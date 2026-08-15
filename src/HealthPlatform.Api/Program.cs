@@ -147,13 +147,42 @@ else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
     var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
     await db.Database.EnsureCreatedAsync();
+
+    var adminEmail = builder.Configuration["Seed:AdminEmail"];
+    var adminPassword = builder.Configuration["Seed:AdminPassword"];
+
     await DbSeeder.SeedAsync(
         db,
         users,
         roles,
         builder.Configuration["Seed:OrganizationName"] ?? "Clinica Demo MVP",
-        builder.Configuration["Seed:AdminEmail"],
-        builder.Configuration["Seed:AdminPassword"]);
+        adminEmail,
+        adminPassword);
+
+    if (builder.Configuration.GetValue<bool>("DemoBootstrap:SyncAdminPassword") &&
+        !string.IsNullOrWhiteSpace(adminEmail) &&
+        !string.IsNullOrWhiteSpace(adminPassword))
+    {
+        var admin = await users.FindByEmailAsync(adminEmail);
+
+        if (admin is null)
+            throw new InvalidOperationException("Admin demo nao encontrado apos o seed.");
+
+        if (!await users.CheckPasswordAsync(admin, adminPassword))
+        {
+            var resetToken = await users.GeneratePasswordResetTokenAsync(admin);
+            var resetResult = await users.ResetPasswordAsync(admin, resetToken, adminPassword);
+
+            if (!resetResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    "Nao foi possivel sincronizar a senha do admin demo: " +
+                    string.Join("; ", resetResult.Errors.Select(x => x.Description)));
+            }
+
+            Console.WriteLine("Senha do admin demo sincronizada com Seed__AdminPassword.");
+        }
+    }
 }
 
 app.Run();

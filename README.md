@@ -1,3 +1,45 @@
+# v0.3.40-r3 — Sincronização da senha do admin no Render
+
+Correção do login profissional no ambiente demo.
+
+## Causa
+
+O `DbSeeder` só define a senha no momento em que cria o usuário.
+
+Se `admin@healthplatform.local` já existia, alterar `Seed__AdminPassword` no Render não modificava a senha armazenada no ASP.NET Core Identity.
+
+Isso fazia o healthcheck, banco, SPA e assets funcionarem normalmente, mas o login retornar HTTP 401.
+
+## Correção
+
+No modo `DemoBootstrap`, quando:
+
+`DemoBootstrap__SyncAdminPassword=true`
+
+a inicialização agora:
+
+1. executa o seed normal;
+2. localiza o admin configurado em `Seed__AdminEmail`;
+3. verifica a senha atual com `CheckPasswordAsync`;
+4. se ela for diferente de `Seed__AdminPassword`, gera um token interno de reset;
+5. aplica `ResetPasswordAsync`.
+
+Nenhum paciente, consulta, plano ou outro registro é apagado.
+
+O `render.yaml` já habilita:
+
+`DemoBootstrap__SyncAdminPassword=true`
+
+Portanto, basta definir a senha desejada em `Seed__AdminPassword` e fazer um novo deploy.
+
+## Versão
+
+- `VERSION.txt`: continua `0.3.40`
+- `PREPARAR.ps1`: 30/30
+- `TESTAR.ps1`: 492/492
+- schema novo: não
+
+
 # v0.3.40-r2 — Login Render + Demo Rica
 
 A r2 corrige uma confusão importante da tela de login no ambiente hospedado: o HTML ainda preenchia `ChangeMe_123!`, embora no Render a senha correta seja `Seed__AdminPassword`.

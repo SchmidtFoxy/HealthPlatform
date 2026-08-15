@@ -45,7 +45,14 @@ $css = Invoke-WebRequest -Uri "$base/app.css" -UseBasicParsing
 if ($js.StatusCode -ne 200 -or $css.StatusCode -ne 200) { throw "Assets remotos indisponiveis." }
 
 Write-Host "[4/12] Login profissional..." -ForegroundColor Cyan
-$login = Invoke-RestMethod -Uri "$base/api/auth/login" -Method Post -ContentType "application/json" -Body (Json @{ email=$Email; senha=$Senha })
+try {
+    $login = Invoke-RestMethod -Uri "$base/api/auth/login" -Method Post -ContentType "application/json" -Body (Json @{ email=$Email; senha=$Senha })
+} catch {
+    if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -eq 401) {
+        throw "Login remoto retornou 401. Confirme Seed__AdminEmail/Seed__AdminPassword no Render e verifique se o deploy usa v0.3.40-r3 ou superior."
+    }
+    throw
+}
 if ([string]::IsNullOrWhiteSpace($login.accessToken)) { throw "Login remoto nao retornou token." }
 $headers = @{ Authorization = "Bearer $($login.accessToken)" }
 

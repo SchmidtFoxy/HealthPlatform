@@ -4065,10 +4065,11 @@ Write-Host "[480/492] Validando secrets do Blueprint..."
 if (-not $renderSource.Contains("Jwt__Key") -or
     -not $renderSource.Contains("generateValue: true") -or
     -not $renderSource.Contains("Seed__AdminPassword") -or
-    -not $renderSource.Contains("sync: false")) {
-    throw "Secrets do Render nao estao protegidos."
+    -not $renderSource.Contains("sync: false") -or
+    -not $renderSource.Contains("DemoBootstrap__SyncAdminPassword")) {
+    throw "Secrets/sincronizacao do admin Render incompletos."
 }
-Write-Host "    JWT gerado + senha solicitada no Render: OK."
+Write-Host "    JWT gerado + senha solicitada + sync do admin: OK."
 
 Write-Host "[481/492] Validando conexao PostgreSQL do Render..."
 $resolverSource = Get-Content .\src\HealthPlatform.Api\Services\DatabaseConnectionResolver.cs -Encoding UTF8 -Raw
@@ -4088,11 +4089,15 @@ Write-Host "    Credenciais discretas -> Npgsql: OK."
 Write-Host "[482/492] Validando bootstrap isolado do MVP..."
 $programSource = Get-Content .\src\HealthPlatform.Api\Program.cs -Encoding UTF8 -Raw
 if (-not $programSource.Contains('GetValue<bool>("DemoBootstrap:Enabled")') -or
+    -not $programSource.Contains('GetValue<bool>("DemoBootstrap:SyncAdminPassword")') -or
     -not $programSource.Contains("EnsureCreatedAsync") -or
+    -not $programSource.Contains("CheckPasswordAsync") -or
+    -not $programSource.Contains("GeneratePasswordResetTokenAsync") -or
+    -not $programSource.Contains("ResetPasswordAsync") -or
     -not $programSource.Contains("DatabaseConnectionResolver.Resolve")) {
-    throw "Bootstrap do banco demo incompleto."
+    throw "Bootstrap/sincronizacao do admin demo incompletos."
 }
-Write-Host "    EnsureCreated somente quando DemoBootstrap esta habilitado."
+Write-Host "    EnsureCreated + sync de senha somente no DemoBootstrap."
 
 Write-Host "[483/492] Validando fluxo local preservado..."
 if (-not $programSource.Contains("app.Environment.IsDevelopment()") -or
