@@ -3911,16 +3911,18 @@ Write-Host "[463/492] Validando identidade MVP Preview..."
 $indexSource = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
 if (-not $indexSource.Contains("MVP Preview • v0.3.40") -or
     -not $indexSource.Contains("mvp-brand-badge") -or
-    -not $indexSource.Contains("MVP • DEMO")) {
-    throw "Identidade visual do MVP Preview incompleta."
+    -not $indexSource.Contains("MVP • DEMO") -or
+    -not $indexSource.Contains('id="loginMessage"') -or
+    $indexSource.Contains('value="ChangeMe_123!"')) {
+    throw "Identidade/login do MVP Preview incompletos."
 }
 Write-Host "    Login + marcas de demo: assets OK."
 
 Write-Host "[464/492] Validando aviso de demonstracao..."
 if (-not $indexSource.Contains("Ambiente de demonstração") -or
     -not $indexSource.Contains("Use somente dados fictícios") -or
-    -not $indexSource.Contains("testar fluxos, usabilidade")) {
-    throw "Aviso de ambiente de demonstracao incompleto."
+    -not $indexSource.Contains("senha profissional é a configurada")) {
+    throw "Aviso de ambiente de demonstracao/login incompleto."
 }
 Write-Host "    Uso ficticio e objetivo do prototipo: copy OK."
 
@@ -4132,6 +4134,13 @@ if (-not $remotePopular.Contains("Arroz branco cozido") -or
     -not $remotePopular.Contains("Agachamento livre") -or
     -not $remotePopular.Contains("Como voce avalia sua rotina atual de sono?")) {
     throw "Catalogos remotos iniciais incompletos."
+}
+$richPopular = Get-Content .\POPULAR-REMOTO-RICO.ps1 -Encoding UTF8 -Raw
+if (-not $richPopular.Contains("DEMO RICA PRONTA") -or
+    -not $richPopular.Contains("EnsureAnamnese") -or
+    -not $richPopular.Contains("EnsureMealPlan") -or
+    -not $richPopular.Contains("EnsureWorkoutHistory")) {
+    throw "POPULAR-REMOTO-RICO incompleto."
 }
 Write-Host "    Alimentos + exercicios + pergunta de anamnese: seed remoto OK."
 

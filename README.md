@@ -1,3 +1,38 @@
+# v0.3.40-r2 — Login Render + Demo Rica
+
+A r2 corrige uma confusão importante da tela de login no ambiente hospedado: o HTML ainda preenchia `ChangeMe_123!`, embora no Render a senha correta seja `Seed__AdminPassword`.
+
+Agora:
+- a senha não vem preenchida;
+- erro de autenticação aparece dentro do formulário;
+- 401 no endpoint de login não é tratado como "sessão expirada";
+- a interface orienta a usar a senha configurada na demo.
+
+Também foi criado `POPULAR-REMOTO-RICO.ps1`.
+
+Ele mantém poucos pacientes fictícios, mas aprofunda cada prontuário com:
+- consultas e evoluções SOAP;
+- evolução de hábitos/anamneses;
+- avaliações corporais adicionais;
+- painel laboratorial ampliado;
+- planos alimentares completos com cinco refeições;
+- fases nutricionais e de treino;
+- check-ins longitudinais;
+- histórico de execuções para alimentar progressão de carga;
+- cenários contrastantes de boa resposta, baixa adesão, alterações laboratoriais e performance.
+
+Acesso de paciente preparado pelo seed rico:
+- `ana.ribeiro.demo@healthplatform.local`
+- `diego.alves.demo@healthplatform.local`
+- senha: `PacienteDemo_123!`
+
+Não há alteração de banco/API de domínio.
+
+`VERSION.txt` permanece `0.3.40`.
+`PREPARAR.ps1` permanece 30/30.
+`TESTAR.ps1` permanece 492/492.
+
+
 # v0.3.40-r1 — Render / inotify hotfix
 
 Correção específica do deploy no Render.

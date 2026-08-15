@@ -29,9 +29,10 @@
           <p>Entre com seu acesso profissional ou de paciente.</p>
         </div>
         <label>E-mail<input id="email" type="email" autocomplete="username" value="admin@healthplatform.local" required /></label>
-        <label>Senha<input id="senha" type="password" autocomplete="current-password" value="ChangeMe_123!" required /></label>
+        <label>Senha<input id="senha" type="password" autocomplete="current-password" value="" placeholder="Senha configurada para esta demo" required /></label>
         <button id="loginButton" class="primary full" type="submit">Entrar</button>
-        <div class="dev-note"><strong>Ambiente de demonstração.</strong> Use somente dados fictícios. Esta versão existe para testar fluxos, usabilidade e descobrir o que ainda falta no produto.</div>
+        <div id="loginMessage" class="login-message hidden" role="alert"></div>
+        <div class="dev-note"><strong>Ambiente de demonstração.</strong> Use somente dados fictícios. A senha profissional é a configurada no ambiente da demo; a senha local antiga não é preenchida automaticamente.</div>
       </form>
     </div>
   </section>

@@ -1193,3 +1193,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .mvp-dashboard-actions{width:100%}
   .mvp-dashboard-actions button{flex:1 1 140px}
 }
+
+
+/* ===== v0.3.40-r2 — feedback de login da demo ===== */
+.login-message{padding:10px 12px;border-radius:10px;background:#fff1f1;border:1px solid #f1c6c6;color:#8f2f38;font-size:.76rem;line-height:1.4}
+.login-message.hidden{display:none}
+.login-card input::placeholder{color:#9aa2ad}

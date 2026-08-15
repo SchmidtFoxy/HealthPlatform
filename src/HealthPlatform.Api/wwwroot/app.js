@@ -12,7 +12,7 @@ const val=(form,name)=>{const e=form.elements[name];return e&&e.value!==''?e.val
 const dec=(form,name)=>{const v=val(form,name);return v==null?null:Number(String(v).replace(',','.'))};
 const integer=(form,name)=>{const v=val(form,name);return v==null?null:Number.parseInt(v,10)};
 function toast(message,error=false){const e=$('#toast');e.textContent=message;e.className=`toast show${error?' error':''}`;clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.className='toast',3000)}
-async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});if(r.status===401){logout();throw new Error('Sua sessão expirou.')}const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
+async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout();throw new Error('Sua sessão expirou.')}if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
 function setLoading(){content.innerHTML='<div class="card"><div class="skeleton" style="width:35%;margin-bottom:18px"></div><div class="skeleton" style="height:180px"></div></div>'}
 function showApp(){
   $('#loginView').classList.add('hidden');
@@ -43,7 +43,28 @@ function logout(){
   $('#activationView')?.classList.add('hidden');
   $('#loginView').classList.remove('hidden');
 }
-$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=$('#loginButton');b.disabled=true;b.textContent='Entrando...';try{const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:$('#email').value,senha:$('#senha').value})});state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario};localStorage.setItem('hp_token',state.token);localStorage.setItem('hp_user',JSON.stringify(state.user));showApp()}catch(x){toast(x.message,true)}finally{b.disabled=false;b.textContent='Entrar'}});
+$('#loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const b=$('#loginButton'),msg=$('#loginMessage');
+  msg?.classList.add('hidden');
+  if(msg)msg.textContent='';
+  b.disabled=true;b.textContent='Entrando...';
+  try{
+    const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:$('#email').value.trim(),senha:$('#senha').value})});
+    state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario};
+    localStorage.setItem('hp_token',state.token);localStorage.setItem('hp_user',JSON.stringify(state.user));
+    showApp();
+  }catch(x){
+    const text=String(x?.message||'Não foi possível entrar.');
+    if(msg){
+      msg.textContent=text==='Email ou senha invalidos.'
+        ? 'E-mail ou senha inválidos. No Render, use a senha configurada em Seed__AdminPassword.'
+        : text;
+      msg.classList.remove('hidden');
+    }
+    toast(text,true);
+  }finally{b.disabled=false;b.textContent='Entrar'}
+});
 $('#logoutButton').onclick=logout;$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
 function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
