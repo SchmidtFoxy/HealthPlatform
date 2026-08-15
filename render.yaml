@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: healthplatform-mvp
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_FORWARDEDHEADERS_ENABLED
+        value: "true"
+      - key: DemoBootstrap__Enabled
+        value: "true"
+
+      - key: Database__Host
+        fromDatabase:
+          name: healthplatform-mvp-db
+          property: host
+      - key: Database__Port
+        fromDatabase:
+          name: healthplatform-mvp-db
+          property: port
+      - key: Database__Name
+        fromDatabase:
+          name: healthplatform-mvp-db
+          property: database
+      - key: Database__User
+        fromDatabase:
+          name: healthplatform-mvp-db
+          property: user
+      - key: Database__Password
+        fromDatabase:
+          name: healthplatform-mvp-db
+          property: password
+
+      - key: Jwt__Issuer
+        value: HealthPlatform.Api
+      - key: Jwt__Audience
+        value: HealthPlatform.Web
+      - key: Jwt__Key
+        generateValue: true
+      - key: Jwt__ExpirationMinutes
+        value: "120"
+
+      - key: Seed__OrganizationName
+        value: Clinica Demo MVP
+      - key: Seed__AdminEmail
+        value: admin@healthplatform.local
+      - key: Seed__AdminPassword
+        sync: false
+
+databases:
+  - name: healthplatform-mvp-db
+    plan: free
+    postgresMajorVersion: "18"
+    databaseName: healthplatform
+    user: healthplatform
+    ipAllowList: []

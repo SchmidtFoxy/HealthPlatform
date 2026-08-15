@@ -1,0 +1,24 @@
+namespace HealthPlatform.Api.Contracts.Anamneses;
+
+public sealed record UpsertAnamneseRequest(
+    Guid? ConsultaId,
+    DateTime? DataUtc,
+    string? ObjetivoAcompanhamento,
+    string? HistoricoDoencas,
+    string? HistoricoFamiliar,
+    string? Cirurgias,
+    string? Alergias,
+    string? Medicamentos,
+    string? Suplementos,
+    string? Tabagismo,
+    string? Etilismo,
+    decimal? SonoHorasMedia,
+    string? SonoQualidade,
+    bool? DespertaDuranteNoite,
+    int? EstresseNivel,
+    string? AtividadeFisica,
+    int? AtividadeFisicaDiasSemana,
+    string? HabitoIntestinal,
+    decimal? AguaLitrosDia,
+    string? Observacoes,
+    IReadOnlyCollection<RespostaAnamneseRequest>? RespostasPersonalizadas);

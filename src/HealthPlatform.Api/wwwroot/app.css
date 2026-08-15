@@ -1,0 +1,1195 @@
+:root{
+  --bg:#f5f7fb;--surface:#ffffff;--surface-2:#eef3f8;--text:#172033;--muted:#6f7b8d;--line:#e3e8ef;
+  --navy:#0c1829;--navy-2:#13243b;--accent:#20b486;--accent-dark:#16966f;--accent-soft:#e7f7f1;
+  --danger:#e45d68;--warning:#e8a23a;--shadow:0 18px 50px rgba(15,32,53,.10);--radius:20px;
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)}button,input,select{font:inherit}.hidden{display:none!important}
+.login-shell{min-height:100vh;display:grid;grid-template-columns:1.08fr .92fr;background:#fff}.login-visual{position:relative;padding:56px 72px;color:#fff;background:radial-gradient(circle at 20% 10%,rgba(32,180,134,.26),transparent 32%),linear-gradient(150deg,#09131f,#10253c 62%,#0f4b45);display:flex;flex-direction:column;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.02em}.brand-large{font-size:20px}.brand-mark{height:36px;min-width:36px;padding:0 8px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-weight:900}.hero-copy{max-width:640px}.hero-copy h1{font-size:clamp(42px,5vw,70px);line-height:1.02;letter-spacing:-.045em;margin:14px 0 20px}.hero-copy p{font-size:19px;line-height:1.7;color:#c7d3df;max-width:570px}.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:800;color:var(--accent);text-transform:uppercase}.login-quote{font-size:13px;color:#aebdca}.login-panel{display:flex;align-items:center;justify-content:center;padding:50px}.login-card{width:min(430px,100%);display:grid;gap:22px}.login-card h2{font-size:34px;letter-spacing:-.03em;margin:8px 0 6px}.login-card p,.modal-heading p{color:var(--muted);margin:0;line-height:1.55}.login-card label,.form-grid label{font-size:13px;font-weight:700;display:grid;gap:8px}.login-card input,.form-grid input,.form-grid select,.search-input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:#fff;outline:none;color:var(--text);transition:.2s}.login-card input:focus,.form-grid input:focus,.form-grid select:focus,.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(32,180,134,.12)}.dev-note{font-size:11px;color:#8a96a6;line-height:1.5}.mobile-brand{display:none}
+.primary,.secondary,.ghost{border:0;border-radius:11px;padding:11px 15px;font-weight:800;cursor:pointer;transition:.18s}.primary{background:var(--accent);color:white}.primary:hover{background:var(--accent-dark);transform:translateY(-1px)}.secondary{background:var(--surface-2);color:var(--text)}.ghost{background:transparent;color:var(--muted)}.full{width:100%;padding:14px}
+.app-shell{min-height:100vh;display:grid;grid-template-columns:248px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:var(--navy);color:#d8e1ec;padding:28px 18px;display:flex;flex-direction:column;z-index:20}.sidebar .brand{padding:0 10px 28px;color:#fff}.sidebar nav{display:grid;gap:6px}.nav-item{border:0;background:transparent;color:#9fb0c2;padding:12px 14px;border-radius:11px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;text-decoration:none;font-weight:700;width:100%}.nav-item span{width:22px;text-align:center}.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.075);color:#fff}.nav-item.active{box-shadow:inset 3px 0 var(--accent)}.sidebar-bottom{margin-top:auto;display:grid;gap:5px}.nav-item.danger:hover{color:#ff98a0}.main{min-width:0}.topbar{height:86px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:0 34px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}.topbar h2{margin:3px 0 0;font-size:22px;letter-spacing:-.025em}.user-chip{display:flex;align-items:center;gap:11px}.user-chip strong,.user-chip small{display:block}.user-chip small{color:var(--muted);font-size:11px;margin-top:2px}.avatar{height:39px;width:39px;border-radius:12px;background:var(--accent-soft);color:var(--accent-dark);display:grid;place-items:center;font-weight:900;font-size:12px}.menu-button{display:none;border:0;background:transparent;font-size:22px}.content{padding:30px 34px 48px;max-width:1560px;margin:0 auto}.section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.section-head h3{margin:0;font-size:20px;letter-spacing:-.025em}.section-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.toolbar{display:flex;gap:10px;align-items:center}.search-wrap{position:relative;min-width:300px}.search-wrap:before{content:'⌕';position:absolute;left:13px;top:10px;color:#8b97a8}.search-input{padding-left:36px;background:var(--surface)}
+.stats-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:24px}.stat-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 19px}.stat-card .label{color:var(--muted);font-size:12px;font-weight:700}.stat-card .value{font-size:31px;line-height:1;font-weight:900;letter-spacing:-.04em;margin-top:9px}.stat-card .hint{font-size:11px;color:#9aa5b3;margin-top:7px}.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.8fr);gap:18px}.stack{display:grid;gap:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 1px 2px rgba(15,32,53,.02)}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.card-head h3{font-size:16px;margin:0}.card-head small{color:var(--muted)}.list{display:grid}.list-row{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.list-row:last-child{border-bottom:0}.time-badge{font-size:12px;font-weight:900;background:var(--surface-2);padding:8px;border-radius:10px;min-width:52px;text-align:center}.row-main strong{font-size:13px;display:block}.row-main small{color:var(--muted);display:block;margin-top:3px}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;background:var(--surface-2);color:#667386}.pill.Confirmada,.pill.Realizada,.pill.Ativa{background:var(--accent-soft);color:var(--accent-dark)}.pill.Cancelada,.pill.Faltou{background:#fff0f1;color:#b5444d}.pill.Agendada{background:#eef4ff;color:#4c6eb2}.attention-row{padding:13px;border:1px solid var(--line);border-radius:13px;margin-bottom:9px;display:flex;justify-content:space-between;gap:15px;align-items:center}.attention-row strong{font-size:13px}.attention-row small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.attention-dot{height:9px;width:9px;border-radius:50%;background:var(--warning)}
+.table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.data-table{width:100%;border-collapse:collapse}.data-table th{text-align:left;padding:13px 18px;background:#fafbfd;color:#8490a0;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.data-table td{padding:15px 18px;border-top:1px solid var(--line);font-size:13px}.data-table tbody tr{cursor:pointer}.data-table tbody tr:hover{background:#fbfdfd}.person-cell{display:flex;align-items:center;gap:10px}.mini-avatar{height:34px;width:34px;border-radius:10px;background:#edf3f8;color:#627186;display:grid;place-items:center;font-weight:900;font-size:11px}.empty{padding:34px;text-align:center;color:var(--muted)}
+.agenda-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.date-nav{display:flex;gap:8px;align-items:center}.date-title{min-width:200px;text-align:center;font-weight:900}.agenda-list{display:grid;gap:10px}.agenda-item{display:grid;grid-template-columns:76px 4px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:13px 16px}.agenda-time{font-weight:900;font-size:14px;text-align:center}.agenda-bar{width:4px;height:44px;border-radius:999px;background:var(--accent)}.agenda-person strong{display:block}.agenda-person small{color:var(--muted);display:block;margin-top:4px}.agenda-actions{display:flex;gap:8px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(8,18,31,.62);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:25px;z-index:100}.modal{position:relative;width:min(650px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:24px;padding:28px;box-shadow:var(--shadow)}.modal.large{width:min(1040px,100%)}.modal-close{position:absolute;right:18px;top:17px;border:0;background:var(--surface-2);border-radius:10px;height:34px;width:34px;font-size:21px;cursor:pointer}.modal-heading h2{font-size:27px;margin:7px 0 6px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:25px}.span-2{grid-column:span 2}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:5px}.patient-hero{display:flex;align-items:center;gap:17px;padding-bottom:20px;border-bottom:1px solid var(--line)}.patient-hero .big-avatar{height:62px;width:62px;border-radius:17px;background:var(--accent-soft);color:var(--accent-dark);display:grid;place-items:center;font-size:18px;font-weight:900}.patient-hero h2{margin:0 0 5px;font-size:26px}.patient-hero p{margin:0;color:var(--muted)}.patient-info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.info-box{background:#f8fafc;border-radius:13px;padding:12px}.info-box small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.info-box strong{font-size:13px}.patient-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.timeline{display:grid}.timeline-item{position:relative;padding:0 0 16px 24px;border-left:2px solid #e7ecf2;margin-left:5px}.timeline-item:last-child{border-left-color:transparent}.timeline-item:before{content:'';position:absolute;left:-6px;top:2px;height:10px;width:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}.timeline-item strong{font-size:12px}.timeline-item small{display:block;color:var(--muted);margin-top:4px}.portal-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{background:#f8fafc;border-radius:12px;padding:12px}.metric strong{font-size:19px;display:block}.metric small{font-size:10px;color:var(--muted)}.toast{position:fixed;right:22px;bottom:22px;background:#13243b;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);z-index:200;opacity:0;pointer-events:none;transform:translateY(8px);transition:.2s;font-size:13px}.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:#a43c46}
+.skeleton{height:16px;background:linear-gradient(90deg,#edf1f5,#f7f9fb,#edf1f5);background-size:200%;animation:shimmer 1.2s infinite;border-radius:7px}@keyframes shimmer{to{background-position:-200% 0}}
+@media(max-width:1150px){.stats-grid{grid-template-columns:repeat(3,1fr)}.dashboard-grid{grid-template-columns:1fr}.patient-info-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:780px){.login-shell{grid-template-columns:1fr}.login-visual{display:none}.login-panel{padding:28px;min-height:100vh}.mobile-brand{display:flex}.app-shell{grid-template-columns:1fr}.sidebar{position:fixed;left:-270px;width:248px;transition:.2s}.sidebar.open{left:0}.topbar{padding:0 18px}.menu-button{display:block}.content{padding:22px 16px}.stats-grid{grid-template-columns:1fr 1fr}.section-head{align-items:flex-start;flex-direction:column}.toolbar,.search-wrap{width:100%}.search-wrap{min-width:0}.data-table th:nth-child(3),.data-table td:nth-child(3),.data-table th:nth-child(4),.data-table td:nth-child(4){display:none}.agenda-item{grid-template-columns:58px 3px 1fr}.agenda-actions{grid-column:3}.user-chip>div:last-child{display:none}.patient-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.span-2{grid-column:span 1}.portal-metrics{grid-template-columns:1fr 1fr}}
+/* v0.2.2 — prontuário operacional */
+.clickable{cursor:pointer}.muted-mini{color:var(--muted);font-size:11px;margin-top:3px}.patient-page{display:grid;gap:18px}.patient-page-head{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}.back-link{border:0;background:transparent;color:var(--muted);font-weight:800;cursor:pointer;padding:0 0 14px}.patient-hero.page{border:0;padding:0}.patient-title{flex:1}.patient-title h2{font-size:30px;margin:4px 0}.patient-head-actions{margin-left:auto}.patient-tabs{display:flex;gap:7px;overflow:auto;padding:5px 1px 2px;scrollbar-width:thin}.patient-tab{white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:9px 13px;font-size:11px;font-weight:900;cursor:pointer}.patient-tab.active{background:var(--navy);border-color:var(--navy);color:white}.patient-dashboard{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.8fr);gap:18px}.portal-metrics.wide{grid-template-columns:repeat(4,1fr)}.trend-note{margin-top:12px;padding:10px 12px;background:var(--surface-2);border-radius:10px;color:var(--muted);font-size:12px}.feature-title{font-size:19px;font-weight:900;margin:5px 0 15px}.meal-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.meal-strip>div{background:var(--surface-2);padding:11px;border-radius:12px}.meal-strip strong,.meal-strip span,.meal-strip small{display:block}.meal-strip span{font-weight:800;font-size:12px;margin-top:4px}.meal-strip small{color:var(--muted);margin-top:3px}.next-appointment{display:flex;align-items:center;gap:15px}.date-block{height:58px;width:58px;border-radius:15px;background:var(--accent-soft);color:var(--accent-dark);display:grid;place-items:center;align-content:center}.date-block strong{font-size:21px;line-height:1}.date-block span{font-size:10px;text-transform:uppercase;font-weight:900}.next-appointment p{margin:5px 0 0;color:var(--muted);font-size:11px}.goal-row{display:grid;grid-template-columns:minmax(130px,1fr) minmax(80px,1fr) 42px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.goal-row:last-child{border:0}.goal-row strong,.goal-row small{display:block}.goal-row small{color:var(--muted);font-size:10px;margin-top:3px}.goal-row b{font-size:11px}.goal-progress{height:7px;background:#edf1f5;border-radius:999px;overflow:hidden}.goal-progress span{display:block;height:100%;background:var(--accent);border-radius:999px}.lab-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.lab-row:last-child{border:0}.lab-row strong,.lab-row small{display:block}.lab-row small{font-size:10px;color:var(--muted);margin-top:3px}.lab-row>div:last-child{text-align:right}.lab-row b{font-size:12px;margin-right:8px}.full-card{min-height:300px}.empty.compact{padding:18px}.records-grid,.goals-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.record-card,.clinical-sheet,.exam-block,.food-plan,.goal-card{border:1px solid var(--line);border-radius:15px;padding:16px;background:#fff}.record-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:15px}.record-top h4{margin:4px 0 0;font-size:16px}.record-card dl{display:grid;grid-template-columns:85px 1fr;gap:7px 10px;margin:0}.record-card dt{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:900}.record-card dd{margin:0;font-size:12px;line-height:1.5}.clinical-sheet+.clinical-sheet,.exam-block+.exam-block,.food-plan+.food-plan{margin-top:12px}.clinical-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.clinical-field{background:var(--surface-2);border-radius:11px;padding:11px}.clinical-field small{color:var(--muted);text-transform:uppercase;font-size:9px;font-weight:900}.clinical-field p{margin:5px 0 0;font-size:12px;line-height:1.45}.measurement-table{display:grid;border:1px solid var(--line);border-radius:13px;overflow:hidden}.measurement-row{display:grid;grid-template-columns:1.3fr repeat(5,1fr);gap:10px;padding:12px 14px;border-top:1px solid var(--line);font-size:12px}.measurement-row.header{background:var(--surface-2);border:0;color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:900}.lab-table{display:grid}.lab-line{display:grid;grid-template-columns:minmax(140px,1fr) 150px 140px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:12px}.macro-summary{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px}.macro-summary b{background:var(--accent-soft);color:var(--accent-dark);padding:7px 9px;border-radius:9px}.meal-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}.meal-card{background:var(--surface-2);border-radius:12px;padding:12px}.meal-card>div{display:flex;justify-content:space-between;gap:8px}.meal-card small{color:var(--muted)}.meal-card p{font-size:11px;margin:8px 0 0}.meal-card em{color:var(--accent-dark);font-style:normal}.goal-card .goal-big{font-size:30px;font-weight:900}.goal-card .goal-big small{font-size:12px}.goal-card p{color:var(--muted);font-size:11px}.diary-list{display:grid}.diary-list article{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.diary-icon{height:40px;width:40px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;font-size:18px}.diary-list strong,.diary-list small{display:block}.diary-list small{color:var(--muted);font-size:10px;margin-top:3px}.diary-list p{margin:4px 0 0;font-size:12px}.diary-value{text-align:right;font-weight:900}.diary-value small{display:block}.timeline.expanded .timeline-item{padding-bottom:20px}.timeline.expanded .timeline-item b{display:block;font-size:13px;margin-top:4px}.agenda-header h3{margin:0}.agenda-header p{margin:5px 0 0;color:var(--muted);font-size:13px}.agenda-stats{grid-template-columns:repeat(5,1fr)}
+@media(max-width:1050px){.patient-dashboard{grid-template-columns:1fr}.records-grid,.goals-grid{grid-template-columns:1fr}.portal-metrics.wide{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:780px){.patient-page-head{padding:16px}.patient-hero.page{align-items:flex-start}.patient-title h2{font-size:24px}.patient-head-actions{display:none}.patient-info-grid{grid-template-columns:1fr 1fr}.clinical-grid{grid-template-columns:1fr}.measurement-table{overflow:auto}.measurement-row{min-width:650px}.lab-line{grid-template-columns:1fr auto}.lab-line .pill{grid-column:2}.agenda-stats{grid-template-columns:1fr 1fr}.patient-tabs{margin-right:-16px}.records-grid{grid-template-columns:1fr}}
+
+/* v0.2.2 — ações clínicas */
+.patient-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.clinical-modal{max-width:820px}
+.action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.action-grid button{border:1px solid var(--line,#dfe5ec);background:var(--surface,#fff);border-radius:16px;padding:18px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:.18s ease}
+.action-grid button:hover{transform:translateY(-1px);border-color:#8aa4c7;box-shadow:0 8px 24px rgba(15,23,42,.08)}
+.action-grid button b{font-size:15px}.action-grid button span{font-size:12px;color:var(--muted,#667085);line-height:1.4}
+.clinical-form textarea{min-height:94px;resize:vertical;border:1px solid var(--line,#dfe5ec);border-radius:10px;padding:11px 12px;font:inherit;background:transparent;color:inherit}
+.clinical-form input,.clinical-form select{min-height:42px}
+@media(max-width:720px){.action-grid{grid-template-columns:1fr}.clinical-modal{max-width:calc(100vw - 20px)}}
+
+/* v0.2.3 - builders de exames e plano alimentar */
+.builder-meta{margin-bottom:22px}.builder-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:18px 0 12px}.builder-head h3{margin:0 0 4px}.builder-head p{margin:0;color:var(--muted);font-size:11px}.builder-list{display:grid;gap:12px}.builder-row{position:relative;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:14px}.exam-result-row{display:grid;grid-template-columns:1.45fr repeat(5,minmax(90px,1fr));gap:9px;padding-right:48px}.builder-row label{font-size:10px;font-weight:800;color:var(--muted);display:grid;gap:6px}.builder-row input,.builder-row select,.meal-builder input,.meal-builder select,.substitution-row input,.substitution-row select{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 10px;color:var(--text);outline:none}.remove-builder-row,.remove-sub{border:0;background:#f6e8ea;color:#a43c46;border-radius:9px;width:32px;height:32px;font-size:18px;cursor:pointer}.exam-result-row>.remove-builder-row{position:absolute;right:10px;top:28px}.builder-actions{margin-top:20px}.meal-builder{border:1px solid var(--line);border-radius:16px;padding:15px;background:#fff}.meal-builder-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.meal-meta{display:grid;grid-template-columns:minmax(180px,1fr) 120px;gap:9px;flex:1}.meal-items{display:grid;gap:9px}.meal-item-builder{background:var(--surface-2);border-radius:12px;padding:11px}.meal-item-main{display:grid;grid-template-columns:minmax(180px,2fr) 80px 75px 90px auto 34px;gap:7px;align-items:center}.item-macro-preview{font-size:10px;color:var(--muted);padding:7px 2px 0}.substitution-list{display:grid;gap:6px;margin-top:8px;padding-left:18px;border-left:2px solid var(--accent-soft)}.substitution-row{display:grid;grid-template-columns:minmax(170px,2fr) 75px 70px 85px 32px;gap:6px;align-items:center}.add-meal-item{margin-top:9px}.plan-preview{margin-top:16px;padding:14px;border-radius:13px;background:var(--navy);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:15px}.plan-preview small{font-size:9px;letter-spacing:.12em;color:#aebdca;font-weight:900}.plan-preview .macro-summary b{background:rgba(32,180,134,.2);color:#8ff0d0}.plan-preview .macro-summary span{color:#dfe8ef}@media(max-width:900px){.exam-result-row{grid-template-columns:repeat(2,1fr)}.meal-item-main{grid-template-columns:1fr 1fr}.substitution-row{grid-template-columns:1fr 1fr}.plan-preview{align-items:flex-start;flex-direction:column}}
+
+/* v0.2.4 - relatorios e UX operacional */
+.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.report-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:16px;display:grid;gap:14px}.report-card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.report-card-head h4{margin:4px 0 3px;font-size:16px}.report-card-head small{color:var(--muted)}.report-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.report-metrics span,.report-preview-metrics span{background:var(--surface-2);border-radius:10px;padding:9px;font-size:10px;color:var(--muted)}.report-metrics b,.report-preview-metrics b{display:block;color:var(--text);font-size:14px;margin-bottom:2px}.report-conclusion{margin:0;color:var(--muted);font-size:12px;line-height:1.55;border-left:3px solid var(--accent);padding-left:10px}.report-actions{display:flex;justify-content:flex-end}.report-preview-box{border:1px dashed var(--line);border-radius:14px;padding:14px;background:var(--surface-2)}.report-preview-box>small{font-weight:900;letter-spacing:.1em;color:var(--muted);font-size:9px}.report-preview-box>p{margin:7px 0 0;color:var(--muted);font-size:12px}.report-preview-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.patient-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}@media(max-width:820px){.report-grid{grid-template-columns:1fr}.report-metrics,.report-preview-metrics{grid-template-columns:repeat(2,1fr)}}
+
+/* v0.3.27 - edição clínica + agenda operacional */
+.clinical-edit-trigger{margin-left:auto}.record-choice-list{display:grid;gap:10px;margin:18px 0}.record-choice{display:flex;flex-direction:column;gap:4px;text-align:left;padding:14px;border:1px solid var(--border);background:var(--surface);border-radius:12px;cursor:pointer}.record-choice:hover{border-color:var(--primary);transform:translateY(-1px)}.record-choice span{color:var(--muted);font-size:.86rem}.agenda-item-operational{align-items:flex-start}.agenda-quick-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px}.agenda-quick-actions .secondary{padding:7px 9px;font-size:.78rem}.danger-soft{color:#b42318;border-color:#f1b6b0;background:#fff7f6}.clinical-form select{width:100%;min-height:44px;border:1px solid var(--border);border-radius:10px;padding:0 12px;background:var(--surface);color:var(--text)}
+@media(max-width:900px){.agenda-item-operational{grid-template-columns:60px 3px 1fr}.agenda-item-operational .agenda-actions{grid-column:3}.agenda-quick-actions{justify-content:flex-start}.clinical-edit-trigger{margin-left:8px}}
+
+
+/* ===== v0.3.27 — Catálogos + Configurações ===== */
+.settings-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.settings-grid .span-2{grid-column:1/-1}
+.stack-sm{display:grid;gap:12px}
+.catalog-table{display:grid;gap:8px}
+.catalog-row{
+  display:grid;
+  grid-template-columns:minmax(220px,2fr) repeat(4,minmax(90px,1fr));
+  gap:12px;
+  align-items:center;
+  padding:12px 14px;
+  border:1px solid var(--border,#e6e8ec);
+  border-radius:12px;
+  background:var(--surface,#fff);
+}
+.catalog-row small{display:block;margin-top:3px;color:var(--muted,#7b8491)}
+.badge-ok{background:#eaf8ef;color:#227a3b}
+.badge-muted{background:#eef0f3;color:#6f7782}
+.check-line{display:flex!important;align-items:center;gap:8px;margin-top:28px}
+.check-line input{width:auto!important}
+@media(max-width:900px){
+  .settings-grid{grid-template-columns:1fr}
+  .settings-grid .span-2{grid-column:auto}
+  .catalog-row{grid-template-columns:1fr 1fr}
+}
+
+
+/* ===== v0.3.27 ===== */
+.cfg-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.catalog-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.catalog-row{grid-template-columns:minmax(210px,2fr) repeat(3,minmax(85px,1fr)) minmax(150px,auto)}
+.btn-sm{padding:6px 9px;font-size:.82rem}
+@media(max-width:900px){
+  .catalog-row{grid-template-columns:1fr 1fr}
+  .catalog-actions{grid-column:1/-1;justify-content:flex-start}
+}
+
+
+/* ===== v0.3.27 — Portal do paciente ===== */
+.patient-portal-shell{min-height:100vh;background:#f5f7fb}
+.patient-portal-top{height:72px;background:#fff;border-bottom:1px solid var(--line,#e6e9ef);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,64px);position:sticky;top:0;z-index:20}
+.patient-portal-user{display:flex;align-items:center;gap:10px}
+.patient-portal-user>div:nth-child(2){display:grid}
+.patient-portal-user small{color:var(--muted,#77808d)}
+.patient-portal-content{max-width:1180px;margin:0 auto;padding:32px clamp(16px,4vw,44px) 64px}
+.patient-welcome{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:22px}
+.patient-welcome h1{font-size:clamp(28px,5vw,44px);margin:5px 0}
+.patient-welcome p{color:var(--muted,#77808d)}
+.patient-date{text-transform:capitalize;color:var(--muted,#77808d)}
+.patient-next-card{background:linear-gradient(135deg,#13213a,#213d69);color:#fff;border-radius:18px;padding:22px 26px;margin-bottom:18px;display:grid;gap:4px}
+.patient-next-card span{font-size:.72rem;letter-spacing:.13em;opacity:.72}
+.patient-next-card strong{font-size:1.2rem}
+.patient-next-card p{opacity:.8}
+.patient-portal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.patient-portal-grid .span-2{grid-column:1/-1}
+.patient-goal{grid-template-columns:minmax(150px,1fr) minmax(100px,1fr) auto!important}
+.patient-goal .goal-progress{min-width:100px}
+.access-status-card{display:flex;justify-content:space-between;align-items:center;background:#f7f9fc;border:1px solid var(--line,#e6e9ef);border-radius:14px;padding:14px 16px;margin:14px 0}
+.invite-result{margin-top:16px;border:1px solid #d7e5ff;background:#f4f8ff;border-radius:14px;padding:14px}
+.invite-result textarea{width:100%;min-height:92px;margin:10px 0;resize:vertical}
+@media(max-width:760px){
+  .patient-portal-top{height:auto;padding:12px 16px;gap:8px}
+  .patient-portal-user .avatar{display:none}
+  .patient-portal-content{padding-top:20px}
+  .patient-welcome{align-items:flex-start;flex-direction:column}
+  .patient-date{font-size:.85rem}
+  .patient-portal-grid{grid-template-columns:1fr}
+  .patient-portal-grid .span-2{grid-column:auto}
+  .patient-goal{grid-template-columns:1fr!important}
+}
+
+
+/* ===== v0.3.27 — Portal completo ===== */
+.patient-portal-nav{display:flex;gap:6px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--line,#e6e9ef);padding:8px clamp(16px,5vw,64px);position:sticky;top:72px;z-index:19}
+.patient-portal-nav button{border:0;background:transparent;border-radius:10px;padding:9px 14px;color:var(--muted,#77808d);font-weight:700;white-space:nowrap;cursor:pointer}
+.patient-portal-nav button.active{background:#edf3ff;color:#1e54a4}
+.patient-page-header{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:20px}
+.patient-page-header h1{font-size:clamp(28px,5vw,42px);margin:4px 0}
+.patient-page-header p{color:var(--muted,#77808d)}
+.patient-plan-totals{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.patient-plan-totals .metric{background:#fff;border:1px solid var(--line,#e6e9ef);border-radius:14px;padding:16px}
+.patient-meal-list,.patient-goals-history,.patient-lab-history{display:grid;gap:14px}
+.patient-meal-card{overflow:visible}
+.patient-food-list{display:grid;gap:8px}
+.patient-food-item{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:6px 14px;padding:12px 0;border-top:1px solid var(--line,#e6e9ef)}
+.patient-food-item>div:first-child{display:grid;gap:2px}
+.patient-food-item span,.patient-food-item small{color:var(--muted,#77808d)}
+.food-substitutions{grid-column:1/-1;background:#f7f9fc;border-radius:10px;padding:9px 12px;display:flex;gap:12px;flex-wrap:wrap;font-size:.85rem}
+.goal-progress.large{height:9px;margin:12px 0}
+.goal-history{display:grid;border-top:1px solid var(--line,#e6e9ef);margin:12px 0}
+.goal-history>div{display:grid;grid-template-columns:110px 1fr auto;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#e6e9ef);align-items:center}
+.evolution-table{overflow-x:auto}
+.evolution-row{display:grid;grid-template-columns:120px repeat(5,minmax(90px,1fr));gap:12px;min-width:680px;padding:11px 4px;border-bottom:1px solid var(--line,#e6e9ef);align-items:center}
+.evolution-row.head{color:var(--muted,#77808d);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.lab-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.lab-result-card{border:1px solid var(--line,#e6e9ef);border-radius:12px;padding:12px;display:grid;gap:7px}
+.lab-result-card>div{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.lab-result-card b{font-size:1.05rem}
+.lab-result-card small{color:var(--muted,#77808d)}
+@media(max-width:760px){
+  .patient-portal-nav{top:66px}
+  .patient-page-header{align-items:flex-start;flex-direction:column}
+  .patient-plan-totals{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .patient-food-item{grid-template-columns:1fr}
+  .food-substitutions{grid-column:auto}
+  .lab-result-grid{grid-template-columns:1fr}
+}
+
+
+/* ===== v0.3.27 — Treinos ===== */
+.workout-plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.workout-plan-card{border:1px solid var(--line,#e6e9ef);border-radius:14px;padding:15px;background:#fff}
+.workout-session-mini{display:grid;gap:6px;margin-top:12px}
+.workout-session-mini>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line,#e6e9ef)}
+.workout-session-mini span{color:var(--muted,#77808d);font-size:.86rem}
+.builder-head-actions{display:flex;gap:8px;flex-wrap:wrap}
+.workout-session-fields{flex:1}
+.workout-items{display:grid;gap:8px}
+.workout-item-builder{display:grid;grid-template-columns:minmax(180px,1.6fr) repeat(7,minmax(80px,.7fr)) auto;gap:8px;align-items:end;padding:10px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#f9fafc}
+.workout-item-builder label{font-size:.78rem}
+.patient-workout-list{display:grid;gap:14px}
+.patient-workout-session{overflow:visible}
+.patient-exercise-list{display:grid;gap:8px}
+.patient-exercise-card{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;border-top:1px solid var(--line,#e6e9ef);padding:14px 0}
+.exercise-order{width:34px;height:34px;border-radius:10px;background:#edf3ff;color:#1e54a4;font-weight:800;display:grid;place-items:center}
+.exercise-main{display:grid;gap:7px}
+.exercise-title{display:grid;gap:2px}
+.exercise-title small{color:var(--muted,#77808d)}
+.exercise-prescription{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.exercise-prescription b{font-size:1.03rem}
+.exercise-prescription span{background:#f2f4f7;border-radius:999px;padding:4px 8px;font-size:.8rem}
+.exercise-main p{color:var(--muted,#77808d)}
+.exercise-video{padding:8px 11px;border-radius:9px;text-decoration:none;background:#eef4ff;color:#2059aa;font-weight:700;white-space:nowrap}
+.workout-guidance{margin-bottom:14px}
+.workout-guidance p{margin-top:6px;color:var(--muted,#77808d)}
+@media(max-width:1100px){
+  .workout-item-builder{grid-template-columns:repeat(4,minmax(110px,1fr))}
+}
+@media(max-width:760px){
+  .workout-plan-grid{grid-template-columns:1fr}
+  .workout-item-builder{grid-template-columns:1fr 1fr}
+  .patient-exercise-card{grid-template-columns:34px 1fr}
+  .exercise-video{grid-column:2}
+  .workout-session-mini>div{flex-direction:column;gap:3px}
+}
+
+
+/* ===== v0.3.27 — Execução e progressão ===== */
+.workout-history-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.load-progress-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.load-progress-card{border:1px solid var(--line,#e6e9ef);border-radius:12px;padding:12px;display:grid;gap:4px;background:#fafbfc}
+.load-progress-card span,.load-progress-card small{color:var(--muted,#77808d)}
+.workout-execution-list{display:grid;margin-top:14px;border-top:1px solid var(--line,#e6e9ef)}
+.workout-execution-list article{display:grid;grid-template-columns:minmax(180px,1fr) 90px 90px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line,#e6e9ef)}
+.workout-execution-list article>div{display:grid;gap:2px}
+.workout-execution-list small{color:var(--muted,#77808d)}
+.execution-items{display:grid;gap:10px;margin:14px 0}
+.execution-item{display:grid;grid-template-columns:minmax(190px,1.5fr) repeat(4,minmax(90px,.7fr)) auto;gap:9px;align-items:end;border:1px solid var(--line,#e6e9ef);border-radius:12px;padding:12px;background:#fafbfc}
+.execution-item>div{display:grid;gap:3px}
+.execution-item small{color:var(--muted,#77808d)}
+.workout-history-patient{margin-top:14px}
+@media(max-width:900px){
+  .workout-history-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .load-progress-grid{grid-template-columns:1fr 1fr}
+  .execution-item{grid-template-columns:repeat(3,minmax(100px,1fr))}
+}
+@media(max-width:650px){
+  .load-progress-grid{grid-template-columns:1fr}
+  .execution-item{grid-template-columns:1fr 1fr}
+  .workout-execution-list article{grid-template-columns:1fr auto}
+  .workout-execution-list article>span:last-child{grid-column:2}
+}
+
+
+/* ===== v0.3.27 — gráficos analíticos em SVG ===== */
+.analytics-section{overflow:hidden}
+.analytics-badge{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;border-radius:999px;background:#eef3fb;color:#38557b}
+.analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.analytics-chart{border:1px solid var(--line,#e6e9ef);border-radius:14px;padding:13px;background:var(--surface,#fff);min-width:0}
+.analytics-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:5px}
+.analytics-chart-head h4{margin:0;font-size:.96rem}
+.analytics-chart-head small{display:block;margin-top:2px;color:var(--muted,#77808d)}
+.chart-delta{font-size:.78rem;font-weight:800;border-radius:999px;padding:5px 8px;background:#f2f4f7;white-space:nowrap}
+.chart-delta.up{color:#296c48;background:#edf8f1}
+.chart-delta.down{color:#9a493d;background:#fff1ef}
+.chart-delta.flat{color:#69717e}
+.native-line-chart{display:block;width:100%;height:auto;min-height:190px;overflow:visible}
+.chart-grid-line{stroke:currentColor;opacity:.08;stroke-width:1}
+.chart-axis-label{fill:currentColor;opacity:.52;font-size:11px}
+.chart-line{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.chart-point{fill:var(--surface,#fff);stroke:currentColor;stroke-width:2.5}
+.chart-point-group:hover .chart-point{r:6}
+.analytics-chart{color:#3263a8}
+.chart-foot{display:flex;justify-content:space-between;gap:12px;font-size:.76rem;color:var(--muted,#77808d);border-top:1px solid var(--line,#e6e9ef);padding-top:8px}
+.chart-foot b{color:var(--text,#202733)}
+.analytics-chart-empty{color:inherit}
+.chart-empty,.analytics-empty{min-height:100px;border:1px dashed var(--line,#d8dde6);border-radius:12px;display:grid;place-items:center;padding:20px;text-align:center;color:var(--muted,#77808d);background:#fafbfc}
+.analytics-empty{min-height:120px}
+@media(max-width:840px){
+  .analytics-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .analytics-chart{padding:10px}
+  .native-line-chart{min-height:160px}
+  .chart-axis-label{font-size:10px}
+  .chart-foot{flex-direction:column;gap:3px}
+}
+
+
+/* ===== v0.3.27 — Insights automáticos ===== */
+.insight-dashboard-section{margin-top:16px}
+.insight-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 14px}
+.insight-summary>div{border:1px solid var(--line,#e6e9ef);border-radius:12px;padding:11px 13px;display:grid;gap:2px;background:#fafbfc}
+.insight-summary strong{font-size:1.35rem}
+.insight-summary span{font-size:.75rem;color:var(--muted,#77808d)}
+.insight-summary .high{background:#fff1ef}
+.insight-summary .medium{background:#fff8e8}
+.insight-summary .low{background:#eef5ff}
+.insight-patient-list{display:grid;gap:8px}
+.insight-patient-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;padding:11px;border:1px solid var(--line,#e6e9ef);border-radius:12px}
+.insight-patient-main{display:grid;gap:3px}
+.insight-patient-main small{color:var(--muted,#77808d)}
+.insight-patient-main>div{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
+.mini-insight{font-size:.7rem;padding:3px 6px;border-radius:6px;background:#f1f3f6}
+.insight-high{--insight-accent:#ad4134}
+.insight-medium{--insight-accent:#a66a00}
+.insight-low{--insight-accent:#3263a8}
+.mini-insight.insight-high{background:#fff0ed;color:#973c31}
+.mini-insight.insight-medium{background:#fff6dc;color:#8a5b00}
+.mini-insight.insight-low{background:#edf4ff;color:#2c5d9e}
+.pill.insight-high{background:#fff0ed;color:#973c31}
+.pill.insight-medium{background:#fff6dc;color:#8a5b00}
+.pill.insight-low{background:#edf4ff;color:#2c5d9e}
+.patient-insights-section{margin-bottom:14px}
+.patient-insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.insight-card{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;border:1px solid var(--line,#e6e9ef);border-left:4px solid var(--insight-accent,#667);border-radius:12px;padding:11px;background:#fff}
+.insight-icon{width:32px;height:32px;border-radius:9px;background:#f4f6f9;display:grid;place-items:center}
+.insight-body{display:grid;gap:5px}
+.insight-top{display:flex;justify-content:space-between;gap:8px;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#77808d)}
+.insight-top b{color:var(--insight-accent,#667)}
+.insight-body p{margin:0;color:var(--muted,#77808d);font-size:.86rem;line-height:1.45}
+.insight-body small{color:var(--muted,#77808d);line-height:1.4}
+.insight-value{display:inline-flex;width:max-content;max-width:100%;font-weight:800;font-size:.8rem;padding:4px 7px;border-radius:7px;background:#f3f5f8}
+.insight-disclaimer{margin-top:12px;padding:9px 11px;border-radius:9px;background:#f7f8fa;color:var(--muted,#77808d);font-size:.74rem;line-height:1.4}
+@media(max-width:760px){
+  .insight-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .patient-insight-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .insight-patient-row{grid-template-columns:auto 1fr}
+  .insight-patient-row>.pill{grid-column:2}
+}
+
+
+/* ===== v0.3.27 — Pendências clínicas ===== */
+.insight-actions{display:flex;gap:7px;margin-top:5px}
+.pending-filter{display:flex;gap:7px;flex-wrap:wrap}
+.pending-list{display:grid;gap:10px}
+.pending-card{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;border:1px solid var(--line,#e6e9ef);border-left:4px solid var(--insight-accent,#607080);border-radius:13px;padding:13px;background:#fff;align-items:start}
+.pending-check{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f3f5f8;color:var(--insight-accent,#607080);font-weight:900}
+.pending-main{display:grid;gap:6px}
+.pending-main h4{margin:0}
+.pending-main p{margin:0;color:var(--muted,#77808d);font-size:.88rem;line-height:1.45}
+.pending-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#77808d)}
+.pending-meta b{color:var(--insight-accent,#607080)}
+.pending-context{display:flex;gap:10px;flex-wrap:wrap;font-size:.76rem;color:var(--muted,#77808d)}
+.pending-suggestion,.pending-resolution{color:var(--muted,#77808d);line-height:1.4}
+.pending-actions{display:flex;gap:6px;align-items:flex-end;justify-content:flex-end;flex-wrap:wrap;max-width:320px}
+.dashboard-pending-section{margin-top:16px}
+.dashboard-pending-list{display:grid;gap:7px}
+.dashboard-pending-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line,#e6e9ef);cursor:pointer}
+.dashboard-pending-row:last-child{border-bottom:0}
+.dashboard-pending-row>div{display:grid;gap:2px}
+.dashboard-pending-row small{color:var(--muted,#77808d)}
+.pending-dot{display:block;width:10px;height:10px;border-radius:50%;background:var(--insight-accent,#607080)}
+@media(max-width:880px){
+  .pending-card{grid-template-columns:36px 1fr}
+  .pending-actions{grid-column:2;justify-content:flex-start;max-width:none}
+}
+@media(max-width:560px){
+  .pending-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pending-card{grid-template-columns:1fr}
+  .pending-check{display:none}
+  .pending-actions{grid-column:1}
+}
+
+
+/* ===== v0.3.27 — Notificações internas ===== */
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.notification-button{position:relative;width:38px;height:38px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fff;display:grid;place-items:center;font-size:1rem;cursor:pointer}
+.notification-button:hover{background:#f7f9fc}
+.notification-badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#b74639;color:#fff;font-size:.64rem;font-weight:900;display:grid;place-items:center;border:2px solid #fff}
+.notification-drawer{position:fixed;inset:0;z-index:120}
+.notification-drawer-backdrop{position:absolute;inset:0;background:rgba(20,28,40,.28)}
+.notification-panel{position:absolute;right:0;top:0;bottom:0;width:min(430px,94vw);background:#fff;box-shadow:-18px 0 50px rgba(25,35,50,.16);display:flex;flex-direction:column}
+.notification-panel-head{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:18px;border-bottom:1px solid var(--line,#e6e9ef)}
+.notification-panel-head h3{margin:2px 0 0}
+.notification-panel-actions{display:flex;gap:7px;align-items:center}
+.notification-list{padding:10px;overflow-y:auto;display:grid;gap:7px}
+.notification-item{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:start;padding:12px;border:1px solid var(--line,#e6e9ef);border-left:4px solid var(--notification-accent,#718096);border-radius:12px;cursor:pointer;background:#fff}
+.notification-item:hover{background:#fafbfc}
+.notification-item.unread{background:#fbfdff}
+.notification-item.read{opacity:.72}
+.notification-high{--notification-accent:#b24336}
+.notification-medium{--notification-accent:#a66a00}
+.notification-normal{--notification-accent:#3567a8}
+.notification-icon{width:34px;height:34px;border-radius:10px;background:#f3f5f8;display:grid;place-items:center}
+.notification-main{display:grid;gap:4px}
+.notification-main>strong{line-height:1.3}
+.notification-main p{margin:0;font-size:.83rem;line-height:1.42;color:var(--muted,#77808d)}
+.notification-meta{display:flex;gap:6px;flex-wrap:wrap;font-size:.65rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted,#77808d)}
+.notification-meta b{color:var(--notification-accent,#607080)}
+.notification-unread-dot{width:9px;height:9px;border-radius:50%;background:var(--notification-accent,#3567a8);margin-top:7px}
+.patient-portal-user .notification-button{margin-left:5px}
+@media(max-width:600px){
+  .notification-panel{width:100%}
+  .notification-panel-head{padding:14px}
+  .notification-panel-actions .ghost{font-size:.72rem}
+  .topbar-actions .user-chip>div:last-child{display:none}
+}
+
+
+/* ===== v0.3.27 — Carteira de pacientes ===== */
+.portfolio-toolbar{display:grid;grid-template-columns:minmax(220px,1.4fr) minmax(150px,.6fr) minmax(170px,.7fr) auto;gap:10px;align-items:end}
+.portfolio-toolbar label{display:grid;gap:5px;font-size:.75rem;font-weight:700;color:var(--muted,#77808d)}
+.portfolio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.portfolio-patient-card{--portfolio-accent:#6f7b8b;border:1px solid var(--line,#e6e9ef);border-top:4px solid var(--portfolio-accent);border-radius:15px;background:#fff;padding:14px;display:grid;gap:11px;cursor:pointer;transition:.15s ease}
+.portfolio-patient-card:hover{transform:translateY(-1px);box-shadow:0 9px 28px rgba(31,42,60,.08)}
+.portfolio-high{--portfolio-accent:#b24336}
+.portfolio-medium{--portfolio-accent:#a66a00}
+.portfolio-low{--portfolio-accent:#3567a8}
+.portfolio-stable{--portfolio-accent:#43825d}
+.portfolio-card-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
+.portfolio-identity{display:grid;gap:2px}
+.portfolio-identity small{color:var(--muted,#77808d)}
+.portfolio-priority{font-size:.7rem;font-weight:900;padding:5px 8px;border-radius:999px;background:#f3f5f8;color:var(--portfolio-accent);white-space:nowrap}
+.portfolio-reason{font-size:.84rem;color:var(--muted,#77808d);min-height:20px}
+.portfolio-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.portfolio-metrics>div{border:1px solid var(--line,#e6e9ef);border-radius:10px;padding:9px;display:grid;gap:2px;background:#fafbfc}
+.portfolio-metrics strong{font-size:1.05rem}
+.portfolio-metrics span{font-size:.66rem;color:var(--muted,#77808d)}
+.portfolio-dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;border-top:1px solid var(--line,#e6e9ef);padding-top:10px}
+.portfolio-dates span{display:grid;gap:2px;font-size:.78rem}
+.portfolio-dates b{font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted,#77808d)}
+.portfolio-card-actions{display:flex;gap:7px;justify-content:flex-end}
+.dashboard-portfolio-section{margin-top:16px}
+.dashboard-portfolio-list{display:grid;gap:6px}
+.dashboard-portfolio-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line,#e6e9ef);cursor:pointer}
+.dashboard-portfolio-row:last-child{border-bottom:0}
+.dashboard-portfolio-row>div:nth-child(2){display:grid;gap:2px}
+.dashboard-portfolio-row small{color:var(--muted,#77808d)}
+.dashboard-portfolio-row .portfolio-priority.portfolio-high{color:#a33d32;background:#fff0ed}
+.dashboard-portfolio-row .portfolio-priority.portfolio-medium{color:#8a5b00;background:#fff6dc}
+.dashboard-portfolio-row .portfolio-priority.portfolio-low{color:#2c5d9e;background:#edf4ff}
+.dashboard-portfolio-row .portfolio-priority.portfolio-stable{color:#36704f;background:#edf8f1}
+@media(max-width:980px){
+  .portfolio-toolbar{grid-template-columns:1fr 1fr}
+  .portfolio-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .portfolio-toolbar{grid-template-columns:1fr}
+  .portfolio-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .portfolio-dates{grid-template-columns:1fr}
+  .portfolio-card-top{grid-template-columns:auto 1fr}
+  .portfolio-card-top>.portfolio-priority{grid-column:2}
+}
+
+
+/* ===== v0.3.27 — Follow-up + ações rápidas ===== */
+.portfolio-card-actions{flex-wrap:wrap}
+.portfolio-card-actions .secondary,.portfolio-card-actions .ghost{font-size:.75rem}
+.followup-history-section{margin-top:14px}
+.followup-history-list{display:grid;gap:7px}
+.followup-history-list article{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line,#e6e9ef)}
+.followup-history-list article:last-child{border-bottom:0}
+.followup-channel{width:34px;height:34px;border-radius:10px;background:#f1f4f8;display:grid;place-items:center}
+.followup-history-list article>div:nth-child(2){display:grid;gap:3px}
+.followup-history-list small,.followup-history-list p,.followup-history-list article>span{color:var(--muted,#77808d)}
+.followup-history-list p{margin:0;font-size:.82rem;line-height:1.4}
+.followup-history-list article>span{font-size:.75rem;white-space:nowrap}
+@media(max-width:680px){
+  .followup-history-list article{grid-template-columns:34px 1fr}
+  .followup-history-list article>span{grid-column:2;white-space:normal}
+  .portfolio-card-actions{justify-content:flex-start}
+}
+
+
+/* ===== v0.3.27 — Fila de follow-up ===== */
+.follow-queue-toolbar{display:grid;grid-template-columns:minmax(260px,1fr) minmax(210px,.55fr) auto;gap:10px;align-items:end}
+.follow-queue-toolbar label{display:grid;gap:5px;font-size:.75rem;font-weight:700;color:var(--muted,#77808d)}
+.follow-queue-list{display:grid;gap:10px;margin-top:12px}
+.follow-queue-card{--follow-accent:#617187;display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:13px;align-items:center;border:1px solid var(--line,#e6e9ef);border-left:5px solid var(--follow-accent);border-radius:14px;background:#fff;padding:13px}
+.follow-queue-overdue{--follow-accent:#b24336}
+.follow-queue-today{--follow-accent:#a66a00}
+.follow-queue-soon{--follow-accent:#3567a8}
+.follow-queue-future{--follow-accent:#5b728f}
+.follow-queue-status{display:grid;gap:5px;font-size:.72rem;color:var(--follow-accent)}
+.follow-queue-status>span{width:12px;height:12px;border-radius:50%;background:var(--follow-accent)}
+.follow-queue-name{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center}
+.follow-queue-name>div:last-child{display:grid;gap:2px}
+.follow-queue-name small{color:var(--muted,#77808d)}
+.follow-queue-main{display:grid;gap:9px}
+.follow-queue-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.follow-queue-details span{display:grid;gap:2px;font-size:.78rem}
+.follow-queue-details b{font-size:.65rem;text-transform:uppercase;color:var(--muted,#77808d)}
+.follow-queue-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.dashboard-followup-section{margin-top:16px}
+.dashboard-followup-list{display:grid;gap:6px}
+.dashboard-followup-list article{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line,#e6e9ef);cursor:pointer}
+.dashboard-followup-list article:last-child{border-bottom:0}
+.dashboard-followup-list article>div{display:grid;gap:2px}
+.dashboard-followup-list small,.dashboard-followup-list article>span:last-child{color:var(--muted,#77808d)}
+.followup-mini-dot{width:10px;height:10px;border-radius:50%;background:var(--follow-accent,#617187)}
+@media(max-width:900px){
+  .follow-queue-card{grid-template-columns:1fr}
+  .follow-queue-status{display:flex;align-items:center}
+  .follow-queue-actions{justify-content:flex-start}
+}
+@media(max-width:650px){
+  .follow-queue-toolbar{grid-template-columns:1fr}
+  .follow-queue-details{grid-template-columns:1fr}
+  .follow-queue-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+/* ===== v0.3.27 — Gestão + indicadores ===== */
+.management-head{align-items:end}
+.management-period{display:grid;gap:5px;font-size:.75rem;font-weight:700;color:var(--muted,#77808d);min-width:140px}
+.management-grid,.management-secondary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.management-bars{display:grid;gap:9px}
+.management-bar-row{display:grid;grid-template-columns:100px minmax(0,1fr) 36px;gap:9px;align-items:center;font-size:.78rem}
+.management-bar-row>div{height:10px;border-radius:999px;background:#eef1f5;overflow:hidden}
+.management-bar-row i{display:block;height:100%;border-radius:999px;background:currentColor}
+.management-bar-row b{text-align:right}
+.management-week-series{height:190px;display:flex;align-items:flex-end;gap:7px;padding-top:14px}
+.management-week-series>div{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px}
+.management-week-series i{display:block;width:min(28px,70%);min-height:8px;border-radius:7px 7px 3px 3px;background:currentColor;opacity:.78}
+.management-week-series span{font-size:.65rem;color:var(--muted,#77808d)}
+.management-engagement{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.management-engagement>div{border:1px solid var(--line,#e6e9ef);border-radius:11px;padding:11px;background:#fafbfc;display:grid;gap:3px}
+.management-engagement strong{font-size:1.25rem}
+.management-engagement span{font-size:.72rem;color:var(--muted,#77808d)}
+.management-attention-section{margin-top:12px}
+.management-attention-list{display:grid;gap:6px}
+.management-attention-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line,#e6e9ef);cursor:pointer}
+.management-attention-row:last-child{border-bottom:0}
+.management-attention-row>div:nth-child(2){display:grid;gap:2px}
+.management-attention-row small{color:var(--muted,#77808d)}
+.dashboard-management-section{margin-top:16px}
+.dashboard-management-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.dashboard-management-metrics>div{display:grid;gap:2px;padding:10px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.dashboard-management-metrics strong{font-size:1.15rem}
+.dashboard-management-metrics span{font-size:.7rem;color:var(--muted,#77808d)}
+@media(max-width:850px){
+  .management-grid,.management-secondary-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .management-head{align-items:stretch}
+  .management-period{min-width:0;width:100%}
+  .dashboard-management-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .management-bar-row{grid-template-columns:82px minmax(0,1fr) 30px}
+}
+
+
+/* ===== v0.3.27 — Relatórios gerenciais ===== */
+.management-head-actions{display:flex;gap:8px;align-items:end;flex-wrap:wrap;justify-content:flex-end}
+.management-head-actions .management-period{min-width:140px}
+@media(max-width:720px){
+  .management-head-actions{width:100%;justify-content:flex-start}
+  .management-head-actions>button{flex:1}
+  .management-head-actions .management-period{width:100%;min-width:0}
+}
+
+
+/* ===== v0.3.27 — Busca global ===== */
+.global-search-button{display:flex;align-items:center;gap:7px;border:1px solid var(--line,#e6e9ef);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
+.global-search-button kbd,.global-search-input-wrap kbd{font:600 .66rem/1 system-ui;padding:4px 6px;border:1px solid var(--line,#dfe4ea);border-radius:6px;background:#f7f8fa;color:var(--muted,#77808d)}
+.global-search-overlay{position:fixed;inset:0;z-index:2200;background:rgba(20,28,38,.42);display:flex;justify-content:center;align-items:flex-start;padding:9vh 14px 20px;backdrop-filter:blur(3px)}
+.global-search-overlay.hidden{display:none}
+.global-search-dialog{width:min(760px,100%);max-height:76vh;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(16,24,40,.24);overflow:hidden;display:flex;flex-direction:column}
+.global-search-input-wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line,#e6e9ef)}
+.global-search-input-wrap>span{font-size:1.35rem}
+.global-search-input-wrap input{border:0;outline:0;font-size:1rem;min-width:0;background:transparent}
+.global-search-meta{padding:8px 16px;font-size:.72rem;color:var(--muted,#77808d);border-bottom:1px solid var(--line,#e6e9ef)}
+.global-search-results{overflow:auto;padding:6px}
+.global-search-result{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;border:0;background:transparent;border-radius:11px;padding:10px;cursor:pointer}
+.global-search-result:hover,.global-search-result:focus{background:#f5f7fa;outline:0}
+.global-search-result-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#eef2f7}
+.global-search-result-main{display:grid;gap:3px;min-width:0}
+.global-search-result-main>span{display:flex;align-items:center;gap:6px;min-width:0}
+.global-search-result-main b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.global-search-result-main em{font-style:normal;font-size:.62rem;padding:3px 6px;border-radius:999px;background:#eef2f7;color:var(--muted,#667085)}
+.global-search-result-main small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted,#77808d)}
+.global-search-result-date{font-size:.68rem;color:var(--muted,#77808d);white-space:nowrap}
+.search-severity{background:#fff1ef!important}
+.global-search-empty{padding:28px;text-align:center;color:var(--muted,#77808d)}
+@media(max-width:650px){
+  .global-search-button span,.global-search-button kbd{display:none}
+  .global-search-overlay{padding-top:4vh}
+  .global-search-result{grid-template-columns:auto minmax(0,1fr)}
+  .global-search-result-date{grid-column:2}
+}
+
+
+/* ===== v0.3.27 — Central do Dia ===== */
+.central-day-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.central-day-list{display:grid;gap:4px}
+.central-day-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line,#e6e9ef);cursor:pointer}
+.central-day-row:last-child{border-bottom:0}
+.central-day-row>div:nth-child(2){display:grid;gap:2px;min-width:0}
+.central-day-row strong,.central-day-row small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.central-day-row small{color:var(--muted,#77808d)}
+.central-day-time{font-size:.72rem;font-weight:700;min-width:96px;color:var(--muted,#667085)}
+.central-day-badge{font-size:.65rem;font-weight:700;padding:4px 7px;border-radius:999px;background:#eef2f7;white-space:nowrap}
+.central-day-row.is-overdue .central-day-badge,.central-day-row.is-high .central-day-badge{background:#fff1ef;color:#a53e35}
+.central-day-empty{padding:22px 8px;text-align:center;color:var(--muted,#77808d);font-size:.8rem}
+.dashboard-central-day{margin-top:16px}
+.dashboard-central-day-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.dashboard-central-day-metrics>div{display:grid;gap:2px;padding:10px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.dashboard-central-day-metrics strong{font-size:1.15rem}
+.dashboard-central-day-metrics span{font-size:.7rem;color:var(--muted,#77808d)}
+@media(max-width:900px){.central-day-grid{grid-template-columns:1fr}}
+@media(max-width:620px){
+  .dashboard-central-day-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .central-day-row{grid-template-columns:auto minmax(0,1fr)}
+  .central-day-row>button{grid-column:2;justify-self:start}
+}
+
+
+/* ===== v0.3.27 — Evolução clínica SOAP ===== */
+.soap-list{display:grid;gap:12px}
+.soap-card{border:1px solid var(--line,#e6e9ef);border-radius:14px;padding:14px;background:#fff}
+.soap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.soap-grid>div,.soap-notes{border:1px solid var(--line,#e6e9ef);border-radius:10px;padding:11px;background:#fafbfc}
+.soap-grid b,.soap-notes b{font-size:.72rem;color:var(--muted,#667085);text-transform:uppercase;letter-spacing:.03em}
+.soap-grid p,.soap-notes p{margin:6px 0 0;white-space:pre-wrap;line-height:1.45}
+.soap-notes{margin-top:10px}
+@media(max-width:720px){.soap-grid{grid-template-columns:1fr}}
+
+
+/* ===== v0.3.27 — Resumo clínico consolidado ===== */
+.clinical-summary-card{margin-bottom:12px}
+.clinical-summary-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0}
+.clinical-summary-metrics>div{display:grid;gap:2px;padding:11px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.clinical-summary-metrics strong{font-size:1.2rem}
+.clinical-summary-metrics span{font-size:.69rem;color:var(--muted,#77808d)}
+.clinical-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.clinical-summary-grid article{border:1px solid var(--line,#e6e9ef);border-radius:12px;padding:12px;background:#fff}
+.clinical-summary-grid article>b{font-size:.73rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted,#667085)}
+.clinical-summary-grid p{margin:6px 0 0;line-height:1.4}
+.clinical-summary-exams{margin-top:12px;border-top:1px solid var(--line,#e6e9ef);padding-top:12px}
+.clinical-summary-exam-list{display:grid;gap:5px;margin-top:8px}
+.clinical-summary-exam-list>div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;border-radius:9px;background:#fafbfc}
+.clinical-summary-exam-list em{font-style:normal;font-size:.65rem;padding:3px 6px;border-radius:999px;background:#fff1ef;color:#a53e35}
+@media(max-width:900px){.clinical-summary-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){
+  .clinical-summary-grid{grid-template-columns:1fr}
+  .clinical-summary-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .clinical-summary-exam-list>div{grid-template-columns:1fr}
+}
+
+
+/* ===== v0.3.27 — Handoff clínico e impressão ===== */
+.clinical-summary-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+@media(max-width:620px){
+  .clinical-summary-actions{width:100%;justify-content:flex-start}
+  .clinical-summary-actions .ghost{flex:1 1 auto}
+}
+
+
+/* ===== v0.3.27 — Equipe ===== */
+.team-head{align-items:flex-end}
+.team-stats{margin-bottom:12px}
+.team-list{display:grid}
+.team-row{display:grid;grid-template-columns:auto minmax(0,1.2fr) auto minmax(150px,.8fr) auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line,#e6e9ef)}
+.team-row:last-child{border-bottom:0}
+.team-row.is-inactive{opacity:.62}
+.team-main,.team-role{display:grid;gap:2px;min-width:0}
+.team-main strong,.team-main small,.team-role b,.team-role small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team-main small,.team-role small{color:var(--muted,#77808d)}
+.team-main em{font-style:normal;font-size:.62rem;padding:2px 6px;border-radius:999px;background:#eef2f7;color:var(--muted,#667085)}
+.team-role b{font-size:.78rem}
+.team-active-check{display:flex!important;align-items:center;gap:8px;padding-top:24px}
+.team-active-check input{width:auto}
+.form-hint{font-size:.72rem;color:var(--muted,#77808d);margin-top:8px}
+@media(max-width:820px){
+  .team-row{grid-template-columns:auto minmax(0,1fr) auto}
+  .team-role{grid-column:2}
+  .team-row>.team-edit{grid-column:3;grid-row:1/3}
+}
+@media(max-width:560px){
+  .team-head{align-items:stretch}
+  .team-head>button{width:100%}
+  .team-row{grid-template-columns:auto minmax(0,1fr)}
+  .team-row>div:nth-child(3){grid-column:2}
+  .team-role{grid-column:2}
+  .team-row>.team-edit{grid-column:2;grid-row:auto;justify-self:start}
+}
+
+
+/* ===== v0.3.27 — Equipe v2 / segurança de acesso ===== */
+.team-filterbar{display:grid;grid-template-columns:minmax(220px,1fr) 190px 160px;gap:8px;margin-bottom:12px}
+.team-filterbar select{min-width:0}
+.team-row-actions{display:flex;gap:6px;justify-content:flex-end;align-items:center}
+.team-row-actions button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:820px){
+  .team-filterbar{grid-template-columns:1fr 1fr}
+  .team-filterbar .search-input{grid-column:1/-1}
+  .team-row>.team-row-actions{grid-column:3;grid-row:1/3;display:grid}
+}
+@media(max-width:560px){
+  .team-filterbar{grid-template-columns:1fr}
+  .team-filterbar .search-input{grid-column:auto}
+  .team-row>.team-row-actions{grid-column:2;grid-row:auto;display:flex;justify-content:flex-start}
+}
+
+
+/* ===== v0.3.27 — Minha Conta ===== */
+.account-panel{margin-top:12px;padding:16px;border:1px solid var(--line,#e6e9ef);border-radius:14px;background:#fff}
+.account-panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.account-panel-head h3{margin:2px 0}
+.account-panel-head small{color:var(--muted,#77808d)}
+.account-panel-actions{display:flex;gap:7px;flex-wrap:wrap}
+.account-info-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.account-info-grid>div{display:grid;gap:3px;padding:11px;border-radius:10px;background:#fafbfc;border:1px solid var(--line,#e6e9ef)}
+.account-info-grid small{color:var(--muted,#77808d)}
+.account-info-grid strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:820px){.account-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){
+  .account-panel-head{align-items:stretch;flex-direction:column}
+  .account-panel-actions{display:grid;grid-template-columns:1fr 1fr}
+  .account-info-grid{grid-template-columns:1fr}
+}
+
+
+/* ===== v0.3.27 — Progressão nutricional ===== */
+.nutrition-version-card{position:relative}
+.nutrition-plan-actions{display:flex;justify-content:flex-end;gap:7px;margin:10px 0}
+.nutrition-check{display:flex!important;align-items:center;gap:8px;padding:8px 0}
+.nutrition-check input{width:auto}
+.nutrition-projection{margin:12px 0}
+.nutrition-projection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nutrition-projection-grid>div{display:grid;gap:3px;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.nutrition-projection-grid small,.nutrition-projection-grid span{color:var(--muted,#77808d)}
+.nutrition-projection-grid strong{font-size:1.08rem}
+@media(max-width:680px){
+  .nutrition-projection-grid{grid-template-columns:1fr}
+  .nutrition-plan-actions{justify-content:flex-start}
+}
+
+
+/* ===== v0.3.27 — Modal ampliado para plano alimentar ===== */
+#clinicalActionModal.nutrition-modal-open .modal{
+  width:min(1180px,96vw);
+  max-width:1180px;
+  max-height:94vh;
+}
+#clinicalActionModal.nutrition-modal-open .clinical-modal{
+  width:min(1180px,96vw);
+  max-width:1180px;
+}
+#clinicalActionModal.nutrition-modal-open #clinicalActionContent{
+  max-height:86vh;
+  overflow:auto;
+  padding-right:4px;
+}
+#clinicalActionModal.nutrition-modal-open .meal-builder,
+#clinicalActionModal.nutrition-modal-open .clinical-form{
+  width:100%;
+}
+@media(max-width:720px){
+  #clinicalActionModal.nutrition-modal-open .modal,
+  #clinicalActionModal.nutrition-modal-open .clinical-modal{
+    width:98vw;
+    max-width:98vw;
+    max-height:96vh;
+  }
+}
+
+
+/* ===== v0.3.27 — Progressão de treino ===== */
+.workout-plan-actions{display:flex;justify-content:flex-end;margin:8px 0}
+.workout-progression-badges{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}
+.workout-progression-badges span{font-size:.66rem;padding:4px 7px;border-radius:999px;background:#eef2f7;color:var(--muted,#667085)}
+.workout-check{display:flex!important;align-items:center;gap:8px;padding:8px 0}
+.workout-check input{width:auto}
+.workout-projection{margin:12px 0}
+.workout-projection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.workout-projection-grid>div{display:grid;gap:3px;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.workout-projection-grid small,.workout-projection-grid span{color:var(--muted,#77808d)}
+#clinicalActionModal.workout-modal-open .modal,#clinicalActionModal.workout-modal-open .clinical-modal{width:min(1040px,96vw);max-width:1040px;max-height:94vh}
+#clinicalActionModal.workout-modal-open #clinicalActionContent{max-height:86vh;overflow:auto;padding-right:4px}
+@media(max-width:680px){
+  .workout-projection-grid{grid-template-columns:1fr}
+  .workout-plan-actions{justify-content:flex-start}
+  #clinicalActionModal.workout-modal-open .modal,#clinicalActionModal.workout-modal-open .clinical-modal{width:98vw;max-width:98vw}
+}
+
+
+/* ===== v0.3.27 — Templates de plano alimentar ===== */
+.nutrition-top-actions{display:flex;gap:7px;flex-wrap:wrap}
+.template-picker-toolbar{margin:8px 0 12px}
+.meal-template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.meal-template-card{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:14px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.meal-template-card>div{display:grid;gap:4px;min-width:0}
+.meal-template-card h4,.meal-template-card p{margin:0}
+.meal-template-card p,.meal-template-card small{color:var(--muted,#77808d)}
+.template-summary{display:grid;gap:3px;padding:12px;border-radius:11px;background:#fafbfc;border:1px solid var(--line,#e6e9ef);margin:12px 0}
+.template-summary span{color:var(--muted,#77808d)}
+@media(max-width:720px){
+  .meal-template-grid{grid-template-columns:1fr}
+  .meal-template-card{align-items:stretch;flex-direction:column}
+  .meal-template-card button{width:100%}
+  .nutrition-top-actions{width:100%}
+  .nutrition-top-actions button{flex:1}
+}
+
+
+/* ===== v0.3.27 — Templates de treino ===== */
+.workout-top-actions{display:flex;gap:7px;flex-wrap:wrap}
+.workout-template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.workout-template-card{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:14px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.workout-template-card>div{display:grid;gap:4px;min-width:0}
+.workout-template-card h4,.workout-template-card p{margin:0}
+.workout-template-card p,.workout-template-card small{color:var(--muted,#77808d)}
+@media(max-width:720px){
+  .workout-template-grid{grid-template-columns:1fr}
+  .workout-template-card{align-items:stretch;flex-direction:column}
+  .workout-template-card button{width:100%}
+  .workout-top-actions{width:100%}
+  .workout-top-actions button{flex:1}
+}
+
+
+/* ===== v0.3.27 — Metas nutricionais + distribuição ===== */
+.nutrition-target-panel{margin:12px 0;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fafbfc}
+.nutrition-target-head,.nutrition-distribution-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.nutrition-target-head>div,.nutrition-distribution-head{min-width:0}
+.nutrition-target-head small,.nutrition-distribution-head small{display:block;color:var(--muted,#77808d)}
+.nutrition-target-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.nutrition-target-line{display:grid;gap:4px;padding:9px;border:1px solid var(--line,#e6e9ef);border-radius:9px;background:#fff;min-width:0}
+.nutrition-target-line span,.nutrition-target-line small{color:var(--muted,#77808d)}
+.nutrition-target-line strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nutrition-target-track{height:5px;border-radius:999px;background:#eef1f5;overflow:hidden}
+.nutrition-target-track i{display:block;height:100%;max-width:100%;background:currentColor;border-radius:inherit}
+.nutrition-distribution{margin:12px 0;border-top:1px solid var(--line,#e6e9ef);padding-top:12px}
+.nutrition-distribution-row{display:grid;grid-template-columns:minmax(150px,1.5fr) repeat(4,minmax(60px,.55fr));gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line,#edf0f4)}
+.nutrition-distribution-row>div{display:grid}
+.nutrition-distribution-row small,.nutrition-distribution-row span{color:var(--muted,#77808d)}
+.nutrition-target-builder{margin:12px 0;padding:13px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fafbfc}
+.nutrition-target-builder>div:first-child{display:grid;gap:2px;margin-bottom:9px}
+.nutrition-target-builder small{color:var(--muted,#77808d)}
+.nutrition-target-inputs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.nutrition-target-preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:.75rem;color:var(--muted,#77808d)}
+.nutrition-targets-current{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:11px;margin-bottom:12px;border-radius:10px;background:#fafbfc;border:1px solid var(--line,#e6e9ef)}
+.nutrition-targets-current span{color:var(--muted,#77808d)}
+@media(max-width:900px){
+  .nutrition-target-grid,.nutrition-target-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nutrition-distribution-row{grid-template-columns:minmax(130px,1.4fr) repeat(2,minmax(60px,.6fr))}
+  .nutrition-distribution-row span:nth-of-type(n+3){display:none}
+}
+@media(max-width:560px){
+  .nutrition-target-grid,.nutrition-target-inputs{grid-template-columns:1fr}
+  .nutrition-target-head{align-items:stretch;flex-direction:column}
+  .nutrition-target-head button{width:100%}
+  .nutrition-distribution-row{grid-template-columns:1fr 70px}
+  .nutrition-distribution-row span:nth-of-type(n+2){display:none}
+}
+
+
+/* ===== v0.3.27 — Biblioteca de refeições ===== */
+.meal-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.meal-card-head>div{display:grid;gap:2px}
+.meal-library-toolbar{display:grid;grid-template-columns:1.5fr 1fr;gap:8px;margin:8px 0 12px}
+.meal-library-toolbar select{min-width:0}
+.meal-library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.meal-library-card{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:14px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.meal-library-card>div{display:grid;gap:4px;min-width:0}
+.meal-library-card h4,.meal-library-card p{margin:0}
+.meal-library-card p,.meal-library-card small{color:var(--muted,#77808d)}
+@media(max-width:760px){
+  .meal-library-toolbar,.meal-library-grid{grid-template-columns:1fr}
+  .meal-library-card{flex-direction:column;align-items:stretch}
+  .meal-library-card button{width:100%}
+}
+@media(max-width:560px){
+  .meal-card-head{flex-direction:column}
+  .meal-card-head button{width:100%}
+}
+
+
+/* ===== v0.3.27 — Biblioteca de sessões de treino ===== */
+.workout-session-mini-row{display:flex!important;align-items:center;justify-content:space-between;gap:8px}
+.workout-session-mini-row>div{display:grid;gap:2px;min-width:0}
+.session-library-toolbar{display:grid;grid-template-columns:1.5fr 1fr;gap:8px;margin:8px 0 12px}
+.session-library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.session-library-card{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:14px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.session-library-card>div{display:grid;gap:4px;min-width:0}
+.session-library-card h4,.session-library-card p{margin:0}
+.session-library-card p,.session-library-card small{color:var(--muted,#77808d)}
+@media(max-width:760px){
+  .session-library-toolbar,.session-library-grid{grid-template-columns:1fr}
+  .session-library-card{flex-direction:column;align-items:stretch}
+  .session-library-card button{width:100%}
+}
+@media(max-width:560px){
+  .workout-session-mini-row{align-items:stretch;flex-direction:column}
+  .workout-session-mini-row button{width:100%}
+}
+
+
+/* ===== v0.3.28 — Evolução de hábitos / anamnese ===== */
+.habit-evolution-section{display:grid;gap:12px}
+.habit-current-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.habit-current-card{display:grid;gap:4px;padding:13px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fafbfc;min-width:0}
+.habit-current-card>span{color:var(--muted,#77808d);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.habit-current-card>strong{font-size:1.35rem;letter-spacing:-.03em}
+.habit-current-card>small{color:var(--muted,#77808d)}
+.habit-current-card>em{font-style:normal;font-size:.72rem;color:var(--muted,#77808d);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.habit-chart-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-top:3px}
+.habit-chart-head small{color:var(--muted,#77808d)}
+@media(max-width:900px){
+  .habit-current-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .habit-current-grid{grid-template-columns:1fr}
+  .habit-chart-head{align-items:flex-start;flex-direction:column}
+}
+
+
+/* ===== v0.3.29 — Metas por refeição ===== */
+.nutrition-target-actions{display:flex;gap:6px;flex-wrap:wrap}
+.nutrition-distribution-block{border-bottom:1px solid var(--line,#edf0f4)}
+.nutrition-distribution-block:last-child{border-bottom:0}
+.nutrition-distribution-block .nutrition-distribution-row{border-bottom:0}
+.meal-target-mini{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 0 9px 0}
+.meal-target-mini>div{display:flex;gap:8px;flex-wrap:wrap}
+.meal-target-mini span{font-size:.7rem;color:var(--muted,#77808d)}
+.meal-target-mini span b{color:var(--text,#243247)}
+.meal-target-mini.empty-target>span{font-style:italic}
+.meal-target-builder{display:grid;gap:5px;padding:9px;margin:8px 0;border:1px dashed var(--line,#dfe4eb);border-radius:10px;background:#fafbfc}
+.meal-target-builder>small{color:var(--muted,#77808d);font-weight:800}
+.meal-target-builder>div{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.meal-target-builder input{min-width:0}
+.meal-distribution-editor{display:grid;gap:8px;margin-top:14px}
+.meal-distribution-editor label{display:grid;grid-template-columns:minmax(0,1fr) 110px 20px;gap:8px;align-items:center;padding:10px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fafbfc}
+.meal-distribution-editor label>span{display:grid}
+.meal-distribution-editor label small{color:var(--muted,#77808d)}
+.meal-distribution-editor label em{font-style:normal;color:var(--muted,#77808d)}
+.meal-distribution-total{display:flex;justify-content:flex-end;align-items:baseline;gap:8px;padding:10px 0}
+.meal-distribution-total strong{font-size:1.2rem}
+.meal-distribution-total span{color:var(--muted,#77808d)}
+.meal-distribution-total.invalid strong{color:#b5444d}
+@media(max-width:760px){
+  .meal-target-builder>div{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nutrition-target-actions{width:100%}
+  .nutrition-target-actions button{flex:1}
+}
+@media(max-width:560px){
+  .meal-target-mini{align-items:stretch;flex-direction:column}
+  .meal-target-mini button{width:100%}
+  .meal-target-builder>div{grid-template-columns:1fr}
+  .meal-distribution-editor label{grid-template-columns:1fr 90px 20px}
+}
+
+
+/* ===== v0.3.30 — Fases nutricionais ===== */
+.nutrition-phases-section{margin-top:12px}
+.nutrition-phase-list{display:grid;gap:10px}
+.nutrition-phase-card{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:12px;align-items:start;padding:14px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.nutrition-phase-card.emandamento{border-left:4px solid currentColor}
+.nutrition-phase-card.concluida{opacity:.78}
+.nutrition-phase-card.cancelada{opacity:.6}
+.nutrition-phase-order{display:grid;justify-items:center;gap:5px}
+.nutrition-phase-order>b{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;background:#f2f4f7}
+.nutrition-phase-order>div{display:flex;gap:3px}
+.nutrition-phase-order button{padding:4px 7px;min-width:auto}
+.nutrition-phase-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.nutrition-phase-title h4{margin:2px 0 0}
+.nutrition-phase-body{display:grid;gap:7px;min-width:0}
+.nutrition-phase-body p,.nutrition-phase-body small{margin:0;color:var(--muted,#77808d)}
+.nutrition-phase-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:.75rem;color:var(--muted,#77808d)}
+.nutrition-phase-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:760px){
+  .nutrition-phase-card{grid-template-columns:48px minmax(0,1fr)}
+  .nutrition-phase-actions{grid-column:1/-1;justify-content:stretch}
+  .nutrition-phase-actions button{flex:1}
+}
+@media(max-width:560px){
+  .nutrition-phase-card{grid-template-columns:1fr}
+  .nutrition-phase-order{display:none}
+  .nutrition-phase-title{flex-direction:column}
+}
+
+
+/* ===== v0.3.31 — Ciclos de treino / periodização ===== */
+.workout-phases-section{margin-top:12px}
+.workout-phase-list{display:grid;gap:10px}
+.workout-phase-card{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:12px;align-items:start;padding:14px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.workout-phase-card.emandamento{border-left:4px solid currentColor}
+.workout-phase-card.concluida{opacity:.78}
+.workout-phase-card.cancelada{opacity:.6}
+.workout-phase-order{display:grid;justify-items:center;gap:5px}
+.workout-phase-order>b{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;background:#f2f4f7}
+.workout-phase-order>div{display:flex;gap:3px}
+.workout-phase-order button{padding:4px 7px;min-width:auto}
+.workout-phase-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.workout-phase-title h4{margin:2px 0 0}
+.workout-phase-body{display:grid;gap:7px;min-width:0}
+.workout-phase-body p,.workout-phase-body small{margin:0;color:var(--muted,#77808d)}
+.workout-phase-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:.75rem;color:var(--muted,#77808d)}
+.workout-phase-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:760px){
+  .workout-phase-card{grid-template-columns:48px minmax(0,1fr)}
+  .workout-phase-actions{grid-column:1/-1;justify-content:stretch}
+  .workout-phase-actions button{flex:1}
+}
+@media(max-width:560px){
+  .workout-phase-card{grid-template-columns:1fr}
+  .workout-phase-order{display:none}
+  .workout-phase-title{flex-direction:column}
+}
+
+
+/* ===== v0.3.32 — Check-ins de evolução ===== */
+.checkin-section{display:grid;gap:12px;margin-top:12px}
+.checkin-current-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.checkin-current-card{display:grid;gap:3px;padding:11px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fafbfc}
+.checkin-current-card span{font-size:.7rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.checkin-current-card strong{font-size:1.3rem}
+.checkin-history-list{display:grid;gap:6px}
+.checkin-history-row{display:grid;grid-template-columns:minmax(150px,1.4fr) repeat(4,minmax(70px,.65fr)) minmax(100px,1fr) auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line,#edf0f4)}
+.checkin-history-row>div:first-child{display:grid}
+.checkin-history-row small,.checkin-history-row span{color:var(--muted,#77808d);font-size:.75rem}
+.checkin-phase-tags{display:flex;gap:4px;flex-wrap:wrap}
+.checkin-phase-tags em{font-style:normal;font-size:.68rem;padding:3px 6px;border-radius:999px;background:#f0f2f5}
+@media(max-width:900px){
+  .checkin-current-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .checkin-history-row{grid-template-columns:1.2fr repeat(2,.7fr)}
+  .checkin-history-row>span:nth-of-type(n+3),.checkin-phase-tags{display:none}
+}
+@media(max-width:560px){
+  .checkin-current-grid{grid-template-columns:1fr}
+  .checkin-history-row{grid-template-columns:1fr auto}
+  .checkin-history-row>span:nth-of-type(n+2){display:none}
+  .checkin-history-row button{grid-column:1/-1;width:100%}
+}
+
+
+/* ===== v0.3.33 — Análise comparativa de fases ===== */
+.phase-analysis-section{display:grid;gap:12px;margin-top:12px}
+.phase-highlight-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.phase-highlight-card{display:grid;gap:4px;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.phase-highlight-card>span{font-size:.68rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.phase-highlight-card>strong{font-size:1rem}
+.phase-highlight-card>small{color:var(--muted,#77808d)}
+.phase-highlight-card.muted{opacity:.65}
+.phase-analysis-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.phase-analysis-card{display:grid;gap:10px;padding:13px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}
+.phase-analysis-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.phase-analysis-head h4{margin:2px 0 0}
+.phase-analysis-head>span{font-size:.72rem;color:var(--muted,#77808d)}
+.phase-analysis-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.phase-analysis-metric{display:grid;gap:2px;padding:7px;border-radius:8px;background:#f7f8fa}
+.phase-analysis-metric span{font-size:.65rem;color:var(--muted,#77808d);text-transform:uppercase;font-weight:800}
+.phase-analysis-metric strong{font-size:.92rem}
+.phase-analysis-card>small{color:var(--muted,#77808d)}
+@media(max-width:900px){
+  .phase-highlight-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phase-analysis-list{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .phase-highlight-grid{grid-template-columns:1fr}
+  .phase-analysis-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phase-analysis-head{flex-direction:column}
+}
+
+
+/* ===== v0.3.34 — Metas de fase + critérios de transição ===== */
+.phase-goal-chips{display:flex;gap:5px;flex-wrap:wrap}.phase-goal-chips span{font-size:.68rem;padding:4px 7px;border-radius:999px;background:#f1f3f6;color:var(--muted,#77808d)}.transition-status-section{display:grid;gap:12px;margin-top:12px}.transition-status-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.transition-status-card{display:grid;gap:10px;padding:13px;border:1px solid var(--line,#e6e9ef);border-radius:12px;background:#fff}.transition-status-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.transition-status-head h4{margin:2px 0 0}.transition-progress{display:flex;align-items:baseline;gap:7px}.transition-progress strong{font-size:1.3rem}.transition-progress span{font-size:.72rem;color:var(--muted,#77808d)}.transition-criteria{display:grid;gap:5px}.transition-criterion{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px;border-radius:9px;background:#f7f8fa}.transition-criterion>div{display:grid;gap:2px}.transition-criterion small{color:var(--muted,#77808d)}.transition-criterion>span{font-size:.68rem;font-weight:800}.transition-criterion.ok>span{color:#2f7d53}.transition-criterion.pending>span{color:#9a5a2b}.transition-manual{display:grid;gap:3px;padding:9px;border:1px dashed var(--line,#dfe4eb);border-radius:9px}.transition-manual span{font-size:.75rem;color:var(--muted,#77808d)}@media(max-width:760px){.transition-status-list{grid-template-columns:1fr}}@media(max-width:560px){.transition-status-head{flex-direction:column}.transition-criterion{align-items:flex-start;flex-direction:column}}
+
+
+/* ===== v0.3.35 — Revisão de fase + transição assistida ===== */
+.phase-review-action{width:100%}
+.phase-review-summary{display:grid;gap:8px;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc;margin-bottom:12px}
+.phase-review-summary>strong{font-size:1.35rem}
+.phase-review-summary>span,.phase-review-summary>p{color:var(--muted,#77808d);margin:0}
+.phase-review-override{display:flex!important;align-items:flex-start;gap:8px;padding:10px;border:1px solid #ead9c8;border-radius:10px;background:#fffaf4}
+.phase-review-override input{width:auto;margin-top:2px}
+.phase-review-history-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-top:4px}
+.phase-review-history-head small{color:var(--muted,#77808d)}
+.phase-review-history{display:grid;gap:7px}
+.phase-review-history-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;padding:10px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fff}
+.phase-review-history-card>div{display:grid}
+.phase-review-history-card>p,.phase-review-history-card>small{grid-column:1/-1;margin:0;color:var(--muted,#77808d)}
+.phase-review-decision{font-size:.72rem;font-weight:800;padding:4px 7px;border-radius:999px;background:#f1f3f6;align-self:start}
+@media(max-width:560px){
+  .phase-review-history-head{flex-direction:column}
+  .phase-review-history-card{grid-template-columns:1fr}
+  .phase-review-decision{justify-self:start}
+}
+
+
+/* ===== v0.3.36 — Volume de treino + distribuição muscular ===== */
+.workout-volume-section{display:grid;gap:12px;margin-top:12px}
+.workout-volume-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.workout-volume-summary article{display:grid;gap:3px;padding:11px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fafbfc}
+.workout-volume-summary span{font-size:.68rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.workout-volume-summary strong{font-size:1.25rem}
+.workout-volume-summary small{color:var(--muted,#77808d)}
+.workout-volume-list{display:grid;gap:8px}
+.workout-volume-row{display:grid;grid-template-columns:minmax(150px,1.25fr) minmax(160px,2fr) minmax(150px,1fr);gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line,#edf0f4)}
+.workout-volume-label{display:grid;gap:2px}
+.workout-volume-label small{color:var(--muted,#77808d)}
+.workout-volume-track{height:10px;border-radius:999px;background:#edf0f4;overflow:hidden}
+.workout-volume-track span{display:block;height:100%;border-radius:inherit;background:currentColor;opacity:.7}
+.workout-volume-values{display:grid;grid-template-columns:auto 1fr;gap:1px 6px;align-items:baseline}
+.workout-volume-values b{font-size:.95rem}
+.workout-volume-values small{font-size:.66rem;color:var(--muted,#77808d)}
+.workout-session-volume-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.workout-session-volume-card{display:grid;gap:6px;padding:10px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fff}
+.workout-session-volume-card>div:first-child{display:grid}
+.workout-session-volume-numbers{display:flex;gap:10px;flex-wrap:wrap}
+.workout-session-volume-numbers span{font-size:.72rem;color:var(--muted,#77808d)}
+.workout-session-volume-card>small{color:var(--muted,#77808d)}
+@media(max-width:900px){
+  .workout-volume-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .workout-volume-row{grid-template-columns:minmax(130px,1fr) minmax(130px,1.4fr)}
+  .workout-volume-values{grid-column:1/-1;grid-template-columns:auto 1fr auto 1fr}
+}
+@media(max-width:560px){
+  .workout-volume-summary{grid-template-columns:1fr}
+  .workout-volume-row{grid-template-columns:1fr}
+  .workout-session-volume-list{grid-template-columns:1fr}
+}
+
+
+/* ===== v0.3.37 — Progressão por exercício + recordes de carga ===== */
+.exercise-progress-section{display:grid;gap:12px;margin-top:12px}
+.exercise-progress-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.exercise-progress-summary article{display:grid;gap:3px;padding:11px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fafbfc}
+.exercise-progress-summary span{font-size:.68rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.exercise-progress-summary strong{font-size:1.12rem}
+.exercise-progress-summary small{color:var(--muted,#77808d)}
+.exercise-pr-highlight{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fafbfc}
+.exercise-pr-highlight>span{font-size:.72rem;font-weight:800}
+.exercise-pr-highlight>small{color:var(--muted,#77808d)}
+.exercise-progress-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.exercise-progress-card{display:grid;gap:10px;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fff}
+.exercise-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.exercise-progress-head h4{margin:2px 0 0}
+.exercise-trend{font-size:.68rem;font-weight:800;padding:4px 7px;border-radius:999px;background:#f1f3f6;white-space:nowrap}
+.exercise-trend.acimadabase{color:#2f7d53}
+.exercise-trend.abaixodabase{color:#9a5a2b}
+.exercise-progress-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.exercise-progress-metrics>div{display:grid;gap:2px;padding:7px;border-radius:8px;background:#f7f8fa}
+.exercise-progress-metrics span{font-size:.64rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.exercise-progress-metrics strong{font-size:.88rem}
+.exercise-progress-metrics small{font-size:.65rem;color:var(--muted,#77808d)}
+.exercise-progress-foot{display:flex;gap:8px;flex-wrap:wrap}
+.exercise-progress-foot span{font-size:.7rem;color:var(--muted,#77808d)}
+@media(max-width:900px){
+  .exercise-progress-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .exercise-progress-list{grid-template-columns:1fr}
+  .exercise-progress-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .exercise-progress-summary{grid-template-columns:1fr}
+  .exercise-pr-highlight{grid-template-columns:1fr}
+  .exercise-progress-head{flex-direction:column}
+}
+
+
+/* ===== v0.3.38 — Estagnação + fadiga + sinais de progressão ===== */
+.training-signal-section{display:grid;gap:12px;margin-top:12px}
+.training-signal-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.training-signal-summary article{display:grid;gap:3px;padding:11px;border:1px solid var(--line,#e6e9ef);border-radius:10px;background:#fafbfc}
+.training-signal-summary span{font-size:.68rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.training-signal-summary strong{font-size:1.25rem}
+.training-signal-summary small{color:var(--muted,#77808d)}
+.training-signal-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.training-signal-card{display:grid;gap:10px;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fff}
+.training-signal-card.possivelfadiga{border-left:4px solid currentColor}
+.training-signal-card.estagnacao{border-left:4px dashed currentColor}
+.training-signal-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.training-signal-head h4{margin:2px 0 0}
+.training-signal-badge{font-size:.68rem;font-weight:800;padding:4px 7px;border-radius:999px;background:#f1f3f6;white-space:nowrap}
+.training-signal-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.training-signal-metrics>div{display:grid;gap:2px;padding:7px;border-radius:8px;background:#f7f8fa}
+.training-signal-metrics span{font-size:.63rem;font-weight:800;color:var(--muted,#77808d);text-transform:uppercase}
+.training-signal-metrics strong{font-size:.87rem}
+.training-signal-notes{display:grid;gap:3px}
+.training-signal-notes small{color:var(--muted,#77808d)}
+.training-review-note{padding:8px;border-radius:8px;background:#fffaf4;font-size:.72rem}
+@media(max-width:900px){
+  .training-signal-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .training-signal-list{grid-template-columns:1fr}
+  .training-signal-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .training-signal-summary{grid-template-columns:1fr}
+  .training-signal-head{flex-direction:column}
+}
+
+
+/* ===== v0.3.39 — MVP Preview / polimento de demonstração ===== */
+.mvp-brand-badge{display:inline-flex;align-items:center;margin-left:8px;padding:4px 8px;border:1px solid currentColor;border-radius:999px;font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.72}
+.mvp-brand-badge.compact{padding:3px 6px;font-size:.56rem}
+.mvp-top-pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#f1f3f6;color:var(--muted,#77808d);font-size:.62rem;font-weight:900;letter-spacing:.07em;white-space:nowrap}
+.mvp-dev-link{display:none!important}
+.dev-note{line-height:1.45}
+.dev-note strong{display:block;margin-bottom:3px}
+
+.mvp-dashboard-hero{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px;padding:20px 22px;border:1px solid var(--line,#e6e9ef);border-radius:18px;background:linear-gradient(135deg,var(--surface,#fff),#f7f8fb)}
+.mvp-dashboard-hero h3{margin:5px 0 5px;font-size:1.45rem}
+.mvp-dashboard-hero p{max-width:760px;margin:0;color:var(--muted,#77808d);line-height:1.5}
+.mvp-dashboard-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap;min-width:max-content}
+
+.mvp-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0}
+.mvp-guide-item{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:start;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:11px;background:#fafbfc}
+.mvp-guide-item>span{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#eef1f5;font-size:.72rem;font-weight:900}
+.mvp-guide-item>div{display:grid;gap:3px}
+.mvp-guide-item small{color:var(--muted,#77808d);line-height:1.4}
+.mvp-feedback-card{padding:13px;border:1px dashed var(--line,#dfe4eb);border-radius:11px;background:#fff}
+.mvp-feedback-card p{margin:6px 0 0;color:var(--muted,#77808d);line-height:1.55}
+
+/* Pequenos acabamentos globais para o protótipo */
+button,.clickable,.nav-item{transition:transform .12s ease,box-shadow .12s ease,background .12s ease,border-color .12s ease}
+button:not(:disabled):active{transform:translateY(1px)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid rgba(46,89,255,.18);outline-offset:2px}
+.card,.stat-card{box-shadow:0 1px 2px rgba(16,24,40,.025)}
+.clickable:hover{background-color:rgba(17,24,39,.025)}
+.empty{min-height:72px;display:grid;place-items:center;text-align:center;color:var(--muted,#77808d)}
+.empty::before{content:'· · ·';display:block;margin-bottom:-12px;font-weight:900;letter-spacing:.15em;opacity:.38}
+.toast{max-width:min(460px,calc(100vw - 28px));line-height:1.35}
+
+@media(max-width:900px){
+  .mvp-dashboard-hero{align-items:flex-start;flex-direction:column}
+  .mvp-dashboard-actions{justify-content:flex-start;min-width:0}
+  .mvp-guide-grid{grid-template-columns:1fr}
+  .mvp-top-pill{display:none}
+}
+@media(max-width:620px){
+  .mvp-guide-button{display:none}
+  .mvp-dashboard-hero{padding:16px}
+  .mvp-dashboard-actions{width:100%}
+  .mvp-dashboard-actions button{flex:1 1 140px}
+}

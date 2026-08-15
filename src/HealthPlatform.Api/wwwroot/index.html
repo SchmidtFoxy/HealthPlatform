@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>HealthPlatform • MVP Preview</title>
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <section id="loginView" class="login-shell">
+    <div class="login-visual">
+      <div class="brand brand-large"><span class="brand-mark">H+</span><span>HealthPlatform</span><span class="mvp-brand-badge">MVP Preview</span></div>
+      <div class="hero-copy">
+        <div class="eyebrow">SAÚDE, ACOMPANHAMENTO E PERFORMANCE</div>
+        <h1>O prontuário que acompanha o paciente além da consulta.</h1>
+        <p>Consultas, evolução corporal, exames, alimentação, metas e diário em uma única jornada.</p>
+      </div>
+      <div class="login-quote">MVP Preview • v0.3.40</div>
+    </div>
+    <div class="login-panel">
+      <form id="loginForm" class="login-card">
+        <div class="mobile-brand brand"><span class="brand-mark">H+</span><span>HealthPlatform</span></div>
+        <div>
+          <span class="eyebrow">ÁREA SEGURA</span>
+          <h2>Bem-vindo de volta</h2>
+          <p>Entre com seu acesso profissional ou de paciente.</p>
+        </div>
+        <label>E-mail<input id="email" type="email" autocomplete="username" value="admin@healthplatform.local" required /></label>
+        <label>Senha<input id="senha" type="password" autocomplete="current-password" value="ChangeMe_123!" required /></label>
+        <button id="loginButton" class="primary full" type="submit">Entrar</button>
+        <div class="dev-note"><strong>Ambiente de demonstração.</strong> Use somente dados fictícios. Esta versão existe para testar fluxos, usabilidade e descobrir o que ainda falta no produto.</div>
+      </form>
+    </div>
+  </section>
+
+
+  <section id="activationView" class="login-shell hidden">
+    <div class="login-visual">
+      <div class="brand brand-large"><span class="brand-mark">H+</span><span>HealthPlatform</span></div>
+      <div class="hero-copy">
+        <div class="eyebrow">PRIMEIRO ACESSO</div>
+        <h1>Ative seu portal de acompanhamento.</h1>
+        <p>Defina sua senha para consultar seu plano, metas, evolução e registros.</p>
+      </div>
+      <div class="login-quote">Acesso individual e protegido</div>
+    </div>
+    <div class="login-panel">
+      <form id="activationForm" class="login-card">
+        <div>
+          <span class="eyebrow">ATIVAÇÃO DO PACIENTE</span>
+          <h2>Criar minha senha</h2>
+          <p id="activationEmailText"></p>
+        </div>
+        <label>Nova senha<input id="activationPassword" type="password" autocomplete="new-password" minlength="10" required /></label>
+        <label>Confirmar senha<input id="activationPassword2" type="password" autocomplete="new-password" minlength="10" required /></label>
+        <button id="activationButton" class="primary full" type="submit">Ativar acesso</button>
+        <button id="backToLogin" class="secondary full" type="button">Voltar ao login</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="patientAppView" class="patient-portal-shell hidden">
+    <header class="patient-portal-top">
+      <div class="brand"><span class="brand-mark">H+</span><span>HealthPlatform</span><span class="mvp-brand-badge compact">Demo</span></div>
+      <div class="patient-portal-user">
+        <div class="avatar" id="patientAvatar">PA</div>
+        <div><strong id="patientUserName">Paciente</strong><small>Meu acompanhamento</small></div>
+        <button id="globalSearchButton" class="global-search-button" title="Busca global">⌕ <span>Buscar</span><kbd>Ctrl K</kbd></button>
+        <button class="notification-button" id="patientNotificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="patientNotificationBadge">0</span></button>
+        <button id="patientLogoutButton" class="secondary">Sair</button>
+      </div>
+    </header>
+    <nav id="patientPortalNav" class="patient-portal-nav">
+      <button class="active" data-patient-view="inicio">Início</button>
+      <button data-patient-view="plano">Plano</button>
+      <button data-patient-view="treino">Treino</button>
+      <button data-patient-view="metas">Metas</button>
+      <button data-patient-view="diario">Diário</button>
+      <button data-patient-view="evolucao">Evolução</button>
+      <button data-patient-view="exames">Exames</button>
+    </nav>
+    <main id="patientPortalContent" class="patient-portal-content"></main>
+  </div>
+
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">H+</span><span>HealthPlatform</span><span class="mvp-brand-badge compact">Demo</span></div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Visão geral</button>
+        <button class="nav-item" data-view="central-dia"><span>☀</span> Hoje</button>
+        <button class="nav-item" data-view="carteira"><span>◫</span> Carteira</button>
+        <button class="nav-item" data-view="pacientes"><span>♙</span> Pacientes</button>
+        <button class="nav-item" data-view="agenda"><span>▦</span> Agenda</button>
+        <button class="nav-item" data-view="pendencias"><span>✓</span> Pendências</button>
+        <button class="nav-item" data-view="followups"><span>↻</span> Follow-up</button>
+        <button class="nav-item" data-view="gestao"><span>▥</span> Gestão</button>
+        <button class="nav-item admin-only hidden" data-route="equipe"><span>♟</span> Equipe</button>
+      
+        <button class="nav-item" data-route="configuracoes">⚙️ Configurações</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <a class="nav-item link mvp-dev-link" href="/swagger" target="_blank"><span>⌘</span> Swagger</a>
+        <button id="logoutButton" class="nav-item danger"><span>↪</span> Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuButton" class="menu-button">☰</button>
+        <div>
+          <div id="pageEyebrow" class="eyebrow">ÁREA PROFISSIONAL</div>
+          <h2 id="pageTitle">Visão geral</h2>
+        </div>
+        <div class="topbar-actions">
+          <span class="mvp-top-pill">MVP • DEMO</span>
+          <button class="ghost mvp-guide-button" id="mvpGuideButton" type="button">Roteiro da demo</button>
+          <button class="notification-button" id="notificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="notificationBadge">0</span></button>
+          <div class="user-chip"><div class="avatar" id="avatar">AD</div><div><strong id="userName">Administrador</strong><small id="userType">Administrador</small></div></div>
+        </div>
+      </header>
+
+      <div id="content" class="content"></div>
+    </main>
+  </div>
+
+
+  <div id="notificationDrawer" class="notification-drawer hidden">
+    <div class="notification-drawer-backdrop" data-close-notifications></div>
+    <aside class="notification-panel">
+      <div class="notification-panel-head">
+        <div><span class="eyebrow">CENTRAL</span><h3>Notificações</h3></div>
+        <div class="notification-panel-actions"><button class="ghost" id="readAllNotifications">Marcar todas como lidas</button><button class="icon-btn" data-close-notifications>×</button></div>
+      </div>
+      <div id="notificationList" class="notification-list"><div class="empty">Carregando...</div></div>
+    </aside>
+  </div>
+
+  <div id="patientModal" class="modal-backdrop hidden">
+    <div class="modal large">
+      <button class="modal-close" data-close-modal>×</button>
+      <div id="patientModalContent"></div>
+    </div>
+  </div>
+
+  <div id="clinicalActionModal" class="modal-backdrop hidden">
+    <div class="modal clinical-modal">
+      <button class="modal-close" data-close-clinical>×</button>
+      <div id="clinicalActionContent"></div>
+    </div>
+  </div>
+
+  <div id="createPatientModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <button class="modal-close" data-close-create>×</button>
+      <div class="modal-heading"><span class="eyebrow">NOVO CADASTRO</span><h2>Novo paciente</h2><p>Cadastre os dados essenciais. O prontuário pode ser preenchido depois.</p></div>
+      <form id="createPatientForm" class="form-grid">
+        <label class="span-2">Nome completo<input name="nome" required /></label>
+        <label>CPF<input name="cpf" placeholder="000.000.000-00" /></label>
+        <label>Data de nascimento<input name="dataNascimento" type="date" /></label>
+        <label>Sexo<select name="sexo"><option value="">Não informado</option><option>Masculino</option><option>Feminino</option><option>Outro</option></select></label>
+        <label>Telefone<input name="telefone" /></label>
+        <label>E-mail<input name="email" type="email" /></label>
+        <label>Profissão<input name="profissao" /></label>
+        <div class="span-2 form-actions"><button type="button" class="secondary" data-close-create>Cancelar</button><button class="primary" type="submit">Salvar paciente</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
