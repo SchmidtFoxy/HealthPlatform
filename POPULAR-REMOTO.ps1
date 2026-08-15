@@ -259,7 +259,7 @@ function Ensure-FollowUp($patientId, $channel, $result, $dateUtc, $nextUtc) {
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host " HealthPlatform v0.3.40 - POPULAR RENDER DEMO" -ForegroundColor Cyan
+Write-Host " HealthPlatform v0.3.41 - POPULAR RENDER DEMO" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Este script e idempotente: os cenarios existentes sao reaproveitados." -ForegroundColor DarkGray
 Write-Host ""

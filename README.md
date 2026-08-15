@@ -1,3 +1,102 @@
+# v0.3.41-r1 — Correção do teste do POPULAR remoto
+
+Patch apenas da suíte de testes.
+
+A v0.3.41 atualizou corretamente o banner de `POPULAR-REMOTO.ps1` para:
+
+`HealthPlatform v0.3.41 - POPULAR RENDER DEMO`
+
+mas o teste `[486/508]` ainda procurava a string histórica da v0.3.40.
+
+Isso fazia a suíte interromper em 485/508 mesmo com API, banco, SPA, assets, Docker, Blueprint, bootstrap e healthcheck já validados.
+
+A r1 atualiza somente essa expectativa estática.
+
+Não há alteração de:
+- banco/schema;
+- API;
+- regras de negócio;
+- identidade RS;
+- layout desktop/iPad/iPhone;
+- scripts de deploy;
+- população remota.
+
+`VERSION.txt` permanece `0.3.41`.
+`PREPARAR.ps1` permanece 30/30.
+`TESTAR.ps1` permanece 508/508.
+
+
+# v0.3.41 — RS Visual Identity + Mobile/Tablet UX
+
+A v0.3.41 aplica ao MVP a identidade visual RS enviada como referência e melhora de forma ampla o uso em iPad e iPhone.
+
+## Identidade
+
+A interface passa a usar:
+- azul-marinho profundo como cor institucional;
+- marfim/branco como base;
+- dourado em linhas, estados ativos e detalhes;
+- monograma `RS`;
+- tipografia display condensada para títulos;
+- linguagem visual editorial, limpa e ligada a ciência/performance.
+
+O produto continua se chamando HealthPlatform; `RS` funciona como assinatura visual da demonstração.
+
+## Login
+
+O login foi redesenhado para lembrar a linguagem dos materiais:
+- fundo marfim;
+- faixa vertical navy;
+- linha dourada;
+- formas abstratas discretas;
+- títulos altos/condensados;
+- copy `Ciência. Estratégia. Resultado.`.
+
+Nenhuma imagem externa ou fonte remota é necessária.
+
+## Profissional
+
+- sidebar navy com seleção branca e marcador dourado;
+- dashboard e cards com aparência mais editorial;
+- títulos e números com hierarquia mais forte;
+- prontuário com abas mais limpas;
+- formulários e estados ativos padronizados.
+
+## iPad
+
+Entre 821 e 1180 px:
+- sidebar compacta;
+- conteúdo com margens menores;
+- grids clínicos deixam de ficar espremidos;
+- modais grandes respeitam a viewport;
+- builders de treino ficam mais utilizáveis.
+
+Em iPad retrato a navegação passa para drawer.
+
+## iPhone
+
+- safe areas para notch/home indicator;
+- `100dvh`;
+- menu profissional em drawer com backdrop;
+- touch targets de pelo menos 44 px;
+- modais viram bottom sheets;
+- abas do prontuário ficam sticky e roláveis;
+- portal do paciente ganha header compacto;
+- navegação do portal usa scroll horizontal com snap;
+- grids analíticos de treino são reorganizados para leitura vertical.
+
+## Banco/API
+
+Nenhuma alteração de schema ou regra de negócio.
+
+Os hotfixes do Render e o script `POPULAR-REMOTO-RICO.ps1` são preservados.
+
+`PREPARAR.ps1`: **30 etapas**.
+`POPULAR.ps1`: **13 etapas**.
+`TESTAR.ps1`: **508 etapas**.
+`TESTAR-RENDER.ps1`: **12 etapas**.
+
+
 # v0.3.40-r3 — Sincronização da senha do admin no Render
 
 Correção do login profissional no ambiente demo.

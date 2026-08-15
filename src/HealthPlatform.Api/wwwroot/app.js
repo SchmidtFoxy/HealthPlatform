@@ -4890,7 +4890,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.3.40';
+const HP_MVP_VERSION='0.3.41';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -4974,3 +4974,50 @@ function hpInstallMvpPreviewUi(){
 }
 
 hpInstallMvpPreviewUi();
+
+
+// ===== v0.3.41 — RS visual identity / mobile + tablet UX =====
+function hpInstallRsResponsiveUi(){
+  const app=$('#appView'),sidebar=$('.sidebar'),menu=$('#menuButton');
+  if(!app||!sidebar||!menu||app.querySelector('.rs-sidebar-screen'))return;
+
+  const screen=document.createElement('button');
+  screen.type='button';
+  screen.className='rs-sidebar-screen';
+  screen.setAttribute('aria-label','Fechar menu');
+  app.appendChild(screen);
+
+  const sync=()=>{
+    const open=sidebar.classList.contains('open');
+    screen.classList.toggle('visible',open);
+    document.body.classList.toggle('rs-menu-open',open&&window.innerWidth<=820);
+    menu.setAttribute('aria-expanded',String(open));
+  };
+
+  menu.setAttribute('aria-controls','professionalSidebar');
+  sidebar.id='professionalSidebar';
+  menu.addEventListener('click',()=>requestAnimationFrame(sync));
+  screen.onclick=()=>{
+    sidebar.classList.remove('open');
+    sync();
+  };
+
+  $$('.sidebar .nav-item').forEach(item=>item.addEventListener('click',()=>{
+    sidebar.classList.remove('open');
+    sync();
+  }));
+
+  window.addEventListener('resize',()=>{
+    if(window.innerWidth>820)sidebar.classList.remove('open');
+    sync();
+  });
+
+  // Gives iOS/iPadOS a stable viewport class without UA sniffing.
+  document.documentElement.classList.toggle('rs-touch-ui',matchMedia('(pointer:coarse)').matches);
+  matchMedia('(pointer:coarse)').addEventListener?.('change',e=>{
+    document.documentElement.classList.toggle('rs-touch-ui',e.matches);
+  });
+
+  sync();
+}
+hpInstallRsResponsiveUi();
