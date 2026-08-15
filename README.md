@@ -1,3 +1,33 @@
+# v0.3.40-r1 — Render / inotify hotfix
+
+Correção específica do deploy no Render.
+
+O container gratuito retornou:
+
+`System.IO.IOException: The configured user limit (128) on the number of inotify instances has been reached`
+
+A falha acontecia dentro de `WebApplication.CreateBuilder(args)`, antes da inicialização normal da aplicação, porque o host do .NET habilita por padrão o reload de `appsettings.json` e usa `FileSystemWatcher`.
+
+A r1 agora inicia a aplicação com:
+
+`--hostBuilder:reloadConfigOnChange=false`
+
+Isso impede a criação desse watcher para os arquivos de configuração no ambiente hospedado.
+
+Também foi adicionado ao `render.yaml`:
+
+`DOTNET_USE_POLLING_FILE_WATCHER=1`
+
+como proteção adicional para providers físicos que eventualmente precisem monitorar arquivos no container.
+
+Não há alteração de banco, API ou regra de negócio.
+
+- `VERSION.txt`: continua `0.3.40`
+- `PREPARAR.ps1`: continua 30/30
+- `TESTAR.ps1`: continua 492/492
+- schema novo: não
+
+
 # v0.3.40 — Render Demo Deploy
 
 A v0.3.40 empacota o MVP Preview validado para uma hospedagem temporária de demonstração no Render.

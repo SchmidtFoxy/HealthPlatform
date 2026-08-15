@@ -4043,10 +4043,11 @@ Write-Host "[478/492] Validando bind dinamico de porta..."
 $entrypointSource = Get-Content .\docker-entrypoint.sh -Encoding UTF8 -Raw
 if (-not $entrypointSource.Contains('PORT_VALUE="${PORT:-10000}"') -or
     -not $entrypointSource.Contains('0.0.0.0:${PORT_VALUE}') -or
-    -not $entrypointSource.Contains("HealthPlatform.Api.dll")) {
+    -not $entrypointSource.Contains("HealthPlatform.Api.dll") -or
+    -not $entrypointSource.Contains("--hostBuilder:reloadConfigOnChange=false")) {
     throw "Entrypoint Render incompleto."
 }
-Write-Host "    0.0.0.0 + PORT dinamico: OK."
+Write-Host "    0.0.0.0 + PORT dinamico + config reload desligado: OK."
 
 Write-Host "[479/492] Validando Blueprint Render..."
 $renderSource = Get-Content .\render.yaml -Encoding UTF8 -Raw
@@ -4111,10 +4112,11 @@ Write-Host "    Banco indisponivel -> HTTP 503."
 
 Write-Host "[485/492] Validando forwarded headers..."
 if (-not $renderSource.Contains("ASPNETCORE_FORWARDEDHEADERS_ENABLED") -or
-    -not $renderSource.Contains('value: "true"')) {
-    throw "Forwarded headers do proxy Render nao foram habilitados."
+    -not $renderSource.Contains('value: "true"') -or
+    -not $renderSource.Contains("DOTNET_USE_POLLING_FILE_WATCHER")) {
+    throw "Configuracao de proxy/file watcher do Render incompleta."
 }
-Write-Host "    X-Forwarded-* habilitado no ambiente hospedado."
+Write-Host "    X-Forwarded-* + polling watcher habilitados no ambiente hospedado."
 
 Write-Host "[486/492] Validando POPULAR remoto..."
 $remotePopular = Get-Content .\POPULAR-REMOTO.ps1 -Encoding UTF8 -Raw
