@@ -63,10 +63,35 @@ public record PortalExameRecenteResponse(
     string? Unidade,
     string Classificacao);
 
+public record PortalProntidaoDiariaResponse(
+    Guid Id,
+    DateOnly Data,
+    decimal SonoHoras,
+    int? SonoQualidade,
+    int EnergiaNivel,
+    int DorNivel,
+    int DisposicaoNivel,
+    int RecuperacaoNivel,
+    decimal? HorasDesdeUltimoTreino,
+    int? EsforcoUltimoTreino,
+    int Score,
+    string RecomendacaoTreino,
+    string? MotivoRecomendacao);
+
+public sealed record RegistrarProntidaoDiariaRequest(
+    DateOnly Data,
+    decimal SonoHoras,
+    int? SonoQualidade,
+    int EnergiaNivel,
+    int DorNivel,
+    int DisposicaoNivel,
+    int RecuperacaoNivel);
+
 public record PortalPacienteHomeResponse(
     DateOnly Data,
     PortalPacienteResumoResponse Paciente,
     PortalProximaConsultaResponse? ProximaConsulta,
+    PortalProntidaoDiariaResponse? ProntidaoDiaria,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,
     IReadOnlyCollection<PortalMetaHojeResponse> MetasHoje,

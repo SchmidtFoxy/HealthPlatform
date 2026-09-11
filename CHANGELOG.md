@@ -1,12 +1,26 @@
+# HealthPlatform Changelog
+
+## v0.6.1 — Daily Athlete / Prontidão Diária
+**Tipo:** Feature release / início da linha Sports Medicine + Daily Care
+
+- novo check-in matinal PatientOnly com sono, qualidade do sono, energia, dor, disposição e recuperação;
+- score de prontidão de 0 a 100 com ponderação fisiológica simples e transparente;
+- contexto do treino anterior entra no cálculo quando houve esforço percebido alto recentemente;
+- travas de segurança impedem score artificialmente alto com dor elevada, recuperação muito baixa ou sono muito curto;
+- recomendação diária entre Recuperação, Leve, Normal e Pesado, sem assumir que maior intensidade é sempre melhor;
+- Home do paciente passa a destacar a prontidão e permitir atualização diária rápida;
+- prontuário profissional mostra o mesmo dado em leitura objetiva diária, persistido para análise longitudinal;
+- nova entidade `ProntidaoDiaria`, migration incremental `V061ProntidaoDiaria` e SQL idempotente;
+- PREPARAR ampliado para 34/34;
+- prepara a base para XP, níveis, streaks e desafios alinhados à adequação do comportamento, não ao excesso.
+
 
 ## v0.6.0-r1 — Hotfix da suíte de upgrade
 
 - Corrige validações históricas do `TESTAR.ps1` que ainda tratavam `32/32` como a contagem atual do `PREPARAR`.
-- A contagem atual correta é `33/33` após a inclusão do upgrade de medicamentos da v0.6.0.
+- A contagem anterior era `33/33` após a inclusão do upgrade de medicamentos da v0.6.0; na v0.6.1, a contagem atual é `34/34` com o upgrade de prontidão diária.
 - Preserva as checagens dos upgrades históricos v0.5.1 e v0.5.8.
 - Nenhuma alteração de schema, API ou regra clínica neste hotfix.
-
-# HealthPlatform Changelog
 
 ## v0.6.0 — Medicamentos e Adesão
 **Tipo:** Feature release / novo marco Connected Care
@@ -17,7 +31,7 @@
 - auditoria, PatientOnly e multi-tenant;
 - migration incremental `V060MedicamentosAdesao`;
 - SQL idempotente `v0.6.0_medicamentos.sql`;
-- PREPARAR 33/33.
+- PREPARAR 34/34.
 
 # v0.5.9-r1 — Hotfix de validações do protocolo
 

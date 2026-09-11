@@ -138,10 +138,19 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             Classificar(x.ValorNumerico, x.ReferenciaMinima, x.ReferenciaMaxima)))
             .ToList();
 
+        var prontidao = await db.ProntidoesDiarias.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Data == dia)
+            .Select(x => new PortalProntidaoDiariaResponse(
+                x.Id, x.Data, x.SonoHoras, x.SonoQualidade, x.EnergiaNivel, x.DorNivel,
+                x.DisposicaoNivel, x.RecuperacaoNivel, x.HorasDesdeUltimoTreino,
+                x.EsforcoUltimoTreino, x.Score, x.RecomendacaoTreino, x.MotivoRecomendacao))
+            .FirstOrDefaultAsync(ct);
+
         return Ok(new PortalPacienteHomeResponse(
             dia,
             paciente,
             proximaConsulta,
+            prontidao,
             evolucao,
             plano,
             metas,

@@ -32,6 +32,89 @@ public sealed class MeuPortalPacienteController(
         return await MontarHome(pacienteId.Value, data, ct);
     }
 
+    [HttpPost("prontidao")]
+    public async Task<ActionResult<PortalProntidaoDiariaResponse>> RegistrarProntidao(
+        RegistrarProntidaoDiariaRequest request,
+        CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        if (request.Data > hoje.AddDays(1))
+            return BadRequest(new { message = "Nao e permitido registrar prontidao em data futura." });
+
+        if (request.SonoHoras < 0m || request.SonoHoras > 16m)
+            return BadRequest(new { message = "Sono deve estar entre 0 e 16 horas." });
+
+        if (!EscalaValida(request.SonoQualidade) || !EscalaValida(request.EnergiaNivel) ||
+            !EscalaValida(request.DorNivel) || !EscalaValida(request.DisposicaoNivel) ||
+            !EscalaValida(request.RecuperacaoNivel))
+            return BadRequest(new { message = "As escalas da prontidao devem estar entre 0 e 10." });
+
+        var ultimoTreino = await db.ExecucoesTreino.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value &&
+                        x.Status == "Concluido" &&
+                        x.DataHoraInicioUtc <= DateTime.UtcNow)
+            .OrderByDescending(x => x.DataHoraInicioUtc)
+            .Select(x => new { x.DataHoraInicioUtc, x.EsforcoPercebido })
+            .FirstOrDefaultAsync(ct);
+
+        decimal? horasDesdeUltimoTreino = ultimoTreino is null
+            ? null
+            : Math.Round((decimal)(DateTime.UtcNow - ultimoTreino.DataHoraInicioUtc).TotalHours, 2);
+
+        var calculo = CalcularProntidao(
+            request.SonoHoras, request.SonoQualidade, request.EnergiaNivel, request.DorNivel,
+            request.DisposicaoNivel, request.RecuperacaoNivel, horasDesdeUltimoTreino,
+            ultimoTreino?.EsforcoPercebido);
+
+        var item = await db.ProntidoesDiarias
+            .FirstOrDefaultAsync(x => x.PacienteId == pacienteId.Value && x.Data == request.Data, ct);
+
+        object? antes = item is null ? null : new
+        {
+            item.SonoHoras, item.SonoQualidade, item.EnergiaNivel, item.DorNivel,
+            item.DisposicaoNivel, item.RecuperacaoNivel, item.Score, item.RecomendacaoTreino
+        };
+
+        if (item is null)
+        {
+            item = new ProntidaoDiaria
+            {
+                OrganizacaoId = currentUser.OrganizationId,
+                PacienteId = pacienteId.Value,
+                Data = request.Data,
+                Origem = "Paciente"
+            };
+            db.ProntidoesDiarias.Add(item);
+        }
+
+        item.SonoHoras = request.SonoHoras;
+        item.SonoQualidade = request.SonoQualidade;
+        item.EnergiaNivel = request.EnergiaNivel;
+        item.DorNivel = request.DorNivel;
+        item.DisposicaoNivel = request.DisposicaoNivel;
+        item.RecuperacaoNivel = request.RecuperacaoNivel;
+        item.HorasDesdeUltimoTreino = horasDesdeUltimoTreino;
+        item.EsforcoUltimoTreino = ultimoTreino?.EsforcoPercebido;
+        item.Score = calculo.Score;
+        item.RecomendacaoTreino = calculo.Recomendacao;
+        item.MotivoRecomendacao = calculo.Motivo;
+        item.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar(antes is null ? "CREATE" : "UPDATE", nameof(ProntidaoDiaria), item.Id, antes, new
+        {
+            item.Data, item.SonoHoras, item.SonoQualidade, item.EnergiaNivel, item.DorNivel,
+            item.DisposicaoNivel, item.RecuperacaoNivel, item.HorasDesdeUltimoTreino,
+            item.EsforcoUltimoTreino, item.Score, item.RecomendacaoTreino
+        });
+
+        await db.SaveChangesAsync(ct);
+        return Ok(MapearProntidao(item));
+    }
+
     [HttpPost("diario")]
     public async Task<ActionResult<RegistroDiarioResponse>> RegistrarDiario(
         UpsertRegistroDiarioRequest request,
@@ -691,10 +774,82 @@ public sealed class MeuPortalPacienteController(
             Classificar(x.ValorNumerico, x.ReferenciaMinima, x.ReferenciaMaxima)))
             .ToList();
 
+        var prontidaoEntity = await db.ProntidoesDiarias.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.PacienteId == pacienteId && x.Data == dia, ct);
+        var prontidao = prontidaoEntity is null ? null : MapearProntidao(prontidaoEntity);
+
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
+    }
+
+    private static PortalProntidaoDiariaResponse MapearProntidao(ProntidaoDiaria x)
+        => new(x.Id, x.Data, x.SonoHoras, x.SonoQualidade, x.EnergiaNivel, x.DorNivel,
+            x.DisposicaoNivel, x.RecuperacaoNivel, x.HorasDesdeUltimoTreino,
+            x.EsforcoUltimoTreino, x.Score, x.RecomendacaoTreino, x.MotivoRecomendacao);
+
+    private static bool EscalaValida(int? valor)
+        => !valor.HasValue || (valor.Value >= 0 && valor.Value <= 10);
+
+    private static (int Score, string Recomendacao, string Motivo) CalcularProntidao(
+        decimal sonoHoras, int? sonoQualidade, int energia, int dor, int disposicao,
+        int recuperacao, decimal? horasDesdeUltimoTreino, int? esforcoUltimoTreino)
+    {
+        static decimal NotaSonoHoras(decimal horas)
+        {
+            if (horas >= 7.5m && horas <= 9.5m) return 100m;
+            if (horas > 9.5m) return 90m;
+            if (horas >= 7m) return 90m;
+            if (horas >= 6.5m) return 80m;
+            if (horas >= 6m) return 70m;
+            if (horas >= 5.5m) return 55m;
+            if (horas >= 5m) return 40m;
+            return 25m;
+        }
+
+        var sono = NotaSonoHoras(sonoHoras);
+        if (sonoQualidade.HasValue) sono = (sono + sonoQualidade.Value * 10m) / 2m;
+
+        var score = sono * 0.25m + energia * 10m * 0.20m + (10 - dor) * 10m * 0.20m +
+                    disposicao * 10m * 0.15m + recuperacao * 10m * 0.20m;
+
+        var cargaRecente = false;
+        if (horasDesdeUltimoTreino.HasValue && esforcoUltimoTreino.HasValue)
+        {
+            if (horasDesdeUltimoTreino <= 18m && esforcoUltimoTreino >= 8) { score -= 10m; cargaRecente = true; }
+            else if (horasDesdeUltimoTreino <= 24m && esforcoUltimoTreino >= 7) { score -= 6m; cargaRecente = true; }
+            else if (horasDesdeUltimoTreino <= 36m && esforcoUltimoTreino >= 8) { score -= 4m; cargaRecente = true; }
+        }
+
+        if (dor >= 8) score = Math.Min(score, 45m);
+        if (recuperacao <= 3) score = Math.Min(score, 50m);
+        if (sonoHoras < 4.5m) score = Math.Min(score, 45m);
+        var final = (int)Math.Round(Math.Clamp(score, 0m, 100m));
+
+        string recomendacao;
+        if (final >= 90 && dor <= 2 && energia >= 8 && recuperacao >= 8 && !cargaRecente) recomendacao = "Pesado";
+        else if (final >= 75) recomendacao = "Normal";
+        else if (final >= 55) recomendacao = "Leve";
+        else recomendacao = "Recuperacao";
+
+        var motivos = new List<string>();
+        if (sonoHoras < 6m) motivos.Add("sono abaixo do ideal");
+        if (energia <= 5) motivos.Add("energia reduzida");
+        if (dor >= 5) motivos.Add("dor elevada");
+        if (recuperacao <= 5) motivos.Add("recuperacao incompleta");
+        if (cargaRecente) motivos.Add("carga recente alta");
+        if (motivos.Count == 0) motivos.Add("marcadores do dia favoraveis");
+
+        var acao = recomendacao switch
+        {
+            "Pesado" => "Alta intensidade e uma opcao, desde que esteja prevista no plano.",
+            "Normal" => "Boa prontidao para cumprir o treino planejado.",
+            "Leve" => "Prefira reduzir volume ou intensidade e preservar a tecnica.",
+            _ => "Priorize recuperacao ativa, mobilidade ou descanso conforme o plano."
+        };
+
+        return (final, recomendacao, $"{acao} Sinais considerados: {string.Join(", ", motivos)}.");
     }
 
     private void Auditar(string acao, string entidade, Guid id, object? antes, object? depois)
