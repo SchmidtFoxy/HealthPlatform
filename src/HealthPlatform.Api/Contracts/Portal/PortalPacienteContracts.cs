@@ -153,6 +153,14 @@ public record PortalPerformanceResponse(
     string Tendencia, string Mensagem, IReadOnlyCollection<PortalPerformanceExercicioResponse> Destaques);
 
 
+
+public record PortalEvolucaoEsportivaIndicadorResponse(
+    string Codigo, string Categoria, string Estado, string Titulo, string Valor, string? Referencia, string Tendencia, string Descricao);
+
+public record PortalEvolucaoEsportivaResponse(
+    string Estado, string Titulo, string Resumo, int IndicadoresFavoraveis, int IndicadoresAtencao,
+    IReadOnlyCollection<PortalEvolucaoEsportivaIndicadorResponse> Indicadores, string MensagemSeguranca);
+
 public record PortalPlanoRecuperacaoItemResponse(
     string Codigo, string Categoria, string Prioridade, string Titulo, string Orientacao);
 
@@ -199,6 +207,7 @@ public record PortalPacienteHomeResponse(
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
     PortalPerformanceResponse Performance,
+    PortalEvolucaoEsportivaResponse EvolucaoEsportiva,
     PortalPlanoRecuperacaoResponse PlanoRecuperacao,
     PortalAdesaoNutricionalResponse AdesaoNutricional,
     PortalHidratacaoContextualResponse HidratacaoContextual,

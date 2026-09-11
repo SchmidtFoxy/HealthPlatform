@@ -1,3 +1,37 @@
+## v0.8.0 r11 — compatibilidade dos testes de volume
+
+- Corrige sentinelas históricas `[429/600]`, `[430/600]` e `[431/600]` para validar a estrutura do painel de volume sem depender de rótulos acentuados sujeitos a diferenças de encoding no PowerShell.
+- Nenhuma alteração funcional, de schema ou de versão semântica.
+
+
+### v0.8.0-r8 — compatibilidade de testes dos gráficos de check-in
+- Ajustada a sentinela `[372/600]` para validar os campos estruturais `adesaoAlimentacaoPercentual` e `adesaoTreinoPercentual`, evitando falsos negativos de encoding em rótulos acentuados.
+- Nenhuma alteração funcional, de schema ou de versão semântica.
+
+
+### v0.8.0 r6 — compatibilidade dos testes de gráficos de hábitos
+- Corrige a sentinela `[314/600]` para validar `hpHabitCharts`, `hpLineChart`, `sonoHorasMedia` e `aguaLitrosDia` sem depender de literais acentuados no PowerShell.
+- Nenhuma alteração funcional, de schema ou de versão semântica.
+## v0.8.0-r2 — Hotfix de login local
+
+- Em `Development`, o bootstrap do admin demo agora zera `AccessFailedCount` e remove `LockoutEnd` antes de validar/sincronizar a senha.
+- Corrige `401` persistente após repetidas tentativas de smoke test com credenciais antigas.
+- A alteração é restrita ao fluxo local de desenvolvimento; produção continua respeitando o lockout normal do Identity.
+
+## v0.8.0-r1 — Hotfix de credencial local
+
+- O runner local agora força `Seed__AdminEmail` e `Seed__AdminPassword` a partir do `appsettings.json` antes de iniciar a API.
+- Evita `401` no `TESTAR.ps1` quando uma variável de ambiente antiga `Seed__AdminPassword` sobrescrevia a credencial local esperada.
+- Sem mudança de schema ou versão semântica: `VERSION.txt` permanece `0.8.0`.
+
+# v0.8.0 — Painel de Evolução Esportiva
+
+- Consolida consistência, recuperação, carga, performance, nutrição, hidratação e ciclo em um painel longitudinal.
+- Mantém cada indicador separado, com valor, referência, tendência e explicação; não cria score esportivo opaco.
+- Integra o painel à Home do atleta e ao prontuário profissional.
+- Sem migration; PREPARAR permanece 37/37.
+- Suíte ampliada para 760 verificações.
+
 
 ### v0.7.9-r1 — correção de sentinela do MVP Preview
 - Corrige o teste legado `[463/600]`, que ainda esperava `MVP Preview • v0.7.8` apesar da UI corrente já estar em `v0.7.9`.
@@ -433,3 +467,33 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.7.5 r2 — correção da sentinela de schema
 - Corrige o teste 718/720 para validar a etapa 37/37 em `scripts/setup.ps1`, que é onde o PREPARAR delega os upgrades.
 - Nenhuma alteração de schema, migration ou comportamento funcional.
+
+### v0.8.0 r3 — compatibilidade do teste de handoff
+- A sentinela histórica do handoff clínico deixou de depender do literal acentuado `RESUMO CLÍNICO`, evitando falso negativo de encoding no Windows PowerShell.
+- A validação continua exigindo a função `hpClinicalSummaryText` e os blocos estruturais `AGENDA` e `ACOMPANHAMENTO`.
+- Sem alteração de schema ou versão semântica.
+
+### v0.8.0 r4 — Compatibilidade do teste de inserção visual
+- Corrige a sentinela `[293/600]` para validar a estrutura real da inserção rápida de refeição sem depender de literal acentuado.
+- Preserva `openMealLibraryInsertForm`, endpoint de inserção, retorno à aba de alimentação e fechamento do modal.
+- Nenhuma alteração de schema ou regra funcional.
+
+### v0.8.0 r5 — compatibilidade do teste de inserção visual de sessão
+- Corrige a sentinela `[305/600]` para validar a estrutura funcional da inserção de sessão de treino sem depender de literal acentuado no toast.
+- Mantém a versão funcional `0.8.0`, schema e funcionalidades inalterados.
+
+### v0.8.0 r7
+- Corrigida sentinela historica do formulario de fase nutricional para validar a estrutura do formulario sem depender do literal acentuado "Manutencao".
+
+- r9: teste [385/600] de destaques de fases passou a validar campos estruturais sem depender de strings acentuadas.
+
+### v0.8.0 r12 — compatibilidade dos testes de progressão
+- Corrige sentinelas históricas [444-446] para validar estrutura real do painel profissional, gráficos/recordes e portal do paciente.
+- Remove dependência de rótulos acentuados nas validações estáticas de progressão por exercício.
+- Sem alteração de schema, API funcional ou versão semântica.
+
+- r13: sentinelas [458-460] de sinais de progressao agora validam estrutura/funcoes/campos em vez de literais acentuados.
+
+### v0.8.0 r14 — compatibilidade de encoding dos testes
+- `TESTAR.ps1` passa a ser distribuído em UTF-8 com BOM para Windows PowerShell 5.1 interpretar corretamente literais Unicode (acentos e `•`).
+- Corrige a causa sistêmica dos falsos negativos em sentinelas visuais/identidade sem alterar regras de negócio, schema ou versão funcional.

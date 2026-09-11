@@ -1,3 +1,18 @@
+# HealthPlatform v0.8.0 — Painel de Evolução Esportiva
+
+A linha 0.8.x começa consolidando a experiência esportiva em uma leitura longitudinal única, sem reduzir saúde ou performance a um score composto. O painel apresenta consistência, recuperação, carga, performance, nutrição, hidratação e ciclo com suas próprias evidências.
+
+## Destaques da v0.8.0
+
+- novo `EvolucaoEsportivaService`;
+- síntese transparente de múltiplas dimensões do ciclo;
+- estados `Evoluindo`, `Estavel`, `Observar` e `DadosInsuficientes`;
+- mesma leitura-base para atleta e profissional;
+- nenhuma alteração automática de treino/nutrição;
+- sem migration: dados são derivados dos módulos existentes;
+- PREPARAR permanece 37/37;
+- suíte ampliada para 760 verificações.
+
 # HealthPlatform v0.7.9 — Hidratação Contextual & Balanço do Dia
 
 A linha esportiva agora contextualiza a hidratação do dia a partir da meta profissional, consumo registrado e treino, sem redefinir necessidade hídrica automaticamente.

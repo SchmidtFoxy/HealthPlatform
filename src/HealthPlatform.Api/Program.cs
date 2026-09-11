@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Infrastructure.Data;
 using HealthPlatform.Domain.Enums;
@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.7.9" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.8.0" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -150,6 +150,25 @@ if (app.Environment.IsDevelopment())
         if (admin is null)
             throw new InvalidOperationException("Admin demo nao encontrado apos o seed local.");
 
+        // A conta de administracao local e uma credencial de desenvolvimento/teste.
+        // Tentativas de smoke test com senha antiga podem acionar o lockout do Identity;
+        // limpe esse estado antes de validar/sincronizar a senha esperada pelo TESTAR.ps1.
+        var resetAccessResult = await users.ResetAccessFailedCountAsync(admin);
+        if (!resetAccessResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                "Nao foi possivel zerar falhas de acesso do admin demo local: " +
+                string.Join("; ", resetAccessResult.Errors.Select(x => x.Description)));
+        }
+
+        var unlockResult = await users.SetLockoutEndDateAsync(admin, null);
+        if (!unlockResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                "Nao foi possivel desbloquear o admin demo local: " +
+                string.Join("; ", unlockResult.Errors.Select(x => x.Description)));
+        }
+
         if (!await users.CheckPasswordAsync(admin, adminPassword))
         {
             var resetToken = await users.GeneratePasswordResetTokenAsync(admin);
@@ -162,11 +181,11 @@ if (app.Environment.IsDevelopment())
                     string.Join("; ", resetResult.Errors.Select(x => x.Description)));
             }
 
-            Console.WriteLine("[v0.7.9] Senha do admin local sincronizada com Seed:AdminPassword.");
+            Console.WriteLine("[v0.8.0-r2] Admin local desbloqueado e senha sincronizada com Seed:AdminPassword.");
         }
         else
         {
-            Console.WriteLine("[v0.7.9] Credencial do admin local ja esta sincronizada.");
+            Console.WriteLine("[v0.8.0-r2] Admin local desbloqueado; credencial ja esta sincronizada.");
         }
     }
 }
