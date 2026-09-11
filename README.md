@@ -1,3 +1,21 @@
+# HealthPlatform v0.9.0 — Radar de Adesão & Continuidade do Plano
+
+A v0.9.0 inaugura a linha 0.9.x com um radar de continuidade do plano. Ele combina consistência, ritmo semanal, nutrição e hidratação para reconhecer oscilações de adesão sem rotular o paciente e sem confundir recuperação planejada com abandono.
+
+## Princípios
+- sem score/probabilidade de abandono;
+- descanso coerente com recuperação não vira falha;
+- sem XP negativo ou punição;
+- prioridades pequenas e sustentáveis para reconectar com o plano;
+- nenhuma alteração automática de treino, nutrição ou medicação.
+
+## Estrutura
+- `RadarAdesaoService`;
+- contratos `PortalRadarAdesao*`;
+- cards para atleta e profissional;
+- sem migration nova; `PREPARAR` permanece 37/37;
+- suíte: 840 verificações.
+
 # HealthPlatform v0.8.9 — Tendência Semanal & Comparativo de Semanas
 
 A v0.8.9 acrescenta comparação longitudinal justa entre a semana atual e o mesmo intervalo da semana anterior, mantendo cada eixo separado e auditável.

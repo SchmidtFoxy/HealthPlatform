@@ -1,3 +1,19 @@
+
+### v0.9.0 r1 — correção de compilação do Radar de Adesão
+
+- corrige `RadarAdesaoService` para usar `PortalHidratacaoContextualResponse.MetaMl`, nome real do contrato de hidratação;
+- adiciona sentinela estática para impedir novo desalinhamento entre o radar e o DTO de hidratação;
+- sem alteração de schema, migration ou regra funcional do radar.
+# HealthPlatform v0.9.0 — Radar de Adesão & Continuidade do Plano
+
+- Novo radar de adesão/continuidade com sinais auditáveis.
+- Consistência, ritmo semanal, nutrição e hidratação como eixos separados.
+- Contexto de recuperação impede que descanso adequado seja interpretado como falha.
+- Sem probabilidade de abandono, score opaco, XP negativo ou punição.
+- Integração atleta + profissional.
+- Sem migration; schema permanece 37/37.
+- Suíte ampliada para 840 verificações.
+
 # HealthPlatform v0.8.9 — Tendência Semanal & Comparativo de Semanas
 
 - compara a semana atual com o mesmo número de dias da semana anterior;

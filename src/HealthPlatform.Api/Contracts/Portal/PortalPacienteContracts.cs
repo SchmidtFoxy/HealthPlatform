@@ -189,6 +189,13 @@ public record PortalTendenciaSemanalResponse(
     DateOnly SemanaAnteriorInicio, DateOnly SemanaAnteriorFim,
     IReadOnlyCollection<PortalTendenciaSemanalItemResponse> Itens, string MensagemSeguranca);
 
+public record PortalRadarAdesaoItemResponse(
+    string Codigo, string Categoria, string Estado, string Titulo, string Evidencia, string Acao);
+
+public record PortalRadarAdesaoResponse(
+    string Estado, string Titulo, string Resumo, int SinaisAtencao, bool ContextoRecuperacao,
+    IReadOnlyCollection<PortalRadarAdesaoItemResponse> Itens, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -282,6 +289,7 @@ public record PortalPacienteHomeResponse(
     PortalPlanejamentoSemanalResponse PlanejamentoSemanal,
     PortalResumoSemanalResponse ResumoSemanal,
     PortalTendenciaSemanalResponse TendenciaSemanal,
+    PortalRadarAdesaoResponse RadarAdesao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
