@@ -1,3 +1,12 @@
+# v0.6.5 — Estratégia do Dia
+
+- Adiciona `EstrategiaDiariaService`, combinando prontidão, ciclo esportivo e planos ativos.
+- Cria orientação de intensidade, RPE, carga e volume com regra de segurança: nunca aumentar automaticamente acima da prescrição.
+- Adiciona estratégia nutricional e hidratação contextual sem alterar quantidades prescritas.
+- Home do atleta e prontuário profissional exibem a Estratégia do Dia.
+- Sem mudança de schema; PREPARAR permanece 37/37.
+- Suíte ampliada para 640 verificações.
+
 # v0.6.4 — Ciclos Esportivos
 
 - Novo `CicloEsportivoPaciente` para organizar objetivo, perfil esportivo, período e metas do ciclo.

@@ -93,6 +93,13 @@ public record PortalCicloEsportivoResponse(
     int? MetaTreinosSemanais, int? MetaConsistenciaPercentual, decimal? MetaPesoKg,
     int TreinosNoCiclo, int CheckInsNoCiclo, decimal? MediaProntidao);
 
+
+public record PortalEstrategiaDiaResponse(
+    string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
+    int AjusteCargaPercentual, int AjusteVolumePercentual, string OrientacaoTreino,
+    string EstrategiaNutricional, string FocoHidratacao, string Justificativa,
+    IReadOnlyCollection<string> SessoesPrevistas, IReadOnlyCollection<string> RefeicoesChave);
+
 public record PortalEventoXpResponse(Guid Id, DateOnly Data, string Fonte, int Pontos, string Motivo, string? Adequacao);
 public record PortalDesafioSemanalResponse(Guid Id, string Codigo, string Titulo, string Descricao, int Meta, int Progresso, int RecompensaXp, bool Concluido);
 public record PortalConquistaResponse(Guid Id, string Codigo, string Titulo, string Descricao, string Icone, DateOnly DataConquista, int RecompensaXp);
@@ -109,6 +116,7 @@ public record PortalPacienteHomeResponse(
     PortalProntidaoDiariaResponse? ProntidaoDiaria,
     PortalGamificacaoResponse Gamificacao,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
+    PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,
     IReadOnlyCollection<PortalMetaHojeResponse> MetasHoje,

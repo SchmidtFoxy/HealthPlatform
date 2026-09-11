@@ -147,6 +147,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             .FirstOrDefaultAsync(ct);
         var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
         var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
+        var estrategiaDoDia = await EstrategiaDiariaService.MontarAsync(db, pacienteId, dia, prontidao, ct);
 
         return Ok(new PortalPacienteHomeResponse(
             dia,
@@ -155,6 +156,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             prontidao,
             gamificacao,
             ciclo,
+            estrategiaDoDia,
             evolucao,
             plano,
             metas,

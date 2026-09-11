@@ -1,20 +1,13 @@
-# HealthPlatform v0.6.4 — Ciclos Esportivos
+# HealthPlatform v0.6.5 — Estratégia do Dia
 
-> **v0.6.4 — Ciclos Esportivos:** treino, nutrição, prontidão e gamificação agora podem ser organizados em um ciclo com objetivo, duração e metas definidas pelo profissional.
+> **v0.6.5 — Estratégia do Dia:** prontidão + ciclo + planos de treino/nutrição agora viram uma orientação diária segura, sem reescrever a prescrição profissional.
 
-> **Base preservada da v0.6.1 — Daily Athlete:** o portal do paciente agora começa o dia com um check-in de prontidão (sono, energia, dor, disposição e recuperação), gera um score de 0–100 e sugere intensidade coerente com recuperação e carga recente. Esta é a base da nova direção de medicina do esporte + autocuidado diário + gamificação segura.
-
-
-A v0.6.0 abre o ciclo de tratamento acompanhado no HealthPlatform.
-
-## Feature release
-- cadastro estruturado de medicamentos por paciente;
-- dose, unidade, via, frequência, horários, período e orientação;
-- portal PatientOnly com confirmação de tomada ou dose pulada;
-- histórico de registros e percentual de adesão para o profissional;
-- auditoria e isolamento multi-tenant;
-- nova migration/SQL idempotente v0.6.0;
-- PREPARAR 37/37;
-- fluxo oficial: PREPARAR -> RODAR -> TESTAR.
-
-A funcionalidade é de acompanhamento do tratamento e não implementa prescrição eletrônica regulamentada.
+## Destaques
+- Intensidade e faixa de RPE sugeridas a partir da prontidão.
+- Redução conservadora de carga/volume quando recuperação pede.
+- Prontidão alta nunca aumenta automaticamente carga ou volume acima do plano.
+- Contexto de treino, nutrição e hidratação mostrado na Home Daily Athlete.
+- Sessões e refeições já prescritas aparecem como referências do dia.
+- O profissional vê a mesma estratégia com justificativa clínica.
+- Sem alteração de schema nesta versão; PREPARAR permanece 37/37.
+- Suíte ampliada para 640 verificações.

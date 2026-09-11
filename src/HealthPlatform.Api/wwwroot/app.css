@@ -1935,3 +1935,7 @@ body.rs-menu-open{overflow:hidden}
 
 /* v0.6.4 - ciclos esportivos */
 .athlete-cycle-card{margin-bottom:16px}.cycle-progress{height:9px;border-radius:999px;background:var(--surface-2,#e8edf2);overflow:hidden;margin:12px 0}.cycle-progress>span{display:block;height:100%;background:linear-gradient(90deg,#5a7cff,#7a5cff);border-radius:inherit}.cycle-objective{margin:8px 0 14px}.cycle-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.cycle-metrics span{padding:10px;border-radius:12px;background:var(--surface-2,#f4f6f8);font-size:.82rem}.cycle-metrics b{display:block;font-size:1.05rem}.cycle-professional-card{border-left:3px solid var(--primary,#5a7cff)}@media(max-width:720px){.cycle-metrics{grid-template-columns:1fr}}
+
+
+/* v0.6.5 - estrategia esportiva diaria */
+.daily-strategy-card{display:grid;gap:14px}.daily-strategy-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.daily-strategy-grid>div{padding:12px;border:1px solid var(--border);border-radius:14px;display:grid;gap:4px}.daily-strategy-grid span{font-size:.74rem;color:var(--muted)}.daily-strategy-grid strong{font-size:1.08rem}.strategy-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.strategy-chips span{color:var(--muted);font-size:.78rem}.strategy-chips b{font-size:.78rem;padding:6px 9px;border-radius:999px;background:var(--surface-2)}.daily-strategy-professional .muted-line{margin-top:8px}@media(max-width:680px){.daily-strategy-grid{grid-template-columns:1fr 1fr 1fr}}
