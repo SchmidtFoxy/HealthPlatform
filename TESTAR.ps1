@@ -25,12 +25,12 @@ $settings = Get-Content ".\src\HealthPlatform.Api\appsettings.json" -Encoding UT
 $email = $settings.Seed.AdminEmail
 $senha = $settings.Seed.AdminPassword
 
-Write-Host "[1/518] Healthcheck..." -ForegroundColor Cyan
+Write-Host "[1/526] Healthcheck..." -ForegroundColor Cyan
 $health = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health.version -ne "0.5.1") { throw "Versao inesperada da API: $($health.version)" }
+if ($health.version -ne "0.5.2") { throw "Versao inesperada da API: $($health.version)" }
 Write-Host "    API $($health.version) / banco $($health.database)" -ForegroundColor Green
 
-Write-Host "[2/518] Login..." -ForegroundColor Cyan
+Write-Host "[2/526] Login..." -ForegroundColor Cyan
 $body = @{ email = $email; senha = $senha } | ConvertTo-Json
 $login = Invoke-RestMethod -Uri "$base/api/auth/login" -Method Post -ContentType "application/json" -Body $body
 $token = $login.accessToken
@@ -38,26 +38,26 @@ if ([string]::IsNullOrWhiteSpace($token)) { throw "Login nao retornou accessToke
 $headers = @{ Authorization = "Bearer $token" }
 Write-Host "    Login OK: $($login.nome)" -ForegroundColor Green
 
-Write-Host "[3/518] Listando pacientes..." -ForegroundColor Cyan
+Write-Host "[3/526] Listando pacientes..." -ForegroundColor Cyan
 $lista = Invoke-RestMethod -Uri "$base/api/pacientes?pagina=1&tamanhoPagina=5" -Headers $headers -Method Get
 Write-Host "    Total atual: $($lista.total)" -ForegroundColor Green
 
-Write-Host "[4/518] Validando perguntas de anamnese..." -ForegroundColor Cyan
+Write-Host "[4/526] Validando perguntas de anamnese..." -ForegroundColor Cyan
 try { $perguntas = Invoke-RestMethod -Uri "$base/api/anamnese/perguntas" -Headers $headers -Method Get; Write-Host "    Endpoint OK. Perguntas ativas: $($perguntas.Count)" -ForegroundColor Green } catch { if ($_.Exception.Response.StatusCode.value__ -eq 409) { Write-Host "    Endpoint protegido OK (perfil profissional ainda nao configurado)." -ForegroundColor DarkGreen } else { throw } }
 
-Write-Host "[5/518] Validando catalogo laboratorial..." -ForegroundColor Cyan
+Write-Host "[5/526] Validando catalogo laboratorial..." -ForegroundColor Cyan
 $marcadores = Invoke-RestMethod -Uri "$base/api/exames/marcadores" -Headers $headers -Method Get
 Write-Host "    Marcadores cadastrados: $($marcadores.Count)" -ForegroundColor Green
 
-Write-Host "[6/518] Validando catalogo de alimentos..." -ForegroundColor Cyan
+Write-Host "[6/526] Validando catalogo de alimentos..." -ForegroundColor Cyan
 $alimentos = Invoke-RestMethod -Uri "$base/api/alimentos" -Headers $headers -Method Get
 Write-Host "    Alimentos cadastrados: $($alimentos.Count)" -ForegroundColor Green
 
-Write-Host "[7/518] Validando busca/paginacao..." -ForegroundColor Cyan
+Write-Host "[7/526] Validando busca/paginacao..." -ForegroundColor Cyan
 $busca = Invoke-RestMethod -Uri "$base/api/pacientes?busca=__smoke_test_sem_resultado__&pagina=1&tamanhoPagina=3" -Headers $headers -Method Get
 if ($null -eq $busca.itens) { throw "Resposta de paginacao invalida." }
 
-Write-Host "[8/518] Validando modulos do paciente..." -ForegroundColor Cyan
+Write-Host "[8/526] Validando modulos do paciente..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $preview = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/relatorios/preview" -Headers $headers -Method Get
@@ -66,14 +66,14 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Preview OK / planos alimentares: $($planos.Count)" -ForegroundColor Green
 } else { Write-Host "    Sem pacientes: validacao de modulos ignorada sem criar dados." -ForegroundColor DarkGreen }
 
-Write-Host "[9/518] Validando metas do paciente..." -ForegroundColor Cyan
+Write-Host "[9/526] Validando metas do paciente..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $metas = @(Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/metas?incluirEncerradas=true" -Headers $headers -Method Get)
     Write-Host "    Endpoint OK. Metas cadastradas: $($metas.Count)" -ForegroundColor Green
 } else { Write-Host "    Sem pacientes: validacao de metas ignorada." -ForegroundColor DarkGreen }
 
-Write-Host "[10/518] Validando diario/resumo do dia..." -ForegroundColor Cyan
+Write-Host "[10/526] Validando diario/resumo do dia..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $diario = @(Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/diario" -Headers $headers -Method Get)
@@ -82,7 +82,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Diario: $($diario.Count) registros / metas ativas hoje: $($resumo.metasAtivas)" -ForegroundColor Green
 } else { Write-Host "    Sem pacientes: validacao de diario ignorada." -ForegroundColor DarkGreen }
 
-Write-Host "[11/518] Validando portal/home do paciente..." -ForegroundColor Cyan
+Write-Host "[11/526] Validando portal/home do paciente..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $portal = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/portal/home" -Headers $headers -Method Get
@@ -93,7 +93,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
 
 
 
-Write-Host "[12/518] Validando agenda do profissional..." -ForegroundColor Cyan
+Write-Host "[12/526] Validando agenda do profissional..." -ForegroundColor Cyan
 try {
     $hojeLocal = (Get-Date).ToString("yyyy-MM-dd")
     $agenda = Invoke-RestMethod -Uri "$base/api/agenda?data=$hojeLocal&offsetMinutos=-180" -Headers $headers -Method Get
@@ -103,7 +103,7 @@ try {
     if ($_.Exception.Response.StatusCode.value__ -eq 409) { Write-Host "    Agenda protegida OK (perfil profissional ainda nao configurado)." -ForegroundColor DarkGreen } else { throw }
 }
 
-Write-Host "[13/518] Validando dashboard do profissional..." -ForegroundColor Cyan
+Write-Host "[13/526] Validando dashboard do profissional..." -ForegroundColor Cyan
 try {
     $dashboard = Invoke-RestMethod -Uri "$base/api/profissional/dashboard?offsetMinutos=-180" -Headers $headers -Method Get
     if ($null -eq $dashboard.agendaHoje -or $null -eq $dashboard.proximasConsultas -or $null -eq $dashboard.pacientesRecentes) { throw "Dashboard profissional incompleto." }
@@ -113,67 +113,67 @@ try {
 }
 
 
-Write-Host "[14/518] Validando interface web..." -ForegroundColor Cyan
+Write-Host "[14/526] Validando interface web..." -ForegroundColor Cyan
 $web = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($web.StatusCode -ne 200 -or $web.Content -notmatch "HealthPlatform") { throw "Interface web nao respondeu corretamente." }
 Write-Host "    Interface HTML OK." -ForegroundColor Green
 
-Write-Host "[15/518] Validando assets da interface..." -ForegroundColor Cyan
+Write-Host "[15/526] Validando assets da interface..." -ForegroundColor Cyan
 $js = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($js.StatusCode -ne 200 -or $css.StatusCode -ne 200) { throw "Assets web nao responderam." }
 Write-Host "    app.js + app.css OK." -ForegroundColor Green
 
 
-Write-Host "[16/518] Validando prontuario visual v0.2.2..." -ForegroundColor Cyan
+Write-Host "[16/526] Validando prontuario visual v0.2.2..." -ForegroundColor Cyan
 if ($js.Content -notmatch "patient-tabs" -or $js.Content -notmatch "loadPatient" -or $css.Content -notmatch "patient-dashboard") { throw "Prontuario visual v0.2.2 incompleto nos assets." }
 Write-Host "    Prontuario visual + abas clinicas OK." -ForegroundColor Green
 
-Write-Host "[17/518] Validando acoes clinicas da interface..." -ForegroundColor Cyan
+Write-Host "[17/526] Validando acoes clinicas da interface..." -ForegroundColor Cyan
 if ($js.Content -notmatch "openClinicalActionMenu" -or $js.Content -notmatch "submitClinicalForm" -or $web.Content -notmatch "clinicalActionModal") { throw "Acoes clinicas v0.2.2 nao foram publicadas corretamente." }
 Write-Host "    Registrar consulta, avaliacao, anamnese, meta e diario: assets OK." -ForegroundColor Green
 
-Write-Host "[18/518] Validando rotas usadas pelos formularios clinicos..." -ForegroundColor Cyan
+Write-Host "[18/526] Validando rotas usadas pelos formularios clinicos..." -ForegroundColor Cyan
 if ($js.Content -notmatch "/consultas" -or $js.Content -notmatch "/avaliacoes" -or $js.Content -notmatch "/anamneses" -or $js.Content -notmatch "/metas" -or $js.Content -notmatch "/diario") { throw "Formularios clinicos nao referenciam todas as rotas esperadas." }
 Write-Host "    Rotas de registro clinico presentes." -ForegroundColor Green
 
 
-Write-Host "[19/518] Validando cadastro visual de exames..." -ForegroundColor Cyan
+Write-Host "[19/526] Validando cadastro visual de exames..." -ForegroundColor Cyan
 if ($js.Content -notmatch "openExamForm" -or $js.Content -notmatch "exam-result-row" -or $js.Content -notmatch "/api/exames/marcadores" -or $js.Content -notmatch "/exames") { throw "Construtor visual de exames v0.2.3 incompleto." }
 Write-Host "    Coleta + catalogo de marcadores + resultados: assets OK." -ForegroundColor Green
 
-Write-Host "[20/518] Validando construtor visual do plano alimentar..." -ForegroundColor Cyan
+Write-Host "[20/526] Validando construtor visual do plano alimentar..." -ForegroundColor Cyan
 if ($js.Content -notmatch "openMealPlanForm" -or $js.Content -notmatch "meal-builder" -or $js.Content -notmatch "/api/alimentos" -or $js.Content -notmatch "/planos-alimentares" -or $js.Content -notmatch "substitution-row") { throw "Construtor visual de plano alimentar v0.2.3 incompleto." }
 if ($css.Content -notmatch "meal-item-builder" -or $css.Content -notmatch "plan-preview") { throw "Estilos do construtor alimentar v0.2.3 incompletos." }
 Write-Host "    Refeicoes + alimentos + macros + substituicoes: assets OK." -ForegroundColor Green
 
 
 
-Write-Host "[21/518] Validando relatorios na interface..." -ForegroundColor Cyan
+Write-Host "[21/526] Validando relatorios na interface..." -ForegroundColor Cyan
 if ($js.Content -notmatch "openReportForm" -or $js.Content -notmatch "openReportHtml" -or $js.Content -notmatch "/relatorios/preview" -or $js.Content -notmatch "newReportFromTab") { throw "Fluxo visual de relatorios v0.3.27 incompleto." }
 if ($css.Content -notmatch "report-grid" -or $css.Content -notmatch "report-preview-box") { throw "Estilos de relatorio v0.3.27 incompletos." }
 Write-Host "    Geracao + preview + visualizacao/impressao: assets OK." -ForegroundColor Green
 
-Write-Host "[22/518] Validando edicao visual do paciente..." -ForegroundColor Cyan
+Write-Host "[22/526] Validando edicao visual do paciente..." -ForegroundColor Cyan
 if ($js.Content -notmatch "openEditPatientForm" -or $js.Content -notmatch "method:'PUT'" -or $js.Content -notmatch "Editar dados") { throw "Edicao visual do paciente v0.3.27 incompleta." }
 Write-Host "    Cadastro do paciente pode ser atualizado pela interface." -ForegroundColor Green
 
-Write-Host "[23/518] Validando endpoint de relatorios do paciente..." -ForegroundColor Cyan
+Write-Host "[23/526] Validando endpoint de relatorios do paciente..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $relatoriosSmoke = @(Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/relatorios" -Headers $headers -Method Get)
     Write-Host "    Endpoint OK. Relatorios existentes: $($relatoriosSmoke.Count)" -ForegroundColor Green
 } else { Write-Host "    Sem pacientes: validacao de relatorios ignorada." -ForegroundColor DarkGreen }
 
-Write-Host "[24/518] Validando edicao clinica visual..."
+Write-Host "[24/526] Validando edicao clinica visual..."
 if ($js.Content -notmatch "openEditConsulta" -or $js.Content -notmatch "openEditAnamnese" -or $js.Content -notmatch "openEditAvaliacao" -or $js.Content -notmatch "/api/avaliacoes/") { throw "Edicao clinica visual v0.3.27 incompleta." }
 Write-Host "    Consulta + anamnese + avaliacao: edicao visual OK."
 
-Write-Host "[25/518] Validando agenda operacional..."
+Write-Host "[25/526] Validando agenda operacional..."
 if ($js.Content -notmatch "agendaStatusActions" -or $js.Content -notmatch "openRescheduleForm" -or $js.Content -notmatch "Realizada" -or $js.Content -notmatch "Faltou" -or $js.Content -notmatch "/reagendar") { throw "Agenda operacional v0.3.27 incompleta." }
 Write-Host "    Status rapido + reagendamento: assets OK."
 
-Write-Host "[26/518] Validando endpoint de atualizacao de avaliacao..."
+Write-Host "[26/526] Validando endpoint de atualizacao de avaliacao..."
 try {
     $ctrl = Get-Content -Encoding UTF8 -Raw ".\src\HealthPlatform.Api\Controllers\AvaliacoesController.cs"
     if ($ctrl -notmatch 'HttpPut\("api/avaliacoes/\{id:guid\}"\)' -or $ctrl -notmatch 'AdicionarAuditoria\("UPDATE"') { throw "PUT de avaliacao ou auditoria ausente." }
@@ -182,36 +182,36 @@ try {
 
 Write-Host ""
 
-Write-Host "[27/518] Validando tela de configuracoes..."
+Write-Host "[27/526] Validando tela de configuracoes..."
 $indexHtml = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($indexHtml.Content -notmatch "configuracoes") { throw "Navegacao de configuracoes nao encontrada." }
 Write-Host "    Navegacao de configuracoes presente."
 
-Write-Host "[28/518] Validando gerenciadores de catalogo na interface..."
+Write-Host "[28/526] Validando gerenciadores de catalogo na interface..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "modalAlimento" -or $appJs.Content -notmatch "modalMarcador" -or $appJs.Content -notmatch "modalPergunta") {
     throw "Gerenciadores de catalogo incompletos."
 }
 Write-Host "    Alimentos + marcadores + perguntas: assets OK."
 
-Write-Host "[29/518] Validando resumo de configuracoes do consultorio..."
+Write-Host "[29/526] Validando resumo de configuracoes do consultorio..."
 $cfg = Invoke-RestMethod -Uri "$base/api/configuracoes/resumo" -Headers $headers
 if (-not $cfg.organizacao) { throw "Resumo de configuracoes sem organizacao." }
 Write-Host "    Organizacao/usuario/profissional: endpoint OK."
 
-Write-Host "[30/518] Validando rotas dos catalogos..."
+Write-Host "[30/526] Validando rotas dos catalogos..."
 $null = Invoke-RestMethod -Uri "$base/api/alimentos?incluirInativos=true" -Headers $headers
 $null = Invoke-RestMethod -Uri "$base/api/exames/marcadores?incluirInativos=true" -Headers $headers
 $null = Invoke-RestMethod -Uri "$base/api/anamnese/perguntas" -Headers $headers
 Write-Host "    Catalogos acessiveis e autenticados."
 
 
-Write-Host "[31/518] Validando edicao de configuracoes..."
+Write-Host "[31/526] Validando edicao de configuracoes..."
 $cfg = Invoke-RestMethod -Uri "$base/api/configuracoes/resumo" -Headers $headers
 if (-not $cfg.organizacao -or -not $cfg.usuario) { throw "Resumo de configuracoes incompleto." }
 Write-Host "    Organizacao + usuario carregados para edicao."
 
-Write-Host "[32/518] Validando assets de edicao/inativacao dos catalogos..."
+Write-Host "[32/526] Validando assets de edicao/inativacao dos catalogos..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 $temAlimentos = $appJs.Content -match "/api/alimentos/"
 $temMarcadores = $appJs.Content -match "/api/exames/marcadores/"
@@ -224,24 +224,24 @@ if (-not ($temAlimentos -and $temMarcadores -and $temPerguntas -and $temProfissi
 }
 Write-Host "    Edicao + ativacao/inativacao: assets OK."
 
-Write-Host "[33/518] Validando endpoints administrativos..."
+Write-Host "[33/526] Validando endpoints administrativos..."
 $null = Invoke-RestMethod -Uri "$base/api/configuracoes/resumo" -Headers $headers
 Write-Host "    Configuracoes autenticadas OK."
 
-Write-Host "[34/518] Validando que a interface segue integra..."
+Write-Host "[34/526] Validando que a interface segue integra..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($index.StatusCode -ne 200) { throw "Interface indisponivel." }
 Write-Host "    Interface web OK apos extensoes administrativas."
 
 
-Write-Host "[35/518] Validando separacao de autorizacao profissional/paciente..."
+Write-Host "[35/526] Validando separacao de autorizacao profissional/paciente..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "/api/portal/me/home" -or $appJs.Content -notmatch "tipoUsuario==='Paciente'") {
     throw "Portal autenticado do paciente nao encontrado nos assets."
 }
 Write-Host "    UI separada por tipo de usuario: assets OK."
 
-Write-Host "[36/518] Validando endpoint de status de acesso do paciente..."
+Write-Host "[36/526] Validando endpoint de status de acesso do paciente..."
 if ($pacientes.itens.Count -gt 0) {
     $pid = $pacientes.itens[0].id
     $accessStatus = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/acesso" -Headers $headers
@@ -249,25 +249,25 @@ if ($pacientes.itens.Count -gt 0) {
 }
 Write-Host "    Status de acesso do paciente: endpoint OK."
 
-Write-Host "[37/518] Validando fluxo de convite/ativacao nos assets..."
+Write-Host "[37/526] Validando fluxo de convite/ativacao nos assets..."
 if ($appJs.Content -notmatch "ativarPaciente" -or $appJs.Content -notmatch "/api/auth/paciente/ativar") {
     throw "Fluxo visual de ativacao incompleto."
 }
 Write-Host "    Convite + ativacao: assets OK."
 
-Write-Host "[38/518] Validando autoatendimento do diario..."
+Write-Host "[38/526] Validando autoatendimento do diario..."
 if ($appJs.Content -notmatch "/api/portal/me/diario") {
     throw "Registro de diario pelo paciente nao encontrado."
 }
 Write-Host "    Diario proprio: asset OK."
 
-Write-Host "[39/518] Validando autoatendimento das metas..."
+Write-Host "[39/526] Validando autoatendimento das metas..."
 if ($appJs.Content -notmatch "/api/portal/me/metas/" -or $appJs.Content -notmatch "/registro") {
     throw "Atualizacao de meta pelo paciente nao encontrada."
 }
 Write-Host "    Metas proprias: asset OK."
 
-Write-Host "[40/518] Validando tela dedicada do portal do paciente..."
+Write-Host "[40/526] Validando tela dedicada do portal do paciente..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($index.Content -notmatch "patientAppView" -or $index.Content -notmatch "activationView") {
     throw "Views dedicadas do paciente nao encontradas."
@@ -275,7 +275,7 @@ if ($index.Content -notmatch "patientAppView" -or $index.Content -notmatch "acti
 Write-Host "    Portal + ativacao do paciente: HTML OK."
 
 
-Write-Host "[41/518] Validando navegacao completa do portal..."
+Write-Host "[41/526] Validando navegacao completa do portal..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($index.Content -notmatch "data-patient-view=.plano." -or
     $index.Content -notmatch "data-patient-view=.metas." -or
@@ -286,26 +286,26 @@ if ($index.Content -notmatch "data-patient-view=.plano." -or
 }
 Write-Host "    Inicio + plano + metas + diario + evolucao + exames: HTML OK."
 
-Write-Host "[42/518] Validando endpoint proprio de plano alimentar..."
+Write-Host "[42/526] Validando endpoint proprio de plano alimentar..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "/api/portal/me/plano") { throw "Endpoint proprio do plano ausente dos assets." }
 Write-Host "    Plano alimentar proprio: asset OK."
 
-Write-Host "[43/518] Validando historico proprio de metas e diario..."
+Write-Host "[43/526] Validando historico proprio de metas e diario..."
 if ($appJs.Content -notmatch "/api/portal/me/metas" -or $appJs.Content -notmatch "/api/portal/me/diario") {
     throw "Historico proprio de metas/diario incompleto."
 }
 Write-Host "    Metas + diario historicos: assets OK."
 
-Write-Host "[44/518] Validando historico de evolucao corporal..."
+Write-Host "[44/526] Validando historico de evolucao corporal..."
 if ($appJs.Content -notmatch "/api/portal/me/evolucao") { throw "Evolucao propria ausente." }
 Write-Host "    Evolucao corporal: asset OK."
 
-Write-Host "[45/518] Validando historico proprio de exames..."
+Write-Host "[45/526] Validando historico proprio de exames..."
 if ($appJs.Content -notmatch "/api/portal/me/exames") { throw "Exames proprios ausentes." }
 Write-Host "    Exames laboratoriais: asset OK."
 
-Write-Host "[46/518] Validando assets visuais do portal expandido..."
+Write-Host "[46/526] Validando assets visuais do portal expandido..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "patient-portal-nav" -or $css.Content -notmatch "patient-plan-totals" -or $css.Content -notmatch "lab-result-grid") {
     throw "Estilos do portal expandido incompletos."
@@ -313,18 +313,18 @@ if ($css.Content -notmatch "patient-portal-nav" -or $css.Content -notmatch "pati
 Write-Host "    Portal completo e responsivo: assets OK."
 
 
-Write-Host "[47/518] Validando schema/endpoint do catalogo de exercicios..."
+Write-Host "[47/526] Validando schema/endpoint do catalogo de exercicios..."
 $exercicios = Invoke-RestMethod -Uri "$base/api/exercicios" -Headers $headers
 Write-Host "    Exercicios ativos no catalogo: $($exercicios.Count)"
 
-Write-Host "[48/518] Validando endpoint de planos de treino do paciente..."
+Write-Host "[48/526] Validando endpoint de planos de treino do paciente..."
 if ($pacientes.itens.Count -gt 0) {
     $pid = $pacientes.itens[0].id
     $treinos = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/treinos" -Headers $headers
     Write-Host "    Planos de treino cadastrados: $($treinos.Count)"
 }
 
-Write-Host "[49/518] Validando construtor visual de treino..."
+Write-Host "[49/526] Validando construtor visual de treino..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "openWorkoutForm" -or
     $appJs.Content -notmatch "/api/pacientes/.*/treinos" -or
@@ -333,7 +333,7 @@ if ($appJs.Content -notmatch "openWorkoutForm" -or
 }
 Write-Host "    Treinos + exercicios + series/repeticoes/carga: assets OK."
 
-Write-Host "[50/518] Validando videos e prescricao de exercicios..."
+Write-Host "[50/526] Validando videos e prescricao de exercicios..."
 if ($appJs.Content -notmatch "videoUrl" -or
     $appJs.Content -notmatch "descansoSegundos" -or
     $appJs.Content -notmatch "tempoSegundos") {
@@ -341,28 +341,28 @@ if ($appJs.Content -notmatch "videoUrl" -or
 }
 Write-Host "    Video + descanso + tempo: assets OK."
 
-Write-Host "[51/518] Validando aba de treinos no prontuario..."
+Write-Host "[51/526] Validando aba de treinos no prontuario..."
 if ($appJs.Content -notmatch "Treinos.*treinos.length" -or
     $appJs.Content -notmatch "workout-plan-grid") {
     throw "Aba profissional de treinos nao encontrada."
 }
 Write-Host "    Prontuario profissional: aba Treinos OK."
 
-Write-Host "[52/518] Validando navegacao de treino do paciente..."
+Write-Host "[52/526] Validando navegacao de treino do paciente..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($index.Content -notmatch "data-patient-view=.treino.") {
     throw "Navegacao Treino do portal do paciente ausente."
 }
 Write-Host "    Portal do paciente: navegacao Treino OK."
 
-Write-Host "[53/518] Validando endpoint proprio do treino do paciente..."
+Write-Host "[53/526] Validando endpoint proprio do treino do paciente..."
 if ($appJs.Content -notmatch "/api/portal/me/treino" -or
     $appJs.Content -notmatch "loadPatientWorkout") {
     throw "Portal proprio de treino incompleto."
 }
 Write-Host "    GET /api/portal/me/treino: asset OK."
 
-Write-Host "[54/518] Validando assets visuais do modulo de treino..."
+Write-Host "[54/526] Validando assets visuais do modulo de treino..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "patient-exercise-card" -or
     $css.Content -notmatch "workout-item-builder" -or
@@ -372,12 +372,12 @@ if ($css.Content -notmatch "patient-exercise-card" -or
 Write-Host "    Modulo de treino responsivo: assets OK."
 
 
-Write-Host "[55/518] Validando schema de execucoes de treino..."
+Write-Host "[55/526] Validando schema de execucoes de treino..."
 $tables = docker exec healthplatform-postgres psql -U healthplatform -d healthplatform -t -A -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('ExecucoesTreino','ExecucoesItensTreino');"
 if ([int]$tables -ne 2) { throw "Tabelas de execucao de treino ausentes." }
 Write-Host "    ExecucoesTreino + ExecucoesItensTreino: schema OK."
 
-Write-Host "[56/518] Validando historico profissional de treinos..."
+Write-Host "[56/526] Validando historico profissional de treinos..."
 if ($pacientes.itens.Count -gt 0) {
     $pid = $pacientes.itens[0].id
     $histTreino = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/treinos/historico?dias=90" -Headers $headers
@@ -385,7 +385,7 @@ if ($pacientes.itens.Count -gt 0) {
 }
 Write-Host "    Adesao + historico profissional: endpoint OK."
 
-Write-Host "[57/518] Validando registro visual de execucao pelo paciente..."
+Write-Host "[57/526] Validando registro visual de execucao pelo paciente..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "openWorkoutExecutionForm" -or
     $appJs.Content -notmatch "/api/portal/me/treinos/execucoes") {
@@ -393,7 +393,7 @@ if ($appJs.Content -notmatch "openWorkoutExecutionForm" -or
 }
 Write-Host "    Formulario de execucao: asset OK."
 
-Write-Host "[58/518] Validando series, repeticoes e carga realizadas..."
+Write-Host "[58/526] Validando series, repeticoes e carga realizadas..."
 if ($appJs.Content -notmatch "seriesRealizadas" -or
     $appJs.Content -notmatch "repeticoesRealizadas" -or
     $appJs.Content -notmatch "cargaRealizada") {
@@ -401,14 +401,14 @@ if ($appJs.Content -notmatch "seriesRealizadas" -or
 }
 Write-Host "    Series + repeticoes + carga: assets OK."
 
-Write-Host "[59/518] Validando esforco percebido e duracao..."
+Write-Host "[59/526] Validando esforco percebido e duracao..."
 if ($appJs.Content -notmatch "esforcoPercebido" -or
     $appJs.Content -notmatch "duracaoMinutos") {
     throw "RPE/duracao ausentes."
 }
 Write-Host "    RPE + duracao: assets OK."
 
-Write-Host "[60/518] Validando historico do paciente..."
+Write-Host "[60/526] Validando historico do paciente..."
 # Evita depender de texto visual acentuado (encoding pode variar no Windows PowerShell).
 # Valida a rota real e os dados usados para renderizar o historico do proprio paciente.
 if ($appJs.Content -notmatch "/api/portal/me/treinos/historico\?dias=90" -or
@@ -418,14 +418,14 @@ if ($appJs.Content -notmatch "/api/portal/me/treinos/historico\?dias=90" -or
 }
 Write-Host "    Historico proprio: asset OK."
 
-Write-Host "[61/518] Validando progressao de carga no prontuario..."
+Write-Host "[61/526] Validando progressao de carga no prontuario..."
 if ($appJs.Content -notmatch "evolucaoCarga" -or
     $appJs.Content -notmatch "Adesão e progressão") {
     throw "Progressao de carga profissional ausente."
 }
 Write-Host "    Evolucao de carga + adesao: assets OK."
 
-Write-Host "[62/518] Validando estilos do acompanhamento de treino..."
+Write-Host "[62/526] Validando estilos do acompanhamento de treino..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "load-progress-grid" -or
     $css.Content -notmatch "execution-item" -or
@@ -435,7 +435,7 @@ if ($css.Content -notmatch "load-progress-grid" -or
 Write-Host "    Acompanhamento responsivo: assets OK."
 
 
-Write-Host "[63/518] Validando motor de graficos SVG..."
+Write-Host "[63/526] Validando motor de graficos SVG..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "hpLineChart" -or
     $appJs.Content -notmatch "native-line-chart" -or
@@ -444,7 +444,7 @@ if ($appJs.Content -notmatch "hpLineChart" -or
 }
 Write-Host "    SVG nativo + escalas + series: assets OK."
 
-Write-Host "[64/518] Validando graficos corporais no prontuario..."
+Write-Host "[64/526] Validando graficos corporais no prontuario..."
 if ($appJs.Content -notmatch "hpEvalCharts" -or
     $appJs.Content -notmatch "professional-evaluations" -or
     $appJs.Content -notmatch "professional-summary") {
@@ -452,7 +452,7 @@ if ($appJs.Content -notmatch "hpEvalCharts" -or
 }
 Write-Host "    Peso + IMC + gordura + cintura: assets OK."
 
-Write-Host "[65/518] Validando tendencias laboratoriais..."
+Write-Host "[65/526] Validando tendencias laboratoriais..."
 if ($appJs.Content -notmatch "hpLabSeriesFromProfessional" -or
     $appJs.Content -notmatch "hpLabSeriesFromPatient" -or
     $appJs.Content -notmatch "hpLabCharts") {
@@ -460,7 +460,7 @@ if ($appJs.Content -notmatch "hpLabSeriesFromProfessional" -or
 }
 Write-Host "    Series numericas por marcador: assets OK."
 
-Write-Host "[66/518] Validando progressao grafica de carga..."
+Write-Host "[66/526] Validando progressao grafica de carga..."
 if ($appJs.Content -notmatch "hpLoadCharts" -or
     $appJs.Content -notmatch "professional-workout-load" -or
     $appJs.Content -notmatch "patient-workout-load") {
@@ -468,21 +468,21 @@ if ($appJs.Content -notmatch "hpLoadCharts" -or
 }
 Write-Host "    Progressao de carga profissional/paciente: assets OK."
 
-Write-Host "[67/518] Validando evolucao visual no portal do paciente..."
+Write-Host "[67/526] Validando evolucao visual no portal do paciente..."
 if ($appJs.Content -notmatch "Gráficos de evolução" -or
     $appJs.Content -notmatch "Minha evolução corporal") {
     throw "Evolucao visual do paciente ausente."
 }
 Write-Host "    Portal: graficos corporais OK."
 
-Write-Host "[68/518] Validando graficos de exames no portal..."
+Write-Host "[68/526] Validando graficos de exames no portal..."
 if ($appJs.Content -notmatch "Tendências dos exames" -or
     $appJs.Content -notmatch "Resultados e tendências") {
     throw "Graficos de exames do paciente ausentes."
 }
 Write-Host "    Portal: tendencias laboratoriais OK."
 
-Write-Host "[69/518] Validando responsividade dos graficos..."
+Write-Host "[69/526] Validando responsividade dos graficos..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "analytics-grid" -or
     $css.Content -notmatch "native-line-chart" -or
@@ -491,23 +491,23 @@ if ($css.Content -notmatch "analytics-grid" -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[70/518] Validando compatibilidade de schema na v0.3.27..."
+Write-Host "[70/526] Validando compatibilidade de schema na v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 if (-not (Test-Path .\scripts\sql\v0.3.1_execucoes_treino.sql)) {
     throw "Historico de upgrade v0.3.1 ausente."
 }
 Write-Host "    v0.3.27 reutiliza o schema ja atualizado; sem upgrade novo nesta versao."
 
 
-Write-Host "[71/518] Validando endpoint de insights do dashboard..."
+Write-Host "[71/526] Validando endpoint de insights do dashboard..."
 $insightsDashboard = Invoke-RestMethod -Uri "$base/api/insights/dashboard?limite=12" -Headers $headers
 if ($null -eq $insightsDashboard.pacientesAnalisados -or $null -eq $insightsDashboard.totalInsights) {
     throw "Dashboard de insights invalido."
 }
 Write-Host "    Pacientes analisados: $($insightsDashboard.pacientesAnalisados) / sinais: $($insightsDashboard.totalInsights)"
 
-Write-Host "[72/518] Validando insights por paciente..."
+Write-Host "[72/526] Validando insights por paciente..."
 if ($pacientes.itens.Count -gt 0) {
     $pid = $pacientes.itens[0].id
     $patientInsights = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/insights" -Headers $headers
@@ -517,7 +517,7 @@ if ($pacientes.itens.Count -gt 0) {
 }
 Write-Host "    Endpoint individual: OK."
 
-Write-Host "[73/518] Validando regra de exame fora da referencia..."
+Write-Host "[73/526] Validando regra de exame fora da referencia..."
 $sourceInsights = Get-Content .\src\HealthPlatform.Api\Controllers\InsightsController.cs -Encoding UTF8 -Raw
 if ($sourceInsights -notmatch "EXAME_FORA_REFERENCIA" -or
     $sourceInsights -notmatch "ReferenciaMinima" -or
@@ -526,14 +526,14 @@ if ($sourceInsights -notmatch "EXAME_FORA_REFERENCIA" -or
 }
 Write-Host "    Faixa registrada pelo laboratorio: regra OK."
 
-Write-Host "[74/518] Validando regras de evolucao e retorno..."
+Write-Host "[74/526] Validando regras de evolucao e retorno..."
 if ($sourceInsights -notmatch "VARIACAO_PESO" -or
     $sourceInsights -notmatch "SEM_RETORNO") {
     throw "Regras de evolucao/retorno incompletas."
 }
 Write-Host "    Variacao corporal + retorno: regras OK."
 
-Write-Host "[75/518] Validando regras de adesao..."
+Write-Host "[75/526] Validando regras de adesao..."
 if ($sourceInsights -notmatch "BAIXA_ADESAO_META" -or
     $sourceInsights -notmatch "SEM_TREINO_RECENTE" -or
     $sourceInsights -notmatch "QUEDA_FREQUENCIA_TREINO") {
@@ -541,7 +541,7 @@ if ($sourceInsights -notmatch "BAIXA_ADESAO_META" -or
 }
 Write-Host "    Metas + frequencia de treino: regras OK."
 
-Write-Host "[76/518] Validando central de atencao visual..."
+Write-Host "[76/526] Validando central de atencao visual..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "Central de atenção" -or
     $appJs.Content -notmatch "/api/insights/dashboard" -or
@@ -550,7 +550,7 @@ if ($appJs.Content -notmatch "Central de atenção" -or
 }
 Write-Host "    Dashboard profissional: assets OK."
 
-Write-Host "[77/518] Validando insights no prontuario..."
+Write-Host "[77/526] Validando insights no prontuario..."
 if ($appJs.Content -notmatch "/insights" -or
     $appJs.Content -notmatch "Insights de acompanhamento" -or
     $appJs.Content -notmatch "insight-disclaimer") {
@@ -558,7 +558,7 @@ if ($appJs.Content -notmatch "/insights" -or
 }
 Write-Host "    Prontuario: sinais + aviso de interpretacao OK."
 
-Write-Host "[78/518] Validando estilos e compatibilidade do schema..."
+Write-Host "[78/526] Validando estilos e compatibilidade do schema..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "insight-summary" -or
     $css.Content -notmatch "patient-insight-grid" -or
@@ -566,30 +566,30 @@ if ($css.Content -notmatch "insight-summary" -or
     throw "Estilos de insights incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    Insights responsivos / schema existente compativel: OK."
 
 
-Write-Host "[79/518] Validando schema de pendencias clinicas..."
+Write-Host "[79/526] Validando schema de pendencias clinicas..."
 $pendingTable = docker exec healthplatform-postgres psql -U healthplatform -d healthplatform -t -A -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='PendenciasClinicas';"
 if ([int]$pendingTable -ne 1) { throw "Tabela PendenciasClinicas ausente." }
 Write-Host "    PendenciasClinicas: schema OK."
 
-Write-Host "[80/518] Validando endpoint geral de pendencias..."
+Write-Host "[80/526] Validando endpoint geral de pendencias..."
 $pendencias = Invoke-RestMethod -Uri "$base/api/pendencias?status=abertas&limite=20" -Headers $headers
 if ($null -eq $pendencias.total -or $null -eq $pendencias.itens) {
     throw "Endpoint geral de pendencias invalido."
 }
 Write-Host "    Pendencias abertas: $($pendencias.total)"
 
-Write-Host "[81/518] Validando endpoint de pendencias do paciente..."
+Write-Host "[81/526] Validando endpoint de pendencias do paciente..."
 if ($pacientes.itens.Count -gt 0) {
     $pid = $pacientes.itens[0].id
     $pp = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/pendencias" -Headers $headers
 }
 Write-Host "    Lista por paciente: endpoint OK."
 
-Write-Host "[82/518] Validando acoes de ciclo de vida..."
+Write-Host "[82/526] Validando acoes de ciclo de vida..."
 $pendingSource = Get-Content .\src\HealthPlatform.Api\Controllers\PendenciasController.cs -Encoding UTF8 -Raw
 if ($pendingSource -notmatch '/vista' -or
     $pendingSource -notmatch '/adiar' -or
@@ -598,7 +598,7 @@ if ($pendingSource -notmatch '/vista' -or
 }
 Write-Host "    Vista + adiada + resolvida: rotas OK."
 
-Write-Host "[83/518] Validando criacao de retorno a partir da pendencia..."
+Write-Host "[83/526] Validando criacao de retorno a partir da pendencia..."
 if ($pendingSource -notmatch '/retorno' -or
     $pendingSource -notmatch 'StatusConsulta.Agendada' -or
     $pendingSource -notmatch 'ConsultaRetornoId') {
@@ -606,7 +606,7 @@ if ($pendingSource -notmatch '/retorno' -or
 }
 Write-Host "    Pendencia -> consulta futura: backend OK."
 
-Write-Host "[84/518] Validando transformar insight em pendencia..."
+Write-Host "[84/526] Validando transformar insight em pendencia..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "insight-to-pending" -or
     $appJs.Content -notmatch "/pendencias" -or
@@ -615,7 +615,7 @@ if ($appJs.Content -notmatch "insight-to-pending" -or
 }
 Write-Host "    Insight -> pendencia: assets OK."
 
-Write-Host "[85/518] Validando tela de gerenciamento de pendencias..."
+Write-Host "[85/526] Validando tela de gerenciamento de pendencias..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 if ($index.Content -notmatch 'data-view=.pendencias.' -or
     $appJs.Content -notmatch "loadPendencias" -or
@@ -624,7 +624,7 @@ if ($index.Content -notmatch 'data-view=.pendencias.' -or
 }
 Write-Host "    Navegacao + filtros + fila: assets OK."
 
-Write-Host "[86/518] Validando acoes visuais da pendencia..."
+Write-Host "[86/526] Validando acoes visuais da pendencia..."
 if ($appJs.Content -notmatch "openResolvePending" -or
     $appJs.Content -notmatch "openSnoozePending" -or
     $appJs.Content -notmatch "openReturnPending") {
@@ -632,14 +632,14 @@ if ($appJs.Content -notmatch "openResolvePending" -or
 }
 Write-Host "    Resolver + adiar + retorno: assets OK."
 
-Write-Host "[87/518] Validando resumo de pendencias no dashboard..."
+Write-Host "[87/526] Validando resumo de pendencias no dashboard..."
 if ($appJs.Content -notmatch "Pendências abertas" -or
     $appJs.Content -notmatch "dashboard-pending-section") {
     throw "Resumo de pendencias no dashboard ausente."
 }
 Write-Host "    Dashboard: pendencias abertas OK."
 
-Write-Host "[88/518] Validando auditoria, estilos e upgrade v0.3.27..."
+Write-Host "[88/526] Validando auditoria, estilos e upgrade v0.3.27..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "pending-card" -or
     $css.Content -notmatch "pending-actions" -or
@@ -647,16 +647,16 @@ if ($css.Content -notmatch "pending-card" -or
     throw "Auditoria/estilos de pendencias incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    Auditoria + UI responsiva + v0.3.27: OK."
 
 
-Write-Host "[89/518] Validando schema de notificacoes internas..."
+Write-Host "[89/526] Validando schema de notificacoes internas..."
 $notificationTable = docker exec healthplatform-postgres psql -U healthplatform -d healthplatform -t -A -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='NotificacoesInternas';"
 if ([int]$notificationTable -ne 1) { throw "Tabela NotificacoesInternas ausente." }
 Write-Host "    NotificacoesInternas: schema OK."
 
-Write-Host "[90/518] Validando sincronizacao de notificacoes..."
+Write-Host "[90/526] Validando sincronizacao de notificacoes..."
 $notificationControllerSource = Get-Content .\src\HealthPlatform.Api\Controllers\NotificacoesController.cs -Encoding UTF8 -Raw
 if ($notificationControllerSource -notmatch 'HttpPost\("sincronizar"\)' -or
     $notificationControllerSource -notmatch 'SincronizarProfissional' -or
@@ -665,14 +665,14 @@ if ($notificationControllerSource -notmatch 'HttpPost\("sincronizar"\)' -or
 }
 Write-Host "    Sincronizacao idempotente: rota + regras presentes; sem mutar dados."
 
-Write-Host "[91/518] Validando listagem e contador nao lido..."
+Write-Host "[91/526] Validando listagem e contador nao lido..."
 $notifications = Invoke-RestMethod -Uri "$base/api/notificacoes?sincronizar=false&limite=50" -Headers $headers
 if ($null -eq $notifications.total -or $null -eq $notifications.naoLidas -or $null -eq $notifications.itens) {
     throw "Listagem de notificacoes invalida."
 }
 Write-Host "    Total: $($notifications.total) / nao lidas: $($notifications.naoLidas)"
 
-Write-Host "[92/518] Validando regras de agenda profissional..."
+Write-Host "[92/526] Validando regras de agenda profissional..."
 $notificationSource = Get-Content .\src\HealthPlatform.Api\Controllers\NotificacoesController.cs -Encoding UTF8 -Raw
 if ($notificationSource -notmatch "SincronizarProfissional" -or
     $notificationSource -notmatch "AddHours.24." -or
@@ -681,7 +681,7 @@ if ($notificationSource -notmatch "SincronizarProfissional" -or
 }
 Write-Host "    Consultas proximas 24h: regra OK."
 
-Write-Host "[93/518] Validando regras de pendencias..."
+Write-Host "[93/526] Validando regras de pendencias..."
 if ($notificationSource -notmatch 'PROF:PENDENCIA' -or
     $notificationSource -notmatch 'PendenciaClinica' -or
     $notificationSource -notmatch 'var vencida' -or
@@ -692,7 +692,7 @@ if ($notificationSource -notmatch 'PROF:PENDENCIA' -or
 }
 Write-Host "    Vencidas + alta prioridade + vencimento proximo: regras OK."
 
-Write-Host "[94/518] Validando lembretes do paciente..."
+Write-Host "[94/526] Validando lembretes do paciente..."
 if ($notificationSource -notmatch "SincronizarPaciente" -or
     $notificationSource -notmatch 'PAC:CONSULTA' -or
     $notificationSource -notmatch "Lembrete de consulta") {
@@ -700,7 +700,7 @@ if ($notificationSource -notmatch "SincronizarPaciente" -or
 }
 Write-Host "    Portal do paciente: consulta proxima OK."
 
-Write-Host "[95/518] Validando leitura individual e em massa..."
+Write-Host "[95/526] Validando leitura individual e em massa..."
 if ($notificationSource -notmatch '/lida' -or
     $notificationSource -notmatch 'ler-todas' -or
     $notificationSource -notmatch 'LidaEmUtc') {
@@ -708,7 +708,7 @@ if ($notificationSource -notmatch '/lida' -or
 }
 Write-Host "    Lida individual + ler todas: backend OK."
 
-Write-Host "[96/518] Validando sino e drawer na interface..."
+Write-Host "[96/526] Validando sino e drawer na interface..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($index.Content -notmatch "notificationButton" -or
@@ -719,7 +719,7 @@ if ($index.Content -notmatch "notificationButton" -or
 }
 Write-Host "    Profissional + paciente + drawer: assets OK."
 
-Write-Host "[97/518] Validando contador e atualizacao periodica..."
+Write-Host "[97/526] Validando contador e atualizacao periodica..."
 if ($appJs.Content -notmatch "notificationBadge" -or
     $appJs.Content -notmatch "setInterval" -or
     $appJs.Content -notmatch "60000" -or
@@ -728,7 +728,7 @@ if ($appJs.Content -notmatch "notificationBadge" -or
 }
 Write-Host "    Badge + atualizacao a cada 60s: assets OK."
 
-Write-Host "[98/518] Validando estilos, upgrade e versao..."
+Write-Host "[98/526] Validando estilos, upgrade e versao..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "notification-panel" -or
     $css.Content -notmatch "notification-item" -or
@@ -736,11 +736,11 @@ if ($css.Content -notmatch "notification-panel" -or
     throw "Estilos de notificacoes incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    UI responsiva + upgrade v0.3.27: OK."
 
 
-Write-Host "[99/518] Validando script de popular banco..."
+Write-Host "[99/526] Validando script de popular banco..."
 if (-not (Test-Path .\POPULAR.ps1)) { throw "POPULAR.ps1 ausente." }
 $popularSource = Get-Content .\POPULAR.ps1 -Encoding UTF8 -Raw
 if ($popularSource -notmatch "Ana Ribeiro" -or
@@ -752,7 +752,7 @@ if ($popularSource -notmatch "Ana Ribeiro" -or
 }
 Write-Host "    Cinco cenarios adicionais presentes."
 
-Write-Host "[100/518] Validando idempotencia do popular..."
+Write-Host "[100/526] Validando idempotencia do popular..."
 if ($popularSource -notmatch "Ensure-Patient" -or
     $popularSource -notmatch "Ensure-Consultation" -or
     $popularSource -notmatch "Ensure-Evaluation" -or
@@ -762,7 +762,7 @@ if ($popularSource -notmatch "Ensure-Patient" -or
 }
 Write-Host "    Paciente + consulta + avaliacao + exames + metas: helpers OK."
 
-Write-Host "[101/518] Validando cobertura de modulos na base demo..."
+Write-Host "[101/526] Validando cobertura de modulos na base demo..."
 if ($popularSource -notmatch "Ensure-Diary" -or
     $popularSource -notmatch "Ensure-Workout" -or
     $popularSource -notmatch "Ensure-Pending" -or
@@ -771,7 +771,7 @@ if ($popularSource -notmatch "Ensure-Diary" -or
 }
 Write-Host "    Diario + treino + pendencias + notificacoes: script OK."
 
-Write-Host "[102/518] Validando endpoint de resumo de dados..."
+Write-Host "[102/526] Validando endpoint de resumo de dados..."
 $dataResumo = Invoke-RestMethod -Uri "$base/api/dados/resumo" -Headers $headers
 if ($null -eq $dataResumo.pacientes -or
     $null -eq $dataResumo.consultas -or
@@ -781,28 +781,28 @@ if ($null -eq $dataResumo.pacientes -or
 }
 Write-Host "    Pacientes=$($dataResumo.pacientes) / consultas=$($dataResumo.consultas) / avaliacoes=$($dataResumo.avaliacoes) / exames=$($dataResumo.exames)"
 
-Write-Host "[103/518] Validando que popular banco e opt-in..."
+Write-Host "[103/526] Validando que popular banco e opt-in..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if ($setupSource -match "POPULAR.ps1") {
     throw "POPULAR.ps1 nao deve executar automaticamente no PREPARAR."
 }
 Write-Host "    PREPARAR preserva dados do usuario; POPULAR e execucao explicita."
 
-Write-Host "[104/518] Validando versao v0.3.27 e upgrade do schema..."
+Write-Host "[104/526] Validando versao v0.3.27 e upgrade do schema..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 if ($setupSource -notmatch "\[31/31\]") { throw "PREPARAR deveria possuir 31 etapas na v0.3.27." }
 Write-Host "    v0.3.27 / PREPARAR 29 etapas / upgrade SOAP: OK."
 
 
-Write-Host "[105/518] Validando endpoint da carteira..."
+Write-Host "[105/526] Validando endpoint da carteira..."
 $carteira = Invoke-RestMethod -Uri "$base/api/carteira?ordenar=score" -Headers $headers
 if ($null -eq $carteira.totalPacientes -or $null -eq $carteira.pacientes) {
     throw "Endpoint da carteira invalido."
 }
 Write-Host "    Carteira: $($carteira.totalPacientes) paciente(s)."
 
-Write-Host "[106/518] Validando priorizacao da carteira..."
+Write-Host "[106/526] Validando priorizacao da carteira..."
 $carteiraSource = Get-Content .\src\HealthPlatform.Api\Controllers\CarteiraController.cs -Encoding UTF8 -Raw
 if ($carteiraSource -notmatch "Score" -or
     $carteiraSource -notmatch "Prioridade" -or
@@ -812,7 +812,7 @@ if ($carteiraSource -notmatch "Score" -or
 }
 Write-Host "    Score + pendencias + retorno: backend OK."
 
-Write-Host "[107/518] Validando sinais de exames/evolucao na carteira..."
+Write-Host "[107/526] Validando sinais de exames/evolucao na carteira..."
 if ($carteiraSource -notmatch "ReferenciaMinima" -or
     $carteiraSource -notmatch "ReferenciaMaxima" -or
     $carteiraSource -notmatch "PesoKg") {
@@ -820,7 +820,7 @@ if ($carteiraSource -notmatch "ReferenciaMinima" -or
 }
 Write-Host "    Exames + peso: leitura longitudinal OK."
 
-Write-Host "[108/518] Validando atividade recente..."
+Write-Host "[108/526] Validando atividade recente..."
 if ($carteiraSource -notmatch "TreinosUltimos30Dias" -or
     $carteiraSource -notmatch "RegistrosDiarioUltimos14Dias" -or
     $carteiraSource -notmatch "RegistrosMetaUltimos14Dias") {
@@ -828,7 +828,7 @@ if ($carteiraSource -notmatch "TreinosUltimos30Dias" -or
 }
 Write-Host "    Treinos + diario + metas: backend OK."
 
-Write-Host "[109/518] Validando tela Carteira..."
+Write-Host "[109/526] Validando tela Carteira..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($index.Content -notmatch 'data-view=.carteira.' -or
@@ -838,7 +838,7 @@ if ($index.Content -notmatch 'data-view=.carteira.' -or
 }
 Write-Host "    Navegacao + carregamento: assets OK."
 
-Write-Host "[110/518] Validando filtros e ordenacao..."
+Write-Host "[110/526] Validando filtros e ordenacao..."
 if ($appJs.Content -notmatch "portfolioSearch" -or
     $appJs.Content -notmatch "portfolioPriority" -or
     $appJs.Content -notmatch "portfolioSort") {
@@ -846,7 +846,7 @@ if ($appJs.Content -notmatch "portfolioSearch" -or
 }
 Write-Host "    Busca + prioridade + ordenacao: assets OK."
 
-Write-Host "[111/518] Validando atalho da carteira no dashboard..."
+Write-Host "[111/526] Validando atalho da carteira no dashboard..."
 if ($appJs.Content -notmatch "Pacientes para acompanhar" -or
     $appJs.Content -notmatch "openPortfolio" -or
     $appJs.Content -notmatch "dashboard-portfolio-section") {
@@ -854,7 +854,7 @@ if ($appJs.Content -notmatch "Pacientes para acompanhar" -or
 }
 Write-Host "    Dashboard -> carteira: assets OK."
 
-Write-Host "[112/518] Validando estilos e versao v0.3.27..."
+Write-Host "[112/526] Validando estilos e versao v0.3.27..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "portfolio-patient-card" -or
     $css.Content -notmatch "portfolio-metrics" -or
@@ -862,16 +862,16 @@ if ($css.Content -notmatch "portfolio-patient-card" -or
     throw "Estilos da carteira incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    Carteira responsiva / v0.3.27: OK."
 
 
-Write-Host "[113/518] Validando schema de follow-up..."
+Write-Host "[113/526] Validando schema de follow-up..."
 $followTable = docker exec healthplatform-postgres psql -U healthplatform -d healthplatform -t -A -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_name='InteracoesAcompanhamento';"
 if ([int]$followTable -ne 1) { throw "Tabela InteracoesAcompanhamento ausente." }
 Write-Host "    InteracoesAcompanhamento: schema OK."
 
-Write-Host "[114/518] Validando endpoint de follow-up..."
+Write-Host "[114/526] Validando endpoint de follow-up..."
 $followSource = Get-Content .\src\HealthPlatform.Api\Controllers\FollowUpController.cs -Encoding UTF8 -Raw
 if ($followSource -notmatch 'api/pacientes/{pacienteId:guid}/followups' -or
     $followSource -notmatch 'RegistrarFollowUpRequest' -or
@@ -880,7 +880,7 @@ if ($followSource -notmatch 'api/pacientes/{pacienteId:guid}/followups' -or
 }
 Write-Host "    GET + POST de follow-up: backend OK."
 
-Write-Host "[115/518] Validando canais e proximo contato..."
+Write-Host "[115/526] Validando canais e proximo contato..."
 if ($followSource -notmatch "WhatsApp" -or
     $followSource -notmatch "Telefone" -or
     $followSource -notmatch "Presencial" -or
@@ -889,14 +889,14 @@ if ($followSource -notmatch "WhatsApp" -or
 }
 Write-Host "    Canais + proximo contato: backend OK."
 
-Write-Host "[116/518] Validando auditoria do contato..."
+Write-Host "[116/526] Validando auditoria do contato..."
 if ($followSource -notmatch "AuditLogs" -or
     $followSource -notmatch "nameof.InteracaoAcompanhamento.") {
     throw "Auditoria de follow-up ausente."
 }
 Write-Host "    Auditoria: backend OK."
 
-Write-Host "[117/518] Validando follow-up na carteira..."
+Write-Host "[117/526] Validando follow-up na carteira..."
 $carteiraSource = Get-Content .\src\HealthPlatform.Api\Controllers\CarteiraController.cs -Encoding UTF8 -Raw
 if ($carteiraSource -notmatch "UltimoContatoUtc" -or
     $carteiraSource -notmatch "ProximoContatoUtc" -or
@@ -905,7 +905,7 @@ if ($carteiraSource -notmatch "UltimoContatoUtc" -or
 }
 Write-Host "    Ultimo/proximo contato + volume 30d: backend OK."
 
-Write-Host "[118/518] Validando acao rapida de contato..."
+Write-Host "[118/526] Validando acao rapida de contato..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "openPortfolioContact" -or
     $appJs.Content -notmatch "Registrar contato" -or
@@ -914,7 +914,7 @@ if ($appJs.Content -notmatch "openPortfolioContact" -or
 }
 Write-Host "    Carteira -> registrar contato: assets OK."
 
-Write-Host "[119/518] Validando acao rapida de retorno..."
+Write-Host "[119/526] Validando acao rapida de retorno..."
 if ($appJs.Content -notmatch "openPortfolioReturn" -or
     $appJs.Content -notmatch "Agendar retorno" -or
     $appJs.Content -notmatch "/consultas") {
@@ -922,7 +922,7 @@ if ($appJs.Content -notmatch "openPortfolioReturn" -or
 }
 Write-Host "    Carteira -> agenda: assets OK."
 
-Write-Host "[120/518] Validando acao rapida de pendencia..."
+Write-Host "[120/526] Validando acao rapida de pendencia..."
 if ($appJs.Content -notmatch "openPortfolioPending" -or
     $appJs.Content -notmatch "Criar pendência" -or
     $appJs.Content -notmatch "/pendencias") {
@@ -930,7 +930,7 @@ if ($appJs.Content -notmatch "openPortfolioPending" -or
 }
 Write-Host "    Carteira -> pendencia: assets OK."
 
-Write-Host "[121/518] Validando historico no prontuario..."
+Write-Host "[121/526] Validando historico no prontuario..."
 if ($appJs.Content -notmatch "Follow-up" -or
     $appJs.Content -notmatch "followup-history-section" -or
     $appJs.Content -notmatch "patientQuickContact") {
@@ -938,25 +938,25 @@ if ($appJs.Content -notmatch "Follow-up" -or
 }
 Write-Host "    Prontuario: historico + contato rapido OK."
 
-Write-Host "[122/518] Validando estilos, upgrade e versao..."
+Write-Host "[122/526] Validando estilos, upgrade e versao..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "followup-history-list" -or
     $css.Content -notmatch "followup-channel") {
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / follow-up responsivo / upgrade OK."
 
 
-Write-Host "[123/518] Validando endpoint da fila de follow-up..."
+Write-Host "[123/526] Validando endpoint da fila de follow-up..."
 $fila = Invoke-RestMethod -Uri "$base/api/followups/fila?faixa=todos" -Headers $headers
 if ($null -eq $fila.total -or $null -eq $fila.itens) {
     throw "Fila de follow-up invalida."
 }
 Write-Host "    Pacientes com proximo contato: $($fila.total)"
 
-Write-Host "[124/518] Validando faixas de vencimento..."
+Write-Host "[124/526] Validando faixas de vencimento..."
 $filaSource = Get-Content .\src\HealthPlatform.Api\Controllers\FilaFollowUpController.cs -Encoding UTF8 -Raw
 if ($filaSource -notmatch "Vencido" -or
     $filaSource -notmatch "Proximos7Dias" -or
@@ -965,7 +965,7 @@ if ($filaSource -notmatch "Vencido" -or
 }
 Write-Host "    Vencido + hoje + 7 dias + futuro: backend OK."
 
-Write-Host "[125/518] Validando busca e filtros da fila..."
+Write-Host "[125/526] Validando busca e filtros da fila..."
 if ($filaSource -notmatch "busca" -or
     $filaSource -notmatch "faixa" -or
     $filaSource -notmatch "PacienteNome") {
@@ -973,7 +973,7 @@ if ($filaSource -notmatch "busca" -or
 }
 Write-Host "    Busca + faixa: backend OK."
 
-Write-Host "[126/518] Validando notificacao de follow-up..."
+Write-Host "[126/526] Validando notificacao de follow-up..."
 $notificationSource = Get-Content .\src\HealthPlatform.Api\Controllers\NotificacoesController.cs -Encoding UTF8 -Raw
 if ($notificationSource -notmatch "PROF:FOLLOWUP" -or
     $notificationSource -notmatch "InteracaoAcompanhamento" -or
@@ -982,7 +982,7 @@ if ($notificationSource -notmatch "PROF:FOLLOWUP" -or
 }
 Write-Host "    Proximo contato -> notificacao: backend OK."
 
-Write-Host "[127/518] Validando tela de follow-up..."
+Write-Host "[127/526] Validando tela de follow-up..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($index.Content -notmatch 'data-view=.followups.' -or
@@ -992,7 +992,7 @@ if ($index.Content -notmatch 'data-view=.followups.' -or
 }
 Write-Host "    Navegacao + fila: assets OK."
 
-Write-Host "[128/518] Validando acoes rapidas na fila..."
+Write-Host "[128/526] Validando acoes rapidas na fila..."
 if ($appJs.Content -notmatch "follow-queue-contact" -or
     $appJs.Content -notmatch "openPortfolioContact" -or
     $appJs.Content -notmatch "follow-queue-patient") {
@@ -1000,7 +1000,7 @@ if ($appJs.Content -notmatch "follow-queue-contact" -or
 }
 Write-Host "    Registrar contato + prontuario: assets OK."
 
-Write-Host "[129/518] Validando resumo de follow-up no dashboard..."
+Write-Host "[129/526] Validando resumo de follow-up no dashboard..."
 if ($appJs.Content -notmatch "dashboard-followup-section" -or
     $appJs.Content -notmatch "openFollowUpQueue" -or
     $appJs.Content -notmatch "Follow-ups") {
@@ -1008,7 +1008,7 @@ if ($appJs.Content -notmatch "dashboard-followup-section" -or
 }
 Write-Host "    Dashboard -> fila de follow-up: assets OK."
 
-Write-Host "[130/518] Validando estilos, popular e versao..."
+Write-Host "[130/526] Validando estilos, popular e versao..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 $popularSource = Get-Content .\POPULAR.ps1 -Encoding UTF8 -Raw
 if ($css.Content -notmatch "follow-queue-card" -or
@@ -1017,11 +1017,11 @@ if ($css.Content -notmatch "follow-queue-card" -or
     throw "Estilos/populacao de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / fila responsiva / demo follow-up: OK."
 
 
-Write-Host "[131/518] Validando endpoint de gestao..."
+Write-Host "[131/526] Validando endpoint de gestao..."
 $gestao = Invoke-RestMethod -Uri "$base/api/gestao/resumo?dias=30" -Headers $headers
 if ($null -eq $gestao.pacientesAtivos -or
     $null -eq $gestao.consultasRealizadas -or
@@ -1030,7 +1030,7 @@ if ($null -eq $gestao.pacientesAtivos -or
 }
 Write-Host "    Pacientes=$($gestao.pacientesAtivos) / realizadas=$($gestao.consultasRealizadas) / comparecimento=$($gestao.taxaComparecimentoPct)%"
 
-Write-Host "[132/518] Validando indicadores de consultas..."
+Write-Host "[132/526] Validando indicadores de consultas..."
 $gestaoSource = Get-Content .\src\HealthPlatform.Api\Controllers\GestaoController.cs -Encoding UTF8 -Raw
 if ($gestaoSource -notmatch "ConsultasRealizadas" -or
     $gestaoSource -notmatch "ConsultasCanceladas" -or
@@ -1040,7 +1040,7 @@ if ($gestaoSource -notmatch "ConsultasRealizadas" -or
 }
 Write-Host "    Realizadas + faltas + canceladas + taxa: backend OK."
 
-Write-Host "[133/518] Validando indicadores de acompanhamento..."
+Write-Host "[133/526] Validando indicadores de acompanhamento..."
 if ($gestaoSource -notmatch "FollowUpsRealizados" -or
     $gestaoSource -notmatch "FollowUpsVencidos" -or
     $gestaoSource -notmatch "PendenciasAbertas" -or
@@ -1049,7 +1049,7 @@ if ($gestaoSource -notmatch "FollowUpsRealizados" -or
 }
 Write-Host "    Follow-up + pendencias: backend OK."
 
-Write-Host "[134/518] Validando indicadores de engajamento..."
+Write-Host "[134/526] Validando indicadores de engajamento..."
 if ($gestaoSource -notmatch "TreinosRegistrados" -or
     $gestaoSource -notmatch "RegistrosDiario" -or
     $gestaoSource -notmatch "RegistrosMetas") {
@@ -1057,7 +1057,7 @@ if ($gestaoSource -notmatch "TreinosRegistrados" -or
 }
 Write-Host "    Treinos + diario + metas: backend OK."
 
-Write-Host "[135/518] Validando series gerenciais..."
+Write-Host "[135/526] Validando series gerenciais..."
 if ($gestaoSource -notmatch "ConsultasPorStatus" -or
     $gestaoSource -notmatch "AtividadePorSemana" -or
     $gestaoSource -notmatch "PacientesAtencao") {
@@ -1065,7 +1065,7 @@ if ($gestaoSource -notmatch "ConsultasPorStatus" -or
 }
 Write-Host "    Status + atividade semanal + pacientes de atencao: backend OK."
 
-Write-Host "[136/518] Validando tela Gestao..."
+Write-Host "[136/526] Validando tela Gestao..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($index.Content -notmatch 'data-view=.gestao.' -or
@@ -1075,7 +1075,7 @@ if ($index.Content -notmatch 'data-view=.gestao.' -or
 }
 Write-Host "    Navegacao + periodo + indicadores: assets OK."
 
-Write-Host "[137/518] Validando graficos e resumo no dashboard..."
+Write-Host "[137/526] Validando graficos e resumo no dashboard..."
 if ($appJs.Content -notmatch "managementBarChart" -or
     $appJs.Content -notmatch "managementMiniSeries" -or
     $appJs.Content -notmatch "dashboard-management-section") {
@@ -1083,7 +1083,7 @@ if ($appJs.Content -notmatch "managementBarChart" -or
 }
 Write-Host "    Barras + serie semanal + dashboard: assets OK."
 
-Write-Host "[138/518] Validando estilos e versao v0.3.27..."
+Write-Host "[138/526] Validando estilos e versao v0.3.27..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "management-grid" -or
     $css.Content -notmatch "management-bars" -or
@@ -1091,11 +1091,11 @@ if ($css.Content -notmatch "management-grid" -or
     throw "Estilos de gestao incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    Gestao responsiva / v0.3.27: OK."
 
 
-Write-Host "[139/518] Validando PREPARAR sem atualizacao automatica do dotnet..."
+Write-Host "[139/526] Validando PREPARAR sem atualizacao automatica do dotnet..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if ($setupSource -match "winget\s+(install|upgrade).*DotNet" -or
     $setupSource -match "dotnet-install\.ps1" -or
@@ -1108,7 +1108,7 @@ if ($setupSource -notmatch "FAST_DOTNET_CHECK" -or
 }
 Write-Host "    dotnet: check rapido apenas, sem update/install automatico."
 
-Write-Host "[140/518] Validando endpoint CSV gerencial..."
+Write-Host "[140/526] Validando endpoint CSV gerencial..."
 $exportSource = Get-Content .\src\HealthPlatform.Api\Controllers\GestaoExportController.cs -Encoding UTF8 -Raw
 if ($exportSource -notmatch 'HttpGet\("csv"\)' -or
     $exportSource -notmatch "text/csv" -or
@@ -1117,7 +1117,7 @@ if ($exportSource -notmatch 'HttpGet\("csv"\)' -or
 }
 Write-Host "    CSV: backend OK."
 
-Write-Host "[141/518] Validando conteudo longitudinal do CSV..."
+Write-Host "[141/526] Validando conteudo longitudinal do CSV..."
 if ($exportSource -notmatch "UltimaConsulta" -or
     $exportSource -notmatch "ProximaConsulta" -or
     $exportSource -notmatch "FollowUpsNoPeriodo" -or
@@ -1126,7 +1126,7 @@ if ($exportSource -notmatch "UltimaConsulta" -or
 }
 Write-Host "    Consulta + pendencia + follow-up: colunas OK."
 
-Write-Host "[142/518] Validando relatorio HTML imprimivel..."
+Write-Host "[142/526] Validando relatorio HTML imprimivel..."
 if ($exportSource -notmatch 'HttpGet\("html"\)' -or
     $exportSource -notmatch "window.print" -or
     $exportSource -notmatch "Comparecimento" -or
@@ -1135,7 +1135,7 @@ if ($exportSource -notmatch 'HttpGet\("html"\)' -or
 }
 Write-Host "    HTML imprimivel: backend OK."
 
-Write-Host "[143/518] Validando botoes de exportacao na Gestao..."
+Write-Host "[143/526] Validando botoes de exportacao na Gestao..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "managementExportCsv" -or
     $appJs.Content -notmatch "managementPrintReport" -or
@@ -1144,7 +1144,7 @@ if ($appJs.Content -notmatch "managementExportCsv" -or
 }
 Write-Host "    CSV + relatorio: assets OK."
 
-Write-Host "[144/518] Validando download autenticado..."
+Write-Host "[144/526] Validando download autenticado..."
 if ($appJs.Content -notmatch "hpAuthenticatedBlob" -or
     $appJs.Content -notmatch "Authorization" -or
     $appJs.Content -notmatch "createObjectURL") {
@@ -1152,7 +1152,7 @@ if ($appJs.Content -notmatch "hpAuthenticatedBlob" -or
 }
 Write-Host "    Bearer + Blob + nome de arquivo: assets OK."
 
-Write-Host "[145/518] Validando relatorio autenticado em nova janela..."
+Write-Host "[145/526] Validando relatorio autenticado em nova janela..."
 if ($appJs.Content -notmatch "openManagementPrintable" -or
     $appJs.Content -notmatch "/api/gestao/export/html" -or
     $appJs.Content -notmatch "window.open") {
@@ -1160,17 +1160,17 @@ if ($appJs.Content -notmatch "openManagementPrintable" -or
 }
 Write-Host "    HTML autenticado -> janela imprimivel: assets OK."
 
-Write-Host "[146/518] Validando estilos e versao v0.3.27..."
+Write-Host "[146/526] Validando estilos e versao v0.3.27..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "management-head-actions") {
     throw "Estilos de exportacao gerencial ausentes."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / exportacao gerencial / setup rapido: OK."
 
 
-Write-Host "[147/518] Validando perguntas de anamnese inativas..."
+Write-Host "[147/526] Validando perguntas de anamnese inativas..."
 $perguntasSource = Get-Content .\src\HealthPlatform.Api\Controllers\PerguntasAnamneseController.cs -Encoding UTF8 -Raw
 if ($perguntasSource -notmatch "incluirInativas" -or
     $perguntasSource -notmatch "incluirInativas \|\| x.Ativa") {
@@ -1178,7 +1178,7 @@ if ($perguntasSource -notmatch "incluirInativas" -or
 }
 Write-Host "    incluirInativas=true: backend OK."
 
-Write-Host "[148/518] Validando totais completos de insights..."
+Write-Host "[148/526] Validando totais completos de insights..."
 $insightSource = Get-Content .\src\HealthPlatform.Api\Controllers\InsightsController.cs -Encoding UTF8 -Raw
 if ($insightSource -match "SelectMany\(x => x.Insights\)" -and $insightSource -match "Take\(4\)") {
     throw "Totais do dashboard ainda dependem da lista visual truncada."
@@ -1188,14 +1188,14 @@ if ($insightSource -notmatch "totalInsights \+= insights.Count") {
 }
 Write-Host "    Totais agregados independem do top 4 visual."
 
-Write-Host "[149/518] Validando timezone das notificacoes..."
+Write-Host "[149/526] Validando timezone das notificacoes..."
 $notifSource = Get-Content .\src\HealthPlatform.Api\Controllers\NotificacoesController.cs -Encoding UTF8 -Raw
 if ($notifSource -match "ToLocalTime\(\):dd/MM HH:mm") {
     throw "Notificacoes ainda formatam horario pelo timezone do servidor."
 }
 Write-Host "    Instantes permanecem UTC; interface localiza no navegador."
 
-Write-Host "[150/518] Validando cleanup do polling no logout..."
+Write-Host "[150/526] Validando cleanup do polling no logout..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "logoutBtn.onclick" -or
     $appJs.Content -notmatch "patientLogoutBtn.onclick") {
@@ -1203,7 +1203,7 @@ if ($appJs.Content -notmatch "logoutBtn.onclick" -or
 }
 Write-Host "    Logout profissional + paciente: polling cleanup OK."
 
-Write-Host "[151/518] Validando navegacao robusta no portal..."
+Write-Host "[151/526] Validando navegacao robusta no portal..."
 if ($appJs.Content -notmatch "hpOpenPatientNotificationLink" -or
     $appJs.Content -notmatch "loadPatientPortalView" -or
     $appJs.Content -notmatch "loadPatientSection") {
@@ -1211,7 +1211,7 @@ if ($appJs.Content -notmatch "hpOpenPatientNotificationLink" -or
 }
 Write-Host "    Notificacao do paciente: fallback de navegacao OK."
 
-Write-Host "[152/518] Validando smoke de notificacoes sem mutacao..."
+Write-Host "[152/526] Validando smoke de notificacoes sem mutacao..."
 $testSource = Get-Content .\TESTAR.ps1 -Encoding UTF8 -Raw
 if ($testSource -match 'Invoke-RestMethod\s+-Uri\s+"\$base/api/notificacoes/sincronizar"') {
     throw "TESTAR ainda chama POST mutavel de sincronizacao."
@@ -1221,8 +1221,8 @@ if ($testSource -match '/api/notificacoes\?sincronizar=true') {
 }
 Write-Host "    TESTAR nao cria nem sincroniza notificacoes."
 
-Write-Host "[153/518] Validando copy historica de schema..."
-$schemaCheckMarker = 'Write-Host "[153/518] Validando copy historica de schema..."'
+Write-Host "[153/526] Validando copy historica de schema..."
+$schemaCheckMarker = 'Write-Host "[153/526] Validando copy historica de schema..."'
 $schemaCheckIndex = $testSource.IndexOf($schemaCheckMarker)
 if ($schemaCheckIndex -lt 0) {
     throw "Nao foi possivel localizar o bloco de validacao de schema."
@@ -1234,13 +1234,13 @@ if ($historicalTestSource -match "nao exige schema novo" -or
 }
 Write-Host "    Copy de schema atualizada."
 
-Write-Host "[154/518] Validando versao v0.3.27..."
+Write-Host "[154/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / estabilizacao + qualidade: OK."
 
 
-Write-Host "[155/518] Validando endpoint de busca global..."
+Write-Host "[155/526] Validando endpoint de busca global..."
 $buscaSource = Get-Content .\src\HealthPlatform.Api\Controllers\BuscaGlobalController.cs -Encoding UTF8 -Raw
 if ($buscaSource -notmatch 'Route\("api/busca"\)' -or
     $buscaSource -notmatch "EF.Functions.ILike") {
@@ -1248,7 +1248,7 @@ if ($buscaSource -notmatch 'Route\("api/busca"\)' -or
 }
 Write-Host "    /api/busca + ILIKE: backend OK."
 
-Write-Host "[156/518] Validando fontes da busca..."
+Write-Host "[156/526] Validando fontes da busca..."
 if ($buscaSource -notmatch '"Paciente"' -or
     $buscaSource -notmatch '"Pendência"' -or
     $buscaSource -notmatch '"Follow-up"' -or
@@ -1257,14 +1257,14 @@ if ($buscaSource -notmatch '"Paciente"' -or
 }
 Write-Host "    Paciente + pendencia + follow-up + consulta: OK."
 
-Write-Host "[157/518] Validando isolamento por organizacao..."
+Write-Host "[157/526] Validando isolamento por organizacao..."
 if ($buscaSource -notmatch "currentUser.OrganizationId" -or
     $buscaSource -notmatch "x.OrganizacaoId == org") {
     throw "Busca global sem isolamento organizacional."
 }
 Write-Host "    Multi-tenant: filtro de organizacao presente."
 
-Write-Host "[158/518] Validando botao e atalho da busca..."
+Write-Host "[158/526] Validando botao e atalho da busca..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($index.Content -notmatch "globalSearchButton" -or
@@ -1274,7 +1274,7 @@ if ($index.Content -notmatch "globalSearchButton" -or
 }
 Write-Host "    Botao + Ctrl/Cmd+K: assets OK."
 
-Write-Host "[159/518] Validando modal e debounce..."
+Write-Host "[159/526] Validando modal e debounce..."
 if ($appJs.Content -notmatch "globalSearchModal" -or
     $appJs.Content -notmatch "hpGlobalSearchTimer" -or
     $appJs.Content -notmatch "setTimeout") {
@@ -1282,7 +1282,7 @@ if ($appJs.Content -notmatch "globalSearchModal" -or
 }
 Write-Host "    Modal + debounce: assets OK."
 
-Write-Host "[160/518] Validando acoes dos resultados..."
+Write-Host "[160/526] Validando acoes dos resultados..."
 if ($appJs.Content -notmatch "hpExecuteGlobalSearchResult" -or
     $appJs.Content -notmatch "openPatient" -or
     $appJs.Content -notmatch "navigate\('pendencias'\)" -or
@@ -1292,7 +1292,7 @@ if ($appJs.Content -notmatch "hpExecuteGlobalSearchResult" -or
 }
 Write-Host "    Prontuario + pendencias + follow-up + agenda: assets OK."
 
-Write-Host "[161/518] Validando estilos responsivos da busca..."
+Write-Host "[161/526] Validando estilos responsivos da busca..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "global-search-dialog" -or
     $css.Content -notmatch "global-search-result" -or
@@ -1301,13 +1301,13 @@ if ($css.Content -notmatch "global-search-dialog" -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[162/518] Validando versao v0.3.27..."
+Write-Host "[162/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / busca global + central de acoes: OK."
 
 
-Write-Host "[163/518] Validando endpoint da Central do Dia..."
+Write-Host "[163/526] Validando endpoint da Central do Dia..."
 $centralSource = Get-Content .\src\HealthPlatform.Api\Controllers\CentralDiaController.cs -Encoding UTF8 -Raw
 if ($centralSource -notmatch 'Route\("api/central-dia"\)' -or
     $centralSource -notmatch "offsetMinutos") {
@@ -1315,7 +1315,7 @@ if ($centralSource -notmatch 'Route\("api/central-dia"\)' -or
 }
 Write-Host "    Endpoint + offset local: backend OK."
 
-Write-Host "[164/518] Validando agenda do dia..."
+Write-Host "[164/526] Validando agenda do dia..."
 if ($centralSource -notmatch "ConsultasHoje" -or
     $centralSource -notmatch "DataHoraUtc >= inicioUtc" -or
     $centralSource -notmatch "DataHoraUtc < fimUtc") {
@@ -1323,7 +1323,7 @@ if ($centralSource -notmatch "ConsultasHoje" -or
 }
 Write-Host "    Janela local do dia -> UTC: backend OK."
 
-Write-Host "[165/518] Validando follow-ups do dia..."
+Write-Host "[165/526] Validando follow-ups do dia..."
 if ($centralSource -notmatch "FollowUpsVencidos" -or
     $centralSource -notmatch "FollowUpsHoje" -or
     $centralSource -notmatch '"Vencido"' -or
@@ -1332,7 +1332,7 @@ if ($centralSource -notmatch "FollowUpsVencidos" -or
 }
 Write-Host "    Vencidos + hoje: backend OK."
 
-Write-Host "[166/518] Validando pendencias prioritarias..."
+Write-Host "[166/526] Validando pendencias prioritarias..."
 if ($centralSource -notmatch "PendenciasPrioritarias" -or
     $centralSource -notmatch 'x.Severidade == "Alta"' -or
     $centralSource -notmatch "VencimentoUtc") {
@@ -1340,7 +1340,7 @@ if ($centralSource -notmatch "PendenciasPrioritarias" -or
 }
 Write-Host "    Alta prioridade + vencimento: backend OK."
 
-Write-Host "[167/518] Validando pacientes para revisao..."
+Write-Host "[167/526] Validando pacientes para revisao..."
 if ($centralSource -notmatch "PacientesRevisao" -or
     $centralSource -notmatch "SemRetornoFuturo" -or
     $centralSource -notmatch "PendenciasAbertas") {
@@ -1348,7 +1348,7 @@ if ($centralSource -notmatch "PacientesRevisao" -or
 }
 Write-Host "    Pendencias + retorno futuro: backend OK."
 
-Write-Host "[168/518] Validando tela Hoje..."
+Write-Host "[168/526] Validando tela Hoje..."
 $index = Invoke-WebRequest -Uri "$base/" -UseBasicParsing
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($index.Content -notmatch 'data-view=.central-dia.' -or
@@ -1358,7 +1358,7 @@ if ($index.Content -notmatch 'data-view=.central-dia.' -or
 }
 Write-Host "    Navegacao + carregamento: assets OK."
 
-Write-Host "[169/518] Validando acoes rapidas e dashboard..."
+Write-Host "[169/526] Validando acoes rapidas e dashboard..."
 if ($appJs.Content -notmatch "central-register-contact" -or
     $appJs.Content -notmatch "central-open-patient" -or
     $appJs.Content -notmatch "dashboard-central-day" -or
@@ -1367,7 +1367,7 @@ if ($appJs.Content -notmatch "central-register-contact" -or
 }
 Write-Host "    Contato + prontuario + filas + dashboard: assets OK."
 
-Write-Host "[170/518] Validando estilos e versao v0.3.27..."
+Write-Host "[170/526] Validando estilos e versao v0.3.27..."
 $css = Get-Utf8WebAsset -Uri "$base/app.css" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.css"
 if ($css.Content -notmatch "central-day-grid" -or
     $css.Content -notmatch "central-day-row" -or
@@ -1375,11 +1375,11 @@ if ($css.Content -notmatch "central-day-grid" -or
     throw "Estilos da Central do Dia incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Central do Dia responsiva: OK."
 
 
-Write-Host "[171/518] Validando schema de evolucoes clinicas SOAP..."
+Write-Host "[171/526] Validando schema de evolucoes clinicas SOAP..."
 $evoEntity = Get-Content .\src\HealthPlatform.Domain\Entities\EvolucaoClinica.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if ($evoEntity -notmatch "Subjetivo" -or
@@ -1391,7 +1391,7 @@ if ($evoEntity -notmatch "Subjetivo" -or
 }
 Write-Host "    S + O + A + P: modelo e EF OK."
 
-Write-Host "[172/518] Validando endpoint de evolucoes..."
+Write-Host "[172/526] Validando endpoint de evolucoes..."
 $evoController = Get-Content .\src\HealthPlatform.Api\Controllers\EvolucoesClinicasController.cs -Encoding UTF8 -Raw
 if ($evoController -notmatch 'api/pacientes/{pacienteId:guid}/evolucoes' -or
     $evoController -notmatch 'HttpPost' -or
@@ -1400,7 +1400,7 @@ if ($evoController -notmatch 'api/pacientes/{pacienteId:guid}/evolucoes' -or
 }
 Write-Host "    GET + POST + PUT: backend OK."
 
-Write-Host "[173/518] Validando consulta opcional e isolamento..."
+Write-Host "[173/526] Validando consulta opcional e isolamento..."
 if ($evoController -notmatch "ConsultaValida" -or
     $evoController -notmatch "currentUser.OrganizationId" -or
     $evoController -notmatch "PacienteId == pacienteId") {
@@ -1408,7 +1408,7 @@ if ($evoController -notmatch "ConsultaValida" -or
 }
 Write-Host "    Consulta opcional + multi-tenant: backend OK."
 
-Write-Host "[174/518] Validando auditoria da evolucao..."
+Write-Host "[174/526] Validando auditoria da evolucao..."
 if ($evoController -notmatch 'AdicionarAuditoria\("CREATE"' -or
     $evoController -notmatch 'AdicionarAuditoria\("UPDATE"' -or
     $evoController -notmatch "DadosAnterioresJson" -or
@@ -1417,7 +1417,7 @@ if ($evoController -notmatch 'AdicionarAuditoria\("CREATE"' -or
 }
 Write-Host "    CREATE + UPDATE com antes/depois: OK."
 
-Write-Host "[175/518] Validando evolucao na timeline..."
+Write-Host "[175/526] Validando evolucao na timeline..."
 $timelineSource = Get-Content .\src\HealthPlatform.Api\Controllers\TimelineController.cs -Encoding UTF8 -Raw
 if ($timelineSource -notmatch "EvolucoesClinicas" -or
     $timelineSource -notmatch '"evolucao_clinica"' -or
@@ -1426,7 +1426,7 @@ if ($timelineSource -notmatch "EvolucoesClinicas" -or
 }
 Write-Host "    Evolucao aparece na timeline clinica."
 
-Write-Host "[176/518] Validando aba Evolucoes no prontuario..."
+Write-Host "[176/526] Validando aba Evolucoes no prontuario..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "tabButton\('evolucoes'" -or
     $appJs.Content -notmatch "soap-card" -or
@@ -1435,7 +1435,7 @@ if ($appJs.Content -notmatch "tabButton\('evolucoes'" -or
 }
 Write-Host "    Historico SOAP: assets OK."
 
-Write-Host "[177/518] Validando registro visual SOAP..."
+Write-Host "[177/526] Validando registro visual SOAP..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openEvolutionForm") -or
     -not $appJsSource.Contains(",'subjetivo'") -or
@@ -1450,7 +1450,7 @@ if (-not $appJsSource.Contains("openEvolutionForm") -or
 }
 Write-Host "    Registro estruturado S/O/A/P: assets OK."
 
-Write-Host "[178/518] Validando edicao visual da evolucao..."
+Write-Host "[178/526] Validando edicao visual da evolucao..."
 if (-not $appJsSource.Contains("edit-evolution") -or
     -not $appJsSource.Contains("method:id?'PUT':'POST'") -or
     -not $appJsSource.Contains("/api/evolucoes/")) {
@@ -1458,7 +1458,7 @@ if (-not $appJsSource.Contains("edit-evolution") -or
 }
 Write-Host "    Historico + edicao auditada: assets OK."
 
-Write-Host "[179/518] Validando upgrade SQL SOAP historico e PREPARAR atual..."
+Write-Host "[179/526] Validando upgrade SQL SOAP historico e PREPARAR atual..."
 $soapSqlSource = Get-Content .\scripts\sql\v0.3.15_evolucoes_clinicas.sql -Encoding UTF8 -Raw
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $soapSqlSource.Contains('"EvolucoesClinicas"') -or
@@ -1475,18 +1475,18 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SOAP v0.3.15 preservado / PREPARAR atual 31/31: OK."
 
-Write-Host "[180/518] Validando estilos e versao v0.3.27..."
+Write-Host "[180/526] Validando estilos e versao v0.3.27..."
 $soapCssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $soapCssSource.Contains("soap-grid") -or
     -not $soapCssSource.Contains("soap-card")) {
     throw "Estilos SOAP incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / evolucao clinica SOAP: OK."
 
 
-Write-Host "[181/518] Validando endpoint de resumo clinico..."
+Write-Host "[181/526] Validando endpoint de resumo clinico..."
 $resumoSource = Get-Content .\src\HealthPlatform.Api\Controllers\ResumoClinicoController.cs -Encoding UTF8 -Raw
 if (-not $resumoSource.Contains('Route("api/pacientes/{pacienteId:guid}/resumo-clinico")') -or
     -not $resumoSource.Contains("ResumoClinicoResponse")) {
@@ -1494,7 +1494,7 @@ if (-not $resumoSource.Contains('Route("api/pacientes/{pacienteId:guid}/resumo-c
 }
 Write-Host "    Endpoint consolidado: backend OK."
 
-Write-Host "[182/518] Validando consulta e SOAP no resumo..."
+Write-Host "[182/526] Validando consulta e SOAP no resumo..."
 if (-not $resumoSource.Contains("UltimaConsulta") -or
     -not $resumoSource.Contains("ProximaConsulta") -or
     -not $resumoSource.Contains("UltimaEvolucao") -or
@@ -1503,7 +1503,7 @@ if (-not $resumoSource.Contains("UltimaConsulta") -or
 }
 Write-Host "    Ultima/proxima consulta + SOAP: OK."
 
-Write-Host "[183/518] Validando corpo e anamnese..."
+Write-Host "[183/526] Validando corpo e anamnese..."
 if (-not $resumoSource.Contains("UltimaAvaliacao") -or
     -not $resumoSource.Contains("db.Avaliacoes") -or
     -not $resumoSource.Contains("UltimaAnamnese") -or
@@ -1512,7 +1512,7 @@ if (-not $resumoSource.Contains("UltimaAvaliacao") -or
 }
 Write-Host "    Avaliacao corporal + anamnese: OK."
 
-Write-Host "[184/518] Validando exames alterados..."
+Write-Host "[184/526] Validando exames alterados..."
 if (-not $resumoSource.Contains("ExamesAlterados") -or
     -not $resumoSource.Contains("ReferenciaMinima") -or
     -not $resumoSource.Contains("ReferenciaMaxima") -or
@@ -1522,7 +1522,7 @@ if (-not $resumoSource.Contains("ExamesAlterados") -or
 }
 Write-Host "    Faixas numericas registradas: backend OK."
 
-Write-Host "[185/518] Validando metas, treinos e pendencias..."
+Write-Host "[185/526] Validando metas, treinos e pendencias..."
 if (-not $resumoSource.Contains("MetasAtivas") -or
     -not $resumoSource.Contains("TreinosUltimos30Dias") -or
     -not $resumoSource.Contains("DataHoraInicioUtc") -or
@@ -1531,7 +1531,7 @@ if (-not $resumoSource.Contains("MetasAtivas") -or
 }
 Write-Host "    Metas + treino + pendencias: backend OK."
 
-Write-Host "[186/518] Validando resumo no prontuario..."
+Write-Host "[186/526] Validando resumo no prontuario..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpClinicalSummaryCard") -or
     -not $appJsSource.Contains("/resumo-clinico") -or
@@ -1540,7 +1540,7 @@ if (-not $appJsSource.Contains("hpClinicalSummaryCard") -or
 }
 Write-Host "    Resumo integrado ao prontuario: assets OK."
 
-Write-Host "[187/518] Validando atualizacao e responsividade..."
+Write-Host "[187/526] Validando atualizacao e responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("clinicalSummaryRefresh") -or
     -not $cssSource.Contains("clinical-summary-grid") -or
@@ -1549,13 +1549,13 @@ if (-not $appJsSource.Contains("clinicalSummaryRefresh") -or
 }
 Write-Host "    Atualizacao manual + desktop/mobile: assets OK."
 
-Write-Host "[188/518] Validando versao v0.3.27..."
+Write-Host "[188/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / resumo clinico consolidado: OK."
 
 
-Write-Host "[189/518] Validando texto de handoff clinico..."
+Write-Host "[189/526] Validando texto de handoff clinico..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpClinicalSummaryText") -or
     -not $appJsSource.Contains("RESUMO CLÍNICO") -or
@@ -1564,7 +1564,7 @@ if (-not $appJsSource.Contains("hpClinicalSummaryText") -or
 }
 Write-Host "    Resumo textual estruturado: assets OK."
 
-Write-Host "[190/518] Validando conteudo SOAP no handoff..."
+Write-Host "[190/526] Validando conteudo SOAP no handoff..."
 if (-not $appJsSource.Contains("r.ultimaEvolucao.subjetivo") -or
     -not $appJsSource.Contains("r.ultimaEvolucao.objetivo") -or
     -not $appJsSource.Contains("r.ultimaEvolucao.avaliacao") -or
@@ -1573,7 +1573,7 @@ if (-not $appJsSource.Contains("r.ultimaEvolucao.subjetivo") -or
 }
 Write-Host "    S/O/A/P presentes no texto de handoff."
 
-Write-Host "[191/518] Validando copia para clipboard..."
+Write-Host "[191/526] Validando copia para clipboard..."
 if (-not $appJsSource.Contains("hpCopyClinicalSummary") -or
     -not $appJsSource.Contains("navigator.clipboard") -or
     -not $appJsSource.Contains("document.execCommand('copy')")) {
@@ -1581,7 +1581,7 @@ if (-not $appJsSource.Contains("hpCopyClinicalSummary") -or
 }
 Write-Host "    Clipboard moderno + fallback: assets OK."
 
-Write-Host "[192/518] Validando impressao do resumo..."
+Write-Host "[192/526] Validando impressao do resumo..."
 if (-not $appJsSource.Contains("hpClinicalSummaryPrintHtml") -or
     -not $appJsSource.Contains("hpPrintClinicalSummary") -or
     -not $appJsSource.Contains("window.print()")) {
@@ -1589,14 +1589,14 @@ if (-not $appJsSource.Contains("hpClinicalSummaryPrintHtml") -or
 }
 Write-Host "    HTML imprimivel + print automatico: assets OK."
 
-Write-Host "[193/518] Validando seguranca basica do HTML imprimivel..."
+Write-Host "[193/526] Validando seguranca basica do HTML imprimivel..."
 if (-not $appJsSource.Contains("const escPrint=v=>esc(v??'')") -or
     -not $appJsSource.Contains("noopener,noreferrer")) {
     throw "Protecoes da impressao incompletas."
 }
 Write-Host "    Escape de conteudo + nova janela isolada: assets OK."
 
-Write-Host "[194/518] Validando botoes no resumo clinico..."
+Write-Host "[194/526] Validando botoes no resumo clinico..."
 if (-not $appJsSource.Contains('id="clinicalSummaryCopy"') -or
     -not $appJsSource.Contains('id="clinicalSummaryPrint"') -or
     -not $appJsSource.Contains('id="clinicalSummaryRefresh"')) {
@@ -1604,7 +1604,7 @@ if (-not $appJsSource.Contains('id="clinicalSummaryCopy"') -or
 }
 Write-Host "    Copiar + imprimir + atualizar: assets OK."
 
-Write-Host "[195/518] Validando responsividade das acoes..."
+Write-Host "[195/526] Validando responsividade das acoes..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("clinical-summary-actions") -or
     -not $cssSource.Contains("@media(max-width:620px)")) {
@@ -1612,13 +1612,13 @@ if (-not $cssSource.Contains("clinical-summary-actions") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[196/518] Validando versao v0.3.27..."
+Write-Host "[196/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / handoff clinico + impressao: OK."
 
 
-Write-Host "[197/518] Validando endpoint de equipe..."
+Write-Host "[197/526] Validando endpoint de equipe..."
 $teamSource = Get-Content .\src\HealthPlatform.Api\Controllers\EquipeController.cs -Encoding UTF8 -Raw
 if (-not $teamSource.Contains('Route("api/equipe")') -or
     -not $teamSource.Contains("[HttpGet]") -or
@@ -1628,7 +1628,7 @@ if (-not $teamSource.Contains('Route("api/equipe")') -or
 }
 Write-Host "    GET + POST + PUT: backend OK."
 
-Write-Host "[198/518] Validando isolamento e administracao..."
+Write-Host "[198/526] Validando isolamento e administracao..."
 if (-not $teamSource.Contains("currentUser.OrganizationId") -or
     -not $teamSource.Contains("TipoUsuario.Admin") -or
     -not $teamSource.Contains("EhAdmin")) {
@@ -1636,7 +1636,7 @@ if (-not $teamSource.Contains("currentUser.OrganizationId") -or
 }
 Write-Host "    Organizacao + admin: backend OK."
 
-Write-Host "[199/518] Validando criacao de acesso..."
+Write-Host "[199/526] Validando criacao de acesso..."
 if (-not $teamSource.Contains("userManager.CreateAsync") -or
     -not $teamSource.Contains("SenhaTemporaria") -or
     -not $teamSource.Contains("AddToRoleAsync")) {
@@ -1644,7 +1644,7 @@ if (-not $teamSource.Contains("userManager.CreateAsync") -or
 }
 Write-Host "    Identity + senha temporaria + role: backend OK."
 
-Write-Host "[200/518] Validando sincronizacao de tipo e role..."
+Write-Host "[200/526] Validando sincronizacao de tipo e role..."
 if (-not $teamSource.Contains("RemoveFromRolesAsync") -or
     -not $teamSource.Contains("usuario.TipoUsuario = tipo") -or
     -not $teamSource.Contains("userManager.UpdateAsync")) {
@@ -1652,7 +1652,7 @@ if (-not $teamSource.Contains("RemoveFromRolesAsync") -or
 }
 Write-Host "    TipoUsuario + Identity Role: backend OK."
 
-Write-Host "[201/518] Validando perfil profissional..."
+Write-Host "[201/526] Validando perfil profissional..."
 if (-not $teamSource.Contains("ExigePerfilProfissional") -or
     -not $teamSource.Contains("RegistroProfissional") -or
     -not $teamSource.Contains("TipoUsuario.Nutricionista") -or
@@ -1661,14 +1661,14 @@ if (-not $teamSource.Contains("ExigePerfilProfissional") -or
 }
 Write-Host "    Medico + nutricionista + personal: backend OK."
 
-Write-Host "[202/518] Validando protecao do proprio administrador..."
+Write-Host "[202/526] Validando protecao do proprio administrador..."
 if (-not $teamSource.Contains("usuario.Id == currentUser.UserId") -or
     -not $teamSource.Contains("nao pode remover o proprio acesso administrativo")) {
     throw "Protecao do admin atual incompleta."
 }
 Write-Host "    Auto-bloqueio administrativo impedido."
 
-Write-Host "[203/518] Validando auditoria da equipe..."
+Write-Host "[203/526] Validando auditoria da equipe..."
 if (-not $teamSource.Contains('"CREATE"') -or
     -not $teamSource.Contains('"UPDATE"') -or
     -not $teamSource.Contains('"UsuarioEquipe"') -or
@@ -1677,7 +1677,7 @@ if (-not $teamSource.Contains('"CREATE"') -or
 }
 Write-Host "    CREATE + UPDATE auditados."
 
-Write-Host "[204/518] Validando tela Equipe..."
+Write-Host "[204/526] Validando tela Equipe..."
 $indexSource = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $indexSource.Contains('data-route="equipe"') -or
@@ -1688,7 +1688,7 @@ if (-not $indexSource.Contains('data-route="equipe"') -or
 }
 Write-Host "    Navegacao + cadastro + edicao: assets OK."
 
-Write-Host "[205/518] Validando visibilidade admin e responsividade..."
+Write-Host "[205/526] Validando visibilidade admin e responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $indexSource.Contains("admin-only hidden") -or
     -not $appJsSource.Contains("u.tipoUsuario!=='Admin'") -or
@@ -1698,13 +1698,13 @@ if (-not $indexSource.Contains("admin-only hidden") -or
 }
 Write-Host "    Admin-only + desktop/mobile: assets OK."
 
-Write-Host "[206/518] Validando versao v0.3.27..."
+Write-Host "[206/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe + gestao de profissionais: OK."
 
 
-Write-Host "[207/518] Validando filtros da equipe..."
+Write-Host "[207/526] Validando filtros da equipe..."
 $teamSource = Get-Content .\src\HealthPlatform.Api\Controllers\EquipeController.cs -Encoding UTF8 -Raw
 if (-not $teamSource.Contains("[FromQuery] string? busca") -or
     -not $teamSource.Contains("[FromQuery] string? tipo") -or
@@ -1714,7 +1714,7 @@ if (-not $teamSource.Contains("[FromQuery] string? busca") -or
 }
 Write-Host "    Busca + tipo + status: backend OK."
 
-Write-Host "[208/518] Validando redefinicao de senha..."
+Write-Host "[208/526] Validando redefinicao de senha..."
 if (-not $teamSource.Contains('redefinir-senha') -or
     -not $teamSource.Contains("GeneratePasswordResetTokenAsync") -or
     -not $teamSource.Contains("ResetPasswordAsync")) {
@@ -1722,7 +1722,7 @@ if (-not $teamSource.Contains('redefinir-senha') -or
 }
 Write-Host "    Token Identity + reset: backend OK."
 
-Write-Host "[209/518] Validando escopo e protecoes do reset..."
+Write-Host "[209/526] Validando escopo e protecoes do reset..."
 if (-not $teamSource.Contains("usuarioId == currentUser.UserId") -or
     -not $teamSource.Contains("x.OrganizacaoId == currentUser.OrganizationId") -or
     -not $teamSource.Contains("Reative o acesso antes de redefinir a senha")) {
@@ -1730,7 +1730,7 @@ if (-not $teamSource.Contains("usuarioId == currentUser.UserId") -or
 }
 Write-Host "    Self-reset administrativo + tenant + inativo: protegidos."
 
-Write-Host "[210/518] Validando auditoria segura de senha..."
+Write-Host "[210/526] Validando auditoria segura de senha..."
 if (-not $teamSource.Contains('"PASSWORD_RESET"') -or
     -not $teamSource.Contains("SenhaTemporariaRedefinida = true")) {
     throw "Auditoria do reset incompleta."
@@ -1741,7 +1741,7 @@ if ($teamSource.Contains("NovaSenhaTemporaria =") -or
 }
 Write-Host "    Evento auditado sem persistir a senha."
 
-Write-Host "[211/518] Validando filtros visuais..."
+Write-Host "[211/526] Validando filtros visuais..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("teamSearch") -or
     -not $appJsSource.Contains("teamTypeFilter") -or
@@ -1751,7 +1751,7 @@ if (-not $appJsSource.Contains("teamSearch") -or
 }
 Write-Host "    Busca com debounce + filtros: assets OK."
 
-Write-Host "[212/518] Validando acao visual de senha..."
+Write-Host "[212/526] Validando acao visual de senha..."
 if (-not $appJsSource.Contains("openResetTeamPassword") -or
     -not $appJsSource.Contains("team-reset-password") -or
     -not $appJsSource.Contains("/redefinir-senha")) {
@@ -1759,7 +1759,7 @@ if (-not $appJsSource.Contains("openResetTeamPassword") -or
 }
 Write-Host "    Modal + endpoint de reset: assets OK."
 
-Write-Host "[213/518] Validando responsividade da equipe v2..."
+Write-Host "[213/526] Validando responsividade da equipe v2..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("team-filterbar") -or
     -not $cssSource.Contains("team-row-actions") -or
@@ -1768,13 +1768,13 @@ if (-not $cssSource.Contains("team-filterbar") -or
 }
 Write-Host "    Filtros + acoes desktop/mobile: OK."
 
-Write-Host "[214/518] Validando versao v0.3.27..."
+Write-Host "[214/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe v2 + seguranca de acesso: OK."
 
 
-Write-Host "[215/518] Validando endpoint Minha Conta..."
+Write-Host "[215/526] Validando endpoint Minha Conta..."
 $configSource = Get-Content .\src\HealthPlatform.Api\Controllers\ConfiguracoesController.cs -Encoding UTF8 -Raw
 if (-not $configSource.Contains('[HttpGet("minha-conta")]') -or
     -not $configSource.Contains('[HttpPut("minha-conta")]')) {
@@ -1782,7 +1782,7 @@ if (-not $configSource.Contains('[HttpGet("minha-conta")]') -or
 }
 Write-Host "    GET + PUT da conta: backend OK."
 
-Write-Host "[216/518] Validando alteracao da propria senha..."
+Write-Host "[216/526] Validando alteracao da propria senha..."
 if (-not $configSource.Contains('minha-conta/alterar-senha') -or
     -not $configSource.Contains("ChangePasswordAsync") -or
     -not $configSource.Contains("SenhaAtual") -or
@@ -1791,7 +1791,7 @@ if (-not $configSource.Contains('minha-conta/alterar-senha') -or
 }
 Write-Host "    Senha atual + nova senha + confirmacao: backend OK."
 
-Write-Host "[217/518] Validando protecoes da troca de senha..."
+Write-Host "[217/526] Validando protecoes da troca de senha..."
 if (-not $configSource.Contains("A nova senha deve ser diferente da senha atual") -or
     -not $configSource.Contains("request.NovaSenha.Length < 10") -or
     -not $configSource.Contains("currentUser.OrganizationId")) {
@@ -1799,7 +1799,7 @@ if (-not $configSource.Contains("A nova senha deve ser diferente da senha atual"
 }
 Write-Host "    Diferenca + comprimento + tenant: backend OK."
 
-Write-Host "[218/518] Validando auditoria segura da conta..."
+Write-Host "[218/526] Validando auditoria segura da conta..."
 if (-not $configSource.Contains('"PASSWORD_CHANGE"') -or
     -not $configSource.Contains("SenhaAlterada = true")) {
     throw "Auditoria da troca de senha incompleta."
@@ -1810,14 +1810,14 @@ if ($configSource.Contains("NovaSenha = request.") -or
 }
 Write-Host "    PASSWORD_CHANGE auditado sem armazenar credenciais."
 
-Write-Host "[219/518] Validando sincronizacao do nome profissional..."
+Write-Host "[219/526] Validando sincronizacao do nome profissional..."
 if (-not $configSource.Contains("profissional.Nome = usuario.Nome") -or
     -not $configSource.Contains('"MinhaConta"')) {
     throw "Sincronizacao de nome incompleta."
 }
 Write-Host "    Usuario + perfil profissional sincronizados."
 
-Write-Host "[220/518] Validando painel Minha Conta..."
+Write-Host "[220/526] Validando painel Minha Conta..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("ensureAccountPanel") -or
     -not $appJsSource.Contains("accountChangePassword") -or
@@ -1826,7 +1826,7 @@ if (-not $appJsSource.Contains("ensureAccountPanel") -or
 }
 Write-Host "    Dados + editar nome + alterar senha: assets OK."
 
-Write-Host "[221/518] Validando responsividade da conta..."
+Write-Host "[221/526] Validando responsividade da conta..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("account-panel") -or
     -not $cssSource.Contains("account-info-grid") -or
@@ -1835,13 +1835,13 @@ if (-not $cssSource.Contains("account-panel") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[222/518] Validando versao v0.3.27..."
+Write-Host "[222/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Minha Conta + troca de senha: OK."
 
 
-Write-Host "[223/518] Validando schema de progressao alimentar..."
+Write-Host "[223/526] Validando schema de progressao alimentar..."
 $planEntity = Get-Content .\src\HealthPlatform.Domain\Entities\PlanoAlimentar.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $planEntity.Contains("PlanoOrigemId") -or
@@ -1852,7 +1852,7 @@ if (-not $planEntity.Contains("PlanoOrigemId") -or
 }
 Write-Host "    Origem + versao + ajuste: modelo OK."
 
-Write-Host "[224/518] Validando simulador nutricional..."
+Write-Host "[224/526] Validando simulador nutricional..."
 $planSource = Get-Content .\src\HealthPlatform.Api\Controllers\PlanosAlimentaresController.cs -Encoding UTF8 -Raw
 if (-not $planSource.Contains("simular-ajuste") -or
     -not $planSource.Contains("SimulacaoAjustePlanoResponse") -or
@@ -1861,7 +1861,7 @@ if (-not $planSource.Contains("simular-ajuste") -or
 }
 Write-Host "    Percentual/calorias -> macros projetados: backend OK."
 
-Write-Host "[225/518] Validando duplicacao versionada..."
+Write-Host "[225/526] Validando duplicacao versionada..."
 if (-not $planSource.Contains('/duplicar') -or
     -not $planSource.Contains("PlanoOrigemId = raizId") -or
     -not $planSource.Contains("Versao = maiorVersao + 1")) {
@@ -1869,7 +1869,7 @@ if (-not $planSource.Contains('/duplicar') -or
 }
 Write-Host "    Nova versao preserva linhagem."
 
-Write-Host "[226/518] Validando escala de porcoes..."
+Write-Host "[226/526] Validando escala de porcoes..."
 if (-not $planSource.Contains("EscalarQuantidade(itemOrigem.Quantidade") -or
     -not $planSource.Contains("EscalarQuantidade(itemOrigem.QuantidadeGramas") -or
     -not $planSource.Contains("EscalarQuantidade(subOrigem.QuantidadeGramas")) {
@@ -1877,28 +1877,28 @@ if (-not $planSource.Contains("EscalarQuantidade(itemOrigem.Quantidade") -or
 }
 Write-Host "    Itens + gramas + substituicoes: backend OK."
 
-Write-Host "[227/518] Validando ajuste por calorias alvo..."
+Write-Host "[227/526] Validando ajuste por calorias alvo..."
 if (-not $planSource.Contains("caloriasAlvo.Value / caloriasAtuais") -or
     -not $planSource.Contains("percentual.HasValue && caloriasAlvo.HasValue")) {
     throw "Ajuste por calorias alvo incompleto."
 }
 Write-Host "    Calorias alvo convertem para fator proporcional."
 
-Write-Host "[228/518] Validando limites de ajuste..."
+Write-Host "[228/526] Validando limites de ajuste..."
 if (-not $planSource.Contains("ajustePercentual < -50m") -or
     -not $planSource.Contains("ajustePercentual > 100m")) {
     throw "Limites da progressao alimentar incompletos."
 }
 Write-Host "    Faixa -50% a +100% protegida."
 
-Write-Host "[229/518] Validando encerramento opcional do plano anterior..."
+Write-Host "[229/526] Validando encerramento opcional do plano anterior..."
 if (-not $planSource.Contains("ConcluirPlanoAnterior") -or
     -not $planSource.Contains('origem.Status = "Concluido"')) {
     throw "Encerramento de versao anterior incompleto."
 }
 Write-Host "    Plano anterior pode ser concluido automaticamente."
 
-Write-Host "[230/518] Validando auditoria da progressao..."
+Write-Host "[230/526] Validando auditoria da progressao..."
 if (-not $planSource.Contains('"DUPLICATE_SCALE"') -or
     -not $planSource.Contains("CaloriasOriginais") -or
     -not $planSource.Contains("CaloriasProjetadas")) {
@@ -1906,7 +1906,7 @@ if (-not $planSource.Contains('"DUPLICATE_SCALE"') -or
 }
 Write-Host "    Origem + ajuste + calorias auditados."
 
-Write-Host "[231/518] Validando interface de progressao..."
+Write-Host "[231/526] Validando interface de progressao..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openNutritionProgression") -or
     -not $appJsSource.Contains("nutrition-progress") -or
@@ -1919,7 +1919,7 @@ if (-not $appJsSource.Contains("openNutritionProgression") -or
 }
 Write-Host "    Novo plano + modal ampliado + simulacao + nova versao: assets OK."
 
-Write-Host "[232/518] Validando modos percentual e calorias..."
+Write-Host "[232/526] Validando modos percentual e calorias..."
 if (-not $appJsSource.Contains('value="percentual"') -or
     -not $appJsSource.Contains('value="calorias"') -or
     -not $appJsSource.Contains("totaisProjetados")) {
@@ -1927,7 +1927,7 @@ if (-not $appJsSource.Contains('value="percentual"') -or
 }
 Write-Host "    Percentual + calorias alvo: assets OK."
 
-Write-Host "[233/518] Validando upgrade SQL e PREPARAR..."
+Write-Host "[233/526] Validando upgrade SQL e PREPARAR..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.21_progressao_plano_alimentar.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -1938,13 +1938,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
-Write-Host "[234/518] Validando versao v0.3.27..."
+Write-Host "[234/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao do plano alimentar: OK."
 
 
-Write-Host "[235/518] Validando schema de progressao de treino..."
+Write-Host "[235/526] Validando schema de progressao de treino..."
 $workoutEntity = Get-Content .\src\HealthPlatform.Domain\Entities\PlanoTreino.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $workoutEntity.Contains("PlanoOrigemId") -or
@@ -1955,7 +1955,7 @@ if (-not $workoutEntity.Contains("PlanoOrigemId") -or
 }
 Write-Host "    Origem + versao + ajustes: modelo OK."
 
-Write-Host "[236/518] Validando simulador de treino..."
+Write-Host "[236/526] Validando simulador de treino..."
 $workoutSource = Get-Content .\src\HealthPlatform.Api\Controllers\TreinosController.cs -Encoding UTF8 -Raw
 if (-not $workoutSource.Contains("simular-progressao") -or
     -not $workoutSource.Contains("SimulacaoProgressaoTreinoResponse") -or
@@ -1964,7 +1964,7 @@ if (-not $workoutSource.Contains("simular-progressao") -or
 }
 Write-Host "    Carga + series + reps + descanso: backend OK."
 
-Write-Host "[237/518] Validando duplicacao versionada do treino..."
+Write-Host "[237/526] Validando duplicacao versionada do treino..."
 if (-not $workoutSource.Contains('/duplicar') -or
     -not $workoutSource.Contains("PlanoOrigemId = raizId") -or
     -not $workoutSource.Contains("Versao = maiorVersao + 1")) {
@@ -1972,28 +1972,28 @@ if (-not $workoutSource.Contains('/duplicar') -or
 }
 Write-Host "    Nova versao preserva linhagem."
 
-Write-Host "[238/518] Validando progressao de carga..."
+Write-Host "[238/526] Validando progressao de carga..."
 if (-not $workoutSource.Contains("fatorCarga") -or
     -not $workoutSource.Contains("itemOrigem.Carga.Value * fatorCarga")) {
     throw "Progressao de carga incompleta."
 }
 Write-Host "    Carga percentual aplicada aos exercicios prescritos."
 
-Write-Host "[239/518] Validando progressao de series e descanso..."
+Write-Host "[239/526] Validando progressao de series e descanso..."
 if (-not $workoutSource.Contains("itemOrigem.Series + request.AjusteSeries") -or
     -not $workoutSource.Contains("itemOrigem.DescansoSegundos.Value + request.AjusteDescansoSegundos")) {
     throw "Progressao de series/descanso incompleta."
 }
 Write-Host "    Series + descanso com limites inferiores seguros."
 
-Write-Host "[240/518] Validando repeticoes estruturadas..."
+Write-Host "[240/526] Validando repeticoes estruturadas..."
 if (-not $workoutSource.Contains("TentarAjustarRepeticoes") -or
     -not $workoutSource.Contains("PrescricoesRepeticoesPreservadas")) {
     throw "Ajuste seguro de repeticoes incompleto."
 }
 Write-Host "    Numeros/faixas ajustados; texto complexo preservado."
 
-Write-Host "[241/518] Validando limites de progressao..."
+Write-Host "[241/526] Validando limites de progressao..."
 if (-not $workoutSource.Contains("cargaPercentual < -50m") -or
     -not $workoutSource.Contains("seriesDelta < -5") -or
     -not $workoutSource.Contains("repeticoesDelta < -20") -or
@@ -2002,7 +2002,7 @@ if (-not $workoutSource.Contains("cargaPercentual < -50m") -or
 }
 Write-Host "    Limites de carga/series/reps/descanso: OK."
 
-Write-Host "[242/518] Validando encerramento e auditoria..."
+Write-Host "[242/526] Validando encerramento e auditoria..."
 if (-not $workoutSource.Contains("ConcluirPlanoAnterior") -or
     -not $workoutSource.Contains('origem.Status = "Concluido"') -or
     -not $workoutSource.Contains('"DUPLICATE_PROGRESS"')) {
@@ -2010,7 +2010,7 @@ if (-not $workoutSource.Contains("ConcluirPlanoAnterior") -or
 }
 Write-Host "    Plano anterior + evento de progressao: OK."
 
-Write-Host "[243/518] Validando interface de progressao de treino..."
+Write-Host "[243/526] Validando interface de progressao de treino..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openWorkoutProgression") -or
     -not $appJsSource.Contains("workout-progress") -or
@@ -2020,7 +2020,7 @@ if (-not $appJsSource.Contains("openWorkoutProgression") -or
 }
 Write-Host "    Prontuario -> simulacao -> nova versao: assets OK."
 
-Write-Host "[244/518] Validando projecao e modal ampliado..."
+Write-Host "[244/526] Validando projecao e modal ampliado..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("workoutProjection") -or
     -not $appJsSource.Contains("workout-modal-open") -or
@@ -2030,7 +2030,7 @@ if (-not $appJsSource.Contains("workoutProjection") -or
 }
 Write-Host "    Projecao + modal responsivo: assets OK."
 
-Write-Host "[245/518] Validando upgrade SQL e PREPARAR 19..."
+Write-Host "[245/526] Validando upgrade SQL e PREPARAR 19..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.22_progressao_treino.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2041,13 +2041,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
-Write-Host "[246/518] Validando versao v0.3.27..."
+Write-Host "[246/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao de treino + ciclo versionado: OK."
 
 
-Write-Host "[247/518] Validando schema dos modelos alimentares..."
+Write-Host "[247/526] Validando schema dos modelos alimentares..."
 $modelEntity = Get-Content .\src\HealthPlatform.Domain\Entities\ModeloPlanoAlimentar.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $modelEntity.Contains("ConteudoJson") -or
@@ -2058,7 +2058,7 @@ if (-not $modelEntity.Contains("ConteudoJson") -or
 }
 Write-Host "    Modelo multi-tenant + JSON estruturado: OK."
 
-Write-Host "[248/518] Validando listagem e busca de modelos..."
+Write-Host "[248/526] Validando listagem e busca de modelos..."
 $modelSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosPlanosAlimentaresController.cs -Encoding UTF8 -Raw
 if (-not $modelSource.Contains('api/modelos-planos-alimentares') -or
     -not $modelSource.Contains("EF.Functions.ILike") -or
@@ -2067,7 +2067,7 @@ if (-not $modelSource.Contains('api/modelos-planos-alimentares') -or
 }
 Write-Host "    GET + busca + ativos/inativos: backend OK."
 
-Write-Host "[249/518] Validando salvar plano como modelo..."
+Write-Host "[249/526] Validando salvar plano como modelo..."
 if (-not $modelSource.Contains("salvar-como-modelo") -or
     -not $modelSource.Contains("TemplateConteudo") -or
     -not $modelSource.Contains("JsonSerializer.Serialize(conteudo)")) {
@@ -2075,7 +2075,7 @@ if (-not $modelSource.Contains("salvar-como-modelo") -or
 }
 Write-Host "    Refeicoes + itens + substituicoes serializados."
 
-Write-Host "[250/518] Validando criacao de plano a partir de modelo..."
+Write-Host "[250/526] Validando criacao de plano a partir de modelo..."
 if (-not $modelSource.Contains("criar-de-modelo") -or
     -not $modelSource.Contains("JsonSerializer.Deserialize<TemplateConteudo>") -or
     -not $modelSource.Contains("db.PlanosAlimentares.Add(plano)")) {
@@ -2083,7 +2083,7 @@ if (-not $modelSource.Contains("criar-de-modelo") -or
 }
 Write-Host "    Template -> novo plano: backend OK."
 
-Write-Host "[251/518] Validando alimentos do catalogo..."
+Write-Host "[251/526] Validando alimentos do catalogo..."
 if (-not $modelSource.Contains("alimentosValidos") -or
     -not $modelSource.Contains("alimentosInvalidos") -or
     -not $modelSource.Contains("x.Ativo")) {
@@ -2091,7 +2091,7 @@ if (-not $modelSource.Contains("alimentosValidos") -or
 }
 Write-Host "    Alimentos inativos/indisponiveis bloqueiam instanciacao."
 
-Write-Host "[252/518] Validando isolamento e auditoria..."
+Write-Host "[252/526] Validando isolamento e auditoria..."
 if (-not $modelSource.Contains("currentUser.OrganizationId") -or
     -not $modelSource.Contains('"CREATE_FROM_TEMPLATE"') -or
     -not $modelSource.Contains("AuditLogs")) {
@@ -2099,7 +2099,7 @@ if (-not $modelSource.Contains("currentUser.OrganizationId") -or
 }
 Write-Host "    Tenant + auditoria: backend OK."
 
-Write-Host "[253/518] Validando interface de salvar modelo..."
+Write-Host "[253/526] Validando interface de salvar modelo..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openSaveMealTemplate") -or
     -not $appJsSource.Contains("nutrition-save-template") -or
@@ -2108,7 +2108,7 @@ if (-not $appJsSource.Contains("openSaveMealTemplate") -or
 }
 Write-Host "    Card de plano -> salvar modelo: assets OK."
 
-Write-Host "[254/518] Validando seletor de modelos..."
+Write-Host "[254/526] Validando seletor de modelos..."
 if (-not $appJsSource.Contains("openMealTemplatePicker") -or
     -not $appJsSource.Contains("mealTemplateSearch") -or
     -not $appJsSource.Contains("meal-template-grid")) {
@@ -2116,7 +2116,7 @@ if (-not $appJsSource.Contains("openMealTemplatePicker") -or
 }
 Write-Host "    Busca + cards de modelos: assets OK."
 
-Write-Host "[255/518] Validando criacao visual via modelo..."
+Write-Host "[255/526] Validando criacao visual via modelo..."
 if (-not $appJsSource.Contains("openMealTemplateCreateForm") -or
     -not $appJsSource.Contains("criar-de-modelo") -or
     -not $appJsSource.Contains("Plano criado a partir do modelo")) {
@@ -2124,7 +2124,7 @@ if (-not $appJsSource.Contains("openMealTemplateCreateForm") -or
 }
 Write-Host "    Modelo -> paciente -> plano ativo: assets OK."
 
-Write-Host "[256/518] Validando responsividade dos modelos..."
+Write-Host "[256/526] Validando responsividade dos modelos..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("meal-template-grid") -or
     -not $cssSource.Contains("nutrition-top-actions") -or
@@ -2133,7 +2133,7 @@ if (-not $cssSource.Contains("meal-template-grid") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[257/518] Validando upgrade SQL e PREPARAR 20..."
+Write-Host "[257/526] Validando upgrade SQL e PREPARAR 20..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.23_modelos_plano_alimentar.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2144,13 +2144,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 20/20: OK."
 
-Write-Host "[258/518] Validando versao v0.3.27..."
+Write-Host "[258/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de plano alimentar: OK."
 
 
-Write-Host "[259/518] Validando schema dos modelos de treino..."
+Write-Host "[259/526] Validando schema dos modelos de treino..."
 $modelEntity = Get-Content .\src\HealthPlatform.Domain\Entities\ModeloPlanoTreino.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $modelEntity.Contains("ConteudoJson") -or
@@ -2161,7 +2161,7 @@ if (-not $modelEntity.Contains("ConteudoJson") -or
 }
 Write-Host "    Modelo multi-tenant + JSON estruturado: OK."
 
-Write-Host "[260/518] Validando listagem e busca de modelos de treino..."
+Write-Host "[260/526] Validando listagem e busca de modelos de treino..."
 $modelSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosPlanosTreinoController.cs -Encoding UTF8 -Raw
 if (-not $modelSource.Contains('api/modelos-planos-treino') -or
     -not $modelSource.Contains("EF.Functions.ILike") -or
@@ -2170,7 +2170,7 @@ if (-not $modelSource.Contains('api/modelos-planos-treino') -or
 }
 Write-Host "    GET + busca + ativos/inativos: backend OK."
 
-Write-Host "[261/518] Validando salvar treino como modelo..."
+Write-Host "[261/526] Validando salvar treino como modelo..."
 if (-not $modelSource.Contains("salvar-como-modelo") -or
     -not $modelSource.Contains("TemplateTreinoConteudo") -or
     -not $modelSource.Contains("JsonSerializer.Serialize(conteudo)")) {
@@ -2178,7 +2178,7 @@ if (-not $modelSource.Contains("salvar-como-modelo") -or
 }
 Write-Host "    Sessoes + exercicios + prescricao serializados."
 
-Write-Host "[262/518] Validando criacao de treino a partir de modelo..."
+Write-Host "[262/526] Validando criacao de treino a partir de modelo..."
 if (-not $modelSource.Contains("criar-de-modelo") -or
     -not $modelSource.Contains("JsonSerializer.Deserialize<TemplateTreinoConteudo>") -or
     -not $modelSource.Contains("db.PlanosTreino.Add(plano)")) {
@@ -2186,7 +2186,7 @@ if (-not $modelSource.Contains("criar-de-modelo") -or
 }
 Write-Host "    Template -> novo plano de treino: backend OK."
 
-Write-Host "[263/518] Validando catalogo de exercicios..."
+Write-Host "[263/526] Validando catalogo de exercicios..."
 if (-not $modelSource.Contains("exerciciosValidos") -or
     -not $modelSource.Contains("exerciciosInvalidos") -or
     -not $modelSource.Contains("x.Ativo")) {
@@ -2194,7 +2194,7 @@ if (-not $modelSource.Contains("exerciciosValidos") -or
 }
 Write-Host "    Exercicios inativos/indisponiveis bloqueiam instanciacao."
 
-Write-Host "[264/518] Validando prescricao completa do template..."
+Write-Host "[264/526] Validando prescricao completa do template..."
 if (-not $modelSource.Contains("Series = i.Series") -or
     -not $modelSource.Contains("Repeticoes = i.Repeticoes") -or
     -not $modelSource.Contains("Carga = i.Carga") -or
@@ -2204,7 +2204,7 @@ if (-not $modelSource.Contains("Series = i.Series") -or
 }
 Write-Host "    Series + reps + carga + descanso + tempo: backend OK."
 
-Write-Host "[265/518] Validando isolamento e auditoria dos modelos de treino..."
+Write-Host "[265/526] Validando isolamento e auditoria dos modelos de treino..."
 if (-not $modelSource.Contains("currentUser.OrganizationId") -or
     -not $modelSource.Contains('"CREATE_FROM_TEMPLATE"') -or
     -not $modelSource.Contains("AuditLogs")) {
@@ -2212,7 +2212,7 @@ if (-not $modelSource.Contains("currentUser.OrganizationId") -or
 }
 Write-Host "    Tenant + auditoria: backend OK."
 
-Write-Host "[266/518] Validando interface de salvar modelo de treino..."
+Write-Host "[266/526] Validando interface de salvar modelo de treino..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openSaveWorkoutTemplate") -or
     -not $appJsSource.Contains("workout-save-template") -or
@@ -2221,7 +2221,7 @@ if (-not $appJsSource.Contains("openSaveWorkoutTemplate") -or
 }
 Write-Host "    Card do treino -> salvar modelo: assets OK."
 
-Write-Host "[267/518] Validando seletor e busca de modelos..."
+Write-Host "[267/526] Validando seletor e busca de modelos..."
 if (-not $appJsSource.Contains("openWorkoutTemplatePicker") -or
     -not $appJsSource.Contains("workoutTemplateSearch") -or
     -not $appJsSource.Contains("workout-template-grid")) {
@@ -2229,7 +2229,7 @@ if (-not $appJsSource.Contains("openWorkoutTemplatePicker") -or
 }
 Write-Host "    Busca + cards de modelos: assets OK."
 
-Write-Host "[268/518] Validando criacao visual via modelo..."
+Write-Host "[268/526] Validando criacao visual via modelo..."
 if (-not $appJsSource.Contains("openWorkoutTemplateCreateForm") -or
     -not $appJsSource.Contains("treinos/criar-de-modelo") -or
     -not $appJsSource.Contains("Treino criado a partir do modelo")) {
@@ -2237,7 +2237,7 @@ if (-not $appJsSource.Contains("openWorkoutTemplateCreateForm") -or
 }
 Write-Host "    Modelo -> paciente -> treino ativo: assets OK."
 
-Write-Host "[269/518] Validando upgrade SQL, responsividade e PREPARAR 21..."
+Write-Host "[269/526] Validando upgrade SQL, responsividade e PREPARAR 21..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.24_modelos_plano_treino.sql -Encoding UTF8 -Raw
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
@@ -2250,13 +2250,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + UI responsiva + PREPARAR 21/21: OK."
 
-Write-Host "[270/518] Validando versao v0.3.27..."
+Write-Host "[270/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de treino + criacao rapida: OK."
 
 
-Write-Host "[271/518] Validando schema das metas nutricionais..."
+Write-Host "[271/526] Validando schema das metas nutricionais..."
 $planEntity = Get-Content .\src\HealthPlatform.Domain\Entities\PlanoAlimentar.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $planEntity.Contains("MetaCalorias") -or
@@ -2269,7 +2269,7 @@ if (-not $planEntity.Contains("MetaCalorias") -or
 }
 Write-Host "    Calorias + P/C/G + fibras: modelo OK."
 
-Write-Host "[272/518] Validando contratos nutricionais..."
+Write-Host "[272/526] Validando contratos nutricionais..."
 $contractsSource = Get-Content .\src\HealthPlatform.Api\Contracts\PlanosAlimentares\PlanoAlimentarContracts.cs -Encoding UTF8 -Raw
 if (-not $contractsSource.Contains("AtualizarMetasNutricionaisRequest") -or
     -not $contractsSource.Contains("AnalisePlanoAlimentarResponse") -or
@@ -2278,7 +2278,7 @@ if (-not $contractsSource.Contains("AtualizarMetasNutricionaisRequest") -or
 }
 Write-Host "    Metas + desvios + distribuicao: contratos OK."
 
-Write-Host "[273/518] Validando endpoint de metas..."
+Write-Host "[273/526] Validando endpoint de metas..."
 $planSource = Get-Content .\src\HealthPlatform.Api\Controllers\PlanosAlimentaresController.cs -Encoding UTF8 -Raw
 if (-not $planSource.Contains("metas-nutricionais") -or
     -not $planSource.Contains('"NUTRITION_TARGETS"') -or
@@ -2287,7 +2287,7 @@ if (-not $planSource.Contains("metas-nutricionais") -or
 }
 Write-Host "    PUT + validacao + auditoria: backend OK."
 
-Write-Host "[274/518] Validando analise nutricional..."
+Write-Host "[274/526] Validando analise nutricional..."
 if (-not $planSource.Contains("analise-nutricional") -or
     -not $planSource.Contains("DistribuicaoNutricionalResponse") -or
     -not $planSource.Contains("DesviosNutricionaisResponse") -or
@@ -2296,7 +2296,7 @@ if (-not $planSource.Contains("analise-nutricional") -or
 }
 Write-Host "    Meta x prescrito + distribuicao por refeicao: backend OK."
 
-Write-Host "[275/518] Validando metas na criacao e edicao..."
+Write-Host "[275/526] Validando metas na criacao e edicao..."
 if (-not $planSource.Contains("MetaCalorias = request.MetaCalorias") -or
     -not $planSource.Contains("MetaProteinasG = request.MetaProteinasG") -or
     -not $planSource.Contains("MetaFibrasG = request.MetaFibrasG")) {
@@ -2304,14 +2304,14 @@ if (-not $planSource.Contains("MetaCalorias = request.MetaCalorias") -or
 }
 Write-Host "    Criacao/edicao preservam metas."
 
-Write-Host "[276/518] Validando metas na progressao alimentar..."
+Write-Host "[276/526] Validando metas na progressao alimentar..."
 if (-not $planSource.Contains("EscalarNullable(origem.MetaProteinasG") -or
     -not $planSource.Contains("request.CaloriasAlvo ?? EscalarNullable(origem.MetaCalorias")) {
     throw "Metas nao acompanham progressao alimentar."
 }
 Write-Host "    Progressao escala metas junto das porcoes."
 
-Write-Host "[277/518] Validando metas nos templates alimentares..."
+Write-Host "[277/526] Validando metas nos templates alimentares..."
 $templateSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosPlanosAlimentaresController.cs -Encoding UTF8 -Raw
 if (-not $templateSource.Contains("plano.MetaCalorias") -or
     -not $templateSource.Contains("MetaCalorias = conteudo.MetaCalorias") -or
@@ -2320,7 +2320,7 @@ if (-not $templateSource.Contains("plano.MetaCalorias") -or
 }
 Write-Host "    Template salva e restaura objetivos nutricionais."
 
-Write-Host "[278/518] Validando construtor com metas..."
+Write-Host "[278/526] Validando construtor com metas..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("nutrition-target-builder") -or
     -not $appJsSource.Contains("metaCalorias:dec(f,'metaCalorias')") -or
@@ -2329,7 +2329,7 @@ if (-not $appJsSource.Contains("nutrition-target-builder") -or
 }
 Write-Host "    Metas no cadastro + preview em tempo real: assets OK."
 
-Write-Host "[279/518] Validando Meta x Prescrito no prontuario..."
+Write-Host "[279/526] Validando Meta x Prescrito no prontuario..."
 if (-not $appJsSource.Contains("nutritionTargetPanel") -or
     -not $appJsSource.Contains("nutritionTargetLine") -or
     -not $appJsSource.Contains("nutrition-edit-targets")) {
@@ -2337,7 +2337,7 @@ if (-not $appJsSource.Contains("nutritionTargetPanel") -or
 }
 Write-Host "    Comparacao diaria + edicao rapida: assets OK."
 
-Write-Host "[280/518] Validando distribuicao por refeicao..."
+Write-Host "[280/526] Validando distribuicao por refeicao..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("nutritionMealDistribution") -or
     -not $appJsSource.Contains("Prescrito no dia + metas planejadas por bloco") -or
@@ -2346,7 +2346,7 @@ if (-not $appJsSource.Contains("nutritionMealDistribution") -or
 }
 Write-Host "    Prescrito diario + meta planejada por refeicao: assets OK."
 
-Write-Host "[281/518] Validando modal de metas..."
+Write-Host "[281/526] Validando modal de metas..."
 if (-not $appJsSource.Contains("openNutritionTargets") -or
     -not $appJsSource.Contains("/metas-nutricionais") -or
     -not $appJsSource.Contains("Metas nutricionais atualizadas")) {
@@ -2354,7 +2354,7 @@ if (-not $appJsSource.Contains("openNutritionTargets") -or
 }
 Write-Host "    Edicao sem reconstruir o plano: assets OK."
 
-Write-Host "[282/518] Validando responsividade nutricional..."
+Write-Host "[282/526] Validando responsividade nutricional..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("nutrition-target-grid") -or
     -not $cssSource.Contains("nutrition-distribution-row") -or
@@ -2363,7 +2363,7 @@ if (-not $cssSource.Contains("nutrition-target-grid") -or
 }
 Write-Host "    Meta + distribuicao desktop/mobile: OK."
 
-Write-Host "[283/518] Validando SQL e PREPARAR 22..."
+Write-Host "[283/526] Validando SQL e PREPARAR 22..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.25_metas_nutricionais.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2374,13 +2374,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 22/22: OK."
 
-Write-Host "[284/518] Validando versao v0.3.27..."
+Write-Host "[284/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / metas nutricionais + distribuicao: OK."
 
 
-Write-Host "[285/518] Validando schema da biblioteca de refeicoes..."
+Write-Host "[285/526] Validando schema da biblioteca de refeicoes..."
 $modelEntity = Get-Content .\src\HealthPlatform.Domain\Entities\ModeloRefeicao.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $modelEntity.Contains("ConteudoJson") -or
@@ -2390,7 +2390,7 @@ if (-not $modelEntity.Contains("ConteudoJson") -or
 }
 Write-Host "    Modelo + categoria + snapshot JSON: OK."
 
-Write-Host "[286/518] Validando listagem e filtros da biblioteca..."
+Write-Host "[286/526] Validando listagem e filtros da biblioteca..."
 $modelSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosRefeicoesController.cs -Encoding UTF8 -Raw
 if (-not $modelSource.Contains('api/modelos-refeicoes') -or
     -not $modelSource.Contains("EF.Functions.ILike") -or
@@ -2399,7 +2399,7 @@ if (-not $modelSource.Contains('api/modelos-refeicoes') -or
 }
 Write-Host "    Busca + categoria + ativos/inativos: backend OK."
 
-Write-Host "[287/518] Validando salvar refeicao como modelo..."
+Write-Host "[287/526] Validando salvar refeicao como modelo..."
 if (-not $modelSource.Contains("refeicoes-plano/{refeicaoId:guid}/salvar-como-modelo") -or
     -not $modelSource.Contains("ModeloRefeicaoConteudo") -or
     -not $modelSource.Contains("JsonSerializer.Serialize(conteudo)")) {
@@ -2407,7 +2407,7 @@ if (-not $modelSource.Contains("refeicoes-plano/{refeicaoId:guid}/salvar-como-mo
 }
 Write-Host "    Refeicao + itens + substituicoes: backend OK."
 
-Write-Host "[288/518] Validando insercao de refeicao no plano..."
+Write-Host "[288/526] Validando insercao de refeicao no plano..."
 if (-not $modelSource.Contains("inserir-modelo-refeicao") -or
     -not $modelSource.Contains("db.RefeicoesPlanoAlimentar.Add(refeicao)") -or
     -not $modelSource.Contains("plano.Refeicoes.Max(x => x.Ordem) + 1")) {
@@ -2415,7 +2415,7 @@ if (-not $modelSource.Contains("inserir-modelo-refeicao") -or
 }
 Write-Host "    Modelo -> nova refeicao no final do plano: backend OK."
 
-Write-Host "[289/518] Validando catalogo e substituicoes..."
+Write-Host "[289/526] Validando catalogo e substituicoes..."
 if (-not $modelSource.Contains("alimentosValidos") -or
     -not $modelSource.Contains("alimentosInvalidos") -or
     -not $modelSource.Contains("i.Substituicoes")) {
@@ -2423,7 +2423,7 @@ if (-not $modelSource.Contains("alimentosValidos") -or
 }
 Write-Host "    Catalogo ativo revalidado antes da insercao."
 
-Write-Host "[290/518] Validando protecoes e auditoria..."
+Write-Host "[290/526] Validando protecoes e auditoria..."
 if (-not $modelSource.Contains('plano.Status == "Concluido"') -or
     -not $modelSource.Contains('"INSERT_FROM_TEMPLATE"') -or
     -not $modelSource.Contains("currentUser.OrganizationId")) {
@@ -2431,7 +2431,7 @@ if (-not $modelSource.Contains('plano.Status == "Concluido"') -or
 }
 Write-Host "    Plano concluido + tenant + auditoria: protegidos."
 
-Write-Host "[291/518] Validando botao Salvar refeicao..."
+Write-Host "[291/526] Validando botao Salvar refeicao..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("meal-save-template") -or
     -not $appJsSource.Contains("openSaveMealTemplate") -or
@@ -2440,7 +2440,7 @@ if (-not $appJsSource.Contains("meal-save-template") -or
 }
 Write-Host "    Refeicao do plano -> biblioteca: assets OK."
 
-Write-Host "[292/518] Validando biblioteca visual..."
+Write-Host "[292/526] Validando biblioteca visual..."
 if (-not $appJsSource.Contains("openMealLibrary") -or
     -not $appJsSource.Contains("mealLibrarySearch") -or
     -not $appJsSource.Contains("mealLibraryPlan") -or
@@ -2449,7 +2449,7 @@ if (-not $appJsSource.Contains("openMealLibrary") -or
 }
 Write-Host "    Busca + selecao do plano + cards: assets OK."
 
-Write-Host "[293/518] Validando insercao visual rapida..."
+Write-Host "[293/526] Validando insercao visual rapida..."
 if (-not $appJsSource.Contains("openMealLibraryInsertForm") -or
     -not $appJsSource.Contains("inserir-modelo-refeicao") -or
     -not $appJsSource.Contains("Refeição inserida no plano")) {
@@ -2457,7 +2457,7 @@ if (-not $appJsSource.Contains("openMealLibraryInsertForm") -or
 }
 Write-Host "    Modelo -> plano ativo: assets OK."
 
-Write-Host "[294/518] Validando responsividade da biblioteca..."
+Write-Host "[294/526] Validando responsividade da biblioteca..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("meal-library-grid") -or
     -not $cssSource.Contains("meal-card-head") -or
@@ -2466,7 +2466,7 @@ if (-not $cssSource.Contains("meal-library-grid") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[295/518] Validando SQL e PREPARAR 23..."
+Write-Host "[295/526] Validando SQL e PREPARAR 23..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.26_modelos_refeicoes.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2477,13 +2477,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 23/23: OK."
 
-Write-Host "[296/518] Validando versao v0.3.27..."
+Write-Host "[296/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de refeicoes + insercao rapida: OK."
 
 
-Write-Host "[297/518] Validando schema da biblioteca de sessoes..."
+Write-Host "[297/526] Validando schema da biblioteca de sessoes..."
 $modelEntity = Get-Content .\src\HealthPlatform.Domain\Entities\ModeloSessaoTreino.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $modelEntity.Contains("ConteudoJson") -or
@@ -2493,7 +2493,7 @@ if (-not $modelEntity.Contains("ConteudoJson") -or
 }
 Write-Host "    Modelo + categoria + snapshot JSON: OK."
 
-Write-Host "[298/518] Validando listagem e filtros..."
+Write-Host "[298/526] Validando listagem e filtros..."
 $modelSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosSessoesTreinoController.cs -Encoding UTF8 -Raw
 if (-not $modelSource.Contains('api/modelos-sessoes-treino') -or
     -not $modelSource.Contains("EF.Functions.ILike") -or
@@ -2502,7 +2502,7 @@ if (-not $modelSource.Contains('api/modelos-sessoes-treino') -or
 }
 Write-Host "    Busca + categoria + ativos/inativos: backend OK."
 
-Write-Host "[299/518] Validando salvar sessao como modelo..."
+Write-Host "[299/526] Validando salvar sessao como modelo..."
 if (-not $modelSource.Contains("sessoes-treino/{sessaoId:guid}/salvar-como-modelo") -or
     -not $modelSource.Contains("ModeloSessaoConteudo") -or
     -not $modelSource.Contains("JsonSerializer.Serialize(conteudo)")) {
@@ -2510,7 +2510,7 @@ if (-not $modelSource.Contains("sessoes-treino/{sessaoId:guid}/salvar-como-model
 }
 Write-Host "    Sessao + exercicios + prescricao: backend OK."
 
-Write-Host "[300/518] Validando insercao de sessao no plano..."
+Write-Host "[300/526] Validando insercao de sessao no plano..."
 if (-not $modelSource.Contains("inserir-modelo-sessao") -or
     -not $modelSource.Contains("db.SessoesTreino.Add(sessao)") -or
     -not $modelSource.Contains("plano.Sessoes.Max(x => x.Ordem) + 1")) {
@@ -2518,7 +2518,7 @@ if (-not $modelSource.Contains("inserir-modelo-sessao") -or
 }
 Write-Host "    Modelo -> nova sessao ao final do plano: backend OK."
 
-Write-Host "[301/518] Validando catalogo e prescricao..."
+Write-Host "[301/526] Validando catalogo e prescricao..."
 if (-not $modelSource.Contains("exerciciosValidos") -or
     -not $modelSource.Contains("exerciciosInvalidos") -or
     -not $modelSource.Contains("Series = i.Series") -or
@@ -2528,7 +2528,7 @@ if (-not $modelSource.Contains("exerciciosValidos") -or
 }
 Write-Host "    Catalogo ativo + series/reps/carga/descanso: OK."
 
-Write-Host "[302/518] Validando protecoes e auditoria..."
+Write-Host "[302/526] Validando protecoes e auditoria..."
 if (-not $modelSource.Contains('plano.Status == "Concluido"') -or
     -not $modelSource.Contains('"INSERT_FROM_TEMPLATE"') -or
     -not $modelSource.Contains("currentUser.OrganizationId")) {
@@ -2536,7 +2536,7 @@ if (-not $modelSource.Contains('plano.Status == "Concluido"') -or
 }
 Write-Host "    Plano concluido + tenant + auditoria: protegidos."
 
-Write-Host "[303/518] Validando botao Salvar sessao..."
+Write-Host "[303/526] Validando botao Salvar sessao..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("session-save-template") -or
     -not $appJsSource.Contains("openSaveWorkoutSessionTemplate") -or
@@ -2545,7 +2545,7 @@ if (-not $appJsSource.Contains("session-save-template") -or
 }
 Write-Host "    Sessao do plano -> biblioteca: assets OK."
 
-Write-Host "[304/518] Validando biblioteca visual..."
+Write-Host "[304/526] Validando biblioteca visual..."
 if (-not $appJsSource.Contains("openWorkoutSessionLibrary") -or
     -not $appJsSource.Contains("sessionLibrarySearch") -or
     -not $appJsSource.Contains("sessionLibraryPlan") -or
@@ -2554,7 +2554,7 @@ if (-not $appJsSource.Contains("openWorkoutSessionLibrary") -or
 }
 Write-Host "    Busca + selecao do plano + cards: assets OK."
 
-Write-Host "[305/518] Validando insercao visual rapida..."
+Write-Host "[305/526] Validando insercao visual rapida..."
 if (-not $appJsSource.Contains("openWorkoutSessionInsertForm") -or
     -not $appJsSource.Contains("inserir-modelo-sessao") -or
     -not $appJsSource.Contains("Sessão inserida no plano")) {
@@ -2562,7 +2562,7 @@ if (-not $appJsSource.Contains("openWorkoutSessionInsertForm") -or
 }
 Write-Host "    Modelo -> plano ativo: assets OK."
 
-Write-Host "[306/518] Validando responsividade..."
+Write-Host "[306/526] Validando responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("session-library-grid") -or
     -not $cssSource.Contains("workout-session-mini-row") -or
@@ -2571,7 +2571,7 @@ if (-not $cssSource.Contains("session-library-grid") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[307/518] Validando SQL e PREPARAR 24..."
+Write-Host "[307/526] Validando SQL e PREPARAR 24..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.27_modelos_sessoes_treino.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2582,13 +2582,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
-Write-Host "[308/518] Validando versao v0.3.27..."
+Write-Host "[308/526] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de sessoes + insercao rapida: OK."
 
 
-Write-Host "[309/518] Validando endpoint longitudinal de habitos..." -ForegroundColor Cyan
+Write-Host "[309/526] Validando endpoint longitudinal de habitos..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $habitos = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/evolucao-habitos?limite=24" -Headers $headers -Method Get
@@ -2599,7 +2599,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Sem pacientes: smoke longitudinal ignorado sem criar dados." -ForegroundColor DarkGreen
 }
 
-Write-Host "[310/518] Validando contrato da evolucao de habitos..."
+Write-Host "[310/526] Validando contrato da evolucao de habitos..."
 $anamSource = Get-Content .\src\HealthPlatform.Api\Controllers\AnamnesesController.cs -Encoding UTF8 -Raw
 if (-not $anamSource.Contains("EvolucaoHabitosPontoResponse") -or
     -not $anamSource.Contains("VariacaoHabitosResponse") -or
@@ -2608,7 +2608,7 @@ if (-not $anamSource.Contains("EvolucaoHabitosPontoResponse") -or
 }
 Write-Host "    Atual + anterior + variacao + serie: backend OK."
 
-Write-Host "[311/518] Validando series de sono, estresse, atividade e agua..."
+Write-Host "[311/526] Validando series de sono, estresse, atividade e agua..."
 if (-not $anamSource.Contains("SonoHorasMedia") -or
     -not $anamSource.Contains("EstresseNivel") -or
     -not $anamSource.Contains("AtividadeFisicaDiasSemana") -or
@@ -2617,14 +2617,14 @@ if (-not $anamSource.Contains("SonoHorasMedia") -or
 }
 Write-Host "    Quatro indicadores longitudinais presentes."
 
-Write-Host "[312/518] Validando limite e isolamento multi-tenant..."
+Write-Host "[312/526] Validando limite e isolamento multi-tenant..."
 if (-not $anamSource.Contains("Math.Clamp(limite, 2, 60)") -or
     -not $anamSource.Contains("x.Paciente.OrganizacaoId == currentUser.OrganizationId")) {
     throw "Protecoes do endpoint longitudinal incompletas."
 }
 Write-Host "    Limite 2-60 + OrganizacaoId: OK."
 
-Write-Host "[313/518] Validando comparacao com registro anterior..."
+Write-Host "[313/526] Validando comparacao com registro anterior..."
 if (-not $anamSource.Contains("itens[^1]") -or
     -not $anamSource.Contains("itens[^2]") -or
     -not $anamSource.Contains("Diferenca(atual?.SonoHorasMedia") -or
@@ -2633,7 +2633,7 @@ if (-not $anamSource.Contains("itens[^1]") -or
 }
 Write-Host "    Atual x anterior: backend OK."
 
-Write-Host "[314/518] Validando graficos de habitos..."
+Write-Host "[314/526] Validando graficos de habitos..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpHabitCharts") -or
     -not $appJsSource.Contains("Sono médio") -or
@@ -2643,7 +2643,7 @@ if (-not $appJsSource.Contains("hpHabitCharts") -or
 }
 Write-Host "    SVG nativo reutilizado para 4 tendencias."
 
-Write-Host "[315/518] Validando resumo atual dos habitos..."
+Write-Host "[315/526] Validando resumo atual dos habitos..."
 if (-not $appJsSource.Contains("habit-current-grid") -or
     -not $appJsSource.Contains("hpHabitCurrentCard") -or
     -not $appJsSource.Contains("hpHabitDelta")) {
@@ -2651,21 +2651,21 @@ if (-not $appJsSource.Contains("habit-current-grid") -or
 }
 Write-Host "    Valor atual + delta vs anterior: assets OK."
 
-Write-Host "[316/518] Validando integracao na aba Anamnese..."
+Write-Host "[316/526] Validando integracao na aba Anamnese..."
 if (-not $appJsSource.Contains("tab==='anamnese'") -or
     -not $appJsSource.Contains("professional-anamnesis")) {
     throw "Integracao da evolucao na aba Anamnese incompleta."
 }
 Write-Host "    Anamnese -> evolucao de habitos: assets OK."
 
-Write-Host "[317/518] Validando integracao no Resumo..."
+Write-Host "[317/526] Validando integracao no Resumo..."
 if (-not $appJsSource.Contains("professional-summary-habits") -or
     -not $appJsSource.Contains("hpInjectHabitEvolution")) {
     throw "Integracao dos habitos no resumo incompleta."
 }
 Write-Host "    Resumo -> tendencias de habitos: assets OK."
 
-Write-Host "[318/518] Validando responsividade..."
+Write-Host "[318/526] Validando responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("habit-current-grid") -or
     -not $cssSource.Contains("habit-evolution-section") -or
@@ -2674,7 +2674,7 @@ if (-not $cssSource.Contains("habit-current-grid") -or
 }
 Write-Host "    Cards e graficos desktop/mobile: OK."
 
-Write-Host "[319/518] Validando compatibilidade de banco e PREPARAR..."
+Write-Host "[319/526] Validando compatibilidade de banco e PREPARAR..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
     -not $setupSource.Contains("v0.3.27_modelos_sessoes_treino.sql")) {
@@ -2685,13 +2685,13 @@ if (Test-Path .\scripts\sql\v0.3.28_evolucao_habitos.sql) {
 }
 Write-Host "    Sem schema novo / PREPARAR atual 31/31: OK."
 
-Write-Host "[320/518] Validando versao v0.3.28..."
+Write-Host "[320/526] Validando versao v0.3.28..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.28 / evolucao de habitos + graficos de anamnese: OK."
 
 
-Write-Host "[321/518] Validando resposta runtime com metas por refeicao..." -ForegroundColor Cyan
+Write-Host "[321/526] Validando resposta runtime com metas por refeicao..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $planosMeta = @(Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/planos-alimentares" -Headers $headers -Method Get)
@@ -2725,7 +2725,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Sem pacientes: smoke de metas por refeicao ignorado." -ForegroundColor DarkGreen
 }
 
-Write-Host "[322/518] Validando schema de metas por refeicao..."
+Write-Host "[322/526] Validando schema de metas por refeicao..."
 $mealEntity = Get-Content .\src\HealthPlatform.Domain\Entities\RefeicaoPlanoAlimentar.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $mealEntity.Contains("MetaCalorias") -or
@@ -2738,7 +2738,7 @@ if (-not $mealEntity.Contains("MetaCalorias") -or
 }
 Write-Host "    Kcal + P/C/G + fibra por refeicao: modelo OK."
 
-Write-Host "[323/518] Validando contratos de metas por refeicao..."
+Write-Host "[323/526] Validando contratos de metas por refeicao..."
 $contractsSource = Get-Content .\src\HealthPlatform.Api\Contracts\PlanosAlimentares\PlanoAlimentarContracts.cs -Encoding UTF8 -Raw
 if (-not $contractsSource.Contains("AtualizarMetasRefeicaoRequest") -or
     -not $contractsSource.Contains("DistribuirMetasRefeicoesRequest") -or
@@ -2748,7 +2748,7 @@ if (-not $contractsSource.Contains("AtualizarMetasRefeicaoRequest") -or
 }
 Write-Host "    Edicao + distribuicao + comparacao: contratos OK."
 
-Write-Host "[324/518] Validando endpoint de meta individual..."
+Write-Host "[324/526] Validando endpoint de meta individual..."
 $planSource = Get-Content .\src\HealthPlatform.Api\Controllers\PlanosAlimentaresController.cs -Encoding UTF8 -Raw
 if (-not $planSource.Contains("refeicoes-plano/{refeicaoId:guid}/metas-nutricionais") -or
     -not $planSource.Contains('"MEAL_NUTRITION_TARGETS"') -or
@@ -2757,7 +2757,7 @@ if (-not $planSource.Contains("refeicoes-plano/{refeicaoId:guid}/metas-nutricion
 }
 Write-Host "    PUT por refeicao + auditoria: backend OK."
 
-Write-Host "[325/518] Validando distribuicao automatica..."
+Write-Host "[325/526] Validando distribuicao automatica..."
 if (-not $planSource.Contains("distribuir-metas-refeicoes") -or
     -not $planSource.Contains("Math.Abs(soma - 100m)") -or
     -not $planSource.Contains("PercentualMeta(") -or
@@ -2766,7 +2766,7 @@ if (-not $planSource.Contains("distribuir-metas-refeicoes") -or
 }
 Write-Host "    Percentuais fecham 100% e distribuem metas diarias."
 
-Write-Host "[326/518] Validando isolamento e integridade da distribuicao..."
+Write-Host "[326/526] Validando isolamento e integridade da distribuicao..."
 if (-not $planSource.Contains("idsPlano.SequenceEqual(idsRequest)") -or
     -not $planSource.Contains("currentUser.OrganizationId") -or
     -not $planSource.Contains("TemMetaPlano")) {
@@ -2774,7 +2774,7 @@ if (-not $planSource.Contains("idsPlano.SequenceEqual(idsRequest)") -or
 }
 Write-Host "    Todas as refeicoes + tenant + meta diaria: protegidos."
 
-Write-Host "[327/518] Validando progressao com metas por refeicao..."
+Write-Host "[327/526] Validando progressao com metas por refeicao..."
 if (-not $planSource.Contains("EscalarNullable(refeicaoOrigem.MetaCalorias") -or
     -not $planSource.Contains("EscalarNullable(refeicaoOrigem.MetaProteinasG") -or
     -not $planSource.Contains("EscalarNullable(refeicaoOrigem.MetaFibrasG")) {
@@ -2782,7 +2782,7 @@ if (-not $planSource.Contains("EscalarNullable(refeicaoOrigem.MetaCalorias") -or
 }
 Write-Host "    V2/V3 escalam metas dos blocos junto das porcoes."
 
-Write-Host "[328/518] Validando templates de plano..."
+Write-Host "[328/526] Validando templates de plano..."
 $templateSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosPlanosAlimentaresController.cs -Encoding UTF8 -Raw
 if (-not $templateSource.Contains("r.MetaCalorias") -or
     -not $templateSource.Contains("MetaCalorias = r.MetaCalorias") -or
@@ -2791,7 +2791,7 @@ if (-not $templateSource.Contains("r.MetaCalorias") -or
 }
 Write-Host "    Template completo salva/restaura metas dos blocos."
 
-Write-Host "[329/518] Validando biblioteca de refeicoes..."
+Write-Host "[329/526] Validando biblioteca de refeicoes..."
 $mealTemplateSource = Get-Content .\src\HealthPlatform.Api\Controllers\ModelosRefeicoesController.cs -Encoding UTF8 -Raw
 if (-not $mealTemplateSource.Contains("refeicao.MetaCalorias") -or
     -not $mealTemplateSource.Contains("MetaCalorias = conteudo.MetaCalorias") -or
@@ -2800,7 +2800,7 @@ if (-not $mealTemplateSource.Contains("refeicao.MetaCalorias") -or
 }
 Write-Host "    Blocos reutilizaveis mantem sua meta planejada."
 
-Write-Host "[330/518] Validando construtor alimentar..."
+Write-Host "[330/526] Validando construtor alimentar..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("meal-target-builder") -or
     -not $appJsSource.Contains("mealMetaCalorias") -or
@@ -2809,7 +2809,7 @@ if (-not $appJsSource.Contains("meal-target-builder") -or
 }
 Write-Host "    Nova dieta pode nascer com meta por bloco: assets OK."
 
-Write-Host "[331/518] Validando edicao e comparacao visual..."
+Write-Host "[331/526] Validando edicao e comparacao visual..."
 if (-not $appJsSource.Contains("openMealNutritionTargets") -or
     -not $appJsSource.Contains("mealTargetMini") -or
     -not $appJsSource.Contains("meal-edit-targets") -or
@@ -2818,7 +2818,7 @@ if (-not $appJsSource.Contains("openMealNutritionTargets") -or
 }
 Write-Host "    Prescrito x planejado + edicao rapida: assets OK."
 
-Write-Host "[332/518] Validando modal de distribuicao..."
+Write-Host "[332/526] Validando modal de distribuicao..."
 if (-not $appJsSource.Contains("openMealTargetDistribution") -or
     -not $appJsSource.Contains("mealDistributionTotal") -or
     -not $appJsSource.Contains("distribuir-metas-refeicoes") -or
@@ -2827,7 +2827,7 @@ if (-not $appJsSource.Contains("openMealTargetDistribution") -or
 }
 Write-Host "    Percentuais por refeicao + fechamento 100%: assets OK."
 
-Write-Host "[333/518] Validando SQL e PREPARAR 25..."
+Write-Host "[333/526] Validando SQL e PREPARAR 25..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.29_metas_por_refeicao.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2838,13 +2838,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
-Write-Host "[334/518] Validando versao v0.3.29..."
+Write-Host "[334/526] Validando versao v0.3.29..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.29 / metas por refeicao + distribuicao planejada: OK."
 
 
-Write-Host "[335/518] Validando schema das fases nutricionais..."
+Write-Host "[335/526] Validando schema das fases nutricionais..."
 $phaseEntity = Get-Content .\src\HealthPlatform.Domain\Entities\FaseNutricional.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $phaseEntity.Contains("PlanoAlimentarId") -or
@@ -2856,7 +2856,7 @@ if (-not $phaseEntity.Contains("PlanoAlimentarId") -or
 }
 Write-Host "    Paciente + periodo + plano + ordem + status: modelo OK."
 
-Write-Host "[336/518] Validando listagem das fases..."
+Write-Host "[336/526] Validando listagem das fases..."
 $phaseSource = Get-Content .\src\HealthPlatform.Api\Controllers\FasesNutricionaisController.cs -Encoding UTF8 -Raw
 if (-not $phaseSource.Contains('api/pacientes/{pacienteId:guid}/fases-nutricionais') -or
     -not $phaseSource.Contains("OrderBy(x => x.Ordem)") -or
@@ -2865,7 +2865,7 @@ if (-not $phaseSource.Contains('api/pacientes/{pacienteId:guid}/fases-nutriciona
 }
 Write-Host "    Ordem + plano vinculado + profissional: backend OK."
 
-Write-Host "[337/518] Validando criacao de fase..."
+Write-Host "[337/526] Validando criacao de fase..."
 if (-not $phaseSource.Contains("CriarFaseNutricionalRequest") -or
     -not $phaseSource.Contains('Status = "Planejada"') -or
     -not $phaseSource.Contains("maiorOrdem + 1")) {
@@ -2873,7 +2873,7 @@ if (-not $phaseSource.Contains("CriarFaseNutricionalRequest") -or
 }
 Write-Host "    Nova fase entra no fim como Planejada."
 
-Write-Host "[338/518] Validando edicao e estados..."
+Write-Host "[338/526] Validando edicao e estados..."
 if (-not $phaseSource.Contains("AtualizarFaseNutricionalRequest") -or
     -not $phaseSource.Contains('"Planejada" or "EmAndamento" or "Concluida" or "Cancelada"') -or
     -not $phaseSource.Contains('"UPDATE"')) {
@@ -2881,7 +2881,7 @@ if (-not $phaseSource.Contains("AtualizarFaseNutricionalRequest") -or
 }
 Write-Host "    Planejada / Em andamento / Concluida / Cancelada: OK."
 
-Write-Host "[339/518] Validando vinculo seguro com plano alimentar..."
+Write-Host "[339/526] Validando vinculo seguro com plano alimentar..."
 if (-not $phaseSource.Contains("PlanoValido") -or
     -not $phaseSource.Contains("x.PacienteId == pacienteId") -or
     -not $phaseSource.Contains("x.Paciente.OrganizacaoId == currentUser.OrganizationId")) {
@@ -2889,7 +2889,7 @@ if (-not $phaseSource.Contains("PlanoValido") -or
 }
 Write-Host "    Plano precisa pertencer ao mesmo paciente/tenant."
 
-Write-Host "[340/518] Validando reordenacao do ciclo..."
+Write-Host "[340/526] Validando reordenacao do ciclo..."
 if (-not $phaseSource.Contains("fases-nutricionais/reordenar") -or
     -not $phaseSource.Contains("idsExistentes.SequenceEqual(idsRecebidos)") -or
     -not $phaseSource.Contains("ordemDuplicada")) {
@@ -2897,7 +2897,7 @@ if (-not $phaseSource.Contains("fases-nutricionais/reordenar") -or
 }
 Write-Host "    Reordenacao exige todas as fases e ordem unica."
 
-Write-Host "[341/518] Validando exclusao protegida..."
+Write-Host "[341/526] Validando exclusao protegida..."
 if (-not $phaseSource.Contains("HttpDelete") -or
     -not $phaseSource.Contains('fase.Status == "EmAndamento"') -or
     -not $phaseSource.Contains('"DELETE"')) {
@@ -2905,7 +2905,7 @@ if (-not $phaseSource.Contains("HttpDelete") -or
 }
 Write-Host "    Fase em andamento nao pode ser apagada."
 
-Write-Host "[342/518] Validando isolamento e auditoria..."
+Write-Host "[342/526] Validando isolamento e auditoria..."
 if (-not $phaseSource.Contains("currentUser.OrganizationId") -or
     -not $phaseSource.Contains("AuditLogs") -or
     -not $phaseSource.Contains("nameof(FaseNutricional)")) {
@@ -2913,7 +2913,7 @@ if (-not $phaseSource.Contains("currentUser.OrganizationId") -or
 }
 Write-Host "    Organizacao + auditoria: backend OK."
 
-Write-Host "[343/518] Validando interface das fases..."
+Write-Host "[343/526] Validando interface das fases..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("loadNutritionPhases") -or
     -not $appJsSource.Contains("nutritionPhaseCard") -or
@@ -2922,7 +2922,7 @@ if (-not $appJsSource.Contains("loadNutritionPhases") -or
 }
 Write-Host "    Aba Alimentacao -> ciclo nutricional: assets OK."
 
-Write-Host "[344/518] Validando formulario de fase..."
+Write-Host "[344/526] Validando formulario de fase..."
 if (-not $appJsSource.Contains("openNutritionPhaseForm") -or
     -not $appJsSource.Contains("Cutting") -or
     -not $appJsSource.Contains("Manutenção") -or
@@ -2931,7 +2931,7 @@ if (-not $appJsSource.Contains("openNutritionPhaseForm") -or
 }
 Write-Host "    Tipo + periodo + plano + objetivo + observacoes: assets OK."
 
-Write-Host "[345/518] Validando reordenacao visual..."
+Write-Host "[345/526] Validando reordenacao visual..."
 if (-not $appJsSource.Contains("moveNutritionPhase") -or
     -not $appJsSource.Contains("nutrition-phase-up") -or
     -not $appJsSource.Contains("nutrition-phase-down")) {
@@ -2939,7 +2939,7 @@ if (-not $appJsSource.Contains("moveNutritionPhase") -or
 }
 Write-Host "    Subir/descer fase: assets OK."
 
-Write-Host "[346/518] Validando responsividade..."
+Write-Host "[346/526] Validando responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("nutrition-phase-card") -or
     -not $cssSource.Contains("nutrition-phase-list") -or
@@ -2948,7 +2948,7 @@ if (-not $cssSource.Contains("nutrition-phase-card") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[347/518] Validando SQL e PREPARAR 26..."
+Write-Host "[347/526] Validando SQL e PREPARAR 26..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.30_fases_nutricionais.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -2959,13 +2959,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 26/26: OK."
 
-Write-Host "[348/518] Validando versao v0.3.30..."
+Write-Host "[348/526] Validando versao v0.3.30..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.30 / fases nutricionais + planejamento de ciclo: OK."
 
 
-Write-Host "[349/518] Validando schema das fases de treino..."
+Write-Host "[349/526] Validando schema das fases de treino..."
 $phaseEntity = Get-Content .\src\HealthPlatform.Domain\Entities\FaseTreino.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $phaseEntity.Contains("PlanoTreinoId") -or
@@ -2977,7 +2977,7 @@ if (-not $phaseEntity.Contains("PlanoTreinoId") -or
 }
 Write-Host "    Paciente + periodo + ficha + ordem + status: modelo OK."
 
-Write-Host "[350/518] Validando listagem das fases..."
+Write-Host "[350/526] Validando listagem das fases..."
 $phaseSource = Get-Content .\src\HealthPlatform.Api\Controllers\FasesTreinoController.cs -Encoding UTF8 -Raw
 if (-not $phaseSource.Contains('api/pacientes/{pacienteId:guid}/fases-treino') -or
     -not $phaseSource.Contains("OrderBy(x => x.Ordem)") -or
@@ -2986,7 +2986,7 @@ if (-not $phaseSource.Contains('api/pacientes/{pacienteId:guid}/fases-treino') -
 }
 Write-Host "    Ordem + ficha vinculada + profissional: backend OK."
 
-Write-Host "[351/518] Validando criacao de fase..."
+Write-Host "[351/526] Validando criacao de fase..."
 if (-not $phaseSource.Contains("CriarFaseTreinoRequest") -or
     -not $phaseSource.Contains('Status = "Planejada"') -or
     -not $phaseSource.Contains("maiorOrdem + 1")) {
@@ -2994,7 +2994,7 @@ if (-not $phaseSource.Contains("CriarFaseTreinoRequest") -or
 }
 Write-Host "    Nova fase entra no fim como Planejada."
 
-Write-Host "[352/518] Validando edicao e estados..."
+Write-Host "[352/526] Validando edicao e estados..."
 if (-not $phaseSource.Contains("AtualizarFaseTreinoRequest") -or
     -not $phaseSource.Contains('"Planejada" or "EmAndamento" or "Concluida" or "Cancelada"') -or
     -not $phaseSource.Contains('"UPDATE"')) {
@@ -3002,7 +3002,7 @@ if (-not $phaseSource.Contains("AtualizarFaseTreinoRequest") -or
 }
 Write-Host "    Planejada / Em andamento / Concluida / Cancelada: OK."
 
-Write-Host "[353/518] Validando vinculo seguro com ficha..."
+Write-Host "[353/526] Validando vinculo seguro com ficha..."
 if (-not $phaseSource.Contains("PlanoValido") -or
     -not $phaseSource.Contains("x.PacienteId == pacienteId") -or
     -not $phaseSource.Contains("x.Paciente.OrganizacaoId == currentUser.OrganizationId")) {
@@ -3010,7 +3010,7 @@ if (-not $phaseSource.Contains("PlanoValido") -or
 }
 Write-Host "    Plano de treino precisa pertencer ao mesmo paciente/tenant."
 
-Write-Host "[354/518] Validando reordenacao do ciclo..."
+Write-Host "[354/526] Validando reordenacao do ciclo..."
 if (-not $phaseSource.Contains("fases-treino/reordenar") -or
     -not $phaseSource.Contains("idsExistentes.SequenceEqual(idsRecebidos)") -or
     -not $phaseSource.Contains("GroupBy(x => x.Ordem)")) {
@@ -3018,7 +3018,7 @@ if (-not $phaseSource.Contains("fases-treino/reordenar") -or
 }
 Write-Host "    Reordenacao exige todas as fases e ordem unica."
 
-Write-Host "[355/518] Validando exclusao protegida..."
+Write-Host "[355/526] Validando exclusao protegida..."
 if (-not $phaseSource.Contains("HttpDelete") -or
     -not $phaseSource.Contains('fase.Status == "EmAndamento"') -or
     -not $phaseSource.Contains('"DELETE"')) {
@@ -3026,7 +3026,7 @@ if (-not $phaseSource.Contains("HttpDelete") -or
 }
 Write-Host "    Fase em andamento nao pode ser apagada."
 
-Write-Host "[356/518] Validando isolamento e auditoria..."
+Write-Host "[356/526] Validando isolamento e auditoria..."
 if (-not $phaseSource.Contains("currentUser.OrganizationId") -or
     -not $phaseSource.Contains("AuditLogs") -or
     -not $phaseSource.Contains("nameof(FaseTreino)")) {
@@ -3034,7 +3034,7 @@ if (-not $phaseSource.Contains("currentUser.OrganizationId") -or
 }
 Write-Host "    Organizacao + auditoria: backend OK."
 
-Write-Host "[357/518] Validando interface do ciclo..."
+Write-Host "[357/526] Validando interface do ciclo..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("loadWorkoutPhases") -or
     -not $appJsSource.Contains("workoutPhaseCard") -or
@@ -3043,7 +3043,7 @@ if (-not $appJsSource.Contains("loadWorkoutPhases") -or
 }
 Write-Host "    Aba Treinos -> periodizacao: assets OK."
 
-Write-Host "[358/518] Validando formulario de fase..."
+Write-Host "[358/526] Validando formulario de fase..."
 if (-not $appJsSource.Contains("openWorkoutPhaseForm") -or
     -not $appJsSource.Contains("Hipertrofia") -or
     -not $appJsSource.Contains("Deload") -or
@@ -3052,7 +3052,7 @@ if (-not $appJsSource.Contains("openWorkoutPhaseForm") -or
 }
 Write-Host "    Tipo + periodo + ficha + objetivo + observacoes: assets OK."
 
-Write-Host "[359/518] Validando reordenacao visual..."
+Write-Host "[359/526] Validando reordenacao visual..."
 if (-not $appJsSource.Contains("moveWorkoutPhase") -or
     -not $appJsSource.Contains("workout-phase-up") -or
     -not $appJsSource.Contains("workout-phase-down")) {
@@ -3060,7 +3060,7 @@ if (-not $appJsSource.Contains("moveWorkoutPhase") -or
 }
 Write-Host "    Subir/descer fase: assets OK."
 
-Write-Host "[360/518] Validando responsividade..."
+Write-Host "[360/526] Validando responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("workout-phase-card") -or
     -not $cssSource.Contains("workout-phase-list") -or
@@ -3069,7 +3069,7 @@ if (-not $cssSource.Contains("workout-phase-card") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[361/518] Validando SQL e PREPARAR 27..."
+Write-Host "[361/526] Validando SQL e PREPARAR 27..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.31_fases_treino.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -3080,13 +3080,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 27/27: OK."
 
-Write-Host "[362/518] Validando versao v0.3.31..."
+Write-Host "[362/526] Validando versao v0.3.31..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.31 / ciclos de treino + periodizacao: OK."
 
 
-Write-Host "[363/518] Validando schema dos check-ins..."
+Write-Host "[363/526] Validando schema dos check-ins..."
 $checkinEntity = Get-Content .\src\HealthPlatform.Domain\Entities\CheckInAcompanhamento.cs -Encoding UTF8 -Raw
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $checkinEntity.Contains("AdesaoAlimentacaoPercentual") -or
@@ -3098,7 +3098,7 @@ if (-not $checkinEntity.Contains("AdesaoAlimentacaoPercentual") -or
 }
 Write-Host "    Adesao + escalas + fases + peso: modelo OK."
 
-Write-Host "[364/518] Validando endpoint profissional..."
+Write-Host "[364/526] Validando endpoint profissional..."
 $checkinSource = Get-Content .\src\HealthPlatform.Api\Controllers\CheckInsAcompanhamentoController.cs -Encoding UTF8 -Raw
 if (-not $checkinSource.Contains('api/pacientes/{pacienteId:guid}/check-ins') -or
     -not $checkinSource.Contains("MontarHistorico") -or
@@ -3107,7 +3107,7 @@ if (-not $checkinSource.Contains('api/pacientes/{pacienteId:guid}/check-ins') -o
 }
 Write-Host "    Historico + atual + variacao: backend OK."
 
-Write-Host "[365/518] Validando criacao e edicao..."
+Write-Host "[365/526] Validando criacao e edicao..."
 if (-not $checkinSource.Contains("UpsertCheckInRequest") -or
     -not $checkinSource.Contains('Origem = "Profissional"') -or
     -not $checkinSource.Contains('Auditar("UPDATE"')) {
@@ -3115,7 +3115,7 @@ if (-not $checkinSource.Contains("UpsertCheckInRequest") -or
 }
 Write-Host "    POST + PUT + auditoria: backend OK."
 
-Write-Host "[366/518] Validando limites dos indicadores..."
+Write-Host "[366/526] Validando limites dos indicadores..."
 if (-not $checkinSource.Contains("Peso deve ficar entre 20 e 400 kg") -or
     -not $checkinSource.Contains("Adesao deve ficar entre 0 e 100%") -or
     -not $checkinSource.Contains("devem ficar entre 0 e 10")) {
@@ -3123,7 +3123,7 @@ if (-not $checkinSource.Contains("Peso deve ficar entre 20 e 400 kg") -or
 }
 Write-Host "    Peso + adesao + escalas: protegidos."
 
-Write-Host "[367/518] Validando vinculo com fases..."
+Write-Host "[367/526] Validando vinculo com fases..."
 if (-not $checkinSource.Contains("FasesValidas") -or
     -not $checkinSource.Contains("db.FasesNutricionais.AnyAsync") -or
     -not $checkinSource.Contains("db.FasesTreino.AnyAsync")) {
@@ -3131,7 +3131,7 @@ if (-not $checkinSource.Contains("FasesValidas") -or
 }
 Write-Host "    Fase nutricional/treino precisa ser do paciente."
 
-Write-Host "[368/518] Validando auto-vinculo do paciente..."
+Write-Host "[368/526] Validando auto-vinculo do paciente..."
 if (-not $checkinSource.Contains("FaseNutricionalAtual") -or
     -not $checkinSource.Contains("FaseTreinoAtual") -or
     -not $checkinSource.Contains('Origem = "Paciente"')) {
@@ -3139,7 +3139,7 @@ if (-not $checkinSource.Contains("FaseNutricionalAtual") -or
 }
 Write-Host "    Portal associa automaticamente as fases atuais."
 
-Write-Host "[369/518] Validando portal do paciente..."
+Write-Host "[369/526] Validando portal do paciente..."
 if (-not $checkinSource.Contains('api/portal/me/check-ins') -or
     -not $checkinSource.Contains('Authorize(Policy = "PatientOnly")') -or
     -not $checkinSource.Contains('"CREATE_SELF"')) {
@@ -3147,7 +3147,7 @@ if (-not $checkinSource.Contains('api/portal/me/check-ins') -or
 }
 Write-Host "    GET + POST PatientOnly + auditoria: backend OK."
 
-Write-Host "[370/518] Validando isolamento multi-tenant..."
+Write-Host "[370/526] Validando isolamento multi-tenant..."
 if (-not $checkinSource.Contains("currentUser.OrganizationId") -or
     -not $checkinSource.Contains("MeuPacienteId") -or
     -not $checkinSource.Contains("x.OrganizacaoId == currentUser.OrganizationId")) {
@@ -3155,7 +3155,7 @@ if (-not $checkinSource.Contains("currentUser.OrganizationId") -or
 }
 Write-Host "    Organizacao + usuario/paciente vinculados: OK."
 
-Write-Host "[371/518] Validando painel profissional..."
+Write-Host "[371/526] Validando painel profissional..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpInjectProfessionalCheckIns") -or
     -not $appJsSource.Contains("professional-checkin-new") -or
@@ -3164,7 +3164,7 @@ if (-not $appJsSource.Contains("hpInjectProfessionalCheckIns") -or
 }
 Write-Host "    Resumo/alimentacao/treinos -> check-ins: assets OK."
 
-Write-Host "[372/518] Validando graficos de resposta..."
+Write-Host "[372/526] Validando graficos de resposta..."
 if (-not $appJsSource.Contains("hpCheckInCharts") -or
     -not $appJsSource.Contains("Adesão alimentar") -or
     -not $appJsSource.Contains("Adesão ao treino") -or
@@ -3173,7 +3173,7 @@ if (-not $appJsSource.Contains("hpCheckInCharts") -or
 }
 Write-Host "    Peso + dieta + treino + energia: assets OK."
 
-Write-Host "[373/518] Validando formulario profissional..."
+Write-Host "[373/526] Validando formulario profissional..."
 if (-not $appJsSource.Contains("adesaoAlimentacaoPercentual") -or
     -not $appJsSource.Contains("percepcaoEvolucaoNivel") -or
     -not $appJsSource.Contains("faseNutricionalId") -or
@@ -3182,7 +3182,7 @@ if (-not $appJsSource.Contains("adesaoAlimentacaoPercentual") -or
 }
 Write-Host "    Indicadores + duas fases: assets OK."
 
-Write-Host "[374/518] Validando check-in no portal..."
+Write-Host "[374/526] Validando check-in no portal..."
 if (-not $appJsSource.Contains("loadMyCheckInsIntoEvolution") -or
     -not $appJsSource.Contains("openMyCheckInForm") -or
     -not $appJsSource.Contains("patientCheckInNew") -or
@@ -3191,7 +3191,7 @@ if (-not $appJsSource.Contains("loadMyCheckInsIntoEvolution") -or
 }
 Write-Host "    Evolucao -> novo check-in + historico: assets OK."
 
-Write-Host "[375/518] Validando responsividade..."
+Write-Host "[375/526] Validando responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("checkin-current-grid") -or
     -not $cssSource.Contains("checkin-history-row") -or
@@ -3200,7 +3200,7 @@ if (-not $cssSource.Contains("checkin-current-grid") -or
 }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[376/518] Validando SQL e PREPARAR 28..."
+Write-Host "[376/526] Validando SQL e PREPARAR 28..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.32_checkins_acompanhamento.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -3211,20 +3211,20 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 28/28: OK."
 
-Write-Host "[377/518] Validando preservacao dos ciclos..."
+Write-Host "[377/526] Validando preservacao dos ciclos..."
 if (-not $setupSource.Contains("v0.3.30_fases_nutricionais.sql") -or
     -not $setupSource.Contains("v0.3.31_fases_treino.sql")) {
     throw "Upgrades historicos dos ciclos nao foram preservados."
 }
 Write-Host "    Fases nutricionais + treino preservadas."
 
-Write-Host "[378/518] Validando versao v0.3.32..."
+Write-Host "[378/526] Validando versao v0.3.32..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.32 / check-ins de evolucao + adesao por fase: OK."
 
 
-Write-Host "[379/518] Validando endpoint de analise por fase..."
+Write-Host "[379/526] Validando endpoint de analise por fase..."
 $checkinSource = Get-Content .\src\HealthPlatform.Api\Controllers\CheckInsAcompanhamentoController.cs -Encoding UTF8 -Raw
 if (-not $checkinSource.Contains('api/pacientes/{pacienteId:guid}/analise-fases') -or
     -not $checkinSource.Contains("MontarAnaliseFase") -or
@@ -3233,7 +3233,7 @@ if (-not $checkinSource.Contains('api/pacientes/{pacienteId:guid}/analise-fases'
 }
 Write-Host "    Nutricao + treino + agregacao: backend OK."
 
-Write-Host "[380/518] Validando metricas agregadas..."
+Write-Host "[380/526] Validando metricas agregadas..."
 if (-not $checkinSource.Contains("MediaAdesaoAlimentacao") -or
     -not $checkinSource.Contains("MediaAdesaoTreino") -or
     -not $checkinSource.Contains("MediaFome") -or
@@ -3243,7 +3243,7 @@ if (-not $checkinSource.Contains("MediaAdesaoAlimentacao") -or
 }
 Write-Host "    Adesao + fome + energia + sono: backend OK."
 
-Write-Host "[381/518] Validando variacao de peso por fase..."
+Write-Host "[381/526] Validando variacao de peso por fase..."
 if (-not $checkinSource.Contains("PesoInicialKg") -or
     -not $checkinSource.Contains("PesoFinalKg") -or
     -not $checkinSource.Contains("VariacaoPesoKg") -or
@@ -3252,7 +3252,7 @@ if (-not $checkinSource.Contains("PesoInicialKg") -or
 }
 Write-Host "    Peso inicial -> final -> delta: backend OK."
 
-Write-Host "[382/518] Validando destaques automaticos..."
+Write-Host "[382/526] Validando destaques automaticos..."
 if (-not $checkinSource.Contains("melhorAdesaoAlimentar") -or
     -not $checkinSource.Contains("melhorAdesaoTreino") -or
     -not $checkinSource.Contains("maiorReducaoPeso") -or
@@ -3261,14 +3261,14 @@ if (-not $checkinSource.Contains("melhorAdesaoAlimentar") -or
 }
 Write-Host "    Melhores respostas calculadas sem IA generativa."
 
-Write-Host "[383/518] Validando isolamento multi-tenant..."
+Write-Host "[383/526] Validando isolamento multi-tenant..."
 if (-not $checkinSource.Contains("x.OrganizacaoId == currentUser.OrganizationId") -or
     -not $checkinSource.Contains("PacienteExiste(pacienteId")) {
     throw "Isolamento da analise de fases incompleto."
 }
 Write-Host "    Paciente + organizacao protegidos."
 
-Write-Host "[384/518] Validando cards comparativos..."
+Write-Host "[384/526] Validando cards comparativos..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpPhaseAnalysisCard") -or
     -not $appJsSource.Contains("phase-analysis-grid") -or
@@ -3277,7 +3277,7 @@ if (-not $appJsSource.Contains("hpPhaseAnalysisCard") -or
 }
 Write-Host "    Peso + adesao + energia + fome + sono: assets OK."
 
-Write-Host "[385/518] Validando destaques visuais..."
+Write-Host "[385/526] Validando destaques visuais..."
 if (-not $appJsSource.Contains("hpPhaseHighlightCard") -or
     -not $appJsSource.Contains("Melhor adesão alimentar") -or
     -not $appJsSource.Contains("Maior redução de peso")) {
@@ -3285,28 +3285,28 @@ if (-not $appJsSource.Contains("hpPhaseHighlightCard") -or
 }
 Write-Host "    Melhores fases aparecem no topo da analise."
 
-Write-Host "[386/518] Validando integracao com nutricao..."
+Write-Host "[386/526] Validando integracao com nutricao..."
 if (-not $appJsSource.Contains("nutrition-phase-analysis") -or
     -not $appJsSource.Contains("'nutrition'")) {
     throw "Analise das fases nutricionais nao integrada."
 }
 Write-Host "    Alimentacao -> comparativo nutricional: assets OK."
 
-Write-Host "[387/518] Validando integracao com treino..."
+Write-Host "[387/526] Validando integracao com treino..."
 if (-not $appJsSource.Contains("workout-phase-analysis") -or
     -not $appJsSource.Contains("'workout'")) {
     throw "Analise das fases de treino nao integrada."
 }
 Write-Host "    Treinos -> comparativo de periodizacao: assets OK."
 
-Write-Host "[388/518] Validando resumo consolidado..."
+Write-Host "[388/526] Validando resumo consolidado..."
 if (-not $appJsSource.Contains("summary-phase-analysis") -or
     -not $appJsSource.Contains("hpInjectPhaseAnalysis")) {
     throw "Analise consolidada de fases nao integrada ao resumo."
 }
 Write-Host "    Resumo -> destaques dos dois ciclos: assets OK."
 
-Write-Host "[389/518] Validando responsividade e compatibilidade de banco..."
+Write-Host "[389/526] Validando responsividade e compatibilidade de banco..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("phase-highlight-grid") -or
@@ -3320,87 +3320,87 @@ if (Test-Path .\scripts\sql\v0.3.33_analise_fases.sql) {
 }
 Write-Host "    UI responsiva / sem schema novo / PREPARAR 28/28: OK."
 
-Write-Host "[390/518] Validando versao v0.3.33..."
+Write-Host "[390/526] Validando versao v0.3.33..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.33 / analise de fases + comparativo de resposta: OK."
 
-Write-Host "[391/518] Validando metas das fases..."
+Write-Host "[391/526] Validando metas das fases..."
 $nutritionPhaseEntity = Get-Content .\src\HealthPlatform.Domain\Entities\FaseNutricional.cs -Encoding UTF8 -Raw
 $workoutPhaseEntity = Get-Content .\src\HealthPlatform.Domain\Entities\FaseTreino.cs -Encoding UTF8 -Raw
 if (-not $nutritionPhaseEntity.Contains("MetaPesoKg") -or -not $nutritionPhaseEntity.Contains("MetaAdesaoPercentual") -or -not $nutritionPhaseEntity.Contains("DuracaoMinimaDias") -or -not $nutritionPhaseEntity.Contains("CriterioTransicao") -or -not $workoutPhaseEntity.Contains("MetaPesoKg") -or -not $workoutPhaseEntity.Contains("CriterioTransicao")) { throw "Metas das fases incompletas." }
 Write-Host "    Peso + adesao + duracao + criterio manual: modelo OK."
 
-Write-Host "[392/518] Validando mapeamento EF..."
+Write-Host "[392/526] Validando mapeamento EF..."
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbSource.Contains("MetaPesoKg).HasPrecision(8, 2)") -or -not $dbSource.Contains("CriterioTransicao).HasMaxLength(1000)")) { throw "Mapeamento EF dos criterios incompleto." }
 Write-Host "    Precisao de peso + limite do criterio: EF OK."
 
-Write-Host "[393/518] Validando CRUD das fases..."
+Write-Host "[393/526] Validando CRUD das fases..."
 $nutritionPhaseSource = Get-Content .\src\HealthPlatform.Api\Controllers\FasesNutricionaisController.cs -Encoding UTF8 -Raw
 $workoutPhaseSource = Get-Content .\src\HealthPlatform.Api\Controllers\FasesTreinoController.cs -Encoding UTF8 -Raw
 if (-not $nutritionPhaseSource.Contains("request.MetaAdesaoPercentual") -or -not $workoutPhaseSource.Contains("request.MetaAdesaoPercentual") -or -not $nutritionPhaseSource.Contains("request.CriterioTransicao") -or -not $workoutPhaseSource.Contains("request.CriterioTransicao")) { throw "CRUD das fases nao preserva criterios." }
 Write-Host "    Criacao + edicao preservam metas."
 
-Write-Host "[394/518] Validando limites dos criterios..."
+Write-Host "[394/526] Validando limites dos criterios..."
 if (-not $nutritionPhaseSource.Contains("Meta de peso deve ficar entre 20 e 400 kg") -or -not $nutritionPhaseSource.Contains("Meta de adesao deve ficar entre 0 e 100%") -or -not $nutritionPhaseSource.Contains("Duracao minima deve ficar entre 1 e 3650 dias") -or -not $nutritionPhaseSource.Contains("1000 caracteres")) { throw "Validacoes dos criterios incompletas." }
 Write-Host "    Limites de configuracao: OK."
 
-Write-Host "[395/518] Validando endpoint runtime de prontidao..."
+Write-Host "[395/526] Validando endpoint runtime de prontidao..."
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) { $pacienteSmoke = $lista.itens | Select-Object -First 1; $statusTransicao = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/status-transicao-fases" -Headers $headers -Method Get; if ($null -eq $statusTransicao.nutricao -or $null -eq $statusTransicao.treino) { throw "Endpoint de status de transicao retornou estrutura invalida." }; Write-Host "    GET status-transicao-fases: runtime OK." } else { Write-Host "    Sem pacientes: smoke runtime ignorado." }
 
-Write-Host "[396/518] Validando motor de criterios objetivos..."
+Write-Host "[396/526] Validando motor de criterios objetivos..."
 $checkinSource = Get-Content .\src\HealthPlatform.Api\Controllers\CheckInsAcompanhamentoController.cs -Encoding UTF8 -Raw
 if (-not $checkinSource.Contains("duracao_minima") -or -not $checkinSource.Contains("adesao_minima") -or -not $checkinSource.Contains("meta_peso") -or -not $checkinSource.Contains("Math.Abs(pesoAtual.Value - metaPesoKg.Value) <= 0.5m")) { throw "Motor objetivo incompleto." }
 Write-Host "    Duracao + adesao + peso: motor OK."
 
-Write-Host "[397/518] Validando revisao profissional..."
+Write-Host "[397/526] Validando revisao profissional..."
 if (-not $checkinSource.Contains("ObjetivosProntosParaRevisao") -or -not $checkinSource.Contains("RequerAvaliacaoProfissional")) { throw "Semantica de revisao profissional incompleta." }
 Write-Host "    Motor sugere revisao, nao conclui a fase automaticamente."
 
-Write-Host "[398/518] Validando formularios das fases..."
+Write-Host "[398/526] Validando formularios das fases..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("metaPesoKg") -or -not $appJsSource.Contains("metaAdesaoPercentual") -or -not $appJsSource.Contains("duracaoMinimaDias") -or -not $appJsSource.Contains("criterioTransicao")) { throw "Formularios de criterios incompletos." }
 Write-Host "    Nutricao + treino configuram metas: assets OK."
 
-Write-Host "[399/518] Validando metas nos cards..."
+Write-Host "[399/526] Validando metas nos cards..."
 if (-not $appJsSource.Contains("phaseGoalChips")) { throw "Resumo visual das metas incompleto." }
 Write-Host "    Cards exibem metas configuradas."
 
-Write-Host "[400/518] Validando painel de prontidao..."
+Write-Host "[400/526] Validando painel de prontidao..."
 if (-not $appJsSource.Contains("hpInjectTransitionStatus") -or -not $appJsSource.Contains("hpTransitionStatusCard") -or -not $appJsSource.Contains("objetivosProntosParaRevisao")) { throw "Painel de prontidao incompleto." }
 Write-Host "    Progresso dos criterios: assets OK."
 
-Write-Host "[401/518] Validando integracao nutricional..."
+Write-Host "[401/526] Validando integracao nutricional..."
 if (-not $appJsSource.Contains("nutrition-transition-status")) { throw "Integracao nutricional incompleta." }
 Write-Host "    Alimentacao: OK."
 
-Write-Host "[402/518] Validando integracao de treino..."
+Write-Host "[402/526] Validando integracao de treino..."
 if (-not $appJsSource.Contains("workout-transition-status")) { throw "Integracao de treino incompleta." }
 Write-Host "    Treinos: OK."
 
-Write-Host "[403/518] Validando integracao no resumo..."
+Write-Host "[403/526] Validando integracao no resumo..."
 if (-not $appJsSource.Contains("summary-transition-status")) { throw "Integracao no resumo incompleta." }
 Write-Host "    Resumo: OK."
 
-Write-Host "[404/518] Validando responsividade..."
+Write-Host "[404/526] Validando responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("transition-status-card") -or -not $cssSource.Contains("phase-goal-chips")) { throw "Estilos de transicao incompletos." }
 Write-Host "    Desktop + mobile: estilos OK."
 
-Write-Host "[405/518] Validando SQL e PREPARAR 29..."
+Write-Host "[405/526] Validando SQL e PREPARAR 29..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.34_criterios_transicao_fases.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or -not $setupSource.Contains("v0.3.34_criterios_transicao_fases.sql") -or -not $sqlSource.Contains('"MetaPesoKg"') -or -not $sqlSource.Contains('"CriterioTransicao"') -or -not $setupSource.Contains("v0.3.32_checkins_acompanhamento.sql")) { throw "Upgrade dos criterios incompleto." }
 Write-Host "    SQL idempotente + PREPARAR 29/29 + historico preservado."
 
-Write-Host "[406/518] Validando versao v0.3.34..."
+Write-Host "[406/526] Validando versao v0.3.34..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.34 / metas de fase + criterios de transicao: OK."
 
 
-Write-Host "[407/518] Validando entidade de revisao..."
+Write-Host "[407/526] Validando entidade de revisao..."
 $reviewEntity = Get-Content .\src\HealthPlatform.Domain\Entities\RevisaoFase.cs -Encoding UTF8 -Raw
 if (-not $reviewEntity.Contains("RevisadoPorUsuarioId") -or
     -not $reviewEntity.Contains("FaseDestinoId") -or
@@ -3410,7 +3410,7 @@ if (-not $reviewEntity.Contains("RevisadoPorUsuarioId") -or
 }
 Write-Host "    Decisao + destino + override + snapshot: modelo OK."
 
-Write-Host "[408/518] Validando mapeamento das revisoes..."
+Write-Host "[408/526] Validando mapeamento das revisoes..."
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbSource.Contains("DbSet<RevisaoFase>") -or
     -not $dbSource.Contains('ToTable("RevisoesFases")') -or
@@ -3419,7 +3419,7 @@ if (-not $dbSource.Contains("DbSet<RevisaoFase>") -or
 }
 Write-Host "    Tabela + indices + paciente: EF OK."
 
-Write-Host "[409/518] Validando historico runtime..."
+Write-Host "[409/526] Validando historico runtime..."
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $revisoesSmoke = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/revisoes-fases?limite=6" -Headers $headers -Method Get
@@ -3431,7 +3431,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Sem pacientes: smoke de revisoes ignorado."
 }
 
-Write-Host "[410/518] Validando revisao nutricional..."
+Write-Host "[410/526] Validando revisao nutricional..."
 $reviewSource = Get-Content .\src\HealthPlatform.Api\Controllers\RevisoesFasesController.cs -Encoding UTF8 -Raw
 if (-not $reviewSource.Contains('api/fases-nutricionais/{id:guid}/revisar') -or
     -not $reviewSource.Contains("RevisarNutricional") -or
@@ -3440,7 +3440,7 @@ if (-not $reviewSource.Contains('api/fases-nutricionais/{id:guid}/revisar') -or
 }
 Write-Host "    Endpoint de revisao nutricional: backend OK."
 
-Write-Host "[411/518] Validando revisao de treino..."
+Write-Host "[411/526] Validando revisao de treino..."
 if (-not $reviewSource.Contains('api/fases-treino/{id:guid}/revisar') -or
     -not $reviewSource.Contains("RevisarTreino") -or
     -not $reviewSource.Contains('"Treino"')) {
@@ -3448,7 +3448,7 @@ if (-not $reviewSource.Contains('api/fases-treino/{id:guid}/revisar') -or
 }
 Write-Host "    Endpoint de revisao de treino: backend OK."
 
-Write-Host "[412/518] Validando decisoes e fase ativa..."
+Write-Host "[412/526] Validando decisoes e fase ativa..."
 if (-not $reviewSource.Contains('"Manter"') -or
     -not $reviewSource.Contains('"Concluir"') -or
     -not $reviewSource.Contains('"Avancar"') -or
@@ -3457,7 +3457,7 @@ if (-not $reviewSource.Contains('"Manter"') -or
 }
 Write-Host "    Manter / concluir / avancar + EmAndamento: regras OK."
 
-Write-Host "[413/518] Validando override consciente..."
+Write-Host "[413/526] Validando override consciente..."
 if (-not $reviewSource.Contains("ConfirmarMesmoSemCriterios") -or
     -not $reviewSource.Contains("ExigeOverride") -or
     -not $reviewSource.Contains("criterios objetivos pendentes")) {
@@ -3465,7 +3465,7 @@ if (-not $reviewSource.Contains("ConfirmarMesmoSemCriterios") -or
 }
 Write-Host "    Criterios pendentes exigem confirmacao explicita."
 
-Write-Host "[414/518] Validando transicao para proxima fase..."
+Write-Host "[414/526] Validando transicao para proxima fase..."
 if (-not $reviewSource.Contains("x.Ordem > fase.Ordem") -or
     -not $reviewSource.Contains('x.Status == "Planejada"') -or
     -not $reviewSource.Contains('proxima.Status = "EmAndamento"') -or
@@ -3474,7 +3474,7 @@ if (-not $reviewSource.Contains("x.Ordem > fase.Ordem") -or
 }
 Write-Host "    Atual conclui + proxima Planejada ativa: backend OK."
 
-Write-Host "[415/518] Validando transacao e auditoria..."
+Write-Host "[415/526] Validando transacao e auditoria..."
 if (-not $reviewSource.Contains("BeginTransactionAsync") -or
     -not $reviewSource.Contains("CommitAsync") -or
     -not $reviewSource.Contains('"REVIEW_CREATE"') -or
@@ -3483,7 +3483,7 @@ if (-not $reviewSource.Contains("BeginTransactionAsync") -or
 }
 Write-Host "    Decisao + mudancas de status atomicas e auditadas."
 
-Write-Host "[416/518] Validando modal de revisao..."
+Write-Host "[416/526] Validando modal de revisao..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openPhaseReview") -or
     -not $appJsSource.Contains("phaseReviewForm") -or
@@ -3493,7 +3493,7 @@ if (-not $appJsSource.Contains("openPhaseReview") -or
 }
 Write-Host "    Decisao + justificativa + override: assets OK."
 
-Write-Host "[417/518] Validando historico visual..."
+Write-Host "[417/526] Validando historico visual..."
 if (-not $appJsSource.Contains("hpPhaseReviewHistory") -or
     -not $appJsSource.Contains("Histórico de decisões") -or
     -not $appJsSource.Contains("phase-review-history-card")) {
@@ -3501,7 +3501,7 @@ if (-not $appJsSource.Contains("hpPhaseReviewHistory") -or
 }
 Write-Host "    Ultimas decisoes aparecem junto da prontidao."
 
-Write-Host "[418/518] Validando integracao com painel de transicao..."
+Write-Host "[418/526] Validando integracao com painel de transicao..."
 if (-not $appJsSource.Contains("hpTransitionStatusCardReview") -or
     -not $appJsSource.Contains("phase-review-action") -or
     -not $appJsSource.Contains("/revisoes-fases?limite=6")) {
@@ -3509,7 +3509,7 @@ if (-not $appJsSource.Contains("hpTransitionStatusCardReview") -or
 }
 Write-Host "    Fase EmAndamento recebe acao de revisao."
 
-Write-Host "[419/518] Validando SQL e PREPARAR 30..."
+Write-Host "[419/526] Validando SQL e PREPARAR 30..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.35_revisoes_transicoes_fases.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
@@ -3521,13 +3521,13 @@ if (-not $setupSource.Contains("[31/31]") -or
 }
 Write-Host "    SQL idempotente + PREPARAR 31/31 + v0.3.34 preservada."
 
-Write-Host "[420/518] Validando versao v0.3.35..."
+Write-Host "[420/526] Validando versao v0.3.35..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.35 / revisao de fase + transicao assistida: OK."
 
 
-Write-Host "[421/518] Validando controller de volume..."
+Write-Host "[421/526] Validando controller de volume..."
 $volumeSource = Get-Content .\src\HealthPlatform.Api\Controllers\AnaliseVolumeTreinoController.cs -Encoding UTF8 -Raw
 if (-not $volumeSource.Contains('api/pacientes/{pacienteId:guid}/treinos/analise-volume') -or
     -not $volumeSource.Contains("AnaliseVolumeTreinoController") -or
@@ -3536,14 +3536,14 @@ if (-not $volumeSource.Contains('api/pacientes/{pacienteId:guid}/treinos/analise
 }
 Write-Host "    Endpoint + selecao do plano: backend OK."
 
-Write-Host "[422/518] Validando isolamento multi-tenant..."
+Write-Host "[422/526] Validando isolamento multi-tenant..."
 if (-not $volumeSource.Contains("x.OrganizacaoId == currentUser.OrganizationId") -or
     -not $volumeSource.Contains("x.Paciente.OrganizacaoId == currentUser.OrganizationId")) {
     throw "Isolamento da analise de volume incompleto."
 }
 Write-Host "    Paciente + plano + execucoes: tenant OK."
 
-Write-Host "[423/518] Validando volume planejado por grupo..."
+Write-Host "[423/526] Validando volume planejado por grupo..."
 if (-not $volumeSource.Contains("Grupo(x.Exercicio.GrupoMuscular)") -or
     -not $volumeSource.Contains("SeriesPorCiclo") -or
     -not $volumeSource.Contains("SeriesSemanaisEstimadas") -or
@@ -3552,7 +3552,7 @@ if (-not $volumeSource.Contains("Grupo(x.Exercicio.GrupoMuscular)") -or
 }
 Write-Host "    Series + exercicios distintos + grupo muscular: backend OK."
 
-Write-Host "[424/518] Validando frequencia semanal..."
+Write-Host "[424/526] Validando frequencia semanal..."
 if (-not $volumeSource.Contains("FrequenciaSemanal") -or
     -not $volumeSource.Contains("SemAcentos") -or
     -not $volumeSource.Contains("segunda") -or
@@ -3561,14 +3561,14 @@ if (-not $volumeSource.Contains("FrequenciaSemanal") -or
 }
 Write-Host "    DiasSemana -> frequencia reconhecida: backend OK."
 
-Write-Host "[425/518] Validando fallback de frequencia..."
+Write-Host "[425/526] Validando fallback de frequencia..."
 if (-not $volumeSource.Contains("return (1, false)") -or
     -not $volumeSource.Contains("frequenciaInferida")) {
     throw "Fallback de frequencia nao identificado."
 }
 Write-Host "    Dias nao reconhecidos usam 1x/semana e ficam sinalizados."
 
-Write-Host "[426/518] Validando execucoes reais..."
+Write-Host "[426/526] Validando execucoes reais..."
 if (-not $volumeSource.Contains("SeriesRealizadas") -or
     -not $volumeSource.Contains('x.Status == "Concluido"') -or
     -not $volumeSource.Contains("seriesRealizadasPeriodo") -or
@@ -3577,7 +3577,7 @@ if (-not $volumeSource.Contains("SeriesRealizadas") -or
 }
 Write-Host "    Series concluidas + periodo + media semanal: backend OK."
 
-Write-Host "[427/518] Validando ausencia de tonelagem inventada..."
+Write-Host "[427/526] Validando ausencia de tonelagem inventada..."
 if (-not $volumeSource.Contains("Tonelagem nao e inferida") -or
     $volumeSource.Contains("RepeticoesRealizadas *") -or
     $volumeSource.Contains("CargaRealizada *")) {
@@ -3585,7 +3585,7 @@ if (-not $volumeSource.Contains("Tonelagem nao e inferida") -or
 }
 Write-Host "    Repeticoes textuais nao viram tonelagem ficticia."
 
-Write-Host "[428/518] Validando runtime da analise..."
+Write-Host "[428/526] Validando runtime da analise..."
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     try {
@@ -3605,7 +3605,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Sem pacientes: smoke runtime ignorado."
 }
 
-Write-Host "[429/518] Validando painel de volume..."
+Write-Host "[429/526] Validando painel de volume..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpInjectWorkoutVolume") -or
     -not $appJsSource.Contains("hpWorkoutVolumeBar") -or
@@ -3614,7 +3614,7 @@ if (-not $appJsSource.Contains("hpInjectWorkoutVolume") -or
 }
 Write-Host "    Distribuicao muscular: assets OK."
 
-Write-Host "[430/518] Validando resumo analitico..."
+Write-Host "[430/526] Validando resumo analitico..."
 if (-not $appJsSource.Contains("Séries planejadas") -or
     -not $appJsSource.Contains("Séries realizadas") -or
     -not $appJsSource.Contains("Média realizada") -or
@@ -3623,7 +3623,7 @@ if (-not $appJsSource.Contains("Séries planejadas") -or
 }
 Write-Host "    Planejado + realizado + concentracao: assets OK."
 
-Write-Host "[431/518] Validando volume por sessao..."
+Write-Host "[431/526] Validando volume por sessao..."
 if (-not $appJsSource.Contains("hpWorkoutSessionVolume") -or
     -not $appJsSource.Contains("séries/sessão") -or
     -not $appJsSource.Contains("Frequência não reconhecida")) {
@@ -3631,7 +3631,7 @@ if (-not $appJsSource.Contains("hpWorkoutSessionVolume") -or
 }
 Write-Host "    Sessao + frequencia + series semanais: assets OK."
 
-Write-Host "[432/518] Validando integracao e responsividade..."
+Write-Host "[432/526] Validando integracao e responsividade..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("workout-volume-main") -or
     -not $appJsSource.Contains("workout-volume-summary") -or
@@ -3641,7 +3641,7 @@ if (-not $appJsSource.Contains("workout-volume-main") -or
 }
 Write-Host "    Treinos + Resumo + layout responsivo: assets OK."
 
-Write-Host "[433/518] Validando compatibilidade de banco..."
+Write-Host "[433/526] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
@@ -3652,13 +3652,13 @@ if (Test-Path .\scripts\sql\v0.3.36_volume_treino.sql) {
 }
 Write-Host "    Sem schema novo / PREPARAR permanece 31/31."
 
-Write-Host "[434/518] Validando versao v0.3.36..."
+Write-Host "[434/526] Validando versao v0.3.36..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.36 / volume de treino + distribuicao muscular: OK."
 
 
-Write-Host "[435/518] Validando endpoints de progressao por exercicio..."
+Write-Host "[435/526] Validando endpoints de progressao por exercicio..."
 $progressSource = Get-Content .\src\HealthPlatform.Api\Controllers\ProgressaoExerciciosTreinoController.cs -Encoding UTF8 -Raw
 if (-not $progressSource.Contains('api/pacientes/{pacienteId:guid}/treinos/progressao-exercicios') -or
     -not $progressSource.Contains('api/portal/me/treinos/progressao-exercicios') -or
@@ -3667,7 +3667,7 @@ if (-not $progressSource.Contains('api/pacientes/{pacienteId:guid}/treinos/progr
 }
 Write-Host "    Profissional + paciente: rotas OK."
 
-Write-Host "[436/518] Validando seguranca e tenant..."
+Write-Host "[436/526] Validando seguranca e tenant..."
 if (-not $progressSource.Contains('Authorize(Policy = "PatientOnly")') -or
     -not $progressSource.Contains("x.OrganizacaoId == currentUser.OrganizationId") -or
     -not $progressSource.Contains("x.Paciente.OrganizacaoId == currentUser.OrganizationId")) {
@@ -3675,7 +3675,7 @@ if (-not $progressSource.Contains('Authorize(Policy = "PatientOnly")') -or
 }
 Write-Host "    PatientOnly + organizacao: OK."
 
-Write-Host "[437/518] Validando separacao por unidade..."
+Write-Host "[437/526] Validando separacao por unidade..."
 if (-not $progressSource.Contains("NormalizarUnidade") -or
     -not $progressSource.Contains("x.Unidade") -or
     -not $progressSource.Contains('"kg" or "kgs"') -or
@@ -3684,7 +3684,7 @@ if (-not $progressSource.Contains("NormalizarUnidade") -or
 }
 Write-Host "    Mesmo exercicio nao mistura kg com lb."
 
-Write-Host "[438/518] Validando metricas de carga..."
+Write-Host "[438/526] Validando metricas de carga..."
 if (-not $progressSource.Contains("primeiraCarga") -or
     -not $progressSource.Contains("ultimaCarga") -or
     -not $progressSource.Contains("maiorCarga") -or
@@ -3694,7 +3694,7 @@ if (-not $progressSource.Contains("primeiraCarga") -or
 }
 Write-Host "    Inicial + atual + PR + delta + percentual: backend OK."
 
-Write-Host "[439/518] Validando recordes sucessivos..."
+Write-Host "[439/526] Validando recordes sucessivos..."
 if (-not $progressSource.Contains("ContarNovosRecordes") -or
     -not $progressSource.Contains("ponto.Carga > maiorAnterior") -or
     -not $progressSource.Contains("novosRecordesPeriodo")) {
@@ -3702,7 +3702,7 @@ if (-not $progressSource.Contains("ContarNovosRecordes") -or
 }
 Write-Host "    Novos PRs ao longo do periodo: backend OK."
 
-Write-Host "[440/518] Validando tendencia de carga..."
+Write-Host "[440/526] Validando tendencia de carga..."
 if (-not $progressSource.Contains("Tendencia") -or
     -not $progressSource.Contains('"AcimaDaBase"') -or
     -not $progressSource.Contains('"Estavel"') -or
@@ -3711,7 +3711,7 @@ if (-not $progressSource.Contains("Tendencia") -or
 }
 Write-Host "    Base recente + tolerancia: backend OK."
 
-Write-Host "[441/518] Validando protecao contra estimativas artificiais..."
+Write-Host "[441/526] Validando protecao contra estimativas artificiais..."
 if (-not $progressSource.Contains("Nao ha estimativa de 1RM") -or
     -not $progressSource.Contains("repeticoes textuais") -or
     $progressSource.Contains("Epley") -or
@@ -3720,7 +3720,7 @@ if (-not $progressSource.Contains("Nao ha estimativa de 1RM") -or
 }
 Write-Host "    Sem 1RM/tonelagem inferidos de texto livre."
 
-Write-Host "[442/518] Validando runtime profissional..."
+Write-Host "[442/526] Validando runtime profissional..."
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $progressSmoke = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/treinos/progressao-exercicios?dias=180" -Headers $headers -Method Get
@@ -3732,7 +3732,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Sem pacientes: smoke runtime ignorado."
 }
 
-Write-Host "[443/518] Validando payload de pontos..."
+Write-Host "[443/526] Validando payload de pontos..."
 if (-not $progressSource.Contains("cargaRealizada = x.Carga") -or
     -not $progressSource.Contains("SeriesRealizadas") -or
     -not $progressSource.Contains("RepeticoesRealizadas") -or
@@ -3741,7 +3741,7 @@ if (-not $progressSource.Contains("cargaRealizada = x.Carga") -or
 }
 Write-Host "    Data + carga + series + reps + RPE: backend OK."
 
-Write-Host "[444/518] Validando painel profissional..."
+Write-Host "[444/526] Validando painel profissional..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpInjectExerciseProgression") -or
     -not $appJsSource.Contains("hpExerciseProgressCard") -or
@@ -3750,7 +3750,7 @@ if (-not $appJsSource.Contains("hpInjectExerciseProgression") -or
 }
 Write-Host "    Treinos + Resumo: assets OK."
 
-Write-Host "[445/518] Validando graficos e recordes..."
+Write-Host "[445/526] Validando graficos e recordes..."
 if (-not $appJsSource.Contains("hpExerciseProgressCharts") -or
     -not $appJsSource.Contains("Melhor marca") -or
     -not $appJsSource.Contains("Novos recordes") -or
@@ -3759,7 +3759,7 @@ if (-not $appJsSource.Contains("hpExerciseProgressCharts") -or
 }
 Write-Host "    Curvas + PRs + destaque: assets OK."
 
-Write-Host "[446/518] Validando portal do paciente..."
+Write-Host "[446/526] Validando portal do paciente..."
 if (-not $appJsSource.Contains("hpInjectMyExerciseProgression") -or
     -not $appJsSource.Contains("Minha progressão por exercício") -or
     -not $appJsSource.Contains("__loadPatientWorkout_v037_exerciseprogress")) {
@@ -3767,7 +3767,7 @@ if (-not $appJsSource.Contains("hpInjectMyExerciseProgression") -or
 }
 Write-Host "    Meu treino -> progressao individual: assets OK."
 
-Write-Host "[447/518] Validando compatibilidade de banco..."
+Write-Host "[447/526] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
@@ -3778,13 +3778,13 @@ if (Test-Path .\scripts\sql\v0.3.37_progressao_exercicios.sql) {
 }
 Write-Host "    Sem schema novo / PREPARAR permanece 31/31."
 
-Write-Host "[448/518] Validando versao v0.3.37..."
+Write-Host "[448/526] Validando versao v0.3.37..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.37 / progressao por exercicio + recordes de carga: OK."
 
 
-Write-Host "[449/518] Validando endpoints de sinais de progressao..."
+Write-Host "[449/526] Validando endpoints de sinais de progressao..."
 $signalSource = Get-Content .\src\HealthPlatform.Api\Controllers\AnaliseProgressoTreinoController.cs -Encoding UTF8 -Raw
 if (-not $signalSource.Contains('api/pacientes/{pacienteId:guid}/treinos/analise-progresso') -or
     -not $signalSource.Contains('api/portal/me/treinos/analise-progresso') -or
@@ -3793,7 +3793,7 @@ if (-not $signalSource.Contains('api/pacientes/{pacienteId:guid}/treinos/analise
 }
 Write-Host "    Profissional + paciente: rotas OK."
 
-Write-Host "[450/518] Validando tenant e PatientOnly..."
+Write-Host "[450/526] Validando tenant e PatientOnly..."
 if (-not $signalSource.Contains('Authorize(Policy = "PatientOnly")') -or
     -not $signalSource.Contains("x.OrganizacaoId == currentUser.OrganizationId") -or
     -not $signalSource.Contains("x.Paciente.OrganizacaoId == currentUser.OrganizationId")) {
@@ -3801,7 +3801,7 @@ if (-not $signalSource.Contains('Authorize(Policy = "PatientOnly")') -or
 }
 Write-Host "    Isolamento + portal: OK."
 
-Write-Host "[451/518] Validando estados da analise..."
+Write-Host "[451/526] Validando estados da analise..."
 if (-not $signalSource.Contains('"Progredindo"') -or
     -not $signalSource.Contains('"Estagnacao"') -or
     -not $signalSource.Contains('"PossivelFadiga"') -or
@@ -3811,7 +3811,7 @@ if (-not $signalSource.Contains('"Progredindo"') -or
 }
 Write-Host "    Progresso + estagnacao + carga/RPE + base: backend OK."
 
-Write-Host "[452/518] Validando regra de estagnacao..."
+Write-Host "[452/526] Validando regra de estagnacao..."
 if (-not $signalSource.Contains("pontos.Count >= 5") -or
     -not $signalSource.Contains("Math.Abs(variacao.Value) <= 2m") -or
     -not $signalSource.Contains("!recordeNaJanelaRecente")) {
@@ -3819,7 +3819,7 @@ if (-not $signalSource.Contains("pontos.Count >= 5") -or
 }
 Write-Host "    +/-2% + sem PR recente + base minima: regra OK."
 
-Write-Host "[453/518] Validando sinal de carga/RPE..."
+Write-Host "[453/526] Validando sinal de carga/RPE..."
 if (-not $signalSource.Contains("variacao.Value <= -3m") -or
     -not $signalSource.Contains("mediaRpe.Value >= 8m") -or
     -not $signalSource.Contains('status is "Estagnacao" or "PossivelFadiga"')) {
@@ -3827,7 +3827,7 @@ if (-not $signalSource.Contains("variacao.Value <= -3m") -or
 }
 Write-Host "    Queda >=3% + RPE >=8: sinaliza revisao."
 
-Write-Host "[454/518] Validando progressao recente..."
+Write-Host "[454/526] Validando progressao recente..."
 if (-not $signalSource.Contains("recordeNaJanelaRecente") -or
     -not $signalSource.Contains("variacao.Value > 2m") -or
     -not $signalSource.Contains('status = "Progredindo"')) {
@@ -3835,14 +3835,14 @@ if (-not $signalSource.Contains("recordeNaJanelaRecente") -or
 }
 Write-Host "    PR recente ou ganho >2%: progresso reconhecido."
 
-Write-Host "[455/518] Validando semantica nao diagnostica..."
+Write-Host "[455/526] Validando semantica nao diagnostica..."
 if (-not $signalSource.Contains("Nao representam diagnostico de fadiga") -or
     -not $signalSource.Contains("nao prescrevem aumento de carga automaticamente")) {
     throw "Disclaimer da analise esportiva incompleto."
 }
 Write-Host "    Heuristica de acompanhamento, nao diagnostico/prescricao."
 
-Write-Host "[456/518] Validando runtime profissional..."
+Write-Host "[456/526] Validando runtime profissional..."
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteSmoke = $lista.itens | Select-Object -First 1
     $signalSmoke = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteSmoke.id)/treinos/analise-progresso?dias=120" -Headers $headers -Method Get
@@ -3854,7 +3854,7 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     Write-Host "    Sem pacientes: smoke runtime ignorado."
 }
 
-Write-Host "[457/518] Validando payload analitico..."
+Write-Host "[457/526] Validando payload analitico..."
 if (-not $signalSource.Contains("AnaliseExercicioResponse") -or
     -not $signalSource.Contains("PontoAnaliseExercicio") -or
     -not $signalSource.Contains("mediaCargaAnterior") -or
@@ -3866,7 +3866,7 @@ if (-not $signalSource.Contains("AnaliseExercicioResponse") -or
 }
 Write-Host "    Base + recente + variacao + RPE + PR: backend OK."
 
-Write-Host "[458/518] Validando painel profissional..."
+Write-Host "[458/526] Validando painel profissional..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpInjectTrainingSignals") -or
     -not $appJsSource.Contains("hpTrainingSignalCard") -or
@@ -3875,7 +3875,7 @@ if (-not $appJsSource.Contains("hpInjectTrainingSignals") -or
 }
 Write-Host "    Treinos + Resumo: assets OK."
 
-Write-Host "[459/518] Validando portal do paciente..."
+Write-Host "[459/526] Validando portal do paciente..."
 if (-not $appJsSource.Contains("hpInjectMyTrainingSignals") -or
     -not $appJsSource.Contains("Meus sinais de progressão") -or
     -not $appJsSource.Contains("__loadPatientWorkout_v038_trainingsignals")) {
@@ -3883,7 +3883,7 @@ if (-not $appJsSource.Contains("hpInjectMyTrainingSignals") -or
 }
 Write-Host "    Meu treino: assets OK."
 
-Write-Host "[460/518] Validando cards e graficos..."
+Write-Host "[460/526] Validando cards e graficos..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpTrainingSignalCharts") -or
     -not $appJsSource.Contains("Revisão sugerida pelo histórico recente") -or
@@ -3893,7 +3893,7 @@ if (-not $appJsSource.Contains("hpTrainingSignalCharts") -or
 }
 Write-Host "    Cards + graficos + revisao sugerida: assets OK."
 
-Write-Host "[461/518] Validando compatibilidade de banco..."
+Write-Host "[461/526] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
@@ -3904,15 +3904,15 @@ if (Test-Path .\scripts\sql\v0.3.38_analise_progresso.sql) {
 }
 Write-Host "    Sem schema novo / PREPARAR permanece 31/31."
 
-Write-Host "[462/518] Validando versao v0.3.38..."
+Write-Host "[462/526] Validando versao v0.3.38..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.38 / estagnacao + fadiga + sinais de progressao: OK."
 
 
-Write-Host "[463/518] Validando identidade MVP Preview..."
+Write-Host "[463/526] Validando identidade MVP Preview..."
 $indexSource = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
-if (-not $indexSource.Contains("MVP Preview • v0.5.1") -or
+if (-not $indexSource.Contains("MVP Preview • v0.5.2") -or
     -not $indexSource.Contains("mvp-brand-badge") -or
     -not $indexSource.Contains("MVP • DEMO") -or
     -not $indexSource.Contains('id="loginMessage"') -or
@@ -3921,7 +3921,7 @@ if (-not $indexSource.Contains("MVP Preview • v0.5.1") -or
 }
 Write-Host "    Login + marcas de demo: assets OK."
 
-Write-Host "[464/518] Validando aviso de demonstracao..."
+Write-Host "[464/526] Validando aviso de demonstracao..."
 if (-not $indexSource.Contains("Ambiente de demonstração") -or
     -not $indexSource.Contains("Use somente dados fictícios") -or
     -not $indexSource.Contains("senha profissional é a configurada")) {
@@ -3929,7 +3929,7 @@ if (-not $indexSource.Contains("Ambiente de demonstração") -or
 }
 Write-Host "    Uso ficticio e objetivo do prototipo: copy OK."
 
-Write-Host "[465/518] Validando roteiro da demo..."
+Write-Host "[465/526] Validando roteiro da demo..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("openMvpGuide") -or
     -not $appJsSource.Contains("Roteiro rápido para testar o sistema") -or
@@ -3938,7 +3938,7 @@ if (-not $appJsSource.Contains("openMvpGuide") -or
 }
 Write-Host "    Guia interno de exploracao: assets OK."
 
-Write-Host "[466/518] Validando checklist de avaliacao..."
+Write-Host "[466/526] Validando checklist de avaliacao..."
 if (-not $appJsSource.Contains("Cadastre ou escolha um paciente") -or
     -not $appJsSource.Contains("Simule uma consulta") -or
     -not $appJsSource.Contains("Monte alimentação e treino") -or
@@ -3948,7 +3948,7 @@ if (-not $appJsSource.Contains("Cadastre ou escolha um paciente") -or
 }
 Write-Host "    Fluxos principais cobertos no roteiro."
 
-Write-Host "[467/518] Validando modelo de feedback..."
+Write-Host "[467/526] Validando modelo de feedback..."
 if (-not $appJsSource.Contains("copyMvpFeedbackTemplate") -or
     -not $appJsSource.Contains("FALTOU:") -or
     -not $appJsSource.Contains("CONFUNDIU:") -or
@@ -3958,7 +3958,7 @@ if (-not $appJsSource.Contains("copyMvpFeedbackTemplate") -or
 }
 Write-Host "    Feedback estruturado pode ser copiado."
 
-Write-Host "[468/518] Validando dashboard de apresentacao..."
+Write-Host "[468/526] Validando dashboard de apresentacao..."
 if (-not $appJsSource.Contains("mvp-dashboard-hero") -or
     -not $appJsSource.Contains("AMBIENTE DE DEMONSTRAÇÃO") -or
     -not $appJsSource.Contains("openMvpGuideHero") -or
@@ -3967,7 +3967,7 @@ if (-not $appJsSource.Contains("mvp-dashboard-hero") -or
 }
 Write-Host "    Hero + atalhos de demo: assets OK."
 
-Write-Host "[469/518] Validando atalho Escape..."
+Write-Host "[469/526] Validando atalho Escape..."
 if (-not $appJsSource.Contains("e.key!=='Escape'") -or
     -not $appJsSource.Contains("closeClinicalAction") -or
     -not $appJsSource.Contains("create.classList.add('hidden')") -or
@@ -3976,7 +3976,7 @@ if (-not $appJsSource.Contains("e.key!=='Escape'") -or
 }
 Write-Host "    Escape fecha camadas sem alterar dados."
 
-Write-Host "[470/518] Validando feedback de conectividade..."
+Write-Host "[470/526] Validando feedback de conectividade..."
 if (-not $appJsSource.Contains("addEventListener('offline'") -or
     -not $appJsSource.Contains("addEventListener('online'") -or
     -not $appJsSource.Contains("Conexão restabelecida")) {
@@ -3984,7 +3984,7 @@ if (-not $appJsSource.Contains("addEventListener('offline'") -or
 }
 Write-Host "    Offline/online recebem feedback visual."
 
-Write-Host "[471/518] Validando acabamento de foco..."
+Write-Host "[471/526] Validando acabamento de foco..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("focus-visible") -or
     -not $cssSource.Contains("outline-offset") -or
@@ -3993,7 +3993,7 @@ if (-not $cssSource.Contains("focus-visible") -or
 }
 Write-Host "    Teclado + feedback de clique: estilos OK."
 
-Write-Host "[472/518] Validando estados vazios..."
+Write-Host "[472/526] Validando estados vazios..."
 if (-not $cssSource.Contains(".empty::before") -or
     -not $cssSource.Contains("place-items:center") -or
     -not $cssSource.Contains("text-align:center")) {
@@ -4001,14 +4001,14 @@ if (-not $cssSource.Contains(".empty::before") -or
 }
 Write-Host "    Estados sem dados mais consistentes."
 
-Write-Host "[473/518] Validando limpeza da navegacao de demo..."
+Write-Host "[473/526] Validando limpeza da navegacao de demo..."
 if (-not $indexSource.Contains("mvp-dev-link") -or
     -not $cssSource.Contains(".mvp-dev-link{display:none!important}")) {
     throw "Link tecnico nao foi escondido da navegacao da demo."
 }
 Write-Host "    Swagger continua no backend, mas sai da navegacao principal."
 
-Write-Host "[474/518] Validando responsividade do MVP..."
+Write-Host "[474/526] Validando responsividade do MVP..."
 if (-not $cssSource.Contains("@media(max-width:900px)") -or
     -not $cssSource.Contains(".mvp-guide-grid{grid-template-columns:1fr}") -or
     -not $cssSource.Contains("@media(max-width:620px)") -or
@@ -4017,7 +4017,7 @@ if (-not $cssSource.Contains("@media(max-width:900px)") -or
 }
 Write-Host "    Notebook + mobile: estilos de demo OK."
 
-Write-Host "[475/518] Validando compatibilidade de banco..."
+Write-Host "[475/526] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $setupSource.Contains("[31/31]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
@@ -4028,13 +4028,13 @@ if (Test-Path .\scripts\sql\v0.3.39_mvp_preview.sql) {
 }
 Write-Host "    Sem schema novo / PREPARAR permanece 31/31."
 
-Write-Host "[476/518] Validando versao v0.3.39..."
+Write-Host "[476/526] Validando versao v0.3.39..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.39 / MVP Preview + polimento de demonstracao: OK."
 
 
-Write-Host "[477/518] Validando Dockerfile..."
+Write-Host "[477/526] Validando Dockerfile..."
 $dockerSource = Get-Content .\Dockerfile -Encoding UTF8 -Raw
 if (-not $dockerSource.Contains("mcr.microsoft.com/dotnet/sdk:10.0") -or
     -not $dockerSource.Contains("mcr.microsoft.com/dotnet/aspnet:10.0") -or
@@ -4044,7 +4044,7 @@ if (-not $dockerSource.Contains("mcr.microsoft.com/dotnet/sdk:10.0") -or
 }
 Write-Host "    Build multi-stage .NET 10: OK."
 
-Write-Host "[478/518] Validando bind dinamico de porta..."
+Write-Host "[478/526] Validando bind dinamico de porta..."
 $entrypointSource = Get-Content .\docker-entrypoint.sh -Encoding UTF8 -Raw
 if (-not $entrypointSource.Contains('PORT_VALUE="${PORT:-10000}"') -or
     -not $entrypointSource.Contains('0.0.0.0:${PORT_VALUE}') -or
@@ -4054,7 +4054,7 @@ if (-not $entrypointSource.Contains('PORT_VALUE="${PORT:-10000}"') -or
 }
 Write-Host "    0.0.0.0 + PORT dinamico + config reload desligado: OK."
 
-Write-Host "[479/518] Validando Blueprint Render..."
+Write-Host "[479/526] Validando Blueprint Render..."
 $renderSource = Get-Content .\render.yaml -Encoding UTF8 -Raw
 if (-not $renderSource.Contains("runtime: docker") -or
     -not $renderSource.Contains("plan: free") -or
@@ -4064,7 +4064,7 @@ if (-not $renderSource.Contains("runtime: docker") -or
 }
 Write-Host "    Web + Postgres + healthcheck: Blueprint OK."
 
-Write-Host "[480/518] Validando secrets do Blueprint..."
+Write-Host "[480/526] Validando secrets do Blueprint..."
 if (-not $renderSource.Contains("Jwt__Key") -or
     -not $renderSource.Contains("generateValue: true") -or
     -not $renderSource.Contains("Seed__AdminPassword") -or
@@ -4074,7 +4074,7 @@ if (-not $renderSource.Contains("Jwt__Key") -or
 }
 Write-Host "    JWT gerado + senha solicitada + sync do admin: OK."
 
-Write-Host "[481/518] Validando conexao PostgreSQL do Render..."
+Write-Host "[481/526] Validando conexao PostgreSQL do Render..."
 $resolverSource = Get-Content .\src\HealthPlatform.Api\Services\DatabaseConnectionResolver.cs -Encoding UTF8 -Raw
 if (-not $resolverSource.Contains("NpgsqlConnectionStringBuilder") -or
     -not $resolverSource.Contains('configuration["Database:Host"]') -or
@@ -4089,7 +4089,7 @@ if (-not $renderSource.Contains("Database__Host") -or
 }
 Write-Host "    Credenciais discretas -> Npgsql: OK."
 
-Write-Host "[482/518] Validando bootstrap isolado do MVP..."
+Write-Host "[482/526] Validando bootstrap isolado do MVP..."
 $programSource = Get-Content .\src\HealthPlatform.Api\Program.cs -Encoding UTF8 -Raw
 if (-not $programSource.Contains('GetValue<bool>("DemoBootstrap:Enabled")') -or
     -not $programSource.Contains('GetValue<bool>("DemoBootstrap:SyncAdminPassword")') -or
@@ -4102,7 +4102,7 @@ if (-not $programSource.Contains('GetValue<bool>("DemoBootstrap:Enabled")') -or
 }
 Write-Host "    EnsureCreated + sync de senha somente no DemoBootstrap."
 
-Write-Host "[483/518] Validando fluxo local preservado..."
+Write-Host "[483/526] Validando fluxo local preservado..."
 if (-not $programSource.Contains("app.Environment.IsDevelopment()") -or
     -not $programSource.Contains("MigrateAsync") -or
     -not $setupSource.Contains("[31/31]") -or
@@ -4111,7 +4111,7 @@ if (-not $programSource.Contains("app.Environment.IsDevelopment()") -or
 }
 Write-Host "    Development continua usando baseline + migrations."
 
-Write-Host "[484/518] Validando healthcheck real..."
+Write-Host "[484/526] Validando healthcheck real..."
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
 if (-not $healthSource.Contains("Status503ServiceUnavailable") -or
     -not $healthSource.Contains('status = "degraded"') -or
@@ -4120,7 +4120,7 @@ if (-not $healthSource.Contains("Status503ServiceUnavailable") -or
 }
 Write-Host "    Banco indisponivel -> HTTP 503."
 
-Write-Host "[485/518] Validando forwarded headers..."
+Write-Host "[485/526] Validando forwarded headers..."
 if (-not $renderSource.Contains("ASPNETCORE_FORWARDEDHEADERS_ENABLED") -or
     -not $renderSource.Contains('value: "true"') -or
     -not $renderSource.Contains("DOTNET_USE_POLLING_FILE_WATCHER")) {
@@ -4128,16 +4128,16 @@ if (-not $renderSource.Contains("ASPNETCORE_FORWARDEDHEADERS_ENABLED") -or
 }
 Write-Host "    X-Forwarded-* + polling watcher habilitados no ambiente hospedado."
 
-Write-Host "[486/518] Validando POPULAR remoto..."
+Write-Host "[486/526] Validando POPULAR remoto..."
 $remotePopular = Get-Content .\POPULAR-REMOTO.ps1 -Encoding UTF8 -Raw
 if (-not $remotePopular.Contains("[Parameter(Mandatory=`$true)][string]`$BaseUrl") -or
-    -not $remotePopular.Contains("HealthPlatform v0.5.1 - POPULAR RENDER DEMO") -or
+    -not $remotePopular.Contains("HealthPlatform v0.5.2 - POPULAR RENDER DEMO") -or
     -not $remotePopular.Contains("PacienteDemo_123!")) {
     throw "POPULAR-REMOTO incompleto."
 }
 Write-Host "    Base URL + credenciais + acesso paciente: OK."
 
-Write-Host "[487/518] Validando catalogos da demo remota..."
+Write-Host "[487/526] Validando catalogos da demo remota..."
 if (-not $remotePopular.Contains("Arroz branco cozido") -or
     -not $remotePopular.Contains("Agachamento livre") -or
     -not $remotePopular.Contains("Como voce avalia sua rotina atual de sono?")) {
@@ -4152,7 +4152,7 @@ if (-not $richPopular.Contains("POPULAR REMOTO RICO V2 FINALIZADO") -or
 }
 Write-Host "    Alimentos + exercicios + pergunta de anamnese: seed remoto OK."
 
-Write-Host "[488/518] Validando smoke test remoto..."
+Write-Host "[488/526] Validando smoke test remoto..."
 $remoteTest = Get-Content .\TESTAR-RENDER.ps1 -Encoding UTF8 -Raw
 if (-not $remoteTest.Contains("TESTE REMOTO RENDER") -or
     -not $remoteTest.Contains("[12/12]") -or
@@ -4161,7 +4161,7 @@ if (-not $remoteTest.Contains("TESTE REMOTO RENDER") -or
 }
 Write-Host "    Smoke remoto somente leitura: OK."
 
-Write-Host "[489/518] Validando guia de deploy..."
+Write-Host "[489/526] Validando guia de deploy..."
 $deployGuide = Get-Content .\DEPLOY-RENDER-MVP.md -Encoding UTF8 -Raw
 if (-not $deployGuide.Contains("New") -or
     -not $deployGuide.Contains("Blueprint") -or
@@ -4171,7 +4171,7 @@ if (-not $deployGuide.Contains("New") -or
 }
 Write-Host "    Blueprint -> popular -> smoke: documentado."
 
-Write-Host "[490/518] Validando ausencia de schema novo..."
+Write-Host "[490/526] Validando ausencia de schema novo..."
 if (Test-Path .\scripts\sql\v0.3.40_render_demo.sql) {
     throw "v0.3.40 nao deveria adicionar upgrade SQL ao fluxo local."
 }
@@ -4180,7 +4180,7 @@ if (-not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
 }
 Write-Host "    PREPARAR continua 31/31 / sem SQL v0.3.40."
 
-Write-Host "[491/518] Validando arquivos de container..."
+Write-Host "[491/526] Validando arquivos de container..."
 $dockerIgnore = Get-Content .\.dockerignore -Encoding UTF8 -Raw
 if (-not $dockerIgnore.Contains("**/bin/") -or
     -not $dockerIgnore.Contains("**/obj/") -or
@@ -4189,13 +4189,13 @@ if (-not $dockerIgnore.Contains("**/bin/") -or
 }
 Write-Host "    Contexto Docker enxuto: OK."
 
-Write-Host "[492/518] Validando versao base do deploy..."
+Write-Host "[492/526] Validando versao base do deploy..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
-Write-Host "    v0.5.1 / Render Demo Deploy preservado: OK."
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
+Write-Host "    v0.5.2 / Render Demo Deploy preservado: OK."
 
 
-Write-Host "[493/518] Validando paleta RS..."
+Write-Host "[493/526] Validando paleta RS..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("--rs-navy:#0b2347") -or
     -not $cssSource.Contains("--rs-gold:#c7aa5b") -or
@@ -4204,7 +4204,7 @@ if (-not $cssSource.Contains("--rs-navy:#0b2347") -or
 }
 Write-Host "    Navy + dourado + marfim: identidade OK."
 
-Write-Host "[494/518] Validando monograma RS..."
+Write-Host "[494/526] Validando monograma RS..."
 $indexSource = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
 if ($indexSource.Contains('<span class="brand-mark">H+</span>') -or
     -not $indexSource.Contains('<span class="brand-mark">RS</span>')) {
@@ -4212,21 +4212,21 @@ if ($indexSource.Contains('<span class="brand-mark">H+</span>') -or
 }
 Write-Host "    Login + profissional + paciente: RS OK."
 
-Write-Host "[495/518] Validando linguagem editorial..."
+Write-Host "[495/526] Validando linguagem editorial..."
 if (-not $indexSource.Contains("CIÊNCIA. ESTRATÉGIA. RESULTADO.") -or
     -not $indexSource.Contains("Saúde, longevidade e alta performance.")) {
     throw "Copy visual RS incompleta."
 }
 Write-Host "    Ciencia + estrategia + performance: copy OK."
 
-Write-Host "[496/518] Validando tipografia condensada..."
+Write-Host "[496/526] Validando tipografia condensada..."
 if (-not $cssSource.Contains('--font-display:"Avenir Next Condensed"') -or
     -not $cssSource.Contains("text-transform:uppercase")) {
     throw "Sistema tipografico editorial incompleto."
 }
 Write-Host "    Display condensada + titulos editoriais: CSS OK."
 
-Write-Host "[497/518] Validando login editorial..."
+Write-Host "[497/526] Validando login editorial..."
 if (-not $cssSource.Contains(".login-visual:before") -or
     -not $cssSource.Contains(".login-visual:after") -or
     -not $cssSource.Contains("linear-gradient(90deg,var(--rs-navy) 0 10px")) {
@@ -4234,7 +4234,7 @@ if (-not $cssSource.Contains(".login-visual:before") -or
 }
 Write-Host "    Linhas + formas + papel marfim: login OK."
 
-Write-Host "[498/518] Validando sidebar RS..."
+Write-Host "[498/526] Validando sidebar RS..."
 if (-not $cssSource.Contains(".nav-item.active:before") -or
     -not $cssSource.Contains("background:var(--rs-gold)") -or
     -not $cssSource.Contains(".sidebar .brand-mark")) {
@@ -4242,14 +4242,14 @@ if (-not $cssSource.Contains(".nav-item.active:before") -or
 }
 Write-Host "    Navy + marcador dourado + monograma: OK."
 
-Write-Host "[499/518] Validando experiencia iPad..."
+Write-Host "[499/526] Validando experiencia iPad..."
 if (-not $cssSource.Contains("@media (min-width:821px) and (max-width:1180px)") -or
     -not $cssSource.Contains(".app-shell{grid-template-columns:216px")) {
     throw "Layout tablet/iPad incompleto."
 }
 Write-Host "    Sidebar compacta + conteudo adaptado: iPad OK."
 
-Write-Host "[500/518] Validando drawer mobile..."
+Write-Host "[500/526] Validando drawer mobile..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains("hpInstallRsResponsiveUi") -or
     -not $appJsSource.Contains("rs-sidebar-screen") -or
@@ -4258,7 +4258,7 @@ if (-not $appJsSource.Contains("hpInstallRsResponsiveUi") -or
 }
 Write-Host "    Menu profissional com backdrop: mobile OK."
 
-Write-Host "[501/518] Validando safe areas iOS..."
+Write-Host "[501/526] Validando safe areas iOS..."
 if (-not $cssSource.Contains("safe-area-inset-top") -or
     -not $cssSource.Contains("safe-area-inset-bottom") -or
     -not $cssSource.Contains("100dvh")) {
@@ -4266,7 +4266,7 @@ if (-not $cssSource.Contains("safe-area-inset-top") -or
 }
 Write-Host "    Notch + home indicator + viewport dinamico: iOS OK."
 
-Write-Host "[502/518] Validando modal bottom-sheet no iPhone..."
+Write-Host "[502/526] Validando modal bottom-sheet no iPhone..."
 if (-not $cssSource.Contains("border-radius:22px 22px 0 0") -or
     -not $cssSource.Contains("align-items:flex-end") -or
     -not $cssSource.Contains("max-height:92dvh")) {
@@ -4274,7 +4274,7 @@ if (-not $cssSource.Contains("border-radius:22px 22px 0 0") -or
 }
 Write-Host "    Formularios/modais adaptados ao iPhone."
 
-Write-Host "[503/518] Validando portal mobile..."
+Write-Host "[503/526] Validando portal mobile..."
 if (-not $cssSource.Contains(".patient-portal-top .brand>span:nth-child(2)") -or
     -not $cssSource.Contains(".patient-portal-user .global-search-button") -or
     -not $cssSource.Contains("scroll-snap-type:x mandatory")) {
@@ -4282,7 +4282,7 @@ if (-not $cssSource.Contains(".patient-portal-top .brand>span:nth-child(2)") -or
 }
 Write-Host "    Header compacto + navegacao horizontal: portal OK."
 
-Write-Host "[504/518] Validando abas do prontuario no mobile..."
+Write-Host "[504/526] Validando abas do prontuario no mobile..."
 if (-not $cssSource.Contains(".patient-tabs{") -or
     -not $cssSource.Contains("position:sticky") -or
     -not $cssSource.Contains("scroll-snap-align:start")) {
@@ -4290,21 +4290,21 @@ if (-not $cssSource.Contains(".patient-tabs{") -or
 }
 Write-Host "    Abas sticky + swipe horizontal: prontuario OK."
 
-Write-Host "[505/518] Validando touch targets..."
+Write-Host "[505/526] Validando touch targets..."
 if (-not $cssSource.Contains(".rs-touch-ui button") -or
     -not $cssSource.Contains("min-height:44px")) {
     throw "Touch targets incompletos."
 }
 Write-Host "    Alvos de toque >=44px em interface touch."
 
-Write-Host "[506/518] Validando cards analiticos no iPhone..."
+Write-Host "[506/526] Validando cards analiticos no iPhone..."
 if (-not $cssSource.Contains(".exercise-progress-summary,.training-signal-summary,.workout-volume-summary") -or
     -not $cssSource.Contains(".training-signal-list,.workout-session-volume-list")) {
     throw "Analiticos mobile incompletos."
 }
 Write-Host "    Treino/analytics reorganizados para telas estreitas."
 
-Write-Host "[507/518] Validando deploy/demo preservados..."
+Write-Host "[507/526] Validando deploy/demo preservados..."
 $renderSource = Get-Content .\render.yaml -Encoding UTF8 -Raw
 if (-not $renderSource.Contains("DemoBootstrap__SyncAdminPassword") -or
     -not $renderSource.Contains("DOTNET_USE_POLLING_FILE_WATCHER") -or
@@ -4313,55 +4313,90 @@ if (-not $renderSource.Contains("DemoBootstrap__SyncAdminPassword") -or
 }
 Write-Host "    Render r3 + popular rico: preservados."
 
-Write-Host "[508/518] Validando entidade de solicitacoes clinicas..."
+Write-Host "[508/526] Validando entidade de solicitacoes clinicas..."
 $requestEntity = Get-Content .\src\HealthPlatform.Domain\Entities\SolicitacaoClinica.cs -Encoding UTF8 -Raw
 if (-not $requestEntity.Contains("class SolicitacaoClinica") -or -not $requestEntity.Contains("RespostaPaciente") -or -not $requestEntity.Contains("RevisadaEmUtc")) { throw "Entidade SolicitacaoClinica incompleta." }
 Write-Host "    Ciclo Pendente -> Enviada -> Revisada: modelo OK."
 
-Write-Host "[509/518] Validando mapeamento EF de solicitacoes..."
+Write-Host "[509/526] Validando mapeamento EF de solicitacoes..."
 $dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbSource.Contains("DbSet<SolicitacaoClinica>") -or -not $dbSource.Contains('ToTable("SolicitacoesClinicas")')) { throw "Mapeamento EF de solicitacoes ausente." }
 Write-Host "    DbSet + indices + relacionamentos: OK."
 
-Write-Host "[510/518] Validando endpoints profissionais de solicitacoes..."
+Write-Host "[510/526] Validando endpoints profissionais de solicitacoes..."
 $requestController = Get-Content .\src\HealthPlatform.Api\Controllers\SolicitacoesClinicasController.cs -Encoding UTF8 -Raw
 if (-not $requestController.Contains('api/pacientes/{pacienteId:guid}/solicitacoes') -or -not $requestController.Contains('api/solicitacoes/{id:guid}/revisar') -or -not $requestController.Contains('api/solicitacoes/{id:guid}/cancelar')) { throw "Endpoints profissionais de solicitacoes incompletos." }
 Write-Host "    Criar + listar + revisar + cancelar: backend OK."
 
-Write-Host "[511/518] Validando portal do paciente para solicitacoes..."
+Write-Host "[511/526] Validando portal do paciente para solicitacoes..."
 if (-not $requestController.Contains('api/portal/me/solicitacoes') -or -not $requestController.Contains('api/portal/me/solicitacoes/{id:guid}/responder') -or -not $requestController.Contains('PatientOnly')) { throw "Endpoints PatientOnly de solicitacoes incompletos." }
 Write-Host "    Listagem propria + resposta protegida: backend OK."
 
-Write-Host "[512/518] Validando isolamento multi-tenant..."
+Write-Host "[512/526] Validando isolamento multi-tenant..."
 if (-not $requestController.Contains('x.OrganizacaoId == currentUser.OrganizationId') -or -not $requestController.Contains('x.UsuarioId == currentUser.UserId')) { throw "Isolamento multi-tenant das solicitacoes incompleto." }
 Write-Host "    Organizacao + vinculo de usuario/paciente: OK."
 
-Write-Host "[513/518] Validando auditoria de solicitacoes..."
+Write-Host "[513/526] Validando auditoria de solicitacoes..."
 if (-not $requestController.Contains('PATIENT_RESPONSE') -or -not $requestController.Contains('Auditar("REVIEW"') -or -not $requestController.Contains('Auditar("CANCEL"')) { throw "Auditoria do ciclo de solicitacoes incompleta." }
 Write-Host "    CREATE + resposta + revisao + cancelamento: auditados."
 
-Write-Host "[514/518] Validando interface profissional..."
+Write-Host "[514/526] Validando interface profissional..."
 if (-not $appJsSource.Contains("openSolicitacaoClinica") -or -not $appJsSource.Contains("Solicitação ao paciente") -or -not $appJsSource.Contains("renderProfessionalRequests")) { throw "Interface profissional de solicitacoes incompleta." }
 Write-Host "    Criacao + historico + revisao: assets OK."
 
-Write-Host "[515/518] Validando interface do paciente..."
+Write-Host "[515/526] Validando interface do paciente..."
 if (-not $indexSource.Contains('data-patient-view="solicitacoes"') -or -not $appJsSource.Contains("loadPatientRequests") -or -not $appJsSource.Contains("openPatientRequestAnswer")) { throw "Portal de solicitacoes do paciente incompleto." }
 Write-Host "    Navegacao + lista + resposta: assets OK."
 
-Write-Host "[516/518] Validando upgrade SQL v0.5.1..."
+Write-Host "[516/526] Validando upgrade SQL v0.5.1 preservado..."
 $sqlRequest = Get-Content .\scripts\sql\v0.5.1_solicitacoes_clinicas.sql -Encoding UTF8 -Raw
 if (-not $sqlRequest.Contains('CREATE TABLE IF NOT EXISTS "SolicitacoesClinicas"') -or -not $sqlRequest.Contains('IX_SolicitacoesClinicas_PacienteId_Status')) { throw "Upgrade SQL de solicitacoes incompleto." }
 Write-Host "    Tabela + indices idempotentes: OK."
 
-Write-Host "[517/518] Validando PREPARAR 31/31..."
+Write-Host "[517/526] Validando PREPARAR 31/31..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[31/31] Aplicando upgrade v0.5.1') -or -not $setupSource.Contains('v0.5.1_solicitacoes_clinicas.sql')) { throw "PREPARAR nao aplica o upgrade v0.5.1." }
+if (-not $setupSource.Contains('[31/31] Aplicando upgrade v0.5.1') -or -not $setupSource.Contains('v0.5.1_solicitacoes_clinicas.sql')) { throw "PREPARAR nao preserva o upgrade v0.5.1." }
 Write-Host "    Upgrade de solicitacoes integrado ao setup."
 
-Write-Host "[518/518] Validando versao v0.5.1..."
+Write-Host "[518/526] Validando versao v0.5.2..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.5.1") { throw "VERSION.txt inesperado." }
-Write-Host "    v0.5.1 / Solicitacoes Clinicas + Connected Care: OK."
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
+Write-Host "    v0.5.2 / Solicitacoes Clinicas + Connected Care: OK."
+
+Write-Host "[519/526] Validando notificacoes de solicitacoes no backend..."
+$notificationSource = Get-Content .\src\HealthPlatform.Api\Controllers\NotificacoesController.cs -Encoding UTF8 -Raw
+if (-not $notificationSource.Contains('OrigemTipo == "SolicitacaoClinica"') -or -not $notificationSource.Contains('PAC:SOLICITACAO:') -or -not $notificationSource.Contains('PROF:SOLICITACAO:')) { throw "Sincronizacao de solicitacoes nas notificacoes incompleta." }
+Write-Host "    Paciente + profissional integrados ao motor de notificacoes."
+
+Write-Host "[520/526] Validando prioridade por prazo para o paciente..."
+if (-not $notificationSource.Contains('var vencida = r.DataLimiteUtc.HasValue') -or -not $notificationSource.Contains('venceEm24h') -or -not $notificationSource.Contains('prioridade = vencida ? "Alta"')) { throw "Prioridade por prazo de solicitacao incompleta." }
+Write-Host "    Vencida=Alta / 24h=Media / demais=Normal: OK."
+
+Write-Host "[521/526] Validando notificacao de resposta para profissional..."
+if (-not $notificationSource.Contains('x.Status == "Enviada"') -or -not $notificationSource.Contains('Resposta recebida:') -or -not $notificationSource.Contains('$"paciente:{r.PacienteId}"')) { throw "Notificacao profissional de resposta incompleta." }
+Write-Host "    Resposta do paciente gera contexto para revisao profissional."
+
+Write-Host "[522/526] Validando limpeza de notificacoes encerradas..."
+if (-not $notificationSource.Contains('x.OrigemTipo == "SolicitacaoClinica"')) { throw "Solicitacoes nao participam da desativacao de notificacoes antigas." }
+Write-Host "    Mudanca de estado remove notificacao ativa obsoleta."
+
+Write-Host "[523/526] Validando navegacao do paciente pela notificacao..."
+if (-not $appJsSource.Contains("'solicitacoes'].includes(link)")) { throw "Notificacao do paciente nao abre Solicitacoes." }
+Write-Host "    Drawer -> Minhas solicitacoes: OK."
+
+Write-Host "[524/526] Validando navegacao contextual do profissional..."
+if (-not $appJsSource.Contains("startsWith('paciente:')") -or -not $appJsSource.Contains("await openPatient(pacienteId)")) { throw "Notificacao profissional nao abre prontuario contextual." }
+Write-Host "    Drawer -> prontuario do paciente: OK."
+
+Write-Host "[525/526] Validando identidade visual de notificacao..."
+if (-not $appJsSource.Contains("t==='Solicitacao'")) { throw "Identidade de solicitacao ausente nas notificacoes." }
+Write-Host "    Solicitacoes identificadas no drawer: OK."
+
+Write-Host "[526/526] Validando versao funcional v0.5.2..."
+$version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
+if ($version.Trim() -ne "0.5.2") { throw "VERSION.txt inesperado." }
+if (-not $notificationSource.Contains('SolicitacaoClinica')) { throw "Feature v0.5.2 ausente." }
+Write-Host "    v0.5.2 / Notificacoes Contextuais + Connected Care: OK."
 
 Write-Host "TESTE DE FUMACA CONCLUIDO." -ForegroundColor Green
 Write-Host "Nenhum registro foi criado ou alterado." -ForegroundColor Green

@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.5.1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.5.2" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -149,7 +149,7 @@ else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
     await db.Database.EnsureCreatedAsync();
 
     // Compatibilidade incremental do MVP hospedado: EnsureCreated nao altera um banco ja existente.
-    // A v0.5.1 introduz SolicitacoesClinicas e precisa garantir a tabela tambem em demos Render preservadas.
+    // A v0.5.2 introduz SolicitacoesClinicas e precisa garantir a tabela tambem em demos Render preservadas.
     await db.Database.ExecuteSqlRawAsync("""
         CREATE TABLE IF NOT EXISTS "SolicitacoesClinicas" (
             "Id" uuid NOT NULL,

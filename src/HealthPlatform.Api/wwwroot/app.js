@@ -2853,7 +2853,7 @@ function notificationPriorityClass(p){
   return p==='Alta'?'notification-high':p==='Media'?'notification-medium':'notification-normal';
 }
 function notificationIcon(t){
-  return t==='Agenda'||t==='Consulta'?'📅':t==='Pendencia'?'⚠️':'🔔';
+  return t==='Agenda'||t==='Consulta'?'📅':t==='Pendencia'?'⚠️':t==='Solicitacao'?'📋':'🔔';
 }
 function notificationBadgeNodes(){
   return [$('#notificationBadge'),$('#patientNotificationBadge')].filter(Boolean);
@@ -2897,7 +2897,7 @@ async function openNotification(el){
   closeNotifications();
   await refreshNotifications();
   if((state.user?.tipoUsuario==='Paciente'||state.user?.tipo==='Paciente'||state.user?.tipoUsuario===6||state.user?.tipo===6)){
-    if(['inicio','plano','treino','metas','diario','evolucao','exames'].includes(link)){
+    if(['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes'].includes(link)){
       await hpOpenPatientNotificationLink(link);
     }
     return;
@@ -2905,7 +2905,13 @@ async function openNotification(el){
   if(link==='pendencias'){navigate('pendencias');return}
   if(link==='agenda'){navigate('agenda');return}
   if(link==='dashboard'){navigate('dashboard');return}
+  if(link?.startsWith('paciente:')){
+    const pacienteId=link.slice('paciente:'.length);
+    if(pacienteId)await openPatient(pacienteId);
+    return;
+  }
 }
+
 async function openNotifications(){
   $('#notificationDrawer').classList.remove('hidden');
   $('#notificationList').innerHTML='<div class="empty">Carregando...</div>';
@@ -4934,7 +4940,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.5.1';
+const HP_MVP_VERSION='0.5.2';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -5067,7 +5073,7 @@ function hpInstallRsResponsiveUi(){
 hpInstallRsResponsiveUi();
 
 
-// ===== v0.5.1 — Solicitações clínicas / Connected Care =====
+// ===== v0.5.2 — Solicitações clínicas / Connected Care =====
 function requestStatusPill(status){
   const cls=status==='Revisada'?'Ativa':status==='Enviada'?'Agendada':status==='Cancelada'?'Cancelada':'Media';
   return `<span class="pill ${cls}">${esc(status||'Pendente')}</span>`;

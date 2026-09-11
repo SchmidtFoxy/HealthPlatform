@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.2 — Feature release
+
+- Integra Solicitações Clínicas ao motor de notificações internas.
+- Paciente recebe lembretes contextuais com prioridade baseada no prazo.
+- Profissional recebe aviso quando uma solicitação é respondida.
+- Navegação contextual: paciente → Solicitações; profissional → prontuário do paciente.
+- Notificações são desativadas automaticamente quando o estado deixa de exigir ação.
+- Sem schema novo.
+- Suíte ampliada de 518 para 526 verificações.
+
 ## v0.5.1-r1 — Hotfix de migration
 
 - Corrige o `PREPARAR.ps1` em instalações que já possuem a migration baseline da v0.5.0.

@@ -24,13 +24,13 @@ function Invoke-OptionalGet([string]$Uri, $Headers) {
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host " HealthPlatform v0.5.1 - TESTE REMOTO RENDER" -ForegroundColor Cyan
+Write-Host " HealthPlatform v0.5.2 - TESTE REMOTO RENDER" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Base: $base" -ForegroundColor DarkGray
 
 Write-Host "[1/12] Healthcheck..." -ForegroundColor Cyan
 $health = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health.status -ne "ok" -or $health.version -ne "0.5.1" -or $health.database -ne "connected") {
+if ($health.status -ne "ok" -or $health.version -ne "0.5.2" -or $health.database -ne "connected") {
     throw "Healthcheck remoto inesperado."
 }
 Write-Host "    API $($health.version) / banco $($health.database)"
@@ -100,7 +100,7 @@ if ($index.Content -notmatch "MVP Preview" -or $index.Content -notmatch "Ambient
 
 Write-Host "[12/12] Final..." -ForegroundColor Cyan
 $health2 = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health2.version -ne "0.5.1") { throw "Versao remota mudou durante o teste." }
+if ($health2.version -ne "0.5.2") { throw "Versao remota mudou durante o teste." }
 
 Write-Host ""
 Write-Host "TESTE REMOTO CONCLUIDO: 12/12" -ForegroundColor Green

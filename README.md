@@ -1,3 +1,25 @@
+# v0.5.2 — Notificações Contextuais / Connected Care
+
+A v0.5.2 evolui as Solicitações Clínicas da v0.5.1-r1 integrando-as ao sistema de notificações já existente, sem criar schema novo.
+
+## O que entrou
+
+- paciente recebe notificação para solicitações clínicas pendentes;
+- prazo vencido recebe prioridade alta e prazo nas próximas 24h recebe prioridade média;
+- ao abrir a notificação, o paciente vai direto para **Solicitações**;
+- profissional recebe notificação quando o paciente responde uma solicitação;
+- a notificação profissional abre diretamente o prontuário do paciente relacionado;
+- notificações deixam de ficar ativas quando a solicitação muda de estado;
+- ícone próprio de solicitação no drawer de notificações;
+- sem migration/schema novo: reutiliza `SolicitacoesClinicas` e `NotificacoesInternas`;
+- suíte de fumaça ampliada para 526 verificações.
+
+## Baseline
+
+A base funcional anterior é **v0.5.1-r1**, validada pelo usuário após correção do fluxo de migrations.
+
+---
+
 # v0.5.1 — Solicitações Clínicas / Connected Care
 
 > **Hotfix v0.5.1-r1:** corrige o fluxo de migrations para bancos atualizados a partir da v0.5.0. A versão funcional da API permanece 0.5.1.

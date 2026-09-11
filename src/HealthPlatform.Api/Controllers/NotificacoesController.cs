@@ -137,7 +137,7 @@ public sealed class NotificacoesController(
                 x.OrganizacaoId == currentUser.OrganizationId &&
                 x.UsuarioId == currentUser.UserId &&
                 x.Ativa &&
-                (x.OrigemTipo == "Consulta" || x.OrigemTipo == "PendenciaClinica" || x.OrigemTipo == "InteracaoAcompanhamento"))
+                (x.OrigemTipo == "Consulta" || x.OrigemTipo == "PendenciaClinica" || x.OrigemTipo == "InteracaoAcompanhamento" || x.OrigemTipo == "SolicitacaoClinica"))
             .ToListAsync(ct);
 
         foreach (var antiga in antigas)
@@ -315,6 +315,42 @@ public sealed class NotificacoesController(
                 ct);
         }
 
+
+        var solicitacoesRespondidas = await db.SolicitacoesClinicas.AsNoTracking()
+            .Where(x =>
+                x.ProfissionalId == profissional.Id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Status == "Enviada")
+            .OrderByDescending(x => x.RespondidaEmUtc ?? x.UpdatedAtUtc)
+            .Select(x => new
+            {
+                x.Id,
+                x.PacienteId,
+                PacienteNome = x.Paciente.Nome,
+                x.Titulo,
+                x.Tipo,
+                x.RespondidaEmUtc
+            })
+            .ToListAsync(ct);
+
+        foreach (var r in solicitacoesRespondidas)
+        {
+            var chave = $"PROF:SOLICITACAO:{r.Id}";
+            validas.Add(chave);
+
+            count += await Upsert(
+                chave,
+                "Solicitacao",
+                "Media",
+                $"Resposta recebida: {r.PacienteNome}",
+                $"{r.Tipo} • {r.Titulo}",
+                "SolicitacaoClinica",
+                r.Id,
+                r.RespondidaEmUtc,
+                $"paciente:{r.PacienteId}",
+                ct);
+        }
+
         return count;
     }
 
@@ -370,6 +406,52 @@ public sealed class NotificacoesController(
                 c.Id,
                 c.DataHoraUtc,
                 "inicio",
+                ct);
+        }
+
+
+        var solicitacoesPendentes = await db.SolicitacoesClinicas.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == paciente.Id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Status == "Pendente")
+            .OrderBy(x => x.DataLimiteUtc ?? DateTime.MaxValue)
+            .Select(x => new
+            {
+                x.Id,
+                x.Tipo,
+                x.Titulo,
+                x.DataLimiteUtc,
+                ProfissionalNome = x.Profissional.Nome
+            })
+            .ToListAsync(ct);
+
+        foreach (var r in solicitacoesPendentes)
+        {
+            var chave = $"PAC:SOLICITACAO:{r.Id}";
+            validas.Add(chave);
+
+            var vencida = r.DataLimiteUtc.HasValue && r.DataLimiteUtc.Value < agora;
+            var venceEm24h = r.DataLimiteUtc.HasValue &&
+                             r.DataLimiteUtc.Value >= agora &&
+                             r.DataLimiteUtc.Value <= agora.AddHours(24);
+            var prioridade = vencida ? "Alta" : venceEm24h ? "Media" : "Normal";
+            var titulo = vencida
+                ? $"Solicitação atrasada: {r.Titulo}"
+                : venceEm24h
+                    ? $"Solicitação vence em breve: {r.Titulo}"
+                    : $"Nova solicitação: {r.Titulo}";
+
+            count += await Upsert(
+                chave,
+                "Solicitacao",
+                prioridade,
+                titulo,
+                $"{r.Tipo} • solicitado por {r.ProfissionalNome}",
+                "SolicitacaoClinica",
+                r.Id,
+                r.DataLimiteUtc,
+                "solicitacoes",
                 ct);
         }
 
