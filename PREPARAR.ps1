@@ -1,6 +1,50 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
+
+# Hotfix v0.9.7-r1: o PREPARAR precisa conseguir recompilar mesmo quando uma
+# instancia local anterior da API ainda esta aberta. O processo mantem as DLLs
+# de Domain/Infrastructure bloqueadas no Windows e faz o dotnet build falhar
+# com MSB3021/MSB3027. Encerramos somente a instancia local do HealthPlatform
+# associada a este workspace/porta de desenvolvimento antes de compilar.
+function Stop-HealthPlatformLocalApi {
+    $stopped = @()
+
+    # Primeiro, tenta localizar quem esta escutando na porta local oficial.
+    try {
+        $listeners = Get-NetTCPConnection -LocalPort 5180 -State Listen -ErrorAction SilentlyContinue
+        foreach ($listener in $listeners) {
+            $proc = Get-Process -Id $listener.OwningProcess -ErrorAction SilentlyContinue
+            if ($proc -and ($proc.ProcessName -eq 'HealthPlatform.Api' -or $proc.ProcessName -eq 'dotnet')) {
+                Write-Host "[API] Encerrando instancia local antiga na porta 5180 (PID $($proc.Id))..." -ForegroundColor Yellow
+                Stop-Process -Id $proc.Id -Force -ErrorAction Stop
+                $stopped += $proc.Id
+            }
+        }
+    } catch {
+        Write-Host "[API] Nao foi possivel consultar/encerrar a porta 5180: $($_.Exception.Message)" -ForegroundColor DarkYellow
+    }
+
+    # Fallback para executavel self-hosted que pode continuar segurando DLLs
+    # mesmo sem listener ativo. Restringimos ao caminho do workspace atual.
+    Get-Process -Name 'HealthPlatform.Api' -ErrorAction SilentlyContinue | ForEach-Object {
+        if ($stopped -contains $_.Id) { return }
+        $path = $null
+        try { $path = $_.Path } catch { $path = $null }
+        if (-not $path -or $path.StartsWith($root, [System.StringComparison]::OrdinalIgnoreCase)) {
+            Write-Host "[API] Encerrando HealthPlatform.Api antigo (PID $($_.Id)) antes do build..." -ForegroundColor Yellow
+            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+            $stopped += $_.Id
+        }
+    }
+
+    if ($stopped.Count -gt 0) {
+        Start-Sleep -Milliseconds 700
+        Write-Host "[API] Instancia anterior encerrada; DLLs liberadas para compilacao." -ForegroundColor DarkGray
+    }
+}
+
+Stop-HealthPlatformLocalApi
 
 # Evita um segundo prompt de seguranca ao chamar scripts internos extraidos do ZIP.
 Get-ChildItem (Join-Path $root "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue

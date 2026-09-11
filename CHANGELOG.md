@@ -1,6 +1,20 @@
+﻿# v0.9.7 — Reentrada Gradual de Desafio
+
+- avalia quando a rotina em manutencao tem espaco para um unico novo desafio;
+- retomada, habitos oscilando ou consolidando bloqueiam aumento prematuro de exigencia;
+- elegibilidade nao cria meta automaticamente, nao altera prescricao e nao cria score opaco;
+- cards equivalentes para atleta e profissional;
+- sem migration nova; schema permanece 37/37.
+
 # Changelog
 
-## v0.9.6 — Encerramento do Ciclo de Hábito & Transição para Manutenção
+## v0.9.7-r1 — Hotfix de build local
+
+- `PREPARAR.ps1` encerra automaticamente uma instância local antiga da `HealthPlatform.Api` antes do `dotnet build`.
+- Evita falhas `MSB3021/MSB3027` causadas por DLLs bloqueadas pelo processo da API ainda em execução.
+- Não altera schema, versão semântica ou regras funcionais da v0.9.7.
+
+## v0.9.7 — Encerramento do Ciclo de Hábito & Transição para Manutenção
 
 - adiciona leitura de encerramento do foco de hábito;
 - diferencia foco em curso, consolidando, pronto para manutenção, manutenção e proteção;

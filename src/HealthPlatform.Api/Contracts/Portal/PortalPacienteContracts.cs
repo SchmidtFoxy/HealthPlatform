@@ -229,6 +229,11 @@ public record PortalEncerramentoCicloHabitoResponse(
     string Estado, string Titulo, string Resumo, string? CodigoHabito, string? CategoriaHabito,
     string Decisao, string Evidencia, string Acao, bool EmManutencao, int HabitosEmManutencao, string MensagemSeguranca);
 
+public record PortalReentradaDesafioResponse(
+    string Estado, string Titulo, string Resumo, bool ElegivelNovoDesafio, string? CategoriaBase,
+    string Decisao, string Evidencia, string Acao, int HabitosEstaveis, int HabitosConsolidando, int HabitosOscilando,
+    string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -329,6 +334,7 @@ public record PortalPacienteHomeResponse(
     PortalProximoFocoHabitoResponse ProximoFocoHabito,
     PortalRevisaoFocoHabitoResponse RevisaoFocoHabito,
     PortalEncerramentoCicloHabitoResponse EncerramentoCicloHabito,
+    PortalReentradaDesafioResponse ReentradaDesafio,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
