@@ -1,3 +1,14 @@
+# v0.8.1 — Metas do Ciclo & Progresso por Objetivo
+
+- Acompanha metas mensuráveis já definidas no ciclo esportivo: treinos semanais, consistência e peso-alvo.
+- Treinos da semana usam apenas sessões concluídas dentro da semana atual do ciclo.
+- Peso-alvo usa distância absoluta ao alvo, funcionando tanto para perda quanto para ganho de peso.
+- Objetivo textual do profissional permanece informativo e não é convertido em score opaco.
+- Home do atleta e prontuário profissional recebem o mesmo acompanhamento.
+- Progresso não altera automaticamente carga, dieta ou prescrição.
+- Sem migration; PREPARAR permanece 37/37.
+- Suíte ampliada para 768 verificações.
+
 ## v0.8.0 r11 — compatibilidade dos testes de volume
 
 - Corrige sentinelas históricas `[429/600]`, `[430/600]` e `[431/600]` para validar a estrutura do painel de volume sem depender de rótulos acentuados sujeitos a diferenças de encoding no PowerShell.

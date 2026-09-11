@@ -906,6 +906,7 @@ public sealed class MeuPortalPacienteController(
         var dorCorporal = await DorCorporalService.MontarAsync(db, pacienteId, dia, ct);
         var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
         var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
+        var metasDoCiclo = await MetasCicloService.MontarAsync(db, pacienteId, dia, ciclo, gamificacao, ct);
         var estrategiaDoDia = await EstrategiaDiariaService.MontarAsync(db, pacienteId, dia, prontidao, ct);
         var tendenciaRecuperacao = await TendenciaRecuperacaoService.MontarAsync(db, pacienteId, dia, ct);
         var cargaTreino = await CargaTreinoService.MontarAsync(db, pacienteId, dia, ct);
@@ -918,7 +919,7 @@ public sealed class MeuPortalPacienteController(
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

@@ -119,6 +119,14 @@ public record PortalCicloEsportivoResponse(
     int? MetaTreinosSemanais, int? MetaConsistenciaPercentual, decimal? MetaPesoKg,
     int TreinosNoCiclo, int CheckInsNoCiclo, decimal? MediaProntidao);
 
+public record PortalMetaCicloItemResponse(
+    string Codigo, string Titulo, string Estado, string ValorAtual, string Meta,
+    decimal? ProgressoPercentual, string Descricao);
+
+public record PortalMetasCicloResponse(
+    string Estado, string Titulo, string Resumo,
+    IReadOnlyCollection<PortalMetaCicloItemResponse> Itens, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -203,6 +211,7 @@ public record PortalPacienteHomeResponse(
     PortalDorCorporalResumoResponse DorCorporal,
     PortalGamificacaoResponse Gamificacao,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
+    PortalMetasCicloResponse MetasDoCiclo,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

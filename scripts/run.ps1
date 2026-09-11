@@ -43,7 +43,7 @@ try {
     Write-Host "Aviso: nao foi possivel verificar a porta 5180 automaticamente: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 
-Write-Host "Iniciando HealthPlatform v0.8.0..." -ForegroundColor Green
+Write-Host "Iniciando HealthPlatform v0.8.1..." -ForegroundColor Green
 Write-Host "Ambiente: Development (forcado pelo RODAR.ps1)" -ForegroundColor DarkGreen
 Write-Host "Interface: http://localhost:5180" -ForegroundColor Cyan
 Write-Host "Swagger:   http://localhost:5180/swagger" -ForegroundColor DarkCyan

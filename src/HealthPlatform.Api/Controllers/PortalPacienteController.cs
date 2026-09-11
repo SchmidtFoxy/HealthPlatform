@@ -148,6 +148,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var dorCorporal = await DorCorporalService.MontarAsync(db, pacienteId, dia, ct);
         var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
         var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
+        var metasDoCiclo = await MetasCicloService.MontarAsync(db, pacienteId, dia, ciclo, gamificacao, ct);
         var estrategiaDoDia = await EstrategiaDiariaService.MontarAsync(db, pacienteId, dia, prontidao, ct);
         var tendenciaRecuperacao = await TendenciaRecuperacaoService.MontarAsync(db, pacienteId, dia, ct);
         var cargaTreino = await CargaTreinoService.MontarAsync(db, pacienteId, dia, ct);
@@ -167,6 +168,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             dorCorporal,
             gamificacao,
             ciclo,
+            metasDoCiclo,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

@@ -1,3 +1,17 @@
+# HealthPlatform v0.8.1 — Metas do Ciclo & Progresso por Objetivo
+
+A v0.8.1 transforma as metas já configuradas no ciclo esportivo em acompanhamento objetivo e auditável, sem criar score único e sem alterar automaticamente a prescrição profissional.
+
+## Destaques da v0.8.1
+
+- progresso semanal de treinos contra a meta do ciclo;
+- consistência atual comparada à meta profissional;
+- acompanhamento de peso-alvo com suporte a ganho ou perda de peso;
+- objetivo textual do ciclo preservado como orientação, sem score artificial;
+- mesma leitura para atleta e profissional;
+- sem migration: PREPARAR permanece 37/37;
+- suíte ampliada para 768 verificações.
+
 # HealthPlatform v0.8.0 — Painel de Evolução Esportiva
 
 A linha 0.8.x começa consolidando a experiência esportiva em uma leitura longitudinal única, sem reduzir saúde ou performance a um score composto. O painel apresenta consistência, recuperação, carga, performance, nutrição, hidratação e ciclo com suas próprias evidências.
