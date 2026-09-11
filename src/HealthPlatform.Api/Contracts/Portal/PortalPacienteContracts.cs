@@ -89,6 +89,16 @@ public record PortalDorCorporalResumoResponse(
 public sealed record RegistrarDorCorporalRequest(
     DateOnly Data, string Regiao, string? Lado, int Intensidade, int ImpactoTreino, string? Observacao);
 
+
+public record PortalMapaCorporalLongitudinalRegiaoResponse(
+    string Regiao, string? Lado, int Registros56, int DiasComRegistro, int DiasRecentes28, int DiasAnteriores28,
+    int IntensidadeMaxima, decimal? IntensidadeMedia, int ImpactoMaximoTreino, DateOnly PrimeiroRegistro, DateOnly UltimoRegistro,
+    string Estado, string Tendencia, IReadOnlyCollection<DateOnly> OcorrenciasRecentes);
+
+public record PortalMapaCorporalLongitudinalResponse(
+    string Estado, string Titulo, string Resumo, int PeriodoDias, int TotalRegistros, int RegioesObservadas, int RegioesRecorrentes,
+    IReadOnlyCollection<PortalMapaCorporalLongitudinalRegiaoResponse> Regioes, string MensagemSeguranca);
+
 public record PortalProntidaoDiariaResponse(
     Guid Id,
     DateOnly Data,
@@ -467,6 +477,7 @@ public record PortalPacienteHomeResponse(
     PortalPerfilRespostaAtletaResponse PerfilRespostaAtleta,
     PortalPainelMedicinaEsporteResponse PainelMedicinaEsporte,
     PortalAlertasClinicoEsportivosResponse AlertasClinicoEsportivos,
+    PortalMapaCorporalLongitudinalResponse MapaCorporalLongitudinal,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

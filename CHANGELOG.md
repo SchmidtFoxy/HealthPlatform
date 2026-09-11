@@ -1,3 +1,13 @@
+
+## v0.11.2 — Mapa Corporal Longitudinal
+
+- amplia dor localizada de 7 dias para uma leitura longitudinal de 56 dias, sem substituir o resumo diário existente;
+- agrupa ocorrências por região + lateralidade e mantém frequência, intensidade e impacto funcional separados;
+- compara presença em 28 dias recentes vs. 28 dias anteriores (`MaisPresente`, `MenosPresente`, `SemMudanca` ou `HistoricoCurto`);
+- considera recorrência apenas como frequência observada (3+ dias), sem diagnóstico, probabilidade de lesão ou causalidade automática;
+- integra a visão nas Homes do atleta e do profissional, sem migration nova;
+- suíte de fumaça ampliada para 1016 verificações.
+
 # v0.11.1 — Alertas Clinico-Esportivos Transparentes
 
 - Adiciona alertas explicaveis a partir dos oito eixos ja consolidados no Painel de Medicina do Esporte.
