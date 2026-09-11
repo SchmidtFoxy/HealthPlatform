@@ -1,3 +1,14 @@
+# v0.5.7 — Monitoramento Guiado
+**Tipo:** feature release
+
+- adiciona registros guiados de sinais vitais e sintomas ao Hoje do paciente;
+- estrutura pressão arterial em sistólica/diastólica sem criar nova tabela;
+- adiciona glicemia, frequência cardíaca, saturação e temperatura aos registros rápidos;
+- adiciona resumo profissional dos últimos 7 dias com último valor, média, mínimo e máximo;
+- adiciona endpoints profissional e PatientOnly de monitoramento;
+- reutiliza o diário existente, sem schema ou migration nova;
+- suíte ampliada de 561 para 570 verificações.
+
 # v0.5.6 — Jornada do Paciente
 **Tipo:** feature release
 
