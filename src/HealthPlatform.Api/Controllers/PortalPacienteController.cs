@@ -182,6 +182,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var registroProgressao = await RegistroProgressaoService.MontarAsync(db, currentUser.OrganizationId, pacienteId, ct);
         var comparativoProgressao = await ComparativoProgressaoService.MontarAsync(db, currentUser.OrganizationId, pacienteId, dia, ct);
         var interpretacaoLongitudinalProgressao = InterpretacaoLongitudinalProgressaoService.Montar(registroProgressao, comparativoProgressao, reavaliacaoProgressao);
+        var historicoProgressoes = await HistoricoProgressaoService.MontarAsync(db, currentUser.OrganizationId, pacienteId, interpretacaoLongitudinalProgressao, dia, ct);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -217,6 +218,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             registroProgressao,
             comparativoProgressao,
             interpretacaoLongitudinalProgressao,
+            historicoProgressoes,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

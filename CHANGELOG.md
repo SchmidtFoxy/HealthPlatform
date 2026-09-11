@@ -1,3 +1,16 @@
+## v0.10.6 r1 — alinhamento das sentinelas da timeline
+- Explicita no HistoricoProgressaoService que a timeline nasce de **eventos realmente registrados** e persistidos.
+- Explicita a trava **nao ranqueia eventos** com a mesma formulacao usada pela suíte de compatibilidade.
+- Nenhuma alteracao funcional, de schema ou de versao semantica.
+
+## v0.10.6 — Histórico de Progressões & Linha do Tempo Esportiva
+- organiza eventos de progressão realmente registrados em uma timeline longitudinal;
+- exibe aplicação, eixo, profissional, duração em observação, encerramento e observações;
+- associa a interpretação longitudinal atual somente ao evento temporal correspondente;
+- eventos antigos sem leitura comparável permanecem como histórico registrado, sem fabricar resposta retrospectiva;
+- não ranqueia progressões e não cria score de melhor/pior resposta;
+- sem nova migration: schema permanece 38/38.
+
 ## v0.10.5 — Interpretação Longitudinal da Resposta
 - integra o comparativo pré/pós, o evento registrado e a reavaliação supervisionada;
 - classifica o padrão observado como DadosInsuficientes, EmFormacao, Estavel, Favoravel, Misto ou Atencao;
