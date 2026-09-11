@@ -87,6 +87,9 @@ function hpClinicalSummaryCard(r){
   const body=r.ultimaAvaliacao;
   const anam=r.ultimaAnamnese;
   const examCount=r.examesAlterados?.length||0;
+  const period=r.desdeUltimaConsulta;
+  const periodLabel=period?.basePeriodo==='UltimaConsulta'?'Desde a última consulta':'Últimos 30 dias';
+  const pct=v=>v==null?'—':`${num(v,0)}%`;
   return `<section class="card full-card clinical-summary-card">
     <div class="card-head">
       <div><span class="eyebrow">VISÃO CONSOLIDADA</span><h3>Resumo clínico</h3><small>Leitura rápida do estado atual do prontuário.</small></div>
@@ -99,6 +102,19 @@ function hpClinicalSummaryCard(r){
       <div><strong>${r.treinosUltimos30Dias}</strong><span>Treinos / 30 dias</span></div>
       <div><strong>${examCount}</strong><span>Exames alterados</span></div>
     </div>
+    ${period?`<div class="clinical-period-summary" data-clinical-period-summary>
+      <div class="clinical-period-head"><div><span class="eyebrow">ACOMPANHAMENTO LONGITUDINAL</span><h4>${periodLabel}</h4><small>${period.diasAcompanhados} dia(s) acompanhados desde ${fmtDate(period.periodoInicioUtc)}</small></div>${period.variacaoPesoKg!=null?`<span class="clinical-period-weight ${Number(period.variacaoPesoKg)>0?'up':Number(period.variacaoPesoKg)<0?'down':''}">${Number(period.variacaoPesoKg)>0?'+':''}${num(period.variacaoPesoKg,1)} kg</span>`:''}</div>
+      <div class="clinical-period-metrics">
+        <div><strong>${period.registrosDiario}</strong><span>Registros do paciente</span></div>
+        <div><strong>${period.treinosRealizados}</strong><span>Treinos realizados</span></div>
+        <div><strong>${period.checkInsRealizados}</strong><span>Check-ins</span></div>
+        <div><strong>${pct(period.adesaoAlimentacaoMedia)}</strong><span>Adesão alimentar média</span></div>
+        <div><strong>${pct(period.adesaoTreinoMedia)}</strong><span>Adesão ao treino média</span></div>
+        <div><strong>${period.solicitacoesPendentes}</strong><span>Solicitações pendentes</span></div>
+        <div><strong>${period.solicitacoesParaRevisao}</strong><span>Aguardando revisão</span></div>
+      </div>
+      ${(period.pesoInicialKg!=null||period.pesoAtualKg!=null)?`<div class="clinical-period-note">Peso no período: <strong>${period.pesoInicialKg!=null?`${num(period.pesoInicialKg,1)} kg`:'—'}</strong> → <strong>${period.pesoAtualKg!=null?`${num(period.pesoAtualKg,1)} kg`:'—'}</strong></div>`:''}
+    </div>`:''}
     <div class="clinical-summary-grid">
       <article><b>Agenda</b>
         <p>${r.ultimaConsulta?`Última: ${fmtDateTime(r.ultimaConsulta.dataHoraUtc)} • ${esc(r.ultimaConsulta.status)}`:'Sem consulta anterior.'}</p>
@@ -4975,7 +4991,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.5.4';
+const HP_MVP_VERSION='0.5.5';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

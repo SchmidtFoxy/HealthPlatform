@@ -1,4 +1,4 @@
-# v0.5.4 — Solicitações no Hoje / Connected Care
+# v0.5.5 — Solicitações no Hoje / Connected Care
 
 A v0.5.4 integra Solicitações Clínicas ao fluxo diário, reduzindo a dependência de telas isoladas.
 
@@ -21,3 +21,12 @@ A v0.5.3 foi validada pelo usuário com **535/535 testes** e é a baseline desta
 
 - `PREPARAR.ps1`: 31/31.
 - `TESTAR.ps1`: 545/545.
+
+
+## v0.5.5 — Desde a última consulta
+- resumo longitudinal no prontuário desde a última consulta (fallback de 30 dias);
+- consolidação de registros do diário, treinos e check-ins;
+- médias de adesão alimentar e ao treino;
+- variação de peso no período;
+- solicitações pendentes e aguardando revisão no mesmo contexto;
+- sem alteração de schema ou migration nova.

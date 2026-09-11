@@ -48,6 +48,22 @@ public sealed record ResumoClinicoAnamneseResponse(
     string? SonoQualidade,
     int? EstresseNivel);
 
+
+public sealed record ResumoDesdeUltimaConsultaResponse(
+    DateTime PeriodoInicioUtc,
+    string BasePeriodo,
+    int DiasAcompanhados,
+    int RegistrosDiario,
+    int TreinosRealizados,
+    int CheckInsRealizados,
+    decimal? AdesaoAlimentacaoMedia,
+    decimal? AdesaoTreinoMedia,
+    decimal? PesoInicialKg,
+    decimal? PesoAtualKg,
+    decimal? VariacaoPesoKg,
+    int SolicitacoesPendentes,
+    int SolicitacoesParaRevisao);
+
 public sealed record ResumoClinicoResponse(
     Guid PacienteId,
     string PacienteNome,
@@ -61,7 +77,8 @@ public sealed record ResumoClinicoResponse(
     int MetasAtivas,
     int TreinosUltimos30Dias,
     int PendenciasAbertas,
-    int PendenciasAltaPrioridade);
+    int PendenciasAltaPrioridade,
+    ResumoDesdeUltimaConsultaResponse DesdeUltimaConsulta);
 
 [ApiController]
 [Authorize]
@@ -233,6 +250,80 @@ public sealed class ResumoClinicoController(
             .Select(x => new { x.Severidade })
             .ToListAsync(ct);
 
+        var periodoInicio = ultimaConsultaEntity?.DataHoraUtc ?? agora.AddDays(-30);
+        var basePeriodo = ultimaConsultaEntity is null ? "Ultimos30Dias" : "UltimaConsulta";
+        var diasAcompanhados = Math.Max(0, (int)Math.Ceiling((agora - periodoInicio).TotalDays));
+
+        var registrosDesdeConsulta = await db.RegistrosDiarioPaciente.AsNoTracking()
+            .CountAsync(x =>
+                x.PacienteId == pacienteId &&
+                x.Paciente.OrganizacaoId == org &&
+                x.DataHoraUtc >= periodoInicio, ct);
+
+        var treinosDesdeConsulta = await db.ExecucoesTreino.AsNoTracking()
+            .CountAsync(x =>
+                x.PacienteId == pacienteId &&
+                x.Paciente.OrganizacaoId == org &&
+                x.DataHoraInicioUtc >= periodoInicio &&
+                x.Status == "Concluido", ct);
+
+        var checkInsPeriodo = await db.CheckInsAcompanhamento.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId &&
+                x.OrganizacaoId == org &&
+                x.DataUtc >= periodoInicio)
+            .Select(x => new
+            {
+                x.AdesaoAlimentacaoPercentual,
+                x.AdesaoTreinoPercentual
+            })
+            .ToListAsync(ct);
+
+        var adesaoAlimentacao = checkInsPeriodo
+            .Where(x => x.AdesaoAlimentacaoPercentual.HasValue)
+            .Select(x => (decimal)x.AdesaoAlimentacaoPercentual!.Value)
+            .ToList();
+        var adesaoTreino = checkInsPeriodo
+            .Where(x => x.AdesaoTreinoPercentual.HasValue)
+            .Select(x => (decimal)x.AdesaoTreinoPercentual!.Value)
+            .ToList();
+
+        var pesosPeriodo = await db.Avaliacoes.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId &&
+                x.Paciente.OrganizacaoId == org &&
+                x.DataUtc >= periodoInicio &&
+                x.PesoKg.HasValue)
+            .OrderBy(x => x.DataUtc)
+            .Select(x => x.PesoKg!.Value)
+            .ToListAsync(ct);
+
+        decimal? pesoInicial = pesosPeriodo.Count > 0 ? pesosPeriodo[0] : null;
+        decimal? pesoAtual = pesosPeriodo.Count > 0 ? pesosPeriodo[^1] : null;
+        decimal? variacaoPeso = pesoInicial.HasValue && pesoAtual.HasValue
+            ? Math.Round(pesoAtual.Value - pesoInicial.Value, 2)
+            : null;
+
+        var solicitacoesPeriodo = await db.SolicitacoesClinicas.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.OrganizacaoId == org)
+            .Select(x => x.Status)
+            .ToListAsync(ct);
+
+        var desdeUltimaConsulta = new ResumoDesdeUltimaConsultaResponse(
+            periodoInicio,
+            basePeriodo,
+            diasAcompanhados,
+            registrosDesdeConsulta,
+            treinosDesdeConsulta,
+            checkInsPeriodo.Count,
+            adesaoAlimentacao.Count > 0 ? Math.Round(adesaoAlimentacao.Average(), 1) : null,
+            adesaoTreino.Count > 0 ? Math.Round(adesaoTreino.Average(), 1) : null,
+            pesoInicial,
+            pesoAtual,
+            variacaoPeso,
+            solicitacoesPeriodo.Count(x => x == "Pendente"),
+            solicitacoesPeriodo.Count(x => x == "Enviada"));
+
         return Ok(new ResumoClinicoResponse(
             paciente.Id,
             paciente.Nome,
@@ -246,6 +337,7 @@ public sealed class ResumoClinicoController(
             metasAtivas,
             treinosUltimos30Dias,
             pendencias.Count,
-            pendencias.Count(x => x.Severidade == "Alta")));
+            pendencias.Count(x => x.Severidade == "Alta"),
+            desdeUltimaConsulta));
     }
 }

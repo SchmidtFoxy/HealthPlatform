@@ -1,3 +1,13 @@
+# v0.5.5 — Desde a última consulta
+**Tipo:** feature release
+
+- adiciona resumo longitudinal ao prontuário profissional;
+- usa a última consulta como início do período, com fallback seguro de 30 dias;
+- agrega registros do paciente, treinos, check-ins e médias de adesão;
+- mostra peso inicial/atual e variação quando houver avaliações suficientes;
+- consolida solicitações pendentes e respostas aguardando revisão;
+- sem schema novo e sem migration nova.
+
 # Changelog
 
 ## v0.5.4 — Feature release
