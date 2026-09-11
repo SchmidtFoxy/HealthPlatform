@@ -1,3 +1,12 @@
+# Changelog
+
+## v0.10.1 — Monitoramento de Resposta à Progressão
+- adiciona leitura transparente de recuperação, carga e performance ao redor do plano supervisionado;
+- estados Estável, Observar, Revisar e DadosInsuficientes, sem score opaco;
+- revisão clínica prevalece sobre qualquer novo avanço;
+- não atribui causalidade sem registro temporal da mudança e não prescreve nova progressão;
+- integração nos portais do atleta e profissional, sem nova migration.
+
 ﻿﻿# v0.10.0 — Plano de Progressão Supervisionada
 
 - adiciona `PlanoProgressaoSupervisionadaService`;

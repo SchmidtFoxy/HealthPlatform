@@ -1,6 +1,9 @@
-# HealthPlatform v0.10.0 — Plano de Progressão Supervisionada
+## v0.10.1 — Monitoramento de Resposta à Progressão
+Acompanha recuperação, carga e performance ao redor do plano supervisionado sem inferir causalidade nem autorizar nova progressão automática.
 
-> Marco v0.10.0: depois de abrir a janela e organizar a decisão de progressão, a plataforma agora estrutura a discussão profissional sem transformar elegibilidade em prescrição automática.
+# HealthPlatform v0.10.1 — Plano de Progressão Supervisionada
+
+> Marco v0.10.1: depois de abrir a janela e organizar a decisão de progressão, a plataforma agora estrutura a discussão profissional sem transformar elegibilidade em prescrição automática.
 
 A camada de progressão supervisionada mostra um único eixo em discussão, critérios transparentes e uma regra de reavaliação baseada na resposta observada. O sistema não define carga, volume, calorias, medicação ou meta automaticamente.
 
