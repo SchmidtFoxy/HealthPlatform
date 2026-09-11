@@ -1,4 +1,13 @@
-﻿# v0.9.8 — Janela de Progressão & Critério de Avanço
+﻿# v0.9.9 — Decisão Assistida de Progressão
+
+- adiciona `DecisaoProgressaoService` depois da Janela de Progressão;
+- organiza até 3 opções transparentes e sugere apenas um eixo para discussão por vez;
+- considera prioridade do ciclo e perfil/objetivo esportivo sem produzir prescrição automática;
+- janela fechada, recuperação/carga em revisão ou dados insuficientes continuam bloqueando nova exigência;
+- não define carga, volume, calorias, medicação nem cria meta automaticamente;
+- integrado às Homes do atleta e profissional sem migration; schema permanece 37/37.
+
+# v0.9.8 — Janela de Progressão & Critério de Avanço
 
 - Nova camada `JanelaProgressaoService` com critérios transparentes e independentes para considerar uma progressão.
 - Expõe base comportamental, ausência de oscilação, recuperação e carga recente sem condensar os eixos em score opaco.

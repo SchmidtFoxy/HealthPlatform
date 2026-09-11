@@ -1,8 +1,8 @@
-﻿# HealthPlatform v0.9.8 — Janela de Progressão & Critério de Avanço
+# HealthPlatform v0.9.9 — Janela de Progressão & Critério de Avanço
 
-> v0.9.8: a plataforma agora explicita quando existe contexto suficiente para discutir uma progressão e quando recuperação, carga, oscilação ou falta de dados pedem manutenção.
+> v0.9.9: a plataforma agora explicita quando existe contexto suficiente para discutir uma progressão e quando recuperação, carga, oscilação ou falta de dados pedem manutenção.
 
-A v0.9.8 continua a linha de medicina do esporte e autocuidado diário: avanço não é recompensa automática por aderir bem. A janela usa critérios separados e visíveis, sem score opaco, e nunca aumenta carga, volume, meta nutricional ou medicação por conta própria.
+A v0.9.9 continua a linha de medicina do esporte e autocuidado diário: avanço não é recompensa automática por aderir bem. A janela usa critérios separados e visíveis, sem score opaco, e nunca aumenta carga, volume, meta nutricional ou medicação por conta própria.
 
 
 ## Princípios
