@@ -1,3 +1,23 @@
+# Changelog
+
+## v0.5.1-r1 — Hotfix de migration
+
+- Corrige o `PREPARAR.ps1` em instalações que já possuem a migration baseline da v0.5.0.
+- Gera e normaliza a migration incremental `V051SolicitacoesClinicas` antes de `database update`.
+- Mantém instalações novas usando a `InitialCreate` atual, sem migration incremental redundante.
+- Não suprime `PendingModelChangesWarning`, não recria o banco e não altera dados existentes.
+- Mantém o upgrade SQL v0.5.1 idempotente como camada adicional de compatibilidade.
+
+## v0.5.1 — Solicitações Clínicas
+**Tipo:** feature release.
+
+- adiciona solicitações clínicas profissional → paciente;
+- adiciona resposta/conclusão pelo portal do paciente;
+- adiciona revisão/cancelamento profissional;
+- adiciona auditoria e isolamento multi-tenant;
+- adiciona schema idempotente e etapa 31/31 no PREPARAR;
+- adiciona cobertura estrutural à suíte de fumaça.
+
 # HealthPlatform — Changelog
 
 ## v0.5.0 — Connected Care Stable Milestone

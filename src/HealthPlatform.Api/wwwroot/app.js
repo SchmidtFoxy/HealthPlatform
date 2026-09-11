@@ -178,7 +178,7 @@ function nutritionMealDistribution(p){
 
 function openClinicalActionMenu(p){
   const box=$('#clinicalActionContent');
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">REGISTRO CLÍNICO</span><h2>${esc(p.nome)}</h2><p>Escolha o que deseja registrar no prontuário.</p></div><div class="action-grid"><button data-action="consulta"><b>Consulta</b><span>Atendimento, queixa, evolução e conduta</span></button><button data-action="evolucao"><b>Evolução SOAP</b><span>Subjetivo, objetivo, avaliação e plano</span></button><button data-action="avaliacao"><b>Avaliação</b><span>Peso, medidas e sinais vitais</span></button><button data-action="anamnese"><b>Anamnese</b><span>Histórico, hábitos e objetivos</span></button><button data-action="exame"><b>Exame laboratorial</b><span>Coleta, marcadores, valores e referências</span></button><button data-action="plano"><b>Plano alimentar</b><span>Refeições, alimentos, macros e substituições</span></button><button data-action="treino"><b>Plano de treino</b><span>Treinos, exercícios, séries, repetições e carga</span></button><button data-action="meta"><b>Meta</b><span>Objetivo e acompanhamento</span></button><button data-action="diario"><b>Diário</b><span>Registro rápido do paciente</span></button><button data-action="relatorio"><b>Relatório clínico</b><span>Snapshot do período, conclusão e impressão</span></button></div>`;
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">REGISTRO CLÍNICO</span><h2>${esc(p.nome)}</h2><p>Escolha o que deseja registrar no prontuário.</p></div><div class="action-grid"><button data-action="consulta"><b>Consulta</b><span>Atendimento, queixa, evolução e conduta</span></button><button data-action="evolucao"><b>Evolução SOAP</b><span>Subjetivo, objetivo, avaliação e plano</span></button><button data-action="avaliacao"><b>Avaliação</b><span>Peso, medidas e sinais vitais</span></button><button data-action="anamnese"><b>Anamnese</b><span>Histórico, hábitos e objetivos</span></button><button data-action="exame"><b>Exame laboratorial</b><span>Coleta, marcadores, valores e referências</span></button><button data-action="plano"><b>Plano alimentar</b><span>Refeições, alimentos, macros e substituições</span></button><button data-action="treino"><b>Plano de treino</b><span>Treinos, exercícios, séries, repetições e carga</span></button><button data-action="meta"><b>Meta</b><span>Objetivo e acompanhamento</span></button><button data-action="diario"><b>Diário</b><span>Registro rápido do paciente</span></button><button data-action="relatorio"><b>Relatório clínico</b><span>Snapshot do período, conclusão e impressão</span></button><button data-action="solicitacao"><b>Solicitação ao paciente</b><span>Tarefa, exame, documento ou acompanhamento com prazo</span></button></div>`;
   $('#clinicalActionModal').classList.remove('hidden');
   $$('#clinicalActionContent [data-action]').forEach(b=>b.onclick=()=>openClinicalForm(b.dataset.action,p));
 }
@@ -190,6 +190,7 @@ function openClinicalForm(type,p){
   if(type==='plano'){openMealPlanForm(p);return}
   if(type==='relatorio'){openReportForm(p);return}
   if(type==='evolucao'){openEvolutionForm(p);return}
+  if(type==='solicitacao'){openSolicitacaoClinica(p);return}
   const box=$('#clinicalActionContent');let html='';
   if(type==='consulta')html=clinicalFormShell('Nova consulta',p.nome,`${field('Data e hora','dataHora','datetime-local',`value="${localDateTimeValue()}" required`)}${field('Status','status','text','value="Agendada"')}${field('Motivo','motivo')}${area('Queixa principal','queixaPrincipal')}${area('Evolução','evolucao')}${area('Conduta','conduta')}${area('Orientações','orientacoes')}`);
   if(type==='avaliacao')html=clinicalFormShell('Nova avaliação',p.nome,`${field('Data','dataUtc','datetime-local',`value="${localDateTimeValue()}"`)}${field('Peso (kg)','pesoKg','number','step="0.01"')}${field('Altura (m)','alturaM','number','step="0.01"')}${field('Gordura (%)','percentualGordura','number','step="0.01"')}${field('Massa magra (kg)','massaMagraKg','number','step="0.01"')}${field('Massa gorda (kg)','massaGordaKg','number','step="0.01"')}${field('Cintura (cm)','cinturaCm','number','step="0.01"')}${field('Abdômen (cm)','abdomenCm','number','step="0.01"')}${field('Quadril (cm)','quadrilCm','number','step="0.01"')}${field('Pressão sistólica','pressaoSistolica','number')}${field('Pressão diastólica','pressaoDiastolica','number')}${field('Frequência cardíaca','frequenciaCardiaca','number')}`);
@@ -1558,7 +1559,7 @@ $('#patientLogoutButton')?.addEventListener('click',logout);
 
 // ===== v0.3.27 — Portal do paciente completo =====
 async function loadPatientSection(view='inicio'){
-  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames'];
+  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes'];
   if(!allowed.includes(view))view='inicio';
   $$('#patientPortalNav [data-patient-view]').forEach(b=>b.classList.toggle('active',b.dataset.patientView===view));
   const host=$('#patientPortalContent');
@@ -1570,6 +1571,7 @@ async function loadPatientSection(view='inicio'){
   if(view==='diario')return loadPatientDiary();
   if(view==='evolucao')return loadPatientEvolution();
   if(view==='exames')return loadPatientLabs();
+  if(view==='solicitacoes')return loadPatientRequests();
 }
 
 $$('#patientPortalNav [data-patient-view]').forEach(b=>b.addEventListener('click',()=>loadPatientSection(b.dataset.patientView).catch(e=>toast(e.message,true))));
@@ -4932,7 +4934,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.5.0';
+const HP_MVP_VERSION='0.5.1';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -5063,3 +5065,58 @@ function hpInstallRsResponsiveUi(){
   sync();
 }
 hpInstallRsResponsiveUi();
+
+
+// ===== v0.5.1 — Solicitações clínicas / Connected Care =====
+function requestStatusPill(status){
+  const cls=status==='Revisada'?'Ativa':status==='Enviada'?'Agendada':status==='Cancelada'?'Cancelada':'Media';
+  return `<span class="pill ${cls}">${esc(status||'Pendente')}</span>`;
+}
+function requestDeadline(x){return x?fmtDateTime(x):'Sem prazo definido'}
+async function openSolicitacaoClinica(p){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">CONNECTED CARE</span><h2>Solicitações para ${esc(p.nome)}</h2><p>Carregando acompanhamento...</p></div>`;
+  try{
+    const itens=await api(`/api/pacientes/${p.id}/solicitacoes`);
+    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">CONNECTED CARE</span><h2>Solicitações para ${esc(p.nome)}</h2><p>Crie tarefas clínicas e acompanhe a devolutiva do paciente.</p></div>
+      <form id="requestClinicalForm" class="form-grid clinical-form">
+        <label>Tipo<select name="tipo"><option>Acompanhamento</option><option>Exame</option><option>Documento</option><option>Medição</option><option>Questionário</option><option>Retorno</option><option>Outro</option></select></label>
+        ${field('Prazo','dataLimite','datetime-local')}
+        ${field('Título','titulo','text','required placeholder="Ex.: Enviar hemograma atualizado"')}
+        ${area('Orientação ao paciente','descricao','placeholder="Explique exatamente o que precisa ser feito."')}
+        <div class="span-2 form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Enviar solicitação</button></div>
+      </form>
+      <section class="request-history"><div class="card-head"><h3>Histórico</h3><small>${itens.length} solicitação(ões)</small></div>${renderProfessionalRequests(itens,p)}</section>`;
+    $('.clinical-back').onclick=()=>openClinicalActionMenu(p);
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    $('#requestClinicalForm').onsubmit=async e=>{
+      e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');b.disabled=true;
+      try{
+        await api(`/api/pacientes/${p.id}/solicitacoes`,{method:'POST',body:JSON.stringify({tipo:val(f,'tipo'),titulo:val(f,'titulo'),descricao:val(f,'descricao'),dataLimiteUtc:val(f,'dataLimite')?new Date(val(f,'dataLimite')).toISOString():null})});
+        toast('Solicitação enviada ao paciente.');await openSolicitacaoClinica(p);
+      }catch(err){toast(err.message,true)}finally{b.disabled=false}
+    };
+    $$('#clinicalActionContent [data-request-review]').forEach(b=>b.onclick=()=>reviewClinicalRequest(b.dataset.requestReview,p));
+    $$('#clinicalActionContent [data-request-cancel]').forEach(b=>b.onclick=async()=>{if(!confirm('Cancelar esta solicitação?'))return;try{await api(`/api/solicitacoes/${b.dataset.requestCancel}/cancelar`,{method:'PUT'});toast('Solicitação cancelada.');await openSolicitacaoClinica(p)}catch(err){toast(err.message,true)}});
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+function renderProfessionalRequests(items,p){
+  if(!items.length)return sectionEmpty('Nenhuma solicitação criada para este paciente.');
+  return `<div class="request-list">${items.map(x=>`<article class="request-card"><div class="request-card-head"><div><span class="eyebrow">${esc(x.tipo)}</span><h4>${esc(x.titulo)}</h4></div>${requestStatusPill(x.status)}</div><p>${esc(x.descricao||'Sem orientação adicional.')}</p><small>Prazo: ${requestDeadline(x.dataLimiteUtc)} • ${esc(x.profissionalNome||'Profissional')}</small>${x.respostaPaciente||x.linkResposta?`<div class="request-response"><b>Resposta do paciente</b>${x.respostaPaciente?`<p>${esc(x.respostaPaciente)}</p>`:''}${x.linkResposta?`<a href="${esc(x.linkResposta)}" target="_blank" rel="noopener">Abrir referência enviada</a>`:''}</div>`:''}<div class="request-actions">${x.status==='Enviada'?`<button class="primary" data-request-review="${x.id}">Revisar</button>`:''}${!['Revisada','Cancelada'].includes(x.status)?`<button class="secondary" data-request-cancel="${x.id}">Cancelar</button>`:''}</div>${x.observacaoRevisao?`<div class="request-review-note"><b>Revisão</b><p>${esc(x.observacaoRevisao)}</p></div>`:''}</article>`).join('')}</div>`;
+}
+function reviewClinicalRequest(id,p){
+  const note=prompt('Observação da revisão (opcional):','');if(note===null)return;
+  api(`/api/solicitacoes/${id}/revisar`,{method:'PUT',body:JSON.stringify({observacao:note})}).then(async()=>{toast('Solicitação revisada.');await openSolicitacaoClinica(p)}).catch(e=>toast(e.message,true));
+}
+async function loadPatientRequests(){
+  const host=$('#patientPortalContent'),d=await api('/api/portal/me/solicitacoes'),items=d.itens||[];
+  host.innerHTML=patientPageHeader('ACOMPANHAMENTO','Minhas solicitações','Tarefas e pedidos enviados pelo seu profissional.')+`<div class="request-summary"><div class="metric"><strong>${d.pendentes||0}</strong><span>Pendentes</span></div><div class="metric"><strong>${d.aguardandoRevisao||0}</strong><span>Aguardando revisão</span></div></div><div class="request-list">${items.length?items.map(x=>`<article class="card request-card"><div class="request-card-head"><div><span class="eyebrow">${esc(x.tipo)}</span><h3>${esc(x.titulo)}</h3></div>${requestStatusPill(x.status)}</div><p>${esc(x.descricao||'Sem orientação adicional.')}</p><small>Solicitado por ${esc(x.profissionalNome||'seu profissional')} • Prazo: ${requestDeadline(x.dataLimiteUtc)}</small>${x.status==='Pendente'?`<button class="primary patient-request-answer" data-request-id="${x.id}" data-request-title="${esc(x.titulo)}">Responder / concluir</button>`:''}${x.respostaPaciente?`<div class="request-response"><b>Sua resposta</b><p>${esc(x.respostaPaciente)}</p></div>`:''}${x.observacaoRevisao?`<div class="request-review-note"><b>Retorno do profissional</b><p>${esc(x.observacaoRevisao)}</p></div>`:''}</article>`).join(''):sectionEmpty('Você não possui solicitações no momento.')}</div>`;
+  $$('.patient-request-answer').forEach(b=>b.onclick=()=>openPatientRequestAnswer(b.dataset.requestId,b.dataset.requestTitle));
+}
+function openPatientRequestAnswer(id,title){
+  patientPortalModal(`Responder: ${title}`,`${area('Resposta / observação','resposta','placeholder="Conte ao profissional o que foi realizado ou o resultado."')}${field('Link de documento ou exame (opcional)','linkResposta','url','placeholder="https://..."')}`,async f=>{
+    await api(`/api/portal/me/solicitacoes/${id}/responder`,{method:'POST',body:JSON.stringify({resposta:val(f,'resposta'),linkResposta:val(f,'linkResposta')})});
+    setTimeout(()=>loadPatientRequests().catch(e=>toast(e.message,true)),0);
+  });
+}

@@ -1,3 +1,26 @@
+# v0.5.1 — Solicitações Clínicas / Connected Care
+
+> **Hotfix v0.5.1-r1:** corrige o fluxo de migrations para bancos atualizados a partir da v0.5.0. A versão funcional da API permanece 0.5.1.
+
+A v0.5.1 é a primeira entrega funcional após o marco estável v0.5.0 (508/508). Ela cria um fluxo bidirecional simples entre profissional e paciente para tarefas clínicas.
+
+## O que entrou
+- nova entidade `SolicitacaoClinica`, isolada por organização;
+- profissional cria solicitações por paciente com tipo, título, orientação e prazo;
+- histórico da solicitação acessível no fluxo clínico do paciente;
+- paciente ganhou a área **Solicitações** no portal;
+- paciente pode responder/concluir uma solicitação com texto e link de referência;
+- profissional pode revisar a devolutiva ou cancelar uma solicitação;
+- todas as mudanças de estado são auditadas;
+- novo upgrade SQL idempotente `v0.5.1_solicitacoes_clinicas.sql`;
+- PREPARAR passa de 30 para 31 etapas;
+- suíte de fumaça passa de 508 para 518 verificações.
+
+## Escopo deliberadamente deixado para versões seguintes
+Upload físico de arquivos, notificações automáticas e protocolos recorrentes ainda não fazem parte desta entrega. O campo de link permite validar o ciclo antes de introduzir armazenamento de documentos.
+
+---
+
 # v0.5.0 — Connected Care: marco estável
 
 A v0.5.0 promove a **v0.4.6**, validada com **508/508 testes de fumaça**, como novo marco estável do HealthPlatform. Esta promoção encerra o ciclo 0.4.x sem introduzir schema novo, regra clínica nova ou mutação de dados.

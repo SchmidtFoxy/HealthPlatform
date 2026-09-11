@@ -50,6 +50,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<NotificacaoInterna> NotificacoesInternas => Set<NotificacaoInterna>();
     public DbSet<InteracaoAcompanhamento> InteracoesAcompanhamento => Set<InteracaoAcompanhamento>();
     public DbSet<EvolucaoClinica> EvolucoesClinicas => Set<EvolucaoClinica>();
+    public DbSet<SolicitacaoClinica> SolicitacoesClinicas => Set<SolicitacaoClinica>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -628,6 +629,24 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasForeignKey(x => x.ConsultaId).OnDelete(DeleteBehavior.SetNull);
         });
 
+
+        builder.Entity<SolicitacaoClinica>(entity =>
+        {
+            entity.ToTable("SolicitacoesClinicas");
+            entity.Property(x => x.Tipo).HasMaxLength(60).IsRequired();
+            entity.Property(x => x.Titulo).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Descricao).HasMaxLength(3000);
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.RespostaPaciente).HasMaxLength(4000);
+            entity.Property(x => x.LinkResposta).HasMaxLength(1000);
+            entity.Property(x => x.ObservacaoRevisao).HasMaxLength(3000);
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Status, x.DataLimiteUtc });
+            entity.HasIndex(x => new { x.PacienteId, x.Status });
+            entity.HasOne(x => x.Paciente).WithMany()
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Profissional).WithMany()
+                .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+        });
 
         builder.Entity<AuditLog>(entity =>
         {
