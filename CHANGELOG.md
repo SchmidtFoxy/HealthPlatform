@@ -1,3 +1,12 @@
+# HealthPlatform v0.8.8 — Resumo Semanal & Fechamento da Semana
+
+- Nova síntese semanal derivada do planejamento, recuperação, carga, nutrição, hidratação e execução diária.
+- Estados transparentes: Executando, Equilibrada, Observar e Revisar.
+- Sem score único, sem diagnóstico e sem alteração automática de prescrição.
+- Integração na Home do atleta e no prontuário profissional.
+- Sem migration nova; schema permanece 37/37.
+- Suíte ampliada para 824 verificações.
+
 # HealthPlatform v0.8.7 — Planejamento Semanal Adaptativo
 
 - organiza até 5 focos da semana usando prioridades, metas, checkpoint e Estratégia do Dia;
@@ -574,3 +583,8 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.8.0 r14 — compatibilidade de encoding dos testes
 - `TESTAR.ps1` passa a ser distribuído em UTF-8 com BOM para Windows PowerShell 5.1 interpretar corretamente literais Unicode (acentos e `•`).
 - Corrige a causa sistêmica dos falsos negativos em sentinelas visuais/identidade sem alterar regras de negócio, schema ou versão funcional.
+
+
+### v0.8.8-r1 — Correção das sentinelas de versão
+- TESTAR.ps1 alinhado à versão corrente 0.8.8 em VERSION.txt, HP_MVP_VERSION e /api/health.
+- Testes históricos e schema 37/37 preservados.

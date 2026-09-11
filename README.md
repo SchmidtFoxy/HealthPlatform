@@ -1,6 +1,10 @@
-# HealthPlatform v0.8.7 — Ações Prioritárias do Ciclo
+## v0.8.8 — Resumo Semanal & Fechamento da Semana
 
-A v0.8.7 transforma os sinais já calculados pelo HealthPlatform em até três prioridades semanais claras, colocando recuperação e equilíbrio de carga acima de metas de volume/performance quando necessário. A camada organiza; não cria prescrição nova.
+A síntese semanal reúne treino, recuperação, carga, nutrição, hidratação e execução em eixos separados, sem score clínico único.
+
+# HealthPlatform v0.8.8 — Ações Prioritárias do Ciclo
+
+A v0.8.8 transforma os sinais já calculados pelo HealthPlatform em até três prioridades semanais claras, colocando recuperação e equilíbrio de carga acima de metas de volume/performance quando necessário. A camada organiza; não cria prescrição nova.
 
 ## Destaques
 
@@ -31,5 +35,5 @@ A v0.8.2 transforma o ciclo esportivo em uma revisão longitudinal transparente.
 - Suíte ampliada para 776 verificações.
 
 
-## v0.8.7 — Ações Prioritárias do Ciclo
+## v0.8.8 — Ações Prioritárias do Ciclo
 A Home ordena até três prioridades semanais usando sinais já existentes, colocando recuperação e carga acima de metas de volume/performance quando necessário. A camada é explicativa e não altera prescrição automaticamente.

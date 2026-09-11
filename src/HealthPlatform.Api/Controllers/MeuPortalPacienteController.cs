@@ -922,10 +922,11 @@ public sealed class MeuPortalPacienteController(
         var tendenciaDoObjetivo = TendenciaObjetivoCicloService.Montar(ciclo, metasDoCiclo, evolucaoEsportiva, performance, cargaTreino, tendenciaRecuperacao, adesaoNutricional);
         var acoesPrioritariasDoCiclo = AcoesPrioritariasCicloService.Montar(ciclo, tendenciaDoObjetivo, checkpointDoCiclo, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual);
         var planejamentoSemanal = PlanejamentoSemanalService.Montar(ciclo, metasDoCiclo, acoesPrioritariasDoCiclo, checkpointDoCiclo, estrategiaDoDia);
+        var resumoSemanal = ResumoSemanalService.Montar(dia, planejamentoSemanal, acoesPrioritariasDoCiclo, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual, execucaoDoDia);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

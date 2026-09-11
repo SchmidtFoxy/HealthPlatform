@@ -172,6 +172,14 @@ public record PortalPlanejamentoSemanalResponse(
     string Estado, string Titulo, string Resumo, int? MetaTreinosSemana, int? TreinosConcluidosSemana, int? TreinosRestantesSemana,
     IReadOnlyCollection<PortalPlanejamentoSemanalItemResponse> Itens, string MensagemSeguranca);
 
+public record PortalResumoSemanalItemResponse(
+    string Codigo, string Categoria, string Estado, string Titulo, string Evidencia);
+
+public record PortalResumoSemanalResponse(
+    string Estado, string Titulo, string Resumo, DateOnly SemanaInicio, DateOnly SemanaFim,
+    int? TreinosConcluidosSemana, int? MetaTreinosSemana, decimal ProgressoExecucaoHoje,
+    IReadOnlyCollection<PortalResumoSemanalItemResponse> Itens, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -263,6 +271,7 @@ public record PortalPacienteHomeResponse(
     PortalTendenciaObjetivoResponse TendenciaDoObjetivo,
     PortalAcoesPrioritariasCicloResponse AcoesPrioritariasDoCiclo,
     PortalPlanejamentoSemanalResponse PlanejamentoSemanal,
+    PortalResumoSemanalResponse ResumoSemanal,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
