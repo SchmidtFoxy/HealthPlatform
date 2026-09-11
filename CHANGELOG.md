@@ -1,3 +1,11 @@
+## v0.10.4 — Comparativo Pré/Pós-Progressão
+- usa o evento real da v0.10.3 como marco temporal;
+- compara até 7 dias antes e depois em recuperação, dor, prontidão, carga interna e volume estimado;
+- distingue janela em formação, dados insuficientes e janela comparável;
+- associação temporal não é tratada como causalidade;
+- não cria nova progressão, score causal ou prescrição automática;
+- sem nova migration: schema permanece 38/38.
+
 
 ## v0.10.3 r3 — alinhamento das sentinelas PREPARAR 38/38
 - Corrige smoke tests legados que ainda esperavam denominador `/37` nos upgrades v0.5.1–v0.6.4.

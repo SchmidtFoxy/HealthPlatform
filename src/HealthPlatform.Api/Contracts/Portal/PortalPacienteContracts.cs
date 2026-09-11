@@ -274,6 +274,15 @@ public record PortalRegistroProgressaoResponse(
     string Estado, string Titulo, string Resumo, bool PossuiEventoAtivo,
     PortalEventoProgressaoSupervisionadaResponse? EventoAtual, string MensagemSeguranca);
 
+public record PortalComparativoProgressaoEixoResponse(
+    string Codigo, string Titulo, string Unidade, decimal? Antes, decimal? Depois, decimal? Variacao,
+    int RegistrosAntes, int RegistrosDepois, string Estado, string Evidencia);
+
+public record PortalComparativoProgressaoResponse(
+    string Estado, string Titulo, string Resumo, bool PossuiMarcoTemporal, string? EixoProgressao,
+    DateTime? DataAplicacaoUtc, int DiasJanelaAntes, int DiasJanelaDepois,
+    IReadOnlyCollection<PortalComparativoProgressaoEixoResponse> Eixos, string Interpretacao, string MensagemSeguranca);
+
 public record PortalCriterioReavaliacaoProgressaoResponse(
     string Codigo, string Titulo, string Estado, string Evidencia);
 
@@ -389,6 +398,7 @@ public record PortalPacienteHomeResponse(
     PortalMonitoramentoRespostaProgressaoResponse MonitoramentoRespostaProgressao,
     PortalReavaliacaoProgressaoResponse ReavaliacaoProgressao,
     PortalRegistroProgressaoResponse RegistroProgressao,
+    PortalComparativoProgressaoResponse ComparativoProgressao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
