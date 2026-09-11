@@ -110,6 +110,12 @@ public record PortalTendenciaRecuperacaoResponse(
     int Treinos7, int TreinosIntensos7, string Tendencia, string NivelAtencao, string Mensagem,
     IReadOnlyCollection<PortalSinalRecuperacaoResponse> Sinais);
 
+public record PortalCargaTreinoResponse(
+    int DiasObservados, int Treinos7, int TreinosIntensos7, int? DuracaoMinutos7,
+    decimal? CargaInterna7, decimal? CargaMediaSemanalBase, decimal? RelacaoCargaComBase,
+    decimal? RpeMedio7, int? DiasDesdeUltimoTreino, string Classificacao, string NivelAtencao,
+    string Mensagem, IReadOnlyCollection<string> Sinais);
+
 public record PortalPerformanceExercicioResponse(
     Guid ExercicioId, string Exercicio, string? GrupoMuscular, decimal? MelhorCarga, string? UnidadeCarga,
     DateTime? DataMelhorCarga, decimal? UltimaCarga, decimal? EvolucaoMelhorCargaPercentual,
@@ -149,6 +155,7 @@ public record PortalPacienteHomeResponse(
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
+    PortalCargaTreinoResponse CargaTreino,
     PortalPerformanceResponse Performance,
     PortalExecucaoDiaResponse ExecucaoDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,

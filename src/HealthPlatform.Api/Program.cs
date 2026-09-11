@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.6.8" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.6.9" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -128,13 +128,47 @@ if (app.Environment.IsDevelopment())
     var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
     await db.Database.MigrateAsync();
+    var adminEmail = builder.Configuration["Seed:AdminEmail"];
+    var adminPassword = builder.Configuration["Seed:AdminPassword"];
+
     await DbSeeder.SeedAsync(
         db,
         users,
         roles,
         builder.Configuration["Seed:OrganizationName"] ?? "Clinica Demo",
-        builder.Configuration["Seed:AdminEmail"],
-        builder.Configuration["Seed:AdminPassword"]);
+        adminEmail,
+        adminPassword);
+
+    // Ambiente local: mantem a credencial demo alinhada ao appsettings.Development.json.
+    // Isso evita 401 ao reaproveitar um banco criado por revisoes anteriores.
+    if (builder.Configuration.GetValue<bool>("DemoBootstrap:SyncAdminPassword") &&
+        !string.IsNullOrWhiteSpace(adminEmail) &&
+        !string.IsNullOrWhiteSpace(adminPassword))
+    {
+        var admin = await users.FindByEmailAsync(adminEmail);
+
+        if (admin is null)
+            throw new InvalidOperationException("Admin demo nao encontrado apos o seed local.");
+
+        if (!await users.CheckPasswordAsync(admin, adminPassword))
+        {
+            var resetToken = await users.GeneratePasswordResetTokenAsync(admin);
+            var resetResult = await users.ResetPasswordAsync(admin, resetToken, adminPassword);
+
+            if (!resetResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    "Nao foi possivel sincronizar a senha do admin demo local: " +
+                    string.Join("; ", resetResult.Errors.Select(x => x.Description)));
+            }
+
+            Console.WriteLine("[v0.6.9-r5] Senha do admin local sincronizada com Seed:AdminPassword.");
+        }
+        else
+        {
+            Console.WriteLine("[v0.6.9-r5] Credencial do admin local ja esta sincronizada.");
+        }
+    }
 }
 else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
 {

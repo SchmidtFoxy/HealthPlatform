@@ -1949,3 +1949,7 @@ body.rs-menu-open{overflow:hidden}
 
 /* v0.6.8 — performance e PRs */
 .performance-card .performance-list{display:grid;gap:8px;margin-top:12px}.performance-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft)}.performance-row>div{display:flex;flex-direction:column;gap:2px}.performance-row>div:last-child{text-align:right}.performance-row small{color:var(--muted)}.performance-row.is-pr{box-shadow:inset 3px 0 0 var(--accent)}.performance-volume{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:12px;margin:12px 0;border-radius:12px;background:var(--surface-soft)}.performance-volume b{font-size:1.25rem}.performance-volume small{grid-column:1/-1;color:var(--muted)}
+
+
+/* v0.6.9 — carga de treino e equilíbrio */
+.training-load-card .recovery-trend-metrics{margin-top:14px}.training-load-card .recovery-signal-list{margin-top:12px}.training-load-card.athlete strong{white-space:nowrap}.training-load-card.professional .game-prof-grid{margin-top:12px}

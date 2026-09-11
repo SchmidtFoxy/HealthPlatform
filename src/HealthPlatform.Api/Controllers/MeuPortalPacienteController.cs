@@ -827,11 +827,12 @@ public sealed class MeuPortalPacienteController(
         var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
         var estrategiaDoDia = await EstrategiaDiariaService.MontarAsync(db, pacienteId, dia, prontidao, ct);
         var tendenciaRecuperacao = await TendenciaRecuperacaoService.MontarAsync(db, pacienteId, dia, ct);
+        var cargaTreino = await CargaTreinoService.MontarAsync(db, pacienteId, dia, ct);
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, dia, ct);
         var execucaoDoDia = await ExecucaoGuiadaService.MontarAsync(db, pacienteId, dia, estrategiaDoDia, ct);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, performance, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

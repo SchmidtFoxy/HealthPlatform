@@ -1,3 +1,36 @@
+# v0.6.9-r5
+
+- Corrige `VERSION.txt` para a versao semantica `0.6.9`, preservando revisoes apenas em logs/changelog.
+- Mantem o runner local fixado em `http://localhost:5180` e a sincronizacao de credencial local.
+
+# v0.6.9-r4
+
+- Corrige o runner local para fixar explicitamente `http://localhost:5180` mesmo usando `--no-launch-profile`.
+- Mantém Development explícito e sincronização da credencial local do admin.
+- Evita divergência entre a porta real da API e TESTAR/DEMO/POPULAR.
+
+## v0.6.9-r3 — correção de bootstrap local
+
+- Corrige sincronização da senha do admin também no fluxo Development.
+- RODAR.ps1 força Development explicitamente e evita instância dotnet antiga na porta 5180.
+- Mantém a versão funcional/API em 0.6.9 e a suíte em 672 verificações.
+
+## v0.6.9-r1 — Hotfix da linha de base + seed Ana Ribeiro
+
+- Corrige a linha de base de carga para três janelas semanais explícitas anteriores aos 7 dias atuais.
+- Alinha `RelacaoCargaComBase` entre motor, contrato e teste 667/672.
+- Adiciona `POPULAR-ANA-RIBEIRO.ps1` para gerar histórico esportivo rico e idempotente da paciente demo.
+
+# v0.6.9 — Carga de Treino & Equilíbrio
+
+- Adicionado `CargaTreinoService` com carga interna estimada por sessão (`duração × RPE`).
+- Comparação dos últimos 7 dias com a média semanal das 3 semanas anteriores.
+- Classificação observacional: DadosInsuficientes, ConstruindoBase, AbaixoDaBase, Coerente, AcimaDaBase e Revisar.
+- Combinação contextual com prontidão, dor e recuperação recentes.
+- Cards específicos para atleta e profissional, com linguagem não diagnóstica.
+- Nenhuma migration: leitura calculada sobre execuções e prontidão já persistidas.
+- Suíte ampliada para 672 verificações.
+
 # v0.6.8 — Performance & PRs
 
 - Linha de performance derivada diretamente das execuções reais de treino.

@@ -1,9 +1,12 @@
-# HealthPlatform v0.6.8 — Performance & PRs
+# HealthPlatform v0.6.9 — Carga de Treino & Equilíbrio
 
-A v0.6.8 transforma execuções reais de treino em uma linha de evolução esportiva: melhores cargas por exercício, volume estimado, novas marcas recentes e contexto de prontidão no dia do PR. Os indicadores são observacionais e não autorizam aumento automático de carga.
+A v0.6.9 transforma duração e RPE das execuções reais em carga interna estimada (sRPE), comparando os últimos 7 dias com a média semanal das 3 semanas anteriores. A leitura é contextual: ciclo, prontidão, dor e recuperação continuam sendo considerados, sem diagnóstico automático ou progressão automática de carga.
 
-A tendência de recuperação da v0.6.7 permanece ativa e complementa a leitura de performance com sono, dor, recuperação, prontidão e carga recente.
-
-> **v0.6.6 — Roteiro de Hoje:** a Estratégia do Dia agora vira ações acompanháveis: prontidão, treino prescrito, metas, hidratação e reflexão de fechamento.
-
-A execução continua subordinada à prescrição profissional e à prontidão. O progresso mede registros reais, não perfeição nem intensidade bruta.
+## Destaques
+- carga interna semanal por duração × RPE;
+- linha de base das 3 semanas anteriores;
+- relação entre carga recente e base;
+- RPE médio, duração semanal e sessões intensas;
+- sinais de revisão quando carga elevada coincide com recuperação desfavorável;
+- Home do atleta e prontuário profissional;
+- nenhuma migration nova: dados derivados do histórico já existente.
