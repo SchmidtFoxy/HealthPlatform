@@ -163,6 +163,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var comparativoDeCiclos = await ComparativoCiclosService.MontarAsync(db, pacienteId, dia, ct);
         var tendenciaDoObjetivo = TendenciaObjetivoCicloService.Montar(ciclo, metasDoCiclo, evolucaoEsportiva, performance, cargaTreino, tendenciaRecuperacao, adesaoNutricional);
         var acoesPrioritariasDoCiclo = AcoesPrioritariasCicloService.Montar(ciclo, tendenciaDoObjetivo, checkpointDoCiclo, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual);
+        var planejamentoSemanal = PlanejamentoSemanalService.Montar(ciclo, metasDoCiclo, acoesPrioritariasDoCiclo, checkpointDoCiclo, estrategiaDoDia);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -179,6 +180,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             comparativoDeCiclos,
             tendenciaDoObjetivo,
             acoesPrioritariasDoCiclo,
+            planejamentoSemanal,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

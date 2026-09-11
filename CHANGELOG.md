@@ -1,6 +1,15 @@
+# HealthPlatform v0.8.7 — Planejamento Semanal Adaptativo
+
+- organiza até 5 focos da semana usando prioridades, metas, checkpoint e Estratégia do Dia;
+- recuperação/carga têm precedência sobre perseguir volume semanal;
+- mostra treinos concluídos/restantes apenas como referência da meta do ciclo;
+- não cria exercícios, não redistribui carga e não altera prescrição automaticamente;
+- sem migration; schema permanece 37/37;
+- suíte ampliada para 816 verificações.
+
 # Changelog
 
-## v0.8.6 — Ações Prioritárias do Ciclo
+## v0.8.7 — Ações Prioritárias do Ciclo
 - Consolida tendência por objetivo, checkpoint, recuperação, carga, nutrição e hidratação em até 3 prioridades semanais.
 - Recuperação e equilíbrio de carga têm precedência sobre metas de volume/performance quando há sinais de atenção.
 - Cada prioridade informa motivo e ação, sem score opaco e sem alterar prescrição automaticamente.
