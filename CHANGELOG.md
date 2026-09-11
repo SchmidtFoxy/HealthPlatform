@@ -122,3 +122,8 @@
 ## Próximo ciclo funcional
 
 O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando a ponte profissional ↔ paciente. As próximas entregas devem privilegiar módulos como solicitações clínicas, tarefas/acompanhamento, protocolos configuráveis e comunicação contextual, e cada release deverá declarar explicitamente o que entrou.
+
+### v0.5.4-r1 — Hotfix de testes
+- Corrige validações do TESTAR.ps1 que dependiam de textos acentuados servidos via HTTP.
+- As verificações agora usam rotas, funções e seletores técnicos estáveis.
+- Nenhuma alteração de schema, API, regra clínica ou dados.

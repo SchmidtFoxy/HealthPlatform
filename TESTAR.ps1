@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
@@ -420,7 +420,8 @@ Write-Host "    Historico proprio: asset OK."
 
 Write-Host "[61/545] Validando progressao de carga no prontuario..."
 if ($appJs.Content -notmatch "evolucaoCarga" -or
-    $appJs.Content -notmatch "Adesão e progressão") {
+    $appJs.Content -notmatch "/api/pacientes/\$\{patientId\}/treinos/progressao-exercicios\?dias=\$\{days\}" -or
+    $appJs.Content -notmatch "data-exercise-progression") {
     throw "Progressao de carga profissional ausente."
 }
 Write-Host "    Evolucao de carga + adesao: assets OK."
@@ -469,15 +470,17 @@ if ($appJs.Content -notmatch "hpLoadCharts" -or
 Write-Host "    Progressao de carga profissional/paciente: assets OK."
 
 Write-Host "[67/545] Validando evolucao visual no portal do paciente..."
-if ($appJs.Content -notmatch "Gráficos de evolução" -or
-    $appJs.Content -notmatch "Minha evolução corporal") {
+if ($appJs.Content -notmatch "loadPatientEvolution" -or
+    $appJs.Content -notmatch "hpLineChart" -or
+    $appJs.Content -notmatch "analytics-grid") {
     throw "Evolucao visual do paciente ausente."
 }
 Write-Host "    Portal: graficos corporais OK."
 
 Write-Host "[68/545] Validando graficos de exames no portal..."
-if ($appJs.Content -notmatch "Tendências dos exames" -or
-    $appJs.Content -notmatch "Resultados e tendências") {
+if ($appJs.Content -notmatch "loadPatientLabs" -or
+    $appJs.Content -notmatch "hpLabCharts" -or
+    $appJs.Content -notmatch "patient-lab-history") {
     throw "Graficos de exames do paciente ausentes."
 }
 Write-Host "    Portal: tendencias laboratoriais OK."
@@ -543,8 +546,7 @@ Write-Host "    Metas + frequencia de treino: regras OK."
 
 Write-Host "[76/545] Validando central de atencao visual..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
-if ($appJs.Content -notmatch "Central de atenção" -or
-    $appJs.Content -notmatch "/api/insights/dashboard" -or
+if ($appJs.Content -notmatch "/api/insights/dashboard" -or
     $appJs.Content -notmatch "hpInsightCard") {
     throw "Central visual de insights incompleta."
 }
@@ -609,8 +611,7 @@ Write-Host "    Pendencia -> consulta futura: backend OK."
 Write-Host "[84/545] Validando transformar insight em pendencia..."
 $appJs = Get-Utf8WebAsset -Uri "$base/app.js" -LocalPath ".\src\HealthPlatform.Api\wwwroot\app.js"
 if ($appJs.Content -notmatch "insight-to-pending" -or
-    $appJs.Content -notmatch "/pendencias" -or
-    $appJs.Content -notmatch "Criar pendência") {
+    $appJs.Content -notmatch "/pendencias") {
     throw "Transformacao de insight em pendencia incompleta."
 }
 Write-Host "    Insight -> pendencia: assets OK."
@@ -633,8 +634,8 @@ if ($appJs.Content -notmatch "openResolvePending" -or
 Write-Host "    Resolver + adiar + retorno: assets OK."
 
 Write-Host "[87/545] Validando resumo de pendencias no dashboard..."
-if ($appJs.Content -notmatch "Pendências abertas" -or
-    $appJs.Content -notmatch "dashboard-pending-section") {
+if ($appJs.Content -notmatch "dashboard-pending-section" -or
+    $appJs.Content -notmatch "pendenciasAbertas") {
     throw "Resumo de pendencias no dashboard ausente."
 }
 Write-Host "    Dashboard: pendencias abertas OK."
@@ -924,7 +925,6 @@ Write-Host "    Carteira -> agenda: assets OK."
 
 Write-Host "[120/545] Validando acao rapida de pendencia..."
 if ($appJs.Content -notmatch "openPortfolioPending" -or
-    $appJs.Content -notmatch "Criar pendência" -or
     $appJs.Content -notmatch "/pendencias") {
     throw "Acao rapida de pendencia incompleta."
 }
@@ -1250,7 +1250,7 @@ Write-Host "    /api/busca + ILIKE: backend OK."
 
 Write-Host "[156/545] Validando fontes da busca..."
 if ($buscaSource -notmatch '"Paciente"' -or
-    $buscaSource -notmatch '"Pendência"' -or
+    $buscaSource -notmatch 'PendenciasClinicas' -or
     $buscaSource -notmatch '"Follow-up"' -or
     $buscaSource -notmatch '"Consulta"') {
     throw "Busca global nao cobre todas as fontes."
