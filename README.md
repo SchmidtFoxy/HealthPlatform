@@ -1,3 +1,16 @@
+# HealthPlatform v0.9.1 — Plano de Reconexão & Retomada Sustentável
+
+A v0.9.1 transforma sinais do Radar de Adesão em até três passos pequenos de retomada, sem compensação, punição ou prescrição paralela. Recuperação adequada continua acima da pressão por metas.
+
+## Princípios
+- no máximo 3 passos de reconexão;
+- usa sinais já existentes do radar, roteiro do dia e prioridades do ciclo;
+- descanso coerente com recuperação permanece protegido;
+- sem XP negativo, punição de streak ou compensação;
+- não dobra treino, não restringe alimentação e não altera prescrição automaticamente;
+- sem migration nova; `PREPARAR` permanece 37/37;
+- suíte: 848 verificações.
+
 # HealthPlatform v0.9.0 — Radar de Adesão & Continuidade do Plano
 
 A v0.9.0 inaugura a linha 0.9.x com um radar de continuidade do plano. Ele combina consistência, ritmo semanal, nutrição e hidratação para reconhecer oscilações de adesão sem rotular o paciente e sem confundir recuperação planejada com abandono.

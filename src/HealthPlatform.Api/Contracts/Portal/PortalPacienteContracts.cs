@@ -196,6 +196,13 @@ public record PortalRadarAdesaoResponse(
     string Estado, string Titulo, string Resumo, int SinaisAtencao, bool ContextoRecuperacao,
     IReadOnlyCollection<PortalRadarAdesaoItemResponse> Itens, string MensagemSeguranca);
 
+public record PortalPlanoReconexaoItemResponse(
+    string Codigo, string Categoria, int Ordem, string Titulo, string Motivo, string Acao);
+
+public record PortalPlanoReconexaoResponse(
+    string Estado, string Titulo, string Resumo, int Passos,
+    IReadOnlyCollection<PortalPlanoReconexaoItemResponse> Itens, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -290,6 +297,7 @@ public record PortalPacienteHomeResponse(
     PortalResumoSemanalResponse ResumoSemanal,
     PortalTendenciaSemanalResponse TendenciaSemanal,
     PortalRadarAdesaoResponse RadarAdesao,
+    PortalPlanoReconexaoResponse PlanoReconexao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

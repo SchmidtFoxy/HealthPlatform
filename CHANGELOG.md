@@ -1,3 +1,12 @@
+## v0.9.1 — Plano de Reconexão & Retomada Sustentável
+- Converte sinais do Radar de Adesão em até 3 passos pequenos e auditáveis de retomada.
+- Protege descanso/redução de ritmo quando há contexto de recuperação.
+- Usa o roteiro do dia e prioridades já existentes; não cria prescrição paralela.
+- Sem XP negativo, punição de streak, treino dobrado ou restrição compensatória.
+- Integração atleta + profissional.
+- Sem migration; schema permanece 37/37.
+- Suíte ampliada para 848 verificações.
+
 
 ### v0.9.0 r1 — correção de compilação do Radar de Adesão
 
