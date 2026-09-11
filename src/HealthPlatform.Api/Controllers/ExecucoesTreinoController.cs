@@ -108,6 +108,16 @@ public sealed class ExecucoesTreinoPacienteController(
         }
 
         db.ExecucoesTreino.Add(execucao);
+
+        var dataTreino = DateOnly.FromDateTime(inicio);
+        var recomendacao = await db.ProntidoesDiarias.AsNoTracking()
+            .Where(x => x.PacienteId == paciente.Id && x.Data == dataTreino)
+            .Select(x => x.RecomendacaoTreino)
+            .FirstOrDefaultAsync(ct);
+        var xpTreino = GamificacaoService.CalcularXpTreino(recomendacao, execucao.EsforcoPercebido);
+        await GamificacaoService.RegistrarEventoAsync(db, currentUser.OrganizationId, paciente.Id, dataTreino,
+            "Treino", execucao.Id, xpTreino.Pontos, xpTreino.Motivo, xpTreino.Adequacao, ct);
+
         db.AuditLogs.Add(new AuditLog
         {
             OrganizacaoId = currentUser.OrganizationId,

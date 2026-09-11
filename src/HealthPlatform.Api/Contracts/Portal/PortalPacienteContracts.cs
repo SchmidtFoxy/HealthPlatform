@@ -87,11 +87,18 @@ public sealed record RegistrarProntidaoDiariaRequest(
     int DisposicaoNivel,
     int RecuperacaoNivel);
 
+public record PortalEventoXpResponse(Guid Id, DateOnly Data, string Fonte, int Pontos, string Motivo, string? Adequacao);
+
+public record PortalGamificacaoResponse(
+    int XpTotal, int Nivel, int XpNoNivel, int XpProximoNivel, int ConsistenciaScore,
+    int StreakDias, int XpHoje, int DiasAtivos14, IReadOnlyCollection<PortalEventoXpResponse> EventosRecentes);
+
 public record PortalPacienteHomeResponse(
     DateOnly Data,
     PortalPacienteResumoResponse Paciente,
     PortalProximaConsultaResponse? ProximaConsulta,
     PortalProntidaoDiariaResponse? ProntidaoDiaria,
+    PortalGamificacaoResponse Gamificacao,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,
     IReadOnlyCollection<PortalMetaHojeResponse> MetasHoje,

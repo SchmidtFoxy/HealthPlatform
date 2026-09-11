@@ -111,6 +111,10 @@ public sealed class MeuPortalPacienteController(
             item.EsforcoUltimoTreino, item.Score, item.RecomendacaoTreino
         });
 
+        if (antes is null)
+            await GamificacaoService.RegistrarEventoAsync(db, currentUser.OrganizationId, pacienteId.Value,
+                item.Data, "Prontidao", item.Id, 30, "Check-in de prontidao concluido.", "Autocuidado", ct);
+
         await db.SaveChangesAsync(ct);
         return Ok(MapearProntidao(item));
     }
@@ -197,6 +201,7 @@ public sealed class MeuPortalPacienteController(
         var registro = await db.RegistrosMetas
             .FirstOrDefaultAsync(x => x.MetaPacienteId == meta.Id && x.Data == request.Data, ct);
 
+        var jaConcluida = registro?.Concluida == true;
         object? antes = registro is null
             ? null
             : new { registro.Valor, registro.Concluida, registro.Observacao };
@@ -216,6 +221,10 @@ public sealed class MeuPortalPacienteController(
 
         Auditar(antes is null ? "CREATE" : "UPDATE", nameof(RegistroMeta), registro.Id, antes,
             new { registro.MetaPacienteId, registro.Data, registro.Valor, registro.Concluida, registro.Observacao });
+
+        if (!jaConcluida && registro.Concluida == true)
+            await GamificacaoService.RegistrarEventoAsync(db, currentUser.OrganizationId, pacienteId.Value,
+                registro.Data, "MetaDiaria", registro.Id, 25, $"Meta concluida: {meta.Nome}.", "Consistencia", ct);
 
         await db.SaveChangesAsync(ct);
 
@@ -777,9 +786,10 @@ public sealed class MeuPortalPacienteController(
         var prontidaoEntity = await db.ProntidoesDiarias.AsNoTracking()
             .FirstOrDefaultAsync(x => x.PacienteId == pacienteId && x.Data == dia, ct);
         var prontidao = prontidaoEntity is null ? null : MapearProntidao(prontidaoEntity);
+        var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, gamificacao, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

@@ -55,6 +55,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<MedicamentoPaciente> MedicamentosPaciente => Set<MedicamentoPaciente>();
     public DbSet<RegistroMedicamento> RegistrosMedicamentos => Set<RegistroMedicamento>();
     public DbSet<ProntidaoDiaria> ProntidoesDiarias => Set<ProntidaoDiaria>();
+    public DbSet<EventoXp> EventosXp => Set<EventoXp>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -470,6 +471,19 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .WithMany(x => x.ProntidoesDiarias)
                 .HasForeignKey(x => x.PacienteId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<EventoXp>(entity =>
+        {
+            entity.ToTable("EventosXp");
+            entity.Property(x => x.Fonte).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.Motivo).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.Adequacao).HasMaxLength(30);
+            entity.HasIndex(x => new { x.PacienteId, x.Fonte, x.FonteId }).IsUnique()
+                .HasDatabaseName("IX_EventosXp_PacienteId_Fonte_FonteId");
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Data });
+            entity.HasOne(x => x.Paciente).WithMany(x => x.EventosXp)
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<FaseTreino>(entity =>

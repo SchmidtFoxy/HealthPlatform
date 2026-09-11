@@ -34,4 +34,5 @@ public class Paciente : BaseEntity
     public ICollection<CheckInAcompanhamento> CheckInsAcompanhamento { get; set; } = new List<CheckInAcompanhamento>();
     public ICollection<RevisaoFase> RevisoesFases { get; set; } = new List<RevisaoFase>();
     public ICollection<ProntidaoDiaria> ProntidoesDiarias { get; set; } = new List<ProntidaoDiaria>();
+    public ICollection<EventoXp> EventosXp { get; set; } = new List<EventoXp>();
 }

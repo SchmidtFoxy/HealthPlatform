@@ -1,5 +1,16 @@
 # HealthPlatform Changelog
 
+## v0.6.2 — XP & Consistência
+
+- Ledger auditável `EventosXp`, com idempotência por paciente + fonte + registro de origem.
+- XP de autocuidado para check-in de prontidão e conclusão de metas.
+- XP de treino baseado na adequação entre RPE executado e recomendação diária; sobrecarga deliberada recebe menos XP.
+- Níveis de 500 XP, XP do dia, streak e score de consistência baseado em frequência sustentável nos últimos 14 dias.
+- Nova faixa de evolução esportiva na Home do paciente e resumo de consistência para leitura profissional.
+- Upgrade incremental `V062XpConsistencia`, SQL idempotente e PREPARAR 35/35.
+- Suíte ampliada para 616 verificações.
+
+
 ## v0.6.1 — Daily Athlete / Prontidão Diária
 **Tipo:** Feature release / início da linha Sports Medicine + Daily Care
 
@@ -90,6 +101,7 @@
 - sem schema novo e sem migration nova.
 
 # Changelog
+
 
 ## v0.5.4 — Feature release
 
