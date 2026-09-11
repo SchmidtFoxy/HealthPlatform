@@ -1,14 +1,15 @@
-# v0.5.9 — Aderência aos Protocolos / Connected Care
+# v0.6.0 — Medicamentos e Adesão / Connected Care
 
-A v0.5.9 transforma protocolos configuráveis em acompanhamento mensurável.
+A v0.6.0 abre o ciclo de tratamento acompanhado no HealthPlatform.
 
-## O que entrou
-- cálculo de aderência aos itens programados do protocolo;
-- status do dia no portal do paciente;
-- resumo de aderência dos últimos 7 dias no prontuário profissional;
-- suporte a Diário, DiasSemana e Semanal; itens SobDemanda não penalizam aderência;
-- pressão arterial só conta como concluída quando sistólica e diastólica foram registradas;
-- cálculo respeita o offset local do navegador;
-- sem schema ou migration nova;
-- fluxo oficial: PREPARAR → RODAR → TESTAR;
-- suíte ampliada para 588 verificações.
+## Feature release
+- cadastro estruturado de medicamentos por paciente;
+- dose, unidade, via, frequência, horários, período e orientação;
+- portal PatientOnly com confirmação de tomada ou dose pulada;
+- histórico de registros e percentual de adesão para o profissional;
+- auditoria e isolamento multi-tenant;
+- nova migration/SQL idempotente v0.6.0;
+- PREPARAR 33/33;
+- fluxo oficial: PREPARAR -> RODAR -> TESTAR.
+
+A funcionalidade é de acompanhamento do tratamento e não implementa prescrição eletrônica regulamentada.

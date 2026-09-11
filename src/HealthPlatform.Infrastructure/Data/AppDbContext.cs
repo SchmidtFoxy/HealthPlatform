@@ -52,6 +52,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<EvolucaoClinica> EvolucoesClinicas => Set<EvolucaoClinica>();
     public DbSet<SolicitacaoClinica> SolicitacoesClinicas => Set<SolicitacaoClinica>();
     public DbSet<ProtocoloAcompanhamentoItem> ProtocolosAcompanhamento => Set<ProtocoloAcompanhamentoItem>();
+    public DbSet<MedicamentoPaciente> MedicamentosPaciente => Set<MedicamentoPaciente>();
+    public DbSet<RegistroMedicamento> RegistrosMedicamentos => Set<RegistroMedicamento>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -665,6 +667,32 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.Profissional).WithMany()
                 .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<MedicamentoPaciente>(entity =>
+        {
+            entity.ToTable("MedicamentosPaciente");
+            entity.Property(x => x.Nome).HasMaxLength(220).IsRequired();
+            entity.Property(x => x.Dose).HasPrecision(12, 3);
+            entity.Property(x => x.Unidade).HasMaxLength(40);
+            entity.Property(x => x.Via).HasMaxLength(80);
+            entity.Property(x => x.Frequencia).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.HorariosLocais).HasMaxLength(200);
+            entity.Property(x => x.Orientacao).HasMaxLength(1600);
+            entity.HasIndex(x => new { x.OrganizacaoId, x.PacienteId, x.Ativo });
+            entity.HasOne(x => x.Paciente).WithMany().HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Profissional).WithMany().HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<RegistroMedicamento>(entity =>
+        {
+            entity.ToTable("RegistrosMedicamentos");
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Observacao).HasMaxLength(1000);
+            entity.HasIndex(x => new { x.OrganizacaoId, x.PacienteId, x.DataHoraPrevistaUtc });
+            entity.HasIndex(x => new { x.MedicamentoId, x.DataHoraPrevistaUtc });
+            entity.HasOne(x => x.Paciente).WithMany().HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Medicamento).WithMany(x => x.Registros).HasForeignKey(x => x.MedicamentoId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<AuditLog>(entity =>

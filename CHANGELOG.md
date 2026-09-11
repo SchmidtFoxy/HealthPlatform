@@ -1,3 +1,24 @@
+
+## v0.6.0-r1 — Hotfix da suíte de upgrade
+
+- Corrige validações históricas do `TESTAR.ps1` que ainda tratavam `32/32` como a contagem atual do `PREPARAR`.
+- A contagem atual correta é `33/33` após a inclusão do upgrade de medicamentos da v0.6.0.
+- Preserva as checagens dos upgrades históricos v0.5.1 e v0.5.8.
+- Nenhuma alteração de schema, API ou regra clínica neste hotfix.
+
+# HealthPlatform Changelog
+
+## v0.6.0 — Medicamentos e Adesão
+**Tipo:** Feature release / novo marco Connected Care
+
+- medicamentos estruturados por paciente;
+- registro de tomadas pelo portal;
+- aderência de 30 dias no prontuário;
+- auditoria, PatientOnly e multi-tenant;
+- migration incremental `V060MedicamentosAdesao`;
+- SQL idempotente `v0.6.0_medicamentos.sql`;
+- PREPARAR 33/33.
+
 # v0.5.9-r1 — Hotfix de validações do protocolo
 
 - corrige o teste 577 para reconhecer a rota do protocolo com `offsetMinutos`, introduzida pela aderência baseada no dia local;
