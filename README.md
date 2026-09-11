@@ -1,3 +1,20 @@
+# HealthPlatform v0.8.3 — Fechamento de Ciclo & Relatório de Evolução
+
+A v0.8.3 transforma o checkpoint do ciclo em um relatório longitudinal de fechamento. A leitura consolida execução, metas mensuráveis, evolução multidimensional e o estado do checkpoint sem reduzir tudo a um score opaco e sem criar automaticamente o ciclo seguinte.
+
+## Destaques
+
+- relatório do ciclo compartilhado entre atleta e profissional;
+- período, semana atual, treinos, check-ins e prontidão média;
+- síntese das metas mensuráveis sem esconder cada indicador;
+- evolução esportiva permanece dividida em dimensões auditáveis;
+- estados `EmCurso`, `Evoluindo`, `Revisar` e `ProntoParaFechamento`;
+- fechamento não cria diagnóstico, nova prescrição ou próximo ciclo;
+- nenhuma migration nova: schema continua 37/37;
+- suíte ampliada para 784 verificações.
+
+---
+
 # HealthPlatform v0.8.2 — Revisão de Ciclo & Checkpoint de Progresso
 
 A v0.8.2 transforma o ciclo esportivo em uma revisão longitudinal transparente. O checkpoint cruza avanço temporal, metas mensuráveis e o Painel de Evolução Esportiva sem produzir score clínico opaco e sem alterar a prescrição automaticamente.

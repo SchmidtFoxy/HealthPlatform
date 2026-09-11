@@ -1,3 +1,21 @@
+## v0.8.3-r1
+
+- Corrige sentinelas correntes do TESTAR.ps1 para esperar API e identidade MVP Preview v0.8.3.
+- Mantém validações históricas da v0.8.2 intactas.
+
+# v0.8.3 — Fechamento de Ciclo & Relatório de Evolução
+
+- Adiciona `RelatorioCicloService` como síntese longitudinal do ciclo ativo.
+- Consolida volume realizado, metas mensuráveis, evolução multidimensional e checkpoint.
+- Introduz estados `EmCurso`, `Evoluindo`, `Revisar` e `ProntoParaFechamento`.
+- Adiciona cards de relatório na Home do atleta e no prontuário profissional.
+- Mantém cada dimensão auditável, sem score clínico composto.
+- Não cria automaticamente próximo ciclo e não altera prescrição.
+- Mantém schema 37/37, sem migration nova.
+- Amplia a suíte para 784 verificações.
+
+---
+
 # v0.8.2 — Revisão de Ciclo & Checkpoint de Progresso
 
 - Adicionado `CheckpointCicloService`.
