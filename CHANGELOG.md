@@ -1,4 +1,4 @@
-# v0.7.0 — Coach Diário & Prioridades Contextuais
+# v0.7.1 — Coach Diário & Prioridades Contextuais
 
 - Adiciona `CoachDiarioService` como camada derivada e explicável.
 - Combina prontidão, estratégia, recuperação, carga, performance, execução e ciclo.

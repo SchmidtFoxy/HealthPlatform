@@ -23,11 +23,23 @@ function Api($method, $uri, $headers=$null, $body=$null) {
     Invoke-RestMethod @p
 }
 
-Write-Host "=== HealthPlatform v0.7.x | Seed esportivo PESADO da Ana Ribeiro ===" -ForegroundColor Cyan
+Write-Host "=== HealthPlatform v0.7.1 | Seed esportivo PESADO da Ana Ribeiro (v3) ===" -ForegroundColor Cyan
 Write-Host "Base: $base" -ForegroundColor DarkGray
 
+# 0) Healthcheck antes de alterar qualquer dado
+try {
+    $health = Api Get '/api/health'
+    Write-Host ("[0/10] Healthcheck: API {0} / banco {1}" -f $health.version,$health.database) -ForegroundColor Green
+} catch {
+    throw "API indisponivel em $base. Rode .\RODAR.ps1 e confirme que ela esta ouvindo nessa URL. Detalhe: $($_.Exception.Message)"
+}
+
 # 1) Login administrativo
-$adminLogin = Api Post '/api/auth/login' $null @{ email=$AdminEmail; senha=$SenhaAdmin }
+try {
+    $adminLogin = Api Post '/api/auth/login' $null @{ email=$AdminEmail; senha=$SenhaAdmin }
+} catch {
+    throw "Falha no login administrativo de $AdminEmail. Confirme a senha Seed:AdminPassword/ChangeMe_123! no ambiente local. Detalhe: $($_.Exception.Message)"
+}
 $admin = @{ Authorization = "Bearer $($adminLogin.accessToken)" }
 Write-Host "[1/10] Login administrativo: OK" -ForegroundColor Green
 
@@ -42,22 +54,22 @@ if ($null -eq $ana) {
     }
     Write-Host "[2/10] Ana criada: $($ana.id)" -ForegroundColor Green
 } else { Write-Host "[2/10] Ana localizada: $($ana.id)" -ForegroundColor Green }
-$pid = $ana.id
+$pacienteIdSeed = $ana.id
 
 # 3) Garante/reset acesso do portal da Ana
-$convite = Api Post "/api/pacientes/$pid/acesso" $admin @{ email=$anaEmail }
+$convite = Api Post "/api/pacientes/$pacienteIdSeed/acesso" $admin @{ email=$anaEmail }
 Api Post '/api/auth/paciente/ativar' $null @{ email=$anaEmail; token=$convite.activationToken; senha=$SenhaPaciente } | Out-Null
 $plogin = Api Post '/api/auth/login' $null @{ email=$anaEmail; senha=$SenhaPaciente }
 $patient = @{ Authorization = "Bearer $($plogin.accessToken)" }
 Write-Host "[3/10] Portal da Ana ativado/resetado: OK" -ForegroundColor Green
 
 # 4) Garante ciclo esportivo ativo
-$ciclos = Arr (Api Get "/api/pacientes/$pid/ciclos-esportivos" $admin)
+$ciclos = Arr (Api Get "/api/pacientes/$pacienteIdSeed/ciclos-esportivos" $admin)
 $ativo = $ciclos | Where-Object { $_.status -eq 'Ativo' } | Select-Object -First 1
 $hoje = (Get-Date).Date
 $inicioSeed = $hoje.AddDays(-[math]::Max($Dias,42)+7)
 if ($null -eq $ativo) {
-    Api Post "/api/pacientes/$pid/ciclos-esportivos" $admin @{
+    Api Post "/api/pacientes/$pacienteIdSeed/ciclos-esportivos" $admin @{
         nome='Ciclo Performance Sustentavel'; perfilEsportivo='Hipertrofia';
         objetivo='Evoluir força e composição corporal mantendo boa recuperação e consistência.';
         dataInicio=(D $inicioSeed); dataFim=(D $hoje.AddDays(56)); status='Ativo';
@@ -70,10 +82,10 @@ if ($null -eq $ativo) {
 
 # 5) Garante 3 metas diárias e popula histórico
 function EnsureGoal([string]$nome,[decimal]$alvo,[string]$unidade) {
-    $metas = Arr (Api Get "/api/pacientes/$pid/metas?incluirEncerradas=true" $admin)
+    $metas = Arr (Api Get "/api/pacientes/$pacienteIdSeed/metas?incluirEncerradas=true" $admin)
     $m = $metas | Where-Object { $_.nome -eq $nome } | Select-Object -First 1
     if ($null -eq $m) {
-        $m = Api Post "/api/pacientes/$pid/metas" $admin @{
+        $m = Api Post "/api/pacientes/$pacienteIdSeed/metas" $admin @{
             nome=$nome; tipo='Habito'; valorObjetivo=$alvo; unidade=$unidade; frequencia='Diaria';
             dataInicio=(D $inicioSeed); dataFim=(D $hoje.AddDays(90));
             observacoes='Meta criada pelo seed esportivo da Ana Ribeiro.'
@@ -128,7 +140,7 @@ if ($null -eq $treinoAtual.plano) {
                 @{exercicioId=$ex[3].id;ordem=2;series=3;repeticoes='10-12';carga=20;unidadeCarga='kg';descansoSegundos=75;tempoSegundos=$null;observacoes=$null})}
         )
     }
-    Api Post "/api/pacientes/$pid/treinos" $admin $body | Out-Null
+    Api Post "/api/pacientes/$pacienteIdSeed/treinos" $admin $body | Out-Null
     $treinoAtual = Api Get '/api/portal/me/treino' $patient
 }
 Write-Host "[6/10] Plano ativo para gerar performance/carga: OK" -ForegroundColor Green
@@ -209,7 +221,7 @@ for ($i=$Dias-1; $i -ge 0; $i--) {
 Write-Host "[8/10] Prontidão + diário + hidratação + peso: OK" -ForegroundColor Green
 
 # 9) Garante série de avaliações corporais para evolução longitudinal.
-$avaliacoes = Arr (Api Get "/api/pacientes/$pid/avaliacoes" $admin)
+$avaliacoes = Arr (Api Get "/api/pacientes/$pacienteIdSeed/avaliacoes" $admin)
 $datasAval = @(42,35,28,21,14,7,0)
 $idxAval = 0
 foreach ($diasAtras in $datasAval) {
@@ -221,7 +233,7 @@ foreach ($diasAtras in $datasAval) {
     $peso = [math]::Round(68.6 - ($idxAval * 0.28),1)
     $gordura = [math]::Round(27.8 - ($idxAval * 0.35),1)
     $cintura = [math]::Round(78.5 - ($idxAval * 0.45),1)
-    Api Post "/api/pacientes/$pid/avaliacoes" $admin @{
+    Api Post "/api/pacientes/$pacienteIdSeed/avaliacoes" $admin @{
         consultaId=$null; dataUtc=(Iso $dt); pesoKg=$peso; alturaM=1.66;
         percentualGordura=$gordura; massaMagraKg=[math]::Round($peso*(1-$gordura/100),1);
         massaGordaKg=[math]::Round($peso*($gordura/100),1); cinturaCm=$cintura;

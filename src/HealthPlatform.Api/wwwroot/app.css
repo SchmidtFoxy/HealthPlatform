@@ -1954,5 +1954,5 @@ body.rs-menu-open{overflow:hidden}
 /* v0.6.9 — carga de treino e equilíbrio */
 .training-load-card .recovery-trend-metrics{margin-top:14px}.training-load-card .recovery-signal-list{margin-top:12px}.training-load-card.athlete strong{white-space:nowrap}.training-load-card.professional .game-prof-grid{margin-top:12px}
 
-/* v0.7.0 — Coach Diário / prioridades contextuais */
+/* v0.7.1 — Coach Diário / prioridades contextuais */
 .coach-daily-card{overflow:hidden}.coach-daily-card .coach-priority-list{display:grid;gap:10px;margin-top:14px}.coach-priority{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}.coach-priority>b{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--soft);font-size:.8rem}.coach-priority strong,.coach-priority small,.coach-priority p{display:block}.coach-priority small{margin-top:3px;opacity:.72}.coach-priority p{margin:7px 0 0}.coach-priority.alta{border-left:3px solid currentColor}.coach-daily-card.recuperar{box-shadow:inset 3px 0 0 rgba(255,190,90,.7)}.coach-daily-card.consolidar{box-shadow:inset 3px 0 0 rgba(110,210,150,.6)}

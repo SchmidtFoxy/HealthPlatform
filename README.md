@@ -1,6 +1,8 @@
-# HealthPlatform v0.7.0 — Coach Diário & Prioridades Contextuais
+# HealthPlatform v0.7.1 — Coach Diário & Prioridades Contextuais
 
-A v0.7.0 inaugura a linha 0.7.x transformando os motores esportivos construídos na série 0.6.x em uma síntese diária explicável. O Coach Diário combina prontidão, estratégia, recuperação, carga, performance, execução e ciclo para destacar até três prioridades do dia.
+> **v0.7.1:** robustez do Coach + `POPULAR-ANA-RIBEIRO.ps1` v3, com correção da variável reservada `$PID`, healthcheck preventivo e mensagens de diagnóstico.
+
+A v0.7.1 inaugura a linha 0.7.x transformando os motores esportivos construídos na série 0.6.x em uma síntese diária explicável. O Coach Diário combina prontidão, estratégia, recuperação, carga, performance, execução e ciclo para destacar até três prioridades do dia.
 
 ## Princípios
 
