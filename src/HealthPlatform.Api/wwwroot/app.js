@@ -4932,7 +4932,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.4.6';
+const HP_MVP_VERSION='0.5.0';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -5018,7 +5018,7 @@ function hpInstallMvpPreviewUi(){
 hpInstallMvpPreviewUi();
 
 
-// ===== v0.4.6 — RS visual identity / mobile + tablet UX =====
+// ===== v0.5.0 — RS visual identity / mobile + tablet UX =====
 function hpInstallRsResponsiveUi(){
   const app=$('#appView'),sidebar=$('.sidebar'),menu=$('#menuButton');
   if(!app||!sidebar||!menu||app.querySelector('.rs-sidebar-screen'))return;
