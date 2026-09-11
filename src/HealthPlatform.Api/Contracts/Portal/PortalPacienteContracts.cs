@@ -234,6 +234,14 @@ public record PortalReentradaDesafioResponse(
     string Decisao, string Evidencia, string Acao, int HabitosEstaveis, int HabitosConsolidando, int HabitosOscilando,
     string MensagemSeguranca);
 
+public record PortalCriterioJanelaProgressaoResponse(
+    string Codigo, string Titulo, bool Atendido, string Estado, string Evidencia);
+
+public record PortalJanelaProgressaoResponse(
+    string Estado, string Titulo, string Resumo, bool JanelaAberta, string Decisao,
+    int CriteriosAtendidos, int CriteriosTotais, IReadOnlyCollection<PortalCriterioJanelaProgressaoResponse> Criterios,
+    string Acao, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -335,6 +343,7 @@ public record PortalPacienteHomeResponse(
     PortalRevisaoFocoHabitoResponse RevisaoFocoHabito,
     PortalEncerramentoCicloHabitoResponse EncerramentoCicloHabito,
     PortalReentradaDesafioResponse ReentradaDesafio,
+    PortalJanelaProgressaoResponse JanelaProgressao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

@@ -174,6 +174,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var revisaoFocoHabito = RevisaoFocoHabitoService.Montar(proximoFocoHabito, estabilidadeHabitos, protecaoRetomada, tendenciaSemanal);
         var encerramentoCicloHabito = EncerramentoCicloHabitoService.Montar(revisaoFocoHabito, estabilidadeHabitos, protecaoRetomada);
         var reentradaDesafio = ReentradaDesafioService.Montar(encerramentoCicloHabito, estabilidadeHabitos, protecaoRetomada);
+        var janelaProgressao = JanelaProgressaoService.Montar(reentradaDesafio, estabilidadeHabitos, tendenciaRecuperacao, cargaTreino);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -201,6 +202,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             revisaoFocoHabito,
             encerramentoCicloHabito,
             reentradaDesafio,
+            janelaProgressao,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

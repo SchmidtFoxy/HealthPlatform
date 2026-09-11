@@ -1,4 +1,12 @@
-﻿# v0.9.7 — Reentrada Gradual de Desafio
+﻿# v0.9.8 — Janela de Progressão & Critério de Avanço
+
+- Nova camada `JanelaProgressaoService` com critérios transparentes e independentes para considerar uma progressão.
+- Expõe base comportamental, ausência de oscilação, recuperação e carga recente sem condensar os eixos em score opaco.
+- Recuperação/carga em atenção alta bloqueiam progressão; dados insuficientes viram observação, nunca reprovação.
+- Uma janela aberta apenas autoriza considerar uma progressão pequena; não cria meta, aumenta carga ou altera plano automaticamente.
+- Integrado às Homes do atleta e profissional sem nova migration; schema permanece 37/37.
+
+# v0.9.7 — Reentrada Gradual de Desafio
 
 - avalia quando a rotina em manutencao tem espaco para um unico novo desafio;
 - retomada, habitos oscilando ou consolidando bloqueiam aumento prematuro de exigencia;
@@ -692,3 +700,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Corrige o cálculo de hidratação comparativa filtrando apenas registros com valor e materializando `decimal` não anulável antes do `Average`.
 - Elimina o erro CS1503 em `TendenciaSemanalService` sem alterar regra de negócio, schema ou versão semântica.
 - r1: alinhada a trava textual do encerramento de hábito para explicitar que o sistema **não gera nova meta automática** ao consolidar um foco.
+## v0.9.8 r1 — correção da sentinela inicial de versão
+
+- Corrige o healthcheck inicial do `TESTAR.ps1`, que ainda exigia `0.9.7` apesar da API e do pacote já estarem em `0.9.8`.
+- Preserva as referências históricas de compatibilidade da v0.9.7.
+- Mantém `VERSION.txt` em `0.9.8`, sem alteração de schema ou migration.
+

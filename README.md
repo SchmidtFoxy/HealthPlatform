@@ -1,8 +1,9 @@
-# HealthPlatform v0.9.7 — Proteção da Retomada & Continuidade
+﻿# HealthPlatform v0.9.8 — Janela de Progressão & Critério de Avanço
 
-> v0.9.7: Encerramento do Ciclo de Hábito & Transição para Manutenção — foco consolidado sai do destaque sem abrir nova cobrança automaticamente.
+> v0.9.8: a plataforma agora explicita quando existe contexto suficiente para discutir uma progressão e quando recuperação, carga, oscilação ou falta de dados pedem manutenção.
 
-A v0.9.7 protege o período logo após uma reconexão com o plano. Ela usa apenas sinais observáveis — streak curto, mudança de dias ativos, consistência e contexto de recuperação — para reconhecer uma retomada ainda frágil sem rotular recaída ou calcular probabilidade de abandono.
+A v0.9.8 continua a linha de medicina do esporte e autocuidado diário: avanço não é recompensa automática por aderir bem. A janela usa critérios separados e visíveis, sem score opaco, e nunca aumenta carga, volume, meta nutricional ou medicação por conta própria.
+
 
 ## Princípios
 - retomada em curso é inferida por sinais transparentes, não por score oculto;
