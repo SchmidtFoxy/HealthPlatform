@@ -1,3 +1,7 @@
+# HealthPlatform v0.7.9 — Hidratação Contextual & Balanço do Dia
+
+A linha esportiva agora contextualiza a hidratação do dia a partir da meta profissional, consumo registrado e treino, sem redefinir necessidade hídrica automaticamente.
+
 # HealthPlatform v0.7.8 — Adesão Nutricional Contextual
 
 > A v0.7.8 transforma o plano alimentar ativo em acompanhamento diário de execução: cada refeição pode ser registrada como realizada, adaptada ou não realizada, sem alterar automaticamente calorias, macros ou prescrição.

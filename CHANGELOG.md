@@ -1,3 +1,16 @@
+
+### v0.7.9-r1 — correção de sentinela do MVP Preview
+- Corrige o teste legado `[463/600]`, que ainda esperava `MVP Preview • v0.7.8` apesar da UI corrente já estar em `v0.7.9`.
+- Nenhuma alteração de schema ou regra funcional.
+
+# v0.7.9 — Hidratação Contextual & Balanço do Dia
+
+- Resume meta hídrica ativa, consumo registrado e progresso do dia.
+- Usa duração e RPE do treino apenas como contexto, sem aumentar automaticamente a meta.
+- Integra hidratação ao Coach Diário e às Homes do atleta e do profissional.
+- Reutiliza metas/registros existentes; sem migration nova.
+- PREPARAR permanece 37/37; suíte ampliada para 752 verificações.
+
 ﻿
 ### v0.7.8 r1 — alinhamento de sentinelas de versão
 - Corrige TESTAR.ps1 para esperar API 0.7.8 no healthcheck.

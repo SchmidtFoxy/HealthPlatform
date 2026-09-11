@@ -53,6 +53,10 @@ public record PortalAdesaoNutricionalResponse(
     decimal? AdequacaoRegistradaPercentual, string Estado, string Mensagem,
     IReadOnlyCollection<PortalAdesaoNutricionalRefeicaoResponse> Refeicoes);
 
+public record PortalHidratacaoContextualResponse(
+    decimal? MetaMl, decimal? ConsumidoMl, decimal? ProgressoPercentual, int? TreinoMinutos, int? TreinoRpe,
+    string Estado, string NivelAtencao, string Mensagem, IReadOnlyCollection<string> Sinais);
+
 public sealed record RegistrarAdesaoRefeicaoRequest(string Status, string? Observacao);
 
 public record PortalPlanoAtualResponse(
@@ -197,6 +201,7 @@ public record PortalPacienteHomeResponse(
     PortalPerformanceResponse Performance,
     PortalPlanoRecuperacaoResponse PlanoRecuperacao,
     PortalAdesaoNutricionalResponse AdesaoNutricional,
+    PortalHidratacaoContextualResponse HidratacaoContextual,
     PortalCoachDiarioResponse CoachDiario,
     PortalExecucaoDiaResponse ExecucaoDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,

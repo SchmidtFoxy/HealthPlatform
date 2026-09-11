@@ -17,7 +17,8 @@ public static class CoachDiarioService
         PortalPerformanceResponse performance,
         PortalExecucaoDiaResponse execucao,
         PortalCicloEsportivoResponse? ciclo,
-        PortalAdesaoNutricionalResponse adesaoNutricional)
+        PortalAdesaoNutricionalResponse adesaoNutricional,
+        PortalHidratacaoContextualResponse hidratacaoContextual)
     {
         var prioridades = new List<PortalCoachPrioridadeResponse>();
 
@@ -108,6 +109,23 @@ public static class CoachDiarioService
                 "Registre como o plano alimentar aconteceu",
                 "Há refeições planejadas hoje, mas ainda sem registro de execução.",
                 "Marque cada refeição como realizada, adaptada ou não realizada; o objetivo é aprender com o padrão, não buscar perfeição.");
+        }
+
+        if (hidratacaoContextual.Estado == "SemRegistro" && hidratacaoContextual.MetaMl.HasValue)
+        {
+            Adicionar(
+                "registrar-hidratacao", "Hidratação", "Baixa",
+                "Registre sua hidratação de hoje",
+                "Existe uma meta hídrica ativa, mas ainda sem registro de consumo.",
+                "Use a meta definida pelo profissional como referência; o sistema não aumenta automaticamente a quantidade por causa do treino.");
+        }
+        else if (hidratacaoContextual.Estado == "EmAndamento" && hidratacaoContextual.NivelAtencao == "Media")
+        {
+            Adicionar(
+                "acompanhar-hidratacao", "Hidratação", "Baixa",
+                "Distribua a hidratação ao longo do dia",
+                hidratacaoContextual.Mensagem,
+                "Continue acompanhando a meta prescrita sem concentrar ingestão no fim do dia nem buscar excesso por XP.");
         }
 
         if (execucao.ProgressoPercentual < 100m)
