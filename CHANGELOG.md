@@ -1,3 +1,12 @@
+## v0.10.5 — Interpretação Longitudinal da Resposta
+- integra o comparativo pré/pós, o evento registrado e a reavaliação supervisionada;
+- classifica o padrão observado como DadosInsuficientes, EmFormacao, Estavel, Favoravel, Misto ou Atencao;
+- preserva prontidão, recuperação, dor, carga e volume como eixos independentes;
+- não usa score composto e não transforma melhora temporal em causalidade;
+- sinais clínicos de atenção prevalecem sobre leitura isolada de performance/carga;
+- padrão favorável não libera nova progressão automática;
+- sem nova migration: schema permanece 38/38.
+
 ## v0.10.4 — Comparativo Pré/Pós-Progressão
 - usa o evento real da v0.10.3 como marco temporal;
 - compara até 7 dias antes e depois em recuperação, dor, prontidão, carga interna e volume estimado;

@@ -283,6 +283,14 @@ public record PortalComparativoProgressaoResponse(
     DateTime? DataAplicacaoUtc, int DiasJanelaAntes, int DiasJanelaDepois,
     IReadOnlyCollection<PortalComparativoProgressaoEixoResponse> Eixos, string Interpretacao, string MensagemSeguranca);
 
+public record PortalInterpretacaoLongitudinalEixoResponse(
+    string Codigo, string Titulo, string Estado, string Evidencia);
+
+public record PortalInterpretacaoLongitudinalProgressaoResponse(
+    string Estado, string Titulo, string Resumo, string? EixoProgressao, DateTime? DataAplicacaoUtc,
+    bool JanelaComparavel, IReadOnlyCollection<PortalInterpretacaoLongitudinalEixoResponse> Eixos,
+    string CondutaObservacional, string Interpretacao, string MensagemSeguranca);
+
 public record PortalCriterioReavaliacaoProgressaoResponse(
     string Codigo, string Titulo, string Estado, string Evidencia);
 
@@ -399,6 +407,7 @@ public record PortalPacienteHomeResponse(
     PortalReavaliacaoProgressaoResponse ReavaliacaoProgressao,
     PortalRegistroProgressaoResponse RegistroProgressao,
     PortalComparativoProgressaoResponse ComparativoProgressao,
+    PortalInterpretacaoLongitudinalProgressaoResponse InterpretacaoLongitudinalProgressao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
