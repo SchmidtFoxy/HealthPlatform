@@ -1,3 +1,15 @@
+# v0.7.2 — Seed Resiliente & Diagnóstico de Dados
+
+- Corrige o seed pesado da Ana Ribeiro que podia abortar com `400 Bad Request` sem revelar o endpoint ou a resposta da API.
+- `Api()` agora inclui método, rota e corpo de erro retornado pelo backend.
+- Metas demonstrativas passaram a ser opcionais: falha em uma meta não impede a população das demais camadas.
+- Histórico de metas é protegido contra recurso ausente e falha individual.
+- Seed acumula avisos não fatais e mostra um resumo ao final.
+- Mantém URL local 5180, 56 dias de histórico e proteção contra `$PID`.
+- `VERSION.txt`, API, Swagger e UI atualizados para 0.7.2.
+- Sem migration nova; `PREPARAR` permanece 37/37.
+- Suíte: 696 verificações.
+
 # v0.7.1 — Coach Diário & Prioridades Contextuais
 
 - Adiciona `CoachDiarioService` como camada derivada e explicável.

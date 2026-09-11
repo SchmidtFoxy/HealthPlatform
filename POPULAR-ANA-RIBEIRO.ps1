@@ -16,14 +16,34 @@ function Arr($v) { if ($null -eq $v) { return @() }; return @($v | Where-Object 
 function D([datetime]$d) { $d.ToString('yyyy-MM-dd') }
 function Iso([datetime]$d) { $d.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ') }
 function DateKey($v) { if ($null -eq $v) { return $null }; try { return ([datetime]$v).ToString('yyyy-MM-dd') } catch { return $null } }
+$seedWarnings = New-Object System.Collections.Generic.List[string]
+
+function Get-ApiErrorBody($err) {
+    try {
+        $response = $err.Exception.Response
+        if ($null -eq $response) { return $err.Exception.Message }
+        $stream = $response.GetResponseStream()
+        if ($null -eq $stream) { return $err.Exception.Message }
+        $reader = New-Object System.IO.StreamReader($stream)
+        $text = $reader.ReadToEnd()
+        $reader.Dispose()
+        if ([string]::IsNullOrWhiteSpace($text)) { return $err.Exception.Message }
+        return $text
+    } catch { return $err.Exception.Message }
+}
 function Api($method, $uri, $headers=$null, $body=$null) {
     $p = @{ Uri="$base$uri"; Method=$method }
     if ($null -ne $headers) { $p.Headers=$headers }
     if ($null -ne $body) { $p.ContentType='application/json'; $p.Body=(Json $body 30) }
-    Invoke-RestMethod @p
+    try {
+        return Invoke-RestMethod @p
+    } catch {
+        $detail = Get-ApiErrorBody $_
+        throw "Falha API $method $uri :: $detail"
+    }
 }
 
-Write-Host "=== HealthPlatform v0.7.1 | Seed esportivo PESADO da Ana Ribeiro (v3) ===" -ForegroundColor Cyan
+Write-Host "=== HealthPlatform v0.7.2 | Seed esportivo PESADO da Ana Ribeiro (v4) ===" -ForegroundColor Cyan
 Write-Host "Base: $base" -ForegroundColor DarkGray
 
 # 0) Healthcheck antes de alterar qualquer dado
@@ -80,48 +100,67 @@ if ($null -eq $ativo) {
     Write-Host "[4/10] Ciclo esportivo criado: OK" -ForegroundColor Green
 } else { Write-Host "[4/10] Ciclo esportivo já existia: OK" -ForegroundColor DarkGreen }
 
-# 5) Garante 3 metas diárias e popula histórico
-function EnsureGoal([string]$nome,[decimal]$alvo,[string]$unidade) {
-    $metas = Arr (Api Get "/api/pacientes/$pacienteIdSeed/metas?incluirEncerradas=true" $admin)
-    $m = $metas | Where-Object { $_.nome -eq $nome } | Select-Object -First 1
-    if ($null -eq $m) {
-        $m = Api Post "/api/pacientes/$pacienteIdSeed/metas" $admin @{
-            nome=$nome; tipo='Habito'; valorObjetivo=$alvo; unidade=$unidade; frequencia='Diaria';
-            dataInicio=(D $inicioSeed); dataFim=(D $hoje.AddDays(90));
-            observacoes='Meta criada pelo seed esportivo da Ana Ribeiro.'
+# 5) Garante 3 metas diárias e popula histórico.
+# Metas são enriquecimento demonstrativo: uma falha nelas não deve impedir treinos,
+# prontidão, diário, avaliações, performance e Coach de serem populados.
+function EnsureGoalSafe([string]$nome,[decimal]$alvo,[string]$unidade) {
+    try {
+        $metas = Arr (Api Get "/api/pacientes/$pacienteIdSeed/metas?incluirEncerradas=true" $admin)
+        $m = $metas | Where-Object { $_.nome -eq $nome } | Select-Object -First 1
+        if ($null -eq $m) {
+            $payload = @{
+                nome=$nome; tipo='Habito'; valorObjetivo=$alvo; unidade=$unidade; frequencia='Diaria';
+                dataInicio=(D $inicioSeed); dataFim=(D $hoje.AddDays(90));
+                observacoes='Meta criada pelo seed esportivo da Ana Ribeiro.'
+            }
+            $m = Api Post "/api/pacientes/$pacienteIdSeed/metas" $admin $payload
         }
+        return $m
+    } catch {
+        $msg = "Meta opcional ignorada [$nome]: $($_.Exception.Message)"
+        $seedWarnings.Add($msg)
+        Write-Host "    AVISO: $msg" -ForegroundColor Yellow
+        return $null
     }
-    return $m
 }
-$metaAgua = EnsureGoal 'Hidratação diária' 3.0 'L'
-$metaSono = EnsureGoal 'Sono reparador' 7.5 'h'
-$metaMov = EnsureGoal 'Movimento diário' 8000 'passos'
 
-$existingAgua = Arr (Api Get "/api/metas/$($metaAgua.id)/registros?inicio=$(D $inicioSeed)&fim=$(D $hoje)" $admin)
-$existingSono = Arr (Api Get "/api/metas/$($metaSono.id)/registros?inicio=$(D $inicioSeed)&fim=$(D $hoje)" $admin)
-$existingMov = Arr (Api Get "/api/metas/$($metaMov.id)/registros?inicio=$(D $inicioSeed)&fim=$(D $hoje)" $admin)
+$metaAgua = EnsureGoalSafe 'Hidratacao diaria' 3.0 'L'
+$metaSono = EnsureGoalSafe 'Sono reparador' 7.5 'h'
+$metaMov  = EnsureGoalSafe 'Movimento diario' 8000 'passos'
+
+$existingAgua=@(); $existingSono=@(); $existingMov=@()
+if ($null -ne $metaAgua) { try { $existingAgua = Arr (Api Get "/api/metas/$($metaAgua.id)/registros?inicio=$(D $inicioSeed)&fim=$(D $hoje)" $admin) } catch { $seedWarnings.Add("Historico da meta agua indisponivel: $($_.Exception.Message)") } }
+if ($null -ne $metaSono) { try { $existingSono = Arr (Api Get "/api/metas/$($metaSono.id)/registros?inicio=$(D $inicioSeed)&fim=$(D $hoje)" $admin) } catch { $seedWarnings.Add("Historico da meta sono indisponivel: $($_.Exception.Message)") } }
+if ($null -ne $metaMov)  { try { $existingMov  = Arr (Api Get "/api/metas/$($metaMov.id)/registros?inicio=$(D $inicioSeed)&fim=$(D $hoje)" $admin) } catch { $seedWarnings.Add("Historico da meta movimento indisponivel: $($_.Exception.Message)") } }
 
 for ($i=$Dias-1; $i -ge 0; $i--) {
     $dt=$hoje.AddDays(-$i); $key=D $dt
-    # Oscilações determinísticas: bons dias + alguns dias de adesão parcial.
     $agua = [math]::Round(2.45 + (($i % 5) * 0.18),2)
     if (($i % 11) -eq 0) { $agua = 1.9 }
     $sono = [math]::Round(6.7 + (($i % 6) * 0.18),2)
     if (($i % 13) -eq 0) { $sono = 5.9 }
     $passos = 6500 + (($i * 913) % 5200)
-    foreach ($x in @(
-        @{m=$metaAgua; e=$existingAgua; v=$agua},
-        @{m=$metaSono; e=$existingSono; v=$sono},
-        @{m=$metaMov; e=$existingMov; v=$passos}
-    )) {
+
+    $goalRows=@()
+    if ($null -ne $metaAgua) { $goalRows += @{m=$metaAgua; e=$existingAgua; v=$agua} }
+    if ($null -ne $metaSono) { $goalRows += @{m=$metaSono; e=$existingSono; v=$sono} }
+    if ($null -ne $metaMov)  { $goalRows += @{m=$metaMov;  e=$existingMov;  v=$passos} }
+    foreach ($x in $goalRows) {
         if (-not ($x.e | Where-Object { "$($_.data)" -eq $key } | Select-Object -First 1)) {
-            Api Post "/api/portal/me/metas/$($x.m.id)/registro" $patient @{
-                data=$key; valor=$x.v; concluida=$null; observacao='Seed histórico esportivo Ana Ribeiro'
-            } | Out-Null
+            try {
+                Api Post "/api/portal/me/metas/$($x.m.id)/registro" $patient @{
+                    data=$key; valor=$x.v; concluida=$null; observacao='Seed historico esportivo Ana Ribeiro'
+                } | Out-Null
+            } catch {
+                $msg="Registro opcional de meta ignorado [$($x.m.nome) / $key]: $($_.Exception.Message)"
+                $seedWarnings.Add($msg)
+                Write-Host "    AVISO: $msg" -ForegroundColor DarkYellow
+            }
         }
     }
 }
-Write-Host "[5/10] Metas + até $Dias dias de histórico: OK" -ForegroundColor Green
+$metasCriadas = @(@($metaAgua,$metaSono,$metaMov) | Where-Object { $null -ne $_ }).Count
+Write-Host "[5/10] Metas demonstrativas disponíveis: $metasCriadas/3 | histórico tentado por até $Dias dias" -ForegroundColor Green
 
 # 6) Garante plano ativo. Se não existir, cria um plano simples com exercícios existentes.
 $treinoAtual = Api Get '/api/portal/me/treino' $patient
@@ -280,4 +319,13 @@ if ($null -ne $home.coachDiario) {
         Write-Host ("  #{0} {1}: {2}" -f $pos,$prio.categoria,$prio.titulo) -ForegroundColor DarkMagenta
         $pos++
     }
+}
+
+
+if ($seedWarnings.Count -gt 0) {
+    Write-Host "" 
+    Write-Host "AVISOS DO SEED ($($seedWarnings.Count))" -ForegroundColor Yellow
+    $seedWarnings | Select-Object -First 20 | ForEach-Object { Write-Host "  - $_" -ForegroundColor DarkYellow }
+    if ($seedWarnings.Count -gt 20) { Write-Host "  ... e mais $($seedWarnings.Count-20) aviso(s)." -ForegroundColor DarkYellow }
+    Write-Host "O seed continuou porque essas etapas foram classificadas como nao fatais." -ForegroundColor Yellow
 }

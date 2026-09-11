@@ -1,8 +1,18 @@
-# HealthPlatform v0.7.1 — Coach Diário & Prioridades Contextuais
+# HealthPlatform v0.7.2 — Seed Resiliente & Diagnóstico de Dados
 
-> **v0.7.1:** robustez do Coach + `POPULAR-ANA-RIBEIRO.ps1` v3, com correção da variável reservada `$PID`, healthcheck preventivo e mensagens de diagnóstico.
+> **v0.7.2:** consolida a linha 0.7.x e endurece o seed-vitrine da Ana Ribeiro. Requisições 4xx/5xx agora informam método, endpoint e corpo devolvido pela API; metas demonstrativas são tratadas como enriquecimento opcional, para que uma falha isolada não impeça prontidão, treinos, diário, avaliações, performance e Coach de serem populados.
 
-A v0.7.1 inaugura a linha 0.7.x transformando os motores esportivos construídos na série 0.6.x em uma síntese diária explicável. O Coach Diário combina prontidão, estratégia, recuperação, carga, performance, execução e ciclo para destacar até três prioridades do dia.
+## Destaques da v0.7.2
+
+- `POPULAR-ANA-RIBEIRO.ps1` v4;
+- diagnóstico detalhado de erros HTTP do seed;
+- falhas não fatais são acumuladas e resumidas no fim;
+- criação/histórico de metas não derruba todo o cenário demonstrativo;
+- mantém 56 dias de histórico esportivo, carga, PRs, prontidão e avaliações;
+- Coach Diário e toda a linha v0.7.1 preservados;
+- nenhuma alteração de schema: `PREPARAR` permanece 37/37;
+- suíte ampliada para 696 verificações.
+
 
 ## Princípios
 
