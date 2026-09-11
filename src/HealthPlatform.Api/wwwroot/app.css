@@ -1202,7 +1202,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 
 /* ==================================================================
-   v0.4.1 — RS VISUAL IDENTITY
+   v0.4.2 — RS VISUAL IDENTITY
    Inspirada na identidade editorial enviada:
    navy profundo + marfim + dourado + tipografia condensada.
    ================================================================== */
@@ -1864,7 +1864,7 @@ body.rs-menu-open{overflow:hidden}
 }
 
 
-/* ===== v0.4.1 — Connected Care / Patient Today ===== */
+/* ===== v0.4.2 — Connected Care / Patient Today ===== */
 .patient-today-home{display:grid;gap:18px}.today-hero{position:relative;overflow:hidden}.today-progress{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-top:12px;padding-top:16px;border-top:1px solid var(--line)}.today-progress>div:first-child{display:flex;gap:7px;align-items:baseline}.today-progress span{font-size:12px;color:var(--muted)}.today-progress-track{height:9px;background:var(--surface-2);border-radius:99px;overflow:hidden}.today-progress-track i{display:block;height:100%;background:var(--accent);border-radius:inherit}.today-actions-card{padding:20px}.patient-quick-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:14px}.patient-quick-action{min-height:105px;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:14px 10px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;text-align:left;cursor:pointer;transition:.18s ease}.patient-quick-action:hover{transform:translateY(-2px);border-color:var(--accent)}.patient-quick-action>span{font-size:22px}.patient-quick-action strong{font-size:14px}.patient-quick-action small{color:var(--muted);font-size:11px}.patient-quick-action.done{background:color-mix(in srgb,var(--accent) 8%,var(--surface));border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}.goal-done{opacity:.82}.today-next{margin:0}.today-grid{align-items:start}
 @media(max-width:900px){.patient-quick-grid{grid-template-columns:repeat(3,1fr)}.today-progress{grid-template-columns:auto 1fr}.today-progress>b{display:none}}
 @media(max-width:560px){.patient-today-home{gap:12px}.today-actions-card{padding:16px}.patient-quick-grid{grid-template-columns:repeat(2,1fr);gap:8px}.patient-quick-action{min-height:92px;padding:12px}.today-progress{grid-template-columns:1fr}.today-progress-track{width:100%}.patient-portal-nav button:first-child::before{content:'☀ ';}}

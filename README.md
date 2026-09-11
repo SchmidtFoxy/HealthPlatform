@@ -1,4 +1,22 @@
-﻿# v0.4.1 — Connected Care: Base promovida
+﻿# v0.4.2 — Connected Care: baseline promovida
+
+A v0.4.2 promove a **v0.4.1**, validada com **508/508 testes**, como nova baseline estável do HealthPlatform antes da próxima expansão funcional do Connected Care.
+
+## Promoção desta versão
+
+- runtime, healthcheck e Swagger atualizados para 0.4.2;
+- identificação visual e scripts local/remoto atualizados para 0.4.2;
+- suíte `TESTAR.ps1` atualizada para exigir 0.4.2;
+- nenhuma alteração de schema, regra clínica ou dados nesta promoção;
+- v0.4.1 preservada como marco estável anterior com 508/508 testes.
+
+## Próxima frente funcional
+
+A linha v0.4.2 continua a fase **Connected Care**, com foco planejado em solicitações e tarefas clínicas entre profissional e paciente.
+
+---
+
+# v0.4.1 — Connected Care: Base promovida
 
 A v0.4.1 promove a base estável da **v0.4.0-r1**, validada com **508/508 testes**, como ponto de partida oficial da próxima etapa do Connected Care.
 
