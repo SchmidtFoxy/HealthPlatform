@@ -918,10 +918,11 @@ public sealed class MeuPortalPacienteController(
         var evolucaoEsportiva = EvolucaoEsportivaService.Montar(gamificacao, ciclo, tendenciaRecuperacao, cargaTreino, performance, adesaoNutricional, hidratacaoContextual);
         var checkpointDoCiclo = CheckpointCicloService.Montar(ciclo, metasDoCiclo, evolucaoEsportiva);
         var relatorioDoCiclo = RelatorioCicloService.Montar(ciclo, metasDoCiclo, checkpointDoCiclo, evolucaoEsportiva);
+        var comparativoDeCiclos = await ComparativoCiclosService.MontarAsync(db, pacienteId, dia, ct);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

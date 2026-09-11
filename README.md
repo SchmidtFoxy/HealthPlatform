@@ -1,6 +1,6 @@
-# HealthPlatform v0.8.3 — Fechamento de Ciclo & Relatório de Evolução
+# HealthPlatform v0.8.4 — Fechamento de Ciclo & Relatório de Evolução
 
-A v0.8.3 transforma o checkpoint do ciclo em um relatório longitudinal de fechamento. A leitura consolida execução, metas mensuráveis, evolução multidimensional e o estado do checkpoint sem reduzir tudo a um score opaco e sem criar automaticamente o ciclo seguinte.
+A v0.8.4 transforma o checkpoint do ciclo em um relatório longitudinal de fechamento. A leitura consolida execução, metas mensuráveis, evolução multidimensional e o estado do checkpoint sem reduzir tudo a um score opaco e sem criar automaticamente o ciclo seguinte.
 
 ## Destaques
 

@@ -1,9 +1,19 @@
-## v0.8.3-r1
+# v0.8.4 — Comparativo de Ciclos & Tendência de Longo Prazo
 
-- Corrige sentinelas correntes do TESTAR.ps1 para esperar API e identidade MVP Preview v0.8.3.
+- compara até quatro ciclos esportivos usando taxas semanais, não apenas totais brutos;
+- apresenta treinos/semana, check-ins/semana, prontidão média e variação de peso por ciclo;
+- compara o ciclo mais recente com o anterior sem criar score composto;
+- variação de peso permanece descritiva, sem classificação automática de bom/ruim;
+- mesma leitura para atleta e profissional;
+- sem migration nova; schema permanece 37/37;
+- suíte ampliada para 792 verificações.
+
+## v0.8.4-r1
+
+- Corrige sentinelas correntes do TESTAR.ps1 para esperar API e identidade MVP Preview v0.8.4.
 - Mantém validações históricas da v0.8.2 intactas.
 
-# v0.8.3 — Fechamento de Ciclo & Relatório de Evolução
+# v0.8.4 — Fechamento de Ciclo & Relatório de Evolução
 
 - Adiciona `RelatorioCicloService` como síntese longitudinal do ciclo ativo.
 - Consolida volume realizado, metas mensuráveis, evolução multidimensional e checkpoint.

@@ -142,6 +142,15 @@ public record PortalRelatorioCicloResponse(
     int TreinosNoCiclo, int CheckInsNoCiclo, decimal? MediaProntidao,
     IReadOnlyCollection<PortalRelatorioCicloItemResponse> Itens, string MensagemSeguranca);
 
+public record PortalComparativoCicloItemResponse(
+    Guid CicloId, string Nome, string PerfilEsportivo, string Status, DateOnly DataInicio, DateOnly DataFim,
+    int DiasObservados, int Treinos, decimal TreinosPorSemana, int CheckIns, decimal CheckInsPorSemana,
+    decimal? MediaProntidao, decimal? PesoInicialKg, decimal? PesoFinalKg, decimal? VariacaoPesoKg);
+
+public record PortalComparativoCiclosResponse(
+    string Estado, string Titulo, string Resumo, IReadOnlyCollection<PortalComparativoCicloItemResponse> Ciclos,
+    string? ComparacaoComAnterior, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -229,6 +238,7 @@ public record PortalPacienteHomeResponse(
     PortalMetasCicloResponse MetasDoCiclo,
     PortalCheckpointCicloResponse CheckpointDoCiclo,
     PortalRelatorioCicloResponse RelatorioDoCiclo,
+    PortalComparativoCiclosResponse ComparativoDeCiclos,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
