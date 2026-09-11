@@ -1,3 +1,14 @@
+# v0.7.0 — Coach Diário & Prioridades Contextuais
+
+- Adiciona `CoachDiarioService` como camada derivada e explicável.
+- Combina prontidão, estratégia, recuperação, carga, performance, execução e ciclo.
+- Prioriza até três ações do dia com motivo e ação recomendada.
+- Inclui travas explícitas contra diagnóstico, prescrição paralela e progressão automática de carga.
+- Exibe síntese para atleta e leitura equivalente no prontuário profissional.
+- Mantém o schema em 37/37; nenhuma migration nova.
+- Amplia a suíte de 672 para 680 verificações.
+- Atualiza `POPULAR-ANA-RIBEIRO.ps1` para a linha 0.7.x.
+
 # v0.6.9-r5
 
 - Corrige `VERSION.txt` para a versao semantica `0.6.9`, preservando revisoes apenas em logs/changelog.

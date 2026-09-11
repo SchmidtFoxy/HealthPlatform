@@ -830,9 +830,10 @@ public sealed class MeuPortalPacienteController(
         var cargaTreino = await CargaTreinoService.MontarAsync(db, pacienteId, dia, ct);
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, dia, ct);
         var execucaoDoDia = await ExecucaoGuiadaService.MontarAsync(db, pacienteId, dia, estrategiaDoDia, ct);
+        var coachDiario = CoachDiarioService.Montar(prontidao, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

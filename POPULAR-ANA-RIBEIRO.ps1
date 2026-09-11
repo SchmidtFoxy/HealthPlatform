@@ -1,9 +1,9 @@
 param(
-    [string]$BaseUrl = "http://localhost:8080",
+    [string]$BaseUrl = "http://localhost:5180",
     [string]$AdminEmail = "admin@healthplatform.local",
     [Parameter(Mandatory=$true)][string]$SenhaAdmin,
     [string]$SenhaPaciente = "PacienteDemo_123!",
-    [int]$Dias = 42
+    [int]$Dias = 56
 )
 
 $ErrorActionPreference = "Stop"
@@ -23,13 +23,13 @@ function Api($method, $uri, $headers=$null, $body=$null) {
     Invoke-RestMethod @p
 }
 
-Write-Host "=== HealthPlatform | Seed esportivo pesado da Ana Ribeiro ===" -ForegroundColor Cyan
+Write-Host "=== HealthPlatform v0.7.x | Seed esportivo PESADO da Ana Ribeiro ===" -ForegroundColor Cyan
 Write-Host "Base: $base" -ForegroundColor DarkGray
 
 # 1) Login administrativo
 $adminLogin = Api Post '/api/auth/login' $null @{ email=$AdminEmail; senha=$SenhaAdmin }
 $admin = @{ Authorization = "Bearer $($adminLogin.accessToken)" }
-Write-Host "[1/9] Login administrativo: OK" -ForegroundColor Green
+Write-Host "[1/10] Login administrativo: OK" -ForegroundColor Green
 
 # 2) Localiza/cria Ana
 $q = [uri]::EscapeDataString($anaNome)
@@ -40,8 +40,8 @@ if ($null -eq $ana) {
         nome=$anaNome; cpf='91000000001'; dataNascimento='1995-03-12'; sexo='Feminino';
         telefone='41999991001'; email=$anaEmail; profissao='Arquiteta'
     }
-    Write-Host "[2/9] Ana criada: $($ana.id)" -ForegroundColor Green
-} else { Write-Host "[2/9] Ana localizada: $($ana.id)" -ForegroundColor Green }
+    Write-Host "[2/10] Ana criada: $($ana.id)" -ForegroundColor Green
+} else { Write-Host "[2/10] Ana localizada: $($ana.id)" -ForegroundColor Green }
 $pid = $ana.id
 
 # 3) Garante/reset acesso do portal da Ana
@@ -49,7 +49,7 @@ $convite = Api Post "/api/pacientes/$pid/acesso" $admin @{ email=$anaEmail }
 Api Post '/api/auth/paciente/ativar' $null @{ email=$anaEmail; token=$convite.activationToken; senha=$SenhaPaciente } | Out-Null
 $plogin = Api Post '/api/auth/login' $null @{ email=$anaEmail; senha=$SenhaPaciente }
 $patient = @{ Authorization = "Bearer $($plogin.accessToken)" }
-Write-Host "[3/9] Portal da Ana ativado/resetado: OK" -ForegroundColor Green
+Write-Host "[3/10] Portal da Ana ativado/resetado: OK" -ForegroundColor Green
 
 # 4) Garante ciclo esportivo ativo
 $ciclos = Arr (Api Get "/api/pacientes/$pid/ciclos-esportivos" $admin)
@@ -65,8 +65,8 @@ if ($null -eq $ativo) {
         faseTreinoId=$null; faseNutricionalId=$null;
         observacoes='Ciclo demonstrativo rico para alimentar Daily Athlete, carga, PRs e tendências.'
     } | Out-Null
-    Write-Host "[4/9] Ciclo esportivo criado: OK" -ForegroundColor Green
-} else { Write-Host "[4/9] Ciclo esportivo já existia: OK" -ForegroundColor DarkGreen }
+    Write-Host "[4/10] Ciclo esportivo criado: OK" -ForegroundColor Green
+} else { Write-Host "[4/10] Ciclo esportivo já existia: OK" -ForegroundColor DarkGreen }
 
 # 5) Garante 3 metas diárias e popula histórico
 function EnsureGoal([string]$nome,[decimal]$alvo,[string]$unidade) {
@@ -109,7 +109,7 @@ for ($i=$Dias-1; $i -ge 0; $i--) {
         }
     }
 }
-Write-Host "[5/9] Metas + até $Dias dias de histórico: OK" -ForegroundColor Green
+Write-Host "[5/10] Metas + até $Dias dias de histórico: OK" -ForegroundColor Green
 
 # 6) Garante plano ativo. Se não existir, cria um plano simples com exercícios existentes.
 $treinoAtual = Api Get '/api/portal/me/treino' $patient
@@ -131,7 +131,7 @@ if ($null -eq $treinoAtual.plano) {
     Api Post "/api/pacientes/$pid/treinos" $admin $body | Out-Null
     $treinoAtual = Api Get '/api/portal/me/treino' $patient
 }
-Write-Host "[6/9] Plano ativo para gerar performance/carga: OK" -ForegroundColor Green
+Write-Host "[6/10] Plano ativo para gerar performance/carga: OK" -ForegroundColor Green
 
 # 7) Popula ~4 treinos/semana nos últimos 42 dias, com progressão + deload + alguns RPE altos.
 $hist = Api Get '/api/portal/me/treinos/historico?dias=365' $patient
@@ -173,7 +173,7 @@ if ($sessoes.Count -gt 0) {
         $n++
     }
 }
-Write-Host "[7/9] Histórico de treinos, RPE, carga, volume e PRs: OK" -ForegroundColor Green
+Write-Host "[7/10] Histórico de treinos, RPE, carga, volume e PRs: OK" -ForegroundColor Green
 
 # 8) Popula prontidão diária e diário (hidratação/peso/dor subjetiva) com padrão coerente.
 # POST de prontidão é upsert por data, portanto pode rodar novamente sem duplicar o check-in.
@@ -206,11 +206,35 @@ for ($i=$Dias-1; $i -ge 0; $i--) {
         }
     }
 }
-Write-Host "[8/9] Prontidão + diário + hidratação + peso: OK" -ForegroundColor Green
+Write-Host "[8/10] Prontidão + diário + hidratação + peso: OK" -ForegroundColor Green
 
-# 9) Mostra resumo final
+# 9) Garante série de avaliações corporais para evolução longitudinal.
+$avaliacoes = Arr (Api Get "/api/pacientes/$pid/avaliacoes" $admin)
+$datasAval = @(42,35,28,21,14,7,0)
+$idxAval = 0
+foreach ($diasAtras in $datasAval) {
+    if ($diasAtras -ge $Dias) { continue }
+    $dt = $hoje.AddDays(-$diasAtras).AddHours(10)
+    $key = D $dt
+    $exists = $avaliacoes | Where-Object { (DateKey $_.dataUtc) -eq $key } | Select-Object -First 1
+    if ($null -ne $exists) { $idxAval++; continue }
+    $peso = [math]::Round(68.6 - ($idxAval * 0.28),1)
+    $gordura = [math]::Round(27.8 - ($idxAval * 0.35),1)
+    $cintura = [math]::Round(78.5 - ($idxAval * 0.45),1)
+    Api Post "/api/pacientes/$pid/avaliacoes" $admin @{
+        consultaId=$null; dataUtc=(Iso $dt); pesoKg=$peso; alturaM=1.66;
+        percentualGordura=$gordura; massaMagraKg=[math]::Round($peso*(1-$gordura/100),1);
+        massaGordaKg=[math]::Round($peso*($gordura/100),1); cinturaCm=$cintura;
+        abdomenCm=[math]::Round($cintura+5.5,1); quadrilCm=[math]::Round(101.0-($idxAval*0.25),1);
+        pressaoSistolica=118; pressaoDiastolica=76; frequenciaCardiaca=(66-([math]::Min($idxAval,4)))
+    } | Out-Null
+    $idxAval++
+}
+Write-Host "[9/10] Avaliações corporais longitudinais: OK" -ForegroundColor Green
+
+# 10) Mostra resumo final incluindo a camada 0.7.x.
 $home = Api Get '/api/portal/me/home' $patient
-Write-Host "[9/9] Seed concluído." -ForegroundColor Green
+Write-Host "[10/10] Seed concluído." -ForegroundColor Green
 Write-Host "" 
 Write-Host "ANA RIBEIRO AGORA TEM:" -ForegroundColor Cyan
 Write-Host "  - até $Dias dias de prontidão"
@@ -219,10 +243,29 @@ Write-Host "  - histórico esportivo suficiente para base de 3 semanas"
 Write-Host "  - volume/carga/RPE e progressão de exercícios"
 Write-Host "  - dados para PRs, tendências, consistência, XP e missões"
 Write-Host "  - hidratação e peso no diário"
+Write-Host "  - avaliações corporais seriadas para evolução"
+Write-Host "  - contexto suficiente para o Coach Diário gerar prioridades explicáveis"
 Write-Host "" 
 Write-Host "Login paciente: $anaEmail" -ForegroundColor Yellow
 Write-Host "Senha paciente: $SenhaPaciente" -ForegroundColor Yellow
 Write-Host "" 
 if ($null -ne $home.gamificacao) {
-    Write-Host ("Nível atual: {0} | XP total: {1} | Consistência: {2}%" -f $home.gamificacao.nivel,$home.gamificacao.xpTotal,$home.gamificacao.consistenciaPercentual) -ForegroundColor Cyan
+    Write-Host ("Nível atual: {0} | XP total: {1} | Consistência: {2}/100" -f $home.gamificacao.nivel,$home.gamificacao.xpTotal,$home.gamificacao.consistenciaScore) -ForegroundColor Cyan
+}
+if ($null -ne $home.tendenciaRecuperacao) {
+    Write-Host ("Recuperação: {0} | prontidão média 7d: {1}" -f $home.tendenciaRecuperacao.tendencia,$home.tendenciaRecuperacao.prontidaoMedia7) -ForegroundColor Cyan
+}
+if ($null -ne $home.cargaTreino) {
+    Write-Host ("Carga: {0} | relação com base: {1}x" -f $home.cargaTreino.classificacao,$home.cargaTreino.relacaoCargaComBase) -ForegroundColor Cyan
+}
+if ($null -ne $home.performance) {
+    Write-Host ("Performance: {0} | PRs recentes: {1}" -f $home.performance.tendencia,$home.performance.prsRecentes) -ForegroundColor Cyan
+}
+if ($null -ne $home.coachDiario) {
+    Write-Host ("Coach Diário: {0} | {1}" -f $home.coachDiario.estado,$home.coachDiario.titulo) -ForegroundColor Magenta
+    $pos=1
+    foreach ($prio in (Arr $home.coachDiario.prioridades)) {
+        Write-Host ("  #{0} {1}: {2}" -f $pos,$prio.categoria,$prio.titulo) -ForegroundColor DarkMagenta
+        $pos++
+    }
 }

@@ -126,6 +126,14 @@ public record PortalPerformanceResponse(
     decimal? VolumeEstimado28, decimal? VolumeEstimadoAnterior28, decimal? VariacaoVolumePercentual,
     string Tendencia, string Mensagem, IReadOnlyCollection<PortalPerformanceExercicioResponse> Destaques);
 
+
+public record PortalCoachPrioridadeResponse(
+    string Codigo, string Categoria, string Nivel, string Titulo, string Motivo, string Acao);
+
+public record PortalCoachDiarioResponse(
+    string Estado, string Titulo, string Resumo, string MensagemSeguranca,
+    IReadOnlyCollection<PortalCoachPrioridadeResponse> Prioridades);
+
 public record PortalExecucaoDiaItemResponse(
     string Codigo, string Categoria, string Titulo, string Descricao, string Status,
     bool Obrigatorio, decimal ProgressoPercentual, string? ValorAtual, string? Meta, string Acao);
@@ -157,6 +165,7 @@ public record PortalPacienteHomeResponse(
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
     PortalPerformanceResponse Performance,
+    PortalCoachDiarioResponse CoachDiario,
     PortalExecucaoDiaResponse ExecucaoDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,
