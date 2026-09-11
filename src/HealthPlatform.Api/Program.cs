@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Infrastructure.Data;
 using HealthPlatform.Domain.Enums;
@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.4.4" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.4.5" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

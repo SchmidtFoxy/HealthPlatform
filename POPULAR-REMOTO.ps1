@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory=$true)][string]$BaseUrl,
     [string]$Email = "admin@healthplatform.local",
     [Parameter(Mandatory=$true)][string]$Senha
@@ -259,7 +259,7 @@ function Ensure-FollowUp($patientId, $channel, $result, $dateUtc, $nextUtc) {
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host " HealthPlatform v0.4.4 - POPULAR RENDER DEMO" -ForegroundColor Cyan
+Write-Host " HealthPlatform v0.4.5 - POPULAR RENDER DEMO" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Este script e idempotente: os cenarios existentes sao reaproveitados." -ForegroundColor DarkGray
 Write-Host ""

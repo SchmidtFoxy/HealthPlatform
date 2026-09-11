@@ -1,4 +1,4 @@
-const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
+﻿const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const initials=(n='')=>n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'HP';
@@ -4932,7 +4932,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.4.4';
+const HP_MVP_VERSION='0.4.5';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -5018,7 +5018,7 @@ function hpInstallMvpPreviewUi(){
 hpInstallMvpPreviewUi();
 
 
-// ===== v0.4.4 — RS visual identity / mobile + tablet UX =====
+// ===== v0.4.5 — RS visual identity / mobile + tablet UX =====
 function hpInstallRsResponsiveUi(){
   const app=$('#appView'),sidebar=$('.sidebar'),menu=$('#menuButton');
   if(!app||!sidebar||!menu||app.querySelector('.rs-sidebar-screen'))return;
