@@ -1,4 +1,23 @@
-﻿# v0.4.0 — Connected Care: Patient Today
+﻿# v0.4.1 — Connected Care: Base promovida
+
+A v0.4.1 promove a base estável da **v0.4.0-r1**, validada com **508/508 testes**, como ponto de partida oficial da próxima etapa do Connected Care.
+
+## Estado desta release
+
+- baseline: v0.4.0-r1 aprovada integralmente;
+- sem novo schema de banco nesta promoção;
+- sem quebra de API ou regras clínicas;
+- Portal do Paciente / tela Hoje preservados;
+- deploy local e Render preservados;
+- suíte TESTAR atualizada para exigir 0.4.1.
+
+## Próximo foco funcional
+
+A linha v0.4.1 passa a ser a base para **Solicitações e tarefas clínicas entre profissional e paciente**, conectando pedido, execução pelo paciente e revisão profissional.
+
+---
+
+# v0.4.0 — Connected Care: Patient Today
 
 A v0.4.0 inicia a fase **Connected Care**, mantendo a base clínica da v0.3.41-r1 e mudando o foco do Portal do Paciente de consulta passiva para acompanhamento diário.
 

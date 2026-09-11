@@ -1,4 +1,4 @@
-using HealthPlatform.Infrastructure.Data;
+﻿using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             var payload = new
             {
                 status = databaseOk ? "ok" : "degraded",
-                version = "0.4.0",
+                version = "0.4.1",
                 database = databaseOk ? "connected" : "unavailable",
                 utc = DateTime.UtcNow
             };
