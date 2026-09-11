@@ -151,6 +151,13 @@ public record PortalComparativoCiclosResponse(
     string Estado, string Titulo, string Resumo, IReadOnlyCollection<PortalComparativoCicloItemResponse> Ciclos,
     string? ComparacaoComAnterior, string MensagemSeguranca);
 
+public record PortalTendenciaObjetivoItemResponse(
+    string Codigo, string Eixo, string Estado, string Titulo, string Evidencia, string Leitura);
+
+public record PortalTendenciaObjetivoResponse(
+    string Estado, string PerfilEsportivo, string? Objetivo, string Titulo, string Resumo,
+    IReadOnlyCollection<PortalTendenciaObjetivoItemResponse> Itens, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -239,6 +246,7 @@ public record PortalPacienteHomeResponse(
     PortalCheckpointCicloResponse CheckpointDoCiclo,
     PortalRelatorioCicloResponse RelatorioDoCiclo,
     PortalComparativoCiclosResponse ComparativoDeCiclos,
+    PortalTendenciaObjetivoResponse TendenciaDoObjetivo,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

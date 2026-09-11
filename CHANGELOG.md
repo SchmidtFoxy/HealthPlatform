@@ -1,4 +1,13 @@
-# v0.8.4 — Comparativo de Ciclos & Tendência de Longo Prazo
+# HealthPlatform v0.8.5 — Tendência por Objetivo do Ciclo
+
+- Nova leitura contextual por perfil esportivo (hipertrofia, força/performance, emagrecimento, corrida/condicionamento, qualidade de vida ou personalizado).
+- Prioriza eixos relevantes ao objetivo sem criar score único.
+- Peso continua descritivo e só ganha direção quando existe peso-alvo definido pelo profissional.
+- Integração nas Homes do atleta e do profissional.
+- Sem migration nova; schema permanece 37/37.
+- Suíte ampliada para 800 verificações.
+
+# v0.8.5 — Comparativo de Ciclos & Tendência de Longo Prazo
 
 - compara até quatro ciclos esportivos usando taxas semanais, não apenas totais brutos;
 - apresenta treinos/semana, check-ins/semana, prontidão média e variação de peso por ciclo;
@@ -8,12 +17,12 @@
 - sem migration nova; schema permanece 37/37;
 - suíte ampliada para 792 verificações.
 
-## v0.8.4-r1
+## v0.8.5-r1
 
-- Corrige sentinelas correntes do TESTAR.ps1 para esperar API e identidade MVP Preview v0.8.4.
+- Corrige sentinelas correntes do TESTAR.ps1 para esperar API e identidade MVP Preview v0.8.5.
 - Mantém validações históricas da v0.8.2 intactas.
 
-# v0.8.4 — Fechamento de Ciclo & Relatório de Evolução
+# v0.8.5 — Fechamento de Ciclo & Relatório de Evolução
 
 - Adiciona `RelatorioCicloService` como síntese longitudinal do ciclo ativo.
 - Consolida volume realizado, metas mensuráveis, evolução multidimensional e checkpoint.
