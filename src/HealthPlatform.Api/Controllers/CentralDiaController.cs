@@ -40,16 +40,29 @@ public sealed record CentralDiaPacienteResponse(
     bool SemRetornoFuturo,
     DateTime? UltimaConsultaUtc);
 
+public sealed record CentralDiaSolicitacaoResponse(
+    Guid Id,
+    Guid PacienteId,
+    string PacienteNome,
+    string Tipo,
+    string Titulo,
+    DateTime? DataLimiteUtc,
+    string Status,
+    bool Vencida);
+
 public sealed record CentralDiaResponse(
     DateTime GeradoEmUtc,
     int ConsultasHoje,
     int FollowUpsVencidos,
     int FollowUpsHoje,
     int PendenciasPrioritarias,
+    int SolicitacoesParaRevisao,
+    int SolicitacoesVencidas,
     int PacientesRevisao,
     IReadOnlyCollection<CentralDiaConsultaResponse> Consultas,
     IReadOnlyCollection<CentralDiaFollowUpResponse> FollowUps,
     IReadOnlyCollection<CentralDiaPendenciaResponse> Pendencias,
+    IReadOnlyCollection<CentralDiaSolicitacaoResponse> Solicitacoes,
     IReadOnlyCollection<CentralDiaPacienteResponse> Pacientes);
 
 [ApiController]
@@ -163,6 +176,29 @@ public sealed class CentralDiaController(
                 x.Status))
             .ToListAsync(ct);
 
+        var solicitacoes = await db.SolicitacoesClinicas.AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == org &&
+                x.ProfissionalId == profissional.Id &&
+                (x.Status == "Enviada" ||
+                 (x.Status == "Pendente" && x.DataLimiteUtc.HasValue && x.DataLimiteUtc < agoraUtc)))
+            .OrderBy(x => x.Status == "Enviada" ? 0 : 1)
+            .ThenBy(x => x.DataLimiteUtc ?? DateTime.MaxValue)
+            .Take(20)
+            .Select(x => new CentralDiaSolicitacaoResponse(
+                x.Id,
+                x.PacienteId,
+                x.Paciente.Nome,
+                x.Tipo,
+                x.Titulo,
+                x.DataLimiteUtc,
+                x.Status,
+                x.Status == "Pendente" && x.DataLimiteUtc.HasValue && x.DataLimiteUtc < agoraUtc))
+            .ToListAsync(ct);
+
+        var solicitacoesParaRevisao = solicitacoes.Count(x => x.Status == "Enviada");
+        var solicitacoesVencidas = solicitacoes.Count(x => x.Vencida);
+
         var pacientes = await db.Pacientes.AsNoTracking()
             .Where(x => x.OrganizacaoId == org && x.Ativo)
             .Select(x => new { x.Id, x.Nome })
@@ -227,10 +263,13 @@ public sealed class CentralDiaController(
             followups.Count(x => x.Faixa == "Vencido"),
             followups.Count(x => x.Faixa == "Hoje"),
             pendencias.Count,
+            solicitacoesParaRevisao,
+            solicitacoesVencidas,
             revisaoOrdenada.Count,
             consultas,
             followups,
             pendencias,
+            solicitacoes,
             revisaoOrdenada));
     }
 }

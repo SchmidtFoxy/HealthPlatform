@@ -1,4 +1,4 @@
-﻿const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
+const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const initials=(n='')=>n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'HP';
@@ -1424,9 +1424,13 @@ async function openPatientAccess(p){
 async function loadMyPatientPortal(){
   const host=$('#patientPortalContent');
   host.innerHTML='<div class="card"><div class="skeleton" style="height:180px"></div></div>';
-  const d=await api(`/api/portal/me/home?data=${todayISO()}`);
+  const [d,solicitacoes]=await Promise.all([
+    api(`/api/portal/me/home?data=${todayISO()}`),
+    api('/api/portal/me/solicitacoes')
+  ]);
   const e=d.evolucaoCorporal||{},plano=d.planoAlimentarAtual,prox=d.proximaConsulta;
   const metas=d.metasHoje||[],registros=d.registrosHoje||[];
+  const solicitacoesPendentes=(solicitacoes.itens||[]).filter(x=>x.status==='Pendente');
   const quickTypes=[
     {key:'Peso',label:'Peso',icon:'⚖',unit:'kg',kind:'number',step:'0.1'},
     {key:'Agua',label:'Água',icon:'💧',unit:'ml',kind:'number',step:'50'},
@@ -1436,7 +1440,7 @@ async function loadMyPatientPortal(){
     {key:'Sintoma',label:'Sintoma',icon:'✚',unit:'',kind:'text'}
   ];
   const quickDone=quickTypes.filter(q=>registros.some(r=>String(r.tipo||'').toLowerCase()===q.key.toLowerCase())).length;
-  const totalTasks=metas.length+quickTypes.length;
+  const totalTasks=metas.length+quickTypes.length+solicitacoesPendentes.length;
   const doneTasks=(d.metasConcluidas||0)+quickDone;
   const completion=totalTasks?Math.round(doneTasks/totalTasks*100):0;
   host.innerHTML=`<div class="patient-mobile-home patient-today-home">
@@ -1456,6 +1460,14 @@ async function loadMyPatientPortal(){
     </section>
 
     ${prox?`<section class="patient-next-card today-next"><span>PRÓXIMA CONSULTA</span><strong>${fmtDateTime(prox.dataHoraUtc)}</strong><p>${esc(prox.profissionalNome)}${prox.motivo?' • '+esc(prox.motivo):''}</p></section>`:''}
+
+    ${solicitacoesPendentes.length?`<section class="card patient-today-requests">
+      <div class="card-head"><div><span class="eyebrow">AÇÃO NECESSÁRIA</span><h3>Solicitações do seu acompanhamento</h3></div><button class="ghost" id="patientOpenRequestsToday">Ver todas →</button></div>
+      <div class="today-request-list">${solicitacoesPendentes.slice(0,3).map(r=>{
+        const overdue=r.dataLimiteUtc&&new Date(r.dataLimiteUtc)<new Date();
+        return `<article class="today-request-item ${overdue?'is-overdue':''}"><div><span class="pill ${overdue?'Alta':''}">${overdue?'Vencida':esc(r.tipo||'Solicitação')}</span><strong>${esc(r.titulo)}</strong><small>${r.dataLimiteUtc?'Prazo: '+fmtDateTime(r.dataLimiteUtc):'Sem prazo definido'} • ${esc(r.profissionalNome||'Profissional')}</small></div><button class="primary patient-answer-today" data-request="${r.id}">Responder</button></article>`;
+      }).join('')}</div>
+    </section>`:''}
 
     <div class="patient-portal-grid today-grid">
       <section class="card"><div class="card-head"><div><span class="eyebrow">OBJETIVOS</span><h3>Metas de hoje</h3></div><small>${d.metasConcluidas}/${d.metasAtivas}</small></div>
@@ -1486,6 +1498,11 @@ async function loadMyPatientPortal(){
   </div>`;
 
   $('#patientAddDiary').onclick=openMyDiaryForm;
+  if($('#patientOpenRequestsToday'))$('#patientOpenRequestsToday').onclick=()=>loadPatientSection('solicitacoes').catch(e=>toast(e.message,true));
+  $$('.patient-answer-today').forEach(b=>b.onclick=()=>{
+    const item=(solicitacoes.itens||[]).find(x=>x.id===b.dataset.request);
+    if(item)openPatientRequestAnswer(item);
+  });
   $$('.patient-goal-update').forEach(b=>b.onclick=()=>openMyGoalForm(b.dataset));
   $$('.patient-quick-action').forEach(b=>b.onclick=()=>openQuickPatientRecord(b.dataset));
   $$('[data-patient-jump]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.patientJump).catch(e=>toast(e.message,true)));
@@ -3694,6 +3711,15 @@ function hpCentralPending(x){
     <button class="ghost central-open-pending">Fila</button>
   </article>`;
 }
+function hpCentralRequest(x){
+  const label=x.status==='Enviada'?'Aguardando revisão':x.vencida?'Vencida':'Pendente';
+  return `<article class="central-day-row ${x.vencida?'is-high':''}">
+    <div class="central-day-badge">${esc(label)}</div>
+    <div><strong>${esc(x.titulo)}</strong><small>${esc(x.pacienteNome)} • ${esc(x.tipo)}${x.dataLimiteUtc?` • ${esc(fmtDateTime(x.dataLimiteUtc))}`:''}</small></div>
+    <button class="ghost central-open-requests">Solicitações</button>
+  </article>`;
+}
+
 function hpCentralPatient(x){
   return `<article class="central-day-row" data-central-patient="${x.pacienteId}">
     <div class="mini-avatar">${initials(x.pacienteNome)}</div>
@@ -3713,6 +3739,8 @@ async function loadCentralDia(){
     ${stat('Follow-ups vencidos',d.followUpsVencidos,'pedem contato')}
     ${stat('Follow-ups hoje',d.followUpsHoje,'previstos para hoje')}
     ${stat('Pendências prioritárias',d.pendenciasPrioritarias,'alta ou vencendo')}
+    ${stat('Solicitações para revisar',d.solicitacoesParaRevisao,'respostas recebidas')}
+    ${stat('Solicitações vencidas',d.solicitacoesVencidas,'paciente precisa agir')}
   </div>
   <div class="central-day-grid">
     <section class="card">
@@ -3728,6 +3756,10 @@ async function loadCentralDia(){
       <div class="central-day-list">${d.pendencias?.length?d.pendencias.map(hpCentralPending).join(''):hpCentralEmpty('Nenhuma pendência prioritária.')}</div>
     </section>
     <section class="card">
+      <div class="card-head"><div><h3>Solicitações clínicas</h3><small>${d.solicitacoesParaRevisao} para revisar • ${d.solicitacoesVencidas} vencida(s)</small></div><button class="ghost" id="centralOpenRequests">Abrir central →</button></div>
+      <div class="central-day-list">${d.solicitacoes?.length?d.solicitacoes.map(hpCentralRequest).join(''):hpCentralEmpty('Nenhuma solicitação exige ação agora.')}</div>
+    </section>
+    <section class="card">
       <div class="card-head"><div><h3>Pacientes para revisão</h3><small>${d.pacientesRevisao} em destaque</small></div><button class="ghost" id="centralOpenPortfolio">Abrir carteira →</button></div>
       <div class="central-day-list">${d.pacientes?.length?d.pacientes.map(hpCentralPatient).join(''):hpCentralEmpty('Nenhuma revisão operacional sugerida.')}</div>
     </section>
@@ -3738,6 +3770,8 @@ async function loadCentralDia(){
   $('#centralOpenFollowups').onclick=()=>navigate('followups');
   $('#centralOpenPendencias').onclick=()=>navigate('pendencias');
   $('#centralOpenPortfolio').onclick=()=>navigate('carteira');
+  if($('#centralOpenRequests'))$('#centralOpenRequests').onclick=()=>navigate('solicitacoes-profissional');
+  $$('.central-open-requests').forEach(b=>b.onclick=()=>navigate('solicitacoes-profissional'));
   $$('.central-open-pending').forEach(b=>b.onclick=()=>navigate('pendencias'));
   $$('.central-open-patient').forEach(b=>b.onclick=e=>{e.stopPropagation();openPatient(b.dataset.id)});
   $$('.central-register-contact').forEach(b=>b.onclick=()=>openPortfolioContact(b.dataset.id,b.dataset.name));
@@ -3752,7 +3786,7 @@ loadDashboard=async function(){
     const section=document.createElement('section');
     section.className='card dashboard-central-day';
     section.innerHTML=`<div class="card-head">
-      <div><h3>Hoje</h3><small>${d.consultasHoje} consulta(s) • ${d.followUpsVencidos+d.followUpsHoje} follow-up(s) • ${d.pendenciasPrioritarias} pendência(s)</small></div>
+      <div><h3>Hoje</h3><small>${d.consultasHoje} consulta(s) • ${d.followUpsVencidos+d.followUpsHoje} follow-up(s) • ${d.pendenciasPrioritarias} pendência(s) • ${d.solicitacoesParaRevisao} solicitação(ões) para revisar</small></div>
       <button class="ghost" id="openCentralDay">Abrir central →</button>
     </div>
     <div class="dashboard-central-day-metrics">
@@ -3760,6 +3794,7 @@ loadDashboard=async function(){
       <div><strong>${d.followUpsVencidos}</strong><span>Follow-ups vencidos</span></div>
       <div><strong>${d.followUpsHoje}</strong><span>Follow-ups hoje</span></div>
       <div><strong>${d.pendenciasPrioritarias}</strong><span>Pendências</span></div>
+      <div><strong>${d.solicitacoesParaRevisao}</strong><span>Solicitações p/ revisar</span></div>
     </div>`;
     content.appendChild(section);
     $('#openCentralDay').onclick=()=>navigate('central-dia');
@@ -4940,7 +4975,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.5.2';
+const HP_MVP_VERSION='0.5.4';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -5073,7 +5108,7 @@ function hpInstallRsResponsiveUi(){
 hpInstallRsResponsiveUi();
 
 
-// ===== v0.5.2 — Solicitações clínicas / Connected Care =====
+// ===== v0.5.1 — Solicitações clínicas / Connected Care =====
 function requestStatusPill(status){
   const cls=status==='Revisada'?'Ativa':status==='Enviada'?'Agendada':status==='Cancelada'?'Cancelada':'Media';
   return `<span class="pill ${cls}">${esc(status||'Pendente')}</span>`;
@@ -5126,3 +5161,72 @@ function openPatientRequestAnswer(id,title){
     setTimeout(()=>loadPatientRequests().catch(e=>toast(e.message,true)),0);
   });
 }
+
+
+// ===== v0.5.4 — Central profissional de Solicitações =====
+const __navigate_v053=navigate;
+navigate=function(view){
+  if(view!=='solicitacoes-profissional')return __navigate_v053(view);
+  state.view='solicitacoes-profissional';
+  $$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));
+  $('.sidebar').classList.remove('open');
+  $('#pageEyebrow').textContent='CONNECTED CARE';
+  $('#pageTitle').textContent='Central de solicitações';
+  setLoading();
+  loadProfessionalRequests().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)});
+};
+
+function professionalRequestStatusLabel(status){
+  return status==='Enviada'?'Aguardando revisão':status==='Pendente'?'Pendente':status==='Revisada'?'Revisada':status==='Cancelada'?'Cancelada':status;
+}
+function professionalRequestCard(x){
+  const overdue=x.status==='Pendente'&&x.dataLimiteUtc&&new Date(x.dataLimiteUtc)<new Date();
+  return `<article class="professional-request-card ${overdue?'is-overdue':''}" data-request-patient="${x.pacienteId}">
+    <div class="request-card-head"><div><span class="eyebrow">${esc(x.tipo||'Acompanhamento')}</span><h3>${esc(x.titulo)}</h3><small>${esc(x.pacienteNome)} • ${x.dataLimiteUtc?`prazo ${fmtDateTime(x.dataLimiteUtc)}`:'sem prazo'}</small></div><span class="status ${esc((x.status||'').toLowerCase())}">${esc(overdue?'Vencida':professionalRequestStatusLabel(x.status))}</span></div>
+    ${x.descricao?`<p>${esc(x.descricao)}</p>`:''}
+    ${x.respostaPaciente||x.linkResposta?`<div class="request-response"><strong>Resposta do paciente</strong>${x.respostaPaciente?`<p>${esc(x.respostaPaciente)}</p>`:''}${x.linkResposta?`<a href="${esc(x.linkResposta)}" target="_blank" rel="noopener">Abrir referência ↗</a>`:''}</div>`:''}
+    <div class="request-actions">
+      <button class="ghost professional-request-open" data-id="${x.pacienteId}">Prontuário</button>
+      ${x.status==='Enviada'?`<button class="primary professional-request-review" data-id="${x.id}" data-patient="${x.pacienteId}">Revisar</button>`:''}
+      ${x.status==='Pendente'?`<button class="secondary professional-request-cancel" data-id="${x.id}">Cancelar</button>`:''}
+    </div>
+  </article>`;
+}
+async function loadProfessionalRequests(){
+  const status=$('#professionalRequestStatus')?.value||'Todos';
+  const prazo=$('#professionalRequestDeadline')?.value||'Todos';
+  const busca=$('#professionalRequestSearch')?.value||'';
+  const qs=new URLSearchParams();
+  if(status!=='Todos')qs.set('status',status);
+  if(prazo!=='Todos')qs.set('prazo',prazo);
+  if(busca.trim())qs.set('busca',busca.trim());
+  const d=await api(`/api/solicitacoes?${qs.toString()}`);
+  content.innerHTML=`
+    <section class="request-central-head">
+      <div class="stats-grid request-central-stats">
+        <div class="stat"><span>Pendentes</span><strong>${d.resumo?.pendentes||0}</strong><small>Aguardando paciente</small></div>
+        <div class="stat"><span>Para revisar</span><strong>${d.resumo?.aguardandoRevisao||0}</strong><small>Resposta recebida</small></div>
+        <div class="stat"><span>Vencidas</span><strong>${d.resumo?.vencidas||0}</strong><small>Exigem atenção</small></div>
+        <div class="stat"><span>Em aberto</span><strong>${d.resumo?.total||0}</strong><small>Fluxo ativo</small></div>
+      </div>
+      <div class="card request-central-filters">
+        <input id="professionalRequestSearch" value="${esc(busca)}" placeholder="Buscar paciente, título ou tipo" />
+        <select id="professionalRequestStatus"><option>Todos</option><option>Pendente</option><option>Enviada</option><option>Revisada</option><option>Cancelada</option></select>
+        <select id="professionalRequestDeadline"><option>Todos</option><option value="Vencidas">Vencidas</option><option value="Proximas24h">Próximas 24h</option></select>
+        <button class="secondary" id="professionalRequestRefresh">Atualizar</button>
+      </div>
+    </section>
+    <section class="request-central-list">${(d.itens||[]).length?(d.itens||[]).map(professionalRequestCard).join(''):'<div class="card empty">Nenhuma solicitação encontrada com estes filtros.</div>'}</section>`;
+  $('#professionalRequestStatus').value=status;
+  $('#professionalRequestDeadline').value=prazo;
+  $('#professionalRequestRefresh').onclick=loadProfessionalRequests;
+  $('#professionalRequestStatus').onchange=loadProfessionalRequests;
+  $('#professionalRequestDeadline').onchange=loadProfessionalRequests;
+  let requestSearchTimer;
+  $('#professionalRequestSearch').oninput=()=>{clearTimeout(requestSearchTimer);requestSearchTimer=setTimeout(loadProfessionalRequests,300)};
+  $$('.professional-request-open').forEach(b=>b.onclick=()=>openPatient(b.dataset.id));
+  $$('.professional-request-review').forEach(b=>b.onclick=async()=>{const note=prompt('Observação da revisão (opcional):','')??null;if(note===null)return;try{await api(`/api/solicitacoes/${b.dataset.id}/revisar`,{method:'PUT',body:JSON.stringify({observacao:note})});toast('Solicitação revisada.');await loadProfessionalRequests()}catch(e){toast(e.message,true)}});
+  $$('.professional-request-cancel').forEach(b=>b.onclick=async()=>{if(!confirm('Cancelar esta solicitação?'))return;try{await api(`/api/solicitacoes/${b.dataset.id}/cancelar`,{method:'PUT'});toast('Solicitação cancelada.');await loadProfessionalRequests()}catch(e){toast(e.message,true)}});
+}
+
+// ===== v0.5.4 — Solicitações integradas ao Hoje =====

@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.5.4 — Feature release
+
+- Integra Solicitações Clínicas ao **Hoje** do paciente.
+- Solicitações pendentes passam a contar como atividades do acompanhamento diário.
+- Adiciona destaque e resposta direta para solicitações vencidas/pendentes.
+- Integra respostas aguardando revisão e solicitações vencidas à **Central do Dia** profissional.
+- Dashboard profissional passa a destacar solicitações para revisão.
+- Sem migration/schema novo; reutiliza o schema v0.5.1.
+- Suíte ampliada de 535 para 545 verificações.
+
+## v0.5.3 — Feature release
+
+- Adiciona Central profissional de Solicitações Clínicas.
+- Consolida solicitações de todos os pacientes em uma única fila operacional.
+- Adiciona busca por paciente/título/tipo e filtros por status/prazo.
+- Exibe métricas de pendentes, respostas para revisão e vencidas.
+- Permite revisar, cancelar e abrir o prontuário diretamente da central.
+- Preserva isolamento multi-tenant e reutiliza o schema v0.5.1.
+- Sem migration/schema novo.
+- Suíte ampliada de 526 para 535 verificações.
+
 ## v0.5.2 — Feature release
 
 - Integra Solicitações Clínicas ao motor de notificações internas.

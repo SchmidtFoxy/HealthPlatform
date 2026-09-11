@@ -24,6 +24,70 @@ public sealed class SolicitacoesClinicasController(
     IHttpContextAccessor httpContextAccessor) : ControllerBase
 {
     [Authorize]
+    [HttpGet("api/solicitacoes")]
+    public async Task<IActionResult> FilaProfissional(
+        [FromQuery] string? status,
+        [FromQuery] string? busca,
+        [FromQuery] string? prazo,
+        CancellationToken ct)
+    {
+        if (await ProfissionalAtual(ct) is null) return Forbid();
+
+        var agora = DateTime.UtcNow;
+        var baseQuery = db.SolicitacoesClinicas.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId);
+
+        var pendentes = await baseQuery.CountAsync(x => x.Status == "Pendente", ct);
+        var aguardandoRevisao = await baseQuery.CountAsync(x => x.Status == "Enviada", ct);
+        var vencidas = await baseQuery.CountAsync(x => x.Status == "Pendente" && x.DataLimiteUtc.HasValue && x.DataLimiteUtc < agora, ct);
+
+        var query = baseQuery;
+        var statusLimpo = Limpar(status);
+        if (statusLimpo is not null && !statusLimpo.Equals("Todos", StringComparison.OrdinalIgnoreCase))
+            query = query.Where(x => x.Status == statusLimpo);
+
+        var prazoLimpo = Limpar(prazo);
+        if (prazoLimpo?.Equals("Vencidas", StringComparison.OrdinalIgnoreCase) == true)
+            query = query.Where(x => x.Status == "Pendente" && x.DataLimiteUtc.HasValue && x.DataLimiteUtc < agora);
+        else if (prazoLimpo?.Equals("Proximas24h", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            var limite = agora.AddHours(24);
+            query = query.Where(x => x.Status == "Pendente" && x.DataLimiteUtc.HasValue && x.DataLimiteUtc >= agora && x.DataLimiteUtc <= limite);
+        }
+
+        var termo = Limpar(busca);
+        if (termo is not null)
+        {
+            var like = $"%{termo}%";
+            query = query.Where(x =>
+                EF.Functions.ILike(x.Paciente.Nome, like) ||
+                EF.Functions.ILike(x.Titulo, like) ||
+                EF.Functions.ILike(x.Tipo, like));
+        }
+
+        var itens = await query
+            .OrderBy(x => x.Status == "Enviada" ? 0 : x.Status == "Pendente" ? 1 : 2)
+            .ThenBy(x => x.DataLimiteUtc ?? DateTime.MaxValue)
+            .ThenByDescending(x => x.UpdatedAtUtc)
+            .Select(x => new
+            {
+                x.Id, x.PacienteId, pacienteNome = x.Paciente.Nome,
+                x.ProfissionalId, profissionalNome = x.Profissional.Nome,
+                x.Tipo, x.Titulo, x.Descricao, x.DataLimiteUtc, x.Status,
+                x.RespostaPaciente, x.LinkResposta, x.RespondidaEmUtc,
+                x.RevisadaEmUtc, x.ObservacaoRevisao, x.CreatedAtUtc, x.UpdatedAtUtc
+            })
+            .Take(250)
+            .ToListAsync(ct);
+
+        return Ok(new
+        {
+            resumo = new { pendentes, aguardandoRevisao, vencidas, total = pendentes + aguardandoRevisao },
+            itens
+        });
+    }
+
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/solicitacoes")]
     public async Task<IActionResult> ListarDoPaciente(Guid pacienteId, CancellationToken ct)
     {
