@@ -43,7 +43,7 @@ function Api($method, $uri, $headers=$null, $body=$null) {
     }
 }
 
-Write-Host "=== HealthPlatform v0.7.6 | Seed esportivo PESADO da Ana Ribeiro (v7) ===" -ForegroundColor Cyan
+Write-Host "=== HealthPlatform v0.7.7 | Seed esportivo PESADO da Ana Ribeiro (v7) ===" -ForegroundColor Cyan
 Write-Host "Base: $base" -ForegroundColor DarkGray
 
 # 0) Healthcheck antes de alterar qualquer dado

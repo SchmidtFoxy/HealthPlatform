@@ -1,3 +1,11 @@
+# v0.7.7 — Plano de Recuperação Contextual
+
+- Adiciona síntese diária de recuperação baseada em prontidão, dor localizada, tendência de recuperação, carga, estratégia e execução.
+- Prioriza proteção de região dolorosa, sono, consolidação de carga, hidratação e encerramento do dia quando aplicável.
+- Não diagnostica lesão, não prescreve tratamento e não altera automaticamente a prescrição profissional.
+- Integra a leitura na Home do atleta e no prontuário profissional.
+- Sem migration nova; schema permanece 37/37.
+
 
 ### v0.7.6 r2 — correção de consistência do resumo de dor
 - Alinha a variável interna `impactoMaximoTreino7` ao contrato `ImpactoMaximoTreino7`, preservando a mesma regra de cálculo.

@@ -1,44 +1,37 @@
-# HealthPlatform v0.7.6 — Seed Ana v7 & Proteção de Variáveis PowerShell
+# HealthPlatform v0.7.7 — Plano de Recuperação Contextual
 
-> **v0.7.6:** corrige o populador pesado da Ana Ribeiro para PowerShell nativo. O literal decimal de C# `2.5m` foi removido e substituído por cast explícito `[decimal]2.5`, evitando que o PowerShell tente executar `2.5m` como comando. A versão também adiciona validações de regressão para literais numéricos incompatíveis em scripts `.ps1`.
+> A v0.7.7 transforma prontidão, dor localizada, tendência de recuperação, carga de treino e execução do dia em prioridades claras de recuperação, sem diagnóstico automático e sem alterar a prescrição profissional.
 
-## Destaques da v0.7.6
+## Destaques da v0.7.7
 
-- `POPULAR-ANA-RIBEIRO.ps1` atualizado para **v7**.
-- Corrigido o deload do histórico de treino: `[decimal]2.5` em vez de `2.5m`.
-- Revisão do seed para impedir sufixos numéricos de C# em PowerShell.
-- Diagnóstico resiliente e seed de 56 dias preservados.
-- Sem alteração de schema; `PREPARAR` continua 37/37.
-- Suíte ampliada para 712 verificações.
-
-
-- `POPULAR-ANA-RIBEIRO.ps1` v4;
-- diagnóstico detalhado de erros HTTP do seed;
-- falhas não fatais são acumuladas e resumidas no fim;
-- criação/histórico de metas não derruba todo o cenário demonstrativo;
-- mantém 56 dias de histórico esportivo, carga, PRs, prontidão e avaliações;
-- Coach Diário e toda a linha v0.7.1 preservados;
-- nenhuma alteração de schema: `PREPARAR` permanece 37/37;
-- suíte ampliada para 696 verificações.
-
+- novo `PlanoRecuperacaoService` derivado dos dados esportivos já existentes;
+- estados `Protecao`, `Recuperacao` e `Equilibrio`;
+- proteção de região corporal quando dor/impacto no treino estão altos;
+- prioridade de recuperação quando prontidão/tendência pedem cautela;
+- orientação de consolidação quando a carga exige revisão;
+- atenção à média recente de sono;
+- hidratação e encerramento do dia incorporados ao plano quando pertinentes;
+- card específico na Home do atleta;
+- leitura equivalente no prontuário profissional;
+- mensagens explícitas de segurança: sem diagnóstico de lesão, sem prescrição de tratamento e sem alteração automática de treino/nutrição/medicação;
+- seed da Ana Ribeiro v7 preservado e atualizado para o banner da v0.7.7;
+- nenhuma migration nova: `PREPARAR` permanece `37/37`;
+- suíte ampliada para **736 verificações**.
 
 ## Princípios
 
-- não diagnostica;
-- não cria prescrição paralela;
-- não aumenta carga ou volume automaticamente;
-- explica quais dados motivaram cada prioridade;
-- atleta e profissional enxergam a mesma base de decisão em linguagens adequadas;
-- nenhuma migration nova: `PREPARAR` permanece 37/37.
+- medicina do esporte orientada a comportamento sustentável;
+- a prescrição do profissional continua sendo a fonte de verdade;
+- mais carga não é automaticamente melhor;
+- dor e recuperação contextualizam a execução, não geram diagnóstico automático;
+- gamificação nunca deve ser motivo para ignorar sinais do corpo.
 
-## Validação
-
-A suíte local possui 680 verificações, preservando todas as camadas anteriores.
-
-Execute:
+## Validação local
 
 ```powershell
 .\PREPARAR.ps1
 .\RODAR.ps1
 .\TESTAR.ps1
 ```
+
+Alvo esperado: **736/736**.
