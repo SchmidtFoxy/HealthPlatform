@@ -1,3 +1,24 @@
+﻿# v0.4.0 — Connected Care: Patient Today
+
+A v0.4.0 inicia a fase **Connected Care**, mantendo a base clínica da v0.3.41-r1 e mudando o foco do Portal do Paciente de consulta passiva para acompanhamento diário.
+
+## Entregue nesta primeira etapa
+
+- Home do paciente renomeada conceitualmente para **Hoje**.
+- Resumo de atividades acompanhadas no dia.
+- Registro rápido de **peso, água, sono, dor, energia e sintomas** usando a infraestrutura auditada de `RegistroDiarioPaciente`, sem migration nova.
+- Metas do dia integradas ao fluxo principal.
+- Atalhos para evolução, plano alimentar e exames.
+- UX responsiva específica para celular/tablet.
+- Mantidos isolamento por organização, `PatientOnly`, auditoria e contratos existentes.
+- Nenhuma rotina de preparação passou a apagar dados ou popular demo implicitamente.
+
+## Próximas etapas Connected Care
+
+Protocolos personalizados, solicitações clínicas, medicamentos/adesão, caixa de entrada clínica e comunicação contextual.
+
+---
+
 # v0.3.41-r1 — Correção do teste do POPULAR remoto
 
 Patch apenas da suíte de testes.
@@ -2900,3 +2921,8 @@ Em outro PowerShell:
 .\TESTAR.ps1
 ```
 Acesse `http://localhost:5180`.
+
+
+## Hotfix v0.4.0-r1
+- Corrige o smoke test local do `POPULAR-REMOTO-RICO.ps1`, atualizando as assinaturas verificadas para a implementação rica V2 atual.
+- Não altera schema, API, regras clínicas ou dados.

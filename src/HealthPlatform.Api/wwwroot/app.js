@@ -1425,44 +1425,86 @@ async function loadMyPatientPortal(){
   host.innerHTML='<div class="card"><div class="skeleton" style="height:180px"></div></div>';
   const d=await api(`/api/portal/me/home?data=${todayISO()}`);
   const e=d.evolucaoCorporal||{},plano=d.planoAlimentarAtual,prox=d.proximaConsulta;
-  host.innerHTML=`<div class="patient-mobile-home">
-    <section class="patient-welcome">
-      <div><span class="eyebrow">MEU ACOMPANHAMENTO</span><h1>Olá, ${esc((d.paciente?.nome||state.user?.nome||'Paciente').split(' ')[0])} 👋</h1><p>Aqui está o resumo do seu dia.</p></div>
+  const metas=d.metasHoje||[],registros=d.registrosHoje||[];
+  const quickTypes=[
+    {key:'Peso',label:'Peso',icon:'⚖',unit:'kg',kind:'number',step:'0.1'},
+    {key:'Agua',label:'Água',icon:'💧',unit:'ml',kind:'number',step:'50'},
+    {key:'Sono',label:'Sono',icon:'🌙',unit:'h',kind:'number',step:'0.1'},
+    {key:'Dor',label:'Dor',icon:'●',unit:'0–10',kind:'scale'},
+    {key:'Energia',label:'Energia',icon:'⚡',unit:'0–10',kind:'scale'},
+    {key:'Sintoma',label:'Sintoma',icon:'✚',unit:'',kind:'text'}
+  ];
+  const quickDone=quickTypes.filter(q=>registros.some(r=>String(r.tipo||'').toLowerCase()===q.key.toLowerCase())).length;
+  const totalTasks=metas.length+quickTypes.length;
+  const doneTasks=(d.metasConcluidas||0)+quickDone;
+  const completion=totalTasks?Math.round(doneTasks/totalTasks*100):0;
+  host.innerHTML=`<div class="patient-mobile-home patient-today-home">
+    <section class="patient-welcome today-hero">
+      <div><span class="eyebrow">MEU DIA</span><h1>Olá, ${esc((d.paciente?.nome||state.user?.nome||'Paciente').split(' ')[0])} 👋</h1><p>Vamos cuidar do que importa hoje.</p></div>
       <div class="patient-date">${new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(new Date())}</div>
+      <div class="today-progress"><div><strong>${doneTasks}/${totalTasks}</strong><span>atividades acompanhadas</span></div><div class="today-progress-track"><i style="width:${completion}%"></i></div><b>${completion}%</b></div>
     </section>
 
-    ${prox?`<section class="patient-next-card"><span>PRÓXIMA CONSULTA</span><strong>${fmtDateTime(prox.dataHoraUtc)}</strong><p>${esc(prox.profissionalNome)}${prox.motivo?' • '+esc(prox.motivo):''}</p></section>`:''}
+    <section class="card today-actions-card">
+      <div class="card-head"><div><span class="eyebrow">REGISTRO RÁPIDO</span><h3>Como está seu dia?</h3></div><small>leva poucos segundos</small></div>
+      <div class="patient-quick-grid">${quickTypes.map(q=>{
+        const last=registros.find(r=>String(r.tipo||'').toLowerCase()===q.key.toLowerCase());
+        const val=last?(last.valorNumerico!=null?`${num(last.valorNumerico)} ${esc(last.unidade||q.unit||'')}`:last.escala!=null?`${last.escala}/10`:esc(last.descricao||'Registrado')):'';
+        return `<button class="patient-quick-action ${last?'done':''}" data-quick="${q.key}" data-kind="${q.kind}" data-unit="${q.unit}" data-step="${q.step||''}"><span>${q.icon}</span><strong>${q.label}</strong><small>${last?'✓ '+val:(q.unit||'Registrar')}</small></button>`;
+      }).join('')}</div>
+    </section>
 
-    <div class="patient-portal-grid">
-      <section class="card"><div class="card-head"><h3>Minha evolução</h3><small>última avaliação</small></div>
-        <div class="portal-metrics wide">${metric(num(e.pesoKg),' kg','Peso')}${metric(num(e.imc,2),'','IMC')}${metric(num(e.percentualGordura),'%','Gordura')}${metric(num(e.cinturaCm),' cm','Cintura')}</div>
-        ${e.variacaoPesoKg!=null?`<div class="trend-note">Variação: <strong>${e.variacaoPesoKg>0?'+':''}${num(e.variacaoPesoKg)} kg</strong></div>`:''}
-      </section>
+    ${prox?`<section class="patient-next-card today-next"><span>PRÓXIMA CONSULTA</span><strong>${fmtDateTime(prox.dataHoraUtc)}</strong><p>${esc(prox.profissionalNome)}${prox.motivo?' • '+esc(prox.motivo):''}</p></section>`:''}
 
-      <section class="card"><div class="card-head"><h3>Metas de hoje</h3><small>${d.metasConcluidas}/${d.metasAtivas}</small></div>
-        <div id="patientGoals">${d.metasHoje?.length?d.metasHoje.map(m=>`<div class="goal-row patient-goal">
-          <div><strong>${esc(m.nome)}</strong><small>${num(m.valorHoje)} ${esc(m.unidade||'')} de ${num(m.valorObjetivo)} ${esc(m.unidade||'')}</small></div>
+    <div class="patient-portal-grid today-grid">
+      <section class="card"><div class="card-head"><div><span class="eyebrow">OBJETIVOS</span><h3>Metas de hoje</h3></div><small>${d.metasConcluidas}/${d.metasAtivas}</small></div>
+        <div id="patientGoals">${metas.length?metas.map(m=>`<div class="goal-row patient-goal ${m.concluida?'goal-done':''}">
+          <div><strong>${m.concluida?'✓ ':''}${esc(m.nome)}</strong><small>${m.valorHoje!=null?num(m.valorHoje)+' '+esc(m.unidade||''):'Ainda não registrado'}${m.valorObjetivo!=null?' • meta '+num(m.valorObjetivo)+' '+esc(m.unidade||''):''}</small></div>
           <div class="goal-progress"><span style="width:${Math.min(100,Number(m.progressoPercentual||0))}%"></span></div>
-          <button class="secondary patient-goal-update" data-meta="${m.id}" data-name="${esc(m.nome)}" data-unit="${esc(m.unidade||'')}" data-current="${m.valorHoje??''}">Atualizar</button>
-        </div>`).join(''):sectionEmpty('Nenhuma meta ativa hoje.')}</div>
+          <button class="secondary patient-goal-update" data-meta="${m.id}" data-name="${esc(m.nome)}" data-unit="${esc(m.unidade||'')}" data-current="${m.valorHoje??''}">${m.concluida?'Atualizar':'Registrar'}</button>
+        </div>`).join(''):sectionEmpty('Seu profissional ainda não definiu metas para hoje.')}</div>
       </section>
 
-      <section class="card span-2"><div class="card-head"><h3>Plano alimentar</h3><small>${plano?`${plano.refeicoes} refeições`:'sem plano ativo'}</small></div>
+      <section class="card"><div class="card-head"><div><span class="eyebrow">EVOLUÇÃO</span><h3>Última avaliação</h3></div><button class="ghost" data-patient-jump="evolucao">Ver histórico</button></div>
+        <div class="portal-metrics wide">${metric(num(e.pesoKg),' kg','Peso')}${metric(num(e.imc,2),'','IMC')}${metric(num(e.percentualGordura),'%','Gordura')}${metric(num(e.cinturaCm),' cm','Cintura')}</div>
+        ${e.variacaoPesoKg!=null?`<div class="trend-note">Desde a avaliação anterior: <strong>${e.variacaoPesoKg>0?'+':''}${num(e.variacaoPesoKg)} kg</strong></div>`:''}
+      </section>
+
+      <section class="card span-2"><div class="card-head"><div><span class="eyebrow">ROTINA</span><h3>Plano alimentar de hoje</h3></div><button class="ghost" data-patient-jump="plano">Abrir plano</button></div>
         ${plano?`<div class="feature-title">${esc(plano.nome)}</div><div class="meal-strip">${(plano.rotinaHoje||[]).map(r=>`<div><strong>${r.horario?String(r.horario).slice(0,5):'--:--'}</strong><span>${esc(r.nome)}</span><small>${r.itens} item(ns)</small></div>`).join('')}</div>`:sectionEmpty('Nenhum plano alimentar ativo.')}
       </section>
 
-      <section class="card"><div class="card-head"><h3>Meu diário</h3><button class="ghost" id="patientAddDiary">+ Registrar</button></div>
-        ${d.registrosHoje?.length?`<div class="diary-list compact">${d.registrosHoje.slice(0,5).map(r=>`<article><div class="diary-icon">${diaryIcon(r.tipo)}</div><div><strong>${esc(r.tipo)}</strong><small>${fmtDateTime(r.dataHoraUtc)}</small><p>${esc(r.descricao||'')}</p></div><div class="diary-value">${r.valorNumerico!=null?`${num(r.valorNumerico)} ${esc(r.unidade||'')}`:''}</div></article>`).join('')}</div>`:sectionEmpty('Você ainda não registrou nada hoje.')}
+      <section class="card"><div class="card-head"><div><span class="eyebrow">HOJE</span><h3>Meus registros</h3></div><button class="ghost" id="patientAddDiary">+ Outro registro</button></div>
+        ${registros.length?`<div class="diary-list compact">${registros.slice(0,6).map(r=>`<article><div class="diary-icon">${diaryIcon(r.tipo)}</div><div><strong>${esc(r.tipo)}</strong><small>${fmtDateTime(r.dataHoraUtc)}</small><p>${esc(r.descricao||'')}</p></div><div class="diary-value">${r.valorNumerico!=null?`${num(r.valorNumerico)} ${esc(r.unidade||'')}`:r.escala!=null?`${r.escala}/10`:''}</div></article>`).join('')}</div>`:sectionEmpty('Você ainda não registrou nada hoje.')}
       </section>
 
-      <section class="card"><div class="card-head"><h3>Exames recentes</h3><small>${d.examesRecentes?.length||0}</small></div>
-        ${d.examesRecentes?.length?d.examesRecentes.slice(0,6).map(x=>`<div class="lab-row"><div><strong>${esc(x.marcador)}</strong><small>${fmtDate(x.dataColetaUtc)}</small></div><div><b>${x.valorNumerico!=null?num(x.valorNumerico,2):esc(x.valorTexto||'—')} ${esc(x.unidade||'')}</b><span class="pill ${x.classificacao==='DentroDaReferencia'?'Ativa':x.classificacao}">${esc(x.classificacao)}</span></div></div>`).join(''):sectionEmpty('Nenhum exame recente.')}
+      <section class="card"><div class="card-head"><div><span class="eyebrow">ACOMPANHAMENTO</span><h3>Exames recentes</h3></div><button class="ghost" data-patient-jump="exames">Ver exames</button></div>
+        ${d.examesRecentes?.length?d.examesRecentes.slice(0,5).map(x=>`<div class="lab-row"><div><strong>${esc(x.marcador)}</strong><small>${fmtDate(x.dataColetaUtc)}</small></div><div><b>${x.valorNumerico!=null?num(x.valorNumerico,2):esc(x.valorTexto||'—')} ${esc(x.unidade||'')}</b><span class="pill ${x.classificacao==='DentroDaReferencia'?'Ativa':x.classificacao}">${esc(x.classificacao)}</span></div></div>`).join(''):sectionEmpty('Nenhum exame recente.')}
       </section>
     </div>
   </div>`;
 
   $('#patientAddDiary').onclick=openMyDiaryForm;
   $$('.patient-goal-update').forEach(b=>b.onclick=()=>openMyGoalForm(b.dataset));
+  $$('.patient-quick-action').forEach(b=>b.onclick=()=>openQuickPatientRecord(b.dataset));
+  $$('[data-patient-jump]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.patientJump).catch(e=>toast(e.message,true)));
+}
+
+function openQuickPatientRecord(ds){
+  const label=ds.quick,unit=ds.unit||'';
+  if(ds.kind==='scale'){
+    patientPortalModal(`Registrar ${label}`,`${field(`${label} hoje (0 a 10)`,'escala','number','min="0" max="10" required')}${area('Quer contar algo?','descricao')}`,async f=>{
+      await api('/api/portal/me/diario',{method:'POST',body:JSON.stringify({dataHoraUtc:new Date().toISOString(),tipo:label,descricao:val(f,'descricao'),valorNumerico:null,unidade:null,escala:integer(f,'escala'),imagemUrl:null})});
+    });return;
+  }
+  if(ds.kind==='text'){
+    patientPortalModal(`Registrar ${label}`,`${area('O que você está sentindo?','descricao','required')}`,async f=>{
+      await api('/api/portal/me/diario',{method:'POST',body:JSON.stringify({dataHoraUtc:new Date().toISOString(),tipo:label,descricao:val(f,'descricao'),valorNumerico:null,unidade:null,escala:null,imagemUrl:null})});
+    });return;
+  }
+  patientPortalModal(`Registrar ${label}`,`${field(`${label}${unit?' ('+unit+')':''}`,'valorNumerico','number',`step="${ds.step||'0.1'}" required`)}${area('Observação (opcional)','descricao')}`,async f=>{
+    await api('/api/portal/me/diario',{method:'POST',body:JSON.stringify({dataHoraUtc:new Date().toISOString(),tipo:label,descricao:val(f,'descricao'),valorNumerico:dec(f,'valorNumerico'),unidade:unit,escala:null,imagemUrl:null})});
+  });
 }
 
 function patientPortalModal(title,body,onSubmit){
@@ -4890,7 +4932,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.3.41';
+const HP_MVP_VERSION='0.4.0';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -4976,7 +5018,7 @@ function hpInstallMvpPreviewUi(){
 hpInstallMvpPreviewUi();
 
 
-// ===== v0.3.41 — RS visual identity / mobile + tablet UX =====
+// ===== v0.4.0 — RS visual identity / mobile + tablet UX =====
 function hpInstallRsResponsiveUi(){
   const app=$('#appView'),sidebar=$('.sidebar'),menu=$('#menuButton');
   if(!app||!sidebar||!menu||app.querySelector('.rs-sidebar-screen'))return;
