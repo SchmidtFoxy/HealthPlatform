@@ -1,3 +1,16 @@
+# v0.6.8 — Performance & PRs
+
+- Linha de performance derivada diretamente das execuções reais de treino.
+- Melhor carga por exercício, melhor volume estimado e evolução desde a primeira marca registrada.
+- Detecção conservadora de novos PRs: exige marca anterior e considera PR recente apenas nos últimos 7 dias.
+- Contexto de prontidão exibido no dia da melhor marca quando houver check-in correspondente.
+- Comparação de volume estimado dos últimos 28 dias contra os 28 dias anteriores.
+- Home do atleta com evolução esportiva e lembrete explícito de que PR não é meta diária.
+- Prontuário profissional com performance, volume, PRs e contexto de recuperação.
+- Sem nova migration: dados são calculados a partir do histórico já existente.
+- PREPARAR permanece 37/37.
+- Suíte ampliada para 664 verificações.
+
 # v0.6.7 — Tendências de Recuperação & Alertas Inteligentes
 
 - Nova leitura longitudinal de recuperação comparando os últimos 7 dias com os 7 dias anteriores.

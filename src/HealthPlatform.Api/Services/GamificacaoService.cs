@@ -124,11 +124,14 @@ public static class GamificacaoService
         var totalTreinos = await db.ExecucoesTreino.CountAsync(x => x.PacienteId == pacienteId && x.Status == "Concluido", ct);
         var totalCheckins = await db.ProntidoesDiarias.CountAsync(x => x.PacienteId == pacienteId, ct);
         var eventos14 = await db.EventosXp.Where(x => x.PacienteId == pacienteId && x.Data >= dia.AddDays(-13) && x.Data <= dia).Select(x => x.Data).Distinct().CountAsync(ct);
+        var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, dia, ct);
+        var possuiPrHistorico = performance.Destaques.Any(x => x.Registros >= 2 && x.EvolucaoMelhorCargaPercentual > 0m);
         var candidatas = new[]
         {
             (Codigo: "primeiro-treino", Titulo: "Primeiro passo", Descricao: "Concluiu o primeiro treino registrado.", Icone: "🏁", Atingiu: totalTreinos >= 1, Xp: 80),
             (Codigo: "dez-treinos", Titulo: "Em movimento", Descricao: "Completou 10 treinos registrados.", Icone: "🏋️", Atingiu: totalTreinos >= 10, Xp: 180),
             (Codigo: "sete-checkins", Titulo: "Autoconhecimento", Descricao: "Registrou 7 check-ins de prontidão.", Icone: "🧠", Atingiu: totalCheckins >= 7, Xp: 140),
+            (Codigo: "primeiro-pr", Titulo: "Nova marca", Descricao: "Superou uma melhor carga anterior em um exercício.", Icone: "🏆", Atingiu: possuiPrHistorico, Xp: 150),
             (Codigo: "consistencia-80", Titulo: "Ritmo sustentável", Descricao: "Alcançou consistência de pelo menos 80/100 em 14 dias.", Icone: "🔥", Atingiu: eventos14 >= 8, Xp: 220)
         };
         var conquistadas = await db.ConquistasPaciente.Where(x => x.PacienteId == pacienteId).Select(x => x.Codigo).ToListAsync(ct);

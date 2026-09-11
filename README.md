@@ -1,9 +1,8 @@
+# HealthPlatform v0.6.8 — Performance & PRs
 
-## v0.6.7 — Tendências de Recuperação
+A v0.6.8 transforma execuções reais de treino em uma linha de evolução esportiva: melhores cargas por exercício, volume estimado, novas marcas recentes e contexto de prontidão no dia do PR. Os indicadores são observacionais e não autorizam aumento automático de carga.
 
-O Daily Athlete agora consolida 7 dias de prontidão, sono, dor, recuperação e carga recente para mostrar uma tendência explicável ao atleta e ao profissional. Os sinais são de acompanhamento, não diagnósticos, e nunca aumentam ou reduzem uma prescrição automaticamente.
-
-# HealthPlatform v0.6.7 — Tendências de Recuperação & Alertas Inteligentes
+A tendência de recuperação da v0.6.7 permanece ativa e complementa a leitura de performance com sono, dor, recuperação, prontidão e carga recente.
 
 > **v0.6.6 — Roteiro de Hoje:** a Estratégia do Dia agora vira ações acompanháveis: prontidão, treino prescrito, metas, hidratação e reflexão de fechamento.
 
