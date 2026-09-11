@@ -1,3 +1,13 @@
+# Changelog
+
+## v0.8.6 — Ações Prioritárias do Ciclo
+- Consolida tendência por objetivo, checkpoint, recuperação, carga, nutrição e hidratação em até 3 prioridades semanais.
+- Recuperação e equilíbrio de carga têm precedência sobre metas de volume/performance quando há sinais de atenção.
+- Cada prioridade informa motivo e ação, sem score opaco e sem alterar prescrição automaticamente.
+- Cards equivalentes para atleta e profissional.
+- Sem migration nova; schema permanece 37/37.
+- Suíte ampliada para 808 verificações.
+
 # HealthPlatform v0.8.5 — Tendência por Objetivo do Ciclo
 
 - Nova leitura contextual por perfil esportivo (hipertrofia, força/performance, emagrecimento, corrida/condicionamento, qualidade de vida ou personalizado).
