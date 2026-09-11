@@ -308,6 +308,22 @@ public record PortalToleranciaProgressaoResponse(
     string Estado, string Titulo, string Resumo, int EixosAnalisados,
     IReadOnlyCollection<PortalToleranciaProgressaoEixoResponse> Eixos, string Interpretacao, string MensagemSeguranca);
 
+public record PortalPainelMedicinaEsporteIndicadorResponse(
+    string Codigo, string Categoria, string Estado, string Titulo, string Valor, string Contexto, string Prioridade);
+
+public record PortalPainelMedicinaEsporteResponse(
+    string Estado, string Titulo, string Resumo, int IndicadoresAtencao, int IndicadoresEstaveis,
+    string PrioridadePrincipal, IReadOnlyCollection<PortalPainelMedicinaEsporteIndicadorResponse> Indicadores,
+    IReadOnlyCollection<string> Contextos, string MensagemSeguranca);
+
+public record PortalAlertaClinicoEsportivoResponse(
+    string Codigo, string Nivel, string Titulo, string Resumo,
+    IReadOnlyCollection<string> Sinais, IReadOnlyCollection<string> Origens, string Acao);
+
+public record PortalAlertasClinicoEsportivosResponse(
+    string Estado, string Titulo, string Resumo, int TotalAlertas, string PrioridadePrincipal,
+    IReadOnlyCollection<PortalAlertaClinicoEsportivoResponse> Alertas, string MensagemSeguranca);
+
 public record PortalPerfilRespostaAtletaEixoResponse(
     string Eixo, string PadraoHistorico, int TotalEventos, int EventosInterpretaveis,
     string EstadoAtual, string Contexto, IReadOnlyCollection<string> Evidencias);
@@ -449,6 +465,8 @@ public record PortalPacienteHomeResponse(
     PortalComparacaoProgressaoResponse ComparacaoProgressoes,
     PortalToleranciaProgressaoResponse ToleranciaProgressao,
     PortalPerfilRespostaAtletaResponse PerfilRespostaAtleta,
+    PortalPainelMedicinaEsporteResponse PainelMedicinaEsporte,
+    PortalAlertasClinicoEsportivosResponse AlertasClinicoEsportivos,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

@@ -1,3 +1,28 @@
+# v0.11.1 — Alertas Clinico-Esportivos Transparentes
+
+- Adiciona alertas explicaveis a partir dos oito eixos ja consolidados no Painel de Medicina do Esporte.
+- Cada alerta expoe os sinais e origens que motivaram o destaque, sem score oculto.
+- Combinacoes recuperacao + dor, carga + recuperacao, dor + prontidao e progressao + sinais concomitantes recebem prioridade contextual.
+- Sinal isolado permanece em acompanhamento e nao recebe gravidade artificial.
+- Alertas nao produzem diagnostico, nao estimam probabilidade de lesao e nao realizam prescricao automatica.
+- Integrado as Homes do atleta e do profissional, sem nova migration; schema permanece 38/38.
+
+﻿
+## v0.11.0 r2 — reparo resiliente do Painel de Medicina do Esporte
+- O `PREPARAR.ps1` agora valida os guardrails clinicos do `PainelMedicinaEsporteService.cs` antes do build.
+- Se uma extracao por sobreposicao preservar uma copia antiga, o arquivo e restaurado automaticamente a partir de `scripts/recovery`.
+- Inclui `CORRIGIR-FONTES-v0.11.0.ps1` para reparo manual opcional.
+- Sem mudanca funcional, de schema ou de versao semantica.
+
+# v0.11.0 — Painel de Medicina do Esporte
+
+- Consolida prontidao, dor, recuperacao, carga, performance, adesao e progressao em uma visao profissional unica.
+- Mantem cada eixo rastreavel aos dados-fonte e nao cria score geral de saude/performance.
+- Recuperacao e dor tem prioridade sobre performance isolada na definicao da principal area de atencao.
+- Leva contexto do ciclo esportivo e perfil longitudinal para a interpretacao, sem diagnostico automatico.
+- Adiciona cards de sintese para profissional e atleta, reduzindo a dependencia de leitura card a card.
+- Sem nova migration; schema permanece 38/38.
+
 # v0.10.9 — Perfil de Resposta do Atleta
 
 - Consolida tolerancia individual, resposta longitudinal atual e estabilidade de habitos em um retrato longitudinal unico e revisavel.
@@ -830,3 +855,6 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Preserva as referências históricas de compatibilidade da v0.9.7.
 - Mantém `VERSION.txt` em `0.9.8`, sem alteração de schema ou migration.
 
+
+### v0.11.0 r1 — alinhamento das travas clínicas do painel
+- Explicita no `PainelMedicinaEsporteService` as sentinelas `nao produzir diagnostico`, `previsao de lesao` e `prescricao automatica`, preservando a lógica funcional e a segurança clínica já existentes.

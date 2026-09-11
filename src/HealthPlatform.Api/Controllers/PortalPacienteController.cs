@@ -186,6 +186,8 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var comparacaoProgressoes = ComparacaoProgressoesService.Montar(historicoProgressoes);
         var toleranciaProgressao = ToleranciaProgressaoService.Montar(historicoProgressoes);
         var perfilRespostaAtleta = PerfilRespostaAtletaService.Montar(toleranciaProgressao, interpretacaoLongitudinalProgressao, estabilidadeHabitos, tendenciaRecuperacao, cargaTreino, performance);
+        var painelMedicinaEsporte = PainelMedicinaEsporteService.Montar(prontidao, dorCorporal, tendenciaRecuperacao, cargaTreino, performance, adesaoNutricional, hidratacaoContextual, ciclo, registroProgressao, perfilRespostaAtleta);
+        var alertasClinicoEsportivos = AlertasClinicoEsportivosService.Montar(painelMedicinaEsporte);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -225,6 +227,8 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             comparacaoProgressoes,
             toleranciaProgressao,
             perfilRespostaAtleta,
+            painelMedicinaEsporte,
+            alertasClinicoEsportivos,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

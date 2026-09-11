@@ -81,6 +81,34 @@ function Repair-V0102ControllersIfNeeded {
 
 Repair-V0102ControllersIfNeeded
 
+# Hotfix v0.11.0-r2: algumas extracoes por sobreposicao no Windows podem
+# preservar uma copia antiga do PainelMedicinaEsporteService.cs. Como a suite
+# valida guardrails clinicos diretamente na fonte, garantimos que o arquivo
+# local contenha as travas canonicas antes do build/teste.
+function Repair-V0110PainelMedicinaEsporteIfNeeded {
+    $target = Join-Path $root "src\HealthPlatform.Api\Services\PainelMedicinaEsporteService.cs"
+    $clean  = Join-Path $root "scripts\recovery\PainelMedicinaEsporteService.cs.clean"
+
+    if (-not (Test-Path $target)) { throw "Arquivo esperado ausente: $target" }
+    if (-not (Test-Path $clean))  { throw "Copia de recuperacao ausente: $clean" }
+
+    $source = Get-Content -LiteralPath $target -Encoding UTF8 -Raw
+    $required = @('nao produzir diagnostico', 'previsao de lesao', 'prescricao automatica')
+    $missing = @($required | Where-Object { -not $source.Contains($_) })
+
+    if ($missing.Count -gt 0) {
+        Write-Host "[Fonte] PainelMedicinaEsporteService antigo detectado. Restaurando copia canonica v0.11.0..." -ForegroundColor Yellow
+        Copy-Item -LiteralPath $clean -Destination $target -Force
+        $source = Get-Content -LiteralPath $target -Encoding UTF8 -Raw
+        $missing = @($required | Where-Object { -not $source.Contains($_) })
+        if ($missing.Count -gt 0) {
+            throw "Falha ao restaurar guardrails clinicos do PainelMedicinaEsporteService: $($missing -join ', ')"
+        }
+    }
+}
+
+Repair-V0110PainelMedicinaEsporteIfNeeded
+
 # Evita um segundo prompt de seguranca ao chamar scripts internos extraidos do ZIP.
 Get-ChildItem (Join-Path $root "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue
 
