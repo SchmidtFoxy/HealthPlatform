@@ -1,4 +1,23 @@
+
+## v0.10.2 r2 — proteção contra mesclagem de fontes antigas
+- PREPARAR.ps1 valida e restaura automaticamente os dois controllers da Home antes do build quando detectar o cabeçalho corrompido da r0.
+- Inclui cópias canônicas em scripts/recovery e o utilitário CORRIGIR-FONTES-v0.10.2.ps1 para reparo manual determinístico.
+- Nenhuma alteração funcional, de schema ou de versão semântica.
+
+
+## v0.10.2 r1 — correção de compilação das Homes
+
+- Corrigidos os cabeçalhos `using` de `MeuPortalPacienteController` e `PortalPacienteController`, corrompidos durante a integração da reavaliação de progressão.
+- `reavaliacaoProgressao` agora é passado explicitamente ao `PortalPacienteHomeResponse` nas duas Homes.
+- Sem alteração de schema, migration ou regra funcional da v0.10.2.
 # Changelog
+
+## v0.10.2 — Reavaliação da Progressão & Decisão de Continuidade
+- transforma o monitoramento em decisão transparente: Manter, Revisar, Encerrar ou AguardarDados;
+- encerramento significa apenas finalizar a janela atual de observação, sem inferir sucesso causal;
+- revisão clínica prevalece sobre performance favorável;
+- falta de dado não vira falha, cobrança ou progressão automática;
+- integração nos portais do atleta e profissional, sem nova migration.
 
 ## v0.10.1 — Monitoramento de Resposta à Progressão
 - adiciona leitura transparente de recuperação, carga e performance ao redor do plano supervisionado;

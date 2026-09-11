@@ -46,6 +46,41 @@ function Stop-HealthPlatformLocalApi {
 
 Stop-HealthPlatformLocalApi
 
+# Hotfix v0.10.2-r2: protege contra extracao/mesclagem que preserve os
+# controllers corrompidos da r0. Antes do build, valida o cabecalho dos dois
+# arquivos e restaura copias canonicas incluidas no proprio pacote se necessario.
+function Repair-V0102ControllersIfNeeded {
+    $pairs = @(
+        @{
+            Target = Join-Path $root "src\HealthPlatform.Api\Controllers\PortalPacienteController.cs"
+            Clean  = Join-Path $root "scripts\recovery\PortalPacienteController.cs.clean"
+            First  = "using HealthPlatform.Api.Contracts.Portal;"
+        },
+        @{
+            Target = Join-Path $root "src\HealthPlatform.Api\Controllers\MeuPortalPacienteController.cs"
+            Clean  = Join-Path $root "scripts\recovery\MeuPortalPacienteController.cs.clean"
+            First  = "using System.Text.Json;"
+        }
+    )
+
+    foreach ($pair in $pairs) {
+        if (-not (Test-Path $pair.Target)) { throw "Arquivo esperado ausente: $($pair.Target)" }
+        if (-not (Test-Path $pair.Clean)) { throw "Copia de recuperacao ausente: $($pair.Clean)" }
+
+        $firstLine = Get-Content -LiteralPath $pair.Target -TotalCount 1
+        if ($firstLine -ne $pair.First) {
+            Write-Host "[Fonte] Controller antigo/corrompido detectado. Restaurando $([IO.Path]::GetFileName($pair.Target))..." -ForegroundColor Yellow
+            Copy-Item -LiteralPath $pair.Clean -Destination $pair.Target -Force
+            $firstLine = Get-Content -LiteralPath $pair.Target -TotalCount 1
+            if ($firstLine -ne $pair.First) {
+                throw "Falha ao restaurar controller: $($pair.Target)"
+            }
+        }
+    }
+}
+
+Repair-V0102ControllersIfNeeded
+
 # Evita um segundo prompt de seguranca ao chamar scripts internos extraidos do ZIP.
 Get-ChildItem (Join-Path $root "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue
 

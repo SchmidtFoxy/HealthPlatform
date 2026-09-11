@@ -1,3 +1,6 @@
+## v0.10.2 — Reavaliação da Progressão & Decisão de Continuidade
+Converte o monitoramento de resposta em uma decisão supervisionada de manter, revisar, encerrar a observação atual ou aguardar mais dados, sem inferir causalidade nem iniciar nova progressão automaticamente.
+
 ## v0.10.1 — Monitoramento de Resposta à Progressão
 Acompanha recuperação, carga e performance ao redor do plano supervisionado sem inferir causalidade nem autorizar nova progressão automática.
 

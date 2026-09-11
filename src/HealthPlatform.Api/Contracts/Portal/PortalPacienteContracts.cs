@@ -266,6 +266,14 @@ public record PortalMonitoramentoRespostaProgressaoResponse(
     string Decisao, IReadOnlyCollection<PortalSinalRespostaProgressaoResponse> Sinais, string Acao,
     string MensagemSeguranca);
 
+public record PortalCriterioReavaliacaoProgressaoResponse(
+    string Codigo, string Titulo, string Estado, string Evidencia);
+
+public record PortalReavaliacaoProgressaoResponse(
+    string Estado, string Titulo, string Resumo, bool EmReavaliacao, bool PodeEncerrarObservacao,
+    string? EixoSupervisionado, string Decisao, IReadOnlyCollection<PortalCriterioReavaliacaoProgressaoResponse> Criterios,
+    string Acao, string ProximoPasso, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -371,6 +379,7 @@ public record PortalPacienteHomeResponse(
     PortalDecisaoProgressaoResponse DecisaoProgressao,
     PortalPlanoProgressaoSupervisionadaResponse PlanoProgressaoSupervisionada,
     PortalMonitoramentoRespostaProgressaoResponse MonitoramentoRespostaProgressao,
+    PortalReavaliacaoProgressaoResponse ReavaliacaoProgressao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.10.1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.10.2" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -181,11 +181,11 @@ if (app.Environment.IsDevelopment())
                     string.Join("; ", resetResult.Errors.Select(x => x.Description)));
             }
 
-            Console.WriteLine("[v0.10.1] Admin local desbloqueado e senha sincronizada com Seed:AdminPassword.");
+            Console.WriteLine("[v0.10.2] Admin local desbloqueado e senha sincronizada com Seed:AdminPassword.");
         }
         else
         {
-            Console.WriteLine("[v0.10.1] Admin local desbloqueado; credencial ja esta sincronizada.");
+            Console.WriteLine("[v0.10.2] Admin local desbloqueado; credencial ja esta sincronizada.");
         }
     }
 }
