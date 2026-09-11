@@ -43,7 +43,7 @@ function Api($method, $uri, $headers=$null, $body=$null) {
     }
 }
 
-Write-Host "=== HealthPlatform v0.7.2 | Seed esportivo PESADO da Ana Ribeiro (v4) ===" -ForegroundColor Cyan
+Write-Host "=== HealthPlatform v0.7.5 | Seed esportivo PESADO da Ana Ribeiro (v7) ===" -ForegroundColor Cyan
 Write-Host "Base: $base" -ForegroundColor DarkGray
 
 # 0) Healthcheck antes de alterar qualquer dado
@@ -209,7 +209,7 @@ if ($sessoes.Count -gt 0) {
         foreach ($it in (Arr $sess.itens)) {
             $baseLoad = if ($null -ne $it.carga) { [decimal]$it.carga } else { [decimal]20 }
             $progress = [decimal]([math]::Floor($n/3) * 1.25 + ($j * 0.5))
-            if ($week -eq 3) { $progress -= 2.5m }
+            if ($week -eq 3) { $progress -= [decimal]2.5 }
             $items += @{
                 itemTreinoId=$it.id; seriesRealizadas=$it.series; repeticoesRealizadas=$(if (($n%3)-eq 0){'8'}elseif(($n%3)-eq 1){'9'}else{'10'});
                 cargaRealizada=[math]::Max(0,[math]::Round($baseLoad+$progress,1)); unidadeCarga=$(if($it.unidadeCarga){$it.unidadeCarga}else{'kg'});
@@ -284,7 +284,7 @@ foreach ($diasAtras in $datasAval) {
 Write-Host "[9/10] Avaliações corporais longitudinais: OK" -ForegroundColor Green
 
 # 10) Mostra resumo final incluindo a camada 0.7.x.
-$home = Api Get '/api/portal/me/home' $patient
+$homeResumo = Api Get '/api/portal/me/home' $patient
 Write-Host "[10/10] Seed concluído." -ForegroundColor Green
 Write-Host "" 
 Write-Host "ANA RIBEIRO AGORA TEM:" -ForegroundColor Cyan
@@ -300,22 +300,22 @@ Write-Host ""
 Write-Host "Login paciente: $anaEmail" -ForegroundColor Yellow
 Write-Host "Senha paciente: $SenhaPaciente" -ForegroundColor Yellow
 Write-Host "" 
-if ($null -ne $home.gamificacao) {
-    Write-Host ("Nível atual: {0} | XP total: {1} | Consistência: {2}/100" -f $home.gamificacao.nivel,$home.gamificacao.xpTotal,$home.gamificacao.consistenciaScore) -ForegroundColor Cyan
+if ($null -ne $homeResumo.gamificacao) {
+    Write-Host ("Nível atual: {0} | XP total: {1} | Consistência: {2}/100" -f $homeResumo.gamificacao.nivel,$homeResumo.gamificacao.xpTotal,$homeResumo.gamificacao.consistenciaScore) -ForegroundColor Cyan
 }
-if ($null -ne $home.tendenciaRecuperacao) {
-    Write-Host ("Recuperação: {0} | prontidão média 7d: {1}" -f $home.tendenciaRecuperacao.tendencia,$home.tendenciaRecuperacao.prontidaoMedia7) -ForegroundColor Cyan
+if ($null -ne $homeResumo.tendenciaRecuperacao) {
+    Write-Host ("Recuperação: {0} | prontidão média 7 dias: {1}" -f $homeResumo.tendenciaRecuperacao.tendencia,$homeResumo.tendenciaRecuperacao.prontidaoMedia7) -ForegroundColor Cyan
 }
-if ($null -ne $home.cargaTreino) {
-    Write-Host ("Carga: {0} | relação com base: {1}x" -f $home.cargaTreino.classificacao,$home.cargaTreino.relacaoCargaComBase) -ForegroundColor Cyan
+if ($null -ne $homeResumo.cargaTreino) {
+    Write-Host ("Carga: {0} | relação com base: {1}x" -f $homeResumo.cargaTreino.classificacao,$homeResumo.cargaTreino.relacaoCargaComBase) -ForegroundColor Cyan
 }
-if ($null -ne $home.performance) {
-    Write-Host ("Performance: {0} | PRs recentes: {1}" -f $home.performance.tendencia,$home.performance.prsRecentes) -ForegroundColor Cyan
+if ($null -ne $homeResumo.performance) {
+    Write-Host ("Performance: {0} | PRs recentes: {1}" -f $homeResumo.performance.tendencia,$homeResumo.performance.prsRecentes) -ForegroundColor Cyan
 }
-if ($null -ne $home.coachDiario) {
-    Write-Host ("Coach Diário: {0} | {1}" -f $home.coachDiario.estado,$home.coachDiario.titulo) -ForegroundColor Magenta
+if ($null -ne $homeResumo.coachDiario) {
+    Write-Host ("Coach Diário: {0} | {1}" -f $homeResumo.coachDiario.estado,$homeResumo.coachDiario.titulo) -ForegroundColor Magenta
     $pos=1
-    foreach ($prio in (Arr $home.coachDiario.prioridades)) {
+    foreach ($prio in (Arr $homeResumo.coachDiario.prioridades)) {
         Write-Host ("  #{0} {1}: {2}" -f $pos,$prio.categoria,$prio.titulo) -ForegroundColor DarkMagenta
         $pos++
     }

@@ -1,3 +1,26 @@
+# HealthPlatform v0.7.5 — Seed Ana v7 & Variáveis Automáticas PowerShell
+
+- Hotfix r1: corrige as sentinelas [697] e [705] da suíte que ainda procuravam o banner legado v6 em vez do seed corrente v7.
+
+- Corrige o seed da Ana para não sobrescrever `$HOME`, variável automática somente leitura do PowerShell.
+- O resumo final agora usa `$homeResumo`.
+- Adiciona proteção de regressão para `HOME`, `PID`, `PROFILE`, `HOST` e `PSHOME`.
+- Mantém os 56 dias de histórico, avaliações corporais, carga, performance, gamificação e Coach Diário.
+- Sem alteração de schema; PREPARAR permanece 37/37.
+- Suíte ampliada para 720 verificações.
+
+# v0.7.4 — Seed Ana v6 & Validação PowerShell
+- Corrigido falso positivo da validação numérica: textos como `7d` dentro de strings não são mais tratados como sufixos de código.
+- Resumo do seed agora usa `7 dias` explicitamente.
+
+- Corrigido `POPULAR-ANA-RIBEIRO.ps1`: o literal `2.5m` era sintaxe C# e no PowerShell era interpretado como comando inexistente.
+- Ajuste do deload agora usa `[decimal]2.5`.
+- Seed da Ana atualizado para v6 mantendo 56 dias, Coach, carga, performance, prontidão, metas e avaliações corporais.
+- Adicionadas verificações contra sufixos numéricos incompatíveis em scripts PowerShell.
+- Sem migration nova; schema da v0.6.4 permanece suficiente.
+- API/UI/VERSION atualizados para 0.7.4.
+- Suíte ampliada para 712 verificações.
+
 # v0.7.2 — Seed Resiliente & Diagnóstico de Dados
 
 - Corrige o seed pesado da Ana Ribeiro que podia abortar com `400 Bad Request` sem revelar o endpoint ou a resposta da API.
@@ -359,3 +382,7 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Corrige validações do TESTAR.ps1 que dependiam de textos acentuados servidos via HTTP.
 - As verificações agora usam rotas, funções e seletores técnicos estáveis.
 - Nenhuma alteração de schema, API, regra clínica ou dados.
+
+### v0.7.5 r2 — correção da sentinela de schema
+- Corrige o teste 718/720 para validar a etapa 37/37 em `scripts/setup.ps1`, que é onde o PREPARAR delega os upgrades.
+- Nenhuma alteração de schema, migration ou comportamento funcional.
