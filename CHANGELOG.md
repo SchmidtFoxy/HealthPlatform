@@ -1,3 +1,18 @@
+﻿
+### v0.7.8 r1 — alinhamento de sentinelas de versão
+- Corrige TESTAR.ps1 para esperar API 0.7.8 no healthcheck.
+- Alinha Swagger, banner de login, log de bootstrap e scripts/run.ps1 com 0.7.8.
+- Sem alteração de schema ou regra funcional de adesão nutricional.
+# v0.7.8 — Adesão Nutricional Contextual
+
+- Nova síntese diária de adesão às refeições do plano ativo.
+- Paciente registra refeição como Realizada, Adaptada ou Não realizada.
+- Registros idempotentes por refeição/dia no Diário; nenhuma migration nova.
+- Coach Diário considera ausência/padrão de registros sem prescrever compensações.
+- Home do atleta e prontuário profissional recebem card nutricional.
+- PREPARAR permanece 37/37.
+- Suíte ampliada para 744 verificações.
+
 # v0.7.7 — Plano de Recuperação Contextual
 
 - Adiciona síntese diária de recuperação baseada em prontidão, dor localizada, tendência de recuperação, carga, estratégia e execução.

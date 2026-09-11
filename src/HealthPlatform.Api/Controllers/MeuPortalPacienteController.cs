@@ -158,6 +158,48 @@ public sealed class MeuPortalPacienteController(
         return Ok(await DorCorporalService.MontarAsync(db, pacienteId.Value, request.Data, ct));
     }
 
+
+    [HttpPost("refeicoes/{refeicaoId:guid}/adesao")]
+    public async Task<ActionResult<PortalAdesaoNutricionalResponse>> RegistrarAdesaoRefeicao(
+        Guid refeicaoId, RegistrarAdesaoRefeicaoRequest request, CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue) return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var status = AdesaoNutricionalService.NormalizarStatus(request.Status);
+        if (string.IsNullOrWhiteSpace(status))
+            return BadRequest(new { message = "Status deve ser Realizada, Adaptada ou NaoRealizada." });
+
+        var dia = DateOnly.FromDateTime(DateTime.UtcNow);
+        var refeicaoValida = await db.RefeicoesPlanoAlimentar.AsNoTracking().AnyAsync(x =>
+            x.Id == refeicaoId && x.PlanoAlimentar.PacienteId == pacienteId.Value &&
+            x.PlanoAlimentar.Status == "Ativo" && x.PlanoAlimentar.DataInicio <= dia &&
+            (!x.PlanoAlimentar.DataFim.HasValue || x.PlanoAlimentar.DataFim.Value >= dia), ct);
+        if (!refeicaoValida) return NotFound(new { message = "Refeicao ativa nao encontrada no plano do paciente." });
+
+        var inicio = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fim = inicio.AddDays(1);
+        var candidatos = await db.RegistrosDiarioPaciente
+            .Where(x => x.PacienteId == pacienteId.Value && x.Tipo == "AdesaoRefeicao" &&
+                        x.DataHoraUtc >= inicio && x.DataHoraUtc < fim).ToListAsync(ct);
+        var item = candidatos.FirstOrDefault(x => AdesaoNutricionalService.Corresponde(x.Descricao, refeicaoId));
+        var novo = item is null;
+        if (item is null)
+        {
+            item = new RegistroDiarioPaciente { PacienteId = pacienteId.Value, Tipo = "AdesaoRefeicao", DataHoraUtc = DateTime.UtcNow };
+            db.RegistrosDiarioPaciente.Add(item);
+        }
+        item.Descricao = AdesaoNutricionalService.Serializar(refeicaoId, status, request.Observacao);
+        item.ValorNumerico = status switch { "Realizada" => 100m, "Adaptada" => 80m, _ => 0m };
+        item.Unidade = "adequacao-plano-percentual";
+        item.Escala = null;
+        item.UpdatedAtUtc = DateTime.UtcNow;
+        Auditar(novo ? "CREATE" : "UPDATE", "AdesaoRefeicao", item.Id, null, new { refeicaoId, status });
+        await db.SaveChangesAsync(ct);
+
+        return Ok(await AdesaoNutricionalService.MontarAsync(db, pacienteId.Value, dia, ct));
+    }
+
     [HttpPost("fechamento-dia")]
     public async Task<IActionResult> FecharDia(FecharDiaRequest request, CancellationToken ct)
     {
@@ -870,10 +912,11 @@ public sealed class MeuPortalPacienteController(
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, dia, ct);
         var execucaoDoDia = await ExecucaoGuiadaService.MontarAsync(db, pacienteId, dia, estrategiaDoDia, ct);
         var planoRecuperacao = PlanoRecuperacaoService.Montar(prontidao, dorCorporal, tendenciaRecuperacao, cargaTreino, estrategiaDoDia, execucaoDoDia);
-        var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo);
+        var adesaoNutricional = await AdesaoNutricionalService.MontarAsync(db, pacienteId, dia, ct);
+        var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, planoRecuperacao, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, planoRecuperacao, adesaoNutricional, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

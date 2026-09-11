@@ -16,7 +16,8 @@ public static class CoachDiarioService
         PortalCargaTreinoResponse carga,
         PortalPerformanceResponse performance,
         PortalExecucaoDiaResponse execucao,
-        PortalCicloEsportivoResponse? ciclo)
+        PortalCicloEsportivoResponse? ciclo,
+        PortalAdesaoNutricionalResponse adesaoNutricional)
     {
         var prioridades = new List<PortalCoachPrioridadeResponse>();
 
@@ -90,6 +91,23 @@ public static class CoachDiarioService
                 "Consolide a carga atual",
                 $"A semana está em {carga.RelacaoCargaComBase:0.00}× a linha de base.",
                 "Priorize técnica, recuperação e execução do plano; mais carga não é necessária só porque a semana está indo bem.");
+        }
+
+        if (adesaoNutricional.Estado == "Revisar")
+        {
+            Adicionar(
+                "revisar-adesao-nutricional", "Nutrição", "Media",
+                "Revise o contexto da alimentação de hoje",
+                adesaoNutricional.Mensagem,
+                "Não compense com restrição ou excesso. Registre o que aconteceu e leve padrões recorrentes ao profissional para ajuste do plano.");
+        }
+        else if (adesaoNutricional.Estado == "SemRegistros" && adesaoNutricional.RefeicoesPlanejadas > 0)
+        {
+            Adicionar(
+                "registrar-refeicoes", "Nutrição", "Baixa",
+                "Registre como o plano alimentar aconteceu",
+                "Há refeições planejadas hoje, mas ainda sem registro de execução.",
+                "Marque cada refeição como realizada, adaptada ou não realizada; o objetivo é aprender com o padrão, não buscar perfeição.");
         }
 
         if (execucao.ProgressoPercentual < 100m)

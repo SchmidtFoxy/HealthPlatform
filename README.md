@@ -1,4 +1,18 @@
-# HealthPlatform v0.7.7 — Plano de Recuperação Contextual
+# HealthPlatform v0.7.8 — Adesão Nutricional Contextual
+
+> A v0.7.8 transforma o plano alimentar ativo em acompanhamento diário de execução: cada refeição pode ser registrada como realizada, adaptada ou não realizada, sem alterar automaticamente calorias, macros ou prescrição.
+
+## Destaques da v0.7.8
+
+- acompanhamento das refeições planejadas do dia;
+- status Realizada / Adaptada / Não realizada;
+- adequação calculada apenas sobre refeições já registradas;
+- linguagem não punitiva: foco em padrão sustentável, não perfeição;
+- integração com Coach Diário;
+- visão equivalente para profissional;
+- sem migration: registros reutilizam o Diário do paciente;
+- PREPARAR permanece 37/37.
+
 
 > A v0.7.7 transforma prontidão, dor localizada, tendência de recuperação, carga de treino e execução do dia em prioridades claras de recuperação, sem diagnóstico automático e sem alterar a prescrição profissional.
 

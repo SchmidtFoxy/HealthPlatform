@@ -44,6 +44,17 @@ public record PortalRegistroDiarioResponse(
 
 public record PortalRefeicaoResponse(Guid Id, string Nome, TimeOnly? Horario, int Ordem, int Itens);
 
+
+public record PortalAdesaoNutricionalRefeicaoResponse(
+    Guid RefeicaoId, string Nome, TimeOnly? Horario, string Status, string? Observacao);
+
+public record PortalAdesaoNutricionalResponse(
+    int RefeicoesPlanejadas, int RefeicoesRegistradas, int Realizadas, int Adaptadas, int NaoRealizadas,
+    decimal? AdequacaoRegistradaPercentual, string Estado, string Mensagem,
+    IReadOnlyCollection<PortalAdesaoNutricionalRefeicaoResponse> Refeicoes);
+
+public sealed record RegistrarAdesaoRefeicaoRequest(string Status, string? Observacao);
+
 public record PortalPlanoAtualResponse(
     Guid Id,
     string Nome,
@@ -185,6 +196,7 @@ public record PortalPacienteHomeResponse(
     PortalCargaTreinoResponse CargaTreino,
     PortalPerformanceResponse Performance,
     PortalPlanoRecuperacaoResponse PlanoRecuperacao,
+    PortalAdesaoNutricionalResponse AdesaoNutricional,
     PortalCoachDiarioResponse CoachDiario,
     PortalExecucaoDiaResponse ExecucaoDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
