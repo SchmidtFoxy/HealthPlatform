@@ -926,10 +926,12 @@ public sealed class MeuPortalPacienteController(
         var tendenciaSemanal = await TendenciaSemanalService.MontarAsync(db, pacienteId, dia, ct);
         var radarAdesao = RadarAdesaoService.Montar(gamificacao, tendenciaSemanal, planejamentoSemanal, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual);
         var planoReconexao = PlanoReconexaoService.Montar(radarAdesao, planejamentoSemanal, acoesPrioritariasDoCiclo, execucaoDoDia);
+        var protecaoRetomada = ProtecaoRetomadaService.Montar(radarAdesao, planoReconexao, tendenciaSemanal, gamificacao);
+        var estabilidadeHabitos = EstabilidadeHabitosService.Montar(gamificacao, tendenciaSemanal, radarAdesao, protecaoRetomada);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

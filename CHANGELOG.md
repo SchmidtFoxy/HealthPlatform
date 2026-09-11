@@ -1,3 +1,21 @@
+# v0.9.3 — Estabilidade de Hábitos & Consolidação da Rotina
+
+- Nova leitura de estabilidade por comportamento: estável, consolidando, oscilando ou sem dados.
+- Eixos transparentes: consistência, dias ativos, nutrição, hidratação e contexto de recuperação.
+- Hábitos estáveis não geram cobrança extra; oscilações recebem próxima ação simples e sustentável.
+- Sem score opaco, XP negativo, punição de streak ou alteração automática de prescrição.
+- Sem migration; schema permanece 37/37.
+
+# v0.9.2 — Proteção da Retomada & Continuidade
+
+- adiciona `ProtecaoRetomadaService` para reconhecer retomada recente por streak curto, aumento de dias ativos e consistência ainda em consolidação;
+- protege descanso/redução de ritmo coerentes com recuperação contra falso rótulo de recaída;
+- limita a leitura a até 3 sinais e não cria score/probabilidade de recaída;
+- adiciona cards para atleta e profissional;
+- sem XP negativo, punição de streak ou compensação;
+- sem migration nova; schema permanece 37/37;
+- suíte ampliada para 856 verificações.
+
 ## v0.9.1 — Plano de Reconexão & Retomada Sustentável
 - Converte sinais do Radar de Adesão em até 3 passos pequenos e auditáveis de retomada.
 - Protege descanso/redução de ritmo quando há contexto de recuperação.

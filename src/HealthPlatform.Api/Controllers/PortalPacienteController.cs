@@ -168,6 +168,8 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var tendenciaSemanal = await TendenciaSemanalService.MontarAsync(db, pacienteId, dia, ct);
         var radarAdesao = RadarAdesaoService.Montar(gamificacao, tendenciaSemanal, planejamentoSemanal, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual);
         var planoReconexao = PlanoReconexaoService.Montar(radarAdesao, planejamentoSemanal, acoesPrioritariasDoCiclo, execucaoDoDia);
+        var protecaoRetomada = ProtecaoRetomadaService.Montar(radarAdesao, planoReconexao, tendenciaSemanal, gamificacao);
+        var estabilidadeHabitos = EstabilidadeHabitosService.Montar(gamificacao, tendenciaSemanal, radarAdesao, protecaoRetomada);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -189,6 +191,8 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             tendenciaSemanal,
             radarAdesao,
             planoReconexao,
+            protecaoRetomada,
+            estabilidadeHabitos,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

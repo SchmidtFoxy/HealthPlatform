@@ -1,3 +1,16 @@
+# HealthPlatform v0.9.3 — Proteção da Retomada & Continuidade
+
+A v0.9.3 protege o período logo após uma reconexão com o plano. Ela usa apenas sinais observáveis — streak curto, mudança de dias ativos, consistência e contexto de recuperação — para reconhecer uma retomada ainda frágil sem rotular recaída ou calcular probabilidade de abandono.
+
+## Princípios
+- retomada em curso é inferida por sinais transparentes, não por score oculto;
+- no máximo 3 sinais/prioridades de proteção;
+- redução de ritmo coerente com recuperação não vira recaída;
+- não remove XP, não pune streak e não usa compensação;
+- nenhuma alteração automática de treino, nutrição ou medicação;
+- sem migration nova; `PREPARAR` permanece 37/37;
+- suíte: 856 verificações.
+
 # HealthPlatform v0.9.1 — Plano de Reconexão & Retomada Sustentável
 
 A v0.9.1 transforma sinais do Radar de Adesão em até três passos pequenos de retomada, sem compensação, punição ou prescrição paralela. Recuperação adequada continua acima da pressão por metas.
