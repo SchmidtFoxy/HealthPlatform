@@ -1,3 +1,28 @@
+# v0.5.6 — Jornada do Paciente / Connected Care
+
+A v0.5.6 transforma os eventos já registrados no HealthPlatform em uma linha do tempo compreensível para o paciente.
+
+## O que entrou
+
+- nova área **Jornada** no portal do paciente;
+- timeline própria protegida por `PatientOnly`;
+- reúne consultas, avaliações, exames, metas, diário, check-ins, treinos e solicitações clínicas;
+- filtro de período: 90 dias, 6 meses ou 1 ano;
+- atalhos contextuais da timeline para as áreas correspondentes do portal;
+- versão do paciente evita expor SOAP, conduta e outros detalhes internos do prontuário profissional;
+- sem alteração de schema e sem migration nova.
+
+## Baseline
+
+A v0.5.5 foi validada pelo usuário com **553/553 testes** e é a baseline desta release.
+
+## Validação esperada
+
+- `PREPARAR.ps1`: 31/31.
+- `TESTAR.ps1`: 561/561.
+
+## Histórico recente
+
 # v0.5.5 — Solicitações no Hoje / Connected Care
 
 A v0.5.4 integra Solicitações Clínicas ao fluxo diário, reduzindo a dependência de telas isoladas.

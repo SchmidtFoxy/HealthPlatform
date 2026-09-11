@@ -1,3 +1,14 @@
+# v0.5.6 — Jornada do Paciente
+**Tipo:** feature release
+
+- adiciona timeline própria no portal do paciente;
+- consolida consultas, avaliações, exames, metas, diário, check-ins, treinos e solicitações;
+- adiciona filtro de período e atalhos contextuais;
+- mantém dados clínicos internos/ SOAP fora da visão simplificada do paciente;
+- preserva `PatientOnly` e isolamento organizacional;
+- sem schema novo e sem migration nova;
+- suíte ampliada de 553 para 561 verificações.
+
 # v0.5.5 — Desde a última consulta
 **Tipo:** feature release
 

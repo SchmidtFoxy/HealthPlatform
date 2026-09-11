@@ -1592,7 +1592,7 @@ $('#patientLogoutButton')?.addEventListener('click',logout);
 
 // ===== v0.3.27 — Portal do paciente completo =====
 async function loadPatientSection(view='inicio'){
-  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes'];
+  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','jornada'];
   if(!allowed.includes(view))view='inicio';
   $$('#patientPortalNav [data-patient-view]').forEach(b=>b.classList.toggle('active',b.dataset.patientView===view));
   const host=$('#patientPortalContent');
@@ -1605,6 +1605,7 @@ async function loadPatientSection(view='inicio'){
   if(view==='evolucao')return loadPatientEvolution();
   if(view==='exames')return loadPatientLabs();
   if(view==='solicitacoes')return loadPatientRequests();
+  if(view==='jornada')return loadPatientJourney();
 }
 
 $$('#patientPortalNav [data-patient-view]').forEach(b=>b.addEventListener('click',()=>loadPatientSection(b.dataset.patientView).catch(e=>toast(e.message,true))));
@@ -4991,7 +4992,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.5.5';
+const HP_MVP_VERSION='0.5.6';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
@@ -5246,3 +5247,38 @@ async function loadProfessionalRequests(){
 }
 
 // ===== v0.5.4 — Solicitações integradas ao Hoje =====
+
+
+// ===== v0.5.6 — Jornada do paciente =====
+async function loadPatientJourney(){
+  const host=$('#patientPortalContent');
+  host.innerHTML=`${patientPageHeader('Minha saúde','Minha jornada','Uma linha do tempo simples do seu acompanhamento e das ações que você realizou.')}
+    <div class="card patient-journey-toolbar">
+      <label>Período <select id="patientJourneyDays"><option value="90">90 dias</option><option value="180" selected>6 meses</option><option value="365">1 ano</option></select></label>
+      <span class="muted" id="patientJourneyCount"></span>
+    </div>
+    <div id="patientJourneyTimeline" class="patient-journey-timeline"><div class="card"><div class="skeleton" style="height:220px"></div></div></div>`;
+  const load=async()=>{
+    const dias=Number($('#patientJourneyDays')?.value||180);
+    const d=await api(`/api/portal/me/jornada?dias=${dias}`),items=d.itens||[];
+    $('#patientJourneyCount').textContent=`${items.length} evento${items.length===1?'':'s'} no período`;
+    const timeline=$('#patientJourneyTimeline');
+    if(!items.length){timeline.innerHTML='<div class="card empty-state"><strong>Sua jornada começa aqui.</strong><span>Consultas, check-ins, treinos, exames, metas e solicitações aparecerão nesta linha do tempo.</span></div>';return;}
+    timeline.innerHTML=items.map(x=>`<article class="patient-journey-item" data-kind="${escapeHtml(x.tipo||'evento')}">
+      <div class="patient-journey-dot" aria-hidden="true"></div>
+      <div class="card patient-journey-card">
+        <div class="patient-journey-meta"><span class="pill">${escapeHtml(journeyTypeLabel(x.tipo))}</span><time>${fmtDateTime(x.dataUtc)}</time></div>
+        <h3>${escapeHtml(x.titulo||'Evento')}</h3>
+        ${x.resumo?`<p>${escapeHtml(x.resumo)}</p>`:''}
+        ${x.complemento?`<small>${escapeHtml(x.complemento)}</small>`:''}
+        ${x.destino&&x.destino!=='calendario'?`<button class="secondary compact" data-journey-destination="${escapeHtml(x.destino)}">Ver detalhes</button>`:''}
+      </div>
+    </article>`).join('');
+    $$('[data-journey-destination]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.journeyDestination).catch(e=>toast(e.message,true)));
+  };
+  $('#patientJourneyDays').onchange=()=>load().catch(e=>toast(e.message,true));
+  await load();
+}
+function journeyTypeLabel(tipo){
+  return ({consulta:'Consulta',avaliacao:'Avaliação',exame:'Exame',meta:'Meta',diario:'Diário',checkin:'Check-in',treino:'Treino',solicitacao:'Solicitação'})[tipo]||'Acompanhamento';
+}

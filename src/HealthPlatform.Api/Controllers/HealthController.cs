@@ -19,7 +19,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             var payload = new
             {
                 status = databaseOk ? "ok" : "degraded",
-                version = "0.5.5",
+                version = "0.5.6",
                 database = databaseOk ? "connected" : "unavailable",
                 utc = DateTime.UtcNow
             };

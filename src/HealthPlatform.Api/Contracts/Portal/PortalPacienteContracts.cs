@@ -75,3 +75,5 @@ public record PortalPacienteHomeResponse(
     decimal PercentualMetasConcluidas,
     IReadOnlyCollection<PortalRegistroDiarioResponse> RegistrosHoje,
     IReadOnlyCollection<PortalExameRecenteResponse> ExamesRecentes);
+
+public sealed record PortalJornadaItemResponse(string Tipo, Guid Id, DateTime DataUtc, string Titulo, string? Resumo, string? Complemento, string Destino);

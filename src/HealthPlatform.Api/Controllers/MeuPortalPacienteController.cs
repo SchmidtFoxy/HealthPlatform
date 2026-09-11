@@ -451,6 +451,97 @@ public sealed class MeuPortalPacienteController(
         });
     }
 
+    [HttpGet("jornada")]
+    public async Task<IActionResult> MinhaJornada([FromQuery] int dias = 180, CancellationToken ct = default)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        dias = Math.Clamp(dias, 30, 365);
+        var desde = DateTime.UtcNow.AddDays(-dias);
+        var itens = new List<PortalJornadaItemResponse>();
+
+        var consultas = await db.Consultas.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.DataHoraUtc >= desde)
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Select(x => new { x.Id, x.DataHoraUtc, x.Motivo, x.Status, Profissional = x.Profissional.Nome })
+            .ToListAsync(ct);
+        itens.AddRange(consultas.Select(x => new PortalJornadaItemResponse(
+            "consulta", x.Id, x.DataHoraUtc, "Consulta", x.Motivo ?? $"Consulta {x.Status}", x.Profissional, "calendario")));
+
+        var avaliacoes = await db.Avaliacoes.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.DataUtc >= desde)
+            .OrderByDescending(x => x.DataUtc)
+            .Select(x => new { x.Id, x.DataUtc, x.PesoKg, x.PercentualGordura })
+            .ToListAsync(ct);
+        itens.AddRange(avaliacoes.Select(x => new PortalJornadaItemResponse(
+            "avaliacao", x.Id, x.DataUtc, "Avaliacao corporal",
+            x.PesoKg.HasValue ? $"Peso registrado: {x.PesoKg:0.##} kg" : "Nova avaliacao registrada", null, "evolucao")));
+
+        var exames = await db.ExamesLaboratoriais.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.DataColetaUtc >= desde)
+            .OrderByDescending(x => x.DataColetaUtc)
+            .Select(x => new { x.Id, x.DataColetaUtc, x.Laboratorio, Resultados = x.Resultados.Count })
+            .ToListAsync(ct);
+        itens.AddRange(exames.Select(x => new PortalJornadaItemResponse(
+            "exame", x.Id, x.DataColetaUtc, "Exame laboratorial",
+            x.Resultados == 1 ? "1 marcador registrado" : $"{x.Resultados} marcadores registrados", x.Laboratorio, "exames")));
+
+        var metas = await db.MetasPaciente.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.CreatedAtUtc >= desde)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Select(x => new { x.Id, x.CreatedAtUtc, x.Nome, x.Status, Profissional = x.Profissional.Nome })
+            .ToListAsync(ct);
+        itens.AddRange(metas.Select(x => new PortalJornadaItemResponse(
+            "meta", x.Id, x.CreatedAtUtc, "Nova meta", x.Nome, x.Profissional, "metas")));
+
+        var diario = await db.RegistrosDiarioPaciente.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.DataHoraUtc >= desde)
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Take(100)
+            .Select(x => new { x.Id, x.DataHoraUtc, x.Tipo, x.Descricao, x.ValorNumerico, x.Unidade })
+            .ToListAsync(ct);
+        itens.AddRange(diario.Select(x => new PortalJornadaItemResponse(
+            "diario", x.Id, x.DataHoraUtc, x.Tipo,
+            x.Descricao ?? (x.ValorNumerico.HasValue ? $"{x.ValorNumerico:0.##} {x.Unidade}".Trim() : "Registro realizado"), null, "diario")));
+
+        var checkins = await db.CheckInsAcompanhamento.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.DataUtc >= desde)
+            .OrderByDescending(x => x.DataUtc)
+            .Select(x => new { x.Id, x.DataUtc, x.PesoKg, x.PercepcaoEvolucaoNivel })
+            .ToListAsync(ct);
+        itens.AddRange(checkins.Select(x => new PortalJornadaItemResponse(
+            "checkin", x.Id, x.DataUtc, "Check-in",
+            x.PesoKg.HasValue ? $"Peso: {x.PesoKg:0.##} kg" : "Check-in de acompanhamento enviado", null, "evolucao")));
+
+        var treinos = await db.ExecucoesTreino.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.DataHoraInicioUtc >= desde)
+            .OrderByDescending(x => x.DataHoraInicioUtc)
+            .Select(x => new { x.Id, x.DataHoraInicioUtc, Sessao = x.SessaoTreino.Nome, x.DuracaoMinutos })
+            .ToListAsync(ct);
+        itens.AddRange(treinos.Select(x => new PortalJornadaItemResponse(
+            "treino", x.Id, x.DataHoraInicioUtc, "Treino realizado",
+            string.IsNullOrWhiteSpace(x.Sessao) ? "Sessao concluida" : x.Sessao,
+            x.DuracaoMinutos.HasValue ? $"{x.DuracaoMinutos} min" : null, "treino")));
+
+        var solicitacoes = await db.SolicitacoesClinicas.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.CreatedAtUtc >= desde)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Select(x => new { x.Id, x.CreatedAtUtc, x.Titulo, x.Status, Profissional = x.Profissional.Nome })
+            .ToListAsync(ct);
+        itens.AddRange(solicitacoes.Select(x => new PortalJornadaItemResponse(
+            "solicitacao", x.Id, x.CreatedAtUtc, "Solicitacao clinica", x.Titulo, $"{x.Profissional} · {x.Status}", "solicitacoes")));
+
+        var ordenados = itens.OrderByDescending(x => x.DataUtc).Take(250).ToList();
+        return Ok(new
+        {
+            periodoDias = dias,
+            total = ordenados.Count,
+            itens = ordenados
+        });
+    }
+
     private async Task<Guid?> MeuPacienteId(CancellationToken ct)
         => await db.Pacientes.AsNoTracking()
             .Where(x =>
