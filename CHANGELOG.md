@@ -1,3 +1,13 @@
+# v0.8.2 — Revisão de Ciclo & Checkpoint de Progresso
+
+- Adicionado `CheckpointCicloService`.
+- Novo contrato `PortalCheckpointCicloResponse` com evidências transparentes.
+- Integração nas Homes do atleta e profissional.
+- Estados de acompanhamento: EmCurso, Evoluindo, Revisar e Consolidar.
+- Nenhum score composto opaco e nenhuma alteração automática da prescrição.
+- Sem migration; PREPARAR permanece 37/37.
+- TESTAR ampliado para 776 verificações e preservado em UTF-8 BOM.
+
 # v0.8.1 — Metas do Ciclo & Progresso por Objetivo
 
 - Acompanha metas mensuráveis já definidas no ciclo esportivo: treinos semanais, consistência e peso-alvo.

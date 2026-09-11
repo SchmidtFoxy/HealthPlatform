@@ -127,6 +127,13 @@ public record PortalMetasCicloResponse(
     string Estado, string Titulo, string Resumo,
     IReadOnlyCollection<PortalMetaCicloItemResponse> Itens, string MensagemSeguranca);
 
+public record PortalCheckpointCicloItemResponse(
+    string Codigo, string Categoria, string Estado, string Titulo, string Evidencia, string Orientacao);
+
+public record PortalCheckpointCicloResponse(
+    string Estado, string Titulo, string Resumo, int SemanaAtual, int TotalSemanas, decimal ProgressoTemporalPercentual,
+    IReadOnlyCollection<PortalCheckpointCicloItemResponse> Itens, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -212,6 +219,7 @@ public record PortalPacienteHomeResponse(
     PortalGamificacaoResponse Gamificacao,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalMetasCicloResponse MetasDoCiclo,
+    PortalCheckpointCicloResponse CheckpointDoCiclo,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
