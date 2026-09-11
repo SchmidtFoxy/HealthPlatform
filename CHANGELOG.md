@@ -1,3 +1,14 @@
+
+### v0.7.6 r2 — correção de consistência do resumo de dor
+- Alinha a variável interna `impactoMaximoTreino7` ao contrato `ImpactoMaximoTreino7`, preservando a mesma regra de cálculo.
+- Corrige a validação estática `[722/728]` sem alterar schema, API ou comportamento clínico.
+# v0.7.6 — Dor por Região Corporal
+
+- Registro de região, lado, intensidade e impacto no treino usando o Diário existente.
+- Resumo longitudinal de 7 dias no portal do atleta e prontuário profissional.
+- Coach Diário passa a priorizar dor localizada relevante sem diagnosticar lesão.
+- Sem migration nova; schema permanece 37/37.
+
 # HealthPlatform v0.7.5 — Seed Ana v7 & Variáveis Automáticas PowerShell
 
 - Hotfix r1: corrige as sentinelas [697] e [705] da suíte que ainda procuravam o banner legado v6 em vez do seed corrente v7.

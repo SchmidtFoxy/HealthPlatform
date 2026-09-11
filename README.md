@@ -1,8 +1,8 @@
-# HealthPlatform v0.7.5 — Seed Ana v7 & Proteção de Variáveis PowerShell
+# HealthPlatform v0.7.6 — Seed Ana v7 & Proteção de Variáveis PowerShell
 
-> **v0.7.5:** corrige o populador pesado da Ana Ribeiro para PowerShell nativo. O literal decimal de C# `2.5m` foi removido e substituído por cast explícito `[decimal]2.5`, evitando que o PowerShell tente executar `2.5m` como comando. A versão também adiciona validações de regressão para literais numéricos incompatíveis em scripts `.ps1`.
+> **v0.7.6:** corrige o populador pesado da Ana Ribeiro para PowerShell nativo. O literal decimal de C# `2.5m` foi removido e substituído por cast explícito `[decimal]2.5`, evitando que o PowerShell tente executar `2.5m` como comando. A versão também adiciona validações de regressão para literais numéricos incompatíveis em scripts `.ps1`.
 
-## Destaques da v0.7.5
+## Destaques da v0.7.6
 
 - `POPULAR-ANA-RIBEIRO.ps1` atualizado para **v7**.
 - Corrigido o deload do histórico de treino: `[decimal]2.5` em vez de `2.5m`.

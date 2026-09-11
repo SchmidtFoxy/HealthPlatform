@@ -63,6 +63,17 @@ public record PortalExameRecenteResponse(
     string? Unidade,
     string Classificacao);
 
+public record PortalDorCorporalRegistroResponse(
+    Guid Id, DateOnly Data, string Regiao, string? Lado, int Intensidade, int ImpactoTreino, string? Observacao);
+
+public record PortalDorCorporalResumoResponse(
+    int Registros7, int RegioesAtivas, int IntensidadeMaxima7, decimal? IntensidadeMedia7,
+    int ImpactoMaximoTreino7, string NivelAtencao, string Mensagem,
+    IReadOnlyCollection<PortalDorCorporalRegistroResponse> RegistrosRecentes);
+
+public sealed record RegistrarDorCorporalRequest(
+    DateOnly Data, string Regiao, string? Lado, int Intensidade, int ImpactoTreino, string? Observacao);
+
 public record PortalProntidaoDiariaResponse(
     Guid Id,
     DateOnly Data,
@@ -159,6 +170,7 @@ public record PortalPacienteHomeResponse(
     PortalPacienteResumoResponse Paciente,
     PortalProximaConsultaResponse? ProximaConsulta,
     PortalProntidaoDiariaResponse? ProntidaoDiaria,
+    PortalDorCorporalResumoResponse DorCorporal,
     PortalGamificacaoResponse Gamificacao,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalEstrategiaDiaResponse EstrategiaDoDia,

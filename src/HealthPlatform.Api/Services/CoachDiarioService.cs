@@ -10,6 +10,7 @@ public static class CoachDiarioService
 {
     public static PortalCoachDiarioResponse Montar(
         PortalProntidaoDiariaResponse? prontidao,
+        PortalDorCorporalResumoResponse dorCorporal,
         PortalEstrategiaDiaResponse estrategia,
         PortalTendenciaRecuperacaoResponse recuperacao,
         PortalCargaTreinoResponse carga,
@@ -39,6 +40,24 @@ public static class CoachDiarioService
             prontidao?.RecomendacaoTreino == "Recuperacao" ||
             prontidao?.DorNivel >= 6 ||
             prontidao?.RecuperacaoNivel <= 4;
+
+        if (dorCorporal.NivelAtencao == "Alta")
+        {
+            var principal = dorCorporal.RegistrosRecentes.OrderByDescending(x => Math.Max(x.Intensidade, x.ImpactoTreino)).FirstOrDefault();
+            Adicionar(
+                "dor-localizada-alta", "Dor", "Alta",
+                principal is null ? "Dor localizada merece revisão" : $"Atenção à região: {principal.Regiao}{(string.IsNullOrWhiteSpace(principal.Lado) ? "" : $" ({principal.Lado})")}",
+                principal is null ? dorCorporal.Mensagem : $"Intensidade {principal.Intensidade}/10 e impacto no treino {principal.ImpactoTreino}/10.",
+                "Não use XP, PR ou meta semanal como motivo para forçar a região; ajuste a execução dentro do plano e procure avaliação profissional se o sinal persistir ou piorar.");
+        }
+        else if (dorCorporal.NivelAtencao == "Media")
+        {
+            Adicionar(
+                "acompanhar-dor-localizada", "Dor", "Media",
+                "Acompanhe o desconforto localizado",
+                dorCorporal.Mensagem,
+                "Observe a resposta ao treino e registre novamente se intensidade ou impacto mudarem.");
+        }
 
         if (recuperacaoPedeAtencao)
         {

@@ -36,10 +36,10 @@ public static class DorCorporalService
         }
 
         var max = registros.Count == 0 ? 0 : registros.Max(x => x.Intensidade);
-        var impacto = registros.Count == 0 ? 0 : registros.Max(x => x.ImpactoTreino);
-        var media = registros.Count == 0 ? null : Math.Round(registros.Average(x => (decimal)x.Intensidade), 1);
+        var ImpactoMaximoTreino7 = registros.Count == 0 ? 0 : registros.Max(x => x.ImpactoTreino);
+        var media = registros.Count == 0 ? (decimal?)null : Math.Round(registros.Average(x => (decimal)x.Intensidade), 1);
         var regioes = registros.Select(x => $"{x.Regiao}|{x.Lado}").Distinct(StringComparer.OrdinalIgnoreCase).Count();
-        var nivel = max >= 8 || impacto >= 8 ? "Alta" : max >= 5 || impacto >= 5 ? "Media" : "Baixa";
+        var nivel = max >= 8 || ImpactoMaximoTreino7 >= 8 ? "Alta" : max >= 5 || ImpactoMaximoTreino7 >= 5 ? "Media" : "Baixa";
         var mensagem = registros.Count == 0
             ? "Nenhuma dor localizada registrada nos últimos 7 dias."
             : nivel == "Alta"
@@ -49,7 +49,7 @@ public static class DorCorporalService
                     : "Os registros localizados recentes estão em baixa intensidade.";
 
         return new PortalDorCorporalResumoResponse(
-            registros.Count, regioes, max, media, impacto, nivel, mensagem, registros.Take(8).ToList());
+            registros.Count, regioes, max, media, ImpactoMaximoTreino7, nivel, mensagem, registros.Take(8).ToList());
     }
 
     public static string Serializar(string regiao, string? lado, int impactoTreino, string? observacao)

@@ -120,6 +120,44 @@ public sealed class MeuPortalPacienteController(
     }
 
 
+    [HttpPost("dor-corporal")]
+    public async Task<ActionResult<PortalDorCorporalResumoResponse>> RegistrarDorCorporal(
+        RegistrarDorCorporalRequest request, CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue) return NotFound(new { message = "Paciente vinculado nao encontrado." });
+        if (request.Data > DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1))
+            return BadRequest(new { message = "Nao e permitido registrar dor em data futura." });
+        if (string.IsNullOrWhiteSpace(request.Regiao) || request.Regiao.Trim().Length > 80)
+            return BadRequest(new { message = "Informe uma regiao corporal valida." });
+        if (request.Intensidade < 0 || request.Intensidade > 10 || request.ImpactoTreino < 0 || request.ImpactoTreino > 10)
+            return BadRequest(new { message = "Intensidade e impacto no treino devem estar entre 0 e 10." });
+
+        var inicio = DateTime.SpecifyKind(request.Data.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fim = inicio.AddDays(1);
+        var candidatos = await db.RegistrosDiarioPaciente
+            .Where(x => x.PacienteId == pacienteId.Value && x.Tipo == "DorCorporal" && x.DataHoraUtc >= inicio && x.DataHoraUtc < fim)
+            .ToListAsync(ct);
+        var regiao = request.Regiao.Trim();
+        var lado = Limpar(request.Lado);
+        var item = candidatos.FirstOrDefault(x => DorCorporalService.Corresponde(x.Descricao, regiao, lado));
+        var novo = item is null;
+        if (item is null)
+        {
+            item = new RegistroDiarioPaciente { PacienteId = pacienteId.Value, Tipo = "DorCorporal", DataHoraUtc = inicio.AddHours(12) };
+            db.RegistrosDiarioPaciente.Add(item);
+        }
+        item.Escala = request.Intensidade;
+        item.ValorNumerico = request.ImpactoTreino;
+        item.Unidade = "impacto-treino-0-10";
+        item.Descricao = DorCorporalService.Serializar(regiao, lado, request.ImpactoTreino, Limpar(request.Observacao));
+        item.UpdatedAtUtc = DateTime.UtcNow;
+        Auditar(novo ? "CREATE" : "UPDATE", "DorCorporal", item.Id, null,
+            new { request.Data, Regiao = regiao, Lado = lado, request.Intensidade, request.ImpactoTreino });
+        await db.SaveChangesAsync(ct);
+        return Ok(await DorCorporalService.MontarAsync(db, pacienteId.Value, request.Data, ct));
+    }
+
     [HttpPost("fechamento-dia")]
     public async Task<IActionResult> FecharDia(FecharDiaRequest request, CancellationToken ct)
     {
@@ -823,6 +861,7 @@ public sealed class MeuPortalPacienteController(
         var prontidaoEntity = await db.ProntidoesDiarias.AsNoTracking()
             .FirstOrDefaultAsync(x => x.PacienteId == pacienteId && x.Data == dia, ct);
         var prontidao = prontidaoEntity is null ? null : MapearProntidao(prontidaoEntity);
+        var dorCorporal = await DorCorporalService.MontarAsync(db, pacienteId, dia, ct);
         var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
         var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
         var estrategiaDoDia = await EstrategiaDiariaService.MontarAsync(db, pacienteId, dia, prontidao, ct);
@@ -830,10 +869,10 @@ public sealed class MeuPortalPacienteController(
         var cargaTreino = await CargaTreinoService.MontarAsync(db, pacienteId, dia, ct);
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, dia, ct);
         var execucaoDoDia = await ExecucaoGuiadaService.MontarAsync(db, pacienteId, dia, estrategiaDoDia, ct);
-        var coachDiario = CoachDiarioService.Montar(prontidao, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo);
+        var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }
