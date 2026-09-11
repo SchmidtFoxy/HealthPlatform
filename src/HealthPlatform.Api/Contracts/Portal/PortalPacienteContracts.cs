@@ -87,6 +87,12 @@ public sealed record RegistrarProntidaoDiariaRequest(
     int DisposicaoNivel,
     int RecuperacaoNivel);
 
+public record PortalCicloEsportivoResponse(
+    Guid Id, string Nome, string PerfilEsportivo, string? Objetivo, DateOnly DataInicio, DateOnly DataFim,
+    string Status, int SemanaAtual, int TotalSemanas, decimal ProgressoTemporalPercentual,
+    int? MetaTreinosSemanais, int? MetaConsistenciaPercentual, decimal? MetaPesoKg,
+    int TreinosNoCiclo, int CheckInsNoCiclo, decimal? MediaProntidao);
+
 public record PortalEventoXpResponse(Guid Id, DateOnly Data, string Fonte, int Pontos, string Motivo, string? Adequacao);
 public record PortalDesafioSemanalResponse(Guid Id, string Codigo, string Titulo, string Descricao, int Meta, int Progresso, int RecompensaXp, bool Concluido);
 public record PortalConquistaResponse(Guid Id, string Codigo, string Titulo, string Descricao, string Icone, DateOnly DataConquista, int RecompensaXp);
@@ -102,6 +108,7 @@ public record PortalPacienteHomeResponse(
     PortalProximaConsultaResponse? ProximaConsulta,
     PortalProntidaoDiariaResponse? ProntidaoDiaria,
     PortalGamificacaoResponse Gamificacao,
+    PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,
     IReadOnlyCollection<PortalMetaHojeResponse> MetasHoje,

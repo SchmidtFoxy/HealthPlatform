@@ -787,9 +787,10 @@ public sealed class MeuPortalPacienteController(
             .FirstOrDefaultAsync(x => x.PacienteId == pacienteId && x.Data == dia, ct);
         var prontidao = prontidaoEntity is null ? null : MapearProntidao(prontidaoEntity);
         var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
+        var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, gamificacao, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

@@ -1,3 +1,13 @@
+# v0.6.4 — Ciclos Esportivos
+
+- Novo `CicloEsportivoPaciente` para organizar objetivo, perfil esportivo, período e metas do ciclo.
+- Ciclos podem vincular fases de treino e nutrição e mantêm apenas um ciclo ativo por paciente via fluxo profissional.
+- Home Daily Athlete mostra semana atual, progresso temporal, treinos acumulados e prontidão média do ciclo.
+- Leitura profissional recebe o mesmo ciclo em formato longitudinal e clínico.
+- Missão semanal de treinos passa a respeitar `MetaTreinosSemanais` do ciclo ativo, com fallback seguro para 3.
+- Upgrade `V064CiclosEsportivos`, SQL idempotente e PREPARAR 37/37.
+- Suíte ampliada para 632 verificações.
+
 # v0.6.3 — Missões & Conquistas
 
 - Desafios semanais automáticos baseados em comportamento realmente registrado: treinos, prontidão e dias ativos.

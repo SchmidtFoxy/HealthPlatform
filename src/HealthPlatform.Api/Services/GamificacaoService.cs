@@ -76,16 +76,25 @@ public static class GamificacaoService
     private static async Task AtualizarDesafiosEConquistasAsync(AppDbContext db, Guid organizacaoId, Guid pacienteId, DateOnly dia, CancellationToken ct)
     {
         var semanaInicio = InicioSemana(dia);
+        var metaTreinosCiclo = await db.CiclosEsportivosPaciente.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.Status == "Ativo" && x.DataInicio <= dia && x.DataFim >= dia)
+            .Select(x => x.MetaTreinosSemanais).FirstOrDefaultAsync(ct);
+        var metaTreinosSemana = metaTreinosCiclo ?? 3;
         var modelos = new[]
         {
-            (Codigo: "treinos-3", Titulo: "Ritmo da semana", Descricao: "Complete 3 treinos nesta semana.", Tipo: "Treinos", Meta: 3, Xp: 180),
+            (Codigo: "treinos-3", Titulo: "Ritmo do ciclo", Descricao: $"Complete {metaTreinosSemana} treinos nesta semana.", Tipo: "Treinos", Meta: metaTreinosSemana, Xp: 180),
             (Codigo: "checkins-5", Titulo: "Ouça seu corpo", Descricao: "Faça 5 check-ins de prontidão na semana.", Tipo: "Prontidao", Meta: 5, Xp: 140),
             (Codigo: "dias-5", Titulo: "Consistência sustentável", Descricao: "Tenha atividade saudável registrada em 5 dias da semana.", Tipo: "DiasAtivos", Meta: 5, Xp: 160)
         };
         var existentes = await db.DesafiosSemanaisPaciente.Where(x => x.PacienteId == pacienteId && x.SemanaInicio == semanaInicio).ToListAsync(ct);
         foreach (var modelo in modelos)
         {
-            if (existentes.Any(x => x.Codigo == modelo.Codigo)) continue;
+            var existente = existentes.FirstOrDefault(x => x.Codigo == modelo.Codigo);
+            if (existente is not null)
+            {
+                if (existente.ConcluidoEmUtc is null) { existente.Meta = modelo.Meta; existente.Descricao = modelo.Descricao; existente.Titulo = modelo.Titulo; }
+                continue;
+            }
             var novo = new DesafioSemanalPaciente
             {
                 OrganizacaoId = organizacaoId, PacienteId = pacienteId, SemanaInicio = semanaInicio, Codigo = modelo.Codigo,

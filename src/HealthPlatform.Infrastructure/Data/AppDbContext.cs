@@ -58,6 +58,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<EventoXp> EventosXp => Set<EventoXp>();
     public DbSet<DesafioSemanalPaciente> DesafiosSemanaisPaciente => Set<DesafioSemanalPaciente>();
     public DbSet<ConquistaPaciente> ConquistasPaciente => Set<ConquistaPaciente>();
+    public DbSet<CicloEsportivoPaciente> CiclosEsportivosPaciente => Set<CicloEsportivoPaciente>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -514,6 +515,28 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.HasIndex(x => new { x.OrganizacaoId, x.DataConquista });
             entity.HasOne(x => x.Paciente).WithMany(x => x.Conquistas)
                 .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<CicloEsportivoPaciente>(entity =>
+        {
+            entity.ToTable("CiclosEsportivosPaciente");
+            entity.Property(x => x.Nome).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.PerfilEsportivo).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.Objetivo).HasMaxLength(800);
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.MetaPesoKg).HasPrecision(8, 2);
+            entity.Property(x => x.Observacoes).HasMaxLength(1200);
+            entity.HasIndex(x => new { x.PacienteId, x.DataInicio, x.DataFim })
+                .HasDatabaseName("IX_CiclosEsportivosPaciente_PacienteId_Periodo");
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Status });
+            entity.HasOne(x => x.Paciente).WithMany(x => x.CiclosEsportivos)
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Profissional).WithMany()
+                .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.FaseTreino).WithMany()
+                .HasForeignKey(x => x.FaseTreinoId).OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.FaseNutricional).WithMany()
+                .HasForeignKey(x => x.FaseNutricionalId).OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<FaseTreino>(entity =>
