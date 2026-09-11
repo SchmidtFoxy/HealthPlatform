@@ -27,7 +27,7 @@ $senha = $settings.Seed.AdminPassword
 
 Write-Host "[1/600] Healthcheck..." -ForegroundColor Cyan
 $health = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health.version -ne "0.6.5") { throw "Versao inesperada da API: $($health.version)" }
+if ($health.version -ne "0.6.6") { throw "Versao inesperada da API: $($health.version)" }
 Write-Host "    API $($health.version) / banco $($health.database)" -ForegroundColor Green
 
 Write-Host "[2/600] Login..." -ForegroundColor Cyan
@@ -496,7 +496,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[70/600] Validando compatibilidade de schema na v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not (Test-Path .\scripts\sql\v0.3.1_execucoes_treino.sql)) {
     throw "Historico de upgrade v0.3.1 ausente."
 }
@@ -568,7 +568,7 @@ if ($css.Content -notmatch "insight-summary" -or
     throw "Estilos de insights incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    Insights responsivos / schema existente compativel: OK."
 
 
@@ -648,7 +648,7 @@ if ($css.Content -notmatch "pending-card" -or
     throw "Auditoria/estilos de pendencias incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    Auditoria + UI responsiva + v0.3.27: OK."
 
 
@@ -737,7 +737,7 @@ if ($css.Content -notmatch "notification-panel" -or
     throw "Estilos de notificacoes incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    UI responsiva + upgrade v0.3.27: OK."
 
 
@@ -791,7 +791,7 @@ Write-Host "    PREPARAR preserva dados do usuario; POPULAR e execucao explicita
 
 Write-Host "[104/600] Validando versao v0.3.27 e upgrade do schema..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if ($setupSource -notmatch "\[37/37\]") { throw "PREPARAR atual deveria possuir 36 etapas." }
 Write-Host "    v0.3.27 preservada / PREPARAR atual 37/37 / upgrade SOAP: OK."
 
@@ -863,7 +863,7 @@ if ($css.Content -notmatch "portfolio-patient-card" -or
     throw "Estilos da carteira incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    Carteira responsiva / v0.3.27: OK."
 
 
@@ -945,7 +945,7 @@ if ($css.Content -notmatch "followup-history-list" -or
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / follow-up responsivo / upgrade OK."
 
 
@@ -1017,7 +1017,7 @@ if ($css.Content -notmatch "follow-queue-card" -or
     throw "Estilos/populacao de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / fila responsiva / demo follow-up: OK."
 
 
@@ -1091,7 +1091,7 @@ if ($css.Content -notmatch "management-grid" -or
     throw "Estilos de gestao incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    Gestao responsiva / v0.3.27: OK."
 
 
@@ -1166,7 +1166,7 @@ if ($css.Content -notmatch "management-head-actions") {
     throw "Estilos de exportacao gerencial ausentes."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / exportacao gerencial / setup rapido: OK."
 
 
@@ -1236,7 +1236,7 @@ Write-Host "    Copy de schema atualizada."
 
 Write-Host "[154/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / estabilizacao + qualidade: OK."
 
 
@@ -1303,7 +1303,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[162/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / busca global + central de acoes: OK."
 
 
@@ -1375,7 +1375,7 @@ if ($css.Content -notmatch "central-day-grid" -or
     throw "Estilos da Central do Dia incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Central do Dia responsiva: OK."
 
 
@@ -1482,7 +1482,7 @@ if (-not $soapCssSource.Contains("soap-grid") -or
     throw "Estilos SOAP incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / evolucao clinica SOAP: OK."
 
 
@@ -1551,7 +1551,7 @@ Write-Host "    Atualizacao manual + desktop/mobile: assets OK."
 
 Write-Host "[188/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / resumo clinico consolidado: OK."
 
 
@@ -1614,7 +1614,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[196/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / handoff clinico + impressao: OK."
 
 
@@ -1700,7 +1700,7 @@ Write-Host "    Admin-only + desktop/mobile: assets OK."
 
 Write-Host "[206/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe + gestao de profissionais: OK."
 
 
@@ -1770,7 +1770,7 @@ Write-Host "    Filtros + acoes desktop/mobile: OK."
 
 Write-Host "[214/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe v2 + seguranca de acesso: OK."
 
 
@@ -1837,7 +1837,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[222/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Minha Conta + troca de senha: OK."
 
 
@@ -1940,7 +1940,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[234/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao do plano alimentar: OK."
 
 
@@ -2043,7 +2043,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[246/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao de treino + ciclo versionado: OK."
 
 
@@ -2146,7 +2146,7 @@ Write-Host "    SQL idempotente + PREPARAR 20/20: OK."
 
 Write-Host "[258/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de plano alimentar: OK."
 
 
@@ -2252,7 +2252,7 @@ Write-Host "    SQL idempotente + UI responsiva + PREPARAR 21/21: OK."
 
 Write-Host "[270/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de treino + criacao rapida: OK."
 
 
@@ -2376,7 +2376,7 @@ Write-Host "    SQL idempotente + PREPARAR 22/22: OK."
 
 Write-Host "[284/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / metas nutricionais + distribuicao: OK."
 
 
@@ -2479,7 +2479,7 @@ Write-Host "    SQL idempotente + PREPARAR 23/23: OK."
 
 Write-Host "[296/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de refeicoes + insercao rapida: OK."
 
 
@@ -2584,7 +2584,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[308/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de sessoes + insercao rapida: OK."
 
 
@@ -2687,7 +2687,7 @@ Write-Host "    Sem schema novo / PREPARAR atual 37/37: OK."
 
 Write-Host "[320/600] Validando versao v0.3.28..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.28 / evolucao de habitos + graficos de anamnese: OK."
 
 
@@ -2840,7 +2840,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[334/600] Validando versao v0.3.29..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.29 / metas por refeicao + distribuicao planejada: OK."
 
 
@@ -2961,7 +2961,7 @@ Write-Host "    SQL idempotente + PREPARAR 26/26: OK."
 
 Write-Host "[348/600] Validando versao v0.3.30..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.30 / fases nutricionais + planejamento de ciclo: OK."
 
 
@@ -3082,7 +3082,7 @@ Write-Host "    SQL idempotente + PREPARAR 27/27: OK."
 
 Write-Host "[362/600] Validando versao v0.3.31..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.31 / ciclos de treino + periodizacao: OK."
 
 
@@ -3220,7 +3220,7 @@ Write-Host "    Fases nutricionais + treino preservadas."
 
 Write-Host "[378/600] Validando versao v0.3.32..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.32 / check-ins de evolucao + adesao por fase: OK."
 
 
@@ -3322,7 +3322,7 @@ Write-Host "    UI responsiva / sem schema novo / PREPARAR 28/28: OK."
 
 Write-Host "[390/600] Validando versao v0.3.33..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.33 / analise de fases + comparativo de resposta: OK."
 
 Write-Host "[391/600] Validando metas das fases..."
@@ -3396,7 +3396,7 @@ Write-Host "    SQL idempotente + PREPARAR 29/29 + historico preservado."
 
 Write-Host "[406/600] Validando versao v0.3.34..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.34 / metas de fase + criterios de transicao: OK."
 
 
@@ -3523,7 +3523,7 @@ Write-Host "    SQL idempotente + PREPARAR 37/37 + v0.3.34 preservada."
 
 Write-Host "[420/600] Validando versao v0.3.35..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.35 / revisao de fase + transicao assistida: OK."
 
 
@@ -3654,7 +3654,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
 
 Write-Host "[434/600] Validando versao v0.3.36..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.36 / volume de treino + distribuicao muscular: OK."
 
 
@@ -3780,7 +3780,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
 
 Write-Host "[448/600] Validando versao v0.3.37..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.37 / progressao por exercicio + recordes de carga: OK."
 
 
@@ -3906,13 +3906,13 @@ Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
 
 Write-Host "[462/600] Validando versao v0.3.38..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.38 / estagnacao + fadiga + sinais de progressao: OK."
 
 
 Write-Host "[463/600] Validando identidade MVP Preview..."
 $indexSource = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
-if (-not $indexSource.Contains("MVP Preview • v0.6.5") -or
+if (-not $indexSource.Contains("MVP Preview • v0.6.6") -or
     -not $indexSource.Contains("mvp-brand-badge") -or
     -not $indexSource.Contains("MVP • DEMO") -or
     -not $indexSource.Contains('id="loginMessage"') -or
@@ -4030,7 +4030,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
 
 Write-Host "[476/600] Validando versao v0.3.39..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.39 / MVP Preview + polimento de demonstracao: OK."
 
 
@@ -4191,7 +4191,7 @@ Write-Host "    Contexto Docker enxuto: OK."
 
 Write-Host "[492/600] Validando versao base do deploy..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.6.0 / Render Demo Deploy preservado: OK."
 
 
@@ -4360,7 +4360,7 @@ Write-Host "    Upgrade de solicitacoes integrado ao setup."
 
 Write-Host "[518/600] Validando versao v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.6.0 / Solicitacoes Clinicas + Connected Care: OK."
 
 Write-Host "[519/600] Validando notificacoes de solicitacoes no backend..."
@@ -4394,7 +4394,7 @@ Write-Host "    Solicitacoes identificadas no drawer: OK."
 
 Write-Host "[526/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $notificationSource.Contains('SolicitacaoClinica')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Notificacoes Contextuais + Connected Care: OK."
 
@@ -4436,7 +4436,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[535/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $requestController.Contains('FilaProfissional')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Central de Solicitacoes + Connected Care: OK."
 
@@ -4482,7 +4482,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[545/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $centralSource.Contains('SolicitacoesParaRevisao') -or -not $appJsSource.Contains('patient-today-requests')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Solicitacoes no Hoje + Connected Care: OK."
 
@@ -4519,7 +4519,7 @@ Write-Host "    Resumo visual + responsividade: assets OK."
 
 Write-Host "[553/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $resumoSource.Contains('ResumoDesdeUltimaConsultaResponse') -or -not $appJsSource.Contains('data-clinical-period-summary')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Desde a ultima consulta + Connected Care: OK."
 
@@ -4557,7 +4557,7 @@ Write-Host "    Timeline desktop + mobile: estilos OK."
 
 Write-Host "[561/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $portalController.Contains('MinhaJornada') -or -not $appJsSource.Contains('loadPatientJourney')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Jornada do Paciente + Connected Care: OK."
 
@@ -4599,7 +4599,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[570/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $monitorSource.Contains('TiposMonitorados') -or -not $appJsSource.Contains('hpMonitoringCard')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Monitoramento guiado + Connected Care: OK."
 
@@ -4650,7 +4650,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[580/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('MeuProtocolo') -or -not $appJsSource.Contains('openProtocolManager')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Protocolos de Acompanhamento + Connected Care: OK."
 
@@ -4687,7 +4687,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[588/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('CalcularAderencia') -or -not $appJsSource.Contains('protocol-today-status')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Aderencia aos Protocolos + Connected Care: OK."
 
@@ -4744,219 +4744,264 @@ $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8
 if (-not $cssSource.Contains('.patient-medication-list') -or -not $cssSource.Contains('.medication-dose-row') -or -not $cssSource.Contains('.medication-prof-summary')) { throw "Estilos de medicamentos ausentes." }
 Write-Host "    Desktop + tablet + mobile: estilos OK."
 
-Write-Host "[600/640] Validando compatibilidade funcional v0.6.0..."
+Write-Host "[600/648] Validando compatibilidade funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.6.6") { throw "VERSION.txt inesperado." }
 if (-not $medSource.Contains('RegistrarTomada') -or -not $appJsSource.Contains('loadPatientMedications')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Medicamentos + Adesao ao Tratamento preservado: OK."
 
-Write-Host "[601/640] Validando entidade de prontidao diaria..."
+Write-Host "[601/648] Validando entidade de prontidao diaria..."
 $readinessEntity = Get-Content .\src\HealthPlatform.Domain\Entities\ProntidaoDiaria.cs -Encoding UTF8 -Raw
 if (-not $readinessEntity.Contains('SonoHoras') -or -not $readinessEntity.Contains('RecuperacaoNivel') -or -not $readinessEntity.Contains('RecomendacaoTreino')) { throw "Entidade de prontidao incompleta." }
 Write-Host "    Sono + energia + dor + disposicao + recuperacao: modelo OK."
 
-Write-Host "[602/640] Validando mapeamento EF da prontidao..."
+Write-Host "[602/648] Validando mapeamento EF da prontidao..."
 $dbContextSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbContextSource.Contains('DbSet<ProntidaoDiaria> ProntidoesDiarias') -or -not $dbContextSource.Contains('IX_ProntidoesDiarias_PacienteId_Data')) { throw "Mapeamento EF da prontidao ausente." }
 Write-Host "    Registro unico por paciente/dia + isolamento organizacional: EF OK."
 
-Write-Host "[603/640] Validando endpoint PatientOnly de prontidao..."
+Write-Host "[603/648] Validando endpoint PatientOnly de prontidao..."
 $portalMeSource = Get-Content .\src\HealthPlatform.Api\Controllers\MeuPortalPacienteController.cs -Encoding UTF8 -Raw
 if (-not $portalMeSource.Contains('[HttpPost("prontidao")]') -or -not $portalMeSource.Contains('CalcularProntidao') -or -not $portalMeSource.Contains('carga recente alta')) { throw "Endpoint/calculo de prontidao incompleto." }
 Write-Host "    Upsert diario + carga do treino anterior: backend OK."
 
-Write-Host "[604/640] Validando travas de seguranca do score..."
+Write-Host "[604/648] Validando travas de seguranca do score..."
 if (-not $portalMeSource.Contains('if (dor >= 8)') -or -not $portalMeSource.Contains('if (recuperacao <= 3)') -or -not $portalMeSource.Contains('sonoHoras < 4.5m')) { throw "Travas de seguranca da prontidao ausentes." }
 Write-Host "    Dor alta + baixa recuperacao + sono muito curto limitam score: OK."
 
-Write-Host "[605/640] Validando Home Daily Athlete..."
+Write-Host "[605/648] Validando Home Daily Athlete..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('DAILY ATHLETE • PRONTIDÃO') -or -not $appJsSource.Contains('openDailyReadiness') -or -not $appJsSource.Contains('dailyReadinessButton')) { throw "Home Daily Athlete incompleta." }
 Write-Host "    Check-in matinal + score + recomendacao: assets OK."
 
-Write-Host "[606/640] Validando leitura profissional da prontidao..."
+Write-Host "[606/648] Validando leitura profissional da prontidao..."
 if (-not $appJsSource.Contains('hpReadinessProfessionalCard') -or -not $appJsSource.Contains('portal.prontidaoDiaria')) { throw "Leitura profissional da prontidao ausente." }
 Write-Host "    Mesmo dado diario visivel no prontuario: OK."
 
-Write-Host "[607/640] Validando SQL e migration v0.6.1..."
+Write-Host "[607/648] Validando SQL e migration v0.6.1..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql061 = Get-Content .\scripts\sql\v0.6.1_prontidao_diaria.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains('V061ProntidaoDiaria') -or -not $setupSource.Contains('[34/37] Aplicando upgrade v0.6.1') -or -not $sql061.Contains('CREATE TABLE IF NOT EXISTS "ProntidoesDiarias"')) { throw "Upgrade v0.6.1 de prontidao incompleto." }
 Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
 
-Write-Host "[608/640] Validando versao funcional v0.6.1..."
+Write-Host "[608/648] Validando versao funcional v0.6.1..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.5';")) { throw "Versao v0.6.1 inconsistente." }
+if ($version.Trim() -ne "0.6.6" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.6';")) { throw "Versao v0.6.1 inconsistente." }
 Write-Host "    v0.6.1 / Daily Athlete + Prontidao Diaria: OK."
 
 
 
-Write-Host "[609/640] Validando ledger de XP..."
+Write-Host "[609/648] Validando ledger de XP..."
 $xpEntity = Get-Content .\src\HealthPlatform.Domain\Entities\EventoXp.cs -Encoding UTF8 -Raw
 if (-not $xpEntity.Contains('FonteId') -or -not $xpEntity.Contains('Pontos') -or -not $xpEntity.Contains('Adequacao')) { throw "Entidade de XP incompleta." }
 Write-Host "    Fonte + idempotencia + motivo + adequacao: modelo OK."
 
-Write-Host "[610/640] Validando mapeamento EF de XP..."
+Write-Host "[610/648] Validando mapeamento EF de XP..."
 $dbContextSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbContextSource.Contains('DbSet<EventoXp> EventosXp') -or -not $dbContextSource.Contains('IX_EventosXp_PacienteId_Fonte_FonteId')) { throw "Mapeamento EF de XP ausente." }
 Write-Host "    Ledger unico por fonte + isolamento organizacional: EF OK."
 
-Write-Host "[611/640] Validando XP seguro de treino..."
+Write-Host "[611/648] Validando XP seguro de treino..."
 $gameSource = Get-Content .\src\HealthPlatform.Api\Services\GamificacaoService.cs -Encoding UTF8 -Raw
 if (-not $gameSource.Contains('CalcularXpTreino') -or -not $gameSource.Contains('XP reduzido para nao premiar sobrecarga') -or -not $gameSource.Contains('(35, "Excesso"')) { throw "Regra de XP seguro de treino incompleta." }
 Write-Host "    Adequacao > intensidade bruta: regra OK."
 
-Write-Host "[612/640] Validando nivel, streak e consistencia..."
+Write-Host "[612/648] Validando nivel, streak e consistencia..."
 if (-not $gameSource.Contains('totalXp / 500 + 1') -or -not $gameSource.Contains('diasAtivos.Count * 10') -or -not $gameSource.Contains('streak')) { throw "Progressao/consistencia incompleta." }
 Write-Host "    Nivel + 14 dias + sequencia sustentavel: backend OK."
 
-Write-Host "[613/640] Validando eventos de autocuidado..."
+Write-Host "[613/648] Validando eventos de autocuidado..."
 $portalMeSource = Get-Content .\src\HealthPlatform.Api\Controllers\MeuPortalPacienteController.cs -Encoding UTF8 -Raw
 $trainingSource = Get-Content .\src\HealthPlatform.Api\Controllers\ExecucoesTreinoController.cs -Encoding UTF8 -Raw
 if (-not $portalMeSource.Contains('"Prontidao"') -or -not $portalMeSource.Contains('"MetaDiaria"') -or -not $trainingSource.Contains('"Treino"')) { throw "Fontes de XP nao integradas." }
 Write-Host "    Prontidao + meta + treino: integracao OK."
 
-Write-Host "[614/640] Validando Home esportiva gamificada..."
+Write-Host "[614/648] Validando Home esportiva gamificada..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('EVOLUÇÃO ESPORTIVA') -or -not $appJsSource.Contains('Consistência') -or -not $appJsSource.Contains('athlete-progression-card')) { throw "Home gamificada incompleta." }
 Write-Host "    Nivel + XP + streak + consistencia: assets OK."
 
-Write-Host "[615/640] Validando SQL e migration v0.6.2..."
+Write-Host "[615/648] Validando SQL e migration v0.6.2..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql062 = Get-Content .\scripts\sql\v0.6.2_xp_consistencia.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains('V062XpConsistencia') -or -not $setupSource.Contains('[35/37] Aplicando upgrade v0.6.2') -or -not $sql062.Contains('CREATE TABLE IF NOT EXISTS "EventosXp"')) { throw "Upgrade v0.6.2 incompleto." }
 Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
 
-Write-Host "[616/640] Validando versao funcional v0.6.2..."
+Write-Host "[616/648] Validando versao funcional v0.6.2..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.5';")) { throw "Versao v0.6.2 inconsistente." }
+if ($version.Trim() -ne "0.6.6" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.6';")) { throw "Versao v0.6.2 inconsistente." }
 Write-Host "    v0.6.2 / XP + Nivel + Streak + Consistencia: OK."
 
-Write-Host "[617/640] Validando entidades de desafios e conquistas..."
+Write-Host "[617/648] Validando entidades de desafios e conquistas..."
 $challengeEntity = Get-Content .\src\HealthPlatform.Domain\Entities\DesafioSemanalPaciente.cs -Encoding UTF8 -Raw
 $achievementEntity = Get-Content .\src\HealthPlatform.Domain\Entities\ConquistaPaciente.cs -Encoding UTF8 -Raw
 if (-not $challengeEntity.Contains('SemanaInicio') -or -not $challengeEntity.Contains('RecompensaXp') -or -not $achievementEntity.Contains('DataConquista')) { throw "Modelo de missoes/conquistas incompleto." }
 Write-Host "    Semana + progresso + recompensa + marco persistente: modelo OK."
 
-Write-Host "[618/640] Validando mapeamento EF de missoes..."
+Write-Host "[618/648] Validando mapeamento EF de missoes..."
 $dbContextSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbContextSource.Contains('DbSet<DesafioSemanalPaciente> DesafiosSemanaisPaciente') -or -not $dbContextSource.Contains('IX_DesafiosSemanaisPaciente_PacienteId_SemanaInicio_Codigo')) { throw "Mapeamento EF dos desafios ausente." }
 Write-Host "    Um desafio por codigo/semana/paciente: EF OK."
 
-Write-Host "[619/640] Validando mapeamento EF de conquistas..."
+Write-Host "[619/648] Validando mapeamento EF de conquistas..."
 if (-not $dbContextSource.Contains('DbSet<ConquistaPaciente> ConquistasPaciente') -or -not $dbContextSource.Contains('IX_ConquistasPaciente_PacienteId_Codigo')) { throw "Mapeamento EF das conquistas ausente." }
 Write-Host "    Conquista unica por paciente/codigo: EF OK."
 
-Write-Host "[620/640] Validando missoes automaticas..."
+Write-Host "[620/648] Validando missoes automaticas..."
 $gameSource = Get-Content .\src\HealthPlatform.Api\Services\GamificacaoService.cs -Encoding UTF8 -Raw
 if (-not $gameSource.Contains('treinos-3') -or -not $gameSource.Contains('checkins-5') -or -not $gameSource.Contains('dias-5') -or -not $gameSource.Contains('DesafioSemanal')) { throw "Motor de desafios semanais incompleto." }
 Write-Host "    Treino + prontidao + dias ativos com progresso automatico: OK."
 
-Write-Host "[621/640] Validando conquistas esportivas..."
+Write-Host "[621/648] Validando conquistas esportivas..."
 if (-not $gameSource.Contains('primeiro-treino') -or -not $gameSource.Contains('dez-treinos') -or -not $gameSource.Contains('sete-checkins') -or -not $gameSource.Contains('consistencia-80')) { throw "Catalogo inicial de conquistas ausente." }
 Write-Host "    Marcos esportivos + autocuidado + consistencia: OK."
 
-Write-Host "[622/640] Validando Home com missoes e conquistas..."
+Write-Host "[622/648] Validando Home com missoes e conquistas..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('MISSÕES DA SEMANA') -or -not $appJsSource.Contains('weekly-challenges-card') -or -not $appJsSource.Contains('conquistasRecentes')) { throw "Home de missoes/conquistas incompleta." }
 Write-Host "    Progresso semanal + recompensas + conquistas recentes: assets OK."
 
-Write-Host "[623/640] Validando SQL e migration v0.6.3..."
+Write-Host "[623/648] Validando SQL e migration v0.6.3..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql063 = Get-Content .\scripts\sql\v0.6.3_missoes_conquistas.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains('V063MissoesConquistas') -or -not $setupSource.Contains('[36/37] Aplicando upgrade v0.6.3') -or -not $sql063.Contains('CREATE TABLE IF NOT EXISTS "DesafiosSemanaisPaciente"') -or -not $sql063.Contains('CREATE TABLE IF NOT EXISTS "ConquistasPaciente"')) { throw "Upgrade v0.6.3 incompleto." }
 Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
 
-Write-Host "[624/640] Validando compatibilidade funcional v0.6.3..."
+Write-Host "[624/648] Validando compatibilidade funcional v0.6.3..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.5';")) { throw "Versao atual inconsistente ao validar v0.6.3." }
+if ($version.Trim() -ne "0.6.6" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.6';")) { throw "Versao atual inconsistente ao validar v0.6.3." }
 Write-Host "    v0.6.3 / Missoes + Desafios + Conquistas preservada: OK."
 
 
-Write-Host "[625/640] Validando entidade de ciclo esportivo..."
+Write-Host "[625/648] Validando entidade de ciclo esportivo..."
 $cycleEntity = Get-Content .\src\HealthPlatform.Domain\Entities\CicloEsportivoPaciente.cs -Encoding UTF8 -Raw
 if (-not $cycleEntity.Contains('PerfilEsportivo') -or -not $cycleEntity.Contains('MetaTreinosSemanais') -or -not $cycleEntity.Contains('FaseTreinoId') -or -not $cycleEntity.Contains('FaseNutricionalId')) { throw "Modelo de ciclo esportivo incompleto." }
 Write-Host "    Perfil + objetivo + periodo + metas + fases vinculadas: modelo OK."
 
-Write-Host "[626/640] Validando mapeamento EF de ciclos..."
+Write-Host "[626/648] Validando mapeamento EF de ciclos..."
 $dbContextSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
 if (-not $dbContextSource.Contains('DbSet<CicloEsportivoPaciente> CiclosEsportivosPaciente') -or -not $dbContextSource.Contains('IX_CiclosEsportivosPaciente_PacienteId_Periodo')) { throw "Mapeamento EF de ciclos ausente." }
 Write-Host "    Ciclo + periodo + relacionamentos: EF OK."
 
-Write-Host "[627/640] Validando gestao profissional de ciclos..."
+Write-Host "[627/648] Validando gestao profissional de ciclos..."
 $cycleController = Get-Content .\src\HealthPlatform.Api\Controllers\CiclosEsportivosController.cs -Encoding UTF8 -Raw
 if (-not $cycleController.Contains('api/pacientes/{pacienteId:guid}/ciclos-esportivos') -or -not $cycleController.Contains('EncerrarOutrosAtivos') -or -not $cycleController.Contains('MetaConsistenciaPercentual')) { throw "Gestao de ciclos incompleta." }
 Write-Host "    Criacao + atualizacao + ciclo ativo unico: API OK."
 
-Write-Host "[628/640] Validando resumo longitudinal do ciclo..."
+Write-Host "[628/648] Validando resumo longitudinal do ciclo..."
 $cycleService = Get-Content .\src\HealthPlatform.Api\Services\CicloEsportivoService.cs -Encoding UTF8 -Raw
 if (-not $cycleService.Contains('SemanaAtual') -and -not $cycleService.Contains('semanaAtual')) { throw "Resumo temporal do ciclo ausente." }
 if (-not $cycleService.Contains('MediaProntidao') -and -not $cycleService.Contains('media')) { throw "Prontidao media do ciclo ausente." }
 Write-Host "    Semana + progresso + treinos + prontidao media: OK."
 
-Write-Host "[629/640] Validando desafio semanal adaptado ao ciclo..."
+Write-Host "[629/648] Validando desafio semanal adaptado ao ciclo..."
 $gameSource = Get-Content .\src\HealthPlatform.Api\Services\GamificacaoService.cs -Encoding UTF8 -Raw
 if (-not $gameSource.Contains('metaTreinosCiclo') -or -not $gameSource.Contains('Ritmo do ciclo') -or -not $gameSource.Contains('MetaTreinosSemanais')) { throw "Missao semanal nao respeita ciclo ativo." }
 Write-Host "    Meta semanal vem do ciclo ativo com fallback: OK."
 
-Write-Host "[630/640] Validando Home e leitura profissional do ciclo..."
+Write-Host "[630/648] Validando Home e leitura profissional do ciclo..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('CICLO ATUAL') -or -not $appJsSource.Contains('CICLO ESPORTIVO ATUAL') -or -not $appJsSource.Contains('cicloEsportivoAtual')) { throw "UI de ciclos incompleta." }
 Write-Host "    Daily Athlete + prontuario profissional: assets OK."
 
-Write-Host "[631/640] Validando SQL e migration v0.6.4..."
+Write-Host "[631/648] Validando SQL e migration v0.6.4..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql064 = Get-Content .\scripts\sql\v0.6.4_ciclos_esportivos.sql -Encoding UTF8 -Raw
 if (-not $setupSource.Contains('V064CiclosEsportivos') -or -not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4') -or -not $sql064.Contains('CREATE TABLE IF NOT EXISTS "CiclosEsportivosPaciente"')) { throw "Upgrade v0.6.4 incompleto." }
 Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
 
-Write-Host "[632/640] Validando compatibilidade funcional v0.6.4..."
+Write-Host "[632/648] Validando compatibilidade funcional v0.6.4..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.5';")) { throw "Compatibilidade v0.6.4 inconsistente na versao atual." }
+if ($version.Trim() -ne "0.6.6" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.6';")) { throw "Compatibilidade v0.6.4 inconsistente na versao atual." }
 Write-Host "    v0.6.4 / Ciclos Esportivos + Metas de Ciclo preservado: OK."
 
-Write-Host "[633/640] Validando contrato da Estrategia do Dia..."
+Write-Host "[633/648] Validando contrato da Estrategia do Dia..."
 $portalContracts = Get-Content .\src\HealthPlatform.Api\Contracts\Portal\PortalPacienteContracts.cs -Encoding UTF8 -Raw
 if (-not $portalContracts.Contains('PortalEstrategiaDiaResponse') -or -not $portalContracts.Contains('EstrategiaDoDia')) { throw "Contrato da estrategia diaria ausente." }
 Write-Host "    Perfil + intensidade + RPE + ajustes + nutricao: OK."
 
-Write-Host "[634/640] Validando motor de adaptacao esportiva..."
+Write-Host "[634/648] Validando motor de adaptacao esportiva..."
 $strategySource = Get-Content .\src\HealthPlatform.Api\Services\EstrategiaDiariaService.cs -Encoding UTF8 -Raw
 if (-not $strategySource.Contains('Recuperacao') -or -not $strategySource.Contains('CargaControlada') -or -not $strategySource.Contains('AltaProntidao')) { throw "Perfis de estrategia diaria incompletos." }
 if (-not $strategySource.Contains('-25, -30') -or -not $strategySource.Contains('-15, -20')) { throw "Reducoes conservadoras da estrategia diaria ausentes." }
 Write-Host "    Recuperacao + leve + normal + alta prontidao: OK."
 
-Write-Host "[635/640] Validando trava contra sobrecarga automatica..."
+Write-Host "[635/648] Validando trava contra sobrecarga automatica..."
 if (-not $strategySource.Contains('0, 0, "Boa prontidão') -or -not $strategySource.Contains('Não aumente carga ou volume automaticamente')) { throw "Prontidao alta pode estar premiando sobrecarga automatica." }
 if ($strategySource.Contains('+10') -or $strategySource.Contains('+20')) { throw "Estrategia diaria contem aumento automatico de carga/volume." }
 Write-Host "    Prontidao alta nao aumenta prescricao automaticamente: OK."
 
-Write-Host "[636/640] Validando integracao com ciclo e planos prescritos..."
+Write-Host "[636/648] Validando integracao com ciclo e planos prescritos..."
 if (-not $strategySource.Contains('FaseTreinoId') -or -not $strategySource.Contains('FaseNutricionalId') -or -not $strategySource.Contains('PlanoTreinoId') -or -not $strategySource.Contains('PlanoAlimentarId')) { throw "Estrategia diaria nao respeita planos vinculados ao ciclo." }
 if (-not $strategySource.Contains('Sessoes') -or -not $strategySource.Contains('Refeicoes')) { throw "Contexto de sessoes/refeicoes ausente." }
 Write-Host "    Ciclo + treino + nutricao prescritos: OK."
 
-Write-Host "[637/640] Validando Home Daily Athlete com Estrategia do Dia..."
+Write-Host "[637/648] Validando Home Daily Athlete com Estrategia do Dia..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('ESTRATÉGIA DO DIA') -or -not $appJsSource.Contains('estrategiaDoDia') -or -not $appJsSource.Contains('RPE alvo')) { throw "Card da estrategia diaria ausente na Home." }
 Write-Host "    Intensidade + RPE + carga + volume + nutricao: UI OK."
 
-Write-Host "[638/640] Validando leitura profissional da estrategia diaria..."
+Write-Host "[638/648] Validando leitura profissional da estrategia diaria..."
 if (-not $appJsSource.Contains('hpDailyStrategyProfessionalCard') -or -not $appJsSource.Contains('ajuste de carga') -or -not $appJsSource.Contains('ajuste de volume')) { throw "Leitura profissional da estrategia diaria ausente." }
 Write-Host "    Prontuario recebe a mesma decisao com justificativa: OK."
 
-Write-Host "[639/640] Validando ausencia de alteracao indevida de schema..."
+Write-Host "[639/648] Validando ausencia de alteracao indevida de schema..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR base 37/37 foi alterado sem necessidade de schema." }
 if (Test-Path .\scripts\sql\v0.6.5_estrategia_do_dia.sql) { throw "v0.6.5 nao deveria exigir SQL de schema." }
 Write-Host "    v0.6.5 e funcional; schema v0.6.4 permanece valido: OK."
 
-Write-Host "[640/640] Validando versao funcional v0.6.5..."
+Write-Host "[640/648] Validando compatibilidade funcional v0.6.5..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.6.5" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.5';")) { throw "Versao v0.6.5 inconsistente." }
+if ($version.Trim() -ne "0.6.6" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.6';")) { throw "Versao v0.6.6 inconsistente." }
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if (-not $healthSource.Contains('version = "0.6.5"')) { throw "Health endpoint nao anuncia v0.6.5." }
-Write-Host "    v0.6.5 / Estrategia do Dia: OK."
+if (-not $healthSource.Contains('version = "0.6.6"')) { throw "Health endpoint nao anuncia v0.6.6." }
+Write-Host "    v0.6.5 / Estrategia do Dia preservada: OK."
+
+
+
+Write-Host "[641/648] Validando contrato de execucao guiada..."
+$portalContracts = Get-Content .\src\HealthPlatform.Api\Contracts\Portal\PortalPacienteContracts.cs -Encoding UTF8 -Raw
+if (-not $portalContracts.Contains('PortalExecucaoDiaResponse') -or -not $portalContracts.Contains('PortalExecucaoDiaItemResponse') -or -not $portalContracts.Contains('ExecucaoDoDia')) { throw "Contrato de execucao guiada ausente." }
+Write-Host "    Roteiro + itens + progresso + fechamento: contrato OK."
+
+Write-Host "[642/648] Validando motor do Roteiro de Hoje..."
+$guidedSource = Get-Content .\src\HealthPlatform.Api\Services\ExecucaoGuiadaService.cs -Encoding UTF8 -Raw
+if (-not $guidedSource.Contains('Check-in de prontidão') -or -not $guidedSource.Contains('Treino do dia') -or -not $guidedSource.Contains('Fechar o dia')) { throw "Motor de execucao guiada incompleto." }
+Write-Host "    Prontidao + treino + metas + fechamento: backend OK."
+
+Write-Host "[643/648] Validando progresso baseado em registros reais..."
+if (-not $guidedSource.Contains('ProntidoesDiarias') -or -not $guidedSource.Contains('ExecucoesTreino') -or -not $guidedSource.Contains('RegistrosMetas') -and -not $guidedSource.Contains('meta.Registros')) { throw "Roteiro nao esta usando dados reais." }
+if (-not $guidedSource.Contains('Obrigatorio') -or -not $guidedSource.Contains('progresso')) { throw "Calculo de progresso guiado ausente." }
+Write-Host "    Progresso deriva de check-in, execucao e metas reais: OK."
+
+Write-Host "[644/648] Validando fechamento diario idempotente..."
+$portalMeSource = Get-Content .\src\HealthPlatform.Api\Controllers\MeuPortalPacienteController.cs -Encoding UTF8 -Raw
+if (-not $portalMeSource.Contains('[HttpPost("fechamento-dia")]') -or -not $portalMeSource.Contains('Tipo == "FechamentoDia"') -or -not $portalMeSource.Contains('if (novo)')) { throw "Fechamento diario/idempotencia incompletos." }
+if (-not $portalMeSource.Contains('"FechamentoDia"') -or -not $portalMeSource.Contains('20, "Dia revisado com consciência."')) { throw "XP de reflexao nao integrado." }
+Write-Host "    Um fechamento por dia + XP apenas na primeira criacao: OK."
+
+Write-Host "[645/648] Validando Home com Roteiro de Hoje..."
+$appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
+if (-not $appJsSource.Contains('ROTEIRO DE HOJE') -or -not $appJsSource.Contains('hpExecutionDayCard') -or -not $appJsSource.Contains('closeAthleteDay')) { throw "UI de execucao guiada ausente." }
+Write-Host "    Progresso + itens + fechamento: UI OK."
+
+Write-Host "[646/648] Validando leitura profissional da execucao..."
+if (-not $appJsSource.Contains('hpExecutionProfessionalCard') -or -not $appJsSource.Contains('EXECUÇÃO DO DIA')) { throw "Leitura profissional da execucao ausente." }
+Write-Host "    Execucao do dia traduzida para acompanhamento profissional: OK."
+
+Write-Host "[647/648] Validando ausencia de alteracao indevida de schema v0.6.6..."
+$setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
+if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (Test-Path .\scripts\sql\v0.6.6_execucao_guiada.sql) { throw "v0.6.6 nao deveria exigir migration." }
+Write-Host "    Execucao guiada reutiliza schema existente: OK."
+
+Write-Host "[648/648] Validando versao funcional v0.6.6..."
+$version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
+if ($version.Trim() -ne "0.6.6" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.6.6';")) { throw "Versao v0.6.6 inconsistente." }
+$healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
+if (-not $healthSource.Contains('version = "0.6.6"')) { throw "Health endpoint nao anuncia v0.6.6." }
+Write-Host "    v0.6.6 / Execucao Guiada: OK."
 
 Write-Host "TESTE DE FUMACA CONCLUIDO." -ForegroundColor Green
 Write-Host "Nenhum registro foi criado ou alterado." -ForegroundColor Green

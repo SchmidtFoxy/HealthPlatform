@@ -1,3 +1,12 @@
+# v0.6.6 — Execução Guiada
+
+- Roteiro de Hoje derivado de dados reais do acompanhamento.
+- Progresso diário com prontidão, treino, metas/hidratação e fechamento.
+- Fechamento do dia com percepção 0–10 e reflexão breve.
+- +20 XP apenas no primeiro fechamento do dia; atualização posterior não duplica XP.
+- Leitura profissional da execução diária.
+- Sem alteração de schema: reutiliza registros e ledger já existentes.
+
 # v0.6.5 — Estratégia do Dia
 
 - Adiciona `EstrategiaDiariaService`, combinando prontidão, ciclo esportivo e planos ativos.

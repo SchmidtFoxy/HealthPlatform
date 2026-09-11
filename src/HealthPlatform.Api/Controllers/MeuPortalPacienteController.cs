@@ -119,6 +119,43 @@ public sealed class MeuPortalPacienteController(
         return Ok(MapearProntidao(item));
     }
 
+
+    [HttpPost("fechamento-dia")]
+    public async Task<IActionResult> FecharDia(FecharDiaRequest request, CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+        if (request.PercepcaoDoDia < 0 || request.PercepcaoDoDia > 10)
+            return BadRequest(new { message = "Percepcao do dia deve estar entre 0 e 10." });
+
+        var dia = DateOnly.FromDateTime(DateTime.UtcNow);
+        var inicio = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fim = inicio.AddDays(1);
+        var item = await db.RegistrosDiarioPaciente.FirstOrDefaultAsync(x =>
+            x.PacienteId == pacienteId.Value && x.Tipo == "FechamentoDia" &&
+            x.DataHoraUtc >= inicio && x.DataHoraUtc < fim, ct);
+        var novo = item is null;
+        if (item is null)
+        {
+            item = new RegistroDiarioPaciente { PacienteId = pacienteId.Value, Tipo = "FechamentoDia", DataHoraUtc = DateTime.UtcNow };
+            db.RegistrosDiarioPaciente.Add(item);
+        }
+        item.Escala = request.PercepcaoDoDia;
+        item.Descricao = Limpar(request.Resumo);
+        item.Unidade = null;
+        item.ValorNumerico = null;
+        item.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar(novo ? "CREATE" : "UPDATE", nameof(RegistroDiarioPaciente), item.Id, null,
+            new { item.Tipo, item.Escala, item.Descricao, Data = dia });
+        if (novo)
+            await GamificacaoService.RegistrarEventoAsync(db, currentUser.OrganizationId, pacienteId.Value,
+                dia, "FechamentoDia", item.Id, 20, "Dia revisado com consciência.", "Reflexao", ct);
+        await db.SaveChangesAsync(ct);
+        return Ok(new { data = dia, percepcaoDoDia = item.Escala, resumo = item.Descricao, xp = novo ? 20 : 0 });
+    }
+
     [HttpPost("diario")]
     public async Task<ActionResult<RegistroDiarioResponse>> RegistrarDiario(
         UpsertRegistroDiarioRequest request,
@@ -789,9 +826,10 @@ public sealed class MeuPortalPacienteController(
         var gamificacao = await GamificacaoService.MontarResumoAsync(db, pacienteId, dia, ct);
         var ciclo = await CicloEsportivoService.MontarAtualAsync(db, pacienteId, dia, ct);
         var estrategiaDoDia = await EstrategiaDiariaService.MontarAsync(db, pacienteId, dia, prontidao, ct);
+        var execucaoDoDia = await ExecucaoGuiadaService.MontarAsync(db, pacienteId, dia, estrategiaDoDia, ct);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, gamificacao, ciclo, estrategiaDoDia, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

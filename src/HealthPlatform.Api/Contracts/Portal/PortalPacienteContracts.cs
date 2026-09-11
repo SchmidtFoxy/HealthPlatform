@@ -100,6 +100,18 @@ public record PortalEstrategiaDiaResponse(
     string EstrategiaNutricional, string FocoHidratacao, string Justificativa,
     IReadOnlyCollection<string> SessoesPrevistas, IReadOnlyCollection<string> RefeicoesChave);
 
+
+public record PortalExecucaoDiaItemResponse(
+    string Codigo, string Categoria, string Titulo, string Descricao, string Status,
+    bool Obrigatorio, decimal ProgressoPercentual, string? ValorAtual, string? Meta, string Acao);
+
+public record PortalExecucaoDiaResponse(
+    int TotalItens, int Concluidos, int Pendentes, decimal ProgressoPercentual,
+    bool DiaFechado, int? PercepcaoDoDia, string? ResumoFechamento,
+    IReadOnlyCollection<PortalExecucaoDiaItemResponse> Itens);
+
+public sealed record FecharDiaRequest(int PercepcaoDoDia, string? Resumo);
+
 public record PortalEventoXpResponse(Guid Id, DateOnly Data, string Fonte, int Pontos, string Motivo, string? Adequacao);
 public record PortalDesafioSemanalResponse(Guid Id, string Codigo, string Titulo, string Descricao, int Meta, int Progresso, int RecompensaXp, bool Concluido);
 public record PortalConquistaResponse(Guid Id, string Codigo, string Titulo, string Descricao, string Icone, DateOnly DataConquista, int RecompensaXp);
@@ -117,6 +129,7 @@ public record PortalPacienteHomeResponse(
     PortalGamificacaoResponse Gamificacao,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
+    PortalExecucaoDiaResponse ExecucaoDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,
     IReadOnlyCollection<PortalMetaHojeResponse> MetasHoje,
