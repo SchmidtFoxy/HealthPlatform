@@ -56,6 +56,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<RegistroMedicamento> RegistrosMedicamentos => Set<RegistroMedicamento>();
     public DbSet<ProntidaoDiaria> ProntidoesDiarias => Set<ProntidaoDiaria>();
     public DbSet<EventoXp> EventosXp => Set<EventoXp>();
+    public DbSet<DesafioSemanalPaciente> DesafiosSemanaisPaciente => Set<DesafioSemanalPaciente>();
+    public DbSet<ConquistaPaciente> ConquistasPaciente => Set<ConquistaPaciente>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -483,6 +485,34 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasDatabaseName("IX_EventosXp_PacienteId_Fonte_FonteId");
             entity.HasIndex(x => new { x.OrganizacaoId, x.Data });
             entity.HasOne(x => x.Paciente).WithMany(x => x.EventosXp)
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<DesafioSemanalPaciente>(entity =>
+        {
+            entity.ToTable("DesafiosSemanaisPaciente");
+            entity.Property(x => x.Codigo).HasMaxLength(60).IsRequired();
+            entity.Property(x => x.Titulo).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.Descricao).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.TipoMetrica).HasMaxLength(40).IsRequired();
+            entity.HasIndex(x => new { x.PacienteId, x.SemanaInicio, x.Codigo }).IsUnique()
+                .HasDatabaseName("IX_DesafiosSemanaisPaciente_PacienteId_SemanaInicio_Codigo");
+            entity.HasIndex(x => new { x.OrganizacaoId, x.SemanaInicio });
+            entity.HasOne(x => x.Paciente).WithMany(x => x.DesafiosSemanais)
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<ConquistaPaciente>(entity =>
+        {
+            entity.ToTable("ConquistasPaciente");
+            entity.Property(x => x.Codigo).HasMaxLength(60).IsRequired();
+            entity.Property(x => x.Titulo).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.Descricao).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.Icone).HasMaxLength(20).IsRequired();
+            entity.HasIndex(x => new { x.PacienteId, x.Codigo }).IsUnique()
+                .HasDatabaseName("IX_ConquistasPaciente_PacienteId_Codigo");
+            entity.HasIndex(x => new { x.OrganizacaoId, x.DataConquista });
+            entity.HasOne(x => x.Paciente).WithMany(x => x.Conquistas)
                 .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
         });
 

@@ -35,4 +35,6 @@ public class Paciente : BaseEntity
     public ICollection<RevisaoFase> RevisoesFases { get; set; } = new List<RevisaoFase>();
     public ICollection<ProntidaoDiaria> ProntidoesDiarias { get; set; } = new List<ProntidaoDiaria>();
     public ICollection<EventoXp> EventosXp { get; set; } = new List<EventoXp>();
+    public ICollection<DesafioSemanalPaciente> DesafiosSemanais { get; set; } = new List<DesafioSemanalPaciente>();
+    public ICollection<ConquistaPaciente> Conquistas { get; set; } = new List<ConquistaPaciente>();
 }

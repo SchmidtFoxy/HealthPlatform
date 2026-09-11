@@ -1510,6 +1510,12 @@ async function loadMyPatientPortal(){
       </div>
     </section>
 
+    <section class="card weekly-challenges-card">
+      <div class="card-head"><div><span class="eyebrow">MISSÕES DA SEMANA</span><h3>Consistência vira progresso</h3></div><small>${(game.desafiosSemana||[]).filter(x=>x.concluido).length}/${(game.desafiosSemana||[]).length} concluídas</small></div>
+      <div class="weekly-challenge-list">${(game.desafiosSemana||[]).map(x=>{const pct=Math.min(100,Math.round(((x.progresso||0)/Math.max(1,x.meta||1))*100));return `<article class="weekly-challenge ${x.concluido?'done':''}"><div><strong>${x.concluido?'✓ ':''}${esc(x.titulo)}</strong><small>${esc(x.descricao)} • +${x.recompensaXp} XP</small></div><b>${Math.min(x.progresso,x.meta)}/${x.meta}</b><div class="weekly-challenge-track"><i style="width:${pct}%"></i></div></article>`}).join('')||sectionEmpty('As missões aparecem automaticamente para a semana atual.')}</div>
+      ${(game.conquistasRecentes||[]).length?`<div class="achievement-strip"><span class="eyebrow">CONQUISTAS</span>${game.conquistasRecentes.map(x=>`<div class="achievement-chip" title="${esc(x.descricao)}"><b>${x.icone}</b><span>${esc(x.titulo)}</span></div>`).join('')}</div>`:''}
+    </section>
+
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
       <div class="readiness-main">
         <div><span class="eyebrow">DAILY ATHLETE • PRONTIDÃO</span><h3>${readiness?`Seu corpo hoje: ${esc(readiness.recomendacaoTreino)}`:'Como seu corpo acordou hoje?'}</h3><p>${readiness?esc(readiness.motivoRecomendacao||'Use a prontidão como guia, sempre respeitando o plano definido.'):'Sono, energia, dor, disposição e recuperação ajustam a recomendação do dia.'}</p></div>
@@ -5078,7 +5084,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.6.2';
+const HP_MVP_VERSION='0.6.3';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

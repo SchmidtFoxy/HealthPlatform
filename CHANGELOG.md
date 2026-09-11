@@ -1,3 +1,12 @@
+# v0.6.3 — Missões & Conquistas
+
+- Desafios semanais automáticos baseados em comportamento realmente registrado: treinos, prontidão e dias ativos.
+- Recompensas de desafio entram no ledger de XP com idempotência; não existe botão manual para fabricar progresso.
+- Conquistas persistentes para marcos esportivos e de autocuidado, como primeiro treino, 10 treinos, 7 check-ins e consistência 80+.
+- Home Daily Athlete passa a mostrar progresso das missões e conquistas recentes.
+- Nova entidades `DesafioSemanalPaciente` e `ConquistaPaciente`, upgrade `V063MissoesConquistas` e SQL idempotente.
+- PREPARAR passa a 36/36 e suíte sobe para 624 verificações.
+
 # HealthPlatform Changelog
 
 ## v0.6.2 — XP & Consistência

@@ -88,10 +88,13 @@ public sealed record RegistrarProntidaoDiariaRequest(
     int RecuperacaoNivel);
 
 public record PortalEventoXpResponse(Guid Id, DateOnly Data, string Fonte, int Pontos, string Motivo, string? Adequacao);
+public record PortalDesafioSemanalResponse(Guid Id, string Codigo, string Titulo, string Descricao, int Meta, int Progresso, int RecompensaXp, bool Concluido);
+public record PortalConquistaResponse(Guid Id, string Codigo, string Titulo, string Descricao, string Icone, DateOnly DataConquista, int RecompensaXp);
 
 public record PortalGamificacaoResponse(
     int XpTotal, int Nivel, int XpNoNivel, int XpProximoNivel, int ConsistenciaScore,
-    int StreakDias, int XpHoje, int DiasAtivos14, IReadOnlyCollection<PortalEventoXpResponse> EventosRecentes);
+    int StreakDias, int XpHoje, int DiasAtivos14, IReadOnlyCollection<PortalEventoXpResponse> EventosRecentes,
+    IReadOnlyCollection<PortalDesafioSemanalResponse> DesafiosSemana, IReadOnlyCollection<PortalConquistaResponse> ConquistasRecentes);
 
 public record PortalPacienteHomeResponse(
     DateOnly Data,
