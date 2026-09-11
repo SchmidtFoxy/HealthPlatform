@@ -1,12 +1,12 @@
-﻿# v0.4.5 — Connected Care: baseline promovida
+﻿# v0.4.6 — Connected Care: baseline promovida
 
-A v0.4.5 promove a **v0.4.4-r1**, validada com **508/508 testes**, como nova baseline estável do HealthPlatform. Esta promoção não adiciona schema, regras clínicas nem mutação de dados; ela cria um marco limpo para a próxima expansão funcional do Connected Care.
+A v0.4.6 promove a **v0.4.4-r1**, validada com **508/508 testes**, como nova baseline estável do HealthPlatform. Esta promoção não adiciona schema, regras clínicas nem mutação de dados; ela cria um marco limpo para a próxima expansão funcional do Connected Care.
 
 ## Promoção de versão
 
-- runtime, healthcheck e Swagger atualizados para 0.4.5;
-- identificação visual e scripts local/remoto atualizados para 0.4.5;
-- suíte `TESTAR.ps1` atualizada para exigir 0.4.5;
+- runtime, healthcheck e Swagger atualizados para 0.4.6;
+- identificação visual e scripts local/remoto atualizados para 0.4.6;
+- suíte `TESTAR.ps1` atualizada para exigir 0.4.6;
 - baseline anterior v0.4.4-r1 preservada no histórico;
 - sem migration nova e sem alteração de domínio nesta promoção.
 
@@ -2994,3 +2994,5 @@ Acesse `http://localhost:5180`.
 - Corrige a validação [60/508] do `TESTAR.ps1` para não depender do texto acentuado `Histórico recente` retornado via HTTP no Windows PowerShell.
 - O teste agora valida a rota real de histórico de treino, a coleção `h.execucoes` e o carregador `loadPatientWorkout`.
 - Nenhuma alteração de banco, API, regra clínica ou dados.
+
+- Baseline anterior validada: v0.4.5 (508/508 testes de fumaça).
