@@ -26,12 +26,13 @@ public sealed class ProtocolosAcompanhamentoController(
 
     [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/protocolo-acompanhamento")]
-    public async Task<IActionResult> Listar(Guid pacienteId, CancellationToken ct)
+    public async Task<IActionResult> Listar(Guid pacienteId, [FromQuery] int offsetMinutos = 0, CancellationToken ct = default)
     {
         if (!await PacienteExiste(pacienteId, ct)) return NotFound(new { message = "Paciente nao encontrado." });
         var entidades = await Query(pacienteId).Include(x => x.Profissional).ToListAsync(ct);
         var itens = entidades.Select(x => ToResponse(x, x.Profissional.Nome)).ToList();
-        return Ok(new { pacienteId, ativos = entidades.Count(x => x.Ativo), itens });
+        var aderencia = await CalcularAderencia(pacienteId, entidades.Where(x => x.Ativo).ToList(), offsetMinutos, 7, ct);
+        return Ok(new { pacienteId, ativos = entidades.Count(x => x.Ativo), itens, aderencia });
     }
 
     [Authorize]
@@ -74,13 +75,85 @@ public sealed class ProtocolosAcompanhamentoController(
 
     [Authorize(Policy="PatientOnly")]
     [HttpGet("api/portal/me/protocolo-acompanhamento")]
-    public async Task<IActionResult> MeuProtocolo(CancellationToken ct)
+    public async Task<IActionResult> MeuProtocolo([FromQuery] int offsetMinutos = 0, CancellationToken ct = default)
     {
         var pacienteId=await db.Pacientes.AsNoTracking().Where(x=>x.UsuarioId==currentUser.UserId && x.OrganizacaoId==currentUser.OrganizationId && x.Ativo).Select(x=>(Guid?)x.Id).FirstOrDefaultAsync(ct);
         if(!pacienteId.HasValue)return NotFound(new { message="Paciente vinculado nao encontrado." });
         var entidades=await Query(pacienteId.Value).Where(x=>x.Ativo).Include(x=>x.Profissional).ToListAsync(ct);
         var itens=entidades.Select(x=>ToResponse(x,x.Profissional.Nome)).ToList();
-        return Ok(new { pacienteId=pacienteId.Value, configurado=itens.Count>0, itens });
+        var aderencia=await CalcularAderencia(pacienteId.Value, entidades, offsetMinutos, 7, ct);
+        return Ok(new { pacienteId=pacienteId.Value, configurado=itens.Count>0, itens, aderencia });
+    }
+
+    private async Task<object> CalcularAderencia(Guid pacienteId, IReadOnlyCollection<ProtocoloAcompanhamentoItem> protocolo, int offsetMinutos, int dias, CancellationToken ct)
+    {
+        offsetMinutos = Math.Clamp(offsetMinutos, -840, 840);
+        dias = Math.Clamp(dias, 1, 30);
+        var hojeLocal = DateOnly.FromDateTime(DateTime.UtcNow.AddMinutes(offsetMinutos));
+        var inicioLocal = hojeLocal.AddDays(-(dias - 1));
+        var inicioUtc = DateTime.SpecifyKind(inicioLocal.ToDateTime(TimeOnly.MinValue).AddMinutes(-offsetMinutos), DateTimeKind.Utc);
+        var fimUtc = DateTime.SpecifyKind(hojeLocal.AddDays(1).ToDateTime(TimeOnly.MinValue).AddMinutes(-offsetMinutos), DateTimeKind.Utc);
+        var registros = await db.RegistrosDiarioPaciente.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.DataHoraUtc >= inicioUtc && x.DataHoraUtc < fimUtc)
+            .Select(x => new { x.DataHoraUtc, x.Tipo })
+            .ToListAsync(ct);
+
+        var previstos = 0;
+        var concluidos = 0;
+        var hojePrevistos = 0;
+        var hojeConcluidos = 0;
+        var statusHoje = new List<object>();
+
+        foreach (var diaOffset in Enumerable.Range(0, dias))
+        {
+            var dia = inicioLocal.AddDays(diaOffset);
+            foreach (var item in protocolo.Where(x => x.Ativo && DeveExecutarNoDia(x, dia, offsetMinutos)))
+            {
+                previstos++;
+                var concluido = RegistroCumpre(item.Tipo, registros.Where(r => DateOnly.FromDateTime(r.DataHoraUtc.AddMinutes(offsetMinutos)) == dia).Select(r => r.Tipo));
+                if (concluido) concluidos++;
+                if (dia == hojeLocal)
+                {
+                    hojePrevistos++;
+                    if (concluido) hojeConcluidos++;
+                    statusHoje.Add(new { item.Id, item.Tipo, item.Titulo, item.HorarioLocal, concluido });
+                }
+            }
+        }
+
+        return new
+        {
+            dias,
+            previstos,
+            concluidos,
+            percentual = previstos == 0 ? (int?)null : (int)Math.Round(concluidos * 100m / previstos),
+            hoje = new { previstos = hojePrevistos, concluidos = hojeConcluidos, percentual = hojePrevistos == 0 ? (int?)null : (int)Math.Round(hojeConcluidos * 100m / hojePrevistos), itens = statusHoje }
+        };
+    }
+
+    private static bool DeveExecutarNoDia(ProtocoloAcompanhamentoItem item, DateOnly dia, int offsetMinutos)
+    {
+        if (item.Frequencia.Equals("SobDemanda", StringComparison.OrdinalIgnoreCase)) return false;
+        if (item.Frequencia.Equals("Diario", StringComparison.OrdinalIgnoreCase)) return true;
+        if (item.Frequencia.Equals("Semanal", StringComparison.OrdinalIgnoreCase)) return dia.DayOfWeek == item.CreatedAtUtc.AddMinutes(offsetMinutos).DayOfWeek;
+        if (!item.Frequencia.Equals("DiasSemana", StringComparison.OrdinalIgnoreCase)) return false;
+        var token = dia.DayOfWeek switch
+        {
+            DayOfWeek.Monday => "Seg", DayOfWeek.Tuesday => "Ter", DayOfWeek.Wednesday => "Qua",
+            DayOfWeek.Thursday => "Qui", DayOfWeek.Friday => "Sex", DayOfWeek.Saturday => "Sab", _ => "Dom"
+        };
+        return (item.DiasSemana ?? "").Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Any(x => x.StartsWith(token, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool RegistroCumpre(string tipoProtocolo, IEnumerable<string> tiposRegistrados)
+    {
+        var tipos = tiposRegistrados.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (tipoProtocolo.Equals("Pressao", StringComparison.OrdinalIgnoreCase))
+            return tipos.Contains("PressaoSistolica") && tipos.Contains("PressaoDiastolica");
+        if (tipoProtocolo.Equals("Sintoma", StringComparison.OrdinalIgnoreCase))
+            return tipos.Contains("Sintoma") || tipos.Contains("Observacao");
+        return tipos.Contains(tipoProtocolo);
     }
 
     private IQueryable<ProtocoloAcompanhamentoItem> Query(Guid pacienteId) => db.ProtocolosAcompanhamento.AsNoTracking()

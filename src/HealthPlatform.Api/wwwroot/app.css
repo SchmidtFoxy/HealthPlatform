@@ -1908,3 +1908,11 @@ body.rs-menu-open{overflow:hidden}
 
 /* v0.5.8 — protocolos configuráveis de acompanhamento */
 .protocol-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0}.protocol-summary>div,.protocol-item{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface-soft)}.protocol-summary strong,.protocol-item strong{display:block}.protocol-summary span,.protocol-item small{display:block;margin-top:4px;color:var(--muted);font-size:.84rem}.protocol-manager{display:grid;gap:10px;margin:14px 0 18px}.protocol-item{display:flex;align-items:center;justify-content:space-between;gap:12px}.protocol-item.inactive{opacity:.6}@media(max-width:560px){.protocol-summary{grid-template-columns:1fr}.protocol-item{align-items:flex-start;flex-direction:column}}
+
+
+/* v0.5.9 — aderencia aos protocolos */
+.protocol-adherence{display:grid;gap:8px;margin:12px 0 16px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-soft)}
+.protocol-adherence>div:first-child{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.protocol-adherence strong{font-size:1.4rem}.protocol-adherence span{font-size:.84rem;color:var(--muted)}
+.protocol-adherence-track{height:8px;border-radius:999px;background:var(--line);overflow:hidden}.protocol-adherence-track i{display:block;height:100%;background:var(--accent);border-radius:inherit}
+.protocol-today-status{margin-bottom:16px}.protocol-today-items{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.protocol-today-items span{padding:7px 10px;border:1px solid var(--line);border-radius:999px;font-size:.82rem}.protocol-today-items span.done{font-weight:700}
+@media(max-width:720px){.protocol-today-items{display:grid}.protocol-today-items span{border-radius:12px}}

@@ -1,3 +1,22 @@
+# v0.5.9-r1 — Hotfix de validações do protocolo
+
+- corrige o teste 577 para reconhecer a rota do protocolo com `offsetMinutos`, introduzida pela aderência baseada no dia local;
+- corrige o teste 578 para validar o upgrade histórico correto da v0.5.8 (`v0.5.8_protocolos_acompanhamento.sql`);
+- não altera banco, schema, API ou regra clínica;
+- mantém o fluxo oficial `PREPARAR -> RODAR -> TESTAR`.
+
+# v0.5.9 — Aderência aos Protocolos
+**Tipo:** feature release
+
+- adiciona cálculo de aderência aos protocolos configuráveis;
+- mostra ao paciente o que estava previsto e o que já foi concluído hoje;
+- mostra ao profissional aderência consolidada dos últimos 7 dias;
+- respeita frequência diária, dias da semana, semanal e sob demanda;
+- considera pressão concluída apenas com sistólica + diastólica;
+- respeita timezone local por offset do navegador;
+- sem schema ou migration nova;
+- suíte ampliada de 580 para 588 verificações.
+
 
 ## v0.5.8-r1 - Hotfix de validacao do PREPARAR
 - Corrige o teste 517/580 para reconhecer corretamente o upgrade v0.5.1 na etapa 31/32.

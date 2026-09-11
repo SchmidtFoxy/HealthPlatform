@@ -1,19 +1,14 @@
-# v0.5.8 — Protocolos de Acompanhamento / Connected Care
+# v0.5.9 — Aderência aos Protocolos / Connected Care
 
-A v0.5.8 transforma o monitoramento guiado em acompanhamento personalizado por paciente.
+A v0.5.9 transforma protocolos configuráveis em acompanhamento mensurável.
 
 ## O que entrou
-- profissional configura quais métricas cada paciente deve acompanhar;
-- frequência: diária, dias da semana, semanal ou sob demanda;
-- horário, unidade e instruções personalizadas;
-- portal do paciente passa a priorizar somente os registros definidos no protocolo quando houver configuração ativa;
-- resumo do prontuário mostra o protocolo ativo junto ao monitoramento remoto;
-- ativação/desativação auditada e isolada por organização;
-- nova tabela `ProtocolosAcompanhamento`;
-- PREPARAR passa para 32 etapas e possui migration incremental v0.5.8 para instalações existentes.
-
-## Validação esperada
-- `PREPARAR.ps1`: 32/32
-- `TESTAR.ps1`: 580/580
-
-Baseline anterior: v0.5.7 validada com 570/570 testes.
+- cálculo de aderência aos itens programados do protocolo;
+- status do dia no portal do paciente;
+- resumo de aderência dos últimos 7 dias no prontuário profissional;
+- suporte a Diário, DiasSemana e Semanal; itens SobDemanda não penalizam aderência;
+- pressão arterial só conta como concluída quando sistólica e diastólica foram registradas;
+- cálculo respeita o offset local do navegador;
+- sem schema ou migration nova;
+- fluxo oficial: PREPARAR → RODAR → TESTAR;
+- suíte ampliada para 588 verificações.
