@@ -1,4 +1,14 @@
-﻿# v0.9.9 — Decisão Assistida de Progressão
+﻿﻿# v0.10.0 — Plano de Progressão Supervisionada
+
+- adiciona `PlanoProgressaoSupervisionadaService`;
+- integra atleta e profissional nas duas Homes;
+- estrutura critérios transparentes para discussão de uma única progressão;
+- preserva bloqueios de recuperação, carga e dados insuficientes;
+- não cria meta, carga, volume, calorias ou medicação automaticamente;
+- sem migration; schema permanece 37/37;
+- suíte ampliada para 920 verificações.
+
+# v0.9.9 — Decisão Assistida de Progressão
 
 - adiciona `DecisaoProgressaoService` depois da Janela de Progressão;
 - organiza até 3 opções transparentes e sugere apenas um eixo para discussão por vez;

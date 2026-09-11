@@ -1,3 +1,16 @@
+# HealthPlatform v0.10.0 — Plano de Progressão Supervisionada
+
+> Marco v0.10.0: depois de abrir a janela e organizar a decisão de progressão, a plataforma agora estrutura a discussão profissional sem transformar elegibilidade em prescrição automática.
+
+A camada de progressão supervisionada mostra um único eixo em discussão, critérios transparentes e uma regra de reavaliação baseada na resposta observada. O sistema não define carga, volume, calorias, medicação ou meta automaticamente.
+
+## Princípios
+- uma mudança por vez;
+- outros eixos permanecem estáveis durante observação;
+- janela/decisão anteriores continuam soberanas;
+- falta de dados, recuperação ou carga em revisão bloqueiam nova exigência;
+- reavaliação ocorre após observar resposta, sem prazo automático imposto.
+
 # HealthPlatform v0.9.9 — Janela de Progressão & Critério de Avanço
 
 > v0.9.9: a plataforma agora explicita quando existe contexto suficiente para discutir uma progressão e quando recuperação, carga, oscilação ou falta de dados pedem manutenção.

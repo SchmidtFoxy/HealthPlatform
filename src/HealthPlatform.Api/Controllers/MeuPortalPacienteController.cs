@@ -934,10 +934,11 @@ public sealed class MeuPortalPacienteController(
         var reentradaDesafio = ReentradaDesafioService.Montar(encerramentoCicloHabito, estabilidadeHabitos, protecaoRetomada);
         var janelaProgressao = JanelaProgressaoService.Montar(reentradaDesafio, estabilidadeHabitos, tendenciaRecuperacao, cargaTreino);
         var decisaoProgressao = DecisaoProgressaoService.Montar(janelaProgressao, ciclo, acoesPrioritariasDoCiclo, tendenciaDoObjetivo);
+        var planoProgressaoSupervisionada = PlanoProgressaoSupervisionadaService.Montar(decisaoProgressao, janelaProgressao);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, proximoFocoHabito, revisaoFocoHabito, encerramentoCicloHabito, reentradaDesafio, janelaProgressao, decisaoProgressao, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, proximoFocoHabito, revisaoFocoHabito, encerramentoCicloHabito, reentradaDesafio, janelaProgressao, decisaoProgressao, planoProgressaoSupervisionada, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }

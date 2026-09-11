@@ -250,6 +250,14 @@ public record PortalDecisaoProgressaoResponse(
     string Decisao, string Evidencia, string Acao, IReadOnlyCollection<PortalOpcaoDecisaoProgressaoResponse> Opcoes,
     string MensagemSeguranca);
 
+public record PortalCriterioPlanoProgressaoResponse(
+    string Codigo, string Titulo, string Estado, string Evidencia);
+
+public record PortalPlanoProgressaoSupervisionadaResponse(
+    string Estado, string Titulo, string Resumo, bool PodeAbrirDiscussao, string? EixoSupervisionado,
+    string Decisao, string Evidencia, string Acao, IReadOnlyCollection<PortalCriterioPlanoProgressaoResponse> Criterios,
+    string ProximaReavaliacao, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -353,6 +361,7 @@ public record PortalPacienteHomeResponse(
     PortalReentradaDesafioResponse ReentradaDesafio,
     PortalJanelaProgressaoResponse JanelaProgressao,
     PortalDecisaoProgressaoResponse DecisaoProgressao,
+    PortalPlanoProgressaoSupervisionadaResponse PlanoProgressaoSupervisionada,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
