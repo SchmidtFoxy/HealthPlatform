@@ -27,7 +27,7 @@ $senha = $settings.Seed.AdminPassword
 
 Write-Host "[1/600] Healthcheck..." -ForegroundColor Cyan
 $health = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health.version -ne "0.10.2") { throw "Versao inesperada da API: $($health.version)" }
+if ($health.version -ne "0.10.3") { throw "Versao inesperada da API: $($health.version)" }
 Write-Host "    API $($health.version) / banco $($health.database)" -ForegroundColor Green
 
 Write-Host "[2/600] Login..." -ForegroundColor Cyan
@@ -496,7 +496,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[70/600] Validando compatibilidade de schema na v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not (Test-Path .\scripts\sql\v0.3.1_execucoes_treino.sql)) {
     throw "Historico de upgrade v0.3.1 ausente."
 }
@@ -568,7 +568,7 @@ if ($css.Content -notmatch "insight-summary" -or
     throw "Estilos de insights incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    Insights responsivos / schema existente compativel: OK."
 
 
@@ -648,7 +648,7 @@ if ($css.Content -notmatch "pending-card" -or
     throw "Auditoria/estilos de pendencias incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    Auditoria + UI responsiva + v0.3.27: OK."
 
 
@@ -737,7 +737,7 @@ if ($css.Content -notmatch "notification-panel" -or
     throw "Estilos de notificacoes incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    UI responsiva + upgrade v0.3.27: OK."
 
 
@@ -791,9 +791,9 @@ Write-Host "    PREPARAR preserva dados do usuario; POPULAR e execucao explicita
 
 Write-Host "[104/600] Validando versao v0.3.27 e upgrade do schema..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if ($setupSource -notmatch "\[37/37\]") { throw "PREPARAR atual deveria possuir 36 etapas." }
-Write-Host "    v0.3.27 preservada / PREPARAR atual 37/37 / upgrade SOAP: OK."
+Write-Host "    v0.3.27 preservada / PREPARAR atual 38/38 / upgrade SOAP: OK."
 
 
 Write-Host "[105/600] Validando endpoint da carteira..."
@@ -863,7 +863,7 @@ if ($css.Content -notmatch "portfolio-patient-card" -or
     throw "Estilos da carteira incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    Carteira responsiva / v0.3.27: OK."
 
 
@@ -945,7 +945,7 @@ if ($css.Content -notmatch "followup-history-list" -or
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / follow-up responsivo / upgrade OK."
 
 
@@ -1017,7 +1017,7 @@ if ($css.Content -notmatch "follow-queue-card" -or
     throw "Estilos/populacao de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / fila responsiva / demo follow-up: OK."
 
 
@@ -1091,7 +1091,7 @@ if ($css.Content -notmatch "management-grid" -or
     throw "Estilos de gestao incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    Gestao responsiva / v0.3.27: OK."
 
 
@@ -1166,7 +1166,7 @@ if ($css.Content -notmatch "management-head-actions") {
     throw "Estilos de exportacao gerencial ausentes."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / exportacao gerencial / setup rapido: OK."
 
 
@@ -1236,7 +1236,7 @@ Write-Host "    Copy de schema atualizada."
 
 Write-Host "[154/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / estabilizacao + qualidade: OK."
 
 
@@ -1303,7 +1303,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[162/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / busca global + central de acoes: OK."
 
 
@@ -1375,7 +1375,7 @@ if ($css.Content -notmatch "central-day-grid" -or
     throw "Estilos da Central do Dia incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Central do Dia responsiva: OK."
 
 
@@ -1468,12 +1468,12 @@ if (-not $soapSqlSource.Contains('"EvolucoesClinicas"') -or
     -not $soapSqlSource.Contains('"Plano"')) {
     throw "Upgrade SOAP historico incompleto."
 }
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.15_evolucoes_clinicas.sql") -or
     -not $setupSource.Contains("v0.3.22_progressao_treino.sql")) {
     throw "PREPARAR atual incompleto."
 }
-Write-Host "    SOAP v0.3.15 preservado / PREPARAR atual 37/37: OK."
+Write-Host "    SOAP v0.3.15 preservado / PREPARAR atual 38/38: OK."
 
 Write-Host "[180/600] Validando estilos e versao v0.3.27..."
 $soapCssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
@@ -1482,7 +1482,7 @@ if (-not $soapCssSource.Contains("soap-grid") -or
     throw "Estilos SOAP incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / evolucao clinica SOAP: OK."
 
 
@@ -1551,7 +1551,7 @@ Write-Host "    Atualizacao manual + desktop/mobile: assets OK."
 
 Write-Host "[188/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / resumo clinico consolidado: OK."
 
 
@@ -1614,7 +1614,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[196/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / handoff clinico + impressao: OK."
 
 
@@ -1700,7 +1700,7 @@ Write-Host "    Admin-only + desktop/mobile: assets OK."
 
 Write-Host "[206/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe + gestao de profissionais: OK."
 
 
@@ -1770,7 +1770,7 @@ Write-Host "    Filtros + acoes desktop/mobile: OK."
 
 Write-Host "[214/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe v2 + seguranca de acesso: OK."
 
 
@@ -1837,7 +1837,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[222/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Minha Conta + troca de senha: OK."
 
 
@@ -1930,7 +1930,7 @@ Write-Host "    Percentual + calorias alvo: assets OK."
 Write-Host "[233/600] Validando upgrade SQL e PREPARAR..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.21_progressao_plano_alimentar.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.21_progressao_plano_alimentar.sql") -or
     -not $sqlSource.Contains('"PlanoOrigemId"') -or
     -not $sqlSource.Contains('"Versao"')) {
@@ -1940,7 +1940,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[234/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao do plano alimentar: OK."
 
 
@@ -2033,7 +2033,7 @@ Write-Host "    Projecao + modal responsivo: assets OK."
 Write-Host "[245/600] Validando upgrade SQL e PREPARAR 19..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.22_progressao_treino.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.22_progressao_treino.sql") -or
     -not $sqlSource.Contains('"PlanoOrigemId"') -or
     -not $sqlSource.Contains('"AjusteCargaPercentual"')) {
@@ -2043,7 +2043,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[246/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao de treino + ciclo versionado: OK."
 
 
@@ -2136,7 +2136,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[257/600] Validando upgrade SQL e PREPARAR 20..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.23_modelos_plano_alimentar.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.23_modelos_plano_alimentar.sql") -or
     -not $sqlSource.Contains('"ModelosPlanosAlimentares"') -or
     -not $sqlSource.Contains('"ConteudoJson"')) {
@@ -2146,7 +2146,7 @@ Write-Host "    SQL idempotente + PREPARAR 20/20: OK."
 
 Write-Host "[258/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de plano alimentar: OK."
 
 
@@ -2241,7 +2241,7 @@ Write-Host "[269/600] Validando upgrade SQL, responsividade e PREPARAR 21..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.24_modelos_plano_treino.sql -Encoding UTF8 -Raw
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.24_modelos_plano_treino.sql") -or
     -not $sqlSource.Contains('"ModelosPlanosTreino"') -or
     -not $sqlSource.Contains('"ConteudoJson"') -or
@@ -2252,7 +2252,7 @@ Write-Host "    SQL idempotente + UI responsiva + PREPARAR 21/21: OK."
 
 Write-Host "[270/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de treino + criacao rapida: OK."
 
 
@@ -2366,7 +2366,7 @@ Write-Host "    Meta + distribuicao desktop/mobile: OK."
 Write-Host "[283/600] Validando SQL e PREPARAR 22..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.25_metas_nutricionais.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.25_metas_nutricionais.sql") -or
     -not $sqlSource.Contains('"MetaCalorias"') -or
     -not $sqlSource.Contains('"MetaFibrasG"')) {
@@ -2376,7 +2376,7 @@ Write-Host "    SQL idempotente + PREPARAR 22/22: OK."
 
 Write-Host "[284/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / metas nutricionais + distribuicao: OK."
 
 
@@ -2470,7 +2470,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[295/600] Validando SQL e PREPARAR 23..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.26_modelos_refeicoes.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.26_modelos_refeicoes.sql") -or
     -not $sqlSource.Contains('"ModelosRefeicoes"') -or
     -not $sqlSource.Contains('"Categoria"')) {
@@ -2480,7 +2480,7 @@ Write-Host "    SQL idempotente + PREPARAR 23/23: OK."
 
 Write-Host "[296/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de refeicoes + insercao rapida: OK."
 
 
@@ -2576,7 +2576,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[307/600] Validando SQL e PREPARAR 24..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.27_modelos_sessoes_treino.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.27_modelos_sessoes_treino.sql") -or
     -not $sqlSource.Contains('"ModelosSessoesTreino"') -or
     -not $sqlSource.Contains('"Categoria"')) {
@@ -2586,7 +2586,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[308/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de sessoes + insercao rapida: OK."
 
 
@@ -2678,18 +2678,18 @@ Write-Host "    Cards e graficos desktop/mobile: OK."
 
 Write-Host "[319/600] Validando compatibilidade de banco e PREPARAR..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.27_modelos_sessoes_treino.sql")) {
     throw "PREPARAR historico inesperado."
 }
 if (Test-Path .\scripts\sql\v0.3.28_evolucao_habitos.sql) {
     throw "v0.3.28 nao deveria exigir upgrade de schema."
 }
-Write-Host "    Sem schema novo / PREPARAR atual 37/37: OK."
+Write-Host "    Sem schema novo / PREPARAR atual 38/38: OK."
 
 Write-Host "[320/600] Validando versao v0.3.28..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.28 / evolucao de habitos + graficos de anamnese: OK."
 
 
@@ -2832,7 +2832,7 @@ Write-Host "    Percentuais por refeicao + fechamento 100%: assets OK."
 Write-Host "[333/600] Validando SQL e PREPARAR 25..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.29_metas_por_refeicao.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.29_metas_por_refeicao.sql") -or
     -not $sqlSource.Contains('"MetaCalorias"') -or
     -not $sqlSource.Contains('"MetaFibrasG"')) {
@@ -2842,7 +2842,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[334/600] Validando versao v0.3.29..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.29 / metas por refeicao + distribuicao planejada: OK."
 
 
@@ -2954,7 +2954,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[347/600] Validando SQL e PREPARAR 26..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.30_fases_nutricionais.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.30_fases_nutricionais.sql") -or
     -not $sqlSource.Contains('"FasesNutricionais"') -or
     -not $sqlSource.Contains('"PlanoAlimentarId"')) {
@@ -2964,7 +2964,7 @@ Write-Host "    SQL idempotente + PREPARAR 26/26: OK."
 
 Write-Host "[348/600] Validando versao v0.3.30..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.30 / fases nutricionais + planejamento de ciclo: OK."
 
 
@@ -3075,7 +3075,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[361/600] Validando SQL e PREPARAR 27..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.31_fases_treino.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.31_fases_treino.sql") -or
     -not $sqlSource.Contains('"FasesTreino"') -or
     -not $sqlSource.Contains('"PlanoTreinoId"')) {
@@ -3085,7 +3085,7 @@ Write-Host "    SQL idempotente + PREPARAR 27/27: OK."
 
 Write-Host "[362/600] Validando versao v0.3.31..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.31 / ciclos de treino + periodizacao: OK."
 
 
@@ -3206,7 +3206,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[376/600] Validando SQL e PREPARAR 28..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.32_checkins_acompanhamento.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.32_checkins_acompanhamento.sql") -or
     -not $sqlSource.Contains('"CheckInsAcompanhamento"') -or
     -not $sqlSource.Contains('"AdesaoAlimentacaoPercentual"')) {
@@ -3223,7 +3223,7 @@ Write-Host "    Fases nutricionais + treino preservadas."
 
 Write-Host "[378/600] Validando versao v0.3.32..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.32 / check-ins de evolucao + adesao por fase: OK."
 
 
@@ -3315,7 +3315,7 @@ $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 if (-not $cssSource.Contains("phase-highlight-grid") -or
     -not $cssSource.Contains("phase-analysis-list") -or
     -not $cssSource.Contains("@media(max-width:560px)") -or
-    -not $setupSource.Contains("[37/37]")) {
+    -not $setupSource.Contains("[38/38]")) {
     throw "Responsividade ou compatibilidade de banco inesperada."
 }
 if (Test-Path .\scripts\sql\v0.3.33_analise_fases.sql) {
@@ -3325,7 +3325,7 @@ Write-Host "    UI responsiva / sem schema novo / PREPARAR 28/28: OK."
 
 Write-Host "[390/600] Validando versao v0.3.33..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.33 / analise de fases + comparativo de resposta: OK."
 
 Write-Host "[391/600] Validando metas das fases..."
@@ -3394,12 +3394,12 @@ Write-Host "    Desktop + mobile: estilos OK."
 Write-Host "[405/600] Validando SQL e PREPARAR 29..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.34_criterios_transicao_fases.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or -not $setupSource.Contains("v0.3.34_criterios_transicao_fases.sql") -or -not $sqlSource.Contains('"MetaPesoKg"') -or -not $sqlSource.Contains('"CriterioTransicao"') -or -not $setupSource.Contains("v0.3.32_checkins_acompanhamento.sql")) { throw "Upgrade dos criterios incompleto." }
+if (-not $setupSource.Contains("[38/38]") -or -not $setupSource.Contains("v0.3.34_criterios_transicao_fases.sql") -or -not $sqlSource.Contains('"MetaPesoKg"') -or -not $sqlSource.Contains('"CriterioTransicao"') -or -not $setupSource.Contains("v0.3.32_checkins_acompanhamento.sql")) { throw "Upgrade dos criterios incompleto." }
 Write-Host "    SQL idempotente + PREPARAR 29/29 + historico preservado."
 
 Write-Host "[406/600] Validando versao v0.3.34..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.34 / metas de fase + criterios de transicao: OK."
 
 
@@ -3516,18 +3516,18 @@ Write-Host "    Fase EmAndamento recebe acao de revisao."
 Write-Host "[419/600] Validando SQL e PREPARAR 30..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sqlSource = Get-Content .\scripts\sql\v0.3.35_revisoes_transicoes_fases.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql") -or
     -not $sqlSource.Contains('"RevisoesFases"') -or
     -not $sqlSource.Contains('"SnapshotIndicadoresJson"') -or
     -not $setupSource.Contains("v0.3.34_criterios_transicao_fases.sql")) {
     throw "Upgrade de revisoes/transicoes incompleto."
 }
-Write-Host "    SQL idempotente + PREPARAR 37/37 + v0.3.34 preservada."
+Write-Host "    SQL idempotente + PREPARAR 38/38 + v0.3.34 preservada."
 
 Write-Host "[420/600] Validando versao v0.3.35..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.35 / revisao de fase + transicao assistida: OK."
 
 
@@ -3650,18 +3650,18 @@ Write-Host "    Treinos + Resumo + layout responsivo: assets OK."
 
 Write-Host "[433/600] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
     throw "PREPARAR historico inesperado."
 }
 if (Test-Path .\scripts\sql\v0.3.36_volume_treino.sql) {
     throw "v0.3.36 nao deveria exigir schema novo."
 }
-Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
+Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[434/600] Validando versao v0.3.36..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.36 / volume de treino + distribuicao muscular: OK."
 
 
@@ -3777,18 +3777,18 @@ Write-Host "    Meu treino -> progressao individual: assets OK."
 
 Write-Host "[447/600] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
     throw "PREPARAR historico inesperado."
 }
 if (Test-Path .\scripts\sql\v0.3.37_progressao_exercicios.sql) {
     throw "v0.3.37 nao deveria exigir schema novo."
 }
-Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
+Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[448/600] Validando versao v0.3.37..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.37 / progressao por exercicio + recordes de carga: OK."
 
 
@@ -3908,24 +3908,24 @@ Write-Host "    Cards + graficos + revisao sugerida: assets OK."
 
 Write-Host "[461/600] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
     throw "PREPARAR historico inesperado."
 }
 if (Test-Path .\scripts\sql\v0.3.38_analise_progresso.sql) {
     throw "v0.3.38 nao deveria exigir schema novo."
 }
-Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
+Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[462/600] Validando versao v0.3.38..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.38 / estagnacao + fadiga + sinais de progressao: OK."
 
 
 Write-Host "[463/600] Validando identidade MVP Preview..."
 $indexSource = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
-if (-not $indexSource.Contains("MVP Preview • v0.10.2") -or
+if (-not $indexSource.Contains("MVP Preview • v0.10.3") -or
     -not $indexSource.Contains("mvp-brand-badge") -or
     -not $indexSource.Contains("MVP • DEMO") -or
     -not $indexSource.Contains('id="loginMessage"') -or
@@ -4032,18 +4032,18 @@ Write-Host "    Notebook + mobile: estilos de demo OK."
 
 Write-Host "[475/600] Validando compatibilidade de banco..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains("[37/37]") -or
+if (-not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
     throw "Historico do PREPARAR inesperado."
 }
 if (Test-Path .\scripts\sql\v0.3.39_mvp_preview.sql) {
     throw "v0.3.39 nao deveria exigir schema novo."
 }
-Write-Host "    Sem schema novo / PREPARAR permanece 37/37."
+Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[476/600] Validando versao v0.3.39..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.39 / MVP Preview + polimento de demonstracao: OK."
 
 
@@ -4118,7 +4118,7 @@ Write-Host "    EnsureCreated + sync de senha somente no DemoBootstrap."
 Write-Host "[483/600] Validando fluxo local preservado..."
 if (-not $programSource.Contains("app.Environment.IsDevelopment()") -or
     -not $programSource.Contains("MigrateAsync") -or
-    -not $setupSource.Contains("[37/37]") -or
+    -not $setupSource.Contains("[38/38]") -or
     -not $setupSource.Contains("20260813190735_InitialCreate")) {
     throw "Fluxo local/migration baseline foi alterado indevidamente."
 }
@@ -4191,7 +4191,7 @@ if (Test-Path .\scripts\sql\v0.3.40_render_demo.sql) {
 if (-not $setupSource.Contains("v0.3.35_revisoes_transicoes_fases.sql")) {
     throw "Historico SQL anterior nao foi preservado."
 }
-Write-Host "    PREPARAR continua 37/37 / sem SQL v0.3.40."
+Write-Host "    PREPARAR continua 38/38 / sem SQL v0.3.40."
 
 Write-Host "[491/600] Validando arquivos de container..."
 $dockerIgnore = Get-Content .\.dockerignore -Encoding UTF8 -Raw
@@ -4204,7 +4204,7 @@ Write-Host "    Contexto Docker enxuto: OK."
 
 Write-Host "[492/600] Validando versao base do deploy..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.6.0 / Render Demo Deploy preservado: OK."
 
 
@@ -4366,14 +4366,14 @@ $sqlRequest = Get-Content .\scripts\sql\v0.5.1_solicitacoes_clinicas.sql -Encodi
 if (-not $sqlRequest.Contains('CREATE TABLE IF NOT EXISTS "SolicitacoesClinicas"') -or -not $sqlRequest.Contains('IX_SolicitacoesClinicas_PacienteId_Status')) { throw "Upgrade SQL de solicitacoes incompleto." }
 Write-Host "    Tabela + indices idempotentes: OK."
 
-Write-Host "[517/600] Validando PREPARAR 37/37..."
+Write-Host "[517/600] Validando PREPARAR 38/38..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[31/37] Aplicando upgrade v0.5.1') -or -not $setupSource.Contains('v0.5.1_solicitacoes_clinicas.sql')) { throw "PREPARAR nao preserva o upgrade v0.5.1." }
+if (-not $setupSource.Contains('[31/38] Aplicando upgrade v0.5.1') -or -not $setupSource.Contains('v0.5.1_solicitacoes_clinicas.sql')) { throw "PREPARAR nao preserva o upgrade v0.5.1." }
 Write-Host "    Upgrade de solicitacoes integrado ao setup."
 
 Write-Host "[518/600] Validando versao v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.6.0 / Solicitacoes Clinicas + Connected Care: OK."
 
 Write-Host "[519/600] Validando notificacoes de solicitacoes no backend..."
@@ -4407,7 +4407,7 @@ Write-Host "    Solicitacoes identificadas no drawer: OK."
 
 Write-Host "[526/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $notificationSource.Contains('SolicitacaoClinica')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Notificacoes Contextuais + Connected Care: OK."
 
@@ -4449,7 +4449,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[535/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $requestController.Contains('FilaProfissional')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Central de Solicitacoes + Connected Care: OK."
 
@@ -4495,7 +4495,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[545/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $centralSource.Contains('SolicitacoesParaRevisao') -or -not $appJsSource.Contains('patient-today-requests')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Solicitacoes no Hoje + Connected Care: OK."
 
@@ -4532,7 +4532,7 @@ Write-Host "    Resumo visual + responsividade: assets OK."
 
 Write-Host "[553/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $resumoSource.Contains('ResumoDesdeUltimaConsultaResponse') -or -not $appJsSource.Contains('data-clinical-period-summary')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Desde a ultima consulta + Connected Care: OK."
 
@@ -4570,7 +4570,7 @@ Write-Host "    Timeline desktop + mobile: estilos OK."
 
 Write-Host "[561/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $portalController.Contains('MinhaJornada') -or -not $appJsSource.Contains('loadPatientJourney')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Jornada do Paciente + Connected Care: OK."
 
@@ -4612,7 +4612,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[570/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $monitorSource.Contains('TiposMonitorados') -or -not $appJsSource.Contains('hpMonitoringCard')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Monitoramento guiado + Connected Care: OK."
 
@@ -4653,8 +4653,8 @@ Write-Host "    Registros rapidos filtrados pelo protocolo + timezone local: ass
 Write-Host "[578/600] Validando SQL e migration de upgrade v0.5.8 preservados..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql058 = Get-Content .\scripts\sql\v0.5.8_protocolos_acompanhamento.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('V058ProtocolosAcompanhamento') -or -not $setupSource.Contains('[32/37] Aplicando upgrade v0.5.8') -or -not $sql058.Contains('CREATE TABLE IF NOT EXISTS "ProtocolosAcompanhamento"')) { throw "Upgrade v0.5.8 de protocolos nao foi preservado." }
-Write-Host "    Migration incremental + SQL idempotente v0.5.8 + PREPARAR 37/37: OK."
+if (-not $setupSource.Contains('V058ProtocolosAcompanhamento') -or -not $setupSource.Contains('[32/38] Aplicando upgrade v0.5.8') -or -not $sql058.Contains('CREATE TABLE IF NOT EXISTS "ProtocolosAcompanhamento"')) { throw "Upgrade v0.5.8 de protocolos nao foi preservado." }
+Write-Host "    Migration incremental + SQL idempotente v0.5.8 + PREPARAR 38/38: OK."
 
 Write-Host "[579/600] Validando responsividade dos protocolos..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
@@ -4663,7 +4663,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[580/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('MeuProtocolo') -or -not $appJsSource.Contains('openProtocolManager')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Protocolos de Acompanhamento + Connected Care: OK."
 
@@ -4700,7 +4700,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[588/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('CalcularAderencia') -or -not $appJsSource.Contains('protocol-today-status')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Aderencia aos Protocolos + Connected Care: OK."
 
@@ -4749,8 +4749,8 @@ Write-Host "    Cadastro + adesao + desativacao: assets OK."
 Write-Host "[598/600] Validando SQL e migration v0.6.0..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql060 = Get-Content .\scripts\sql\v0.6.0_medicamentos.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('V060MedicamentosAdesao') -or -not $setupSource.Contains('[33/37] Aplicando upgrade v0.6.0') -or -not $sql060.Contains('CREATE TABLE IF NOT EXISTS "MedicamentosPaciente"')) { throw "Upgrade v0.6.0 de medicamentos incompleto." }
-Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
+if (-not $setupSource.Contains('V060MedicamentosAdesao') -or -not $setupSource.Contains('[33/38] Aplicando upgrade v0.6.0') -or -not $sql060.Contains('CREATE TABLE IF NOT EXISTS "MedicamentosPaciente"')) { throw "Upgrade v0.6.0 de medicamentos incompleto." }
+Write-Host "    Migration incremental + SQL idempotente + PREPARAR 38/38: OK."
 
 Write-Host "[599/600] Validando responsividade de medicamentos..."
 $cssSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
@@ -4759,7 +4759,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[600/696] Validando compatibilidade funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.10.3") { throw "VERSION.txt inesperado." }
 if (-not $medSource.Contains('RegistrarTomada') -or -not $appJsSource.Contains('loadPatientMedications')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Medicamentos + Adesao ao Tratamento preservado: OK."
 
@@ -4794,12 +4794,12 @@ Write-Host "    Mesmo dado diario visivel no prontuario: OK."
 Write-Host "[607/696] Validando SQL e migration v0.6.1..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql061 = Get-Content .\scripts\sql\v0.6.1_prontidao_diaria.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('V061ProntidaoDiaria') -or -not $setupSource.Contains('[34/37] Aplicando upgrade v0.6.1') -or -not $sql061.Contains('CREATE TABLE IF NOT EXISTS "ProntidoesDiarias"')) { throw "Upgrade v0.6.1 de prontidao incompleto." }
-Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
+if (-not $setupSource.Contains('V061ProntidaoDiaria') -or -not $setupSource.Contains('[34/38] Aplicando upgrade v0.6.1') -or -not $sql061.Contains('CREATE TABLE IF NOT EXISTS "ProntidoesDiarias"')) { throw "Upgrade v0.6.1 de prontidao incompleto." }
+Write-Host "    Migration incremental + SQL idempotente + PREPARAR 38/38: OK."
 
 Write-Host "[608/696] Validando versao funcional v0.6.1..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.6.1 inconsistente." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.6.1 inconsistente." }
 Write-Host "    v0.6.1 / Daily Athlete + Prontidao Diaria: OK."
 
 
@@ -4837,12 +4837,12 @@ Write-Host "    Nivel + XP + streak + consistencia: assets OK."
 Write-Host "[615/696] Validando SQL e migration v0.6.2..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql062 = Get-Content .\scripts\sql\v0.6.2_xp_consistencia.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('V062XpConsistencia') -or -not $setupSource.Contains('[35/37] Aplicando upgrade v0.6.2') -or -not $sql062.Contains('CREATE TABLE IF NOT EXISTS "EventosXp"')) { throw "Upgrade v0.6.2 incompleto." }
-Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
+if (-not $setupSource.Contains('V062XpConsistencia') -or -not $setupSource.Contains('[35/38] Aplicando upgrade v0.6.2') -or -not $sql062.Contains('CREATE TABLE IF NOT EXISTS "EventosXp"')) { throw "Upgrade v0.6.2 incompleto." }
+Write-Host "    Migration incremental + SQL idempotente + PREPARAR 38/38: OK."
 
 Write-Host "[616/696] Validando versao funcional v0.6.2..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.6.2 inconsistente." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.6.2 inconsistente." }
 Write-Host "    v0.6.2 / XP + Nivel + Streak + Consistencia: OK."
 
 Write-Host "[617/696] Validando entidades de desafios e conquistas..."
@@ -4877,12 +4877,12 @@ Write-Host "    Progresso semanal + recompensas + conquistas recentes: assets OK
 Write-Host "[623/696] Validando SQL e migration v0.6.3..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql063 = Get-Content .\scripts\sql\v0.6.3_missoes_conquistas.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('V063MissoesConquistas') -or -not $setupSource.Contains('[36/37] Aplicando upgrade v0.6.3') -or -not $sql063.Contains('CREATE TABLE IF NOT EXISTS "DesafiosSemanaisPaciente"') -or -not $sql063.Contains('CREATE TABLE IF NOT EXISTS "ConquistasPaciente"')) { throw "Upgrade v0.6.3 incompleto." }
-Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
+if (-not $setupSource.Contains('V063MissoesConquistas') -or -not $setupSource.Contains('[36/38] Aplicando upgrade v0.6.3') -or -not $sql063.Contains('CREATE TABLE IF NOT EXISTS "DesafiosSemanaisPaciente"') -or -not $sql063.Contains('CREATE TABLE IF NOT EXISTS "ConquistasPaciente"')) { throw "Upgrade v0.6.3 incompleto." }
+Write-Host "    Migration incremental + SQL idempotente + PREPARAR 38/38: OK."
 
 Write-Host "[624/696] Validando compatibilidade funcional v0.6.3..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao atual inconsistente ao validar v0.6.3." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao atual inconsistente ao validar v0.6.3." }
 Write-Host "    v0.6.3 / Missoes + Desafios + Conquistas preservada: OK."
 
 
@@ -4920,12 +4920,12 @@ Write-Host "    Daily Athlete + prontuario profissional: assets OK."
 Write-Host "[631/696] Validando SQL e migration v0.6.4..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
 $sql064 = Get-Content .\scripts\sql\v0.6.4_ciclos_esportivos.sql -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('V064CiclosEsportivos') -or -not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4') -or -not $sql064.Contains('CREATE TABLE IF NOT EXISTS "CiclosEsportivosPaciente"')) { throw "Upgrade v0.6.4 incompleto." }
-Write-Host "    Migration incremental + SQL idempotente + PREPARAR 37/37: OK."
+if (-not $setupSource.Contains('V064CiclosEsportivos') -or -not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4') -or -not $sql064.Contains('CREATE TABLE IF NOT EXISTS "CiclosEsportivosPaciente"')) { throw "Upgrade v0.6.4 incompleto." }
+Write-Host "    Migration incremental + SQL idempotente + PREPARAR 38/38: OK."
 
 Write-Host "[632/696] Validando compatibilidade funcional v0.6.4..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Compatibilidade v0.6.4 inconsistente na versao atual." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Compatibilidade v0.6.4 inconsistente na versao atual." }
 Write-Host "    v0.6.4 / Ciclos Esportivos + Metas de Ciclo preservado: OK."
 
 Write-Host "[633/696] Validando contrato da Estrategia do Dia..."
@@ -4960,15 +4960,15 @@ Write-Host "    Prontuario recebe a mesma decisao com justificativa: OK."
 
 Write-Host "[639/696] Validando ausencia de alteracao indevida de schema..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR base 37/37 foi alterado sem necessidade de schema." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR base 37/37 foi alterado sem necessidade de schema." }
 if (Test-Path .\scripts\sql\v0.6.5_estrategia_do_dia.sql) { throw "v0.6.5 nao deveria exigir SQL de schema." }
 Write-Host "    v0.6.5 e funcional; schema v0.6.4 permanece valido: OK."
 
 Write-Host "[640/696] Validando compatibilidade funcional v0.6.5..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.6.6 inconsistente." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.6.6 inconsistente." }
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if (-not $healthSource.Contains('version = "0.10.2"')) { throw "Health endpoint nao anuncia v0.6.6." }
+if (-not $healthSource.Contains('version = "0.10.3"')) { throw "Health endpoint nao anuncia v0.6.6." }
 Write-Host "    v0.6.5 / Estrategia do Dia preservada: OK."
 
 
@@ -5005,15 +5005,15 @@ Write-Host "    Execucao do dia traduzida para acompanhamento profissional: OK."
 
 Write-Host "[647/696] Validando ausencia de alteracao indevida de schema v0.6.6..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.6.6_execucao_guiada.sql) { throw "v0.6.6 nao deveria exigir migration." }
 Write-Host "    Execucao guiada reutiliza schema existente: OK."
 
 Write-Host "[648/696] Validando compatibilidade funcional v0.6.6..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.6.6 inconsistente." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.6.6 inconsistente." }
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if (-not $healthSource.Contains('version = "0.10.2"')) { throw "Health endpoint nao anuncia v0.6.6." }
+if (-not $healthSource.Contains('version = "0.10.3"')) { throw "Health endpoint nao anuncia v0.6.6." }
 Write-Host "    v0.6.6 / Execucao Guiada: OK."
 
 
@@ -5048,15 +5048,15 @@ Write-Host "    Atleta recebe tendencia; profissional recebe sinais explicaveis:
 
 Write-Host "[655/696] Validando ausencia de alteracao indevida de schema v0.6.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.6.7_tendencias_recuperacao.sql) { throw "v0.6.7 nao deveria exigir migration." }
 Write-Host "    Tendencias reutilizam schema existente: OK."
 
 Write-Host "[656/696] Validando compatibilidade funcional v0.6.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.1 inconsistente." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.1 inconsistente." }
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if (-not $healthSource.Contains('version = "0.10.2"')) { throw "Health endpoint nao anuncia v0.7.1." }
+if (-not $healthSource.Contains('version = "0.10.3"')) { throw "Health endpoint nao anuncia v0.7.1." }
 Write-Host "    v0.6.7 / Tendencias de Recuperacao + Alertas Inteligentes preservada: OK."
 
 
@@ -5091,15 +5091,15 @@ Write-Host "    Atleta recebe evolucao; profissional recebe leitura longitudinal
 
 Write-Host "[663/696] Validando ausencia de alteracao indevida de schema v0.6.8..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.6.8_performance_prs.sql) { throw "v0.7.1 nao deveria exigir migration." }
 Write-Host "    Performance e calculada sobre o historico existente: OK."
 
 Write-Host "[664/696] Validando compatibilidade funcional v0.6.8..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.1 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.1 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
 Write-Host "    v0.6.8 / Performance & PRs preservada: OK."
 
 Write-Host "[665/696] Validando contrato de carga de treino..."
@@ -5132,15 +5132,15 @@ Write-Host "    Atleta recebe ritmo semanal; profissional recebe contexto de car
 
 Write-Host "[671/696] Validando ausencia de alteracao indevida de schema v0.7.1..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.6.9_carga_treino.sql) { throw "v0.7.1 nao deveria exigir migration." }
 Write-Host "    Carga de treino reutiliza schema existente: OK."
 
 Write-Host "[672/696] Validando compatibilidade funcional v0.6.9..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.1 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.1 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
 Write-Host "    v0.6.9 / Carga de Treino & Equilibrio preservada: OK."
 
 
@@ -5177,25 +5177,25 @@ Write-Host "    Prioridades para atleta + leitura profissional: UI OK."
 
 Write-Host "[679/696] Validando ausencia de alteracao indevida de schema v0.7.1..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.1_coach_diario.sql) { throw "v0.7.1 nao deveria exigir migration." }
 $anaSeedSource = Get-Content .\POPULAR-ANA-RIBEIRO.ps1 -Encoding UTF8 -Raw
 if (-not $anaSeedSource.Contains('http://localhost:5180') -or -not $anaSeedSource.Contains('[int]$Dias = 56') -or -not $anaSeedSource.Contains('coachDiario') -or -not $anaSeedSource.Contains('/avaliacoes')) { throw "Seed v2 da Ana Ribeiro nao foi atualizado para a linha 0.7.x." }
-Write-Host "    Coach e camada derivada; schema 37/37 + seed Ana v2: OK."
+Write-Host "    Coach e camada derivada; schema 38/38 + seed Ana v2: OK."
 
 Write-Host "[680/696] Validando compatibilidade funcional v0.7.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.1 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.1 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
 Write-Host "    v0.7.0 / Coach Diario & Prioridades Contextuais preservado: OK."
 
 
 Write-Host "[681/720] Validando versao v0.7.1..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.1 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.1 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.1." }
 Write-Host "    API/UI/VERSION: 0.7.1 OK."
 
 Write-Host "[682/720] Validando seed Ana sem variavel automatica PID..."
@@ -5253,7 +5253,7 @@ Write-Host "    Diagnostico resiliente preservado: OK."
 
 Write-Host "[694/720] Validando ausencia de alteracao indevida de schema v0.7.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.7_seed_resiliente.sql) { throw "v0.7.7 nao deveria exigir migration." }
 Write-Host "    Robustez de seed nao altera schema: OK."
 
@@ -5261,8 +5261,8 @@ Write-Host "[695/720] Validando versao corrente v0.7.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
 Write-Host "    API/UI/VERSION: 0.7.7 OK."
 
 Write-Host "[696/720] Validando compatibilidade funcional v0.7.2..."
@@ -5294,7 +5294,7 @@ if (-not $anaSeedSource.Contains('$workoutDays') -or -not $anaSeedSource.Contain
 Write-Host "    Treinos + prontidao preservados: OK."
 
 Write-Host "[702/720] Validando ausencia de alteracao indevida de schema v0.7.7..."
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "PREPARAR 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "PREPARAR 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.7_seed_numerico.sql) { throw "v0.7.7 nao deveria exigir migration." }
 Write-Host "    Correcao de seed nao altera schema: OK."
 
@@ -5302,8 +5302,8 @@ Write-Host "[703/720] Validando versao corrente v0.7.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
 Write-Host "    API/UI/VERSION: 0.7.7 OK."
 
 Write-Host "[704/720] Validando compatibilidade funcional v0.7.3..."
@@ -5332,11 +5332,11 @@ Write-Host "    Diagnostico resiliente: OK."
 
 Write-Host "[710/720] Validando ausencia de migration v0.7.7..."
 if (Test-Path .\scripts\sql\v0.7.7_seed_validacao.sql) { throw "v0.7.7 nao deveria exigir migration." }
-Write-Host "    Schema permanece 37/37: OK."
+Write-Host "    Schema permanece 38/38: OK."
 
 Write-Host "[711/720] Validando versao corrente v0.7.7..."
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
 Write-Host "    API/UI/VERSION: 0.7.7 OK."
 
 
@@ -5372,16 +5372,16 @@ Write-Host "    Avaliacoes + fechamento do seed: OK."
 
 Write-Host "[718/720] Validando ausencia de migration v0.7.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Setup 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Setup 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.7_seed_automatic_vars.sql) { throw "v0.7.7 nao deveria exigir migration." }
-Write-Host "    Schema permanece 37/37: OK."
+Write-Host "    Schema permanece 38/38: OK."
 
 Write-Host "[719/720] Validando versao corrente v0.7.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
 Write-Host "    API/UI/VERSION: 0.7.7 OK."
 
 Write-Host "[720/728] Validando compatibilidade funcional v0.7.5..."
@@ -5416,15 +5416,15 @@ Write-Host "    Home + prontuario + formulario: OK."
 
 Write-Host "[726/728] Validando ausencia de migration v0.7.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.7_dor_corporal.sql) { throw "v0.7.7 nao deveria exigir migration." }
-Write-Host "    Registro reutiliza Diario; schema permanece 37/37: OK."
+Write-Host "    Registro reutiliza Diario; schema permanece 38/38: OK."
 
 Write-Host "[727/728] Validando versao corrente v0.7.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
 Write-Host "    API/UI/VERSION: 0.7.7 OK."
 
 Write-Host "[728/736] Validando compatibilidade funcional v0.7.6..."
@@ -5457,15 +5457,15 @@ Write-Host "    Paciente + profissional recebem o mesmo motor: OK."
 
 Write-Host "[734/736] Validando ausencia de migration v0.7.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.7_plano_recuperacao.sql) { throw "v0.7.7 nao deveria exigir migration." }
-Write-Host "    Motor derivado; schema permanece 37/37: OK."
+Write-Host "    Motor derivado; schema permanece 38/38: OK."
 
 Write-Host "[735/736] Validando versao corrente v0.7.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.7." }
 Write-Host "    API/UI/VERSION: 0.7.7 OK."
 
 Write-Host "[736/744] Validando compatibilidade funcional v0.7.7..."
@@ -5499,15 +5499,15 @@ Write-Host "    Home + prontuario + acoes por refeicao: OK."
 
 Write-Host "[742/744] Validando ausencia de migration v0.7.8..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.8_adesao_nutricional.sql) { throw "v0.7.8 nao deveria exigir migration." }
-Write-Host "    Registros reutilizam Diario; schema permanece 37/37: OK."
+Write-Host "    Registros reutilizam Diario; schema permanece 38/38: OK."
 
 Write-Host "[743/744] Validando versao corrente v0.7.8..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.9 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.9." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.9 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.9." }
 Write-Host "    API/UI/VERSION: 0.7.8 OK."
 
 Write-Host "[744/744] Validando versao funcional v0.7.8..."
@@ -5546,15 +5546,15 @@ Write-Host "    Paciente + profissional recebem o mesmo resumo: OK."
 
 Write-Host "[751/752] Validando ausencia de migration v0.7.9..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.7.9_hidratacao_contextual.sql) { throw "v0.7.9 nao deveria exigir migration." }
-Write-Host "    Motor derivado; schema permanece 37/37: OK."
+Write-Host "    Motor derivado; schema permanece 38/38: OK."
 
 Write-Host "[752/752] Validando versao funcional v0.7.9..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.7.9 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.9." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.7.9 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.7.9." }
 Write-Host "    v0.7.9 / Hidratacao Contextual & Balanco do Dia: OK."
 
 Write-Host "[753/760] Validando compatibilidade funcional v0.7.9..."
@@ -5588,15 +5588,15 @@ Write-Host "    Sem diagnostico e sem score clinico composto: OK."
 
 Write-Host "[759/760] Validando ausencia de migration v0.8.0..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.0_evolucao_esportiva.sql) { throw "v0.8.0 nao deveria exigir migration." }
-Write-Host "    Painel e derivado dos dados existentes; schema permanece 37/37: OK."
+Write-Host "    Painel e derivado dos dados existentes; schema permanece 38/38: OK."
 
 Write-Host "[760/760] Validando versao funcional v0.8.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.0 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.0." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.0 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.0." }
 Write-Host "    v0.8.0 / Painel de Evolucao Esportiva: OK."
 Write-Host "[761/768] Validando compatibilidade funcional v0.8.0..."
 Write-Host "    v0.8.0 / Painel de Evolucao Esportiva preservado: OK."
@@ -5631,15 +5631,15 @@ Write-Host "    Atleta + profissional recebem o mesmo acompanhamento: OK."
 
 Write-Host "[767/768] Validando ausencia de migration v0.8.2..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.2_metas_ciclo.sql) { throw "v0.8.2 nao deveria exigir migration." }
-Write-Host "    Metas derivadas do ciclo atual; schema permanece 37/37: OK."
+Write-Host "    Metas derivadas do ciclo atual; schema permanece 38/38: OK."
 
 Write-Host "[768/768] Validando versao funcional v0.8.2..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.2 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.2." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.2 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.2." }
 Write-Host "    v0.8.2 / Metas do Ciclo & Progresso por Objetivo: OK."
 
 
@@ -5675,15 +5675,15 @@ Write-Host "    Atleta + profissional recebem o mesmo checkpoint: OK."
 
 Write-Host "[775/776] Validando ausencia de migration v0.8.2..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.2_checkpoint_ciclo.sql) { throw "v0.8.2 nao deveria exigir migration." }
-Write-Host "    Checkpoint derivado dos dados atuais; schema permanece 37/37: OK."
+Write-Host "    Checkpoint derivado dos dados atuais; schema permanece 38/38: OK."
 
 Write-Host "[776/776] Validando versao funcional v0.8.2..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.2 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.2." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.2 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.2." }
 Write-Host "    v0.8.2 / Revisao de Ciclo & Checkpoint de Progresso: OK."
 
 Write-Host "[777/784] Validando compatibilidade funcional v0.8.2..."
@@ -5717,15 +5717,15 @@ Write-Host "    Card atleta + leitura profissional: OK."
 
 Write-Host "[783/784] Validando ausencia de migration v0.8.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.7_relatorio_ciclo.sql) { throw "v0.8.7 nao deveria exigir migration." }
-Write-Host "    Relatorio derivado dos dados existentes; schema permanece 37/37: OK."
+Write-Host "    Relatorio derivado dos dados existentes; schema permanece 38/38: OK."
 
 Write-Host "[784/784] Validando versao funcional v0.8.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
 Write-Host "    v0.8.7 / Fechamento de Ciclo & Relatorio de Evolucao: OK."
 
 Write-Host "[785/800] Validando compatibilidade funcional v0.8.3..."
@@ -5760,15 +5760,15 @@ Write-Host "    Card atleta + leitura longitudinal profissional: OK."
 
 Write-Host "[791/800] Validando ausencia de migration v0.8.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.7_comparativo_ciclos.sql) { throw "v0.8.7 nao deveria exigir migration." }
-Write-Host "    Comparativo derivado do historico existente; schema permanece 37/37: OK."
+Write-Host "    Comparativo derivado do historico existente; schema permanece 38/38: OK."
 
 Write-Host "[792/800] Validando compatibilidade funcional v0.8.4..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
 Write-Host "    v0.8.4 / Comparativo de Ciclos & Tendencia de Longo Prazo preservado: OK."
 
 Write-Host "[793/800] Validando contratos da tendencia por objetivo..."
@@ -5803,15 +5803,15 @@ Write-Host "    Card atleta + leitura profissional: OK."
 
 Write-Host "[799/800] Validando ausencia de migration v0.8.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.7_tendencia_objetivo.sql) { throw "v0.8.7 nao deveria exigir migration." }
-Write-Host "    Tendencia derivada de dados existentes; schema permanece 37/37: OK."
+Write-Host "    Tendencia derivada de dados existentes; schema permanece 38/38: OK."
 
 Write-Host "[800/800] Validando versao funcional v0.8.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
 Write-Host "    v0.8.7 / Tendencia por Objetivo do Ciclo: OK."
 Write-Host "[801/808] Validando compatibilidade funcional v0.8.5..."
 Write-Host "    v0.8.5 / Tendencia por Objetivo do Ciclo preservado: OK."
@@ -5845,15 +5845,15 @@ Write-Host "    Card atleta + leitura profissional: OK."
 
 Write-Host "[807/808] Validando ausencia de migration v0.8.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.7_acoes_prioritarias_ciclo.sql) { throw "v0.8.7 nao deveria exigir migration." }
-Write-Host "    Prioridades derivadas dos dados existentes; schema permanece 37/37: OK."
+Write-Host "    Prioridades derivadas dos dados existentes; schema permanece 38/38: OK."
 
 Write-Host "[808/808] Validando versao funcional v0.8.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
 Write-Host "    v0.8.6 / Acoes Prioritarias do Ciclo preservado: OK."
 
 Write-Host "[809/816] Validando compatibilidade funcional v0.8.6..."
@@ -5887,15 +5887,15 @@ Write-Host "    Card atleta + leitura profissional: OK."
 
 Write-Host "[815/816] Validando ausencia de migration v0.8.7..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.7_planejamento_semanal.sql) { throw "v0.8.7 nao deveria exigir migration." }
-Write-Host "    Planejamento derivado dos dados existentes; schema permanece 37/37: OK."
+Write-Host "    Planejamento derivado dos dados existentes; schema permanece 38/38: OK."
 
 Write-Host "[816/816] Validando versao funcional v0.8.7..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.7." }
 Write-Host "    v0.8.7 / Planejamento Semanal Adaptativo: OK."
 Write-Host "[817/824] Validando compatibilidade funcional v0.8.7..."
 Write-Host "    v0.8.7 / Planejamento Semanal Adaptativo preservado: OK."
@@ -5929,15 +5929,15 @@ Write-Host "    Card atleta + leitura profissional: OK."
 
 Write-Host "[823/824] Validando ausencia de migration v0.8.8..."
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.8_resumo_semanal.sql) { throw "v0.8.8 nao deveria exigir migration." }
-Write-Host "    Resumo derivado dos dados existentes; schema permanece 37/37: OK."
+Write-Host "    Resumo derivado dos dados existentes; schema permanece 38/38: OK."
 
 Write-Host "[824/824] Validando versao funcional v0.8.8..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.8 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.8." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.8 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.8." }
 Write-Host "    v0.8.8 / Resumo Semanal & Fechamento da Semana: OK."
 
 Write-Host "[825/832] Validando compatibilidade funcional v0.8.8..."
@@ -5973,15 +5973,15 @@ Write-Host "[831/832] Validando UI da tendencia semanal e ausencia de migration.
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpWeeklyTrendAthleteCard') -or -not $appJsSource.Contains('hpWeeklyTrendProfessionalCard') -or -not $appJsSource.Contains('tendenciaSemanal')) { throw "UI da tendencia semanal incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.8.9_tendencia_semanal.sql) { throw "v0.8.9 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[832/832] Validando versao funcional v0.8.9..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.8.9 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.9." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.8.9 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.8.9." }
 Write-Host "    v0.8.9 / Tendencia Semanal & Comparativo de Semanas: OK."
 
 Write-Host "[833/840] Validando compatibilidade funcional v0.8.9..."
@@ -6016,15 +6016,15 @@ Write-Host "[839/840] Validando UI do radar e ausencia de migration..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpAdherenceRadarAthleteCard') -or -not $appJsSource.Contains('hpAdherenceRadarProfessionalCard') -or -not $appJsSource.Contains('radarAdesao')) { throw "UI do radar de adesao incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.0_radar_adesao.sql) { throw "v0.9.0 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[840/840] Validando versao funcional v0.9.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.0 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.0." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.0 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.0." }
 Write-Host "    v0.9.0 / Radar de Adesao & Continuidade do Plano: OK."
 
 Write-Host "[841/848] Validando compatibilidade funcional v0.9.0..."
@@ -6059,15 +6059,15 @@ Write-Host "[847/848] Validando UI da reconexao e ausencia de migration..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpReconnectionPlanAthleteCard') -or -not $appJsSource.Contains('hpReconnectionPlanProfessionalCard') -or -not $appJsSource.Contains('planoReconexao')) { throw "UI do plano de reconexao incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.1_plano_reconexao.sql) { throw "v0.9.1 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[848/848] Validando versao funcional v0.9.1..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.1 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.1." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.1 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.1." }
 Write-Host "    v0.9.1 / Plano de Reconexao & Retomada Sustentavel: OK."
 Write-Host "[849/856] Validando compatibilidade funcional v0.9.1..."
 Write-Host "    v0.9.1 / Plano de Reconexao & Retomada Sustentavel preservado: OK."
@@ -6101,15 +6101,15 @@ Write-Host "[855/856] Validando UI da protecao e ausencia de migration..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpReturnProtectionAthleteCard') -or -not $appJsSource.Contains('hpReturnProtectionProfessionalCard') -or -not $appJsSource.Contains('protecaoRetomada')) { throw "UI da protecao da retomada incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.3_protecao_retomada.sql) { throw "v0.9.3 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[856/856] Validando versao funcional v0.9.3..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.3 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.3." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.3 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.3." }
 Write-Host "    v0.9.3 / Protecao da Retomada & Continuidade: OK."
 
 
@@ -6145,15 +6145,15 @@ Write-Host "[863/864] Validando UI e ausencia de migration v0.9.3..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpHabitStabilityAthleteCard') -or -not $appJsSource.Contains('hpHabitStabilityProfessionalCard') -or -not $appJsSource.Contains('estabilidadeHabitos')) { throw "UI de estabilidade dos habitos incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.3_estabilidade_habitos.sql) { throw "v0.9.3 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[864/864] Validando versao funcional v0.9.3..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.3 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.3." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.3 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.3." }
 Write-Host "    v0.9.3 / Estabilidade de Habitos & Consolidacao da Rotina: OK."
 
 Write-Host "[865/872] Validando compatibilidade funcional v0.9.3..."
@@ -6188,15 +6188,15 @@ Write-Host "[871/872] Validando UI e ausencia de migration v0.9.5..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpNextHabitFocusAthleteCard') -or -not $appJsSource.Contains('hpNextHabitFocusProfessionalCard') -or -not $appJsSource.Contains('proximoFocoHabito')) { throw "UI do proximo foco incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.5_proximo_foco_habito.sql) { throw "v0.9.5 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[872/872] Validando versao funcional v0.9.4..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.5 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.5." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.5 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.5." }
 Write-Host "    v0.9.4 / Manutencao Sustentavel & Proximo Foco: OK."
 
 
@@ -6232,15 +6232,15 @@ Write-Host "[879/880] Validando UI e ausencia de migration v0.9.5..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpHabitFocusReviewAthleteCard') -or -not $appJsSource.Contains('hpHabitFocusReviewProfessionalCard') -or -not $appJsSource.Contains('revisaoFocoHabito')) { throw "UI da revisao do foco incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.5_revisao_foco_habito.sql) { throw "v0.9.5 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[880/880] Validando versao funcional v0.9.5..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.5 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.5." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.5 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.5." }
 Write-Host "    v0.9.5 / Revisao do Proximo Foco & Ciclo de Habito: OK."
 
 
@@ -6276,15 +6276,15 @@ Write-Host "[887/888] Validando UI e ausencia de migration v0.9.6..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpHabitCycleClosureAthleteCard') -or -not $appJsSource.Contains('hpHabitCycleClosureProfessionalCard') -or -not $appJsSource.Contains('encerramentoCicloHabito')) { throw "UI do encerramento do ciclo de habito incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.6_encerramento_ciclo_habito.sql) { throw "v0.9.6 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[888/888] Validando versao funcional v0.9.6..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.7 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.7." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.7 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.7." }
 Write-Host "    v0.9.6 / Encerramento do Ciclo de Habito & Transicao para Manutencao: OK."
 
 
@@ -6320,9 +6320,9 @@ Write-Host "[895/896] Validando UI e ausencia de migration v0.9.7..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpChallengeReentryAthleteCard') -or -not $appJsSource.Contains('hpChallengeReentryProfessionalCard') -or -not $appJsSource.Contains('reentradaDesafio')) { throw "UI da reentrada gradual incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.7_reentrada_desafio.sql) { throw "v0.9.7 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[896/904] Validando compatibilidade funcional v0.9.7..."
 Write-Host "    v0.9.7 / Reentrada Gradual de Desafio preservado: OK."
@@ -6360,15 +6360,15 @@ Write-Host "[903/904] Validando UI e ausencia de migration v0.9.8..."
 $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 if (-not $appJsSource.Contains('hpProgressionWindowAthleteCard') -or -not $appJsSource.Contains('hpProgressionWindowProfessionalCard') -or -not $appJsSource.Contains('janelaProgressao')) { throw "UI da janela de progressao incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.8_janela_progressao.sql) { throw "v0.9.8 nao deveria exigir migration." }
-Write-Host "    Cards nas duas visoes; schema permanece 37/37: OK."
+Write-Host "    Cards nas duas visoes; schema permanece 38/38: OK."
 
 Write-Host "[904/904] Validando versao funcional v0.9.8..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.8 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.8." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.8 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.8." }
 Write-Host "    v0.9.8 / Janela de Progressao & Criterio de Avanco: OK."
 
 Write-Host "[905/912] Validando compatibilidade funcional v0.9.8..."
@@ -6405,15 +6405,15 @@ $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF
 if (-not $meuPortalSource.Contains('DecisaoProgressaoService.Montar') -or -not $portalSource.Contains('DecisaoProgressaoService.Montar')) { throw "Decisao assistida nao integrada aos dois portais." }
 if (-not $appJsSource.Contains('hpProgressionDecisionAthleteCard') -or -not $appJsSource.Contains('hpProgressionDecisionProfessionalCard') -or -not $appJsSource.Contains('decisaoProgressao')) { throw "UI da decisao assistida incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.9.9_decisao_progressao.sql) { throw "v0.9.9 nao deveria exigir migration." }
-Write-Host "    Atleta + profissional integrados; schema permanece 37/37: OK."
+Write-Host "    Atleta + profissional integrados; schema permanece 38/38: OK."
 
 Write-Host "[912/912] Validando versao funcional v0.9.9..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.9.9 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.9." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.9.9 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.9.9." }
 Write-Host "    v0.9.9 / Decisao Assistida de Progressao: OK."
 
 Write-Host "[913/920] Validando compatibilidade funcional v0.9.9..."
@@ -6449,15 +6449,15 @@ $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF
 if (-not $meuPortalSource.Contains('PlanoProgressaoSupervisionadaService.Montar') -or -not $portalSource.Contains('PlanoProgressaoSupervisionadaService.Montar')) { throw "Plano supervisionado nao integrado aos dois portais." }
 if (-not $appJsSource.Contains('hpSupervisedProgressionAthleteCard') -or -not $appJsSource.Contains('hpSupervisedProgressionProfessionalCard') -or -not $appJsSource.Contains('planoProgressaoSupervisionada')) { throw "UI do plano supervisionado incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.10.0_plano_progressao_supervisionada.sql) { throw "v0.10.0 nao deveria exigir migration." }
-Write-Host "    Atleta + profissional integrados; schema permanece 37/37: OK."
+Write-Host "    Atleta + profissional integrados; schema permanece 38/38: OK."
 
 Write-Host "[920/920] Validando versao funcional v0.10.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.10.0 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.0." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.10.0 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.0." }
 Write-Host "    v0.10.0 / Plano de Progressao Supervisionada: OK."
 
 
@@ -6494,15 +6494,15 @@ $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF
 if (-not $meuPortalSource.Contains('MonitoramentoRespostaProgressaoService.Montar') -or -not $portalSource.Contains('MonitoramentoRespostaProgressaoService.Montar')) { throw "Monitoramento de resposta nao integrado aos dois portais." }
 if (-not $appJsSource.Contains('hpProgressionResponseAthleteCard') -or -not $appJsSource.Contains('hpProgressionResponseProfessionalCard') -or -not $appJsSource.Contains('monitoramentoRespostaProgressao')) { throw "UI do monitoramento de resposta incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.10.1_monitoramento_resposta_progressao.sql) { throw "v0.10.1 nao deveria exigir migration." }
-Write-Host "    Atleta + profissional integrados; schema permanece 37/37: OK."
+Write-Host "    Atleta + profissional integrados; schema permanece 38/38: OK."
 
 Write-Host "[928/928] Validando versao funcional v0.10.1..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.10.1 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.1." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.10.1 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.1." }
 Write-Host "    v0.10.1 / Monitoramento de Resposta a Progressao: OK."
 
 Write-Host "[929/936] Validando compatibilidade funcional v0.10.1..."
@@ -6539,16 +6539,64 @@ $appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF
 if (-not $meuPortalSource.Contains('ReavaliacaoProgressaoService.Montar') -or -not $portalSource.Contains('ReavaliacaoProgressaoService.Montar')) { throw "Reavaliacao de progressao nao integrada aos dois portais." }
 if (-not $appJsSource.Contains('hpProgressionReassessmentAthleteCard') -or -not $appJsSource.Contains('hpProgressionReassessmentProfessionalCard') -or -not $appJsSource.Contains('reavaliacaoProgressao')) { throw "UI da reavaliacao de progressao incompleta." }
 $setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
-if (-not $setupSource.Contains('[37/37] Aplicando upgrade v0.6.4')) { throw "Schema 37/37 foi alterado sem necessidade." }
+if (-not $setupSource.Contains('[37/38] Aplicando upgrade v0.6.4')) { throw "Schema 38/38 foi alterado sem necessidade." }
 if (Test-Path .\scripts\sql\v0.10.2_reavaliacao_progressao.sql) { throw "v0.10.2 nao deveria exigir migration." }
-Write-Host "    Atleta + profissional integrados; schema permanece 37/37: OK."
+Write-Host "    Atleta + profissional integrados; schema permanece 38/38: OK."
 
 Write-Host "[936/936] Validando versao funcional v0.10.2..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
 $healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.10.2" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.2';")) { throw "Versao v0.10.2 inconsistente." }
-if (($healthSource | Select-String -Pattern 'version = "0.10.2"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.2." }
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.10.2 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.2." }
 Write-Host "    v0.10.2 / Reavaliacao da Progressao e Decisao de Continuidade: OK."
+
+Write-Host "[937/944] Validando compatibilidade funcional v0.10.2..."
+Write-Host "    v0.10.2 / Reavaliacao da Progressao preservada: OK."
+
+Write-Host "[938/944] Validando entidade e contrato do evento de progressao..."
+$eventEntity = Get-Content .\src\HealthPlatform.Domain\Entities\EventoProgressaoSupervisionada.cs -Encoding UTF8 -Raw
+$portalContracts = Get-Content .\src\HealthPlatform.Api\Contracts\Portal\PortalPacienteContracts.cs -Encoding UTF8 -Raw
+if (-not $eventEntity.Contains('DataAplicacaoUtc') -or -not $eventEntity.Contains('ProfissionalId') -or -not $eventEntity.Contains('Status')) { throw "Entidade de evento de progressao incompleta." }
+if (-not $portalContracts.Contains('PortalRegistroProgressaoResponse') -or -not $portalContracts.Contains('PortalEventoProgressaoSupervisionadaResponse') -or -not $portalContracts.Contains('RegistroProgressao')) { throw "Contrato de registro de progressao incompleto." }
+Write-Host "    Marco temporal + profissional + status + contrato de portal: OK."
+
+Write-Host "[939/944] Validando persistencia e upgrade 38/38..."
+$dbSource = Get-Content .\src\HealthPlatform.Infrastructure\Data\AppDbContext.cs -Encoding UTF8 -Raw
+$setupSource = Get-Content .\scripts\setup.ps1 -Encoding UTF8 -Raw
+$sqlEvent = Get-Content .\scripts\sql\v0.10.3_eventos_progressao_supervisionada.sql -Encoding UTF8 -Raw
+if (-not $dbSource.Contains('EventosProgressaoSupervisionada') -or -not $dbSource.Contains('IX_EventosProgressaoSupervisionada_PacienteId_DataAplicacaoUtc')) { throw "Mapeamento EF do evento de progressao incompleto." }
+if (-not $setupSource.Contains('[38/38] Aplicando upgrade v0.10.3') -or -not $sqlEvent.Contains('CREATE TABLE IF NOT EXISTS "EventosProgressaoSupervisionada"')) { throw "Upgrade 38/38 da v0.10.3 ausente." }
+Write-Host "    Tabela idempotente + indice temporal + PREPARAR 38/38: OK."
+
+Write-Host "[940/944] Validando registro explicitamente profissional e uma mudanca por vez..."
+$eventController = Get-Content .\src\HealthPlatform.Api\Controllers\EventosProgressaoSupervisionadaController.cs -Encoding UTF8 -Raw
+if (-not $eventController.Contains('Perfil profissional ativo nao encontrado') -or -not $eventController.Contains('Ja existe uma progressao em observacao') -or -not $eventController.Contains('Eixo deve ser Treino, Nutricao, Recuperacao ou Consistencia')) { throw "Travas profissionais do evento de progressao incompletas." }
+Write-Host "    Profissional ativo + eixo explicito + apenas um evento em observacao: OK."
+
+Write-Host "[941/944] Validando ausencia de inferencia automatica de aplicacao/causalidade..."
+$registroSource = Get-Content .\src\HealthPlatform.Api\Services\RegistroProgressaoService.cs -Encoding UTF8 -Raw
+if (-not $registroSource.Contains('Nao presume que uma sugestao foi aplicada') -or -not $registroSource.Contains('nao presume aplicacao, dose, carga ou causalidade') -or -not $registroSource.Contains('nao prova causalidade')) { throw "Travas metodologicas do registro de progressao incompletas." }
+Write-Host "    Sugestao != aplicacao; evento != causalidade: OK."
+
+Write-Host "[942/944] Validando inicio/encerramento temporal sem nova progressao automatica..."
+if (-not $eventController.Contains('DataAplicacaoUtc') -or -not $eventController.Contains('EncerradoEmUtc') -or -not $eventController.Contains('Status = "Encerrado"')) { throw "Ciclo temporal do evento incompleto." }
+if ($eventController.Contains('AumentarCargaPercentual') -or $eventController.Contains('DoseMedicacao') -or $eventController.Contains('CriarNovaProgressaoAutomatica')) { throw "Evento nao deve prescrever nova progressao automaticamente." }
+Write-Host "    Inicio e encerramento registrados sem prescricao automatica: OK."
+
+Write-Host "[943/944] Validando integracao nas duas Homes e UI..."
+$meuPortalSource = Get-Content .\src\HealthPlatform.Api\Controllers\MeuPortalPacienteController.cs -Encoding UTF8 -Raw
+$portalSource = Get-Content .\src\HealthPlatform.Api\Controllers\PortalPacienteController.cs -Encoding UTF8 -Raw
+$appJsSource = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
+if (-not $meuPortalSource.Contains('RegistroProgressaoService.MontarAsync') -or -not $portalSource.Contains('RegistroProgressaoService.MontarAsync')) { throw "Registro de progressao nao integrado aos dois portais." }
+if (-not $appJsSource.Contains('hpProgressionEventAthleteCard') -or -not $appJsSource.Contains('hpProgressionEventProfessionalCard') -or -not $appJsSource.Contains('registroProgressao')) { throw "UI do registro de progressao incompleta." }
+Write-Host "    Atleta + profissional recebem o marco temporal real: OK."
+
+Write-Host "[944/944] Validando versao funcional v0.10.3..."
+$version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
+$healthSource = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
+if ($version.Trim() -ne "0.10.3" -or -not $appJsSource.Contains("const HP_MVP_VERSION='0.10.3';")) { throw "Versao v0.10.3 inconsistente." }
+if (($healthSource | Select-String -Pattern 'version = "0.10.3"' -AllMatches).Matches.Count -lt 2) { throw "Health endpoint/fallback nao anunciam v0.10.3." }
+Write-Host "    v0.10.3 / Registro de Evento de Progressao: OK."
 
 Write-Host "TESTE DE FUMACA CONCLUIDO." -ForegroundColor Green
 Write-Host "Nenhum registro foi criado ou alterado." -ForegroundColor Green

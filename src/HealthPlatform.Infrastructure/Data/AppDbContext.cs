@@ -59,6 +59,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<DesafioSemanalPaciente> DesafiosSemanaisPaciente => Set<DesafioSemanalPaciente>();
     public DbSet<ConquistaPaciente> ConquistasPaciente => Set<ConquistaPaciente>();
     public DbSet<CicloEsportivoPaciente> CiclosEsportivosPaciente => Set<CicloEsportivoPaciente>();
+    public DbSet<EventoProgressaoSupervisionada> EventosProgressaoSupervisionada => Set<EventoProgressaoSupervisionada>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -537,6 +538,24 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasForeignKey(x => x.FaseTreinoId).OnDelete(DeleteBehavior.SetNull);
             entity.HasOne(x => x.FaseNutricional).WithMany()
                 .HasForeignKey(x => x.FaseNutricionalId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        builder.Entity<EventoProgressaoSupervisionada>(entity =>
+        {
+            entity.ToTable("EventosProgressaoSupervisionada");
+            entity.Property(x => x.Eixo).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.Descricao).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Observacoes).HasMaxLength(1600);
+            entity.HasIndex(x => new { x.PacienteId, x.DataAplicacaoUtc })
+                .HasDatabaseName("IX_EventosProgressaoSupervisionada_PacienteId_DataAplicacaoUtc");
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Status });
+            entity.HasOne(x => x.Paciente).WithMany()
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Profissional).WithMany()
+                .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.CicloEsportivoPaciente).WithMany()
+                .HasForeignKey(x => x.CicloEsportivoPacienteId).OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<FaseTreino>(entity =>

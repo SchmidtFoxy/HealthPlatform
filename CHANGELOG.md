@@ -1,18 +1,38 @@
 
-## v0.10.2 r2 — proteção contra mesclagem de fontes antigas
+## v0.10.3 r3 — alinhamento das sentinelas PREPARAR 38/38
+- Corrige smoke tests legados que ainda esperavam denominador `/37` nos upgrades v0.5.1–v0.6.4.
+- Atualiza as verificações de total atual do PREPARAR para `38/38`, preservando a ordem histórica dos upgrades.
+- Nenhuma regra funcional, migration ou versão semântica foi alterada.
+
+## v0.10.3 r1 — migration EF do evento de progressão
+
+- Corrige `PendingModelChangesWarning` do EF Core 10 no `PREPARAR.ps1`.
+- O setup agora gera a migration incremental `V0103EventosProgressaoSupervisionada` antes do `database update` em bases existentes.
+- O `ModelSnapshot` passa a ser atualizado pelo próprio `dotnet-ef`, mantendo o SQL `v0.10.3_eventos_progressao_supervisionada.sql` como proteção idempotente da etapa 38/38.
+- Todas as etapas do preparo agora anunciam o total 38/38.
+
+## v0.10.3 — Registro de Evento de Progressão
+- adiciona marco temporal explícito para mudanças realmente aplicadas por profissional;
+- novo endpoint para registrar/listar/encerrar eventos supervisionados;
+- nova tabela EventosProgressaoSupervisionada e upgrade 38/38;
+- home do atleta e profissional passa a distinguir sugestão de mudança realmente registrada;
+- nenhuma causalidade é inferida automaticamente a partir do evento.
+
+
+## v0.10.3 r2 — proteção contra mesclagem de fontes antigas
 - PREPARAR.ps1 valida e restaura automaticamente os dois controllers da Home antes do build quando detectar o cabeçalho corrompido da r0.
-- Inclui cópias canônicas em scripts/recovery e o utilitário CORRIGIR-FONTES-v0.10.2.ps1 para reparo manual determinístico.
+- Inclui cópias canônicas em scripts/recovery e o utilitário CORRIGIR-FONTES-v0.10.3.ps1 para reparo manual determinístico.
 - Nenhuma alteração funcional, de schema ou de versão semântica.
 
 
-## v0.10.2 r1 — correção de compilação das Homes
+## v0.10.3 r1 — correção de compilação das Homes
 
 - Corrigidos os cabeçalhos `using` de `MeuPortalPacienteController` e `PortalPacienteController`, corrompidos durante a integração da reavaliação de progressão.
 - `reavaliacaoProgressao` agora é passado explicitamente ao `PortalPacienteHomeResponse` nas duas Homes.
-- Sem alteração de schema, migration ou regra funcional da v0.10.2.
+- Sem alteração de schema, migration ou regra funcional da v0.10.3.
 # Changelog
 
-## v0.10.2 — Reavaliação da Progressão & Decisão de Continuidade
+## v0.10.3 — Reavaliação da Progressão & Decisão de Continuidade
 - transforma o monitoramento em decisão transparente: Manter, Revisar, Encerrar ou AguardarDados;
 - encerramento significa apenas finalizar a janela atual de observação, sem inferir sucesso causal;
 - revisão clínica prevalece sobre performance favorável;

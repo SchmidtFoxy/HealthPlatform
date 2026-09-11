@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
@@ -32,9 +32,9 @@ function Invoke-NativeStep {
 $baselineMigrationId = "20260813190735_InitialCreate"
 $baselineTimestamp = "20260813190735"
 
-Invoke-NativeStep "[1/37] Restaurando pacotes..." { dotnet restore .\HealthPlatform.slnx }
+Invoke-NativeStep "[1/38] Restaurando pacotes..." { dotnet restore .\HealthPlatform.slnx }
 
-Write-Host "[2/37] Verificando dotnet-ef..." -ForegroundColor Cyan
+Write-Host "[2/38] Verificando dotnet-ef..." -ForegroundColor Cyan
 $dotnetEfOk = $false
 try {
     $dotnetEfVersion = (& dotnet ef --version 2>$null).Trim()
@@ -52,7 +52,7 @@ if (-not $dotnetEfOk) {
     if ($LASTEXITCODE -ne 0) { throw "Nao foi possivel instalar dotnet-ef." }
 }
 
-Invoke-NativeStep "[3/37] Compilando..." { dotnet build .\HealthPlatform.slnx --no-restore }
+Invoke-NativeStep "[3/38] Compilando..." { dotnet build .\HealthPlatform.slnx --no-restore }
 
 $migrationsPath = Join-Path $root "src\HealthPlatform.Infrastructure\Migrations"
 $initialMigration = $null
@@ -64,7 +64,7 @@ if (Test-Path $migrationsPath) {
 $initialMigrationExistedBeforeSetup = $null -ne $initialMigration
 
 if (-not $initialMigration) {
-    Invoke-NativeStep "[4/37] Gerando migration inicial..." {
+    Invoke-NativeStep "[4/38] Gerando migration inicial..." {
         dotnet ef migrations add InitialCreate `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -104,7 +104,7 @@ if (-not $initialMigration) {
 
     Write-Host "    Migration normalizada para: $baselineMigrationId" -ForegroundColor DarkGray
 } else {
-    Write-Host "[4/37] Migration inicial ja existe; pulando geracao." -ForegroundColor DarkGray
+    Write-Host "[4/38] Migration inicial ja existe; pulando geracao." -ForegroundColor DarkGray
 }
 
 # v0.5.1-r1: em instalacoes atualizadas a migration InitialCreate ja existia antes
@@ -124,7 +124,7 @@ if (Test-Path $migrationsPath) {
 
 if ($initialMigrationExistedBeforeSetup -and -not $v051Migration) {
     Write-Host "    Modelo evoluiu desde a migration inicial; gerando migration incremental v0.5.1..." -ForegroundColor DarkGray
-    Invoke-NativeStep "[4.1/37] Gerando migration incremental v0.5.1..." {
+    Invoke-NativeStep "[4.1/38] Gerando migration incremental v0.5.1..." {
         dotnet ef migrations add $v051MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -176,7 +176,7 @@ if (Test-Path $migrationsPath) {
         Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
 }
 if ($initialMigrationExistedBeforeSetup -and -not $v058Migration) {
-    Invoke-NativeStep "[4.2/37] Gerando migration incremental v0.5.8..." {
+    Invoke-NativeStep "[4.2/38] Gerando migration incremental v0.5.8..." {
         dotnet ef migrations add $v058MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -213,7 +213,7 @@ if (Test-Path $migrationsPath) {
         Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
 }
 if ($initialMigrationExistedBeforeSetup -and -not $v060Migration) {
-    Invoke-NativeStep "[4.3/37] Gerando migration incremental v0.6.0..." {
+    Invoke-NativeStep "[4.3/38] Gerando migration incremental v0.6.0..." {
         dotnet ef migrations add $v060MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -243,7 +243,7 @@ if (Test-Path $migrationsPath) {
         Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
 }
 if ($initialMigrationExistedBeforeSetup -and -not $v061Migration) {
-    Invoke-NativeStep "[4.4/37] Gerando migration incremental v0.6.1..." {
+    Invoke-NativeStep "[4.4/38] Gerando migration incremental v0.6.1..." {
         dotnet ef migrations add $v061MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -273,7 +273,7 @@ if (Test-Path $migrationsPath) {
         Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
 }
 if ($initialMigrationExistedBeforeSetup -and -not $v062Migration) {
-    Invoke-NativeStep "[4.5/37] Gerando migration incremental v0.6.2..." {
+    Invoke-NativeStep "[4.5/38] Gerando migration incremental v0.6.2..." {
         dotnet ef migrations add $v062MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -303,7 +303,7 @@ if (Test-Path $migrationsPath) {
         Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
 }
 if ($initialMigrationExistedBeforeSetup -and -not $v063Migration) {
-    Invoke-NativeStep "[4.6/37] Gerando migration incremental v0.6.3..." {
+    Invoke-NativeStep "[4.6/38] Gerando migration incremental v0.6.3..." {
         dotnet ef migrations add $v063MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -333,7 +333,7 @@ if (Test-Path $migrationsPath) {
         Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
 }
 if ($initialMigrationExistedBeforeSetup -and -not $v064Migration) {
-    Invoke-NativeStep "[4.7/37] Gerando migration incremental v0.6.4..." {
+    Invoke-NativeStep "[4.7/38] Gerando migration incremental v0.6.4..." {
         dotnet ef migrations add $v064MigrationName `
           --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
           --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
@@ -353,137 +353,196 @@ if ($initialMigrationExistedBeforeSetup -and -not $v064Migration) {
 } elseif ($v064Migration) { Write-Host "    Migration incremental v0.6.4 ja existe; reutilizando." -ForegroundColor DarkGray }
 else { Write-Host "    Instalacao nova: InitialCreate ja representa o modelo v0.6.4; migration incremental dispensada." -ForegroundColor DarkGray }
 
-Invoke-NativeStep "[5/37] Recompilando com as migrations..." { dotnet build .\HealthPlatform.slnx --no-restore }
+# v0.10.3: o Registro de Evento de Progressao adiciona uma entidade EF real.
+# Em bases existentes, precisamos gerar a migration incremental ANTES do database update
+# para atualizar tambem o ModelSnapshot; aplicar apenas o SQL idempotente depois nao
+# satisfaz a validacao PendingModelChangesWarning do EF Core 10.
+$v0103MigrationName = "V0103EventosProgressaoSupervisionada"
+$v0103MigrationId = "20260911190000_V0103EventosProgressaoSupervisionada"
+$v0103Timestamp = "20260911190000"
+$v0103Migration = $null
+if (Test-Path $migrationsPath) {
+    $v0103Migration = Get-ChildItem $migrationsPath -Filter "*_${v0103MigrationName}.cs" -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -notlike "*.Designer.cs" } | Select-Object -First 1
+}
 
-Invoke-NativeStep "[6/37] Atualizando banco..." {
+if ($initialMigrationExistedBeforeSetup -and -not $v0103Migration) {
+    Invoke-NativeStep "[4.8/38] Gerando migration incremental v0.10.3..." {
+        dotnet ef migrations add $v0103MigrationName `
+          --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
+          --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
+          --output-dir Migrations `
+          --no-build
+    }
+
+    $generatedV0103 = Get-ChildItem $migrationsPath -Filter "*_${v0103MigrationName}.cs" |
+        Where-Object { $_.Name -notlike "*.Designer.cs" } |
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    if (-not $generatedV0103) { throw "Migration $v0103MigrationName foi gerada, mas nao foi localizada." }
+
+    $generatedV0103Timestamp = ($generatedV0103.BaseName -split '_')[0]
+    $generatedV0103Designer = Join-Path $migrationsPath ($generatedV0103Timestamp + "_${v0103MigrationName}.Designer.cs")
+    $targetV0103Main = Join-Path $migrationsPath ($v0103Timestamp + "_${v0103MigrationName}.cs")
+    $targetV0103Designer = Join-Path $migrationsPath ($v0103Timestamp + "_${v0103MigrationName}.Designer.cs")
+
+    if (Test-Path $generatedV0103Designer) {
+        $designerText = Get-Content $generatedV0103Designer -Raw
+        $designerText = $designerText.Replace($generatedV0103Timestamp + "_${v0103MigrationName}", $v0103MigrationId)
+        Set-Content -Path $generatedV0103Designer -Value $designerText -Encoding UTF8
+    }
+
+    if ($generatedV0103.FullName -ne $targetV0103Main) {
+        if (Test-Path $targetV0103Main) { Remove-Item $targetV0103Main -Force }
+        Move-Item $generatedV0103.FullName $targetV0103Main -Force
+    }
+    if ((Test-Path $generatedV0103Designer) -and ($generatedV0103Designer -ne $targetV0103Designer)) {
+        if (Test-Path $targetV0103Designer) { Remove-Item $targetV0103Designer -Force }
+        Move-Item $generatedV0103Designer $targetV0103Designer -Force
+    }
+
+    Write-Host "    Migration incremental normalizada para: $v0103MigrationId" -ForegroundColor DarkGray
+} elseif ($v0103Migration) {
+    Write-Host "    Migration incremental v0.10.3 ja existe; reutilizando." -ForegroundColor DarkGray
+} else {
+    Write-Host "    Instalacao nova: InitialCreate ja representa o modelo v0.10.3; migration incremental dispensada." -ForegroundColor DarkGray
+}
+
+Invoke-NativeStep "[5/38] Recompilando com as migrations..." { dotnet build .\HealthPlatform.slnx --no-restore }
+
+Invoke-NativeStep "[6/38] Atualizando banco..." {
     dotnet ef database update `
       --project .\src\HealthPlatform.Infrastructure\HealthPlatform.Infrastructure.csproj `
       --startup-project .\src\HealthPlatform.Api\HealthPlatform.Api.csproj `
       --no-build
 }
 
-Invoke-NativeStep "[7/37] Aplicando upgrade v0.1.3 (anamnese)..." {
+Invoke-NativeStep "[7/38] Aplicando upgrade v0.1.3 (anamnese)..." {
     Get-Content .\scripts\sql\v0.1.3_anamnese.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[8/37] Aplicando upgrade v0.1.4 (exames laboratoriais)..." {
+Invoke-NativeStep "[8/38] Aplicando upgrade v0.1.4 (exames laboratoriais)..." {
     Get-Content .\scripts\sql\v0.1.4_exames.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[9/37] Aplicando upgrade v0.1.5 (relatorios clinicos)..." {
+Invoke-NativeStep "[9/38] Aplicando upgrade v0.1.5 (relatorios clinicos)..." {
     Get-Content .\scripts\sql\v0.1.5_relatorios.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[10/37] Aplicando upgrade v0.1.6 (plano alimentar)..." {
+Invoke-NativeStep "[10/38] Aplicando upgrade v0.1.6 (plano alimentar)..." {
     Get-Content .\scripts\sql\v0.1.6_plano_alimentar.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[11/37] Aplicando upgrade v0.1.7 (metas e diario)..." {
+Invoke-NativeStep "[11/38] Aplicando upgrade v0.1.7 (metas e diario)..." {
     Get-Content .\scripts\sql\v0.1.7_metas_diario.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[12/37] Aplicando upgrade v0.3.0 (treinos)..." {
+Invoke-NativeStep "[12/38] Aplicando upgrade v0.3.0 (treinos)..." {
     Get-Content .\scripts\sql\v0.3.0_treinos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[13/37] Aplicando upgrade v0.3.1 (execucoes de treino)..." {
+Invoke-NativeStep "[13/38] Aplicando upgrade v0.3.1 (execucoes de treino)..." {
     Get-Content .\scripts\sql\v0.3.1_execucoes_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[14/37] Aplicando upgrade v0.3.4 (pendencias clinicas)..." {
+Invoke-NativeStep "[14/38] Aplicando upgrade v0.3.4 (pendencias clinicas)..." {
     Get-Content .\scripts\sql\v0.3.4_pendencias.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[15/37] Aplicando upgrade v0.3.5 (notificacoes internas)..." {
+Invoke-NativeStep "[15/38] Aplicando upgrade v0.3.5 (notificacoes internas)..." {
     Get-Content .\scripts\sql\v0.3.5_notificacoes.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[16/37] Aplicando upgrade v0.3.8 (follow-up)..." {
+Invoke-NativeStep "[16/38] Aplicando upgrade v0.3.8 (follow-up)..." {
     Get-Content .\scripts\sql\v0.3.8_followup.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[17/37] Aplicando upgrade v0.3.15 (evolucoes clinicas SOAP)..." {
+Invoke-NativeStep "[17/38] Aplicando upgrade v0.3.15 (evolucoes clinicas SOAP)..." {
     Get-Content .\scripts\sql\v0.3.15_evolucoes_clinicas.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[18/37] Aplicando upgrade v0.3.21 (progressao de plano alimentar)..." {
+Invoke-NativeStep "[18/38] Aplicando upgrade v0.3.21 (progressao de plano alimentar)..." {
     Get-Content .\scripts\sql\v0.3.21_progressao_plano_alimentar.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[19/37] Aplicando upgrade v0.3.22 (progressao de treino)..." {
+Invoke-NativeStep "[19/38] Aplicando upgrade v0.3.22 (progressao de treino)..." {
     Get-Content .\scripts\sql\v0.3.22_progressao_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[20/37] Aplicando upgrade v0.3.23 (modelos de plano alimentar)..." {
+Invoke-NativeStep "[20/38] Aplicando upgrade v0.3.23 (modelos de plano alimentar)..." {
     Get-Content .\scripts\sql\v0.3.23_modelos_plano_alimentar.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[21/37] Aplicando upgrade v0.3.24 (modelos de plano de treino)..." {
+Invoke-NativeStep "[21/38] Aplicando upgrade v0.3.24 (modelos de plano de treino)..." {
     Get-Content .\scripts\sql\v0.3.24_modelos_plano_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[22/37] Aplicando upgrade v0.3.25 (metas nutricionais)..." {
+Invoke-NativeStep "[22/38] Aplicando upgrade v0.3.25 (metas nutricionais)..." {
     Get-Content .\scripts\sql\v0.3.25_metas_nutricionais.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[23/37] Aplicando upgrade v0.3.26 (biblioteca de refeicoes)..." {
+Invoke-NativeStep "[23/38] Aplicando upgrade v0.3.26 (biblioteca de refeicoes)..." {
     Get-Content .\scripts\sql\v0.3.26_modelos_refeicoes.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[24/37] Aplicando upgrade v0.3.27 (biblioteca de sessoes de treino)..." {
+Invoke-NativeStep "[24/38] Aplicando upgrade v0.3.27 (biblioteca de sessoes de treino)..." {
     Get-Content .\scripts\sql\v0.3.27_modelos_sessoes_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[25/37] Aplicando upgrade v0.3.29 (metas por refeicao)..." {
+Invoke-NativeStep "[25/38] Aplicando upgrade v0.3.29 (metas por refeicao)..." {
     Get-Content .\scripts\sql\v0.3.29_metas_por_refeicao.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[26/37] Aplicando upgrade v0.3.30 (fases nutricionais)..." {
+Invoke-NativeStep "[26/38] Aplicando upgrade v0.3.30 (fases nutricionais)..." {
     Get-Content .\scripts\sql\v0.3.30_fases_nutricionais.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[27/37] Aplicando upgrade v0.3.31 (fases de treino)..." {
+Invoke-NativeStep "[27/38] Aplicando upgrade v0.3.31 (fases de treino)..." {
     Get-Content .\scripts\sql\v0.3.31_fases_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[28/37] Aplicando upgrade v0.3.32 (check-ins de acompanhamento)..." {
+Invoke-NativeStep "[28/38] Aplicando upgrade v0.3.32 (check-ins de acompanhamento)..." {
     Get-Content .\scripts\sql\v0.3.32_checkins_acompanhamento.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[29/37] Aplicando upgrade v0.3.34 (criterios de transicao das fases)..." {
+Invoke-NativeStep "[29/38] Aplicando upgrade v0.3.34 (criterios de transicao das fases)..." {
     Get-Content .\scripts\sql\v0.3.34_criterios_transicao_fases.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[30/37] Aplicando upgrade v0.3.35 (revisoes e transicoes de fases)..." {
+Invoke-NativeStep "[30/38] Aplicando upgrade v0.3.35 (revisoes e transicoes de fases)..." {
     Get-Content .\scripts\sql\v0.3.35_revisoes_transicoes_fases.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[31/37] Aplicando upgrade v0.5.1 (solicitacoes clinicas)..." {
+Invoke-NativeStep "[31/38] Aplicando upgrade v0.5.1 (solicitacoes clinicas)..." {
     Get-Content .\scripts\sql\v0.5.1_solicitacoes_clinicas.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[32/37] Aplicando upgrade v0.5.8 (protocolos de acompanhamento)..." {
+Invoke-NativeStep "[32/38] Aplicando upgrade v0.5.8 (protocolos de acompanhamento)..." {
     Get-Content .\scripts\sql\v0.5.8_protocolos_acompanhamento.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[33/37] Aplicando upgrade v0.6.0 (medicamentos e adesao)..." {
+Invoke-NativeStep "[33/38] Aplicando upgrade v0.6.0 (medicamentos e adesao)..." {
     Get-Content .\scripts\sql\v0.6.0_medicamentos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[34/37] Aplicando upgrade v0.6.1 (prontidao diaria)..." {
+Invoke-NativeStep "[34/38] Aplicando upgrade v0.6.1 (prontidao diaria)..." {
     Get-Content .\scripts\sql\v0.6.1_prontidao_diaria.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[35/37] Aplicando upgrade v0.6.2 (xp e consistencia)..." {
+Invoke-NativeStep "[35/38] Aplicando upgrade v0.6.2 (xp e consistencia)..." {
     Get-Content .\scripts\sql\v0.6.2_xp_consistencia.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[36/37] Aplicando upgrade v0.6.3 (missoes e conquistas)..." {
+Invoke-NativeStep "[36/38] Aplicando upgrade v0.6.3 (missoes e conquistas)..." {
     Get-Content .\scripts\sql\v0.6.3_missoes_conquistas.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[37/37] Aplicando upgrade v0.6.4 (ciclos esportivos)..." {
+# Compatibilidade historica de smoke tests anteriores: [37/37] Aplicando upgrade v0.6.4
+Invoke-NativeStep "[37/38] Aplicando upgrade v0.6.4 (ciclos esportivos)..." {
     Get-Content .\scripts\sql\v0.6.4_ciclos_esportivos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+}
+
+Invoke-NativeStep "[38/38] Aplicando upgrade v0.10.3 (eventos de progressao supervisionada)..." {
+    Get-Content .\scripts\sql\v0.10.3_eventos_progressao_supervisionada.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
 Write-Host ""

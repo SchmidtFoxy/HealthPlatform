@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.10.2" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.10.3" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -128,6 +128,30 @@ if (app.Environment.IsDevelopment())
     var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
     await db.Database.MigrateAsync();
+    await db.Database.ExecuteSqlRawAsync("""
+        CREATE TABLE IF NOT EXISTS "EventosProgressaoSupervisionada" (
+            "Id" uuid NOT NULL,
+            "OrganizacaoId" uuid NOT NULL,
+            "PacienteId" uuid NOT NULL,
+            "ProfissionalId" uuid NOT NULL,
+            "CicloEsportivoPacienteId" uuid NULL,
+            "Eixo" character varying(40) NOT NULL,
+            "Descricao" character varying(1000) NOT NULL,
+            "DataAplicacaoUtc" timestamp with time zone NOT NULL,
+            "Status" character varying(30) NOT NULL DEFAULT 'EmObservacao',
+            "Observacoes" character varying(1600) NULL,
+            "EncerradoEmUtc" timestamp with time zone NULL,
+            "CreatedAtUtc" timestamp with time zone NOT NULL,
+            "UpdatedAtUtc" timestamp with time zone NULL,
+            CONSTRAINT "PK_EventosProgressaoSupervisionada" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_EventosProgressaoSupervisionada_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_EventosProgressaoSupervisionada_Profissionais_ProfissionalId" FOREIGN KEY ("ProfissionalId") REFERENCES "Profissionais" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_EventosProgressaoSupervisionada_Ciclos_CicloId" FOREIGN KEY ("CicloEsportivoPacienteId") REFERENCES "CiclosEsportivosPaciente" ("Id") ON DELETE SET NULL
+        );
+        CREATE INDEX IF NOT EXISTS "IX_EventosProgressaoSupervisionada_PacienteId_DataAplicacaoUtc" ON "EventosProgressaoSupervisionada" ("PacienteId", "DataAplicacaoUtc");
+        CREATE INDEX IF NOT EXISTS "IX_EventosProgressaoSupervisionada_OrganizacaoId_Status" ON "EventosProgressaoSupervisionada" ("OrganizacaoId", "Status");
+        """);
+
     var adminEmail = builder.Configuration["Seed:AdminEmail"];
     var adminPassword = builder.Configuration["Seed:AdminPassword"];
 
@@ -181,11 +205,11 @@ if (app.Environment.IsDevelopment())
                     string.Join("; ", resetResult.Errors.Select(x => x.Description)));
             }
 
-            Console.WriteLine("[v0.10.2] Admin local desbloqueado e senha sincronizada com Seed:AdminPassword.");
+            Console.WriteLine("[v0.10.3] Admin local desbloqueado e senha sincronizada com Seed:AdminPassword.");
         }
         else
         {
-            Console.WriteLine("[v0.10.2] Admin local desbloqueado; credencial ja esta sincronizada.");
+            Console.WriteLine("[v0.10.3] Admin local desbloqueado; credencial ja esta sincronizada.");
         }
     }
 }
@@ -255,6 +279,30 @@ else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
         );
         CREATE UNIQUE INDEX IF NOT EXISTS "IX_ProntidoesDiarias_PacienteId_Data" ON "ProntidoesDiarias" ("PacienteId", "Data");
         CREATE INDEX IF NOT EXISTS "IX_ProntidoesDiarias_OrganizacaoId_Data" ON "ProntidoesDiarias" ("OrganizacaoId", "Data");
+        """);
+
+    await db.Database.ExecuteSqlRawAsync("""
+        CREATE TABLE IF NOT EXISTS "EventosProgressaoSupervisionada" (
+            "Id" uuid NOT NULL,
+            "OrganizacaoId" uuid NOT NULL,
+            "PacienteId" uuid NOT NULL,
+            "ProfissionalId" uuid NOT NULL,
+            "CicloEsportivoPacienteId" uuid NULL,
+            "Eixo" character varying(40) NOT NULL,
+            "Descricao" character varying(1000) NOT NULL,
+            "DataAplicacaoUtc" timestamp with time zone NOT NULL,
+            "Status" character varying(30) NOT NULL DEFAULT 'EmObservacao',
+            "Observacoes" character varying(1600) NULL,
+            "EncerradoEmUtc" timestamp with time zone NULL,
+            "CreatedAtUtc" timestamp with time zone NOT NULL,
+            "UpdatedAtUtc" timestamp with time zone NULL,
+            CONSTRAINT "PK_EventosProgressaoSupervisionada" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_EventosProgressaoSupervisionada_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_EventosProgressaoSupervisionada_Profissionais_ProfissionalId" FOREIGN KEY ("ProfissionalId") REFERENCES "Profissionais" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_EventosProgressaoSupervisionada_Ciclos_CicloId" FOREIGN KEY ("CicloEsportivoPacienteId") REFERENCES "CiclosEsportivosPaciente" ("Id") ON DELETE SET NULL
+        );
+        CREATE INDEX IF NOT EXISTS "IX_EventosProgressaoSupervisionada_PacienteId_DataAplicacaoUtc" ON "EventosProgressaoSupervisionada" ("PacienteId", "DataAplicacaoUtc");
+        CREATE INDEX IF NOT EXISTS "IX_EventosProgressaoSupervisionada_OrganizacaoId_Status" ON "EventosProgressaoSupervisionada" ("OrganizacaoId", "Status");
         """);
 
     var adminEmail = builder.Configuration["Seed:AdminEmail"];

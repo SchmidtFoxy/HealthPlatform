@@ -937,10 +937,11 @@ public sealed class MeuPortalPacienteController(
         var planoProgressaoSupervisionada = PlanoProgressaoSupervisionadaService.Montar(decisaoProgressao, janelaProgressao);
         var monitoramentoRespostaProgressao = MonitoramentoRespostaProgressaoService.Montar(planoProgressaoSupervisionada, tendenciaRecuperacao, cargaTreino, performance);
         var reavaliacaoProgressao = ReavaliacaoProgressaoService.Montar(planoProgressaoSupervisionada, monitoramentoRespostaProgressao);
+        var registroProgressao = await RegistroProgressaoService.MontarAsync(db, currentUser.OrganizationId, pacienteId, ct);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, proximoFocoHabito, revisaoFocoHabito, encerramentoCicloHabito, reentradaDesafio, janelaProgressao, decisaoProgressao, planoProgressaoSupervisionada, monitoramentoRespostaProgressao, reavaliacaoProgressao, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, proximoFocoHabito, revisaoFocoHabito, encerramentoCicloHabito, reentradaDesafio, janelaProgressao, decisaoProgressao, planoProgressaoSupervisionada, monitoramentoRespostaProgressao, reavaliacaoProgressao, registroProgressao, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }
