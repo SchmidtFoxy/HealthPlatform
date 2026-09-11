@@ -1,3 +1,12 @@
+# v0.10.7 — Comparação entre Progressões
+
+- Compara eventos realmente registrados apenas dentro do mesmo eixo esportivo.
+- Mostra sequência, duração de observação, status e estado de resposta de até quatro eventos recentes por eixo.
+- Eixos com somente um evento permanecem documentados sem comparação artificial.
+- Não cria ranking de melhor/pior progressão, score de sucesso ou inferência causal.
+- Não autoriza nova progressão automaticamente e não altera carga, volume, nutrição ou medicação.
+- Integrado às Homes do atleta e do profissional sem nova migration; schema permanece 38/38.
+
 ## v0.10.6 r1 — alinhamento das sentinelas da timeline
 - Explicita no HistoricoProgressaoService que a timeline nasce de **eventos realmente registrados** e persistidos.
 - Explicita a trava **nao ranqueia eventos** com a mesma formulacao usada pela suíte de compatibilidade.
