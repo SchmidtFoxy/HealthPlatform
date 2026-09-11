@@ -1,18 +1,29 @@
-﻿# v0.4.3 — Connected Care: baseline promovida
+﻿# v0.4.4 — Connected Care: baseline promovida
 
-A v0.4.3 promove a **v0.4.2**, validada com **508/508 testes**, como nova baseline estável do HealthPlatform antes da próxima expansão funcional do Connected Care.
+A v0.4.4 promove a **v0.4.3**, validada com **508/508 testes**, como nova baseline estável do HealthPlatform antes da próxima expansão funcional do Connected Care.
 
 ## Promoção desta versão
 
-- runtime, healthcheck e Swagger atualizados para 0.4.3;
-- identificação visual e scripts local/remoto atualizados para 0.4.3;
-- suíte `TESTAR.ps1` atualizada para exigir 0.4.3;
+- runtime, healthcheck e Swagger atualizados para 0.4.4;
+- identificação visual e scripts local/remoto atualizados para 0.4.4;
+- suíte `TESTAR.ps1` atualizada para exigir 0.4.4;
 - nenhuma alteração de schema, regra clínica ou dados nesta promoção;
-- v0.4.2 preservada como marco estável anterior com 508/508 testes.
+- v0.4.3 preservada como marco estável anterior com 508/508 testes.
 
 ## Próxima frente funcional
 
-A linha v0.4.3 continua a fase **Connected Care**, com foco planejado em solicitações e tarefas clínicas entre profissional e paciente.
+A linha v0.4.4 continua a fase **Connected Care**, mantendo como próxima expansão funcional as solicitações e tarefas clínicas entre profissional e paciente.
+
+---
+
+# v0.4.3 — Connected Care: baseline promovida
+
+A v0.4.3 promove a **v0.4.2**, validada com **508/508 testes**, como baseline estável anterior do HealthPlatform.
+
+- runtime, healthcheck e Swagger em 0.4.3;
+- identificação visual e scripts local/remoto em 0.4.3;
+- nenhuma alteração de schema, regra clínica ou dados nessa promoção;
+- v0.4.2 preservada como marco estável anterior com 508/508 testes.
 
 ---
 
@@ -2963,3 +2974,9 @@ Acesse `http://localhost:5180`.
 ## Hotfix v0.4.0-r1
 - Corrige o smoke test local do `POPULAR-REMOTO-RICO.ps1`, atualizando as assinaturas verificadas para a implementação rica V2 atual.
 - Não altera schema, API, regras clínicas ou dados.
+
+## Hotfix v0.4.4-r1
+
+- Corrige a validação [60/508] do `TESTAR.ps1` para não depender do texto acentuado `Histórico recente` retornado via HTTP no Windows PowerShell.
+- O teste agora valida a rota real de histórico de treino, a coleção `h.execucoes` e o carregador `loadPatientWorkout`.
+- Nenhuma alteração de banco, API, regra clínica ou dados.
