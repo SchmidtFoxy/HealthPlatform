@@ -1,3 +1,22 @@
+# v0.9.5 — Revisao do Proximo Foco & Ciclo de Habito
+
+- revisa o foco atual em Continuar, Consolidar, Manutencao ou Proteger;
+- usa a tendencia semanal correspondente ao eixo do foco;
+- impede troca precoce de foco e aumento automatico de exigencia;
+- integra atleta e profissional sem migration nova.
+
+# Changelog
+
+## v0.9.4 — Manutencao Sustentavel & Proximo Foco
+
+- adiciona um proximo foco unico para a rotina, priorizando eixos oscilando antes dos que ainda consolidam;
+- habitos estaveis passam a ficar explicitamente em modo de manutencao, sem aumento automatico de cobranca;
+- protecao de retomada/recuperacao tem precedencia sobre qualquer novo foco;
+- integra a mesma leitura nas Homes do atleta e do profissional;
+- nao cria score opaco, nao pune XP/streak e nao altera prescricao automaticamente;
+- schema permanece 37/37, sem migration nova;
+- suite ampliada para 872 verificacoes.
+
 # v0.9.3 — Estabilidade de Hábitos & Consolidação da Rotina
 
 - Nova leitura de estabilidade por comportamento: estável, consolidando, oscilando ou sem dados.
