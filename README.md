@@ -1,3 +1,7 @@
+# HealthPlatform v0.8.9 — Tendência Semanal & Comparativo de Semanas
+
+A v0.8.9 acrescenta comparação longitudinal justa entre a semana atual e o mesmo intervalo da semana anterior, mantendo cada eixo separado e auditável.
+
 ## v0.8.8 — Resumo Semanal & Fechamento da Semana
 
 A síntese semanal reúne treino, recuperação, carga, nutrição, hidratação e execução em eixos separados, sem score clínico único.

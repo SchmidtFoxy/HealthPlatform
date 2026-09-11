@@ -165,6 +165,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var acoesPrioritariasDoCiclo = AcoesPrioritariasCicloService.Montar(ciclo, tendenciaDoObjetivo, checkpointDoCiclo, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual);
         var planejamentoSemanal = PlanejamentoSemanalService.Montar(ciclo, metasDoCiclo, acoesPrioritariasDoCiclo, checkpointDoCiclo, estrategiaDoDia);
         var resumoSemanal = ResumoSemanalService.Montar(dia, planejamentoSemanal, acoesPrioritariasDoCiclo, tendenciaRecuperacao, cargaTreino, adesaoNutricional, hidratacaoContextual, execucaoDoDia);
+        var tendenciaSemanal = await TendenciaSemanalService.MontarAsync(db, pacienteId, dia, ct);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -183,6 +184,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             acoesPrioritariasDoCiclo,
             planejamentoSemanal,
             resumoSemanal,
+            tendenciaSemanal,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

@@ -1,3 +1,14 @@
+# HealthPlatform v0.8.9 — Tendência Semanal & Comparativo de Semanas
+
+- compara a semana atual com o mesmo número de dias da semana anterior;
+- compara ritmo de treinos, dias ativos, prontidão média, carga interna estimada, adesão nutricional registrada e hidratação registrada;
+- semanas parciais não são comparadas injustamente com semanas completas;
+- carga/frequência maiores não são rotuladas automaticamente como melhores;
+- sem score semanal composto, diagnóstico ou alteração automática de prescrição;
+- mesma leitura para atleta e profissional;
+- sem migration nova; schema permanece 37/37;
+- suíte ampliada para 832 verificações.
+
 # HealthPlatform v0.8.8 — Resumo Semanal & Fechamento da Semana
 
 - Nova síntese semanal derivada do planejamento, recuperação, carga, nutrição, hidratação e execução diária.
@@ -588,3 +599,7 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.8.8-r1 — Correção das sentinelas de versão
 - TESTAR.ps1 alinhado à versão corrente 0.8.8 em VERSION.txt, HP_MVP_VERSION e /api/health.
 - Testes históricos e schema 37/37 preservados.
+
+### v0.8.9 r1 — correção de compilação da tendência semanal
+- Corrige o cálculo de hidratação comparativa filtrando apenas registros com valor e materializando `decimal` não anulável antes do `Average`.
+- Elimina o erro CS1503 em `TendenciaSemanalService` sem alterar regra de negócio, schema ou versão semântica.
