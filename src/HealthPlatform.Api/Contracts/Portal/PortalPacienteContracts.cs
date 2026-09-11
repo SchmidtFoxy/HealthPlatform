@@ -101,6 +101,15 @@ public record PortalEstrategiaDiaResponse(
     IReadOnlyCollection<string> SessoesPrevistas, IReadOnlyCollection<string> RefeicoesChave);
 
 
+
+public record PortalSinalRecuperacaoResponse(string Codigo, string Severidade, string Titulo, string Descricao);
+
+public record PortalTendenciaRecuperacaoResponse(
+    int DiasObservados, decimal? ProntidaoMedia7, decimal? ProntidaoMediaAnterior7, decimal? VariacaoProntidao,
+    decimal? SonoMedio7, decimal? DorMedia7, decimal? RecuperacaoMedia7, decimal? EnergiaMedia7,
+    int Treinos7, int TreinosIntensos7, string Tendencia, string NivelAtencao, string Mensagem,
+    IReadOnlyCollection<PortalSinalRecuperacaoResponse> Sinais);
+
 public record PortalExecucaoDiaItemResponse(
     string Codigo, string Categoria, string Titulo, string Descricao, string Status,
     bool Obrigatorio, decimal ProgressoPercentual, string? ValorAtual, string? Meta, string Acao);
@@ -129,6 +138,7 @@ public record PortalPacienteHomeResponse(
     PortalGamificacaoResponse Gamificacao,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
+    PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalExecucaoDiaResponse ExecucaoDoDia,
     PortalEvolucaoCorporalResponse EvolucaoCorporal,
     PortalPlanoAtualResponse? PlanoAlimentarAtual,

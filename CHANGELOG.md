@@ -1,3 +1,15 @@
+# v0.6.7 — Tendências de Recuperação & Alertas Inteligentes
+
+- Nova leitura longitudinal de recuperação comparando os últimos 7 dias com os 7 dias anteriores.
+- Combina prontidão, sono, dor, recuperação, energia, frequência de treinos e sessões com RPE 8+.
+- Sinais transparentes para dor elevada, sono baixo, recuperação reduzida, carga intensa recente e queda de prontidão.
+- Classificação conservadora: Dados Insuficientes, Estável, Melhorando, Observar ou Atenção.
+- Home do atleta mostra tendência de recuperação sem linguagem diagnóstica.
+- Prontuário profissional mostra os sinais e justificativas usados pelo motor.
+- Nenhum alerta altera automaticamente a prescrição; decisão clínica permanece com o profissional.
+- Sem mudança de schema; PREPARAR permanece 37/37.
+- Suíte ampliada para 656 verificações.
+
 # v0.6.6 — Execução Guiada
 
 - Roteiro de Hoje derivado de dados reais do acompanhamento.
