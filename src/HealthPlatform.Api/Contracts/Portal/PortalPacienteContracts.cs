@@ -308,6 +308,15 @@ public record PortalToleranciaProgressaoResponse(
     string Estado, string Titulo, string Resumo, int EixosAnalisados,
     IReadOnlyCollection<PortalToleranciaProgressaoEixoResponse> Eixos, string Interpretacao, string MensagemSeguranca);
 
+public record PortalPerfilRespostaAtletaEixoResponse(
+    string Eixo, string PadraoHistorico, int TotalEventos, int EventosInterpretaveis,
+    string EstadoAtual, string Contexto, IReadOnlyCollection<string> Evidencias);
+
+public record PortalPerfilRespostaAtletaResponse(
+    string Estado, string Titulo, string Resumo, int EixosComHistorico,
+    int HabitosEstaveis, int HabitosOscilando, IReadOnlyCollection<PortalPerfilRespostaAtletaEixoResponse> Eixos,
+    string LeituraGlobal, string MensagemSeguranca);
+
 public record PortalComparacaoProgressaoEventoResponse(
     Guid Id, DateTime DataAplicacaoUtc, string Status, int DiasObservacao, string EstadoResposta, string ResumoResposta);
 
@@ -439,6 +448,7 @@ public record PortalPacienteHomeResponse(
     PortalHistoricoProgressaoResponse HistoricoProgressoes,
     PortalComparacaoProgressaoResponse ComparacaoProgressoes,
     PortalToleranciaProgressaoResponse ToleranciaProgressao,
+    PortalPerfilRespostaAtletaResponse PerfilRespostaAtleta,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

@@ -1,3 +1,12 @@
+# v0.10.9 — Perfil de Resposta do Atleta
+
+- Consolida tolerancia individual, resposta longitudinal atual e estabilidade de habitos em um retrato longitudinal unico e revisavel.
+- Mantem padroes por eixo separados; nao cria nota geral de responsividade.
+- Diferencia padrao historico de estado longitudinal atual para evitar extrapolacao causal.
+- Usa recuperacao, carga, performance e estabilidade comportamental apenas como contexto atual.
+- Nao rotula o atleta de forma permanente, nao calcula previsao de lesao e nao autoriza nova progressao automaticamente.
+- Integrado as Homes do atleta e do profissional sem nova migration; schema permanece 38/38.
+
 # v0.10.8 — Tolerância Individual à Progressão
 
 - Descreve padrões recorrentes do próprio atleta por eixo, usando eventos realmente registrados.
