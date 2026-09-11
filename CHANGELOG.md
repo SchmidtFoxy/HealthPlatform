@@ -1,3 +1,15 @@
+# Changelog
+
+## v0.9.6 — Encerramento do Ciclo de Hábito & Transição para Manutenção
+
+- adiciona leitura de encerramento do foco de hábito;
+- diferencia foco em curso, consolidando, pronto para manutenção, manutenção e proteção;
+- foco encerrado sai do destaque sem disparar automaticamente outra meta;
+- proteção de retomada continua acima de qualquer transição de foco;
+- sem XP negativo, punição de streak, score opaco ou alteração automática de prescrição;
+- sem migration nova; schema permanece 37/37;
+- suíte ampliada para 888 verificações.
+
 # v0.9.5 — Revisao do Proximo Foco & Ciclo de Habito
 
 - revisa o foco atual em Continuar, Consolidar, Manutencao ou Proteger;
@@ -665,3 +677,4 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.8.9 r1 — correção de compilação da tendência semanal
 - Corrige o cálculo de hidratação comparativa filtrando apenas registros com valor e materializando `decimal` não anulável antes do `Average`.
 - Elimina o erro CS1503 em `TendenciaSemanalService` sem alterar regra de negócio, schema ou versão semântica.
+- r1: alinhada a trava textual do encerramento de hábito para explicitar que o sistema **não gera nova meta automática** ao consolidar um foco.

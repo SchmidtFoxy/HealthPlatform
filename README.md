@@ -1,6 +1,8 @@
-# HealthPlatform v0.9.5 — Proteção da Retomada & Continuidade
+# HealthPlatform v0.9.6 — Proteção da Retomada & Continuidade
 
-A v0.9.5 protege o período logo após uma reconexão com o plano. Ela usa apenas sinais observáveis — streak curto, mudança de dias ativos, consistência e contexto de recuperação — para reconhecer uma retomada ainda frágil sem rotular recaída ou calcular probabilidade de abandono.
+> v0.9.6: Encerramento do Ciclo de Hábito & Transição para Manutenção — foco consolidado sai do destaque sem abrir nova cobrança automaticamente.
+
+A v0.9.6 protege o período logo após uma reconexão com o plano. Ela usa apenas sinais observáveis — streak curto, mudança de dias ativos, consistência e contexto de recuperação — para reconhecer uma retomada ainda frágil sem rotular recaída ou calcular probabilidade de abandono.
 
 ## Princípios
 - retomada em curso é inferida por sinais transparentes, não por score oculto;
@@ -86,5 +88,5 @@ A v0.8.2 transforma o ciclo esportivo em uma revisão longitudinal transparente.
 ## v0.8.8 — Ações Prioritárias do Ciclo
 A Home ordena até três prioridades semanais usando sinais já existentes, colocando recuperação e carga acima de metas de volume/performance quando necessário. A camada é explicativa e não altera prescrição automaticamente.
 
-### v0.9.5 — Manutencao Sustentavel & Proximo Foco
+### v0.9.6 — Manutencao Sustentavel & Proximo Foco
 A rotina agora diferencia habitos que ja podem ficar em manutencao de um unico eixo que merece foco. Recuperacao e retomada continuam acima de qualquer aumento de exigencia.

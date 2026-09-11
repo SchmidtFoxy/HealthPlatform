@@ -225,6 +225,10 @@ public record PortalRevisaoFocoHabitoResponse(
     string Estado, string Titulo, string Resumo, string? CodigoFoco, string? CategoriaFoco, string? EstadoDoFoco,
     string Decisao, string Evidencia, string Acao, int HabitosEmManutencao, string MensagemSeguranca);
 
+public record PortalEncerramentoCicloHabitoResponse(
+    string Estado, string Titulo, string Resumo, string? CodigoHabito, string? CategoriaHabito,
+    string Decisao, string Evidencia, string Acao, bool EmManutencao, int HabitosEmManutencao, string MensagemSeguranca);
+
 
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
@@ -324,6 +328,7 @@ public record PortalPacienteHomeResponse(
     PortalEstabilidadeHabitosResponse EstabilidadeHabitos,
     PortalProximoFocoHabitoResponse ProximoFocoHabito,
     PortalRevisaoFocoHabitoResponse RevisaoFocoHabito,
+    PortalEncerramentoCicloHabitoResponse EncerramentoCicloHabito,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

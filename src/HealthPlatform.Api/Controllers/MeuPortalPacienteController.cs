@@ -930,10 +930,11 @@ public sealed class MeuPortalPacienteController(
         var estabilidadeHabitos = EstabilidadeHabitosService.Montar(gamificacao, tendenciaSemanal, radarAdesao, protecaoRetomada);
         var proximoFocoHabito = ProximoFocoHabitoService.Montar(estabilidadeHabitos, protecaoRetomada, radarAdesao);
         var revisaoFocoHabito = RevisaoFocoHabitoService.Montar(proximoFocoHabito, estabilidadeHabitos, protecaoRetomada, tendenciaSemanal);
+        var encerramentoCicloHabito = EncerramentoCicloHabitoService.Montar(revisaoFocoHabito, estabilidadeHabitos, protecaoRetomada);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
-            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, proximoFocoHabito, revisaoFocoHabito, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
+            dia, paciente, proximaConsulta, prontidao, dorCorporal, gamificacao, ciclo, metasDoCiclo, checkpointDoCiclo, relatorioDoCiclo, comparativoDeCiclos, tendenciaDoObjetivo, acoesPrioritariasDoCiclo, planejamentoSemanal, resumoSemanal, tendenciaSemanal, radarAdesao, planoReconexao, protecaoRetomada, estabilidadeHabitos, proximoFocoHabito, revisaoFocoHabito, encerramentoCicloHabito, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, evolucaoEsportiva, planoRecuperacao, adesaoNutricional, hidratacaoContextual, coachDiario, execucaoDoDia, evolucao, plano,
             metas, metas.Count, metasConcluidas, percentualMetas,
             registros, exames));
     }
