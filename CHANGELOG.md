@@ -1,3 +1,12 @@
+# v0.10.8 — Tolerância Individual à Progressão
+
+- Descreve padrões recorrentes do próprio atleta por eixo, usando eventos realmente registrados.
+- Exige recorrência no mesmo eixo; um evento isolado não define tolerância individual.
+- Mantém duração de observação e estados de resposta como evidências separadas.
+- Pode sinalizar estabilidade recorrente, padrão variável ou necessidade de contexto sem score de risco.
+- Não calcula probabilidade de lesão, não define dose/carga e não autoriza nova progressão automaticamente.
+- Integrado às Homes do atleta e do profissional sem nova migration; schema permanece 38/38.
+
 # v0.10.7 — Comparação entre Progressões
 
 - Compara eventos realmente registrados apenas dentro do mesmo eixo esportivo.
