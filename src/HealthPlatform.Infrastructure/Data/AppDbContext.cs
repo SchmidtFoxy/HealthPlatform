@@ -51,6 +51,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<InteracaoAcompanhamento> InteracoesAcompanhamento => Set<InteracaoAcompanhamento>();
     public DbSet<EvolucaoClinica> EvolucoesClinicas => Set<EvolucaoClinica>();
     public DbSet<SolicitacaoClinica> SolicitacoesClinicas => Set<SolicitacaoClinica>();
+    public DbSet<ProtocoloAcompanhamentoItem> ProtocolosAcompanhamento => Set<ProtocoloAcompanhamentoItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -642,6 +643,24 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.ObservacaoRevisao).HasMaxLength(3000);
             entity.HasIndex(x => new { x.OrganizacaoId, x.Status, x.DataLimiteUtc });
             entity.HasIndex(x => new { x.PacienteId, x.Status });
+            entity.HasOne(x => x.Paciente).WithMany()
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Profissional).WithMany()
+                .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<ProtocoloAcompanhamentoItem>(entity =>
+        {
+            entity.ToTable("ProtocolosAcompanhamento");
+            entity.Property(x => x.Tipo).HasMaxLength(60).IsRequired();
+            entity.Property(x => x.Titulo).HasMaxLength(180).IsRequired();
+            entity.Property(x => x.Unidade).HasMaxLength(40);
+            entity.Property(x => x.Frequencia).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.HorarioLocal).HasMaxLength(5);
+            entity.Property(x => x.DiasSemana).HasMaxLength(80);
+            entity.Property(x => x.Instrucoes).HasMaxLength(1200);
+            entity.HasIndex(x => new { x.OrganizacaoId, x.PacienteId, x.Ativo });
+            entity.HasIndex(x => new { x.PacienteId, x.Tipo, x.Ativo });
             entity.HasOne(x => x.Paciente).WithMany()
                 .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.Profissional).WithMany()

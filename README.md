@@ -1,24 +1,19 @@
-# v0.5.7 — Monitoramento Guiado / Connected Care
+# v0.5.8 — Protocolos de Acompanhamento / Connected Care
 
-A v0.5.7 transforma o diário genérico do paciente em uma experiência mais orientada para sinais e sintomas, sem criar schema novo.
+A v0.5.8 transforma o monitoramento guiado em acompanhamento personalizado por paciente.
 
 ## O que entrou
-
-- registros rápidos de pressão arterial, glicemia, frequência cardíaca, saturação e temperatura;
-- pressão registrada de forma estruturada em sistólica + diastólica;
-- mantém peso, água, sono, dor, energia e sintomas no fluxo diário;
-- novo endpoint profissional `GET /api/pacientes/{id}/monitoramento?dias=7`;
-- novo endpoint PatientOnly `GET /api/portal/me/monitoramento?dias=7`;
-- resumo de último valor, média, mínimo e máximo no período;
-- novo card de **Monitoramento remoto** no resumo do prontuário;
-- aviso explícito de que os dados informados pelo paciente não substituem avaliação clínica;
-- reutiliza `RegistrosDiarioPaciente`: **sem schema novo e sem migration nova**.
-
-## Baseline
-
-A v0.5.6 foi validada pelo usuário com **561/561 testes** e é a baseline desta release.
+- profissional configura quais métricas cada paciente deve acompanhar;
+- frequência: diária, dias da semana, semanal ou sob demanda;
+- horário, unidade e instruções personalizadas;
+- portal do paciente passa a priorizar somente os registros definidos no protocolo quando houver configuração ativa;
+- resumo do prontuário mostra o protocolo ativo junto ao monitoramento remoto;
+- ativação/desativação auditada e isolada por organização;
+- nova tabela `ProtocolosAcompanhamento`;
+- PREPARAR passa para 32 etapas e possui migration incremental v0.5.8 para instalações existentes.
 
 ## Validação esperada
+- `PREPARAR.ps1`: 32/32
+- `TESTAR.ps1`: 580/580
 
-- `PREPARAR.ps1`: 31/31.
-- `TESTAR.ps1`: 570/570.
+Baseline anterior: v0.5.7 validada com 570/570 testes.

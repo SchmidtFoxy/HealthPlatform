@@ -1,3 +1,8 @@
+
+## v0.5.8-r1 - Hotfix de validacao do PREPARAR
+- Corrige o teste 517/580 para reconhecer corretamente o upgrade v0.5.1 na etapa 31/32.
+- Preserva a etapa 32/32 para o upgrade v0.5.8 de protocolos de acompanhamento.
+- Nenhuma alteracao de schema, API, regra clinica ou dados.
 # v0.5.7 — Monitoramento Guiado
 **Tipo:** feature release
 
@@ -82,6 +87,17 @@
 - adiciona cobertura estrutural à suíte de fumaça.
 
 # HealthPlatform — Changelog
+
+## v0.5.8 — Protocolos de Acompanhamento
+**Tipo:** feature
+
+- adiciona protocolo configurável por paciente;
+- permite definir métrica, frequência, horário, unidade e instruções;
+- paciente vê registros rápidos filtrados pelo protocolo ativo;
+- profissional visualiza e gerencia protocolo junto ao monitoramento remoto;
+- adiciona schema `ProtocolosAcompanhamento` e migration incremental compatível com upgrades;
+- amplia smoke test para 580 verificações.
+
 
 ## v0.5.0 — Connected Care Stable Milestone
 **Tipo:** marco de versão / promoção estável
