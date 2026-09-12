@@ -254,6 +254,102 @@ else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
         CREATE INDEX IF NOT EXISTS "IX_SolicitacoesClinicas_ProfissionalId" ON "SolicitacoesClinicas" ("ProfissionalId");
         """);
 
+    // Compatibilidade do Render com bancos demo preservados de versoes anteriores.
+    // EnsureCreatedAsync cria o schema completo apenas quando o banco e novo/vazio;
+    // em bancos existentes, garantimos aqui os upgrades esportivos/gamificacao em ordem.
+    await db.Database.ExecuteSqlRawAsync("""
+        CREATE TABLE IF NOT EXISTS "ProtocolosAcompanhamento" (
+            "Id" uuid NOT NULL, "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "ProfissionalId" uuid NOT NULL,
+            "Tipo" character varying(60) NOT NULL, "Titulo" character varying(180) NOT NULL, "Unidade" character varying(40) NULL,
+            "Frequencia" character varying(30) NOT NULL DEFAULT 'Diario', "HorarioLocal" character varying(5) NULL,
+            "DiasSemana" character varying(80) NULL, "Instrucoes" character varying(1200) NULL, "Ativo" boolean NOT NULL DEFAULT TRUE,
+            CONSTRAINT "PK_ProtocolosAcompanhamento" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_ProtocolosAcompanhamento_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_ProtocolosAcompanhamento_Profissionais_ProfissionalId" FOREIGN KEY ("ProfissionalId") REFERENCES "Profissionais" ("Id") ON DELETE RESTRICT
+        );
+        CREATE INDEX IF NOT EXISTS "IX_ProtocolosAcompanhamento_OrganizacaoId_PacienteId_Ativo" ON "ProtocolosAcompanhamento" ("OrganizacaoId", "PacienteId", "Ativo");
+        CREATE INDEX IF NOT EXISTS "IX_ProtocolosAcompanhamento_PacienteId_Tipo_Ativo" ON "ProtocolosAcompanhamento" ("PacienteId", "Tipo", "Ativo");
+
+        CREATE TABLE IF NOT EXISTS "MedicamentosPaciente" (
+            "Id" uuid NOT NULL, "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "ProfissionalId" uuid NOT NULL,
+            "Nome" varchar(220) NOT NULL, "Dose" numeric(12,3) NULL, "Unidade" varchar(40) NULL, "Via" varchar(80) NULL,
+            "Frequencia" varchar(40) NOT NULL DEFAULT 'Diario', "HorariosLocais" varchar(200) NULL,
+            "DataInicio" date NOT NULL, "DataFim" date NULL, "Orientacao" varchar(1600) NULL, "Ativo" boolean NOT NULL DEFAULT TRUE,
+            "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            CONSTRAINT "PK_MedicamentosPaciente" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_MedicamentosPaciente_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_MedicamentosPaciente_Profissionais_ProfissionalId" FOREIGN KEY ("ProfissionalId") REFERENCES "Profissionais" ("Id") ON DELETE RESTRICT
+        );
+        CREATE INDEX IF NOT EXISTS "IX_MedicamentosPaciente_OrganizacaoId_PacienteId_Ativo" ON "MedicamentosPaciente" ("OrganizacaoId", "PacienteId", "Ativo");
+
+        CREATE TABLE IF NOT EXISTS "RegistrosMedicamentos" (
+            "Id" uuid NOT NULL, "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "MedicamentoId" uuid NOT NULL,
+            "DataHoraPrevistaUtc" timestamp with time zone NOT NULL, "DataHoraTomadaUtc" timestamp with time zone NULL,
+            "Status" varchar(30) NOT NULL, "Observacao" varchar(1000) NULL,
+            "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            CONSTRAINT "PK_RegistrosMedicamentos" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_RegistrosMedicamentos_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_RegistrosMedicamentos_MedicamentosPaciente_MedicamentoId" FOREIGN KEY ("MedicamentoId") REFERENCES "MedicamentosPaciente" ("Id") ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS "IX_RegistrosMedicamentos_OrganizacaoId_PacienteId_DataHoraPrevistaUtc" ON "RegistrosMedicamentos" ("OrganizacaoId", "PacienteId", "DataHoraPrevistaUtc");
+        CREATE INDEX IF NOT EXISTS "IX_RegistrosMedicamentos_MedicamentoId_DataHoraPrevistaUtc" ON "RegistrosMedicamentos" ("MedicamentoId", "DataHoraPrevistaUtc");
+
+        CREATE TABLE IF NOT EXISTS "EventosXp" (
+            "Id" uuid NOT NULL, "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "Data" date NOT NULL,
+            "Fonte" character varying(40) NOT NULL, "FonteId" uuid NOT NULL, "Pontos" integer NOT NULL,
+            "Motivo" character varying(500) NOT NULL, "Adequacao" character varying(30) NULL,
+            CONSTRAINT "PK_EventosXp" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_EventosXp_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_EventosXp_PacienteId_Fonte_FonteId" ON "EventosXp" ("PacienteId", "Fonte", "FonteId");
+        CREATE INDEX IF NOT EXISTS "IX_EventosXp_OrganizacaoId_Data" ON "EventosXp" ("OrganizacaoId", "Data");
+
+        CREATE TABLE IF NOT EXISTS "DesafiosSemanaisPaciente" (
+            "Id" uuid NOT NULL, "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "SemanaInicio" date NOT NULL,
+            "Codigo" character varying(60) NOT NULL, "Titulo" character varying(160) NOT NULL, "Descricao" character varying(500) NOT NULL,
+            "TipoMetrica" character varying(40) NOT NULL, "Meta" integer NOT NULL, "Progresso" integer NOT NULL, "RecompensaXp" integer NOT NULL,
+            "ConcluidoEmUtc" timestamp with time zone NULL,
+            CONSTRAINT "PK_DesafiosSemanaisPaciente" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_DesafiosSemanaisPaciente_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_DesafiosSemanaisPaciente_PacienteId_SemanaInicio_Codigo" ON "DesafiosSemanaisPaciente" ("PacienteId", "SemanaInicio", "Codigo");
+        CREATE INDEX IF NOT EXISTS "IX_DesafiosSemanaisPaciente_OrganizacaoId_SemanaInicio" ON "DesafiosSemanaisPaciente" ("OrganizacaoId", "SemanaInicio");
+
+        CREATE TABLE IF NOT EXISTS "ConquistasPaciente" (
+            "Id" uuid NOT NULL, "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "Codigo" character varying(60) NOT NULL,
+            "Titulo" character varying(160) NOT NULL, "Descricao" character varying(500) NOT NULL, "Icone" character varying(20) NOT NULL,
+            "DataConquista" date NOT NULL, "RecompensaXp" integer NOT NULL,
+            CONSTRAINT "PK_ConquistasPaciente" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_ConquistasPaciente_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_ConquistasPaciente_PacienteId_Codigo" ON "ConquistasPaciente" ("PacienteId", "Codigo");
+        CREATE INDEX IF NOT EXISTS "IX_ConquistasPaciente_OrganizacaoId_DataConquista" ON "ConquistasPaciente" ("OrganizacaoId", "DataConquista");
+
+        CREATE TABLE IF NOT EXISTS "CiclosEsportivosPaciente" (
+            "Id" uuid NOT NULL, "CreatedAtUtc" timestamp with time zone NOT NULL, "UpdatedAtUtc" timestamp with time zone NULL,
+            "OrganizacaoId" uuid NOT NULL, "PacienteId" uuid NOT NULL, "ProfissionalId" uuid NOT NULL,
+            "FaseTreinoId" uuid NULL, "FaseNutricionalId" uuid NULL, "Nome" character varying(160) NOT NULL,
+            "PerfilEsportivo" character varying(50) NOT NULL, "Objetivo" character varying(800) NULL,
+            "DataInicio" date NOT NULL, "DataFim" date NOT NULL, "Status" character varying(30) NOT NULL,
+            "MetaTreinosSemanais" integer NULL, "MetaConsistenciaPercentual" integer NULL, "MetaPesoKg" numeric(8,2) NULL,
+            "Observacoes" character varying(1200) NULL,
+            CONSTRAINT "PK_CiclosEsportivosPaciente" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_CiclosEsportivosPaciente_Pacientes_PacienteId" FOREIGN KEY ("PacienteId") REFERENCES "Pacientes" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_CiclosEsportivosPaciente_Profissionais_ProfissionalId" FOREIGN KEY ("ProfissionalId") REFERENCES "Profissionais" ("Id") ON DELETE RESTRICT,
+            CONSTRAINT "FK_CiclosEsportivosPaciente_FasesTreino_FaseTreinoId" FOREIGN KEY ("FaseTreinoId") REFERENCES "FasesTreino" ("Id") ON DELETE SET NULL,
+            CONSTRAINT "FK_CiclosEsportivosPaciente_FasesNutricionais_FaseNutricionalId" FOREIGN KEY ("FaseNutricionalId") REFERENCES "FasesNutricionais" ("Id") ON DELETE SET NULL
+        );
+        CREATE INDEX IF NOT EXISTS "IX_CiclosEsportivosPaciente_PacienteId_Periodo" ON "CiclosEsportivosPaciente" ("PacienteId", "DataInicio", "DataFim");
+        CREATE INDEX IF NOT EXISTS "IX_CiclosEsportivosPaciente_OrganizacaoId_Status" ON "CiclosEsportivosPaciente" ("OrganizacaoId", "Status");
+        CREATE INDEX IF NOT EXISTS "IX_CiclosEsportivosPaciente_ProfissionalId" ON "CiclosEsportivosPaciente" ("ProfissionalId");
+        CREATE INDEX IF NOT EXISTS "IX_CiclosEsportivosPaciente_FaseTreinoId" ON "CiclosEsportivosPaciente" ("FaseTreinoId");
+        CREATE INDEX IF NOT EXISTS "IX_CiclosEsportivosPaciente_FaseNutricionalId" ON "CiclosEsportivosPaciente" ("FaseNutricionalId");
+        """);
+
     await db.Database.ExecuteSqlRawAsync("""
         CREATE TABLE IF NOT EXISTS "ProntidoesDiarias" (
             "Id" uuid NOT NULL,

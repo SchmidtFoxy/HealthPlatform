@@ -1,3 +1,11 @@
+
+### v0.14.3-r1 — Render Schema Compatibility
+
+- Corrige bootstrap de bancos Render preservados de versoes antigas.
+- `DemoBootstrap` agora garante Protocolos, Medicamentos, XP, Missoes/Conquistas e Ciclos Esportivos antes de `EventosProgressaoSupervisionada`.
+- Evita `42P01 relation "CiclosEsportivosPaciente" does not exist` durante deploy sem apagar dados existentes.
+- Versao funcional permanece 0.14.3; sem migration nova.
+
 # v0.14.3 — Mobile Data Views
 
 - Refina listas, históricos e tabelas do portal do atleta para uso mobile-first.

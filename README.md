@@ -344,3 +344,6 @@ A Home mobile passa a organizar o dia esportivo em **Check-in → Treino → Rec
 
 ### v0.13.20 — Adaptive Mobile Home
 No portal do atleta, a Home mobile agora muda sua hierarquia de acordo com o estágio real do dia: antes do check-in, após o check-in, depois do treino e após o fechamento. A mudança é de UX e reaproveita dados esportivos já existentes, sem prescrição automática ou alteração de schema.
+
+
+> Render: a revisao v0.14.3-r1 adiciona compatibilidade idempotente para bancos demo persistidos de versoes antigas, preservando os dados existentes.
