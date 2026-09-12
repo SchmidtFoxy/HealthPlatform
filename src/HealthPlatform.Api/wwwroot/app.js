@@ -77,7 +77,7 @@ $('#loginForm').addEventListener('submit',async e=>{
   }finally{b.disabled=false;b.textContent='Entrar'}
 });
 $('#logoutButton').onclick=logout;$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
-function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
+function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal','workout-session-review-modal');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
 function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['ÁREA PROFISSIONAL','Visão geral'],pacientes:['PRONTUÁRIO','Pacientes'],agenda:['ORGANIZAÇÃO','Agenda'],paciente:['PRONTUÁRIO','Paciente']};$('#pageEyebrow').textContent=titles[view][0];$('#pageTitle').textContent=titles[view][1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,agenda:loadAgenda,paciente:loadPatient}[view])().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
 function stat(label,value,hint){return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value??0}</div><div class="hint">${hint}</div></div>`}
@@ -2437,7 +2437,7 @@ $$('[data-patient-more-view]').forEach(b=>b.addEventListener('click',()=>{
   loadPatientSection(b.dataset.patientMoreView).catch(e=>toast(e.message,true));
 }));
 
-// ===== v0.13.22 — Quick Log Hub =====
+// ===== v0.13.23 — Quick Log Hub =====
 function closePatientQuickLog(){
   const sheet=$('#patientQuickLogSheet'),backdrop=$('#patientQuickLogBackdrop'),trigger=$('#patientQuickLogTrigger');
   if(sheet){sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true')}
@@ -3222,15 +3222,47 @@ loadPatientWorkout = async function(){
       </article>`).join('')}</div>
     <section class="card workout-history-patient">
       <div class="card-head"><h3>Histórico recente</h3><small>${h.total||0} treino(s)</small></div>
-      ${(h.execucoes||[]).length?`<div class="workout-execution-list">${h.execucoes.slice(0,8).map(x=>`
-        <article><div><strong>${esc(x.sessao)}</strong><small>${fmtDateTime(x.dataHoraInicioUtc)}</small></div><span>${x.duracaoMinutos||0} min</span><span>${x.esforcoPercebido!=null?`RPE ${x.esforcoPercebido}/10`:'—'}</span></article>`).join('')}</div>`:sectionEmpty('Nenhum treino registrado ainda.')}
+      ${(h.execucoes||[]).length?`<div class="workout-execution-list patient-session-history">${h.execucoes.slice(0,8).map(x=>`
+        <button type="button" class="workout-execution-review" data-execution-id="${x.id}" aria-label="Revisar ${esc(x.sessao)}"><div><strong>${esc(x.sessao)}</strong><small>${fmtDateTime(x.dataHoraInicioUtc)}</small></div><span>${x.duracaoMinutos||0} min</span><span>${x.esforcoPercebido!=null?`RPE ${x.esforcoPercebido}/10`:'—'}</span><b class="workout-review-chevron" aria-hidden="true">›</b></button>`).join('')}</div>`:sectionEmpty('Nenhum treino registrado ainda.')}
     </section>`;
 
   $$('.start-workout').forEach(b=>b.onclick=()=>{
     const sessao=(p.sessoes||[]).find(x=>x.id===b.dataset.session);
     if(sessao)openWorkoutExecutionForm(sessao);
   });
+  $$('.workout-execution-review').forEach(b=>b.onclick=()=>{
+    const execution=(h.execucoes||[]).find(x=>String(x.id)===String(b.dataset.executionId));
+    if(execution)openWorkoutSessionReview(execution);
+  });
 };
+
+// ===== v0.13.23 — Mobile Session Review =====
+function openWorkoutSessionReview(execution){
+  const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  const items=execution?.itens||[];
+  const completed=items.filter(x=>x.concluido).length;
+  const duration=execution?.duracaoMinutos!=null?`${execution.duracaoMinutos} min`:'—';
+  const rpe=execution?.esforcoPercebido!=null?`${execution.esforcoPercebido}/10`:'—';
+  modal.classList.remove('hidden');
+  modal.classList.add('workout-session-review-modal');
+  box.innerHTML=`<section class="workout-session-review" aria-labelledby="workoutSessionReviewTitle">
+    <div class="workout-session-review-head">
+      <div><span class="eyebrow">REVISÃO DA SESSÃO</span><h2 id="workoutSessionReviewTitle">${esc(execution?.sessao||'Treino realizado')}</h2><p>${fmtDateTime(execution?.dataHoraInicioUtc)}${execution?.plano?` • ${esc(execution.plano)}`:''}</p></div>
+      <span class="workout-session-review-status">Concluído</span>
+    </div>
+    <div class="workout-session-review-metrics">
+      <span><small>Duração</small><b>${esc(duration)}</b></span>
+      <span><small>RPE geral</small><b>${esc(rpe)}</b></span>
+      <span><small>Exercícios</small><b>${completed}/${items.length}</b></span>
+    </div>
+    ${execution?.observacoes?`<div class="workout-session-review-note"><small>Como foi a sessão</small><p>${esc(execution.observacoes)}</p></div>`:''}
+    ${items.length?`<div class="workout-session-review-items">${items.map((x,index)=>`<article class="${x.concluido?'done':'skipped'}"><div class="workout-session-review-index">${x.concluido?'✓':index+1}</div><div><strong>${esc(x.exercicio||'Exercício')}</strong><small>${x.seriesRealizadas!=null?`${x.seriesRealizadas} séries`:''}${x.repeticoesRealizadas?` • ${esc(x.repeticoesRealizadas)} reps`:''}${x.cargaRealizada!=null?` • ${num(x.cargaRealizada)} ${esc(x.unidadeCarga||'kg')}`:''}</small>${x.esforcoPercebido!=null?`<span>RPE ${x.esforcoPercebido}/10</span>`:''}</div></article>`).join('')}</div>`:`<div class="empty compact">Esta sessão não possui detalhes de exercícios registrados.</div>`}
+    <div class="workout-session-review-safety"><strong>Registro, não nova prescrição.</strong><small>Este resumo mostra o que foi executado. Ajustes de carga, volume ou exercício continuam sendo definidos no seu acompanhamento profissional.</small></div>
+    <div class="workout-session-review-actions"><button type="button" class="secondary" id="workoutReviewQuickLog">Registrar como estou</button><button type="button" class="primary" id="workoutReviewClose">Fechar</button></div>
+  </section>`;
+  $('#workoutReviewClose').onclick=closeClinicalAction;
+  $('#workoutReviewQuickLog').onclick=()=>{closeClinicalAction();openPatientQuickLog()};
+}
 
 function openPostWorkoutSummary({sessaoNome,duracaoMinutos,esforcoPercebido}){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
@@ -5891,7 +5923,8 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.22';
+const HP_MVP_VERSION='0.14.0';
+const HP_MOBILE_UI_FOUNDATION='v0.14.0';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

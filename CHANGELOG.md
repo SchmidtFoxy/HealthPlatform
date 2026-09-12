@@ -1,3 +1,23 @@
+# v0.14.0 — Mobile UI Foundation
+
+- Inicia oficialmente a fase 0.14.x de refinamento estrutural do front mobile.
+- Centraliza tokens de canvas, superfícies, texto, contraste, foco, raio e sombra do portal do atleta.
+- Padroniza títulos, cards, formulários e alvos de toque no mobile.
+- Adiciona foco visível acessível, `touch-action: manipulation`, viewport `100dvh` e tratamento consistente de safe-area.
+- Reduz divergências visuais entre telas sem alterar lógica clínica, API ou persistência.
+- Sem migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1288 verificações.
+
+# v0.13.23 — Mobile Session Review
+
+- Histórico recente de treino passa a abrir uma revisão de sessão no portal do atleta.
+- Resumo mostra duração, RPE geral, exercícios concluídos, cargas/repetições registradas e observação da sessão.
+- Reutiliza exclusivamente os dados já retornados por `treinos/historico`; nenhuma persistência ou endpoint novo.
+- Mobile recebe bottom sheet com safe-area e ação opcional para abrir o Quick Log.
+- Reforça que revisão do executado não altera a prescrição profissional.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1280 verificações.
+
 # v0.13.22-r1 — Quick Log Hub (Smoke Fix)
 
 - Corrige a validação `[1270/1272]` para comparar os textos do Quick Log sem diferenciar maiúsculas/minúsculas.

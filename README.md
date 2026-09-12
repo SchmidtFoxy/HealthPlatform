@@ -1,3 +1,26 @@
+# HealthPlatform v0.14.0 — Mobile UI Foundation
+
+> Versão funcional atual: **v0.14.0 — Mobile UI Foundation**.
+
+## v0.14.0 — Mobile UI Foundation
+
+Marco de entrada da série 0.14.x, dedicada ao refinamento do front mobile. Esta versão centraliza tokens visuais do portal do atleta e padroniza canvas, superfícies, tipografia, cards, formulários, foco acessível, alvos de toque, safe-area e viewport dinâmico. Não altera regras clínicas, endpoints ou schema.
+
+# HealthPlatform v0.13.23 — Mobile Session Review
+
+> Versão funcional atual: **v0.13.23 — Mobile Session Review**.
+
+## v0.13.23 — Mobile Session Review
+
+- histórico recente de treino do atleta passa a ser interativo no celular;
+- toque em uma sessão abre revisão compacta com duração, RPE, exercícios executados e observação;
+- detalhes são lidos do histórico já existente, sem endpoint ou persistência paralela;
+- resumo deixa explícito que o registro não altera a prescrição profissional;
+- ação opcional abre o Quick Log para registrar como o atleta está após revisar a sessão;
+- bottom sheet respeita safe-area e telas estreitas;
+- sem migration nova; schema permanece 38/38;
+- smoke test ampliado para 1280 verificações.
+
 # HealthPlatform v0.13.22 — Quick Log Hub
 
 > Versão funcional atual: **v0.13.22 — Quick Log Hub**.
