@@ -2830,3 +2830,23 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 @media(max-width:390px){
   .mobile-home-glance-rail{grid-template-columns:1fr 1fr;gap:7px}.glance-chip{min-height:66px;padding:9px 10px;gap:8px}.glance-chip>span{width:31px;height:31px;flex-basis:31px;border-radius:10px}.glance-chip b{font-size:11px}.mobile-home-glance-head small{display:none}
 }
+
+
+/* ===== v0.13.9 — Mobile Action Hub ===== */
+.mobile-now-hub{display:none}
+@media(max-width:720px){
+  .mobile-now-hub{display:grid;gap:12px;padding:16px;border-radius:22px;background:linear-gradient(145deg,#113a50,#0c2d40);color:#fff;box-shadow:0 14px 34px rgba(5,31,49,.18);overflow:hidden;position:relative}
+  .mobile-now-hub:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-75px;top:-80px;background:rgba(78,195,170,.12);pointer-events:none}
+  .mobile-now-copy{position:relative;z-index:1}.mobile-now-copy .eyebrow{color:#83d8c4;font-size:9px;letter-spacing:.15em}.mobile-now-copy h3{margin:3px 0 4px;color:#fff;font-size:18px;line-height:1.18}.mobile-now-copy p{margin:0;color:#c7d8e2;font-size:11px;line-height:1.45;max-width:92%}
+  .mobile-now-actions{display:grid;grid-template-columns:1.55fr .8fr .8fr;gap:8px;position:relative;z-index:1}
+  .mobile-now-actions button{min-width:0;min-height:72px;border:0;border-radius:16px;padding:10px;display:grid;align-content:center;justify-items:start;gap:2px;text-align:left;cursor:pointer}
+  .mobile-now-actions button span{font-size:17px}.mobile-now-actions button b{font-size:11px;line-height:1.15}.mobile-now-actions button small{font-size:8px;line-height:1.2;opacity:.78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .mobile-now-primary{background:linear-gradient(135deg,#45c4a5,#35a98e)!important;color:#082f35!important;box-shadow:none!important}.mobile-now-primary small{color:#0c4f4d}
+  .mobile-now-secondary{background:rgba(255,255,255,.09);color:#f3f8fa;border:1px solid rgba(255,255,255,.09)!important}.mobile-now-secondary:active,.mobile-now-primary:active{transform:scale(.97)}
+  .today-actions-card.mobile-now-highlight{animation:hpNowHighlight 1.15s ease}
+  @keyframes hpNowHighlight{0%,100%{box-shadow:0 7px 20px rgba(8,34,58,.06)}35%{box-shadow:0 0 0 3px rgba(64,191,158,.3),0 14px 30px rgba(8,34,58,.12)}}
+}
+@media(max-width:390px){
+  .mobile-now-hub{padding:14px;border-radius:20px}.mobile-now-actions{grid-template-columns:1.35fr .85fr .85fr;gap:6px}.mobile-now-actions button{min-height:68px;padding:9px 8px;border-radius:14px}.mobile-now-copy h3{font-size:17px}.mobile-now-copy p{font-size:10px}.mobile-now-actions button b{font-size:10px}.mobile-now-actions button small{font-size:7px}
+}
+@media(prefers-reduced-motion:reduce){.today-actions-card.mobile-now-highlight{animation:none!important}}

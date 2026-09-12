@@ -1,3 +1,13 @@
+# v0.13.9 — Mobile Action Hub
+
+- Home mobile ganha uma área **Agora** para destacar a próxima ação útil do dia.
+- Sem prontidão registrada, o check-in matinal vira a ação principal.
+- Com prontidão disponível, o treino do dia passa a ser a ação principal.
+- Atalhos diretos para água e registros rápidos reduzem navegação pelo menu.
+- Hub recebe tratamento específico para telas estreitas e respeita redução de movimento.
+- Sem migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1168 verificações.
+
 # v0.13.8 — Mobile Home Hierarchy
 
 - Home do atleta ganha o bloco **Em 30 segundos**, reunindo prontidão, treino, hidratação e streak.

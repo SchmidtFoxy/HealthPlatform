@@ -1823,6 +1823,15 @@ async function loadMyPatientPortal(){
       </div>
     </section>
 
+    <section class="mobile-now-hub" aria-label="Próxima ação do dia">
+      <div class="mobile-now-copy"><span class="eyebrow">AGORA</span><h3>${readiness?'Continue seu plano do dia':'Comece pelo check-in'}</h3><p>${readiness?'Seu contexto já está atualizado. Escolha a ação mais útil sem procurar pelo app.':'Leva menos de 1 minuto e organiza treino, recuperação e foco de hoje.'}</p></div>
+      <div class="mobile-now-actions">
+        <button class="primary mobile-now-primary" id="mobileNowPrimary"><span>${readiness?'🏋️':'◉'}</span><b>${readiness?'Abrir treino':'Fazer check-in'}</b><small>${readiness?esc((d.estrategiaDoDia||{}).intensidadeSugerida||'Plano de hoje'):'Atualizar prontidão'}</small></button>
+        <button class="mobile-now-secondary" id="mobileNowWater"><span>💧</span><b>Água</b><small>${d.hidratacaoContextual?.metaMl?`${num(d.hidratacaoContextual.metaMl,0)} ml meta`:'Registrar'}</small></button>
+        <button class="mobile-now-secondary" id="mobileNowMore"><span>＋</span><b>Registrar</b><small>Energia, dor e mais</small></button>
+      </div>
+    </section>
+
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
       <div class="readiness-main">
         <div><span class="eyebrow">DAILY ATHLETE • PRONTIDÃO</span><h3>${readiness?`Seu corpo hoje: ${esc(readiness.recomendacaoTreino)}`:'Como seu corpo acordou hoje?'}</h3><p>${readiness?esc(readiness.motivoRecomendacao||'Use a prontidão como guia, sempre respeitando o plano definido.'):'Sono, energia, dor, disposição e recuperação ajustam a recomendação do dia.'}</p></div>
@@ -1996,6 +2005,9 @@ async function loadMyPatientPortal(){
     </div>
   </div>`;
 
+  if($('#mobileNowPrimary'))$('#mobileNowPrimary').onclick=()=>readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
+  if($('#mobileNowWater'))$('#mobileNowWater').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
+  if($('#mobileNowMore'))$('#mobileNowMore').onclick=()=>{const target=$('.today-actions-card');if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('mobile-now-highlight');setTimeout(()=>target.classList.remove('mobile-now-highlight'),1200)}};
   if($('#dailyReadinessButton'))$('#dailyReadinessButton').onclick=()=>openDailyReadiness(readiness);
   if($('#bodyPainButton'))$('#bodyPainButton').onclick=()=>openBodyPainRecord();
   $$('.meal-adherence').forEach(btn=>btn.onclick=async()=>{
@@ -5589,7 +5601,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.8';
+const HP_MVP_VERSION='0.13.9';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

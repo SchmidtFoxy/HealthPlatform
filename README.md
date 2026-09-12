@@ -175,3 +175,8 @@ A experiência mobile do atleta agora comunica melhor o que está acontecendo: c
 
 ## v0.13.8 — Mobile Home Hierarchy
 A Home mobile prioriza leitura em poucos segundos: prontidão, intensidade do treino, hidratação e streak aparecem em um resumo compacto antes das análises detalhadas.
+
+
+## v0.13.9 — Mobile Action Hub
+
+A Home do atleta passa a destacar a próxima ação útil em um bloco **Agora**. O objetivo é reduzir procura por funções: check-in quando a prontidão ainda não foi registrada, treino quando o contexto do dia já está disponível, além de atalhos rápidos para hidratação e outros registros. A versão mantém o schema 38/38 e não altera regras clínicas.
