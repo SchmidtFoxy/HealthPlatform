@@ -1,3 +1,28 @@
+## v0.13.11-r4 — Recovery Pulse / smoke test demo encoding-safe
+
+- Corrige a validação `[464/600]` para não depender de frases completas com caracteres acentuados.
+- O aviso da demo passa a ser validado por sua estrutura (`dev-note`) e por fragmentos estáveis do conteúdo.
+- Nenhuma alteração em API, banco, Recovery Pulse ou interface.
+
+### v0.13.11-r2 — correção da identidade do MVP Preview no smoke test
+- Corrige a validação `[463/600]`, que ainda exigia o texto histórico `MVP • DEMO`.
+- O teste agora valida o badge atual `mvp-brand-badge compact">Demo`, compatível com o HTML corrente.
+- Nenhuma alteração funcional em Recovery Pulse, API, banco ou interface.
+
+# v0.13.11 — Recovery Pulse
+### v0.13.11-r1 — correção de sentinelas do MVP Preview
+- Torna a validação de identidade do `TESTAR.ps1` resistente a diferenças de encoding do caractere separador `•` no PowerShell/Windows.
+- A identidade continua exigindo `MVP Preview`, `v0.13.11`, badge de demo e `loginMessage`, mas sem depender de uma única string Unicode literal.
+- Nenhuma regra clínica, API, banco ou interface foi alterada.
+
+
+- Traz a resposta da última sessão para a Home mobile, sem exigir abertura das análises avançadas.
+- Conecta treino, prontidão do dia seguinte, recuperação percebida e dor em um resumo compacto.
+- Diferencia resposta estável, observação e necessidade de revisão sem criar diagnóstico ou nova prescrição.
+- Permite abrir a leitura completa ou fazer o check-in quando a prontidão ainda está pendente.
+- Mantém schema 38/38, sem migration nova.
+- Smoke test ampliado para 1184 verificações.
+
 # v0.13.10 — Post-Workout Mobile Loop
 
 - Fecha o fluxo de treino no celular com um resumo pós-sessão próprio, em vez de retornar silenciosamente à lista.
@@ -1088,3 +1113,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Toasts mobile respeitam o dock inferior e a safe-area do dispositivo.
 - Adiciona resposta tátil visual aos principais alvos de toque e suporte a `prefers-reduced-motion`.
 - Sem alteração de schema; permanece 38/38.
+
+### v0.13.11-r3 — correção do smoke test de aviso da demo
+- Corrige a validação `[464/600]` para comparar o aviso de demonstração sem diferenciar maiúsculas/minúsculas.
+- Nenhuma alteração funcional, visual, de API, banco ou regra esportiva.
+
+### v0.13.11-r5 — Smoke test UTF-8 seguro
+- `TESTAR.ps1` salvo como UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
+- Evita falsos negativos em sentinelas com acentos, incluindo roteiro da demo, prontidão, recuperação e evolução.
+- Nenhuma alteração de API, regra de negócio, schema ou interface.

@@ -254,6 +254,23 @@ function hpSessionResponseProfessionalCard(x){
   return `<section class="card session-response-professional-card"><div class="card-head"><div><span class="eyebrow">MEDICINA DO ESPORTE • RESPOSTA À SESSÃO</span><h3>${esc(x.titulo||'Resposta à sessão')}</h3></div><span class="pill ${x.estado==='Revisar'?'Alta':x.estado==='Observar'?'Agendada':'Info'}">${esc(x.estado||'')}</span></div><p>${esc(x.resumo||'')}</p><div class="game-prof-grid"><span><b>${x.prontidaoResposta!=null?x.prontidaoResposta:'—'}</b>prontidão<small>dia seguinte</small></span><span><b>${x.recuperacaoResposta!=null?x.recuperacaoResposta+'/10':'—'}</b>recuperação</span><span><b>${x.dorResposta!=null?x.dorResposta+'/10':'—'}</b>dor geral</span><span><b>${x.registrosDorLocalizadaPosSessao||0}</b>dor localizada<small>até 36h</small></span></div>${es.length?`<div class="signal-list">${es.map(e=>`<div><strong>${esc(e.titulo)} • ${esc(e.estado)}</strong><span>${esc(e.valor||'')}</span><small>${esc(e.referencia||'')} • ${esc(e.descricao||'')}</small></div>`).join('')}</div>`:''}<p><strong>Interpretação:</strong> ${esc(x.leitura||'')}</p><p class="muted-line">${esc(x.mensagemSeguranca||'')}</p></section>`;
 }
 
+function hpRecoveryPulseCard(x,readiness){
+  if(!x || !x.sessaoNome)return '';
+  const stable=x.estado==='RespostaEstavel';
+  const review=x.estado==='Revisar';
+  const stateClass=review?'review':stable?'stable':'observe';
+  const stateLabel=review?'Revisar recuperação':stable?'Resposta estável':'Observar resposta';
+  const recovery=x.recuperacaoResposta!=null?`${x.recuperacaoResposta}/10`:'—';
+  const pain=x.dorResposta!=null?`${x.dorResposta}/10`:'—';
+  const readinessValue=x.prontidaoResposta!=null?`${x.prontidaoResposta}/100`:(readiness?`${readiness.score}/100`:'pendente');
+  return `<section class="recovery-pulse-card ${stateClass}" aria-label="Resposta da última sessão">
+    <div class="recovery-pulse-head"><div><span class="eyebrow">RECOVERY PULSE</span><h3>Como seu corpo respondeu</h3><small>${esc(x.sessaoNome)}${x.rpeSessao!=null?` • RPE ${x.rpeSessao}`:''}</small></div><span class="recovery-pulse-state">${esc(stateLabel)}</span></div>
+    <div class="recovery-pulse-metrics"><span><small>Prontidão</small><b>${esc(readinessValue)}</b></span><span><small>Recuperação</small><b>${esc(recovery)}</b></span><span><small>Dor</small><b>${esc(pain)}</b></span></div>
+    <p>${esc(x.leitura||x.resumo||'Acompanhe sua resposta antes de decidir como conduzir a próxima sessão.')}</p>
+    <div class="recovery-pulse-actions"><button class="secondary" id="recoveryPulseDetails">Ver leitura completa</button>${!readiness?'<button class="primary" id="recoveryPulseCheckin">Fazer check-in</button>':''}</div>
+  </section>`;
+}
+
 function hpTrainingAvailabilityAthleteCard(x){
   if(!x)return '';
   const cs=x.criterios||[];
@@ -1832,6 +1849,8 @@ async function loadMyPatientPortal(){
       </div>
     </section>
 
+    ${hpRecoveryPulseCard(d.respostaSessao,readiness)}
+
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
       <div class="readiness-main">
         <div><span class="eyebrow">DAILY ATHLETE • PRONTIDÃO</span><h3>${readiness?`Seu corpo hoje: ${esc(readiness.recomendacaoTreino)}`:'Como seu corpo acordou hoje?'}</h3><p>${readiness?esc(readiness.motivoRecomendacao||'Use a prontidão como guia, sempre respeitando o plano definido.'):'Sono, energia, dor, disposição e recuperação ajustam a recomendação do dia.'}</p></div>
@@ -2008,6 +2027,8 @@ async function loadMyPatientPortal(){
   if($('#mobileNowPrimary'))$('#mobileNowPrimary').onclick=()=>readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
   if($('#mobileNowWater'))$('#mobileNowWater').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
   if($('#mobileNowMore'))$('#mobileNowMore').onclick=()=>{const target=$('.today-actions-card');if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('mobile-now-highlight');setTimeout(()=>target.classList.remove('mobile-now-highlight'),1200)}};
+  if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
+  if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
   if($('#dailyReadinessButton'))$('#dailyReadinessButton').onclick=()=>openDailyReadiness(readiness);
   if($('#bodyPainButton'))$('#bodyPainButton').onclick=()=>openBodyPainRecord();
   $$('.meal-adherence').forEach(btn=>btn.onclick=async()=>{
@@ -5635,7 +5656,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.10';
+const HP_MVP_VERSION='0.13.11';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

@@ -1,5 +1,8 @@
 # HealthPlatform v0.13.2 — Foco Gamificado do Dia
 
+> Versão funcional atual: **v0.13.11 — Recovery Pulse**.
+
+
 - entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;
 - reduz ruído no mobile sem transformar gamificação em prescrição;
 - protege dias de recuperação, revisão e retorno gradual;
