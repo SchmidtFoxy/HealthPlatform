@@ -1,3 +1,12 @@
+﻿## v0.13.1 — Missões Contextuais 2.0
+
+- contextualiza as missões semanais com prontidão, recuperação planejada, resposta à sessão e retorno gradual;
+- missões incompletas podem ficar `SemPressaoHoje` quando recuperação/revisão deve prevalecer;
+- preserva progresso e recompensa já registrados, sem apagar desafio, XP ou streak;
+- proíbe compensação de sessão, urgência artificial para fechar a semana e aumento de carga para buscar recompensa;
+- integra a mesma leitura nas Homes do atleta e do profissional;
+- preserva schema 38/38, sem migration nova.
+
 ## v0.13.0 — Gamificacao 2.0
 
 - inaugura uma camada de gamificacao orientada a adequacao, consistencia, recuperacao planejada e retorno gradual;

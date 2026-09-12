@@ -1,4 +1,4 @@
-namespace HealthPlatform.Api.Contracts.Portal;
+﻿namespace HealthPlatform.Api.Contracts.Portal;
 
 public record PortalPacienteResumoResponse(
     Guid Id,
@@ -523,6 +523,13 @@ public record PortalGamificacao2Response(
     string Estado, string Titulo, string FocoAtual, string Mensagem, int XpTotal, int Nivel, int ConsistenciaScore, int StreakDias,
     int EventosAlinhadosRecentes, int EventosExcessoRecentes, IReadOnlyCollection<PortalGamificacao2SinalResponse> Sinais, string MensagemSeguranca);
 
+public record PortalMissaoContextual2ItemResponse(
+    Guid Id, string Codigo, string Titulo, string Descricao, int Meta, int Progresso, int RecompensaXp, bool Concluido,
+    string EstadoContextual, string OrientacaoContextual);
+public record PortalMissoesContextuais2Response(
+    string Estado, string Titulo, string FocoAtual, string Mensagem, int TotalMissoes, int MissoesConcluidas, int MissoesSemPressaoHoje,
+    IReadOnlyCollection<PortalMissaoContextual2ItemResponse> Missoes, string MensagemSeguranca);
+
 public record PortalPacienteHomeResponse(
     DateOnly Data,
     PortalPacienteResumoResponse Paciente,
@@ -531,6 +538,7 @@ public record PortalPacienteHomeResponse(
     PortalDorCorporalResumoResponse DorCorporal,
     PortalGamificacaoResponse Gamificacao,
     PortalGamificacao2Response Gamificacao2,
+    PortalMissoesContextuais2Response MissoesContextuais2,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalMetasCicloResponse MetasDoCiclo,
     PortalCheckpointCicloResponse CheckpointDoCiclo,
