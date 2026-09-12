@@ -2810,3 +2810,23 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   #patientPortalNav button:active,.patient-more-grid button:active,.patient-quick-grid button:active{transform:scale(.96)}
 }
 @media(prefers-reduced-motion:reduce){.patient-view-enter,.patient-loading-orb i,.patient-loading-lines i{animation:none!important}}
+
+
+/* ===== v0.13.8 — Mobile Home Hierarchy ===== */
+.mobile-home-glance{display:none}
+@media(max-width:720px){
+  .patient-today-home{gap:13px!important}
+  .mobile-home-glance{display:block;margin:-2px 0 1px;padding:0 2px}
+  .mobile-home-glance-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 2px 8px}
+  .mobile-home-glance-head .eyebrow{color:#9a7a12;font-size:9px;letter-spacing:.13em}
+  .mobile-home-glance-head small{color:#72869a;font-size:10px}
+  .mobile-home-glance-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .glance-chip{min-width:0;min-height:70px;display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:17px;background:linear-gradient(145deg,#f9fcfd,#edf5f6);border:1px solid rgba(18,60,84,.09);box-shadow:0 7px 18px rgba(8,34,58,.055)}
+  .glance-chip>span{flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#dfecee;color:#155d61;font-size:15px;font-weight:900}
+  .glance-chip.ready>span{background:#d9f0e7;color:#13745f}.glance-chip.pending>span{background:#fff0cc;color:#8a6610}
+  .glance-chip div{min-width:0;display:grid;gap:2px}.glance-chip small{font-size:9px;color:#74889a;text-transform:uppercase;letter-spacing:.07em}.glance-chip b{min-width:0;color:#15344e;font-size:12px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .daily-readiness-card{border-radius:20px!important;padding:15px!important}.daily-readiness-card .readiness-main{gap:10px!important}.daily-readiness-card h3{font-size:17px!important}.daily-readiness-card p{font-size:11px!important;line-height:1.45!important}.daily-readiness-card .readiness-score{flex:0 0 72px!important;width:72px!important;height:72px!important}.daily-readiness-card .readiness-factors{display:flex!important;overflow-x:auto;gap:6px!important;margin:10px -2px 0;padding:0 2px 3px;scrollbar-width:none}.daily-readiness-card .readiness-factors::-webkit-scrollbar{display:none}.daily-readiness-card .readiness-factors span{flex:0 0 auto;white-space:nowrap;font-size:10px!important}.daily-readiness-card .readiness-actions{margin-top:10px!important}.daily-readiness-card .readiness-actions button{min-height:46px!important}
+}
+@media(max-width:390px){
+  .mobile-home-glance-rail{grid-template-columns:1fr 1fr;gap:7px}.glance-chip{min-height:66px;padding:9px 10px;gap:8px}.glance-chip>span{width:31px;height:31px;flex-basis:31px;border-radius:10px}.glance-chip b{font-size:11px}.mobile-home-glance-head small{display:none}
+}

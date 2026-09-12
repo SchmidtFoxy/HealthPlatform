@@ -1,3 +1,10 @@
+# v0.13.8 — Mobile Home Hierarchy
+
+- Home do atleta ganha o bloco **Em 30 segundos**, reunindo prontidão, treino, hidratação e streak.
+- Hierarquia mobile refinada para leitura imediata do estado esportivo diário.
+- Card de prontidão compactado no celular, com fatores em rail horizontal e CTA preservado.
+- Nenhuma migration nova; schema permanece 38/38.
+
 ## v0.13.5 — Empty States & Mobile Polish
 
 - Reestrutura estados vazios do portal do atleta para parecerem estados intencionais de aplicativo, e não telas incompletas.

@@ -1813,6 +1813,16 @@ async function loadMyPatientPortal(){
 
     ${hpDailyGamifiedFocusAthleteCard(d.focoGamificadoDoDia)}
 
+    <section class="mobile-home-glance" aria-label="Resumo rápido do dia">
+      <div class="mobile-home-glance-head"><span class="eyebrow">EM 30 SEGUNDOS</span><small>Seu dia esportivo em um olhar</small></div>
+      <div class="mobile-home-glance-rail">
+        <article class="glance-chip ${readiness?'ready':'pending'}"><span>◉</span><div><small>Prontidão</small><b>${readiness?`${readiness.score}/100`:'Fazer check-in'}</b></div></article>
+        <article class="glance-chip"><span>↗</span><div><small>Treino</small><b>${esc((d.estrategiaDoDia||{}).intensidadeSugerida||'Definir hoje')}</b></div></article>
+        <article class="glance-chip"><span>💧</span><div><small>Hidratação</small><b>${d.hidratacaoContextual?.metaMl?`${num(d.hidratacaoContextual.metaMl,0)} ml`:'Seguir plano'}</b></div></article>
+        <article class="glance-chip"><span>🔥</span><div><small>Streak</small><b>${game.streakDias||0} dia${Number(game.streakDias||0)===1?'':'s'}</b></div></article>
+      </div>
+    </section>
+
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
       <div class="readiness-main">
         <div><span class="eyebrow">DAILY ATHLETE • PRONTIDÃO</span><h3>${readiness?`Seu corpo hoje: ${esc(readiness.recomendacaoTreino)}`:'Como seu corpo acordou hoje?'}</h3><p>${readiness?esc(readiness.motivoRecomendacao||'Use a prontidão como guia, sempre respeitando o plano definido.'):'Sono, energia, dor, disposição e recuperação ajustam a recomendação do dia.'}</p></div>
@@ -5579,7 +5589,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.7';
+const HP_MVP_VERSION='0.13.8';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

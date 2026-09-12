@@ -1,4 +1,4 @@
-﻿using HealthPlatform.Infrastructure.Data;
+using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             var payload = new
             {
                 status = databaseOk ? "ok" : "degraded",
-                version = "0.13.7",
+                version = "0.13.8",
                 database = databaseOk ? "connected" : "unavailable",
                 utc = DateTime.UtcNow
             };
@@ -33,7 +33,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             return StatusCode(StatusCodes.Status503ServiceUnavailable, new
             {
                 status = "degraded",
-                version = "0.13.7",
+                version = "0.13.8",
                 database = "unavailable",
                 utc = DateTime.UtcNow
             });
