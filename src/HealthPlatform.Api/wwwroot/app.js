@@ -254,6 +254,25 @@ function hpSessionResponseProfessionalCard(x){
   return `<section class="card session-response-professional-card"><div class="card-head"><div><span class="eyebrow">MEDICINA DO ESPORTE • RESPOSTA À SESSÃO</span><h3>${esc(x.titulo||'Resposta à sessão')}</h3></div><span class="pill ${x.estado==='Revisar'?'Alta':x.estado==='Observar'?'Agendada':'Info'}">${esc(x.estado||'')}</span></div><p>${esc(x.resumo||'')}</p><div class="game-prof-grid"><span><b>${x.prontidaoResposta!=null?x.prontidaoResposta:'—'}</b>prontidão<small>dia seguinte</small></span><span><b>${x.recuperacaoResposta!=null?x.recuperacaoResposta+'/10':'—'}</b>recuperação</span><span><b>${x.dorResposta!=null?x.dorResposta+'/10':'—'}</b>dor geral</span><span><b>${x.registrosDorLocalizadaPosSessao||0}</b>dor localizada<small>até 36h</small></span></div>${es.length?`<div class="signal-list">${es.map(e=>`<div><strong>${esc(e.titulo)} • ${esc(e.estado)}</strong><span>${esc(e.valor||'')}</span><small>${esc(e.referencia||'')} • ${esc(e.descricao||'')}</small></div>`).join('')}</div>`:''}<p><strong>Interpretação:</strong> ${esc(x.leitura||'')}</p><p class="muted-line">${esc(x.mensagemSeguranca||'')}</p></section>`;
 }
 
+function hpDailyAthleteTimeline(d,readiness){
+  const response=d?.respostaSessao||{};
+  const sessionToday=!!response.sessaoInicioUtc && String(response.sessaoInicioUtc).slice(0,10)===todayISO();
+  const responseReady=!!response.dataCheckInResposta;
+  const checkState=readiness?'done':'current';
+  const workoutState=sessionToday?'done':readiness?'current':'upcoming';
+  const recoveryState=responseReady?'done':sessionToday?'current':'upcoming';
+  const workoutText=sessionToday?'Sessão concluída':readiness?'Treino do dia':'Depois do check-in';
+  const recoveryText=responseReady?'Resposta registrada':sessionToday?'Acompanhar recuperação':'Após o treino';
+  return `<section class="athlete-day-timeline" aria-label="Linha do tempo do seu dia esportivo">
+    <div class="athlete-day-timeline-head"><div><span class="eyebrow">SEU DIA ESPORTIVO</span><h3>Onde você está agora</h3></div><small>Check-in → treino → recuperação</small></div>
+    <div class="athlete-day-steps">
+      <button type="button" class="athlete-day-step ${checkState}" id="athleteTimelineCheckin"><span class="athlete-day-dot">${readiness?'✓':'1'}</span><span><small>Check-in</small><b>${readiness?`${readiness.score}/100 registrado`:'Fazer agora'}</b></span></button>
+      <button type="button" class="athlete-day-step ${workoutState}" id="athleteTimelineWorkout"><span class="athlete-day-dot">${sessionToday?'✓':'2'}</span><span><small>Treino</small><b>${esc(workoutText)}</b></span></button>
+      <button type="button" class="athlete-day-step ${recoveryState}" id="athleteTimelineRecovery"><span class="athlete-day-dot">${responseReady?'✓':'3'}</span><span><small>Recuperação</small><b>${esc(recoveryText)}</b></span></button>
+    </div>
+  </section>`;
+}
+
 function hpRecoveryPulseCard(x,readiness){
   if(!x || !x.sessaoNome)return '';
   const stable=x.estado==='RespostaEstavel';
@@ -1849,6 +1868,8 @@ async function loadMyPatientPortal(){
       </div>
     </section>
 
+    ${hpDailyAthleteTimeline(d,readiness)}
+
     ${hpRecoveryPulseCard(d.respostaSessao,readiness)}
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
@@ -2027,6 +2048,12 @@ async function loadMyPatientPortal(){
   if($('#mobileNowPrimary'))$('#mobileNowPrimary').onclick=()=>readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
   if($('#mobileNowWater'))$('#mobileNowWater').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
   if($('#mobileNowMore'))$('#mobileNowMore').onclick=()=>{const target=$('.today-actions-card');if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('mobile-now-highlight');setTimeout(()=>target.classList.remove('mobile-now-highlight'),1200)}};
+  if($('#athleteTimelineCheckin'))$('#athleteTimelineCheckin').onclick=()=>openDailyReadiness(readiness);
+  if($('#athleteTimelineWorkout'))$('#athleteTimelineWorkout').onclick=()=>loadPatientSection('treino').catch(e=>toast(e.message,true));
+  if($('#athleteTimelineRecovery'))$('#athleteTimelineRecovery').onclick=()=>{
+    if(d.respostaSessao?.sessaoNome){const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}}
+    else loadPatientSection('treino').catch(e=>toast(e.message,true));
+  };
   if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
   if($('#dailyReadinessButton'))$('#dailyReadinessButton').onclick=()=>openDailyReadiness(readiness);
@@ -5656,7 +5683,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.11';
+const HP_MVP_VERSION='0.13.12';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

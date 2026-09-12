@@ -2865,3 +2865,20 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 .recovery-pulse-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:16px 0 13px;position:relative;z-index:1}.recovery-pulse-metrics span{display:flex;flex-direction:column;gap:3px;padding:11px 12px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08)}.recovery-pulse-metrics small{font-size:11px;color:#a8c4d2;text-transform:uppercase;letter-spacing:.06em}.recovery-pulse-metrics b{font-size:18px;color:#fff}.recovery-pulse-card>p{margin:0;color:#d3e7ef;line-height:1.5;position:relative;z-index:1}.recovery-pulse-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:15px;position:relative;z-index:1}.recovery-pulse-actions .secondary{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#f1fbff}
 @media(max-width:680px){.recovery-pulse-card{border-radius:20px;padding:17px}.recovery-pulse-head{display:grid;gap:10px}.recovery-pulse-state{width:max-content}.recovery-pulse-metrics{margin-top:14px}.recovery-pulse-actions{display:grid;grid-template-columns:1fr}.recovery-pulse-actions button{min-height:48px;width:100%}}
 @media(max-width:390px){.recovery-pulse-metrics{gap:6px}.recovery-pulse-metrics span{padding:10px 8px}.recovery-pulse-metrics small{font-size:9px}.recovery-pulse-metrics b{font-size:16px}.recovery-pulse-head h3{font-size:19px}}
+
+
+/* v0.13.12 — Daily Athlete Timeline */
+.athlete-day-timeline{display:none}
+@media(max-width:720px){
+  .athlete-day-timeline{display:grid;gap:12px;padding:16px;border-radius:22px;background:linear-gradient(145deg,#f7fbfc,#edf5f6);border:1px solid rgba(15,55,78,.09);box-shadow:0 10px 26px rgba(8,34,58,.07)}
+  .athlete-day-timeline-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.athlete-day-timeline-head h3{margin:2px 0 0;color:#12364a;font-family:var(--font-ui,Inter,system-ui,sans-serif);font-size:18px;letter-spacing:-.02em}.athlete-day-timeline-head small{color:#718798;font-size:10px;text-align:right}.athlete-day-timeline .eyebrow{color:#147768}
+  .athlete-day-steps{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.athlete-day-steps:before{content:"";position:absolute;left:16.6%;right:16.6%;top:18px;height:2px;background:#d8e5e9;z-index:0}
+  .athlete-day-step{position:relative;z-index:1;min-width:0;min-height:86px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0 7px 9px;border:0;background:transparent;text-align:left;color:#17384a;cursor:pointer;border-radius:14px}.athlete-day-step>span:last-child{min-width:0;display:grid;gap:2px}.athlete-day-step small{font-size:9px;line-height:1.1;text-transform:uppercase;letter-spacing:.07em;color:#8296a3}.athlete-day-step b{font-size:11px;line-height:1.25;color:#476274;overflow-wrap:anywhere}
+  .athlete-day-dot{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#e2ebee;border:3px solid #f4f9fa;color:#647c89;font-size:12px;font-weight:900;box-shadow:0 0 0 1px rgba(14,55,77,.08)}
+  .athlete-day-step.done .athlete-day-dot{background:#d8f2e8;color:#0c765a}.athlete-day-step.done b{color:#1b6857}.athlete-day-step.current{background:#fff;box-shadow:0 7px 18px rgba(8,34,58,.08)}.athlete-day-step.current .athlete-day-dot{background:#123f54;color:#fff;box-shadow:0 0 0 4px rgba(18,63,84,.09)}.athlete-day-step.current b{color:#123f54}.athlete-day-step.upcoming{opacity:.74}
+  .athlete-day-step:active{transform:scale(.985)}
+}
+@media(max-width:390px){
+  .athlete-day-timeline{padding:14px 12px}.athlete-day-timeline-head small{display:none}.athlete-day-steps{gap:3px}.athlete-day-step{padding-left:4px;padding-right:4px;min-height:82px}.athlete-day-dot{width:33px;height:33px}.athlete-day-step b{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.athlete-day-step:active{transform:none}}

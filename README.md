@@ -1,6 +1,6 @@
-# HealthPlatform v0.13.2 — Foco Gamificado do Dia
+# HealthPlatform v0.13.12 — Daily Athlete Timeline
 
-> Versão funcional atual: **v0.13.11 — Recovery Pulse**.
+> Versão funcional atual: **v0.13.12 — Daily Athlete Timeline**.
 
 
 - entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;
@@ -188,3 +188,11 @@ A Home do atleta passa a destacar a próxima ação útil em um bloco **Agora**.
 ## v0.13.10 — Post-Workout Mobile Loop
 
 No portal do atleta, concluir um treino agora abre um resumo pós-sessão mobile com duração, RPE e próximas ações rápidas. O fluxo não cria recomendação clínica nova: apenas confirma o que foi registrado e facilita registrar hidratação ou retornar à tela Hoje.
+
+## v0.13.11 — Recovery Pulse
+
+A Home aproxima a resposta à última sessão da rotina diária, apresentando prontidão, recuperação e dor em um card compacto, sem inferir causalidade nem liberar progressão automaticamente.
+
+## v0.13.12 — Daily Athlete Timeline
+
+A Home mobile passa a organizar o dia esportivo em **Check-in → Treino → Recuperação**. A etapa atual é destacada a partir de dados já existentes e cada estágio funciona como atalho para a ação correspondente. Não há novo score, prescrição, persistência ou migration; o schema permanece 38/38.

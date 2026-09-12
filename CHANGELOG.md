@@ -1,3 +1,13 @@
+# v0.13.12 — Daily Athlete Timeline
+
+- Home mobile passa a apresentar a sequência diária Check-in → Treino → Recuperação.
+- A etapa atual é destacada a partir de dados já existentes de prontidão e resposta à sessão.
+- Cada etapa funciona como atalho para check-in, treino ou leitura pós-sessão.
+- Não cria prescrição, score, dado clínico ou fluxo persistente novo.
+- Ajustes específicos para telas até 720px e 390px, com suporte a `prefers-reduced-motion`.
+- Sem alteração de schema; permanece 38/38.
+- Smoke test ampliado para 1192 verificações.
+
 ## v0.13.11-r4 — Recovery Pulse / smoke test demo encoding-safe
 
 - Corrige a validação `[464/600]` para não depender de frases completas com caracteres acentuados.
