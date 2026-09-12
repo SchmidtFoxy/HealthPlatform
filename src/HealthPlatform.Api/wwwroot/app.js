@@ -294,6 +294,27 @@ function hpWeeklyAthleteRhythm(d){
   </section>`;
 }
 
+
+function hpTrainingLoadSnapshot(d){
+  const load=d?.cargaIndividualizada;
+  if(!load || load.cargaAtual7==null)return '';
+  const current=Number(load.cargaAtual7||0);
+  const median=load.medianaCargaHistorica!=null?Number(load.medianaCargaHistorica):null;
+  const state=String(load.estado||'');
+  const tone=state==='RevisarContexto'?'review':state==='ObservarContexto'?'observe':'steady';
+  const label=tone==='review'?'Revisar contexto':tone==='observe'?'Observar carga':'Dentro do contexto';
+  const comparison=load.posicaoHistorica||'Comparação com sua referência pessoal';
+  const message=load.leitura||load.resumo||'A carga recente deve ser interpretada junto de recuperação, dor e prontidão.';
+  const scale=median&&median>0?Math.min(100,Math.round((current/median)*50)):50;
+  return `<section class="training-load-snapshot ${tone}" aria-label="Resumo da carga de treino recente">
+    <div class="training-load-snapshot-head"><div><span class="eyebrow">CARGA RECENTE</span><h3>Seu esforço no contexto pessoal</h3></div><span class="training-load-state">${esc(label)}</span></div>
+    <div class="training-load-numbers"><div><strong>${num(current,0)}</strong><span>carga • 7 dias</span></div><div><strong>${median!=null?num(median,0):'—'}</strong><span>mediana pessoal</span></div></div>
+    <div class="training-load-reference" aria-label="Comparação visual com referência pessoal"><span>recente</span><div><i style="width:${scale}%"></i><b></b></div><span>referência</span></div>
+    <p><strong>${esc(comparison)}</strong><br>${esc(message)}</p>
+    <button type="button" class="training-load-details" id="trainingLoadSnapshotDetails">Ver leitura completa <span>→</span></button>
+  </section>`;
+}
+
 function hpRecoveryPulseCard(x,readiness){
   if(!x || !x.sessaoNome)return '';
   const stable=x.estado==='RespostaEstavel';
@@ -1893,6 +1914,8 @@ async function loadMyPatientPortal(){
 
     ${hpWeeklyAthleteRhythm(d)}
 
+    ${hpTrainingLoadSnapshot(d)}
+
     ${hpRecoveryPulseCard(d.respostaSessao,readiness)}
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
@@ -2078,6 +2101,7 @@ async function loadMyPatientPortal(){
     else loadPatientSection('treino').catch(e=>toast(e.message,true));
   };
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
+  if($('#trainingLoadSnapshotDetails'))$('#trainingLoadSnapshotDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.individualized-load-athlete-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
   if($('#dailyReadinessButton'))$('#dailyReadinessButton').onclick=()=>openDailyReadiness(readiness);
@@ -5707,7 +5731,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.13';
+const HP_MVP_VERSION='0.13.14';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

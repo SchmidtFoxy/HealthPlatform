@@ -1,6 +1,6 @@
-# HealthPlatform v0.13.13 — Weekly Athlete Rhythm
+# HealthPlatform v0.13.14 — Training Load Snapshot
 
-> Versão funcional atual: **v0.13.13 — Weekly Athlete Rhythm**.
+> Versão funcional atual: **v0.13.14 — Training Load Snapshot**.
 
 
 - entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;
@@ -193,6 +193,16 @@ No portal do atleta, concluir um treino agora abre um resumo pós-sessão mobile
 
 A Home aproxima a resposta à última sessão da rotina diária, apresentando prontidão, recuperação e dor em um card compacto, sem inferir causalidade nem liberar progressão automaticamente.
 
+
+
+## v0.13.14 — Training Load Snapshot
+
+- nova leitura compacta de carga recente na Home mobile;
+- compara carga interna dos últimos 7 dias com a mediana pessoal já calculada;
+- reaproveita estado, posição histórica e leitura da carga individualizada, sem criar score novo;
+- diferencia visualmente contexto estável, observação e revisão;
+- acesso direto à análise completa de carga;
+- nenhuma migration nova; schema permanece 38/38.
 
 ## v0.13.13 — Weekly Athlete Rhythm
 

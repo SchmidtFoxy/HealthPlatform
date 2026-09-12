@@ -1,3 +1,11 @@
+# v0.13.14 — Training Load Snapshot
+
+- Home mobile ganha resumo compacto da carga dos últimos 7 dias;
+- comparação usa a mediana histórica individual já existente;
+- estado visual reaproveita a classificação de carga individualizada do backend;
+- continuidade para a análise completa sem criar fluxo paralelo;
+- nenhuma regra clínica nova, nenhuma migration; schema 38/38.
+
 # v0.13.13 — Weekly Athlete Rhythm
 
 - Home mobile passa a mostrar o ritmo da semana em um card compacto.
