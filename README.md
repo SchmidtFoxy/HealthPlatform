@@ -1,8 +1,8 @@
-# HealthPlatform v0.13.18 — Daily Closure
+# HealthPlatform v0.13.19 — Daily Closure
 
-> Versão funcional atual: **v0.13.18 — Daily Closure**.
+> Versão funcional atual: **v0.13.19 — Daily Closure**.
 
-## v0.13.18 — Daily Closure
+## v0.13.19 — Daily Closure
 
 - traz o fechamento do dia para a hierarquia principal da Home mobile;
 - reutiliza `execucaoDoDia`, progresso, concluídos, pendentes e fechamento já persistido;
@@ -251,3 +251,7 @@ A Home mobile passa a organizar o dia esportivo em **Check-in → Treino → Rec
 - mantém os cards completos no desktop e não altera regra clínica, persistência ou schema;
 - adiciona scroll-snap, alvos confortáveis e tratamento específico para telas estreitas.
 
+
+
+### v0.13.19 — Adaptive Mobile Home
+No portal do atleta, a Home mobile agora muda sua hierarquia de acordo com o estágio real do dia: antes do check-in, após o check-in, depois do treino e após o fechamento. A mudança é de UX e reaproveita dados esportivos já existentes, sem prescrição automática ou alteração de schema.

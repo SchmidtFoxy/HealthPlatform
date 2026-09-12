@@ -254,6 +254,24 @@ function hpSessionResponseProfessionalCard(x){
   return `<section class="card session-response-professional-card"><div class="card-head"><div><span class="eyebrow">MEDICINA DO ESPORTE • RESPOSTA À SESSÃO</span><h3>${esc(x.titulo||'Resposta à sessão')}</h3></div><span class="pill ${x.estado==='Revisar'?'Alta':x.estado==='Observar'?'Agendada':'Info'}">${esc(x.estado||'')}</span></div><p>${esc(x.resumo||'')}</p><div class="game-prof-grid"><span><b>${x.prontidaoResposta!=null?x.prontidaoResposta:'—'}</b>prontidão<small>dia seguinte</small></span><span><b>${x.recuperacaoResposta!=null?x.recuperacaoResposta+'/10':'—'}</b>recuperação</span><span><b>${x.dorResposta!=null?x.dorResposta+'/10':'—'}</b>dor geral</span><span><b>${x.registrosDorLocalizadaPosSessao||0}</b>dor localizada<small>até 36h</small></span></div>${es.length?`<div class="signal-list">${es.map(e=>`<div><strong>${esc(e.titulo)} • ${esc(e.estado)}</strong><span>${esc(e.valor||'')}</span><small>${esc(e.referencia||'')} • ${esc(e.descricao||'')}</small></div>`).join('')}</div>`:''}<p><strong>Interpretação:</strong> ${esc(x.leitura||'')}</p><p class="muted-line">${esc(x.mensagemSeguranca||'')}</p></section>`;
 }
 
+function hpAdaptiveMobileHomeState(d,readiness){
+  const response=d?.respostaSessao||{};
+  const sessionToday=!!response.sessaoInicioUtc && String(response.sessaoInicioUtc).slice(0,10)===todayISO();
+  const closed=!!d?.execucaoDoDia?.diaFechado;
+  if(closed)return {stage:'closed',tone:'calm',eyebrow:'DIA CONCLUÍDO',title:'Seu dia já está fechado',copy:'O que precisava ser registrado hoje está salvo. Agora o app reduz o ruído e deixa recuperação em primeiro plano.'};
+  if(sessionToday)return {stage:'recovery',tone:'recover',eyebrow:'PÓS-TREINO',title:'Agora é hora de observar a resposta',copy:'A sessão já aconteceu. Priorize recuperação, hidratação e fechamento do dia sem transformar sinais isolados em diagnóstico.'};
+  if(readiness)return {stage:'training',tone:'active',eyebrow:'CONTEXTO ATUALIZADO',title:'Prontidão registrada',copy:'Seu contexto do dia já está disponível. O próximo passo é seguir o plano de treino definido para hoje.'};
+  return {stage:'checkin',tone:'start',eyebrow:'COMECE POR AQUI',title:'Atualize como seu corpo acordou',copy:'Um check-in curto organiza prontidão, treino e recuperação antes de qualquer outra decisão do dia.'};
+}
+
+function hpAdaptiveMobileHomeCue(state){
+  if(!state)return '';
+  return `<section class="adaptive-day-cue ${state.tone}" aria-label="Prioridade atual do seu dia" data-adaptive-stage="${state.stage}">
+    <div><span class="eyebrow">${esc(state.eyebrow)}</span><h3>${esc(state.title)}</h3><p>${esc(state.copy)}</p></div>
+    <span class="adaptive-day-stage" aria-hidden="true">${state.stage==='closed'?'✓':state.stage==='recovery'?'♻':state.stage==='training'?'↗':'◉'}</span>
+  </section>`;
+}
+
 function hpDailyAthleteTimeline(d,readiness){
   const response=d?.respostaSessao||{};
   const sessionToday=!!response.sessaoInicioUtc && String(response.sessaoInicioUtc).slice(0,10)===todayISO();
@@ -1939,6 +1957,7 @@ async function loadMyPatientPortal(){
     api(`/api/portal/me/protocolo-acompanhamento?offsetMinutos=${state.offset}`)
   ]);
   const e=d.evolucaoCorporal||{},plano=d.planoAlimentarAtual,prox=d.proximaConsulta,readiness=d.prontidaoDiaria,game=d.gamificacao||{};
+  const adaptiveHome=hpAdaptiveMobileHomeState(d,readiness);
   const metas=d.metasHoje||[],registros=d.registrosHoje||[];
   const solicitacoesPendentes=(solicitacoes.itens||[]).filter(x=>x.status==='Pendente');
   const allQuickTypes=[
@@ -1960,12 +1979,14 @@ async function loadMyPatientPortal(){
   const totalTasks=metas.length+quickTypes.length+solicitacoesPendentes.length;
   const doneTasks=(d.metasConcluidas||0)+quickDone;
   const completion=totalTasks?Math.round(doneTasks/totalTasks*100):0;
-  host.innerHTML=`<div class="patient-mobile-home patient-today-home">
+  host.innerHTML=`<div class="patient-mobile-home patient-today-home home-stage-${adaptiveHome.stage}" data-home-stage="${adaptiveHome.stage}">
     <section class="patient-welcome today-hero">
       <div><span class="eyebrow">MEU DIA</span><h1>Olá, ${esc((d.paciente?.nome||state.user?.nome||'Paciente').split(' ')[0])} 👋</h1><p>Vamos cuidar do que importa hoje.</p></div>
       <div class="patient-date">${new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(new Date())}</div>
       <div class="today-progress"><div><strong>${doneTasks}/${totalTasks}</strong><span>atividades acompanhadas</span></div><div class="today-progress-track"><i style="width:${completion}%"></i></div><b>${completion}%</b></div>
     </section>
+
+    ${hpAdaptiveMobileHomeCue(adaptiveHome)}
 
     ${hpDailyGamifiedFocusAthleteCard(d.focoGamificadoDoDia)}
 
@@ -5811,7 +5832,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.18';
+const HP_MVP_VERSION='0.13.19';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

@@ -2960,7 +2960,7 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 @media(prefers-reduced-motion:reduce){.consistency-compass-track i{transition:none}}
 
 
-/* v0.13.18 — Daily Closure */
+/* v0.13.19 — Daily Closure */
 .daily-closure-card{display:none}
 @media(max-width:720px){
   .daily-closure-card{display:grid;gap:10px;padding:14px 15px;border-radius:19px;background:linear-gradient(145deg,#eef7f6,#f8fbfb);border:1px solid rgba(20,91,102,.12);box-shadow:0 8px 22px rgba(7,50,58,.055);color:#183d48}
@@ -2975,3 +2975,30 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 }
 @media(max-width:390px){.daily-closure-card{padding:13px 14px}.daily-closure-card h3{font-size:15px}.daily-closure-main>strong{min-width:50px}}
 @media(prefers-reduced-motion:reduce){.daily-closure-track i{transition:none}}
+
+/* v0.13.19 — Adaptive Mobile Home */
+.adaptive-day-cue{display:none}
+@media(max-width:720px){
+  .adaptive-day-cue{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:12px;align-items:center;padding:13px 14px;border-radius:18px;border:1px solid rgba(25,91,104,.12);background:linear-gradient(145deg,#eef7f6,#f8fbfb);box-shadow:0 8px 20px rgba(7,50,58,.05)}
+  .adaptive-day-cue .eyebrow{color:#39766f}.adaptive-day-cue h3{margin:2px 0 3px;font-family:var(--font-ui,Inter,system-ui,sans-serif);font-size:16px;line-height:1.18;letter-spacing:-.015em;color:#173d48}.adaptive-day-cue p{margin:0;color:#5e7880;font-size:10.5px;line-height:1.45}
+  .adaptive-day-stage{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:#d9eeea;color:#176d5a;font-size:18px;font-weight:900}
+  .adaptive-day-cue.active{background:linear-gradient(145deg,#eaf5f7,#f5fbfc)}.adaptive-day-cue.active .adaptive-day-stage{background:#d9edf2;color:#176375}
+  .adaptive-day-cue.recover{background:linear-gradient(145deg,#edf7f1,#f8fcfa)}.adaptive-day-cue.recover .adaptive-day-stage{background:#dff2e7;color:#247153}
+  .adaptive-day-cue.calm{background:linear-gradient(145deg,#f1f5f6,#fafcfc)}.adaptive-day-cue.calm .adaptive-day-stage{background:#e3ecee;color:#496b74}
+
+  /* Antes do check-in, o app reduz informação secundária e concentra atenção na prontidão. */
+  .home-stage-checkin .mobile-insight-rail,.home-stage-checkin .consistency-compass,.home-stage-checkin .daily-closure-card{display:none}
+  .home-stage-checkin .daily-readiness-card{order:-1}
+
+  /* Pós-treino: recuperação e fechamento ganham prioridade sem apagar o restante do dia. */
+  .home-stage-recovery .mobile-home-glance{display:none}
+  .home-stage-recovery .daily-closure-card{box-shadow:0 10px 24px rgba(14,87,67,.09)}
+
+  /* Dia encerrado: reduz chamadas de ação e deixa a Home visualmente mais calma. */
+  .home-stage-closed .mobile-now-hub{display:none}
+  .home-stage-closed .today-actions-card{display:none}
+  .home-stage-closed .daily-readiness-card{opacity:.82}
+  .home-stage-closed .daily-closure-card{border-color:rgba(30,142,105,.22);box-shadow:none}
+}
+@media(max-width:390px){.adaptive-day-cue{padding:12px 13px;grid-template-columns:minmax(0,1fr) 38px}.adaptive-day-stage{width:38px;height:38px;border-radius:12px}.adaptive-day-cue h3{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.adaptive-day-cue *{scroll-behavior:auto}}

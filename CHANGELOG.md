@@ -1,4 +1,4 @@
-# v0.13.18 — Daily Closure
+# v0.13.19 — Daily Closure
 
 - Home mobile ganha um fechamento diário compacto logo após a Daily Athlete Timeline.
 - Reutiliza o roteiro diário e o fechamento já existentes, sem persistência paralela.
@@ -1189,3 +1189,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Dias protegidos por recuperação/revisão não geram pressão para treinar ou preservar sequência.
 - Acesso direto ao bloco de Progresso e missões.
 - Sem migration nova; schema permanece 38/38.
+
+
+## v0.13.19 — Adaptive Mobile Home
+- A Home mobile passa a adaptar prioridade conforme quatro estágios do dia: check-in, treino, recuperação e dia fechado.
+- Antes do check-in, informações secundárias são reduzidas para destacar prontidão e contexto inicial.
+- Pós-treino, recuperação e fechamento ganham prioridade visual.
+- Com o dia fechado, chamadas de ação repetitivas são ocultadas e a Home assume um estado mais calmo.
+- A adaptação reutiliza prontidão, resposta à sessão e execução do dia já existentes; sem nova regra clínica, score ou migration.
+- Schema permanece 38/38.
