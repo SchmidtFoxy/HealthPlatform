@@ -1,4 +1,4 @@
-﻿const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
+const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const initials=(n='')=>n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'HP';
@@ -1800,24 +1800,7 @@ async function loadMyPatientPortal(){
       <div class="today-progress"><div><strong>${doneTasks}/${totalTasks}</strong><span>atividades acompanhadas</span></div><div class="today-progress-track"><i style="width:${completion}%"></i></div><b>${completion}%</b></div>
     </section>
 
-    <section class="card athlete-progression-card">
-      <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
-      ${d.cicloEsportivoAtual?`<section class="card athlete-cycle-card"><div class="card-head"><div><span class="eyebrow">CICLO ATUAL</span><h3>${esc(d.cicloEsportivoAtual.nome)}</h3><p>${esc(d.cicloEsportivoAtual.perfilEsportivo)} • Semana ${d.cicloEsportivoAtual.semanaAtual}/${d.cicloEsportivoAtual.totalSemanas}</p></div><span class="pill Ativa">${num(d.cicloEsportivoAtual.progressoTemporalPercentual,0)}%</span></div><div class="cycle-progress"><span style="width:${Math.min(100,Number(d.cicloEsportivoAtual.progressoTemporalPercentual||0))}%"></span></div><p class="cycle-objective">${esc(d.cicloEsportivoAtual.objetivo||'Mantenha o plano do ciclo e priorize consistência.')}</p><div class="cycle-metrics"><span><b>${d.cicloEsportivoAtual.treinosNoCiclo||0}</b> treinos</span><span><b>${d.cicloEsportivoAtual.mediaProntidao!=null?num(d.cicloEsportivoAtual.mediaProntidao,1):'—'}</b> prontidão média</span><span><b>${d.cicloEsportivoAtual.metaTreinosSemanais||'—'}</b> meta/semana</span></div></section>`:''}
-      <div class="athlete-progress-main"><div class="card-head"><div><span class="eyebrow">EVOLUÇÃO ESPORTIVA</span><h3>${game.xpTotal||0} XP acumulados</h3></div><div class="athlete-streak">🔥 ${game.streakDias||0} dias</div></div>
-        <div class="xp-progress-track"><i style="width:${Math.min(100,((game.xpNoNivel||0)/(game.xpProximoNivel||500))*100)}%"></i></div>
-        <div class="athlete-progress-meta"><span>${game.xpNoNivel||0}/${game.xpProximoNivel||500} XP para o próximo nível</span><b>Consistência ${game.consistenciaScore||0}/100</b><span>+${game.xpHoje||0} XP hoje</span></div>
-      </div>
-    </section>
-
-    ${hpGamification2AthleteCard(d.gamificacao2)}
     ${hpDailyGamifiedFocusAthleteCard(d.focoGamificadoDoDia)}
-    ${hpContextualMissionsAthleteCard(d.missoesContextuais2)}
-
-    <section class="card weekly-challenges-card">
-      <div class="card-head"><div><span class="eyebrow">MISSÕES DA SEMANA</span><h3>Consistência vira progresso</h3></div><small>${(game.desafiosSemana||[]).filter(x=>x.concluido).length}/${(game.desafiosSemana||[]).length} concluídas</small></div>
-      <div class="weekly-challenge-list">${(game.desafiosSemana||[]).map(x=>{const pct=Math.min(100,Math.round(((x.progresso||0)/Math.max(1,x.meta||1))*100));return `<article class="weekly-challenge ${x.concluido?'done':''}"><div><strong>${x.concluido?'✓ ':''}${esc(x.titulo)}</strong><small>${esc(x.descricao)} • +${x.recompensaXp} XP</small></div><b>${Math.min(x.progresso,x.meta)}/${x.meta}</b><div class="weekly-challenge-track"><i style="width:${pct}%"></i></div></article>`}).join('')||sectionEmpty('As missões aparecem automaticamente para a semana atual.')}</div>
-      ${(game.conquistasRecentes||[]).length?`<div class="achievement-strip"><span class="eyebrow">CONQUISTAS</span>${game.conquistasRecentes.map(x=>`<div class="achievement-chip" title="${esc(x.descricao)}"><b>${x.icone}</b><span>${esc(x.titulo)}</span></div>`).join('')}</div>`:''}
-    </section>
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
       <div class="readiness-main">
@@ -1830,6 +1813,50 @@ async function loadMyPatientPortal(){
       <div class="readiness-actions"><button class="${readiness?'secondary':'primary'}" id="dailyReadinessButton">${readiness?'Atualizar check-in':'Fazer check-in matinal'}</button>${readiness?`<span class="readiness-badge ${String(readiness.recomendacaoTreino||'').toLowerCase()}">${readiness.recomendacaoTreino==='Recuperacao'?'🧘 Recuperação':readiness.recomendacaoTreino==='Leve'?'🌱 Leve':readiness.recomendacaoTreino==='Pesado'?'🔥 Pesado':'🏋️ Normal'}</span>`:''}</div>
     </section>
 
+    <section class="card today-actions-card">
+      <div class="card-head"><div><span class="eyebrow">REGISTRO RÁPIDO</span><h3>Como está seu dia?</h3></div><small>${protocolo.configurado?`${protocolo.itens.length} item(ns) no seu protocolo`:`leva poucos segundos`}</small></div>
+      <div class="patient-quick-grid">${quickTypes.map(q=>{
+        const last=q.kind==='pressure'?registros.find(r=>r.tipo==='PressaoSistolica'):registros.find(r=>String(r.tipo||'').toLowerCase()===q.key.toLowerCase());
+        const dia=q.kind==='pressure'?registros.find(r=>r.tipo==='PressaoDiastolica'):null;
+        const val=q.kind==='pressure'&&last&&dia?`${num(last.valorNumerico,0)}/${num(dia.valorNumerico,0)} mmHg`:last?(last.valorNumerico!=null?`${num(last.valorNumerico)} ${esc(last.unidade||q.unit||'')}`:last.escala!=null?`${last.escala}/10`:esc(last.descricao||'Registrado')):'';
+        return `<button class="patient-quick-action ${last?'done':''}" data-quick="${q.key}" data-kind="${q.kind}" data-unit="${q.unit}" data-step="${q.step||''}"><span>${q.icon}</span><strong>${q.label}</strong><small>${last?'✓ '+val:(q.unit||'Registrar')}</small></button>`;
+      }).join('')}</div>
+    </section>
+
+    <section class="mobile-day-snapshot card">
+      <div class="mobile-snapshot-head"><div><span class="eyebrow">PLANO DE HOJE</span><h3>${esc((d.estrategiaDoDia||{}).perfilDia||'Aguardando check-in')}</h3></div><span class="mobile-intensity-chip">${esc((d.estrategiaDoDia||{}).intensidadeSugerida||'—')}</span></div>
+      <div class="mobile-snapshot-grid"><span><small>RPE</small><b>${d.estrategiaDoDia?`${d.estrategiaDoDia.rpeMin}-${d.estrategiaDoDia.rpeMax}`:'—'}</b></span><span><small>Treino</small><b>${esc((d.estrategiaDoDia||{}).intensidadeSugerida||'—')}</b></span><span><small>Hidratação</small><b>${d.hidratacaoContextual?.metaMl?`${num(d.hidratacaoContextual.metaMl,0)} ml`:'Plano'}</b></span></div>
+      <p>${esc(d.estrategiaDoDia?.orientacaoTreino||'Faça o check-in matinal para ajustar o foco do dia.')}</p>
+    </section>
+
+    <details class="mobile-disclosure mobile-progress-disclosure">
+      <summary><span><b>Progresso e missões</b><small>XP, streak, ciclo e desafios da semana</small></span><i>⌄</i></summary>
+      <div class="mobile-disclosure-body">
+    ${hpGamification2AthleteCard(d.gamificacao2)}
+    <section class="card athlete-progression-card">
+      <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
+      ${d.cicloEsportivoAtual?`<section class="card athlete-cycle-card"><div class="card-head"><div><span class="eyebrow">CICLO ATUAL</span><h3>${esc(d.cicloEsportivoAtual.nome)}</h3><p>${esc(d.cicloEsportivoAtual.perfilEsportivo)} • Semana ${d.cicloEsportivoAtual.semanaAtual}/${d.cicloEsportivoAtual.totalSemanas}</p></div><span class="pill Ativa">${num(d.cicloEsportivoAtual.progressoTemporalPercentual,0)}%</span></div><div class="cycle-progress"><span style="width:${Math.min(100,Number(d.cicloEsportivoAtual.progressoTemporalPercentual||0))}%"></span></div><p class="cycle-objective">${esc(d.cicloEsportivoAtual.objetivo||'Mantenha o plano do ciclo e priorize consistência.')}</p><div class="cycle-metrics"><span><b>${d.cicloEsportivoAtual.treinosNoCiclo||0}</b> treinos</span><span><b>${d.cicloEsportivoAtual.mediaProntidao!=null?num(d.cicloEsportivoAtual.mediaProntidao,1):'—'}</b> prontidão média</span><span><b>${d.cicloEsportivoAtual.metaTreinosSemanais||'—'}</b> meta/semana</span></div></section>`:''}
+      <div class="athlete-progress-main"><div class="card-head"><div><span class="eyebrow">EVOLUÇÃO ESPORTIVA</span><h3>${game.xpTotal||0} XP acumulados</h3></div><div class="athlete-streak">🔥 ${game.streakDias||0} dias</div></div>
+        <div class="xp-progress-track"><i style="width:${Math.min(100,((game.xpNoNivel||0)/(game.xpProximoNivel||500))*100)}%"></i></div>
+        <div class="athlete-progress-meta"><span>${game.xpNoNivel||0}/${game.xpProximoNivel||500} XP para o próximo nível</span><b>Consistência ${game.consistenciaScore||0}/100</b><span>+${game.xpHoje||0} XP hoje</span></div>
+      </div>
+    </section>
+
+    ${hpContextualMissionsAthleteCard(d.missoesContextuais2)}
+
+    <section class="card weekly-challenges-card">
+      <div class="card-head"><div><span class="eyebrow">MISSÕES DA SEMANA</span><h3>Consistência vira progresso</h3></div><small>${(game.desafiosSemana||[]).filter(x=>x.concluido).length}/${(game.desafiosSemana||[]).length} concluídas</small></div>
+      <div class="weekly-challenge-list">${(game.desafiosSemana||[]).map(x=>{const pct=Math.min(100,Math.round(((x.progresso||0)/Math.max(1,x.meta||1))*100));return `<article class="weekly-challenge ${x.concluido?'done':''}"><div><strong>${x.concluido?'✓ ':''}${esc(x.titulo)}</strong><small>${esc(x.descricao)} • +${x.recompensaXp} XP</small></div><b>${Math.min(x.progresso,x.meta)}/${x.meta}</b><div class="weekly-challenge-track"><i style="width:${pct}%"></i></div></article>`}).join('')||sectionEmpty('As missões aparecem automaticamente para a semana atual.')}</div>
+      ${(game.conquistasRecentes||[]).length?`<div class="achievement-strip"><span class="eyebrow">CONQUISTAS</span>${game.conquistasRecentes.map(x=>`<div class="achievement-chip" title="${esc(x.descricao)}"><b>${x.icone}</b><span>${esc(x.titulo)}</span></div>`).join('')}</div>`:''}
+    </section>
+
+
+      </div>
+    </details>
+
+    <details class="mobile-disclosure mobile-analysis-disclosure">
+      <summary><span><b>Análises esportivas</b><small>Tendências, recuperação, carga e progressão</small></span><i>⌄</i></summary>
+      <div class="mobile-disclosure-body mobile-analysis-stack">
     ${hpCycleGoalsAthleteCard(d.metasDoCiclo)}
     ${hpCycleCheckpointAthleteCard(d.checkpointDoCiclo)}
     ${hpCycleReportAthleteCard(d.relatorioDoCiclo)}
@@ -1899,20 +1926,16 @@ async function loadMyPatientPortal(){
       ${(d.estrategiaDoDia?.refeicoesChave||[]).length?`<div class="strategy-chips"><span>Refeições do plano:</span>${d.estrategiaDoDia.refeicoesChave.map(x=>`<b>${esc(x)}</b>`).join('')}</div>`:''}
       <small>${esc(d.estrategiaDoDia?.justificativa||'A adaptação respeita a prescrição profissional.')}</small>
     </section>
+      </div>
+    </details>
+
+
 
     ${hpExecutionDayCard(d.execucaoDoDia)}
 
     ${protocolo?.aderencia?.hoje?.previstos?`<section class="card protocol-today-status"><div class="card-head"><div><span class="eyebrow">SEU PROTOCOLO HOJE</span><h3>${protocolo.aderencia.hoje.concluidos}/${protocolo.aderencia.hoje.previstos} acompanhamentos concluídos</h3></div><strong>${protocolo.aderencia.hoje.percentual||0}%</strong></div><div class="protocol-adherence-track"><i style="width:${Math.min(100,protocolo.aderencia.hoje.percentual||0)}%"></i></div><div class="protocol-today-items">${(protocolo.aderencia.hoje.itens||[]).map(x=>`<span class="${x.concluido?'done':''}">${x.concluido?'✓':'○'} ${esc(x.titulo)}${x.horarioLocal?' • '+esc(x.horarioLocal):''}</span>`).join('')}</div></section>`:''}
 
-    <section class="card today-actions-card">
-      <div class="card-head"><div><span class="eyebrow">REGISTRO RÁPIDO</span><h3>Como está seu dia?</h3></div><small>${protocolo.configurado?`${protocolo.itens.length} item(ns) no seu protocolo`:`leva poucos segundos`}</small></div>
-      <div class="patient-quick-grid">${quickTypes.map(q=>{
-        const last=q.kind==='pressure'?registros.find(r=>r.tipo==='PressaoSistolica'):registros.find(r=>String(r.tipo||'').toLowerCase()===q.key.toLowerCase());
-        const dia=q.kind==='pressure'?registros.find(r=>r.tipo==='PressaoDiastolica'):null;
-        const val=q.kind==='pressure'&&last&&dia?`${num(last.valorNumerico,0)}/${num(dia.valorNumerico,0)} mmHg`:last?(last.valorNumerico!=null?`${num(last.valorNumerico)} ${esc(last.unidade||q.unit||'')}`:last.escala!=null?`${last.escala}/10`:esc(last.descricao||'Registrado')):'';
-        return `<button class="patient-quick-action ${last?'done':''}" data-quick="${q.key}" data-kind="${q.kind}" data-unit="${q.unit}" data-step="${q.step||''}"><span>${q.icon}</span><strong>${q.label}</strong><small>${last?'✓ '+val:(q.unit||'Registrar')}</small></button>`;
-      }).join('')}</div>
-    </section>
+
 
     ${prox?`<section class="patient-next-card today-next"><span>PRÓXIMA CONSULTA</span><strong>${fmtDateTime(prox.dataHoraUtc)}</strong><p>${esc(prox.profissionalNome)}${prox.motivo?' • '+esc(prox.motivo):''}</p></section>`:''}
 
@@ -2116,6 +2139,29 @@ async function loadPatientSection(view='inicio'){
 }
 
 $$('#patientPortalNav [data-patient-view]').forEach(b=>b.addEventListener('click',()=>loadPatientSection(b.dataset.patientView).catch(e=>toast(e.message,true))));
+
+function closePatientMoreSheet(){
+  const sheet=$('#patientMoreSheet'),backdrop=$('#patientMoreBackdrop'),trigger=$('#patientMoreTrigger');
+  if(sheet){sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true')}
+  if(backdrop)backdrop.classList.add('hidden');
+  if(trigger)trigger.setAttribute('aria-expanded','false');
+}
+function openPatientMoreSheet(){
+  const sheet=$('#patientMoreSheet'),backdrop=$('#patientMoreBackdrop'),trigger=$('#patientMoreTrigger');
+  if(sheet){sheet.classList.add('open');sheet.setAttribute('aria-hidden','false')}
+  if(backdrop)backdrop.classList.remove('hidden');
+  if(trigger)trigger.setAttribute('aria-expanded','true');
+}
+$('#patientMoreTrigger')?.addEventListener('click',()=>{
+  const sheet=$('#patientMoreSheet');
+  sheet?.classList.contains('open')?closePatientMoreSheet():openPatientMoreSheet();
+});
+$('#patientMoreClose')?.addEventListener('click',closePatientMoreSheet);
+$('#patientMoreBackdrop')?.addEventListener('click',closePatientMoreSheet);
+$$('[data-patient-more-view]').forEach(b=>b.addEventListener('click',()=>{
+  closePatientMoreSheet();
+  loadPatientSection(b.dataset.patientMoreView).catch(e=>toast(e.message,true));
+}));
 
 function patientPageHeader(eyebrow,title,subtitle,action=''){
   return `<section class="patient-page-header"><div><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p>${subtitle}</p></div>${action}</section>`;
@@ -2878,20 +2924,20 @@ function openWorkoutExecutionForm(sessao){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading"><span class="eyebrow">EXECUÇÃO</span><h2>${esc(sessao.nome)}</h2><p>Registre o que você realmente executou hoje.</p></div>
-    <form id="workoutExecutionForm" class="clinical-form">
-      <div class="form-grid three">
+    <form id="workoutExecutionForm" class="clinical-form workout-execution-form">
+      <div class="form-grid three workout-execution-meta">
         ${field('Duração (min)','duracao','number','min="0"')}
         ${field('Esforço geral (0-10)','rpe','number','min="0" max="10"')}
         ${field('Horário de início','inicio','datetime-local',`value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"`)}
       </div>
       <div class="execution-items">${(sessao.itens||[]).map(i=>`
         <div class="execution-item" data-item="${i.id}">
-          <div><strong>${esc(i.exercicio)}</strong><small>Prescrito: ${i.series} × ${esc(i.repeticoes)}${i.carga!=null?' • '+num(i.carga)+' '+esc(i.unidadeCarga||'kg'):''}</small></div>
+          <div class="execution-item-head"><strong>${esc(i.exercicio)}</strong><small>Prescrito: ${i.series} × ${esc(i.repeticoes)}${i.carga!=null?' • '+num(i.carga)+' '+esc(i.unidadeCarga||'kg'):''}</small></div>
           <label>Séries<input name="series" type="number" min="0" value="${i.series}"></label>
           <label>Repetições<input name="reps" value="${esc(i.repeticoes)}"></label>
           <label>Carga<input name="load" type="number" min="0" step="0.01" value="${i.carga??''}"></label>
           <label>RPE<input name="itemRpe" type="number" min="0" max="10"></label>
-          <label class="check-line"><input name="done" type="checkbox" checked> Feito</label>
+          <label class="check-line execution-done"><input name="done" type="checkbox" checked><span>Feito</span></label>
         </div>`).join('')}</div>
       ${area('Observação geral','observacoes')}
       <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Concluir treino</button></div>
@@ -5499,7 +5545,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.3';
+const HP_MVP_VERSION='0.13.4';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

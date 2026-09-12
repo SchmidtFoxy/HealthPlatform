@@ -18,7 +18,7 @@
         <h1>Saúde, longevidade e alta performance.</h1>
         <p>Um acompanhamento integrado para avaliar, ajustar, monitorar e evoluir com decisões orientadas por dados.</p>
       </div>
-      <div class="login-quote">MVP Preview • v0.13.3</div>
+      <div class="login-quote">MVP Preview • v0.13.4</div>
     </div>
     <div class="login-panel">
       <form id="loginForm" class="login-card">
@@ -76,17 +76,31 @@
     </header>
     <nav id="patientPortalNav" class="patient-portal-nav">
       <button class="active" data-patient-view="inicio">Hoje</button>
-      <button data-patient-view="plano">Plano</button>
       <button data-patient-view="treino">Treino</button>
-      <button data-patient-view="metas">Metas</button>
-      <button data-patient-view="diario">Diário</button>
+      <button data-patient-view="plano">Plano</button>
       <button data-patient-view="evolucao">Evolução</button>
-      <button data-patient-view="exames">Exames</button>
-      <button data-patient-view="solicitacoes">Solicitações</button>
-      <button data-patient-view="medicamentos">Medicamentos</button>
-      <button data-patient-view="jornada">Jornada</button>
+      <button class="patient-secondary-nav" data-patient-view="metas">Metas</button>
+      <button class="patient-secondary-nav" data-patient-view="diario">Diário</button>
+      <button class="patient-secondary-nav" data-patient-view="exames">Exames</button>
+      <button class="patient-secondary-nav" data-patient-view="solicitacoes">Solicitações</button>
+      <button class="patient-secondary-nav" data-patient-view="medicamentos">Medicamentos</button>
+      <button class="patient-secondary-nav" data-patient-view="jornada">Jornada</button>
+      <button class="patient-more-trigger" id="patientMoreTrigger" type="button" aria-expanded="false" aria-controls="patientMoreSheet">Mais</button>
     </nav>
     <main id="patientPortalContent" class="patient-portal-content"></main>
+    <div id="patientMoreBackdrop" class="patient-more-backdrop hidden"></div>
+    <aside id="patientMoreSheet" class="patient-more-sheet" aria-hidden="true">
+      <div class="patient-more-handle"></div>
+      <div class="patient-more-head"><div><span class="eyebrow">NAVEGAÇÃO</span><h3>Mais do seu acompanhamento</h3></div><button id="patientMoreClose" class="ghost" type="button" aria-label="Fechar">×</button></div>
+      <div class="patient-more-grid">
+        <button data-patient-more-view="metas"><span>◎</span><b>Metas</b><small>Objetivos do dia</small></button>
+        <button data-patient-more-view="diario"><span>✎</span><b>Diário</b><small>Registros e sintomas</small></button>
+        <button data-patient-more-view="exames"><span>◇</span><b>Exames</b><small>Resultados recentes</small></button>
+        <button data-patient-more-view="solicitacoes"><span>⇄</span><b>Solicitações</b><small>Pendências do cuidado</small></button>
+        <button data-patient-more-view="medicamentos"><span>✚</span><b>Medicamentos</b><small>Rotina acompanhada</small></button>
+        <button data-patient-more-view="jornada"><span>◌</span><b>Jornada</b><small>Sua evolução completa</small></button>
+      </div>
+    </aside>
   </div>
 
   <div id="appView" class="app-shell hidden">

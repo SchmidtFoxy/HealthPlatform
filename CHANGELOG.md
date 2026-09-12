@@ -1,3 +1,29 @@
+## v0.13.4-r2 — Mobile Typography Polish
+
+- Corrige a tipografia dos títulos de página do portal do atleta no celular.
+- Remove fonte condensada e caixa alta forçada de nomes de planos/telas.
+- Melhora quebra de linha, legibilidade e escala tipográfica em 720 px e 420 px.
+- Sem alteração de regra de negócio, API, banco ou versão funcional.
+
+
+## v0.13.4-r1 — Workout Execution Mobile Polish
+- Refina a tela de execução de treino no celular com contraste consistente entre labels, campos e cartões.
+- Reorganiza séries, repetições, carga e RPE em uma grade 2x2 mais legível.
+- Transforma o controle "Feito" em alvo de toque adequado para mobile.
+- Corrige o rodapé fixo de conclusão para não encobrir a observação geral.
+- Mantém regras de negócio, API, schema e versão funcional 0.13.4 inalterados.
+
+## v0.13.4 — Mobile Daily Experience
+
+- Reestrutura a Home do atleta para priorizar o uso diário em celular, reduzindo o comportamento de dashboard desktop.
+- Dock inferior passa a ter cinco destinos essenciais: Hoje, Treino, Plano, Evolução e Mais.
+- Destinos secundários ficam em uma bottom sheet acessível por polegar, sem navegação horizontal infinita.
+- Progresso/missões e análises esportivas usam divulgação progressiva no mobile, reduzindo scroll e carga cognitiva.
+- Inclui snapshot compacto do plano do dia antes das análises profundas.
+- Registro rápido vira um rail horizontal com alvos maiores de toque.
+- Mantém toda a lógica clínica/esportiva da v0.13.3 e schema 38/38, sem migration.
+- Smoke test ampliado para 1128 verificações.
+
 ﻿
 ## v0.13.2-r2 — Correção do smoke test + Sport Performance UI
 
