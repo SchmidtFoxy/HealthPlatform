@@ -101,6 +101,14 @@ public record PortalMapaCorporalLongitudinalResponse(
 
 
 
+public record PortalRespostaSessaoEixoResponse(
+    string Codigo, string Titulo, string Estado, string Valor, string Referencia, string Descricao);
+
+public record PortalRespostaSessaoResponse(
+    string Estado, string Titulo, string Resumo, DateTime? SessaoInicioUtc, string? SessaoNome, int? RpeSessao, int? DuracaoSessaoMinutos,
+    DateOnly? DataCheckInResposta, int? ProntidaoResposta, int? RecuperacaoResposta, int? DorResposta, int? DisposicaoResposta,
+    int RegistrosDorLocalizadaPosSessao, IReadOnlyCollection<PortalRespostaSessaoEixoResponse> Eixos, string Leitura, string MensagemSeguranca);
+
 public record PortalComparacaoSessaoItemResponse(
     string Codigo, string Titulo, string Estado, string Planejado, string Executado, string Descricao);
 
@@ -499,6 +507,7 @@ public record PortalPacienteHomeResponse(
     PortalMapaCorporalLongitudinalResponse MapaCorporalLongitudinal,
     PortalDisponibilidadeTreinoResponse DisponibilidadeTreino,
     PortalSessaoPlanejadaExecutadaResponse SessaoPlanejadaExecutada,
+    PortalRespostaSessaoResponse RespostaSessao,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

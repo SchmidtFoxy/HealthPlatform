@@ -1,3 +1,14 @@
+## v0.11.5 — Resposta a Sessao
+
+- acompanha a resposta observada apos a ultima sessao concluida usando o check-in do dia seguinte como referencia principal;
+- separa prontidao, recuperacao percebida, dor, disposicao e registros de dor localizada pos-sessao;
+- evita usar check-in pre-treino do mesmo dia como se fosse resposta posterior;
+- estados SemSessao, AguardandoResposta, RespostaEstavel, Observar e Revisar;
+- associacao temporal nao implica causalidade e resposta estavel nao autoriza nova progressao;
+- nao cria score de sucesso, diagnostico ou prescricao de nova carga;
+- integra atleta e profissional sem migration nova; schema permanece 38/38;
+- suite de fumaca ampliada para 1040 verificacoes.
+
 ## v0.11.4 — Sessao Planejada x Sessao Executada
 
 - compara a estrategia/sessao planejada com a ultima execucao concluida do dia;
