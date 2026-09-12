@@ -1,3 +1,9 @@
+## v0.12.5 — Relatório Esportivo Profissional
+
+A v0.12.5 consolida os principais eixos da medicina do esporte em um relatório longitudinal rastreável para revisão profissional. O relatório organiza ciclo/bloco, carga e recuperação, dor, readiness, sessão planejada versus executada, resposta pós-sessão, progressão supervisionada, retorno gradual e suporte diário, preservando as evidências de origem.
+
+O relatório não cria score geral do atleta, não diagnostica, não estima risco de lesão, não prova causalidade e não prescreve automaticamente. Pontos de atenção têm prioridade clínica-esportiva sobre sinais isolados de performance favorável.
+
 ## v0.12.4 — Retorno Gradual após Pausa/Dor
 
 A plataforma diferencia períodos deliberados de redução de carga, configurados pelo profissional no bloco/mesociclo, de quedas involuntárias de adesão. A leitura é contextual e não prescritiva.

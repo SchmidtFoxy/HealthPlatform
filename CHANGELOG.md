@@ -1,3 +1,12 @@
+## v0.12.5 — Relatório Esportivo Profissional
+
+- adiciona `RelatorioEsportivoProfissionalService`;
+- consolida evidências esportivas em seções rastreáveis;
+- destaca pontos de atenção e pontos estáveis sem score global;
+- integra relatório nas Homes do atleta e do profissional;
+- preserva schema 38/38, sem migration nova;
+- amplia a suíte de fumaça para 1088 verificações.
+
 ## v0.12.4 — Retorno Gradual após Pausa/Dor
 
 - Nova leitura de retorno gradual ancorada em sessões realmente executadas e registros corporais persistidos.
