@@ -1,3 +1,16 @@
+# HealthPlatform v0.14.3 — Mobile Data Views
+
+> Versão funcional atual: **v0.14.3 — Mobile Data Views**.
+
+## v0.14.3 — Mobile Data Views
+
+- Reestrutura tabelas, históricos e listas densas do portal do atleta para leitura mobile-first.
+- Linhas de tabela passam a se comportar como cartões compactos em telas pequenas, evitando desktop comprimido.
+- Padroniza históricos de diário, follow-up, check-ins, metas, medidas e exames.
+- Remove dependência de scroll horizontal nas principais visualizações do atleta e melhora leitura em até 390 px.
+- Nenhuma migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1312 verificações.
+
 # HealthPlatform v0.14.2 — Mobile Content Hierarchy
 
 > Versão funcional atual: **v0.14.2 — Mobile Content Hierarchy**.

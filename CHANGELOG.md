@@ -1,3 +1,11 @@
+# v0.14.3 — Mobile Data Views
+
+- Refina listas, históricos e tabelas do portal do atleta para uso mobile-first.
+- Converte visualmente linhas densas em superfícies compactas no celular, reduzindo scroll horizontal e colunas comprimidas.
+- Padroniza medidas, exames, diário, follow-ups, check-ins, metas e histórico de sessões.
+- Preserva desktop e regras esportivas; nenhuma migration nova, schema 38/38.
+- Smoke test ampliado para 1312 verificações.
+
 # v0.14.2 — Mobile Content Hierarchy
 
 - Consolida a hierarquia visual do conteúdo no portal do atleta.

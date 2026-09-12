@@ -3345,3 +3345,82 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .patient-portal-content .card-head h4{font-size:16px!important}
   .patient-portal-content .card-head{gap:9px;margin-bottom:10px!important}
 }
+
+
+/* ===== v0.14.3 — Mobile Data Views ===== */
+@media(max-width:720px){
+  :root{
+    --hp-mobile-row-gap:10px;
+    --hp-mobile-row-pad:13px;
+    --hp-mobile-row-bg:#f9fbfc;
+    --hp-mobile-row-line:#d9e4e9;
+  }
+  .patient-portal-content .table-wrap,
+  .patient-portal-content .evolution-table,
+  .patient-portal-content .measurement-table{
+    border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;
+  }
+  .patient-portal-content .data-table,
+  .patient-portal-content .measurement-table,
+  .patient-portal-content .lab-table{
+    display:grid!important;gap:var(--hp-mobile-row-gap)!important;width:100%!important;
+  }
+  .patient-portal-content .data-table thead,
+  .patient-portal-content .measurement-row.header{display:none!important}
+  .patient-portal-content .data-table tbody{display:grid!important;gap:var(--hp-mobile-row-gap)!important}
+  .patient-portal-content .data-table tbody tr,
+  .patient-portal-content .measurement-row:not(.header),
+  .patient-portal-content .lab-line,
+  .patient-portal-content .diary-list article,
+  .patient-portal-content .followup-history-list article,
+  .patient-portal-content .checkin-history-row,
+  .patient-portal-content .goal-history>div{
+    display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+    gap:7px 12px!important;align-items:center!important;
+    min-width:0!important;padding:var(--hp-mobile-row-pad)!important;
+    border:1px solid var(--hp-mobile-row-line)!important;border-radius:16px!important;
+    background:var(--hp-mobile-row-bg)!important;box-shadow:none!important;
+  }
+  .patient-portal-content .data-table tbody tr{cursor:pointer}
+  .patient-portal-content .data-table tbody tr:active{transform:scale(.995)}
+  .patient-portal-content .data-table td{
+    display:block!important;padding:0!important;border:0!important;min-width:0!important;
+    font-size:12px!important;line-height:1.4!important;color:var(--hp-mobile-text)!important;
+  }
+  .patient-portal-content .data-table td:first-child{
+    grid-column:1/-1;font-size:13px!important;font-weight:800!important;
+  }
+  .patient-portal-content .data-table td:nth-child(n+2){color:var(--hp-mobile-muted)!important}
+  .patient-portal-content .measurement-row:not(.header)>*,
+  .patient-portal-content .lab-line>*{min-width:0!important}
+  .patient-portal-content .measurement-row:not(.header){grid-template-columns:1fr 1fr!important}
+  .patient-portal-content .measurement-row:not(.header)>:first-child{grid-column:1/-1;font-weight:800;color:var(--hp-mobile-text)}
+  .patient-portal-content .lab-line{grid-template-columns:minmax(0,1fr) auto!important}
+  .patient-portal-content .lab-line .pill{grid-column:auto!important;justify-self:end}
+  .patient-portal-content .diary-list,
+  .patient-portal-content .followup-history-list,
+  .patient-portal-content .checkin-history-list,
+  .patient-portal-content .goal-history{
+    display:grid!important;gap:var(--hp-mobile-row-gap)!important;border:0!important;margin:0!important;
+  }
+  .patient-portal-content .diary-list article,
+  .patient-portal-content .followup-history-list article{grid-template-columns:auto minmax(0,1fr) auto!important}
+  .patient-portal-content .goal-history>div{grid-template-columns:minmax(0,1fr) auto!important}
+  .patient-portal-content .goal-history>div>span:first-child{grid-column:1/-1;color:var(--hp-mobile-muted);font-size:11px}
+  .patient-portal-content .record-card dl{grid-template-columns:1fr!important;gap:4px!important}
+  .patient-portal-content .record-card dt{margin-top:8px!important}
+  .patient-portal-content .record-card dd{overflow-wrap:anywhere}
+  .patient-portal-content .patient-session-history,
+  .patient-portal-content .workout-execution-list{display:grid!important;gap:var(--hp-mobile-row-gap)!important}
+  .patient-portal-content .workout-execution-list>article,
+  .patient-portal-content .patient-session-history>article{
+    border-radius:16px!important;border:1px solid var(--hp-mobile-row-line)!important;background:var(--hp-mobile-row-bg)!important;
+  }
+}
+@media(max-width:390px){
+  :root{--hp-mobile-row-gap:8px;--hp-mobile-row-pad:11px}
+  .patient-portal-content .data-table tbody tr,
+  .patient-portal-content .measurement-row:not(.header),
+  .patient-portal-content .lab-line,
+  .patient-portal-content .goal-history>div{border-radius:14px!important}
+}

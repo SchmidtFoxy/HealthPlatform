@@ -5923,10 +5923,11 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.2';
-const HP_MOBILE_UI_FOUNDATION='v0.14.2';
-const HP_MOBILE_NAVIGATION_SHELL='v0.14.2';
-const HP_MOBILE_CONTENT_HIERARCHY='v0.14.2';
+const HP_MVP_VERSION='0.14.3';
+const HP_MOBILE_UI_FOUNDATION='v0.14.3';
+const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
+const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
+const HP_MOBILE_DATA_VIEWS='v0.14.3';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
