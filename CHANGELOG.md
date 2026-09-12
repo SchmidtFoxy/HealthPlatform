@@ -1,3 +1,14 @@
+## v0.11.4 — Sessao Planejada x Sessao Executada
+
+- compara a estrategia/sessao planejada com a ultima execucao concluida do dia;
+- preserva RPE, series e volume estimado como eixos separados, sem score unico;
+- usa observacoes da execucao como motivo apenas quando realmente registradas;
+- reconhece adaptacao coerente com recuperacao/dor/carga sem tratar reducao como baixa adesao;
+- execucao acima da referencia nao recebe premio automatico;
+- nao gera compensacao, aumento de carga ou prescricao automatica;
+- integra a leitura nas Homes do atleta e do profissional, sem migration nova;
+- suite de fumaca ampliada para 1032 verificacoes.
+
 ## v0.11.3 — Disponibilidade para Treino
 
 - separa disposicao/motivacao de compatibilidade contextual com a sessao planejada;

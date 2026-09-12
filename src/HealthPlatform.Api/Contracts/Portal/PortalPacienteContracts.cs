@@ -100,6 +100,17 @@ public record PortalMapaCorporalLongitudinalResponse(
     IReadOnlyCollection<PortalMapaCorporalLongitudinalRegiaoResponse> Regioes, string MensagemSeguranca);
 
 
+
+public record PortalComparacaoSessaoItemResponse(
+    string Codigo, string Titulo, string Estado, string Planejado, string Executado, string Descricao);
+
+public record PortalSessaoPlanejadaExecutadaResponse(
+    string Estado, string Titulo, string Resumo, string? SessaoPlanejada, string? SessaoExecutada,
+    int? RpeExecutado, int RpePlanejadoMin, int RpePlanejadoMax, int? DuracaoExecutadaMinutos,
+    int SeriesPlanejadas, int SeriesExecutadas, decimal? VolumePlanejadoEstimado, decimal? VolumeExecutadoEstimado,
+    string? MotivoAdaptacaoRegistrado, bool AdaptacaoCoerenteComContexto,
+    IReadOnlyCollection<PortalComparacaoSessaoItemResponse> Comparacoes, string Leitura, string MensagemSeguranca);
+
 public record PortalCriterioDisponibilidadeTreinoResponse(
     string Codigo, string Estado, string Titulo, string Valor, string Descricao);
 
@@ -487,6 +498,7 @@ public record PortalPacienteHomeResponse(
     PortalAlertasClinicoEsportivosResponse AlertasClinicoEsportivos,
     PortalMapaCorporalLongitudinalResponse MapaCorporalLongitudinal,
     PortalDisponibilidadeTreinoResponse DisponibilidadeTreino,
+    PortalSessaoPlanejadaExecutadaResponse SessaoPlanejadaExecutada,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
