@@ -1,8 +1,17 @@
-# HealthPlatform v0.14.1 — Mobile Navigation Shell
+# HealthPlatform v0.14.2 — Mobile Content Hierarchy
 
-> Versão funcional atual: **v0.14.1 — Mobile Navigation Shell**.
+> Versão funcional atual: **v0.14.2 — Mobile Content Hierarchy**.
 
-## v0.14.1 — Mobile Navigation Shell
+## v0.14.2 — Mobile Content Hierarchy
+
+- Padroniza hierarquia de títulos, subtítulos e eyebrows no portal mobile.
+- Unifica espaçamento vertical e padding de cards para reduzir sensação de conteúdo empilhado.
+- Normaliza labels, inputs, selects e textareas com contraste e dimensões consistentes.
+- Melhora ações de formulário e leitura em telas de até 390 px.
+- Nenhuma migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1304 verificações.
+
+## v0.14.2 — Mobile Navigation Shell
 
 Segunda etapa da série 0.14.x de refinamento mobile. Aplica a fundação visual ao shell permanente do portal do atleta: app bar compacta, dock inferior com estado ativo coerente, ação Mais integrada, safe-area lateral/superior/inferior e controles globais preparados para toque. Não altera regras clínicas, endpoints ou schema.
 

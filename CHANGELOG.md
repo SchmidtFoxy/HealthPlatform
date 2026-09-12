@@ -1,4 +1,13 @@
-# v0.14.1 — Mobile Navigation Shell
+# v0.14.2 — Mobile Content Hierarchy
+
+- Consolida a hierarquia visual do conteúdo no portal do atleta.
+- Padroniza títulos de cards, textos auxiliares, labels e campos mobile.
+- Ajusta espaçamento entre seções e densidade para leitura rápida no celular.
+- Melhora contraste de placeholders e superfícies de formulário.
+- Mantém regras esportivas e schema 38/38 sem migration.
+- Smoke test ampliado para 1304 verificações.
+
+# v0.14.2 — Mobile Navigation Shell
 
 - Refina o shell permanente do portal do atleta no celular.
 - App bar fica mais compacta e reduz elementos de identidade redundantes no mobile.

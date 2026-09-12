@@ -3163,7 +3163,7 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .patient-portal-content .card{padding:13px;border-radius:18px}
 }
 
-/* ===== v0.14.1 — Mobile Navigation Shell ===== */
+/* ===== v0.14.2 — Mobile Navigation Shell ===== */
 @media(max-width:720px){
   :root{
     --hp-mobile-appbar-h:58px;
@@ -3241,4 +3241,107 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 }
 @media(prefers-reduced-motion:reduce){
   .patient-portal-nav button,.patient-portal-nav .patient-more-trigger,.patient-portal-user .global-search-button,.patient-portal-user .notification-button,#patientLogoutButton{transition:none!important}
+}
+
+
+/* ===== v0.14.2 — Mobile Content Hierarchy ===== */
+@media(max-width:720px){
+  :root{
+    --hp-mobile-section-gap:14px;
+    --hp-mobile-card-pad:15px;
+    --hp-mobile-muted:#6f8796;
+    --hp-mobile-label:#365466;
+    --hp-mobile-input-bg:#f9fcfd;
+  }
+  .patient-portal-content{
+    display:block;
+  }
+  .patient-portal-content .patient-page,
+  .patient-portal-content .patient-today-home{
+    gap:var(--hp-mobile-section-gap)!important;
+  }
+  .patient-portal-content .patient-page-header,
+  .patient-portal-content .patient-page-head{
+    margin-bottom:var(--hp-mobile-section-gap)!important;
+  }
+  .patient-portal-content .card,
+  .patient-portal-content .record-card,
+  .patient-portal-content .goal-card,
+  .patient-portal-content .report-card,
+  .patient-portal-content .clinical-sheet,
+  .patient-portal-content .exam-block,
+  .patient-portal-content .food-plan{
+    padding:var(--hp-mobile-card-pad)!important;
+  }
+  .patient-portal-content .card-head{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+    margin-bottom:12px!important;
+  }
+  .patient-portal-content .card-head>div{min-width:0}
+  .patient-portal-content .card-head h2,
+  .patient-portal-content .card-head h3,
+  .patient-portal-content .card-head h4{
+    margin:0!important;
+    font-family:var(--font-ui,Inter,system-ui,-apple-system,"Segoe UI",sans-serif)!important;
+    font-size:17px!important;line-height:1.2!important;font-weight:800!important;
+    letter-spacing:-.018em!important;color:var(--hp-mobile-text)!important;text-transform:none!important;
+  }
+  .patient-portal-content .card-head p,
+  .patient-portal-content .muted,
+  .patient-portal-content small{
+    color:var(--hp-mobile-muted);
+  }
+  .patient-portal-content .eyebrow{
+    font-family:var(--font-ui,Inter,system-ui,-apple-system,"Segoe UI",sans-serif)!important;
+    font-size:10px!important;line-height:1.2!important;font-weight:850!important;
+    letter-spacing:.095em!important;text-transform:uppercase!important;
+  }
+  .patient-portal-content label,
+  .patient-mobile-form label,
+  .patient-portal-content .field-label{
+    color:var(--hp-mobile-label);font-size:12px;font-weight:750;line-height:1.25;
+  }
+  .patient-portal-content input:not([type=range]):not([type=checkbox]):not([type=radio]),
+  .patient-portal-content select,
+  .patient-portal-content textarea,
+  .patient-mobile-form input:not([type=range]):not([type=checkbox]):not([type=radio]),
+  .patient-mobile-form select,
+  .patient-mobile-form textarea{
+    width:100%;min-width:0;background:var(--hp-mobile-input-bg)!important;
+    border:1px solid var(--hp-mobile-line)!important;border-radius:14px!important;
+    padding:12px 13px!important;color:var(--hp-mobile-text)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.82)!important;
+  }
+  .patient-portal-content textarea,
+  .patient-mobile-form textarea{min-height:96px;resize:vertical}
+  .patient-portal-content input::placeholder,
+  .patient-portal-content textarea::placeholder,
+  .patient-mobile-form input::placeholder,
+  .patient-mobile-form textarea::placeholder{color:#91a4b0!important;opacity:1}
+  .patient-portal-content .form-grid,
+  .patient-portal-content .clinical-form,
+  .patient-mobile-form{
+    gap:12px!important;
+  }
+  .patient-portal-content .actions,
+  .patient-portal-content .request-actions,
+  .patient-portal-content .modal-actions,
+  .patient-mobile-form .actions{
+    gap:10px!important;
+  }
+  .patient-portal-content .actions>button,
+  .patient-portal-content .request-actions>button,
+  .patient-mobile-form .actions>button{
+    border-radius:14px!important;font-weight:780!important;
+  }
+  .patient-portal-content .table-wrap{
+    border-radius:18px!important;overflow:hidden;
+  }
+}
+@media(max-width:390px){
+  :root{--hp-mobile-section-gap:12px;--hp-mobile-card-pad:13px}
+  .patient-portal-content .card-head h2,
+  .patient-portal-content .card-head h3,
+  .patient-portal-content .card-head h4{font-size:16px!important}
+  .patient-portal-content .card-head{gap:9px;margin-bottom:10px!important}
 }
