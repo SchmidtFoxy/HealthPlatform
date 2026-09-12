@@ -1,4 +1,28 @@
-﻿## v0.13.1 — Missões Contextuais 2.0
+﻿
+## v0.13.2-r2 — Correção do smoke test + Sport Performance UI
+
+- Corrige a asserção de proteção contextual do Foco Gamificado do Dia para o texto real com acentuação.
+- Reduz predominância de branco com canvas azul-acinzentado e superfícies em camadas.
+- Reforça contraste e identidade visual de medicina esportiva/performance.
+- Melhora responsividade de grids, cards, métricas, prontidão, gamificação, tabelas e navegação entre 1180px, 900px, 680px e 480px.
+- Mantém versão funcional 0.13.2, schema 38/38 e regras de negócio intactas.
+
+
+## v0.13.2-r1 — Refinamento visual e correção do smoke test
+- Corrige o healthcheck inicial do TESTAR.ps1 para esperar corretamente a API 0.13.2.
+- Unifica a identidade visual entre Hoje, prontidão, gamificação, foco diário e área profissional.
+- Reforça hierarquia visual mobile, superfícies, espaçamento, navegação e destaque dos cards esportivos sem alterar regras de negócio ou schema.
+## v0.13.2 — Foco Gamificado do Dia
+
+- transforma o contexto esportivo e as missões semanais em uma única prioridade gamificada legível no celular;
+- em dias protegidos, recuperação/revisão/retorno gradual prevalecem e nenhuma missão vira cobrança;
+- em dias compatíveis, uma missão incompleta vira referência de consistência, nunca obrigação;
+- semana já concluída não gera meta extra apenas para buscar XP;
+- não cria treino, não altera meta semanal, não concede XP por si só e não autoriza compensação ou progressão automática;
+- integra a leitura nas Homes do atleta e do profissional;
+- preserva schema 38/38, sem migration nova.
+
+## v0.13.1 — Missões Contextuais 2.0
 
 - contextualiza as missões semanais com prontidão, recuperação planejada, resposta à sessão e retorno gradual;
 - missões incompletas podem ficar `SemPressaoHoje` quando recuperação/revisão deve prevalecer;

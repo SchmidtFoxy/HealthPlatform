@@ -1,4 +1,12 @@
-﻿## v0.13.1 — Missões Contextuais 2.0
+﻿# HealthPlatform v0.13.2 — Foco Gamificado do Dia
+
+- entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;
+- reduz ruído no mobile sem transformar gamificação em prescrição;
+- protege dias de recuperação, revisão e retorno gradual;
+- não inventa treino, não cria XP automático e não exige compensação para manter streak;
+- mantém schema 38/38.
+
+## v0.13.1 — Missões Contextuais 2.0
 
 - contextualiza as missões semanais com prontidão, recuperação planejada, resposta à sessão e retorno gradual;
 - missões incompletas podem ficar `SemPressaoHoje` quando recuperação/revisão deve prevalecer;

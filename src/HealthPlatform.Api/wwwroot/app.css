@@ -1,4 +1,4 @@
-:root{
+﻿:root{
   --bg:#f5f7fb;--surface:#ffffff;--surface-2:#eef3f8;--text:#172033;--muted:#6f7b8d;--line:#e3e8ef;
   --navy:#0c1829;--navy-2:#13243b;--accent:#20b486;--accent-dark:#16966f;--accent-soft:#e7f7f1;
   --danger:#e45d68;--warning:#e8a23a;--shadow:0 18px 50px rgba(15,32,53,.10);--radius:20px;
@@ -1965,3 +1965,192 @@ body.rs-menu-open{overflow:hidden}
 .cycle-report-card,.cycle-report-professional-card{border-top:3px solid var(--accent,#5b8def)}
 .cycle-report-card .performance-list,.cycle-report-professional-card .signal-row{margin-top:12px}
 .cycle-report-card .game-prof-grid,.cycle-report-professional-card .game-prof-grid{margin-top:10px}
+
+
+/* v0.13.2-r1 — identidade visual HealthPlatform / Sport Performance */
+:root{
+  --hp-ink:#10213b;
+  --hp-blue:#164b78;
+  --hp-blue-soft:#eaf2f8;
+  --hp-mint:#20b486;
+  --hp-mint-soft:#e8f7f2;
+  --hp-surface:#ffffff;
+  --hp-radius:18px;
+  --hp-shadow:0 12px 34px rgba(16,33,59,.08);
+}
+body{background:linear-gradient(180deg,#f7f9fc 0,#f3f6fa 100%);color:var(--hp-ink)}
+.card{border:1px solid rgba(16,33,59,.08);border-radius:var(--hp-radius);box-shadow:0 8px 24px rgba(16,33,59,.055);background:var(--hp-surface)}
+.card:hover{border-color:rgba(32,180,134,.18)}
+.eyebrow{color:var(--hp-blue);font-weight:800;letter-spacing:.11em}
+.patient-portal-top,.topbar{background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(16,33,59,.08)}
+.patient-portal-nav{background:#fff;border-bottom:1px solid rgba(16,33,59,.08);box-shadow:0 8px 22px rgba(16,33,59,.04)}
+.patient-portal-nav button{border-radius:12px;font-weight:700;color:#66758a}
+.patient-portal-nav button.active{background:var(--hp-blue-soft);color:var(--hp-blue);box-shadow:inset 0 0 0 1px rgba(22,75,120,.08)}
+.patient-portal-content,.content{max-width:1440px;margin:0 auto;width:100%}
+.today-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#10213b 0%,#164b78 58%,#15755e 125%);color:#fff;border:0;box-shadow:0 18px 44px rgba(16,33,59,.16)}
+.today-hero:after{content:"";position:absolute;right:-80px;top:-110px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.20),rgba(255,255,255,0) 70%);pointer-events:none}
+.today-hero .eyebrow,.today-hero p,.today-hero .patient-date,.today-hero .today-progress span{color:rgba(255,255,255,.76)}
+.today-hero h1,.today-hero strong,.today-hero b{color:#fff}
+.today-progress-track{background:rgba(255,255,255,.18)}
+.today-progress-track i{background:linear-gradient(90deg,#54e1b6,#b5ffe7)}
+.athlete-progression-card{position:relative;align-items:stretch;background:linear-gradient(145deg,#fff 0%,#f6fbf9 100%);border-color:rgba(32,180,134,.18);box-shadow:var(--hp-shadow)}
+.athlete-level{background:linear-gradient(145deg,var(--hp-ink),var(--hp-blue));box-shadow:0 12px 24px rgba(16,33,59,.18)}
+.athlete-cycle-card{background:linear-gradient(135deg,#f7f9ff,#fff);border:1px solid rgba(90,124,255,.12);box-shadow:none}
+.daily-gamified-focus.athlete{position:relative;overflow:hidden;border:1px solid rgba(32,180,134,.28);background:linear-gradient(135deg,var(--hp-mint-soft),#fff 66%);box-shadow:0 14px 34px rgba(32,180,134,.09)}
+.daily-gamified-focus.athlete:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--hp-mint),var(--hp-blue))}
+.daily-gamified-focus .card-head h3{font-size:1.25rem;line-height:1.25;margin-top:4px}
+.daily-gamified-focus .goal-row{background:rgba(255,255,255,.78);border:1px solid rgba(32,180,134,.15);border-radius:14px;padding:12px 14px}
+.daily-readiness-card{border:1px solid rgba(22,75,120,.15);background:linear-gradient(145deg,#fff,#f7fbfe);box-shadow:var(--hp-shadow)}
+.daily-readiness-card.has-score{background:linear-gradient(145deg,#fff 0%,#f3fbf8 100%);border-color:rgba(32,180,134,.22)}
+.readiness-score{border-color:rgba(32,180,134,.22);box-shadow:0 10px 28px rgba(16,33,59,.08)}
+.readiness-score strong{color:var(--hp-blue)}
+.readiness-factors span,.game-prof-grid span,.cycle-metrics span,.professional-execution-list span{background:#f4f7fa;border:1px solid rgba(16,33,59,.055)}
+.weekly-challenges-card{box-shadow:var(--hp-shadow)}
+.weekly-challenge{border-color:rgba(16,33,59,.08);background:#fbfcfe}
+.weekly-challenge.done{background:var(--hp-mint-soft);border-color:rgba(32,180,134,.18)}
+.weekly-challenge-track i,.xp-progress-track i,.guided-day-track i{background:linear-gradient(90deg,var(--hp-blue),var(--hp-mint))}
+.achievement-chip{background:#fff;border-color:rgba(16,33,59,.08);box-shadow:0 4px 12px rgba(16,33,59,.04)}
+.professional-game-card,.professional-readiness-card,.daily-gamified-focus.professional,.professional-execution-card{border-left:4px solid var(--hp-blue);box-shadow:0 8px 22px rgba(16,33,59,.05)}
+.daily-gamified-focus.professional{border-left-color:var(--hp-mint);background:linear-gradient(135deg,#f5fbf9,#fff)}
+.primary{background:linear-gradient(135deg,var(--hp-blue),#16715c);box-shadow:0 8px 18px rgba(22,75,120,.15)}
+.primary:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.sidebar{background:linear-gradient(180deg,#0d1d33 0%,#102744 100%)}
+.sidebar .nav-item.active{background:linear-gradient(90deg,rgba(32,180,134,.18),rgba(32,180,134,.06));box-shadow:inset 3px 0 0 var(--hp-mint)}
+@media(max-width:760px){
+  .patient-portal-content{padding-left:12px;padding-right:12px}
+  .card{border-radius:16px}
+  .today-hero{border-radius:0 0 22px 22px;margin-left:-12px;margin-right:-12px}
+  .daily-gamified-focus .card-head{align-items:flex-start}
+}
+
+
+/* ===== v0.13.2-r2 — Sport Performance UI / responsividade reforçada ===== */
+:root{
+  --bg:#eaf0f6;
+  --surface:#f8fbfd;
+  --surface-2:#e8eff5;
+  --line:#d4dee8;
+  --text:#10213b;
+  --muted:#66758a;
+  --hp-shell:#dfe8f1;
+  --hp-panel:#f5f9fc;
+  --hp-panel-strong:#edf4f8;
+  --hp-deep:#0c1b30;
+  --hp-blue:#15517f;
+  --hp-mint:#20b486;
+}
+html{background:var(--hp-shell)}
+body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-height:100vh}
+.main,.patient-portal-shell{background:transparent}
+.content,.patient-portal-content{padding-top:26px}
+.topbar,.patient-portal-top{background:rgba(240,246,250,.94);border-bottom-color:rgba(16,33,59,.10);box-shadow:0 8px 30px rgba(16,33,59,.06)}
+.patient-portal-nav{background:rgba(226,237,245,.96);border-bottom-color:rgba(16,33,59,.09);box-shadow:0 8px 22px rgba(16,33,59,.055)}
+.patient-portal-nav button{background:rgba(255,255,255,.32);border:1px solid transparent}
+.patient-portal-nav button:hover{background:rgba(255,255,255,.7);color:var(--hp-blue)}
+.patient-portal-nav button.active{background:#f7fbfd;border-color:rgba(22,75,120,.12);box-shadow:0 7px 16px rgba(16,33,59,.07);color:var(--hp-blue)}
+
+.card,.patient-page-head,.table-wrap,.record-card,.clinical-sheet,.exam-block,.food-plan,.goal-card,.report-card,.modal{
+  background:linear-gradient(145deg,var(--hp-panel),#eef5f9);
+  border-color:rgba(16,33,59,.10);
+  box-shadow:0 10px 28px rgba(16,33,59,.07);
+}
+.card:hover{border-color:rgba(22,81,127,.20);box-shadow:0 13px 32px rgba(16,33,59,.09)}
+.stat-card,.metric,.info-box,.clinical-field,.meal-card,.trend-note,.readiness-factors span,.game-prof-grid span,.cycle-metrics span,.professional-execution-list span,.weekly-challenge,.achievement-chip,.attention-row{
+  background:linear-gradient(145deg,#edf4f8,#e4edf4);
+  border:1px solid rgba(16,33,59,.07);
+}
+.stat-card{box-shadow:0 7px 18px rgba(16,33,59,.045)}
+.stat-card .value,.metric strong{color:var(--hp-deep)}
+
+.today-hero{background:linear-gradient(135deg,#09182a 0%,#164f7b 56%,#13745d 118%);box-shadow:0 20px 46px rgba(10,29,49,.24)}
+.today-actions-card{background:linear-gradient(145deg,#f5fafc,#e9f2f7)}
+.patient-quick-action{background:linear-gradient(145deg,#f7fbfd,#e7eff5);border-color:rgba(16,33,59,.09);box-shadow:0 6px 14px rgba(16,33,59,.04)}
+.patient-quick-action:hover{background:#fff;border-color:rgba(32,180,134,.35);box-shadow:0 10px 20px rgba(16,33,59,.08)}
+.patient-quick-action.done{background:linear-gradient(145deg,#e4f6ef,#edf8f4)}
+
+.athlete-progression-card{background:linear-gradient(135deg,#edf6f7 0%,#e6f1f6 100%);border-color:rgba(32,180,134,.22)}
+.daily-gamified-focus.athlete{background:linear-gradient(135deg,#dff4ec 0%,#eaf5f6 54%,#f4f8fb 100%)}
+.daily-readiness-card,.daily-readiness-card.has-score{background:linear-gradient(145deg,#edf5f9,#e8f4f1)}
+.weekly-challenges-card{background:linear-gradient(145deg,#f3f7fa,#e8f0f5)}
+.weekly-challenge.done{background:linear-gradient(145deg,#dff3eb,#eaf7f2)}
+.professional-game-card,.professional-readiness-card,.daily-gamified-focus.professional,.professional-execution-card{background:linear-gradient(145deg,#f1f6fa,#e7eff5)}
+
+.data-table th{background:#dfe9f1;color:#5d6f82}
+.data-table td{background:rgba(247,251,253,.65)}
+.data-table tbody tr:hover td{background:#eef6f8}
+.search-input,.login-card input,.form-grid input,.form-grid select{background:#f7fbfd;border-color:#cbd8e3}
+.secondary{background:#dce8f0;color:#173451}
+.ghost:hover{background:rgba(16,33,59,.06)}
+
+@media(max-width:1180px){
+  .content,.patient-portal-content{padding-left:22px;padding-right:22px}
+  .stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .patient-quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .dashboard-grid,.patient-dashboard{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .topbar{height:72px}
+  .content,.patient-portal-content{padding:18px 14px 32px}
+  .card{padding:17px}
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .portal-metrics,.portal-metrics.wide,.readiness-prof-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .patient-portal-nav{padding-left:10px;padding-right:10px}
+  .patient-portal-nav button{min-height:40px}
+  .athlete-progression-card{align-items:flex-start;flex-wrap:wrap}
+  .athlete-progress-main{min-width:min(100%,420px)}
+  .readiness-main{align-items:flex-start}
+  .patient-quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  body{background:linear-gradient(180deg,#dbe5ee 0%,#e7eef4 100%)}
+  .content,.patient-portal-content{padding:12px 10px 24px}
+  .patient-portal-top{height:62px;padding:0 12px}
+  .patient-portal-nav{gap:6px;padding:8px 10px;scroll-padding-left:10px}
+  .patient-portal-nav button{padding:8px 11px;min-height:38px}
+  .card{padding:15px;border-radius:15px}
+  .card-head{align-items:flex-start;gap:10px}
+  .card-head h3{font-size:15px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat-card{padding:14px}
+  .stat-card .value{font-size:26px}
+  .patient-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .patient-quick-action{min-height:86px;padding:11px}
+  .patient-quick-action>span{font-size:20px}
+  .readiness-main{display:grid;grid-template-columns:1fr auto;gap:14px}
+  .readiness-main p{grid-column:1/-1}
+  .readiness-score{min-width:82px;min-height:82px;border-width:6px}
+  .readiness-score strong{font-size:27px}
+  .recovery-trend-metrics,.game-prof-grid,.daily-strategy-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .goal-row{grid-template-columns:1fr auto}
+  .goal-row .goal-progress{grid-column:1/-1}
+  .weekly-challenge{grid-template-columns:1fr}
+  .weekly-challenge>strong,.weekly-challenge>b{justify-self:start}
+  .weekly-challenge-track{grid-column:1}
+  .professional-game-card,.professional-readiness-card,.daily-gamified-focus.professional,.professional-execution-card{border-left-width:3px}
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .data-table{min-width:640px}
+}
+@media(max-width:480px){
+  .content,.patient-portal-content{padding-left:8px;padding-right:8px}
+  .today-hero{margin-left:-8px;margin-right:-8px;border-radius:0 0 18px 18px;padding:18px 16px}
+  .today-hero h1{font-size:clamp(24px,8vw,31px)}
+  .stats-grid,.portal-metrics,.portal-metrics.wide,.readiness-prof-grid,.recovery-trend-metrics,.game-prof-grid,.daily-strategy-grid{grid-template-columns:1fr!important}
+  .patient-quick-grid{grid-template-columns:1fr 1fr}
+  .athlete-progression-card{display:grid;grid-template-columns:auto 1fr;gap:12px}
+  .athlete-level{width:62px;height:62px;flex-basis:62px;border-radius:16px}
+  .athlete-level strong{font-size:26px}
+  .athlete-progress-main{min-width:0}
+  .athlete-streak{grid-column:1/-1}
+  .athlete-progress-meta{grid-template-columns:1fr}
+  .athlete-progress-meta span:last-child{grid-column:auto}
+  .readiness-main{grid-template-columns:1fr}
+  .readiness-score{justify-self:start}
+  .readiness-main p{grid-column:auto}
+  .readiness-actions,.guided-day-footer,.section-head,.toolbar{align-items:stretch;flex-direction:column}
+  .readiness-actions button,.toolbar button,.section-head button{width:100%}
+  .card-head{flex-wrap:wrap}
+  .card-head>span,.card-head>button{max-width:100%}
+  .goal-row{grid-template-columns:1fr}
+  .goal-row b{text-align:left}
+  .patient-quick-action{min-height:82px}
+}

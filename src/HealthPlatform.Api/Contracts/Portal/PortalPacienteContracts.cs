@@ -530,6 +530,11 @@ public record PortalMissoesContextuais2Response(
     string Estado, string Titulo, string FocoAtual, string Mensagem, int TotalMissoes, int MissoesConcluidas, int MissoesSemPressaoHoje,
     IReadOnlyCollection<PortalMissaoContextual2ItemResponse> Missoes, string MensagemSeguranca);
 
+public record PortalFocoGamificadoDiaResponse(
+    string Estado, string Titulo, string Categoria, string Foco, string Orientacao,
+    string? MissaoCodigo, string? MissaoTitulo, int Progresso, int Meta, int RecompensaXp, bool ProtegidoHoje,
+    string Contexto, string MensagemSeguranca);
+
 public record PortalPacienteHomeResponse(
     DateOnly Data,
     PortalPacienteResumoResponse Paciente,
@@ -539,6 +544,7 @@ public record PortalPacienteHomeResponse(
     PortalGamificacaoResponse Gamificacao,
     PortalGamificacao2Response Gamificacao2,
     PortalMissoesContextuais2Response MissoesContextuais2,
+    PortalFocoGamificadoDiaResponse FocoGamificadoDoDia,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalMetasCicloResponse MetasDoCiclo,
     PortalCheckpointCicloResponse CheckpointDoCiclo,
