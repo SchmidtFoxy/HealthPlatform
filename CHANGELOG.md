@@ -1,3 +1,12 @@
+# v0.13.16 — Body Context Brief
+
+- Nova leitura rápida mobile antes do Insight Rail.
+- Sintetiza semana, carga e recuperação em uma frase contextual.
+- Estados steady/observe/review derivados exclusivamente de dados já existentes.
+- Check-in pendente aparece como dado faltante, sem inferência de prontidão.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1224 verificações.
+
 # v0.13.15 — Mobile Insight Rail
 
 ## UX mobile

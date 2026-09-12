@@ -2929,3 +2929,15 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .mobile-insight-rail{gap:10px}.mobile-insight-rail>.weekly-athlete-rhythm,.mobile-insight-rail>.training-load-snapshot,.mobile-insight-rail>.recovery-pulse-card{flex-basis:88vw;width:88vw}
 }
 @media(prefers-reduced-motion:reduce){.mobile-insight-rail{scroll-behavior:auto}}
+
+
+/* v0.13.16 — Body Context Brief */
+.body-context-brief{display:none}
+@media(max-width:720px){
+  .body-context-brief{display:grid;grid-template-columns:38px minmax(0,1fr);gap:11px;align-items:start;padding:14px 15px;border-radius:18px;background:linear-gradient(145deg,#eaf7f2,#f5fbf8);border:1px solid rgba(26,135,105,.14);box-shadow:0 8px 22px rgba(7,50,58,.06);color:#173946}
+  .body-context-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:#d6f0e7;color:#16745e;font-size:17px;font-weight:900}
+  .body-context-brief .eyebrow{color:#267863}.body-context-brief h3{margin:2px 0 3px;font-family:var(--font-ui,Inter,system-ui,sans-serif);font-size:16px;line-height:1.15;letter-spacing:-.015em;color:#153b48}.body-context-brief p{margin:0;color:#496b76;font-size:11px;line-height:1.45}.body-context-brief small{display:block;margin-top:5px;color:#6b828b;font-size:10px;line-height:1.4}
+  .body-context-brief.observe{background:linear-gradient(145deg,#fff9ec,#fffdf7);border-color:rgba(194,139,32,.18)}.body-context-brief.observe .body-context-icon{background:#fff0c9;color:#845f0e}
+  .body-context-brief.review{background:linear-gradient(145deg,#fff3ee,#fff9f7);border-color:rgba(190,87,48,.18)}.body-context-brief.review .body-context-icon{background:#ffe0d4;color:#934225}
+}
+@media(max-width:390px){.body-context-brief{padding:13px 14px;grid-template-columns:34px minmax(0,1fr)}.body-context-icon{width:34px;height:34px;border-radius:11px}.body-context-brief h3{font-size:15px}.body-context-brief p{font-size:10.5px}}

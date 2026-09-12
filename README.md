@@ -1,6 +1,15 @@
-# HealthPlatform v0.13.15 — Mobile Insight Rail
+# HealthPlatform v0.13.16 — Body Context Brief
 
-> Versão funcional atual: **v0.13.15 — Mobile Insight Rail**.
+> Versão funcional atual: **v0.13.16 — Body Context Brief**.
+
+## v0.13.16 — Body Context Brief
+
+- adiciona uma leitura rápida antes do trilho de insights no portal do atleta;
+- sintetiza semana, carga e recuperação usando somente estados já calculados;
+- diferencia contexto estável, observação e revisão sem criar score ou prescrição;
+- mantém a leitura curta e mobile-first, com detalhes preservados no Insight Rail;
+- não altera schema, mantendo 38/38.
+
 
 
 - entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;

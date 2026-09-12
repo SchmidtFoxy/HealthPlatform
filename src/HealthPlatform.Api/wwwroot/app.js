@@ -315,12 +315,36 @@ function hpTrainingLoadSnapshot(d){
   </section>`;
 }
 
+function hpBodyContextBrief(d,readiness){
+  const plan=d?.planejamentoSemanal||{};
+  const summary=d?.resumoSemanal||{};
+  const load=d?.cargaIndividualizada||{};
+  const response=d?.respostaSessao||{};
+  const weeklyState=String(summary.estado||plan.estado||'Executando');
+  const loadState=String(load.estado||'');
+  const responseState=String(response.estado||'');
+  const protectedWeek=weeklyState==='Revisar'||weeklyState==='Proteger';
+  const reviewLoad=loadState==='RevisarContexto';
+  const observeLoad=loadState==='ObservarContexto';
+  const reviewRecovery=responseState==='Revisar';
+  const observeRecovery=responseState==='Observar';
+  const tone=(protectedWeek||reviewLoad||reviewRecovery)?'review':(observeLoad||observeRecovery)?'observe':'steady';
+  const title=tone==='review'?'Hoje pede contexto':tone==='observe'?'Vale observar a resposta':'Contexto estável';
+  const weekText=protectedWeek?'semana protegida':weeklyState==='Equilibrada'||weeklyState==='Consolidar'?'semana consolidada':'semana em andamento';
+  const loadText=reviewLoad?'carga pede revisão':observeLoad?'carga para observar':'carga no contexto';
+  const recoveryText=reviewRecovery?'recuperação pede revisão':observeRecovery?'recuperação para observar':response.sessaoNome?'recuperação estável':readiness?'check-in registrado':'check-in pendente';
+  const action=!readiness?'Faça o check-in para completar a leitura do dia.':tone==='review'?'Use os detalhes abaixo antes de decidir como conduzir a próxima sessão.':tone==='observe'?'Acompanhe os sinais do dia sem transformar o insight em prescrição.':'Siga o plano do dia e use os insights como contexto.';
+  return `<div class="body-context-brief ${tone}" aria-label="Resumo rápido do contexto esportivo"><div class="body-context-icon" aria-hidden="true">${tone==='review'?'!':tone==='observe'?'~':'✓'}</div><div><span class="eyebrow">LEITURA RÁPIDA</span><h3>${esc(title)}</h3><p>${esc(weekText)} • ${esc(loadText)} • ${esc(recoveryText)}</p><small>${esc(action)}</small></div></div>`;
+}
+
 function hpMobileInsightRail(d,readiness){
   const weekly=hpWeeklyAthleteRhythm(d);
   const load=hpTrainingLoadSnapshot(d);
   const recovery=hpRecoveryPulseCard(d?.respostaSessao,readiness);
   if(!weekly && !load && !recovery)return '';
+  const brief=hpBodyContextBrief(d,readiness);
   return `<section class="mobile-insight-shell" aria-label="Insights esportivos do seu contexto">
+    ${brief}
     <div class="mobile-insight-head"><div><span class="eyebrow">INSIGHTS DO CORPO</span><h3>Semana, carga e recuperação</h3></div><small>Deslize para explorar</small></div>
     <div class="mobile-insight-rail">${weekly}${load}${recovery}</div>
   </section>`;
@@ -5738,7 +5762,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.15';
+const HP_MVP_VERSION='0.13.16';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
