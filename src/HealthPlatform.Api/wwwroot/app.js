@@ -66,7 +66,7 @@ $('#loginForm').addEventListener('submit',async e=>{
   }finally{b.disabled=false;b.textContent='Entrar'}
 });
 $('#logoutButton').onclick=logout;$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
-function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open');$('#clinicalActionContent').innerHTML=''}
+function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
 function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['ÁREA PROFISSIONAL','Visão geral'],pacientes:['PRONTUÁRIO','Pacientes'],agenda:['ORGANIZAÇÃO','Agenda'],paciente:['PRONTUÁRIO','Paciente']};$('#pageEyebrow').textContent=titles[view][0];$('#pageTitle').textContent=titles[view][1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,agenda:loadAgenda,paciente:loadPatient}[view])().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
 function stat(label,value,hint){return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value??0}</div><div class="hint">${hint}</div></div>`}
@@ -2012,16 +2012,21 @@ function openCloseAthleteDay(current){
   });
 }
 
+function patientScaleField(label,name,value=5){
+  const safe=Math.max(0,Math.min(10,Number(value??5)));
+  return `<label class="patient-scale-field span-2"><span class="patient-scale-label"><b>${esc(label)}</b><output data-scale-output="${name}">${safe}</output></span><input class="patient-scale-range" type="range" min="0" max="10" step="1" name="${name}" value="${safe}"><span class="patient-scale-legend"><small>0</small><small>10</small></span></label>`;
+}
+
 function openDailyReadiness(current){
   const value=(key,fallback='')=>current&&current[key]!=null?current[key]:fallback;
   patientPortalModal('Check-in de prontidão',`
     <div class="span-2 readiness-form-intro"><strong>Leva menos de 1 minuto.</strong><p>Responda pelo que seu corpo está mostrando hoje — não pelo treino que você gostaria de fazer.</p></div>
     ${field('Horas de sono','sonoHoras','number',`min="0" max="16" step="0.1" value="${value('sonoHoras',7.5)}" required`)}
-    ${field('Qualidade do sono (0–10)','sonoQualidade','number',`min="0" max="10" value="${value('sonoQualidade',7)}"`)}
-    ${field('Energia (0–10)','energiaNivel','number',`min="0" max="10" value="${value('energiaNivel',7)}" required`)}
-    ${field('Dor corporal (0–10)','dorNivel','number',`min="0" max="10" value="${value('dorNivel',0)}" required`)}
-    ${field('Disposição (0–10)','disposicaoNivel','number',`min="0" max="10" value="${value('disposicaoNivel',7)}" required`)}
-    ${field('Recuperação percebida (0–10)','recuperacaoNivel','number',`min="0" max="10" value="${value('recuperacaoNivel',7)}" required`)}
+    ${patientScaleField('Qualidade do sono','sonoQualidade',value('sonoQualidade',7))}
+    ${patientScaleField('Energia','energiaNivel',value('energiaNivel',7))}
+    ${patientScaleField('Dor corporal','dorNivel',value('dorNivel',0))}
+    ${patientScaleField('Disposição','disposicaoNivel',value('disposicaoNivel',7))}
+    ${patientScaleField('Recuperação percebida','recuperacaoNivel',value('recuperacaoNivel',7))}
   `,async f=>{
     await api('/api/portal/me/prontidao',{method:'POST',body:JSON.stringify({
       data:todayISO(),sonoHoras:dec(f,'sonoHoras'),sonoQualidade:integer(f,'sonoQualidade'),
@@ -2056,7 +2061,7 @@ function openQuickPatientRecord(ds){
     });return;
   }
   if(ds.kind==='scale'){
-    patientPortalModal(`Registrar ${label}`,`${field(`${label} hoje (0 a 10)`,'escala','number','min="0" max="10" required')}${area('Quer contar algo?','descricao')}`,async f=>{
+    patientPortalModal(`Registrar ${label}`,`${patientScaleField(`${label} hoje`,'escala',5)}${area('Quer contar algo?','descricao')}`,async f=>{
       await api('/api/portal/me/diario',{method:'POST',body:JSON.stringify({dataHoraUtc:new Date().toISOString(),tipo:label,descricao:val(f,'descricao'),valorNumerico:null,unidade:null,escala:integer(f,'escala'),imagemUrl:null})});
     });return;
   }
@@ -2073,10 +2078,14 @@ function openQuickPatientRecord(ds){
 function patientPortalModal(title,body,onSubmit){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
   modal.classList.remove('hidden');
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">MEU ACOMPANHAMENTO</span><h2>${esc(title)}</h2></div><form id="patientPortalForm" class="form-grid clinical-form">${body}<div class="span-2 form-actions"><button class="secondary" type="button" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Salvar</button></div></form>`;
+  modal.classList.add('patient-action-sheet');
+  document.body.classList.add('patient-sheet-open');
+  box.innerHTML=`<div class="patient-sheet-handle" aria-hidden="true"></div><div class="modal-heading"><span class="eyebrow">MEU ACOMPANHAMENTO</span><h2>${esc(title)}</h2><p>Registro rápido para manter seu acompanhamento atualizado.</p></div><form id="patientPortalForm" class="form-grid clinical-form patient-mobile-form">${body}<div class="span-2 form-actions patient-sheet-actions"><button class="secondary" type="button" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Salvar registro</button></div></form>`;
+  $$('[data-scale-output]').forEach(out=>{const input=box.querySelector(`input[name="${out.dataset.scaleOutput}"]`);if(input){const sync=()=>{out.value=input.value;out.textContent=input.value};sync();input.addEventListener('input',sync)}});
   $('[data-close-clinical-form]').onclick=closeClinicalAction;
   $('#patientPortalForm').onsubmit=async e=>{e.preventDefault();try{await onSubmit(e.target);closeClinicalAction();toast('Registro atualizado.');await loadMyPatientPortal()}catch(err){toast(err.message,true)}};
 }
+
 function openMyDiaryForm(){
   patientPortalModal('Novo registro no diário',`${field('Tipo','tipo','text','value="Observacao" required')}${field('Valor','valorNumerico','number','step="0.01"')}${field('Unidade','unidade')}${field('Escala (0-10)','escala','number','min="0" max="10"')}${area('Descrição','descricao')}`,async f=>{
     await api('/api/portal/me/diario',{method:'POST',body:JSON.stringify({dataHoraUtc:new Date().toISOString(),tipo:val(f,'tipo'),descricao:val(f,'descricao'),valorNumerico:dec(f,'valorNumerico'),unidade:val(f,'unidade'),escala:integer(f,'escala'),imagemUrl:null})});
@@ -5557,7 +5566,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.5';
+const HP_MVP_VERSION='0.13.6';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

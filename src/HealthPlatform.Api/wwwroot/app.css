@@ -2759,3 +2759,28 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .patient-empty-state{min-height:calc(100dvh - 278px);padding:24px 16px 30px}
   .patient-empty-hint{grid-template-columns:28px 1fr;padding:11px 12px}
 }
+
+
+/* ===== v0.13.6 — Mobile Interaction Experience ===== */
+.patient-scale-field{display:grid!important;gap:10px!important;padding:13px 14px;border:1px solid #d7e3eb;border-radius:16px;background:#f8fbfd}.patient-scale-label{display:flex;align-items:center;justify-content:space-between;gap:12px}.patient-scale-label b{font-size:13px;color:#173650}.patient-scale-label output{display:grid;place-items:center;min-width:38px;height:34px;padding:0 8px;border-radius:11px;background:#0f4f4a;color:#fff;font-size:15px;font-weight:850}.patient-scale-range{appearance:none;-webkit-appearance:none;width:100%;height:7px!important;min-height:7px!important;padding:0!important;border:0!important;border-radius:999px!important;background:linear-gradient(90deg,#b9d8d2,#1ca17f)!important;box-shadow:none!important;accent-color:#16866d}.patient-scale-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid #16866d;box-shadow:0 2px 8px rgba(8,32,55,.18)}.patient-scale-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #16866d;box-shadow:0 2px 8px rgba(8,32,55,.18)}.patient-scale-legend{display:flex;justify-content:space-between;color:#7890a3}.patient-scale-legend small{font-size:10px}.patient-sheet-handle{display:none}.patient-sheet-open{overflow:hidden}
+@media(max-width:680px){
+  #clinicalActionModal.patient-action-sheet{align-items:flex-end!important;justify-content:center!important;padding:0!important;background:rgba(4,17,35,.72)!important}
+  #clinicalActionModal.patient-action-sheet .modal,#clinicalActionModal.patient-action-sheet .clinical-modal{width:100%!important;max-width:none!important;max-height:min(86dvh,760px)!important;margin:0!important;padding:0!important;border-radius:24px 24px 0 0!important;overflow:hidden!important;background:#edf4f7!important;box-shadow:0 -18px 48px rgba(3,18,32,.28)!important;border:0!important}
+  #clinicalActionModal.patient-action-sheet #clinicalActionContent{max-height:min(86dvh,760px);overflow-y:auto;overscroll-behavior:contain;padding:0 14px calc(92px + env(safe-area-inset-bottom));scrollbar-width:none}
+  #clinicalActionModal.patient-action-sheet #clinicalActionContent::-webkit-scrollbar{display:none}
+  #clinicalActionModal.patient-action-sheet .patient-sheet-handle{position:sticky;top:0;z-index:7;display:block;width:42px;height:5px;margin:9px auto 2px;border-radius:999px;background:rgba(255,255,255,.46)}
+  #clinicalActionModal.patient-action-sheet .modal-heading{margin:-16px -14px 14px;padding:30px 54px 16px 16px;color:#fff;background:linear-gradient(135deg,#0a1f35,#10465f 67%,#126252);box-shadow:0 7px 22px rgba(4,21,37,.16)}
+  #clinicalActionModal.patient-action-sheet .modal-heading .eyebrow{color:#78e2c0!important}
+  #clinicalActionModal.patient-action-sheet .modal-heading h2{margin:5px 0 4px;color:#fff!important;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;font-size:22px!important;line-height:1.15;letter-spacing:-.02em;text-transform:none!important}
+  #clinicalActionModal.patient-action-sheet .modal-heading p{color:#c8d8e3!important;font-size:11px;line-height:1.45}
+  #clinicalActionModal.patient-action-sheet .modal-close{position:fixed!important;z-index:112;top:auto!important;right:14px!important;bottom:calc(min(86dvh,760px) - 52px)!important;width:38px;height:38px;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15)}
+  #clinicalActionModal.patient-action-sheet .patient-mobile-form{grid-template-columns:1fr!important;gap:11px!important;margin-top:0!important}
+  #clinicalActionModal.patient-action-sheet .patient-mobile-form>.span-2,#clinicalActionModal.patient-action-sheet .patient-mobile-form>label{grid-column:1!important}
+  #clinicalActionModal.patient-action-sheet .patient-mobile-form label{font-size:12px!important;color:#173650!important;gap:6px!important}
+  #clinicalActionModal.patient-action-sheet .patient-mobile-form input:not([type=range]),#clinicalActionModal.patient-action-sheet .patient-mobile-form select,#clinicalActionModal.patient-action-sheet .patient-mobile-form textarea{min-height:50px!important;border-radius:14px!important;background:#fff!important;color:#102b45!important;border:1px solid #cad9e4!important;padding:12px!important;font-size:16px!important}
+  #clinicalActionModal.patient-action-sheet .patient-mobile-form textarea{min-height:98px!important}
+  #clinicalActionModal.patient-action-sheet .patient-sheet-actions{position:fixed;z-index:110;left:0;right:0;bottom:0;display:grid!important;grid-template-columns:.82fr 1.18fr;gap:8px;margin:0!important;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(239,246,249,.96);backdrop-filter:blur(14px);border-top:1px solid rgba(12,47,75,.09)}
+  #clinicalActionModal.patient-action-sheet .patient-sheet-actions button{min-height:50px;border-radius:14px;font-size:14px;font-weight:850}
+  #clinicalActionModal.patient-action-sheet .readiness-form-intro{grid-column:1!important;margin-bottom:2px;background:#e5f1f1;border:1px solid #cde2df}
+}
+@media(max-width:390px){#clinicalActionModal.patient-action-sheet #clinicalActionContent{padding-left:10px;padding-right:10px}.patient-scale-field{padding:12px}.patient-scale-label b{font-size:12px}}

@@ -163,3 +163,7 @@ O portal do atleta passa a adotar mobile-first de forma estrutural: dock inferio
 
 A experiência mobile agora trata estados vazios como parte real do produto. Cabeçalhos de página ganham contraste consistente no celular e telas sem dados — começando pelo plano alimentar — passam a explicar o estado, orientar o usuário e oferecer uma ação útil, sem parecerem quebradas ou inacabadas.
 
+
+
+### v0.13.6 — Mobile Interaction Experience
+O portal do atleta passa a tratar registros e check-ins como interações nativas de celular: bottom sheets, ações fixas, safe-area e controles 0–10 por slider. A versão mantém schema 38/38 e não altera regras clínicas.

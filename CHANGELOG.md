@@ -1044,3 +1044,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Formulários em coluna única, controles com alvo mínimo de 44px e inputs de 16px para evitar zoom automático no iOS.
 - Ajustes específicos para telas abaixo de 420px.
 - Sem alteração de schema; permanece 38/38.
+
+
+## v0.13.6 — Mobile Interaction Experience
+- Transforma os formulários rápidos do portal do atleta em bottom sheets no celular, com hierarquia e alcance de polegar.
+- Mantém ações Cancelar/Salvar fixas acima da safe-area durante a rolagem.
+- Check-in de prontidão passa a usar sliders 0–10 com valor visível para reduzir digitação repetitiva.
+- Registros rápidos de escala (dor/energia) reutilizam o mesmo controle de toque.
+- Inputs mobile usam altura mínima de 50px e fonte de 16px para evitar zoom automático no iOS.
+- Sem alteração de schema; permanece 38/38.
