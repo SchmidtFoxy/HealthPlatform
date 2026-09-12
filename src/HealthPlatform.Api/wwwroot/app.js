@@ -5923,8 +5923,9 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.0';
-const HP_MOBILE_UI_FOUNDATION='v0.14.0';
+const HP_MVP_VERSION='0.14.1';
+const HP_MOBILE_UI_FOUNDATION='v0.14.1';
+const HP_MOBILE_NAVIGATION_SHELL='v0.14.1';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

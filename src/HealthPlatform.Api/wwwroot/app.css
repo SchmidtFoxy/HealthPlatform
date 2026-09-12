@@ -3162,3 +3162,83 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .patient-page-header h1,.patient-page-head h1,.patient-welcome h1{font-size:23px}
   .patient-portal-content .card{padding:13px;border-radius:18px}
 }
+
+/* ===== v0.14.1 — Mobile Navigation Shell ===== */
+@media(max-width:720px){
+  :root{
+    --hp-mobile-appbar-h:58px;
+    --hp-mobile-dock-surface:rgba(8,27,39,.965);
+    --hp-mobile-dock-active:rgba(48,196,157,.16);
+    --hp-mobile-dock-accent:#52d7b4;
+  }
+  .patient-portal-top{
+    min-height:calc(var(--hp-mobile-appbar-h) + env(safe-area-inset-top));
+    height:calc(var(--hp-mobile-appbar-h) + env(safe-area-inset-top));
+    padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));
+    background:rgba(8,27,39,.94);
+    border-bottom:1px solid rgba(255,255,255,.075);
+    box-shadow:0 8px 28px rgba(5,22,31,.16);
+    backdrop-filter:blur(20px) saturate(1.15);
+  }
+  .patient-portal-top .brand{gap:8px;font-size:0}
+  .patient-portal-top .brand-mark{
+    width:38px;height:38px;display:grid;place-items:center;
+    border-radius:13px;font-size:15px!important;font-weight:900;
+    color:#dffbf2;background:linear-gradient(145deg,rgba(55,207,166,.28),rgba(28,111,96,.22));
+    border:1px solid rgba(100,231,195,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)
+  }
+  .patient-portal-top .patient-portal-user{margin-left:auto;gap:7px!important}
+  .patient-portal-user>div:nth-child(2){display:none}
+  .patient-portal-top .avatar{display:none}
+  .patient-portal-user .global-search-button,
+  .patient-portal-user .notification-button,
+  #patientLogoutButton{
+    width:40px;min-width:40px;height:40px;min-height:40px!important;
+    border-radius:13px!important;background:rgba(255,255,255,.065)!important;
+    border:1px solid rgba(255,255,255,.085)!important;box-shadow:none!important
+  }
+  .patient-portal-user .global-search-button span,.patient-portal-user .global-search-button kbd{display:none!important}
+  .patient-portal-user .global-search-button:active,
+  .patient-portal-user .notification-button:active,
+  #patientLogoutButton:active{background:rgba(82,215,180,.13)!important;transform:scale(.97)}
+
+  .patient-portal-nav{
+    background:var(--hp-mobile-dock-surface)!important;
+    border-top:1px solid rgba(255,255,255,.08)!important;
+    box-shadow:0 -12px 32px rgba(3,18,27,.22)!important;
+    backdrop-filter:blur(22px) saturate(1.12);
+    padding-left:max(7px,env(safe-area-inset-left))!important;
+    padding-right:max(7px,env(safe-area-inset-right))!important;
+  }
+  .patient-portal-nav button,.patient-portal-nav .patient-more-trigger{
+    min-height:58px!important;border-radius:16px!important;
+    color:#9db4bd!important;transition:background .16s ease,color .16s ease,transform .12s ease!important
+  }
+  .patient-portal-nav button:before,.patient-portal-nav .patient-more-trigger:before{color:currentColor;opacity:.92}
+  .patient-portal-nav button.active{
+    color:#eafff8!important;background:var(--hp-mobile-dock-active)!important;
+    box-shadow:inset 0 0 0 1px rgba(82,215,180,.12)!important
+  }
+  .patient-portal-nav button.active:after{display:none!important}
+  .patient-portal-nav button.active:before{color:var(--hp-mobile-dock-accent);filter:none!important;transform:translateX(-50%) scale(1.08)}
+  .patient-portal-nav .patient-more-trigger[aria-expanded="true"]{
+    color:#eafff8!important;background:var(--hp-mobile-dock-active)!important;
+    box-shadow:inset 0 0 0 1px rgba(82,215,180,.12)!important
+  }
+  .patient-portal-nav button:active,.patient-portal-nav .patient-more-trigger:active{transform:scale(.96)}
+
+  .patient-portal-content{
+    padding-top:14px;
+    padding-bottom:calc(var(--mobile-dock-h) + 30px + env(safe-area-inset-bottom));
+  }
+  .patient-page-header,.patient-page-head{scroll-margin-top:calc(var(--hp-mobile-appbar-h) + env(safe-area-inset-top) + 12px)}
+}
+@media(max-width:390px){
+  .patient-portal-top{padding-left:max(9px,env(safe-area-inset-left));padding-right:max(9px,env(safe-area-inset-right))}
+  .patient-portal-top .brand-mark{width:36px;height:36px;border-radius:12px}
+  .patient-portal-user .global-search-button,.patient-portal-user .notification-button,#patientLogoutButton{width:38px;min-width:38px;height:38px;min-height:38px!important}
+  .patient-portal-nav button,.patient-portal-nav .patient-more-trigger{font-size:9.5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .patient-portal-nav button,.patient-portal-nav .patient-more-trigger,.patient-portal-user .global-search-button,.patient-portal-user .notification-button,#patientLogoutButton{transition:none!important}
+}

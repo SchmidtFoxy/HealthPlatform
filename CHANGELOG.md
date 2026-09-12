@@ -1,3 +1,14 @@
+# v0.14.1 — Mobile Navigation Shell
+
+- Refina o shell permanente do portal do atleta no celular.
+- App bar fica mais compacta e reduz elementos de identidade redundantes no mobile.
+- Busca, notificações e saída recebem alvos de toque consistentes.
+- Dock inferior ganha estado ativo mais limpo, sem indicador solto, e integra visualmente o botão Mais.
+- Safe-area passa a considerar topo, laterais e base do aparelho.
+- Mantém `prefers-reduced-motion` e tratamento para telas abaixo de 390 px.
+- Sem migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1296 verificações.
+
 # v0.14.0 — Mobile UI Foundation
 
 - Inicia oficialmente a fase 0.14.x de refinamento estrutural do front mobile.

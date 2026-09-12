@@ -1,3 +1,11 @@
+# HealthPlatform v0.14.1 — Mobile Navigation Shell
+
+> Versão funcional atual: **v0.14.1 — Mobile Navigation Shell**.
+
+## v0.14.1 — Mobile Navigation Shell
+
+Segunda etapa da série 0.14.x de refinamento mobile. Aplica a fundação visual ao shell permanente do portal do atleta: app bar compacta, dock inferior com estado ativo coerente, ação Mais integrada, safe-area lateral/superior/inferior e controles globais preparados para toque. Não altera regras clínicas, endpoints ou schema.
+
 # HealthPlatform v0.14.0 — Mobile UI Foundation
 
 > Versão funcional atual: **v0.14.0 — Mobile UI Foundation**.
