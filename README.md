@@ -1,6 +1,15 @@
-# HealthPlatform v0.13.16 — Body Context Brief
+# HealthPlatform v0.13.17 — Consistency Compass
 
-> Versão funcional atual: **v0.13.16 — Body Context Brief**.
+> Versão funcional atual: **v0.13.17 — Consistency Compass**.
+
+## v0.13.17 — Consistency Compass
+
+- adiciona uma bússola compacta de consistência na Home mobile do atleta;
+- reutiliza score de consistência, streak, dias ativos e missões já existentes;
+- diferencia rotina sustentada, consistência em construção e retomada simples;
+- em recuperação/revisão, reforça que respeitar o plano também é consistência e não exige treino para preservar streak;
+- abre Progresso e missões diretamente, sem criar score clínico, XP novo ou prescrição;
+- não altera schema, mantendo 38/38.
 
 ## v0.13.16 — Body Context Brief
 

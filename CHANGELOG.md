@@ -1172,3 +1172,11 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - `TESTAR.ps1` salvo como UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
 - Evita falsos negativos em sentinelas com acentos, incluindo roteiro da demo, prontidão, recuperação e evolução.
 - Nenhuma alteração de API, regra de negócio, schema ou interface.
+
+
+## v0.13.17 — Consistency Compass
+- Adiciona uma bússola de consistência esportiva compacta na Home mobile.
+- Reutiliza consistência, streak, dias ativos e missões contextuais já existentes.
+- Dias protegidos por recuperação/revisão não geram pressão para treinar ou preservar sequência.
+- Acesso direto ao bloco de Progresso e missões.
+- Sem migration nova; schema permanece 38/38.
