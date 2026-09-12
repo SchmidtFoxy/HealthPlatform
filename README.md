@@ -180,3 +180,8 @@ A Home mobile prioriza leitura em poucos segundos: prontidão, intensidade do tr
 ## v0.13.9 — Mobile Action Hub
 
 A Home do atleta passa a destacar a próxima ação útil em um bloco **Agora**. O objetivo é reduzir procura por funções: check-in quando a prontidão ainda não foi registrada, treino quando o contexto do dia já está disponível, além de atalhos rápidos para hidratação e outros registros. A versão mantém o schema 38/38 e não altera regras clínicas.
+
+
+## v0.13.10 — Post-Workout Mobile Loop
+
+No portal do atleta, concluir um treino agora abre um resumo pós-sessão mobile com duração, RPE e próximas ações rápidas. O fluxo não cria recomendação clínica nova: apenas confirma o que foi registrado e facilita registrar hidratação ou retornar à tela Hoje.

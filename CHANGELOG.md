@@ -1,3 +1,12 @@
+# v0.13.10 — Post-Workout Mobile Loop
+
+- Fecha o fluxo de treino no celular com um resumo pós-sessão próprio, em vez de retornar silenciosamente à lista.
+- Mostra duração e RPE registrados sem criar interpretação clínica adicional.
+- Oferece próximas ações diretas: registrar água ou voltar para Hoje.
+- Resumo pós-treino usa bottom sheet mobile, safe-area e alvos de toque maiores.
+- Mantém schema 38/38 e não adiciona migration.
+- Smoke test ampliado para 1176 verificações.
+
 # v0.13.9 — Mobile Action Hub
 
 - Home mobile ganha uma área **Agora** para destacar a próxima ação útil do dia.
