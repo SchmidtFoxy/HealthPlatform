@@ -999,3 +999,13 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 
 ### v0.11.0 r1 — alinhamento das travas clínicas do painel
 - Explicita no `PainelMedicinaEsporteService` as sentinelas `nao produzir diagnostico`, `previsao de lesao` e `prescricao automatica`, preservando a lógica funcional e a segurança clínica já existentes.
+
+## v0.13.3 — Mobile First Experience
+- Reestruturação mobile-first do portal do atleta, priorizando uso diário por celular.
+- Navegação principal do paciente convertida em dock inferior com swipe horizontal e safe-area para iOS/Android.
+- Cabeçalho mobile mais compacto e contrastado, com identidade visual de performance.
+- Cards, métricas, prontidão, gamificação e ações rápidas reorganizados para leitura e toque em telas pequenas.
+- Tabelas passam a se comportar como cards no mobile, reduzindo dependência de rolagem horizontal.
+- Formulários em coluna única, controles com alvo mínimo de 44px e inputs de 16px para evitar zoom automático no iOS.
+- Ajustes específicos para telas abaixo de 420px.
+- Sem alteração de schema; permanece 38/38.

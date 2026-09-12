@@ -151,3 +151,6 @@ A Home ordena até três prioridades semanais usando sinais já existentes, colo
 
 ### v0.9.7 — Manutencao Sustentavel & Proximo Foco
 A rotina agora diferencia habitos que ja podem ficar em manutencao de um unico eixo que merece foco. Recuperacao e retomada continuam acima de qualquer aumento de exigencia.
+
+### v0.13.3 — Mobile First Experience
+O portal do atleta passa a adotar mobile-first de forma estrutural: dock inferior, safe-area, hierarquia compacta, cards adaptativos, métricas roláveis, tabelas em cards e formulários otimizados para toque. O foco é transformar o uso diário em celular na experiência principal, e não em uma versão reduzida do desktop.
