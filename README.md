@@ -1,8 +1,34 @@
-# HealthPlatform v0.13.19 — Daily Closure
+# HealthPlatform v0.13.21 — Today Brief
 
-> Versão funcional atual: **v0.13.19 — Daily Closure**.
+> Versão funcional atual: **v0.13.21 — Today Brief**.
 
-## v0.13.19 — Daily Closure
+## v0.13.21 — Today Brief
+
+- Home mobile consolida prontidão, treino e hidratação em uma única leitura rápida.
+- Ações diretas reutilizam check-in, área de treino e registro de água existentes.
+- Resumos antigos permanecem no DOM por compatibilidade, mas deixam de competir visualmente no celular.
+- Estados pendente, pronto e recuperação usam apenas dados já calculados.
+- Nenhuma regra clínica, score, prescrição ou migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1264 verificações.
+
+# HealthPlatform v0.13.20 — Hydration Pace
+
+> Versão funcional atual: **v0.13.20 — Hydration Pace**.
+
+## v0.13.20 — Hydration Pace
+
+- adiciona leitura compacta de ritmo de hidratação na Home mobile;
+- mostra água registrada, restante da meta e progresso percentual usando `hidratacaoContextual`;
+- ação `+` abre o registro rápido de água já existente;
+- meta continua vindo exclusivamente do plano profissional, sem aumento automático por treino/RPE;
+- estado de meta concluída não incentiva consumo extra;
+- sem migration nova; schema permanece 38/38.
+
+# HealthPlatform v0.13.20 — Daily Closure
+
+> Versão funcional atual: **v0.13.20 — Daily Closure**.
+
+## v0.13.20 — Daily Closure
 
 - traz o fechamento do dia para a hierarquia principal da Home mobile;
 - reutiliza `execucaoDoDia`, progresso, concluídos, pendentes e fechamento já persistido;
@@ -253,5 +279,5 @@ A Home mobile passa a organizar o dia esportivo em **Check-in → Treino → Rec
 
 
 
-### v0.13.19 — Adaptive Mobile Home
+### v0.13.20 — Adaptive Mobile Home
 No portal do atleta, a Home mobile agora muda sua hierarquia de acordo com o estágio real do dia: antes do check-in, após o check-in, depois do treino e após o fechamento. A mudança é de UX e reaproveita dados esportivos já existentes, sem prescrição automática ou alteração de schema.

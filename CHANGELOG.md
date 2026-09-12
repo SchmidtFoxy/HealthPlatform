@@ -1,4 +1,23 @@
-# v0.13.19 — Daily Closure
+# v0.13.21 — Today Brief
+
+- Consolida prontidão, treino e hidratação em um resumo mobile único.
+- Reduz duplicidade visual da Home sem remover compatibilidade estrutural dos componentes anteriores.
+- Ações rápidas reaproveitam check-in, treino e registro de água existentes.
+- Estados do componente derivam apenas de contexto esportivo já calculado.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1264 verificações.
+
+# v0.13.20 — Hydration Pace
+
+- Home mobile ganha um resumo compacto do ritmo de hidratação do dia.
+- Reutiliza meta, consumo, progresso e estado de `hidratacaoContextual`.
+- Mostra consumido, restante e percentual sem recalcular necessidade hídrica.
+- Ação rápida reaproveita o registro de água existente.
+- Meta atingida encerra a pressão por volume extra.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1256 verificações.
+
+# v0.13.20 — Daily Closure
 
 - Home mobile ganha um fechamento diário compacto logo após a Daily Athlete Timeline.
 - Reutiliza o roteiro diário e o fechamento já existentes, sem persistência paralela.
@@ -1191,7 +1210,7 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Sem migration nova; schema permanece 38/38.
 
 
-## v0.13.19 — Adaptive Mobile Home
+## v0.13.20 — Adaptive Mobile Home
 - A Home mobile passa a adaptar prioridade conforme quatro estágios do dia: check-in, treino, recuperação e dia fechado.
 - Antes do check-in, informações secundárias são reduzidas para destacar prontidão e contexto inicial.
 - Pós-treino, recuperação e fechamento ganham prioridade visual.
