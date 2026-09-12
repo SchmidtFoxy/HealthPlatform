@@ -1,3 +1,12 @@
+# HealthPlatform v0.12.2 — Deload & Recuperação Planejada
+
+- Diferencia redução deliberada de carga de queda involuntária de adesão.
+- Reconhece deload, descarga, recuperação/regenerativo e taper somente quando a intenção está explícita no bloco configurado pelo profissional.
+- Contextualiza Radar de Adesão, carga individualizada e resposta à sessão durante a janela planejada.
+- Não cria deload automaticamente, não prescreve carga, não compensa carga perdida e não diagnostica fadiga/lesão.
+- Sem migration nova; schema permanece 38/38.
+- Suíte funcional ampliada para 1064 verificações.
+
 ## v0.12.1 — Blocos de Treinamento / Mesociclos
 - Consolida a `FaseTreino` vinculada ao ciclo como bloco/mesociclo configurado pelo profissional.
 - Exibe período, semana atual, objetivo, sessões executadas, duração, RPE, carga interna e critério de transição.

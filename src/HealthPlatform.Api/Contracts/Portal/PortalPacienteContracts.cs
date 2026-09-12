@@ -408,6 +408,11 @@ public record PortalBlocoTreinamentoResponse(
     decimal? RpeMedio, decimal? CargaInternaExecutada, string? CriterioTransicao, int? DuracaoMinimaDias,
     string PosicaoCargaAtual, string ContextoRespostaSessao, string Resumo, IReadOnlyCollection<string> Sinais, string MensagemSeguranca);
 
+public record PortalDeloadRecuperacaoPlanejadaResponse(
+    string Estado, bool IntencaoPlanejada, string TipoIntencao, string Titulo, string Resumo, string? BlocoNome,
+    int? SemanaAtual, string PosicaoCargaAtual, string ContextoRespostaSessao, string ContextoAdesao,
+    IReadOnlyCollection<string> Sinais, string MensagemSeguranca);
+
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
     int AjusteCargaPercentual, int AjusteVolumePercentual, string OrientacaoTreino,
@@ -528,6 +533,7 @@ public record PortalPacienteHomeResponse(
     PortalRespostaSessaoResponse RespostaSessao,
     PortalCargaIndividualizadaResponse CargaIndividualizada,
     PortalBlocoTreinamentoResponse BlocoTreinamento,
+    PortalDeloadRecuperacaoPlanejadaResponse DeloadRecuperacaoPlanejada,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

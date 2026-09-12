@@ -1,3 +1,7 @@
+## v0.12.2 — Deload & Recuperação Planejada
+
+A plataforma diferencia períodos deliberados de redução de carga, configurados pelo profissional no bloco/mesociclo, de quedas involuntárias de adesão. A leitura é contextual e não prescritiva.
+
 # HealthPlatform v0.12.1 — Blocos de Treinamento / Mesociclos
 
 A v0.12.1 organiza a FaseTreino já configurada pelo profissional como bloco/mesociclo contextual do ciclo esportivo. Mostra período, semana, objetivo, execução real, RPE/carga observada e critérios de transição sem criar periodização ou progressão automática.
