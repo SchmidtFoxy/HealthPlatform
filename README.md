@@ -1,6 +1,6 @@
-# HealthPlatform v0.13.14 — Training Load Snapshot
+# HealthPlatform v0.13.15 — Mobile Insight Rail
 
-> Versão funcional atual: **v0.13.14 — Training Load Snapshot**.
+> Versão funcional atual: **v0.13.15 — Mobile Insight Rail**.
 
 
 - entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;
@@ -195,7 +195,7 @@ A Home aproxima a resposta à última sessão da rotina diária, apresentando pr
 
 
 
-## v0.13.14 — Training Load Snapshot
+## v0.13.15 — Training Load Snapshot
 
 - nova leitura compacta de carga recente na Home mobile;
 - compara carga interna dos últimos 7 dias com a mediana pessoal já calculada;
@@ -216,3 +216,12 @@ A Home aproxima a resposta à última sessão da rotina diária, apresentando pr
 ## v0.13.12 — Daily Athlete Timeline
 
 A Home mobile passa a organizar o dia esportivo em **Check-in → Treino → Recuperação**. A etapa atual é destacada a partir de dados já existentes e cada estágio funciona como atalho para a ação correspondente. Não há novo score, prescrição, persistência ou migration; o schema permanece 38/38.
+
+## v0.13.15 — Mobile Insight Rail
+
+- reorganiza os insights esportivos secundários da Home em um trilho horizontal no celular;
+- Weekly Athlete Rhythm, Training Load Snapshot e Recovery Pulse continuam disponíveis sem dominar o scroll vertical;
+- preserva a prioridade visual de Hoje, AGORA, Daily Athlete Timeline e prontidão;
+- mantém os cards completos no desktop e não altera regra clínica, persistência ou schema;
+- adiciona scroll-snap, alvos confortáveis e tratamento específico para telas estreitas.
+

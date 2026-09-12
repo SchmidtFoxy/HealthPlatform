@@ -315,6 +315,17 @@ function hpTrainingLoadSnapshot(d){
   </section>`;
 }
 
+function hpMobileInsightRail(d,readiness){
+  const weekly=hpWeeklyAthleteRhythm(d);
+  const load=hpTrainingLoadSnapshot(d);
+  const recovery=hpRecoveryPulseCard(d?.respostaSessao,readiness);
+  if(!weekly && !load && !recovery)return '';
+  return `<section class="mobile-insight-shell" aria-label="Insights esportivos do seu contexto">
+    <div class="mobile-insight-head"><div><span class="eyebrow">INSIGHTS DO CORPO</span><h3>Semana, carga e recuperação</h3></div><small>Deslize para explorar</small></div>
+    <div class="mobile-insight-rail">${weekly}${load}${recovery}</div>
+  </section>`;
+}
+
 function hpRecoveryPulseCard(x,readiness){
   if(!x || !x.sessaoNome)return '';
   const stable=x.estado==='RespostaEstavel';
@@ -1912,11 +1923,7 @@ async function loadMyPatientPortal(){
 
     ${hpDailyAthleteTimeline(d,readiness)}
 
-    ${hpWeeklyAthleteRhythm(d)}
-
-    ${hpTrainingLoadSnapshot(d)}
-
-    ${hpRecoveryPulseCard(d.respostaSessao,readiness)}
+    ${hpMobileInsightRail(d,readiness)}
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
       <div class="readiness-main">
@@ -5731,7 +5738,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.14';
+const HP_MVP_VERSION='0.13.15';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

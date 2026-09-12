@@ -2911,3 +2911,21 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 }
 @media(max-width:390px){.training-load-snapshot{padding:14px;border-radius:20px}.training-load-snapshot h3{font-size:17px}.training-load-numbers strong{font-size:20px}.training-load-state{font-size:9px}.training-load-reference{grid-template-columns:1fr}.training-load-reference>span{display:none}}
 @media(prefers-reduced-motion:reduce){.training-load-details:active{transform:none}}
+
+
+/* v0.13.15 — Mobile Insight Rail */
+.mobile-insight-shell{display:contents}.mobile-insight-head{display:none}.mobile-insight-rail{display:contents}
+@media(max-width:720px){
+  .mobile-insight-shell{display:grid;gap:10px;min-width:0}
+  .mobile-insight-head{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:0 2px}.mobile-insight-head .eyebrow{color:#2b7767}.mobile-insight-head h3{margin:2px 0 0;font-family:var(--font-ui,Inter,system-ui,sans-serif);font-size:16px;line-height:1.15;color:#173846;letter-spacing:-.015em}.mobile-insight-head>small{font-size:10px;color:#6b818a;white-space:nowrap}
+  .mobile-insight-rail{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;overscroll-behavior-inline:contain;padding:2px 2px 8px;margin:0 -2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .mobile-insight-rail::-webkit-scrollbar{display:none}
+  .mobile-insight-rail>.weekly-athlete-rhythm,.mobile-insight-rail>.training-load-snapshot,.mobile-insight-rail>.recovery-pulse-card{flex:0 0 min(84vw,360px);width:min(84vw,360px);min-width:0;scroll-snap-align:start;margin:0}
+  .mobile-insight-rail>.weekly-athlete-rhythm,.mobile-insight-rail>.training-load-snapshot{display:grid}
+  .mobile-insight-rail>.recovery-pulse-card{display:block}
+}
+@media(max-width:390px){
+  .mobile-insight-head h3{font-size:15px}.mobile-insight-head>small{display:none}
+  .mobile-insight-rail{gap:10px}.mobile-insight-rail>.weekly-athlete-rhythm,.mobile-insight-rail>.training-load-snapshot,.mobile-insight-rail>.recovery-pulse-card{flex-basis:88vw;width:88vw}
+}
+@media(prefers-reduced-motion:reduce){.mobile-insight-rail{scroll-behavior:auto}}

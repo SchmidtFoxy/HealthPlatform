@@ -1,4 +1,17 @@
-# v0.13.14 — Training Load Snapshot
+# v0.13.15 — Mobile Insight Rail
+
+## UX mobile
+- Agrupa Weekly Athlete Rhythm, Training Load Snapshot e Recovery Pulse em uma faixa horizontal de insights no celular.
+- Reduz scroll vertical e mantém ações do dia, timeline e prontidão como hierarquia principal.
+- Adiciona scroll-snap, ocultação de scrollbar e largura confortável para uso com o polegar.
+- Desktop mantém os componentes em sua apresentação completa.
+
+## Segurança e compatibilidade
+- Nenhuma migration nova; schema permanece 38/38.
+- Nenhuma regra clínica, score, prescrição ou persistência alterada.
+- TESTAR.ps1 permanece UTF-8 com BOM para Windows PowerShell 5.1.
+
+# v0.13.15 — Mobile Insight Rail
 
 - Home mobile ganha resumo compacto da carga dos últimos 7 dias;
 - comparação usa a mediana histórica individual já existente;
