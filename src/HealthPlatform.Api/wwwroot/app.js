@@ -337,6 +337,24 @@ function hpBodyContextBrief(d,readiness){
   return `<div class="body-context-brief ${tone}" aria-label="Resumo rápido do contexto esportivo"><div class="body-context-icon" aria-hidden="true">${tone==='review'?'!':tone==='observe'?'~':'✓'}</div><div><span class="eyebrow">LEITURA RÁPIDA</span><h3>${esc(title)}</h3><p>${esc(weekText)} • ${esc(loadText)} • ${esc(recoveryText)}</p><small>${esc(action)}</small></div></div>`;
 }
 
+function hpDailyClosureCard(execution){
+  const x=execution||{};
+  const total=Number(x.concluidos||0)+Number(x.pendentes||0);
+  if(!total && !x.diaFechado)return '';
+  const pct=Math.max(0,Math.min(100,Number(x.progressoPercentual||0)));
+  const closed=!!x.diaFechado;
+  const tone=closed?'closed':pct>=75?'almost':'open';
+  const title=closed?'Dia fechado':pct>=75?'Quase lá':'Feche o dia no seu ritmo';
+  const copy=closed
+    ? `Você registrou como o dia terminou${x.percepcaoDoDia!=null?` • percepção ${x.percepcaoDoDia}/10`:''}.`
+    : `${x.concluidos||0} concluído${Number(x.concluidos||0)===1?'':'s'} • ${x.pendentes||0} pendente${Number(x.pendentes||0)===1?'':'s'}. Não precisa buscar perfeição.`;
+  return `<section class="daily-closure-card ${tone}" aria-label="Fechamento do dia esportivo">
+    <div class="daily-closure-main"><div><span class="eyebrow">FECHAMENTO DO DIA</span><h3>${esc(title)}</h3><p>${esc(copy)}</p></div><strong>${closed?'✓':`${num(pct,0)}%`}</strong></div>
+    <div class="daily-closure-track" aria-hidden="true"><i style="width:${closed?100:pct}%"></i></div>
+    <button type="button" class="daily-closure-action" id="dailyClosureAction">${closed?'Revisar fechamento':'Fechar meu dia'} <span>→</span></button>
+  </section>`;
+}
+
 function hpConsistencyCompass(d,readiness){
   const game=d?.gamificacao||{};
   const missions=d?.missoesContextuais2||{};
@@ -1972,6 +1990,8 @@ async function loadMyPatientPortal(){
 
     ${hpDailyAthleteTimeline(d,readiness)}
 
+    ${hpDailyClosureCard(d.execucaoDoDia)}
+
     ${hpConsistencyCompass(d,readiness)}
 
     ${hpMobileInsightRail(d,readiness)}
@@ -2158,6 +2178,7 @@ async function loadMyPatientPortal(){
     if(d.respostaSessao?.sessaoNome){const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}}
     else loadPatientSection('treino').catch(e=>toast(e.message,true));
   };
+  if($('#dailyClosureAction'))$('#dailyClosureAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#consistencyCompassDetails'))$('#consistencyCompassDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#trainingLoadSnapshotDetails'))$('#trainingLoadSnapshotDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.individualized-load-athlete-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
@@ -5790,7 +5811,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.17';
+const HP_MVP_VERSION='0.13.18';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

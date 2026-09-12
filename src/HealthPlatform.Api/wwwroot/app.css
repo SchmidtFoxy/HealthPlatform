@@ -2958,3 +2958,20 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 }
 @media(max-width:390px){.consistency-compass{padding:14px}.consistency-compass h3{font-size:16px}.consistency-compass-metrics{gap:5px}.consistency-compass-metrics span{padding:8px 6px}.consistency-score{min-width:54px}}
 @media(prefers-reduced-motion:reduce){.consistency-compass-track i{transition:none}}
+
+
+/* v0.13.18 — Daily Closure */
+.daily-closure-card{display:none}
+@media(max-width:720px){
+  .daily-closure-card{display:grid;gap:10px;padding:14px 15px;border-radius:19px;background:linear-gradient(145deg,#eef7f6,#f8fbfb);border:1px solid rgba(20,91,102,.12);box-shadow:0 8px 22px rgba(7,50,58,.055);color:#183d48}
+  .daily-closure-card.closed{background:linear-gradient(145deg,#e9f8f0,#f6fcf8);border-color:rgba(30,142,105,.16)}
+  .daily-closure-card.almost{background:linear-gradient(145deg,#f2f8f3,#fbfdf9)}
+  .daily-closure-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
+  .daily-closure-card .eyebrow{color:#337568}.daily-closure-card h3{margin:2px 0 3px;font-family:var(--font-ui,Inter,system-ui,sans-serif);font-size:16px;line-height:1.2;letter-spacing:-.015em;color:#173d48}.daily-closure-card p{margin:0;color:#56747d;font-size:10.5px;line-height:1.45}
+  .daily-closure-main>strong{display:grid;place-items:center;min-width:54px;height:34px;padding:0 9px;border-radius:999px;background:#dcefeb;color:#176d5a;font-size:12px}
+  .daily-closure-track{height:5px;border-radius:999px;background:rgba(19,83,94,.09);overflow:hidden}.daily-closure-track i{display:block;height:100%;border-radius:inherit;background:#4bb99b;transition:width .28s ease}
+  .daily-closure-action{min-height:44px;border:0;border-radius:13px;background:#173f4d;color:#fff;font-weight:760;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left}
+  .daily-closure-card.closed .daily-closure-action{background:rgba(24,104,84,.1);color:#176651}
+}
+@media(max-width:390px){.daily-closure-card{padding:13px 14px}.daily-closure-card h3{font-size:15px}.daily-closure-main>strong{min-width:50px}}
+@media(prefers-reduced-motion:reduce){.daily-closure-track i{transition:none}}

@@ -1,6 +1,14 @@
-# HealthPlatform v0.13.17 — Consistency Compass
+# HealthPlatform v0.13.18 — Daily Closure
 
-> Versão funcional atual: **v0.13.17 — Consistency Compass**.
+> Versão funcional atual: **v0.13.18 — Daily Closure**.
+
+## v0.13.18 — Daily Closure
+
+- traz o fechamento do dia para a hierarquia principal da Home mobile;
+- reutiliza `execucaoDoDia`, progresso, concluídos, pendentes e fechamento já persistido;
+- reforça “execute o plano, não persiga perfeição”, sem transformar 100% em obrigação;
+- permite fechar ou revisar o dia sem abrir o bloco de análises avançadas;
+- não cria score, regra clínica, XP, prescrição ou migration; schema permanece 38/38.
 
 ## v0.13.17 — Consistency Compass
 

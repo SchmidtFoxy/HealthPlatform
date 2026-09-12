@@ -1,3 +1,12 @@
+# v0.13.18 — Daily Closure
+
+- Home mobile ganha um fechamento diário compacto logo após a Daily Athlete Timeline.
+- Reutiliza o roteiro diário e o fechamento já existentes, sem persistência paralela.
+- Mostra progresso, concluídos/pendentes e estado fechado sem exigir perfeição.
+- Ação abre o fluxo existente de fechamento/revisão do dia.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1240 verificações.
+
 # v0.13.16 — Body Context Brief
 
 - Nova leitura rápida mobile antes do Insight Rail.
