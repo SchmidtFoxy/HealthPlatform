@@ -2167,10 +2167,22 @@ function patientPageHeader(eyebrow,title,subtitle,action=''){
   return `<section class="patient-page-header"><div><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p>${subtitle}</p></div>${action}</section>`;
 }
 
+function patientPlanEmptyState(){
+  return `<section class="patient-empty-state patient-empty-nutrition" aria-labelledby="patientEmptyNutritionTitle">
+    <div class="patient-empty-icon" aria-hidden="true">◒</div>
+    <span class="eyebrow">PLANO EM PREPARAÇÃO</span>
+    <h2 id="patientEmptyNutritionTitle">Seu plano alimentar ainda não está disponível</h2>
+    <p>Quando seu profissional publicar o plano, suas refeições, horários e orientações aparecerão aqui automaticamente.</p>
+    <div class="patient-empty-hint"><span>✓</span><div><b>Nada para configurar agora</b><small>Continue acompanhando seu treino e seus registros diários normalmente.</small></div></div>
+    <button type="button" class="primary patient-empty-action" id="patientEmptyGoToday">Voltar para Hoje</button>
+  </section>`;
+}
+
 async function loadPatientPlan(){
   const host=$('#patientPortalContent'),d=await api('/api/portal/me/plano'),p=d.plano;
   if(!p){
-    host.innerHTML=patientPageHeader('ALIMENTAÇÃO','Meu plano alimentar','Seu plano atual preparado pelo profissional.')+sectionEmpty('Você ainda não possui um plano alimentar ativo.');
+    host.innerHTML=patientPageHeader('ALIMENTAÇÃO','Meu plano alimentar','Seu plano atual preparado pelo profissional.')+patientPlanEmptyState();
+    $('#patientEmptyGoToday')?.addEventListener('click',()=>loadPatientSection('inicio').catch(e=>toast(e.message,true)));
     return;
   }
   const totals=p.totais||{};
@@ -5545,7 +5557,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.4';
+const HP_MVP_VERSION='0.13.5';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

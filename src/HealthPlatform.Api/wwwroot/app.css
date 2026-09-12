@@ -2645,3 +2645,117 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
     line-height:1.08!important;
   }
 }
+
+
+/* ===== v0.13.5 — Empty States & Mobile Polish =====
+   Empty screens should feel intentional, not unfinished. */
+.patient-empty-state{
+  min-height:320px;
+  display:grid;
+  justify-items:center;
+  align-content:center;
+  text-align:center;
+  gap:10px;
+  padding:34px 24px;
+  border:1px solid rgba(12,48,77,.08);
+  border-radius:22px;
+  background:linear-gradient(155deg,#ffffff 0%,#f3f8f9 100%);
+  box-shadow:0 10px 30px rgba(8,34,58,.06);
+}
+.patient-empty-icon{
+  width:62px;
+  height:62px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:linear-gradient(145deg,#e1f4ee,#d5e9f2);
+  color:#157866;
+  font-size:30px;
+  box-shadow:inset 0 0 0 1px rgba(20,117,99,.08);
+}
+.patient-empty-state h2{
+  max-width:22ch;
+  margin:2px 0 0;
+  color:#112b43;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:clamp(21px,3vw,27px);
+  line-height:1.12;
+  letter-spacing:-.025em;
+}
+.patient-empty-state>p{
+  max-width:52ch;
+  margin:0;
+  color:#667b8e;
+  font-size:14px;
+  line-height:1.55;
+}
+.patient-empty-hint{
+  width:min(460px,100%);
+  display:grid;
+  grid-template-columns:32px 1fr;
+  gap:10px;
+  align-items:center;
+  margin-top:8px;
+  padding:12px 14px;
+  text-align:left;
+  border-radius:15px;
+  background:#edf6f3;
+  color:#173a43;
+}
+.patient-empty-hint>span{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#d5eee5;
+  color:#13745f;
+  font-weight:900;
+}
+.patient-empty-hint b,.patient-empty-hint small{display:block}
+.patient-empty-hint b{font-size:12px}
+.patient-empty-hint small{margin-top:2px;color:#68808b;font-size:10px;line-height:1.35}
+.patient-empty-action{margin-top:4px;min-width:170px}
+
+@media(max-width:720px){
+  /* Full-bleed app header: fixes dark-on-dark page titles seen on Plano. */
+  .patient-page-header{
+    margin:-10px -10px 14px!important;
+    padding:18px 16px 21px!important;
+    min-height:112px;
+    align-items:flex-end!important;
+    border-radius:0 0 22px 22px;
+    background:linear-gradient(145deg,#0b2138 0%,#123b59 70%,#145b5b 125%);
+    box-shadow:0 12px 28px rgba(4,24,42,.18);
+  }
+  .patient-page-header h1,
+  .patient-page-header h1 *{
+    color:#f7fbfd!important;
+    text-shadow:0 1px 1px rgba(0,0,0,.08);
+  }
+  .patient-page-header .eyebrow{color:#75dfbb!important}
+  .patient-page-header p{color:#bed0dc!important;margin:0!important}
+
+  .patient-empty-state{
+    min-height:calc(100dvh - 292px);
+    margin:0;
+    padding:28px 20px 34px;
+    border-radius:20px;
+    background:linear-gradient(165deg,#f8fbfc 0%,#eef5f6 100%);
+    box-shadow:none;
+  }
+  .patient-empty-state .eyebrow{color:#8b7416}
+  .patient-empty-icon{width:58px;height:58px;border-radius:18px}
+  .patient-empty-state h2{font-size:22px;max-width:19ch}
+  .patient-empty-state>p{font-size:13px;max-width:34ch}
+  .patient-empty-hint{margin-top:6px}
+  .patient-empty-action{width:100%;max-width:330px;min-height:48px}
+}
+
+@media(max-width:420px){
+  .patient-page-header{padding:16px 14px 19px!important;min-height:106px}
+  .patient-page-header h1{font-size:24px!important;line-height:1.08!important}
+  .patient-page-header p{font-size:12px!important;line-height:1.38!important}
+  .patient-empty-state{min-height:calc(100dvh - 278px);padding:24px 16px 30px}
+  .patient-empty-hint{grid-template-columns:28px 1fr;padding:11px 12px}
+}

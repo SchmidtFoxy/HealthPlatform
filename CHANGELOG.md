@@ -1,3 +1,12 @@
+## v0.13.5 — Empty States & Mobile Polish
+
+- Reestrutura estados vazios do portal do atleta para parecerem estados intencionais de aplicativo, e não telas incompletas.
+- Corrige contraste do cabeçalho mobile de páginas como Alimentação, garantindo título e subtítulo legíveis sobre a superfície escura.
+- Adiciona estado vazio orientativo para plano alimentar ainda não publicado, com contexto e retorno rápido para Hoje.
+- Ajusta altura, espaçamento e ocupação vertical de telas sem conteúdo no celular.
+- Mantém schema 38/38 e não adiciona migration.
+- Smoke test ampliado para 1136 verificações.
+
 ## v0.13.4-r2 — Mobile Typography Polish
 
 - Corrige a tipografia dos títulos de página do portal do atleta no celular.
