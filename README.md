@@ -1,6 +1,6 @@
-# HealthPlatform v0.13.12 — Daily Athlete Timeline
+# HealthPlatform v0.13.13 — Weekly Athlete Rhythm
 
-> Versão funcional atual: **v0.13.12 — Daily Athlete Timeline**.
+> Versão funcional atual: **v0.13.13 — Weekly Athlete Rhythm**.
 
 
 - entrega uma única prioridade diária derivada da Gamificação 2.0 e das Missões Contextuais 2.0;
@@ -192,6 +192,16 @@ No portal do atleta, concluir um treino agora abre um resumo pós-sessão mobile
 ## v0.13.11 — Recovery Pulse
 
 A Home aproxima a resposta à última sessão da rotina diária, apresentando prontidão, recuperação e dor em um card compacto, sem inferir causalidade nem liberar progressão automaticamente.
+
+
+## v0.13.13 — Weekly Athlete Rhythm
+
+- adiciona um resumo compacto da semana na Home mobile do atleta;
+- reutiliza `planejamentoSemanal` e `resumoSemanal`, sem criar score ou prescrição paralela;
+- mostra treinos concluídos/meta e sessões restantes;
+- diferencia semana em andamento, consolidada e contexto de proteção/recuperação;
+- permite abrir o contexto semanal detalhado já existente;
+- mantém schema **38/38**, sem migration nova.
 
 ## v0.13.12 — Daily Athlete Timeline
 

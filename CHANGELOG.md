@@ -1,3 +1,13 @@
+# v0.13.13 — Weekly Athlete Rhythm
+
+- Home mobile passa a mostrar o ritmo da semana em um card compacto.
+- Progresso usa meta de treinos, sessões concluídas e restantes já calculadas.
+- Estados de recuperação/revisão protegem o atleta de cobrança por volume.
+- Semana concluída é tratada como consolidada, sem sugerir volume extra.
+- Atalho abre planejamento/resumo semanal detalhado existente.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1200 verificações.
+
 # v0.13.12 — Daily Athlete Timeline
 
 - Home mobile passa a apresentar a sequência diária Check-in → Treino → Recuperação.

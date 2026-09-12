@@ -2882,3 +2882,18 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .athlete-day-timeline{padding:14px 12px}.athlete-day-timeline-head small{display:none}.athlete-day-steps{gap:3px}.athlete-day-step{padding-left:4px;padding-right:4px;min-height:82px}.athlete-day-dot{width:33px;height:33px}.athlete-day-step b{font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){.athlete-day-step:active{transform:none}}
+
+
+/* v0.13.13 — Weekly Athlete Rhythm */
+.weekly-athlete-rhythm{display:none}
+@media(max-width:720px){
+  .weekly-athlete-rhythm{position:relative;display:grid;gap:12px;padding:16px;border-radius:22px;background:linear-gradient(145deg,#102f43,#123e50);color:#effbff;border:1px solid rgba(91,220,193,.14);box-shadow:0 12px 30px rgba(5,31,49,.13);overflow:hidden}
+  .weekly-athlete-rhythm:after{content:"";position:absolute;width:135px;height:135px;right:-70px;bottom:-82px;border-radius:50%;background:rgba(60,201,166,.10);pointer-events:none}
+  .weekly-athlete-rhythm-head{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.weekly-athlete-rhythm .eyebrow{color:#79dbc4}.weekly-athlete-rhythm h3{margin:3px 0 0;color:#fff;font-family:var(--font-ui,Inter,system-ui,sans-serif);font-size:18px;line-height:1.16;letter-spacing:-.02em}.weekly-rhythm-state{display:inline-flex;align-items:center;min-height:28px;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.10);color:#ddecf2;font-size:10px;font-weight:850;white-space:nowrap}
+  .weekly-athlete-rhythm.protect{background:linear-gradient(145deg,#45351e,#2f3029)}.weekly-athlete-rhythm.protect .eyebrow{color:#f5cf78}.weekly-athlete-rhythm.protect .weekly-rhythm-state{color:#ffe3a3;border-color:rgba(245,207,120,.18);background:rgba(245,207,120,.09)}
+  .weekly-athlete-rhythm.balanced{background:linear-gradient(145deg,#103d3a,#114d46)}
+  .weekly-rhythm-progress{position:relative;z-index:1;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}.weekly-rhythm-progress>div:first-child{display:grid;gap:1px}.weekly-rhythm-progress strong{font-size:21px;color:#fff;line-height:1}.weekly-rhythm-progress span{font-size:9px;color:#acc8d2;text-transform:uppercase;letter-spacing:.05em}.weekly-rhythm-progress>b{font-size:10px;color:#d7e9ee;text-align:right;max-width:110px}.weekly-rhythm-track{height:7px;border-radius:999px;background:rgba(255,255,255,.11);overflow:hidden}.weekly-rhythm-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#41c29f,#72e1bf)}
+  .weekly-athlete-rhythm>p{position:relative;z-index:1;margin:0;color:#c5d8df;font-size:11px;line-height:1.45}.weekly-rhythm-details{position:relative;z-index:1;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 13px;border-radius:13px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.07);color:#eefbff;font-size:11px;font-weight:850;text-align:left;cursor:pointer}.weekly-rhythm-details span{font-size:16px;color:#7ae0c3}.weekly-rhythm-details:active{transform:scale(.985)}
+}
+@media(max-width:390px){.weekly-athlete-rhythm{padding:14px;border-radius:20px}.weekly-athlete-rhythm h3{font-size:17px}.weekly-rhythm-progress{grid-template-columns:auto 1fr}.weekly-rhythm-progress>b{grid-column:1/-1;text-align:left;max-width:none;margin-top:-2px}.weekly-rhythm-state{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.weekly-rhythm-details:active{transform:none}}

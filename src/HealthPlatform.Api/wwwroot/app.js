@@ -273,6 +273,27 @@ function hpDailyAthleteTimeline(d,readiness){
   </section>`;
 }
 
+function hpWeeklyAthleteRhythm(d){
+  const plan=d?.planejamentoSemanal;
+  const summary=d?.resumoSemanal;
+  if((!plan || plan.estado==='SemCiclo') && !summary)return '';
+  const completed=Number(summary?.treinosConcluidosSemana ?? plan?.treinosConcluidosSemana ?? 0);
+  const goal=Number(summary?.metaTreinosSemana ?? plan?.metaTreinosSemana ?? 0);
+  const remaining=plan?.treinosRestantesSemana!=null?Number(plan.treinosRestantesSemana):Math.max(0,goal-completed);
+  const state=String(summary?.estado || plan?.estado || 'Executando');
+  const tone=state==='Revisar'||state==='Proteger'?'protect':state==='Equilibrada'||state==='Consolidar'?'balanced':'active';
+  const label=tone==='protect'?'Proteger recuperação':tone==='balanced'?'Semana consolidada':'Semana em andamento';
+  const progress=goal>0?Math.min(100,Math.round((completed/goal)*100)):0;
+  const next=remaining<=0?'Meta principal atendida':`${remaining} sessão${remaining===1?'':'ões'} restante${remaining===1?'':'s'}`;
+  const message=summary?.resumo || plan?.resumo || 'Use a semana como contexto, sem substituir o plano definido pelo profissional.';
+  return `<section class="weekly-athlete-rhythm ${tone}" aria-label="Ritmo esportivo da semana">
+    <div class="weekly-athlete-rhythm-head"><div><span class="eyebrow">RITMO DA SEMANA</span><h3>${esc(label)}</h3></div><span class="weekly-rhythm-state">${esc(state)}</span></div>
+    <div class="weekly-rhythm-progress"><div><strong>${goal>0?`${completed}/${goal}`:`${completed}`}</strong><span>${goal>0?'treinos da meta':'treinos registrados'}</span></div><div class="weekly-rhythm-track"><i style="width:${progress}%"></i></div><b>${esc(next)}</b></div>
+    <p>${esc(message)}</p>
+    <button type="button" class="weekly-rhythm-details" id="weeklyRhythmDetails">Ver contexto da semana <span>→</span></button>
+  </section>`;
+}
+
 function hpRecoveryPulseCard(x,readiness){
   if(!x || !x.sessaoNome)return '';
   const stable=x.estado==='RespostaEstavel';
@@ -1870,6 +1891,8 @@ async function loadMyPatientPortal(){
 
     ${hpDailyAthleteTimeline(d,readiness)}
 
+    ${hpWeeklyAthleteRhythm(d)}
+
     ${hpRecoveryPulseCard(d.respostaSessao,readiness)}
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
@@ -2054,6 +2077,7 @@ async function loadMyPatientPortal(){
     if(d.respostaSessao?.sessaoNome){const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}}
     else loadPatientSection('treino').catch(e=>toast(e.message,true));
   };
+  if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
   if($('#dailyReadinessButton'))$('#dailyReadinessButton').onclick=()=>openDailyReadiness(readiness);
@@ -5683,7 +5707,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.12';
+const HP_MVP_VERSION='0.13.13';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
