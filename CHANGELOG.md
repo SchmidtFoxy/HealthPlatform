@@ -1,3 +1,10 @@
+## v0.12.1 — Blocos de Treinamento / Mesociclos
+- Consolida a `FaseTreino` vinculada ao ciclo como bloco/mesociclo configurado pelo profissional.
+- Exibe período, semana atual, objetivo, sessões executadas, duração, RPE, carga interna e critério de transição.
+- Contextualiza com carga individualizada e resposta recente à sessão.
+- Não cria periodização, deload, carga ideal ou aumento de volume automaticamente.
+- Sem migration nova; schema permanece 38/38.
+
 ## v0.12.0 — Motor de Carga Esportiva Individualizado
 
 - usa ate 56 dias de sessoes reais para construir referencia semanal do proprio atleta;

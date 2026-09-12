@@ -193,6 +193,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var sessaoPlanejadaExecutada = await SessaoPlanejadaExecutadaService.MontarAsync(db, pacienteId, dia, estrategiaDoDia, disponibilidadeTreino, ct);
         var respostaSessao = await RespostaSessaoService.MontarAsync(db, pacienteId, dia, ct);
         var cargaIndividualizada = await CargaIndividualizadaService.MontarAsync(db, pacienteId, dia, cargaTreino, tendenciaRecuperacao, respostaSessao, ct);
+        var blocoTreinamento = await BlocoTreinamentoService.MontarAsync(db, currentUser.OrganizationId, pacienteId, dia, ciclo, cargaIndividualizada, respostaSessao, ct);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -239,6 +240,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             sessaoPlanejadaExecutada,
             respostaSessao,
             cargaIndividualizada,
+            blocoTreinamento,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,

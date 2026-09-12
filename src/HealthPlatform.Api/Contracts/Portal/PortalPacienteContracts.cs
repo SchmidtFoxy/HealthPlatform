@@ -400,6 +400,14 @@ public record PortalCargaIndividualizadaResponse(
     IReadOnlyCollection<PortalCargaIndividualizadaSemanaResponse> Semanas, IReadOnlyCollection<string> Sinais,
     string Leitura, string MensagemSeguranca);
 
+
+public record PortalBlocoTreinamentoResponse(
+    string Estado, Guid? BlocoId, string? Nome, string? Tipo, string? Objetivo,
+    DateOnly? DataInicio, DateOnly? DataFim, int? SemanaAtual, int? TotalSemanas, decimal? ProgressoTemporalPercentual,
+    int? Ordem, string? Status, Guid? PlanoTreinoId, int TreinosExecutados, int DuracaoMinutosExecutada,
+    decimal? RpeMedio, decimal? CargaInternaExecutada, string? CriterioTransicao, int? DuracaoMinimaDias,
+    string PosicaoCargaAtual, string ContextoRespostaSessao, string Resumo, IReadOnlyCollection<string> Sinais, string MensagemSeguranca);
+
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
     int AjusteCargaPercentual, int AjusteVolumePercentual, string OrientacaoTreino,
@@ -519,6 +527,7 @@ public record PortalPacienteHomeResponse(
     PortalSessaoPlanejadaExecutadaResponse SessaoPlanejadaExecutada,
     PortalRespostaSessaoResponse RespostaSessao,
     PortalCargaIndividualizadaResponse CargaIndividualizada,
+    PortalBlocoTreinamentoResponse BlocoTreinamento,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

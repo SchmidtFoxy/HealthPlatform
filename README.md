@@ -1,4 +1,8 @@
-## v0.12.0 — Reavaliação da Progressão & Decisão de Continuidade
+# HealthPlatform v0.12.1 — Blocos de Treinamento / Mesociclos
+
+A v0.12.1 organiza a FaseTreino já configurada pelo profissional como bloco/mesociclo contextual do ciclo esportivo. Mostra período, semana, objetivo, execução real, RPE/carga observada e critérios de transição sem criar periodização ou progressão automática.
+
+## v0.12.1 — Reavaliação da Progressão & Decisão de Continuidade
 Converte o monitoramento de resposta em uma decisão supervisionada de manter, revisar, encerrar a observação atual ou aguardar mais dados, sem inferir causalidade nem iniciar nova progressão automaticamente.
 
 ## v0.10.1 — Monitoramento de Resposta à Progressão
