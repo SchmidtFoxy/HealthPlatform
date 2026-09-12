@@ -1,3 +1,17 @@
+# v0.13.22-r1 — Quick Log Hub (Smoke Fix)
+
+- Corrige a validação `[1270/1272]` para comparar os textos do Quick Log sem diferenciar maiúsculas/minúsculas.
+- Nenhuma alteração funcional, visual, de API, banco ou schema.
+
+# v0.13.22 — Quick Log Hub
+
+- Registro rápido global acessível acima do dock mobile, sem depender da Home.
+- Bottom sheet com Água, Energia, Dor e Sono, reaproveitando o fluxo existente de diário.
+- FAB respeita safe-area, telas estreitas e `prefers-reduced-motion`.
+- Não cria persistência, score ou regra clínica paralela.
+- Sem migration; schema permanece 38/38.
+- Smoke test ampliado para 1272 verificações.
+
 # v0.13.21 — Today Brief
 
 - Consolida prontidão, treino e hidratação em um resumo mobile único.

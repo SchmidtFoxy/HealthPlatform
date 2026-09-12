@@ -18,7 +18,7 @@
         <h1>Saúde, longevidade e alta performance.</h1>
         <p>Um acompanhamento integrado para avaliar, ajustar, monitorar e evoluir com decisões orientadas por dados.</p>
       </div>
-      <div class="login-quote">MVP Preview • v0.13.21</div>
+      <div class="login-quote">MVP Preview • v0.13.22</div>
     </div>
     <div class="login-panel">
       <form id="loginForm" class="login-card">
@@ -88,6 +88,19 @@
       <button class="patient-more-trigger" id="patientMoreTrigger" type="button" aria-expanded="false" aria-controls="patientMoreSheet">Mais</button>
     </nav>
     <main id="patientPortalContent" class="patient-portal-content"></main>
+    <button id="patientQuickLogTrigger" class="patient-quick-log-trigger" type="button" aria-expanded="false" aria-controls="patientQuickLogSheet" aria-label="Abrir registros rápidos"><span>＋</span><small>Registrar</small></button>
+    <div id="patientQuickLogBackdrop" class="patient-quick-log-backdrop hidden"></div>
+    <aside id="patientQuickLogSheet" class="patient-quick-log-sheet" aria-hidden="true" aria-label="Registros rápidos">
+      <div class="patient-quick-log-handle" aria-hidden="true"></div>
+      <div class="patient-quick-log-head"><div><span class="eyebrow">REGISTRO RÁPIDO</span><h3>Como está seu dia?</h3><p>Registre sem sair da tela atual.</p></div><button id="patientQuickLogClose" class="ghost" type="button" aria-label="Fechar">×</button></div>
+      <div class="patient-quick-log-grid">
+        <button type="button" data-quick-log="Agua" data-kind="number" data-unit="ml" data-step="50"><span>💧</span><b>Água</b><small>Adicionar consumo</small></button>
+        <button type="button" data-quick-log="Energia" data-kind="scale" data-unit="0–10"><span>⚡</span><b>Energia</b><small>Como você está</small></button>
+        <button type="button" data-quick-log="Dor" data-kind="scale" data-unit="0–10"><span>●</span><b>Dor</b><small>Percepção geral</small></button>
+        <button type="button" data-quick-log="Sono" data-kind="number" data-unit="h" data-step="0.1"><span>🌙</span><b>Sono</b><small>Horas dormidas</small></button>
+      </div>
+      <p class="patient-quick-log-note">Registros rápidos atualizam seu acompanhamento; não substituem avaliação profissional.</p>
+    </aside>
     <div id="patientMoreBackdrop" class="patient-more-backdrop hidden"></div>
     <aside id="patientMoreSheet" class="patient-more-sheet" aria-hidden="true">
       <div class="patient-more-handle"></div>

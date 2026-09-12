@@ -1,6 +1,16 @@
-# HealthPlatform v0.13.21 — Today Brief
+# HealthPlatform v0.13.22 — Quick Log Hub
 
-> Versão funcional atual: **v0.13.21 — Today Brief**.
+> Versão funcional atual: **v0.13.22 — Quick Log Hub**.
+
+## v0.13.22 — Quick Log Hub
+
+- adiciona um botão flutuante de registro rápido disponível em qualquer área do portal do atleta no celular;
+- reúne Água, Energia, Dor e Sono em uma bottom sheet para uso com uma mão;
+- reaproveita `openQuickPatientRecord` e a persistência já existente, sem fluxo paralelo;
+- respeita safe-area, telas estreitas e `prefers-reduced-motion`;
+- sem migration nova; schema permanece 38/38;
+- smoke test ampliado para 1272 verificações.
+
 
 ## v0.13.21 — Today Brief
 

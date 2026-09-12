@@ -2437,6 +2437,32 @@ $$('[data-patient-more-view]').forEach(b=>b.addEventListener('click',()=>{
   loadPatientSection(b.dataset.patientMoreView).catch(e=>toast(e.message,true));
 }));
 
+// ===== v0.13.22 — Quick Log Hub =====
+function closePatientQuickLog(){
+  const sheet=$('#patientQuickLogSheet'),backdrop=$('#patientQuickLogBackdrop'),trigger=$('#patientQuickLogTrigger');
+  if(sheet){sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true')}
+  if(backdrop)backdrop.classList.add('hidden');
+  if(trigger)trigger.setAttribute('aria-expanded','false');
+}
+function openPatientQuickLog(){
+  closePatientMoreSheet();
+  const sheet=$('#patientQuickLogSheet'),backdrop=$('#patientQuickLogBackdrop'),trigger=$('#patientQuickLogTrigger');
+  if(sheet){sheet.classList.add('open');sheet.setAttribute('aria-hidden','false')}
+  if(backdrop)backdrop.classList.remove('hidden');
+  if(trigger)trigger.setAttribute('aria-expanded','true');
+}
+$('#patientQuickLogTrigger')?.addEventListener('click',()=>{
+  const sheet=$('#patientQuickLogSheet');
+  sheet?.classList.contains('open')?closePatientQuickLog():openPatientQuickLog();
+});
+$('#patientQuickLogClose')?.addEventListener('click',closePatientQuickLog);
+$('#patientQuickLogBackdrop')?.addEventListener('click',closePatientQuickLog);
+$$('[data-quick-log]').forEach(b=>b.addEventListener('click',()=>{
+  closePatientQuickLog();
+  openQuickPatientRecord({quick:b.dataset.quickLog,kind:b.dataset.kind,unit:b.dataset.unit||'',step:b.dataset.step||'1'});
+}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePatientQuickLog()});
+
 function patientPageHeader(eyebrow,title,subtitle,action=''){
   return `<section class="patient-page-header"><div><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p>${subtitle}</p></div>${action}</section>`;
 }
@@ -5865,7 +5891,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.21';
+const HP_MVP_VERSION='0.13.22';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
