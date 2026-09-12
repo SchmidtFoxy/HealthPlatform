@@ -1,3 +1,13 @@
+## v0.11.3 — Disponibilidade para Treino
+
+- separa disposicao/motivacao de compatibilidade contextual com a sessao planejada;
+- cruza prontidao do dia, dor localizada, recuperacao recente e carga de treino sem criar score opaco;
+- introduz estados `DadosInsuficientes`, `RecuperacaoPrioritaria`, `Adaptar` e `CompativelComPlanejado`;
+- sinais de recuperacao/dor/carga prevalecem sobre motivacao isolada;
+- nao produz liberacao medica, diagnostico ou alteracao automatica do treino;
+- integra a leitura nas Homes do atleta e do profissional, sem migration nova;
+- suite de fumaca ampliada para 1024 verificacoes.
+
 
 ## v0.11.2 — Mapa Corporal Longitudinal
 

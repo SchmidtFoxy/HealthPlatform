@@ -99,6 +99,14 @@ public record PortalMapaCorporalLongitudinalResponse(
     string Estado, string Titulo, string Resumo, int PeriodoDias, int TotalRegistros, int RegioesObservadas, int RegioesRecorrentes,
     IReadOnlyCollection<PortalMapaCorporalLongitudinalRegiaoResponse> Regioes, string MensagemSeguranca);
 
+
+public record PortalCriterioDisponibilidadeTreinoResponse(
+    string Codigo, string Estado, string Titulo, string Valor, string Descricao);
+
+public record PortalDisponibilidadeTreinoResponse(
+    string Estado, string Titulo, string Resumo, string SessaoReferencia, bool ExigeAdaptacao,
+    IReadOnlyCollection<PortalCriterioDisponibilidadeTreinoResponse> Criterios, string Acao, string MensagemSeguranca);
+
 public record PortalProntidaoDiariaResponse(
     Guid Id,
     DateOnly Data,
@@ -478,6 +486,7 @@ public record PortalPacienteHomeResponse(
     PortalPainelMedicinaEsporteResponse PainelMedicinaEsporte,
     PortalAlertasClinicoEsportivosResponse AlertasClinicoEsportivos,
     PortalMapaCorporalLongitudinalResponse MapaCorporalLongitudinal,
+    PortalDisponibilidadeTreinoResponse DisponibilidadeTreino,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

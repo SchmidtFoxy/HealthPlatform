@@ -189,6 +189,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var painelMedicinaEsporte = PainelMedicinaEsporteService.Montar(prontidao, dorCorporal, tendenciaRecuperacao, cargaTreino, performance, adesaoNutricional, hidratacaoContextual, ciclo, registroProgressao, perfilRespostaAtleta);
         var alertasClinicoEsportivos = AlertasClinicoEsportivosService.Montar(painelMedicinaEsporte);
         var mapaCorporalLongitudinal = await MapaCorporalLongitudinalService.MontarAsync(db, pacienteId, dia, ct);
+        var disponibilidadeTreino = DisponibilidadeTreinoService.Montar(prontidao, dorCorporal, tendenciaRecuperacao, cargaTreino, estrategiaDoDia);
         var coachDiario = CoachDiarioService.Montar(prontidao, dorCorporal, estrategiaDoDia, tendenciaRecuperacao, cargaTreino, performance, execucaoDoDia, ciclo, adesaoNutricional, hidratacaoContextual);
 
         return Ok(new PortalPacienteHomeResponse(
@@ -231,6 +232,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             painelMedicinaEsporte,
             alertasClinicoEsportivos,
             mapaCorporalLongitudinal,
+            disponibilidadeTreino,
             estrategiaDoDia,
             tendenciaRecuperacao,
             cargaTreino,
