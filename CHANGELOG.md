@@ -1,3 +1,14 @@
+## v0.12.0 — Motor de Carga Esportiva Individualizado
+
+- usa ate 56 dias de sessoes reais para construir referencia semanal do proprio atleta;
+- compara a carga atual de 7 dias com mediana e quartis descritivos das semanas ativas anteriores;
+- exige historico minimo antes de formar uma referencia individual;
+- recuperacao e resposta a sessao prevalecem sobre uma leitura isolada da posicao estatistica da carga;
+- abaixo/dentro/acima do historico recente sao descricoes, nao zonas biologicas de seguranca;
+- nao calcula risco de lesao, carga ideal ou prescricao automatica;
+- integra atleta e profissional sem migration nova; schema permanece 38/38;
+- suite de fumaca ampliada para 1048 verificacoes.
+
 ## v0.11.5 — Resposta a Sessao
 
 - acompanha a resposta observada apos a ultima sessao concluida usando o check-in do dia seguinte como referencia principal;
