@@ -1,3 +1,12 @@
+## v0.12.4 — Retorno Gradual após Pausa/Dor
+
+- Nova leitura de retorno gradual ancorada em sessões realmente executadas e registros corporais persistidos.
+- Detecta pausas observáveis de 7+ dias no histórico recente sem presumir lesão ou causa.
+- Integra readiness contextual, resposta à sessão, carga individualizada e mapa corporal longitudinal.
+- Estados: SemRetornoAtivo, DadosInsuficientes, RetornoEmPreparacao, RetornoEmCurso e RevisarAntesRetorno.
+- Progressão permanece supervisionada: um passo por vez, sem compensação de sessões perdidas e sem aumento automático de carga.
+- Sem migration nova; schema permanece 38/38.
+
 ## v0.12.3 — Readiness Contextual ao Treino do Dia
 
 - relaciona a prontidao do dia com a sessao realmente prevista e sua demanda de RPE;

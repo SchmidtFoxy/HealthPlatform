@@ -421,6 +421,16 @@ public record PortalReadinessContextualTreinoResponse(
     int? ProntidaoScore, string? RecomendacaoProntidao, bool CompativelComSessao, bool ExigeAdaptacao,
     IReadOnlyCollection<PortalCriterioReadinessContextualResponse> Criterios, string Acao, string MensagemSeguranca);
 
+
+public record PortalRetornoGradualCriterioResponse(
+    string Codigo, string Estado, string Titulo, string Evidencia);
+
+public record PortalRetornoGradualResponse(
+    string Estado, string Titulo, string Resumo, string MotivoContexto, int? DiasPausaDetectada,
+    DateTime? UltimaSessaoUtc, DateTime? SessaoRetornoUtc, bool DorRecente, bool PodeAvancarEtapa,
+    string ContextoReadiness, string ContextoRespostaSessao, string ContextoCarga,
+    IReadOnlyCollection<PortalRetornoGradualCriterioResponse> Criterios, string Acao, string MensagemSeguranca);
+
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
     int AjusteCargaPercentual, int AjusteVolumePercentual, string OrientacaoTreino,
@@ -543,6 +553,7 @@ public record PortalPacienteHomeResponse(
     PortalBlocoTreinamentoResponse BlocoTreinamento,
     PortalDeloadRecuperacaoPlanejadaResponse DeloadRecuperacaoPlanejada,
     PortalReadinessContextualTreinoResponse ReadinessContextualTreino,
+    PortalRetornoGradualResponse RetornoGradual,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,
