@@ -1053,3 +1053,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Registros rápidos de escala (dor/energia) reutilizam o mesmo controle de toque.
 - Inputs mobile usam altura mínima de 50px e fonte de 16px para evitar zoom automático no iOS.
 - Sem alteração de schema; permanece 38/38.
+
+
+## v0.13.7 — Mobile Feedback Experience
+- Padroniza feedback de sucesso e erro com componente visual mais legível e acessível.
+- Portal do atleta passa a exibir loading contextual por área, em vez de skeleton genérico.
+- Transições curtas entre áreas do dock melhoram continuidade sem transformar a navegação em animação decorativa.
+- Toasts mobile respeitam o dock inferior e a safe-area do dispositivo.
+- Adiciona resposta tátil visual aos principais alvos de toque e suporte a `prefers-reduced-motion`.
+- Sem alteração de schema; permanece 38/38.

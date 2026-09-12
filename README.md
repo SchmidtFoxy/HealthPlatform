@@ -167,3 +167,7 @@ A experiência mobile agora trata estados vazios como parte real do produto. Cab
 
 ### v0.13.6 — Mobile Interaction Experience
 O portal do atleta passa a tratar registros e check-ins como interações nativas de celular: bottom sheets, ações fixas, safe-area e controles 0–10 por slider. A versão mantém schema 38/38 e não altera regras clínicas.
+
+
+### v0.13.7 — Mobile Feedback Experience
+A experiência mobile do atleta agora comunica melhor o que está acontecendo: carregamentos são contextuais, sucesso/erro usam feedback padronizado, a troca entre áreas tem transição curta e os avisos ficam acima do dock/safe-area. Nenhuma migration foi adicionada; o schema permanece 38/38.

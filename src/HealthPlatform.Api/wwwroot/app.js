@@ -11,7 +11,18 @@ const localDateTimeValue=(d=new Date())=>{const x=new Date(d.getTime()-d.getTime
 const val=(form,name)=>{const e=form.elements[name];return e&&e.value!==''?e.value:null};
 const dec=(form,name)=>{const v=val(form,name);return v==null?null:Number(String(v).replace(',','.'))};
 const integer=(form,name)=>{const v=val(form,name);return v==null?null:Number.parseInt(v,10)};
-function toast(message,error=false){const e=$('#toast');e.textContent=message;e.className=`toast show${error?' error':''}`;clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.className='toast',3000)}
+function toast(message,error=false){
+  const e=$('#toast');
+  if(!e)return;
+  const kind=error?'error':'success';
+  const title=error?'Não foi possível concluir':'Tudo certo';
+  e.innerHTML=`<span class="toast-icon" aria-hidden="true">${error?'!':'✓'}</span><span class="toast-copy"><strong>${title}</strong><small>${esc(message)}</small></span>`;
+  e.className=`toast show ${kind}`;
+  e.setAttribute('role',error?'alert':'status');
+  e.setAttribute('aria-live',error?'assertive':'polite');
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>{e.className='toast';e.removeAttribute('role')},3400);
+}
 async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout();throw new Error('Sua sessão expirou.')}if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
 function setLoading(){content.innerHTML='<div class="card"><div class="skeleton" style="width:35%;margin-bottom:18px"></div><div class="skeleton" style="height:180px"></div></div>'}
 function showApp(){
@@ -2129,22 +2140,24 @@ $('#patientLogoutButton')?.addEventListener('click',logout);
 
 
 // ===== v0.3.27 — Portal do paciente completo =====
+function patientSectionLoading(view='inicio'){
+  const labels={inicio:'Preparando seu dia',plano:'Carregando seu plano',treino:'Preparando seu treino',metas:'Atualizando suas metas',diario:'Abrindo seu diário',evolucao:'Carregando sua evolução',exames:'Buscando seus exames',solicitacoes:'Buscando solicitações',medicamentos:'Carregando medicamentos',jornada:'Montando sua jornada'};
+  return `<section class="patient-loading-state" aria-label="${esc(labels[view]||'Carregando')}"><div class="patient-loading-orb" aria-hidden="true"><i></i></div><strong>${esc(labels[view]||'Carregando')}</strong><span>Um instante...</span><div class="patient-loading-lines"><i></i><i></i><i></i></div></section>`;
+}
 async function loadPatientSection(view='inicio'){
   const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada'];
   if(!allowed.includes(view))view='inicio';
   $$('#patientPortalNav [data-patient-view]').forEach(b=>b.classList.toggle('active',b.dataset.patientView===view));
   const host=$('#patientPortalContent');
-  host.innerHTML='<div class="card"><div class="skeleton" style="height:220px"></div></div>';
-  if(view==='inicio')return loadMyPatientPortal();
-  if(view==='plano')return loadPatientPlan();
-  if(view==='treino')return loadPatientWorkout();
-  if(view==='metas')return loadPatientGoals();
-  if(view==='diario')return loadPatientDiary();
-  if(view==='evolucao')return loadPatientEvolution();
-  if(view==='exames')return loadPatientLabs();
-  if(view==='solicitacoes')return loadPatientRequests();
-  if(view==='medicamentos')return loadPatientMedications();
-  if(view==='jornada')return loadPatientJourney();
+  host?.setAttribute('aria-busy','true');
+  if(host)host.innerHTML=patientSectionLoading(view);
+  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney};
+  try{
+    await loaders[view]();
+    if(host){host.classList.remove('patient-view-enter');void host.offsetWidth;host.classList.add('patient-view-enter')}
+  }finally{
+    host?.removeAttribute('aria-busy');
+  }
 }
 
 $$('#patientPortalNav [data-patient-view]').forEach(b=>b.addEventListener('click',()=>loadPatientSection(b.dataset.patientView).catch(e=>toast(e.message,true))));
@@ -5566,7 +5579,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.13.6';
+const HP_MVP_VERSION='0.13.7';
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;
