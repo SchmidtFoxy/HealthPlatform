@@ -413,6 +413,14 @@ public record PortalDeloadRecuperacaoPlanejadaResponse(
     int? SemanaAtual, string PosicaoCargaAtual, string ContextoRespostaSessao, string ContextoAdesao,
     IReadOnlyCollection<string> Sinais, string MensagemSeguranca);
 
+public record PortalCriterioReadinessContextualResponse(
+    string Codigo, string Estado, string Titulo, string Evidencia);
+
+public record PortalReadinessContextualTreinoResponse(
+    string Estado, string Titulo, string Resumo, string SessaoPlanejada, string DemandaSessao,
+    int? ProntidaoScore, string? RecomendacaoProntidao, bool CompativelComSessao, bool ExigeAdaptacao,
+    IReadOnlyCollection<PortalCriterioReadinessContextualResponse> Criterios, string Acao, string MensagemSeguranca);
+
 public record PortalEstrategiaDiaResponse(
     string PerfilDia, string IntensidadeSugerida, int RpeMin, int RpeMax,
     int AjusteCargaPercentual, int AjusteVolumePercentual, string OrientacaoTreino,
@@ -534,6 +542,7 @@ public record PortalPacienteHomeResponse(
     PortalCargaIndividualizadaResponse CargaIndividualizada,
     PortalBlocoTreinamentoResponse BlocoTreinamento,
     PortalDeloadRecuperacaoPlanejadaResponse DeloadRecuperacaoPlanejada,
+    PortalReadinessContextualTreinoResponse ReadinessContextualTreino,
     PortalEstrategiaDiaResponse EstrategiaDoDia,
     PortalTendenciaRecuperacaoResponse TendenciaRecuperacao,
     PortalCargaTreinoResponse CargaTreino,

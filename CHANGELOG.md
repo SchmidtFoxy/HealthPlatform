@@ -1,3 +1,14 @@
+## v0.12.3 — Readiness Contextual ao Treino do Dia
+
+- relaciona a prontidao do dia com a sessao realmente prevista e sua demanda de RPE;
+- classifica a demanda em recuperacao, leve, moderada ou exigente sem criar uma nova prescricao;
+- a mesma prontidao pode ser compativel com uma sessao leve e exigir adaptacao diante de uma sessao exigente;
+- deload/recuperacao planejada e disponibilidade do dia prevalecem sobre motivacao ou score isolado;
+- ausencia de sessao ou check-in nao gera treino artificial nem aumento de exigencia;
+- nao e liberacao medica, nao diagnostica lesao e nao altera treino automaticamente;
+- integra atleta e profissional sem migration nova; schema permanece 38/38;
+- suite de fumaca ampliada para 1072 verificacoes.
+
 # HealthPlatform v0.12.2 — Deload & Recuperação Planejada
 
 - Diferencia redução deliberada de carga de queda involuntária de adesão.
