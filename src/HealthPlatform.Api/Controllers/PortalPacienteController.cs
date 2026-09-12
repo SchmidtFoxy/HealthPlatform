@@ -197,6 +197,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var deloadRecuperacaoPlanejada = DeloadRecuperacaoPlanejadaService.Montar(blocoTreinamento, cargaIndividualizada, respostaSessao, radarAdesao);
         var readinessContextualTreino = ReadinessContextualTreinoService.Montar(prontidao, estrategiaDoDia, disponibilidadeTreino, deloadRecuperacaoPlanejada);
         var retornoGradual = await RetornoGradualService.MontarAsync(db, pacienteId, dia, mapaCorporalLongitudinal, readinessContextualTreino, respostaSessao, cargaIndividualizada, ct);
+        var gamificacao2 = Gamificacao2Service.Montar(gamificacao, readinessContextualTreino, deloadRecuperacaoPlanejada, respostaSessao, retornoGradual);
         var relatorioEsportivoProfissional = RelatorioEsportivoProfissionalService.Montar(
             dia, ciclo, painelMedicinaEsporte, alertasClinicoEsportivos, mapaCorporalLongitudinal,
             cargaIndividualizada, blocoTreinamento, deloadRecuperacaoPlanejada, readinessContextualTreino,
@@ -210,6 +211,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             prontidao,
             dorCorporal,
             gamificacao,
+            gamificacao2,
             ciclo,
             metasDoCiclo,
             checkpointDoCiclo,

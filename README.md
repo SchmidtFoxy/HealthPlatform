@@ -1,3 +1,13 @@
+## v0.13.0 — Gamificacao 2.0
+
+- inaugura uma camada de gamificacao orientada a adequacao, consistencia, recuperacao planejada e retorno gradual;
+- explicita quando XP recente veio de comportamento alinhado ou de excesso;
+- descanso planejado e adaptacao coerente contam como progresso contextual;
+- XP/streak nao viram obrigacao de treinar nem justificativa para aumentar carga;
+- nao cria XP negativo, score de sofrimento ou recompensa por intensidade bruta;
+- integra a leitura nas Homes do atleta e do profissional;
+- preserva schema 38/38, sem migration nova.
+
 ## v0.12.5 — Relatório Esportivo Profissional
 
 A v0.12.5 consolida os principais eixos da medicina do esporte em um relatório longitudinal rastreável para revisão profissional. O relatório organiza ciclo/bloco, carga e recuperação, dor, readiness, sessão planejada versus executada, resposta pós-sessão, progressão supervisionada, retorno gradual e suporte diário, preservando as evidências de origem.
