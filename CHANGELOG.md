@@ -1,4 +1,14 @@
-﻿### v0.14.3-r4 — Rich Athlete Demo Seed Audit
+# v0.14.4 — Mobile Forms & Inputs
+
+- Consolida a etapa de formulários da série mobile 0.14.x.
+- Form grids do portal do atleta passam a uma coluna em telas pequenas, incluindo layouts `two`, `three` e `span-2`.
+- Inputs, selects, textareas, checkbox, radio e range recebem dimensões e estados mobile consistentes.
+- Ações de formulários em sheets/modais ficam persistentes e respeitam safe-area.
+- Enhancement progressivo adiciona `inputmode`, `aria-required`, `enterkeyhint` e reposicionamento do campo focado para o teclado virtual.
+- Preserva regras esportivas, endpoints e persistência; sem migration nova, schema 38/38.
+- Smoke test ampliado para 1320 verificações.
+
+### v0.14.3-r4 — Rich Athlete Demo Seed Audit
 
 - Mantem a versao funcional 0.14.3 e o schema 38/38.
 - Corrige a janela historica das metas: os 56 dias agora ficam integralmente dentro do periodo configurado.
@@ -1317,3 +1327,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Torna `POPULAR-LUCATTI-DEMO-RICO.ps1` ASCII-safe para Windows PowerShell 5.1 e envia JSON explicitamente em UTF-8.
 - Remove caracteres especiais dos payloads de treino demonstrativo para evitar falha de desserializacao em ambientes Windows PowerShell legados.
 - Mantem `VERSION.txt = 0.14.3`; nenhuma alteracao de schema ou funcionalidade de produto.
+
+
+## v0.14.4-r1 — PowerShell 5.1 Test Runner Compatibility
+- `TESTAR.ps1` regravado em UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
+- Corrige ParserError causado por caracteres Unicode presentes nos tokens de validacao (ex.: seta `→`).
+- Nenhuma alteracao funcional, de API, banco ou schema. `VERSION.txt` permanece `0.14.4`.

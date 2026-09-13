@@ -5923,11 +5923,44 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.3';
+const HP_MVP_VERSION='0.14.4';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
 const HP_MOBILE_DATA_VIEWS='v0.14.3';
+const HP_MOBILE_FORMS_INPUTS='v0.14.4';
+
+function enhancePatientMobileFormControls(root=document){
+  const scope=root?.querySelectorAll?root:document;
+  scope.querySelectorAll('.patient-portal-shell input, .patient-portal-shell textarea, .patient-portal-shell select, .patient-mobile-form input, .patient-mobile-form textarea, .patient-mobile-form select').forEach(control=>{
+    if(control.dataset.hpMobileEnhanced==='true')return;
+    control.dataset.hpMobileEnhanced='true';
+    const type=(control.getAttribute('type')||'').toLowerCase();
+    if(type==='number'){
+      const step=control.getAttribute('step');
+      control.setAttribute('inputmode',step && !['1','1.0'].includes(step)?'decimal':'numeric');
+    }
+    if(type==='tel')control.setAttribute('inputmode','tel');
+    if(type==='email')control.setAttribute('inputmode','email');
+    if(type==='url')control.setAttribute('inputmode','url');
+    if(control.tagName==='TEXTAREA')control.setAttribute('enterkeyhint','done');
+    if(control.required)control.setAttribute('aria-required','true');
+  });
+}
+
+const hpMobileFormObserver=new MutationObserver(records=>{
+  for(const record of records)for(const node of record.addedNodes){if(node.nodeType===1)enhancePatientMobileFormControls(node)}
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  enhancePatientMobileFormControls(document);
+  hpMobileFormObserver.observe(document.body,{childList:true,subtree:true});
+});
+document.addEventListener('focusin',e=>{
+  const control=e.target.closest?.('.patient-portal-shell input, .patient-portal-shell textarea, .patient-portal-shell select, .patient-mobile-form input, .patient-mobile-form textarea, .patient-mobile-form select');
+  if(!control || window.innerWidth>720)return;
+  window.setTimeout(()=>control.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}),120);
+});
+
 
 function hpMvpChecklistItem(icon,title,text){
   return `<article class="mvp-guide-item"><span>${icon}</span><div><strong>${esc(title)}</strong><small>${esc(text)}</small></div></article>`;

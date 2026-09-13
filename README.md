@@ -1,4 +1,19 @@
-﻿# HealthPlatform v0.14.3 — Mobile Data Views
+# HealthPlatform v0.14.4 — Mobile Forms & Inputs
+
+> Versão funcional atual: **v0.14.4 — Mobile Forms & Inputs**.
+
+## v0.14.4 — Mobile Forms & Inputs
+
+- Converte formulários do portal do atleta para fluxo mobile de uma coluna, evitando campos comprimidos.
+- Padroniza inputs, selects e textareas com alvos de toque de 50–52 px, foco visível e estados disabled/erro.
+- Amplia checkbox, radio e range para interação por toque.
+- Mantém ações de salvar/cancelar acessíveis em sheets/modais e respeita safe-area.
+- Aplica `inputmode` contextual a campos numéricos, email, telefone e URL, inclusive em formulários renderizados dinamicamente.
+- Ao focar um campo no celular, reposiciona o controle para reduzir sobreposição pelo teclado virtual.
+- Nenhuma migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1320 verificações.
+
+# HealthPlatform v0.14.3 — Mobile Data Views
 
 > Versão funcional atual: **v0.14.3 — Mobile Data Views**.
 
@@ -375,3 +390,9 @@ No portal do atleta, a Home mobile agora muda sua hierarquia de acordo com o est
 
 ### Revisao v0.14.3-r3 - seed rico
 Se uma tentativa anterior do `POPULAR-LUCATTI-DEMO-RICO.ps1` criou as metas mas falhou durante o treino, nao e necessario limpar o banco. A revisao r3 corrige o periodo das metas existentes e retoma a populacao de forma idempotente.
+
+
+## v0.14.4-r1 — PowerShell 5.1 Test Runner Compatibility
+- `TESTAR.ps1` regravado em UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
+- Corrige ParserError causado por caracteres Unicode presentes nos tokens de validacao (ex.: seta `→`).
+- Nenhuma alteracao funcional, de API, banco ou schema. `VERSION.txt` permanece `0.14.4`.
