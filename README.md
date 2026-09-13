@@ -1,6 +1,17 @@
-# HealthPlatform v0.14.4 — Mobile Forms & Inputs
+# HealthPlatform v0.14.5 — Mobile Feedback States
 
-> Versão funcional atual: **v0.14.4 — Mobile Forms & Inputs**.
+> Versão funcional atual: **v0.14.5 — Mobile Feedback States**.
+
+
+## v0.14.5 — Mobile Feedback States
+
+- Consolida feedbacks de carregamento, erro, vazio, sucesso e submissão no portal mobile do atleta.
+- Erros de carregamento deixam de manter a tela presa no spinner e passam a oferecer `Tentar novamente`.
+- Registros rápidos do atleta mostram estado `Salvando...`, `aria-busy` e bloqueio contra envio duplicado.
+- Empty states do portal recebem superfície, semântica `status` e leitura mobile consistente.
+- Loading states passam a anunciar progresso com `role=status` / `aria-live=polite`.
+- Preserva regras esportivas, endpoints e persistência; sem migration nova, schema 38/38.
+- Smoke test ampliado para 1328 verificações.
 
 ## v0.14.4 — Mobile Forms & Inputs
 
@@ -396,3 +407,5 @@ Se uma tentativa anterior do `POPULAR-LUCATTI-DEMO-RICO.ps1` criou as metas mas 
 - `TESTAR.ps1` regravado em UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
 - Corrige ParserError causado por caracteres Unicode presentes nos tokens de validacao (ex.: seta `→`).
 - Nenhuma alteracao funcional, de API, banco ou schema. `VERSION.txt` permanece `0.14.4`.
+
+> Hotfix v0.14.5-r1: o `TESTAR.ps1` foi ajustado para reconhecer `0.14.5` como versao corrente no healthcheck e nas validacoes equivalentes, preservando compatibilidade com Windows PowerShell 5.1.

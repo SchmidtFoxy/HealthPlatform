@@ -23,6 +23,26 @@ function toast(message,error=false){
   clearTimeout(window.__toast);
   window.__toast=setTimeout(()=>{e.className='toast';e.removeAttribute('role')},3400);
 }
+function hpSetActionPending(button,pending=true,label='Salvando...'){
+  if(!button)return;
+  if(pending){
+    if(!button.dataset.hpIdleLabel)button.dataset.hpIdleLabel=button.textContent.trim();
+    button.disabled=true;
+    button.setAttribute('aria-busy','true');
+    button.classList.add('hp-action-pending');
+    button.innerHTML=`<span class="hp-action-spinner" aria-hidden="true"></span><span>${esc(label)}</span>`;
+  }else{
+    button.disabled=false;
+    button.removeAttribute('aria-busy');
+    button.classList.remove('hp-action-pending');
+    button.textContent=button.dataset.hpIdleLabel||'Salvar';
+    delete button.dataset.hpIdleLabel;
+  }
+}
+function hpPatientFeedbackState(kind='empty',title='Nada por aqui',message='',actionLabel=''){
+  const icon=kind==='error'?'!':kind==='success'?'✓':'•';
+  return `<section class="patient-feedback-state ${esc(kind)}" role="${kind==='error'?'alert':'status'}"><span class="patient-feedback-icon" aria-hidden="true">${icon}</span><div><strong>${esc(title)}</strong>${message?`<p>${esc(message)}</p>`:''}${actionLabel?`<button type="button" class="secondary patient-feedback-action">${esc(actionLabel)}</button>`:''}</div></section>`;
+}
 async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout();throw new Error('Sua sessão expirou.')}if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
 function setLoading(){content.innerHTML='<div class="card"><div class="skeleton" style="width:35%;margin-bottom:18px"></div><div class="skeleton" style="height:180px"></div></div>'}
 function showApp(){
@@ -2346,7 +2366,7 @@ function patientPortalModal(title,body,onSubmit){
   box.innerHTML=`<div class="patient-sheet-handle" aria-hidden="true"></div><div class="modal-heading"><span class="eyebrow">MEU ACOMPANHAMENTO</span><h2>${esc(title)}</h2><p>Registro rápido para manter seu acompanhamento atualizado.</p></div><form id="patientPortalForm" class="form-grid clinical-form patient-mobile-form">${body}<div class="span-2 form-actions patient-sheet-actions"><button class="secondary" type="button" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Salvar registro</button></div></form>`;
   $$('[data-scale-output]').forEach(out=>{const input=box.querySelector(`input[name="${out.dataset.scaleOutput}"]`);if(input){const sync=()=>{out.value=input.value;out.textContent=input.value};sync();input.addEventListener('input',sync)}});
   $('[data-close-clinical-form]').onclick=closeClinicalAction;
-  $('#patientPortalForm').onsubmit=async e=>{e.preventDefault();try{await onSubmit(e.target);closeClinicalAction();toast('Registro atualizado.');await loadMyPatientPortal()}catch(err){toast(err.message,true)}};
+  $('#patientPortalForm').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button[type=submit]');hpSetActionPending(b,true,'Salvando...');try{await onSubmit(e.target);closeClinicalAction();toast('Registro atualizado.');await loadMyPatientPortal()}catch(err){toast(err.message,true)}finally{if(b?.isConnected)hpSetActionPending(b,false)}};
 }
 
 function openMyDiaryForm(){
@@ -2394,7 +2414,7 @@ $('#patientLogoutButton')?.addEventListener('click',logout);
 // ===== v0.3.27 — Portal do paciente completo =====
 function patientSectionLoading(view='inicio'){
   const labels={inicio:'Preparando seu dia',plano:'Carregando seu plano',treino:'Preparando seu treino',metas:'Atualizando suas metas',diario:'Abrindo seu diário',evolucao:'Carregando sua evolução',exames:'Buscando seus exames',solicitacoes:'Buscando solicitações',medicamentos:'Carregando medicamentos',jornada:'Montando sua jornada'};
-  return `<section class="patient-loading-state" aria-label="${esc(labels[view]||'Carregando')}"><div class="patient-loading-orb" aria-hidden="true"><i></i></div><strong>${esc(labels[view]||'Carregando')}</strong><span>Um instante...</span><div class="patient-loading-lines"><i></i><i></i><i></i></div></section>`;
+  return `<section class="patient-loading-state" role="status" aria-live="polite" aria-label="${esc(labels[view]||'Carregando')}"><div class="patient-loading-orb" aria-hidden="true"><i></i></div><strong>${esc(labels[view]||'Carregando')}</strong><span>Um instante...</span><div class="patient-loading-lines" aria-hidden="true"><i></i><i></i><i></i></div></section>`;
 }
 async function loadPatientSection(view='inicio'){
   const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada'];
@@ -2407,6 +2427,12 @@ async function loadPatientSection(view='inicio'){
   try{
     await loaders[view]();
     if(host){host.classList.remove('patient-view-enter');void host.offsetWidth;host.classList.add('patient-view-enter')}
+  }catch(err){
+    if(host){
+      host.innerHTML=hpPatientFeedbackState('error','Não foi possível carregar esta área',String(err?.message||'Tente novamente em instantes.'),'Tentar novamente');
+      host.querySelector('.patient-feedback-action')?.addEventListener('click',()=>loadPatientSection(view).catch(e=>toast(e.message,true)));
+    }
+    throw err;
   }finally{
     host?.removeAttribute('aria-busy');
   }
@@ -5923,12 +5949,13 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.4';
+const HP_MVP_VERSION='0.14.5';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
 const HP_MOBILE_DATA_VIEWS='v0.14.3';
 const HP_MOBILE_FORMS_INPUTS='v0.14.4';
+const HP_MOBILE_FEEDBACK_STATES='v0.14.5';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
@@ -5959,6 +5986,26 @@ document.addEventListener('focusin',e=>{
   const control=e.target.closest?.('.patient-portal-shell input, .patient-portal-shell textarea, .patient-portal-shell select, .patient-mobile-form input, .patient-mobile-form textarea, .patient-mobile-form select');
   if(!control || window.innerWidth>720)return;
   window.setTimeout(()=>control.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}),120);
+});
+
+function enhancePatientFeedbackStates(root=document){
+  const scope=root?.querySelectorAll?root:document;
+  const selector='.patient-portal-content .empty, .patient-action-sheet .empty';
+  const items=[...(scope.matches?.(selector)?[scope]:[]),...scope.querySelectorAll(selector)];
+  items.forEach(el=>{
+    if(el.dataset.hpFeedbackEnhanced==='true')return;
+    el.dataset.hpFeedbackEnhanced='true';
+    el.classList.add('patient-empty-state');
+    el.setAttribute('role','status');
+    el.setAttribute('aria-live','polite');
+  });
+}
+const hpFeedbackObserver=new MutationObserver(records=>{
+  for(const record of records)for(const node of record.addedNodes){if(node.nodeType===1)enhancePatientFeedbackStates(node)}
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  enhancePatientFeedbackStates(document);
+  hpFeedbackObserver.observe(document.body,{childList:true,subtree:true});
 });
 
 

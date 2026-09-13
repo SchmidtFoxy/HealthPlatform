@@ -1,3 +1,13 @@
+# v0.14.5 — Mobile Feedback States
+
+- Consolida estados de carregamento, erro, vazio, sucesso e envio no portal mobile.
+- Erros de carregamento ganham estado persistente com ação `Tentar novamente`, evitando telas presas em loading.
+- Registros rápidos do atleta usam `aria-busy`, spinner e bloqueio de envio duplicado enquanto salvam.
+- Empty states recebem semântica acessível e superfície visual consistente.
+- Loading states passam a usar `role=status` e `aria-live=polite`.
+- Mantém schema 38/38 e não altera endpoints ou regras esportivas.
+- Smoke test ampliado para 1328 verificações.
+
 # v0.14.4 — Mobile Forms & Inputs
 
 - Consolida a etapa de formulários da série mobile 0.14.x.
@@ -1333,3 +1343,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - `TESTAR.ps1` regravado em UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
 - Corrige ParserError causado por caracteres Unicode presentes nos tokens de validacao (ex.: seta `→`).
 - Nenhuma alteracao funcional, de API, banco ou schema. `VERSION.txt` permanece `0.14.4`.
+
+### v0.14.5-r1 - PowerShell 5.1 / current-version smoke-test fix
+- Corrige validacoes do `TESTAR.ps1` que ainda comparavam a versao corrente com `0.14.4` apos o bump funcional para `0.14.5`.
+- Preserva validacoes historicas e nomes de artefatos de releases anteriores.
+- Mantem `TESTAR.ps1` em UTF-8 com BOM para Windows PowerShell 5.1.
+- Sem alteracao de schema, API ou regra funcional.
