@@ -1,3 +1,10 @@
+## v0.16.4 — Weekly Challenges
+- Novo resumo contextual de desafios da semana na Home do atleta.
+- Reutiliza `gamificacao.desafiosSemana`, prontidão e contexto semanal.
+- Recuperação planejada e hábitos básicos podem representar progresso semanal.
+- Sem compensação de treino perdido e sem bônus por intensidade extra.
+- Schema preservado em 38/38; nenhuma migration nova.
+
 ## v0.16.3-r1 - Smoke Test Current Version Fix
 
 - Corrige referencias de versao corrente ainda presas em `0.16.2` no `TESTAR.ps1`.

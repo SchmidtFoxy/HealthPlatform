@@ -1,6 +1,6 @@
-# HealthPlatform — v0.16.3 Achievement Families
+# HealthPlatform — v0.16.4 Weekly Challenges
 
-> Versão funcional atual: **v0.16.3 — Achievement Families**.
+> Versão funcional atual: **v0.16.4 — Weekly Challenges**.
 A Gamificação 3.0 agora organiza conquistas recentes em cinco famílias comportamentais — **Consistência, Recuperação, Execução, Evolução e Hábitos**. A leitura usa o sistema de conquistas já existente, sem criar badges paralelos, e deixa explícito que recuperação planejada e hábitos sustentáveis podem representar progresso tanto quanto performance.
 
 A Gamificação 3.0 agora interpreta a sequência do atleta pela **qualidade da adesão**, não apenas pela contagem de dias. O Streak Intelligence combina consistência, dias ativos, missões e contexto de recuperação para diferenciar sequência sustentável, construção, retomada e sequência protegida. Recuperação planejada não vira falha, e treino extra não é necessário para preservar streak.
@@ -522,3 +522,12 @@ A camada de missões agora reorganiza as missões contextuais já existentes con
 ## v0.16.3 — Achievement Families
 Conquistas recentes passam a ser organizadas por famílias de comportamento (Consistência, Recuperação, Execução, Evolução e Hábitos), usando a gamificação existente sem alterar schema ou criar badges paralelos.
 > Revisao v0.16.3-r1: corrige apenas referencias de versao corrente no smoke test para `0.16.3`; sem mudanca funcional ou de schema.
+
+
+## v0.16.4 — Weekly Challenges
+
+- adiciona desafio semanal contextual sobre `gamificacao.desafiosSemana`;
+- resume progresso semanal sem criar uma segunda fonte de missões;
+- protege semanas de recuperação e reconhece adesão útil;
+- não exige compensação de treino perdido nem recompensa intensidade extra;
+- mantém schema 38/38 e não adiciona migration.

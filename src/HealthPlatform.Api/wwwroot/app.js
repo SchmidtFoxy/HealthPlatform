@@ -488,6 +488,30 @@ function hpDynamicMissions(d){
   </section>`;
 }
 
+function hpWeeklyChallenges(d){
+  const game=d?.gamificacao||{};
+  const readiness=d?.prontidaoDiaria||{};
+  const context=d?.missoesContextuais2||{};
+  const weekly=d?.planejamentoSemanal||{};
+  const summary=d?.resumoSemanal||{};
+  const challenges=Array.isArray(game.desafiosSemana)?game.desafiosSemana:[];
+  const recommendation=String(readiness.recomendacaoTreino||'');
+  const protectedWeek=['Recuperacao','Leve'].includes(recommendation)||['SemPressaoHoje','RecuperacaoProtegida'].includes(String(context.estado||''))||['Revisar','Proteger'].includes(String(summary.estado||weekly.estado||''));
+  const done=challenges.filter(x=>x.concluido).length;
+  const total=challenges.length;
+  const progress=total?Math.round(challenges.reduce((acc,x)=>acc+Math.min(1,Number(x.progresso||0)/Math.max(1,Number(x.meta||1))),0)/total*100):0;
+  const theme=protectedWeek?'Proteção e recuperação':Number(game.consistenciaScore||0)>=80?'Consistência sustentável':'Construção da semana';
+  const headline=protectedWeek?'Seu desafio é proteger a semana':done===total&&total>0?'Desafio semanal consolidado':'Uma semana boa é feita de ações repetíveis';
+  const guidance=protectedWeek?'Recuperação planejada, check-ins e hábitos básicos contam. Não há missão de compensar carga perdida.':'O desafio semanal valoriza adesão útil. Não é necessário aumentar intensidade para completar a semana.';
+  const ranked=[...challenges].sort((a,b)=>Number(a.concluido)-Number(b.concluido)||((Number(b.progresso||0)/Math.max(1,Number(b.meta||1)))-(Number(a.progresso||0)/Math.max(1,Number(a.meta||1))))).slice(0,3);
+  return `<section class="weekly-challenges-intelligent ${protectedWeek?'protected':'active'}" aria-label="Desafio semanal contextual">
+    <div class="weekly-challenges-intelligent-head"><div><span class="eyebrow">WEEKLY CHALLENGES</span><h3>${esc(headline)}</h3><p>${esc(guidance)}</p></div><div class="weekly-challenges-progress" role="img" aria-label="Progresso semanal ${progress} por cento"><strong>${progress}%</strong><span>${done}/${total||0}</span></div></div>
+    <div class="weekly-challenges-theme"><small>FOCO DA SEMANA</small><strong>${esc(theme)}</strong><span>${protectedWeek?'Manter o plano de recuperação também é cumprir o desafio.':'Complete o que está alinhado ao seu contexto; excesso não rende progresso extra.'}</span></div>
+    ${ranked.length?`<div class="weekly-challenges-steps">${ranked.map((x,i)=>{const pct=Math.min(100,Math.round((Number(x.progresso||0)/Math.max(1,Number(x.meta||1)))*100));return `<article class="${x.concluido?'done':''}"><span>${x.concluido?'✓':i+1}</span><div><strong>${esc(x.titulo||'Desafio')}</strong><small>${Math.min(Number(x.progresso||0),Number(x.meta||0))}/${Number(x.meta||0)} • ${pct}%${x.recompensaXp?` • +${Number(x.recompensaXp)} XP`:''}</small><div><i style="width:${pct}%"></i></div></div></article>`}).join('')}</div>`:`<div class="weekly-challenges-empty"><strong>Sem desafio obrigatório agora</strong><span>Continue registrando o dia; o sistema não cria pressão artificial apenas para manter engajamento.</span></div>`}
+    <div class="weekly-challenges-intelligent-footer"><span>Desafios semanais não substituem o plano profissional e nunca pedem compensação de treino perdido.</span><button type="button" class="secondary" id="weeklyChallengesDetails">Ver semana completa <span>→</span></button></div>
+  </section>`;
+}
+
 function hpAchievementFamilies(d){
   const game=d?.gamificacao||{};
   const achievements=Array.isArray(game.conquistasRecentes)?game.conquistasRecentes:[];
@@ -2349,6 +2373,7 @@ async function loadMyPatientPortal(){
     ${hpStreakIntelligence(d)}
     ${hpDynamicMissions(d)}
     ${hpAchievementFamilies(d)}
+    ${hpWeeklyChallenges(d)}
     ${hpGamification2AthleteCard(d.gamificacao2)}
     <section class="card athlete-progression-card">
       <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
@@ -2516,6 +2541,7 @@ async function loadMyPatientPortal(){
   if($('#streakIntelligenceDetails'))$('#streakIntelligenceDetails').onclick=()=>{const target=$('.consistency-compass');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});else{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}}};
   if($('#dynamicMissionsDetails'))$('#dynamicMissionsDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure)disclosure.open=true;requestAnimationFrame(()=>{const target=$('.contextual-missions-card')||$('.weekly-challenges-card');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});});};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
+  if($('#weeklyChallengesDetails'))$('#weeklyChallengesDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-review')||target.querySelector('.weekly-summary-card')||target.querySelector('.weekly-plan-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#weeklyReviewAction'))$('#weeklyReviewAction').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-summary-card')||target.querySelector('.weekly-trend-card')||target.querySelector('.weekly-plan-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#athleteProgressStoryAction'))$('#athleteProgressStoryAction').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
   if($('#trainingLoadSnapshotDetails'))$('#trainingLoadSnapshotDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.individualized-load-athlete-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
@@ -6336,7 +6362,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.16.3';
+const HP_MVP_VERSION='0.16.4';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6358,6 +6384,7 @@ const HP_ATHLETE_LEVEL_SYSTEM='v0.16.0';
 const HP_STREAK_INTELLIGENCE='v0.16.1';
 const HP_DYNAMIC_MISSIONS='v0.16.2';
 const HP_ACHIEVEMENT_FAMILIES='v0.16.3';
+const HP_WEEKLY_CHALLENGES='v0.16.4';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
