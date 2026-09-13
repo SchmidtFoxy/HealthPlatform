@@ -488,6 +488,33 @@ function hpDynamicMissions(d){
   </section>`;
 }
 
+function hpAchievementFamilies(d){
+  const game=d?.gamificacao||{};
+  const achievements=Array.isArray(game.conquistasRecentes)?game.conquistasRecentes:[];
+  const families=[
+    {key:'consistencia',icon:'🔥',title:'Consistência',hint:'sequência, presença e adesão repetível',rx:/(consist|streak|sequ[eê]ncia|dias|rotina|presen[cç]a|ader[eê]ncia)/i},
+    {key:'recuperacao',icon:'♻',title:'Recuperação',hint:'respeito aos sinais e recuperação bem executada',rx:/(recuper|descans|sono|dor|deload|retom|prote[cç])/i},
+    {key:'execucao',icon:'✓',title:'Execução',hint:'ações concluídas conforme o plano',rx:/(treino|execu|sess[aã]o|miss[aã]o|meta|plano|check.?in)/i},
+    {key:'evolucao',icon:'↗',title:'Evolução',hint:'marcas, progressão e melhora longitudinal',rx:/(progress|evolu|record|pr\b|marca|nível|nivel|xp|performance)/i},
+    {key:'habitos',icon:'◎',title:'Hábitos',hint:'hidratação, alimentação e autocuidado diário',rx:/(hidrata|[aá]gua|aliment|nutri|peso|h[aá]bito|di[aá]rio)/i}
+  ];
+  const grouped=Object.fromEntries(families.map(f=>[f.key,[]]));
+  achievements.forEach(a=>{
+    const text=`${a?.titulo||''} ${a?.descricao||''}`;
+    const family=families.find(f=>f.rx.test(text))||families[2];
+    grouped[family.key].push(a);
+  });
+  const earned=families.filter(f=>grouped[f.key].length>0).length;
+  const dominant=[...families].sort((a,b)=>grouped[b.key].length-grouped[a.key].length)[0];
+  const dominantCount=dominant?grouped[dominant.key].length:0;
+  const headline=achievements.length?(dominantCount>0?`${dominant.title} está aparecendo mais no seu repertório`:'Suas conquistas estão formando um repertório'):'Seu repertório começa com comportamentos repetíveis';
+  return `<section class="achievement-families" aria-label="Famílias de conquistas">
+    <div class="achievement-families-head"><div><span class="eyebrow">ACHIEVEMENT FAMILIES</span><h3>${esc(headline)}</h3><p>Conquistas agora são agrupadas pelo comportamento que representam. O objetivo é reconhecer qualidade de adesão, não acumular badges sem contexto.</p></div><span class="achievement-family-total">${achievements.length}<small>recentes</small></span></div>
+    <div class="achievement-family-grid">${families.map(f=>{const items=grouped[f.key];return `<article class="achievement-family-card ${items.length?'earned':'empty'}"><div class="achievement-family-icon">${f.icon}</div><div><small>${items.length?`${items.length} conquista${items.length===1?'':'s'}`:'em construção'}</small><strong>${esc(f.title)}</strong><span>${esc(f.hint)}</span>${items.length?`<div class="achievement-family-chips">${items.slice(0,3).map(x=>`<span title="${esc(x.descricao||'')}">${esc(x.icone||'◆')} ${esc(x.titulo||'Conquista')}</span>`).join('')}</div>`:''}</div></article>`}).join('')}</div>
+    <div class="achievement-families-footer"><span><b>${earned}/5 famílias</b> com conquistas recentes</span><p>Recuperação planejada, constância e hábitos podem ser tão relevantes quanto performance. Intensidade extra não cria uma família “melhor”.</p></div>
+  </section>`;
+}
+
 function hpAthleteProgressStory(d){
   const evo=d?.evolucaoEsportiva||{};
   const items=Array.isArray(evo.itens)?evo.itens:[];
@@ -2321,6 +2348,7 @@ async function loadMyPatientPortal(){
     ${hpAthleteLevelSystem(d)}
     ${hpStreakIntelligence(d)}
     ${hpDynamicMissions(d)}
+    ${hpAchievementFamilies(d)}
     ${hpGamification2AthleteCard(d.gamificacao2)}
     <section class="card athlete-progression-card">
       <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
@@ -6308,7 +6336,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.16.2';
+const HP_MVP_VERSION='0.16.3';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6329,6 +6357,7 @@ const HP_ATHLETE_PROGRESS_STORY='v0.15.6';
 const HP_ATHLETE_LEVEL_SYSTEM='v0.16.0';
 const HP_STREAK_INTELLIGENCE='v0.16.1';
 const HP_DYNAMIC_MISSIONS='v0.16.2';
+const HP_ACHIEVEMENT_FAMILIES='v0.16.3';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

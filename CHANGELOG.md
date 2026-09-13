@@ -1,3 +1,19 @@
+## v0.16.3-r1 - Smoke Test Current Version Fix
+
+- Corrige referencias de versao corrente ainda presas em `0.16.2` no `TESTAR.ps1`.
+- Healthcheck, MVP Preview e verificacoes correntes do HealthController passam a validar `0.16.3`.
+- Preserva marcadores historicos como `HP_DYNAMIC_MISSIONS='v0.16.2'`.
+- Nenhuma alteracao funcional, de schema ou de migration.
+
+# Changelog
+
+## v0.16.3 — Achievement Families
+- Agrupa `gamificacao.conquistasRecentes` em cinco famílias comportamentais: Consistência, Recuperação, Execução, Evolução e Hábitos.
+- Adiciona uma leitura de repertório para mostrar que tipo de comportamento está sendo reconhecido, sem criar um segundo sistema de badges.
+- Mantém recuperação planejada e hábitos como progresso legítimo e explicita que intensidade extra não torna uma família superior.
+- Preserva `HP_DYNAMIC_MISSIONS='v0.16.2'`, schema `38/38` e todos os endpoints/regras existentes.
+- Amplia o smoke test para 1448 verificações e mantém compatibilidade com Windows PowerShell 5.1.
+
 # v0.16.2 — Dynamic Missions
 
 - Missões da gamificação passam a ser priorizadas dinamicamente com base em prontidão, estratégia do dia, foco gamificado e contexto semanal.

@@ -1,6 +1,7 @@
-# HealthPlatform — v0.16.2 Dynamic Missions
+# HealthPlatform — v0.16.3 Achievement Families
 
-> Versão funcional atual: **v0.16.1 — Streak Intelligence**.
+> Versão funcional atual: **v0.16.3 — Achievement Families**.
+A Gamificação 3.0 agora organiza conquistas recentes em cinco famílias comportamentais — **Consistência, Recuperação, Execução, Evolução e Hábitos**. A leitura usa o sistema de conquistas já existente, sem criar badges paralelos, e deixa explícito que recuperação planejada e hábitos sustentáveis podem representar progresso tanto quanto performance.
 
 A Gamificação 3.0 agora interpreta a sequência do atleta pela **qualidade da adesão**, não apenas pela contagem de dias. O Streak Intelligence combina consistência, dias ativos, missões e contexto de recuperação para diferenciar sequência sustentável, construção, retomada e sequência protegida. Recuperação planejada não vira falha, e treino extra não é necessário para preservar streak.
 
@@ -8,7 +9,7 @@ A Gamificação 3.0 começa transformando o nível do atleta em uma leitura de *
 
 - Schema: **38/38**.
 - Migration nova: **nenhuma**.
-- Smoke test: **1424 verificações**.
+- Smoke test: **1448 verificações**.
 - Compatível com Windows PowerShell 5.1 (`TESTAR.ps1` em UTF-8 com BOM).
 
 ---
@@ -516,3 +517,8 @@ A Home do atleta passa a resumir a evolução longitudinal em uma narrativa huma
 
 ## v0.16.2 — Dynamic Missions
 A camada de missões agora reorganiza as missões contextuais já existentes conforme prontidão, estratégia do dia e recuperação. O objetivo é mostrar primeiro a ação mais útil para o momento, sem premiar intensidade desnecessária e sem substituir o plano profissional. Schema preservado em 38/38.
+
+
+## v0.16.3 — Achievement Families
+Conquistas recentes passam a ser organizadas por famílias de comportamento (Consistência, Recuperação, Execução, Evolução e Hábitos), usando a gamificação existente sem alterar schema ou criar badges paralelos.
+> Revisao v0.16.3-r1: corrige apenas referencias de versao corrente no smoke test para `0.16.3`; sem mudanca funcional ou de schema.
