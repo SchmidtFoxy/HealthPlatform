@@ -1,3 +1,11 @@
+# v0.14.6 — Mobile Charts & Progress
+
+- Evolui gráficos SVG existentes para leitura mobile-first sem criar nova dependência visual.
+- Adiciona resumo Mín./Atual/Máx., intervalo temporal, tendência explícita e descrição acessível.
+- Aumenta legibilidade e alvos dos pontos em telas pequenas, preservando rolagem vertical.
+- Mantém endpoints, regras esportivas e schema 38/38 sem migration nova.
+- Smoke test passa a 1336 verificações.
+
 # v0.14.5 — Mobile Feedback States
 
 - Consolida estados de carregamento, erro, vazio, sucesso e envio no portal mobile.

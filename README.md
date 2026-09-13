@@ -1,6 +1,18 @@
-# HealthPlatform v0.14.5 — Mobile Feedback States
+# HealthPlatform v0.14.6 — Mobile Charts & Progress
 
-> Versão funcional atual: **v0.14.5 — Mobile Feedback States**.
+> Versão funcional atual: **v0.14.6 — Mobile Charts & Progress**.
+
+
+## v0.14.6 — Mobile Charts & Progress
+
+- Reorganiza gráficos de evolução do atleta para leitura mobile-first em uma coluna.
+- Cada gráfico passa a mostrar resumo compacto de mínimo, atual e máximo antes da visualização.
+- Tendência e intervalo temporal ficam explícitos sem depender apenas da leitura visual da linha.
+- Pontos do SVG ganham alvo visual maior no celular e os gráficos preservam rolagem vertical por toque.
+- Adiciona descrição textual acessível com quantidade de registros, valores inicial/atual, mínimo/máximo e direção da tendência.
+- Reduz densidade visual em telas estreitas, ocultando rodapé redundante quando o resumo mobile já está visível.
+- Preserva os mesmos dados, endpoints e regras esportivas; sem migration nova, schema 38/38.
+- Smoke test ampliado para 1336 verificações.
 
 
 ## v0.14.5 — Mobile Feedback States

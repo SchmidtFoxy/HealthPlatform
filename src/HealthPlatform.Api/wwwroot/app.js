@@ -3416,10 +3416,20 @@ function hpLineChart(title,points,suffix='',empty='São necessários pelo menos 
   }).join('');
   const dots=series.map((p,i)=>`<g class="chart-point-group"><circle cx="${xAt(i)}" cy="${yAt(p.value)}" r="4.5" class="chart-point"/><title>${esc(p.label||hpChartDate(p.date))}: ${esc(num(p.value,2))}${esc(suffix)}</title></g>`).join('');
   const first=series[0].value,last=series[series.length-1].value,delta=last-first;
+  const minValue=Math.min(...series.map(x=>x.value)),maxValue=Math.max(...series.map(x=>x.value));
   const deltaText=`${delta>0?'+':''}${num(delta,2)}${suffix}`;
-  return `<article class="analytics-chart">
-    <div class="analytics-chart-head"><div><h4>${esc(title)}</h4><small>${series.length} ponto(s)</small></div><span class="chart-delta ${delta>0?'up':delta<0?'down':'flat'}">${esc(deltaText)}</span></div>
-    <svg class="native-line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(title)}">
+  const trend=delta>0?'subiu':delta<0?'caiu':'ficou estável';
+  const chartDescription=`${title}: ${series.length} registros. Valor inicial ${num(first,2)}${suffix}; atual ${num(last,2)}${suffix}; mínimo ${num(minValue,2)}${suffix}; máximo ${num(maxValue,2)}${suffix}. A tendência ${trend} ${Math.abs(delta)>0?`em ${num(Math.abs(delta),2)}${suffix}`:''}.`;
+  const descId=`chart-desc-${String(title).toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${series.length}`;
+  return `<article class="analytics-chart mobile-progress-chart">
+    <div class="analytics-chart-head"><div><h4>${esc(title)}</h4><small>${series.length} ponto(s) • ${esc(hpChartDate(series[0].date))} a ${esc(hpChartDate(series[series.length-1].date))}</small></div><span class="chart-delta ${delta>0?'up':delta<0?'down':'flat'}" aria-label="Variação ${esc(deltaText)}">${esc(deltaText)}</span></div>
+    <p class="sr-only" id="${esc(descId)}">${esc(chartDescription)}</p>
+    <div class="chart-mobile-summary" aria-hidden="true">
+      <span><small>Mín.</small><b>${num(minValue,2)}${esc(suffix)}</b></span>
+      <span class="current"><small>Atual</small><b>${num(last,2)}${esc(suffix)}</b></span>
+      <span><small>Máx.</small><b>${num(maxValue,2)}${esc(suffix)}</b></span>
+    </div>
+    <svg class="native-line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="${esc(descId)}" preserveAspectRatio="xMidYMid meet">
       ${ticks}
       <polyline points="${poly}" class="chart-line"/>
       ${dots}
@@ -5949,13 +5959,14 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.5';
+const HP_MVP_VERSION='0.14.6';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
 const HP_MOBILE_DATA_VIEWS='v0.14.3';
 const HP_MOBILE_FORMS_INPUTS='v0.14.4';
 const HP_MOBILE_FEEDBACK_STATES='v0.14.5';
+const HP_MOBILE_CHARTS_PROGRESS='v0.14.6';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
