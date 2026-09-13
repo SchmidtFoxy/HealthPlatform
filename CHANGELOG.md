@@ -1,3 +1,12 @@
+# Changelog
+
+## v0.15.6 — Athlete Progress Story
+- transforma a evolução esportiva longitudinal já existente em uma narrativa curta e acionável para o atleta;
+- destaca até três sinais entre consistência, recuperação, carga, performance, nutrição, hidratação e ciclo;
+- apresenta um “próximo capítulo” sem prescrição automática e com proteção explícita da referência profissional;
+- integra a história de evolução à Home e leva aos detalhes completos de evolução;
+- mantém schema 38/38 e não adiciona migration.
+
 ## v0.15.5 — Weekly Review
 
 - adiciona `hpWeeklyReview(d)` à Home do atleta;

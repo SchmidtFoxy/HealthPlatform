@@ -1,6 +1,6 @@
 # HealthPlatform v0.15.4 — End-of-Day Flow
 
-## v0.15.5 — Weekly Review
+## v0.15.6 — Weekly Review
 
 A experiência do atleta agora fecha também o ciclo semanal. A Home reúne treino/meta, consistência, missões e carga recente em uma síntese curta, interpreta o estado da semana e sugere um foco contextual para a próxima semana sem substituir o plano profissional. O botão **Revisar semana completa** abre as análises semanais já existentes (planejamento, resumo e tendência), evitando duplicação de dados ou regras. Esta versão não altera o schema (38/38) nem adiciona migration.
 
@@ -491,3 +491,7 @@ A Home do atleta passa a reunir quatro perguntas operacionais em uma única cama
 - Corrige o healthcheck inicial do `TESTAR.ps1` para aceitar a versão corrente `0.15.0`.
 - Atualiza a validação de identidade do `MVP Preview` para `v0.15.0`, preservando todos os marcadores históricos da linha `0.14.x`.
 - Nenhuma alteração funcional, de schema ou de migration.
+
+
+## v0.15.6 — Athlete Progress Story
+A Home do atleta passa a resumir a evolução longitudinal em uma narrativa humana, usando os indicadores já calculados pela Evolução Esportiva. Não há novo schema nem prescrição automática.

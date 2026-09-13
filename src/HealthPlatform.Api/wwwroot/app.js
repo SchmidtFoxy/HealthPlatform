@@ -404,6 +404,25 @@ function hpWeeklyAthleteRhythm(d){
 }
 
 
+function hpAthleteProgressStory(d){
+  const evo=d?.evolucaoEsportiva||{};
+  const items=Array.isArray(evo.itens)?evo.itens:[];
+  if(!items.length)return '';
+  const favorable=items.filter(x=>x.estado==='Favoravel');
+  const attention=items.filter(x=>x.estado==='Atencao');
+  const stable=items.filter(x=>x.estado==='Estavel');
+  const highlights=[...favorable,...stable,...attention].slice(0,3);
+  const state=String(evo.estado||'Estavel');
+  const tone=state==='Evoluindo'?'growing':state==='Observar'?'observe':'steady';
+  const chapter=state==='Evoluindo'?'Seu momento mostra evolução em mais de uma frente':state==='Observar'?'Sua evolução continua, com sinais que merecem contexto':'Sua base está sendo construída com consistência';
+  const next=attention[0]?.titulo?`Observe ${String(attention[0].titulo).toLowerCase()} sem mudar o plano por conta própria.`:favorable[0]?.titulo?`Continue consolidando ${String(favorable[0].titulo).toLowerCase()} com a mesma regularidade.`:'Continue registrando para deixar sua história cada vez mais confiável.';
+  return `<section class="athlete-progress-story ${tone}" aria-label="História da sua evolução">
+    <div class="athlete-progress-story-head"><div><span class="eyebrow">SUA HISTÓRIA DE EVOLUÇÃO</span><h2>${esc(chapter)}</h2><p>${esc(evo.resumo||'Seus registros começam a formar uma leitura longitudinal do seu ciclo.')}</p></div><span class="progress-story-state">${esc(state)}</span></div>
+    <div class="progress-story-path">${highlights.map((x,i)=>`<article><span class="progress-story-index">${i+1}</span><div><small>${esc(x.categoria||'Evolução')}</small><strong>${esc(x.titulo||'Indicador')}</strong><b>${esc(x.valor||'—')}</b><p>${esc(x.detalhe||x.tendencia||x.mensagem||'')}</p></div></article>`).join('')}</div>
+    <div class="progress-story-footer"><div><small>PRÓXIMO CAPÍTULO</small><strong>${esc(next)}</strong><span>Esta narrativa resume tendências registradas e não substitui a interpretação profissional.</span></div><button type="button" class="secondary progress-story-action" id="athleteProgressStoryAction">Ver evolução completa <span>→</span></button></div>
+  </section>`;
+}
+
 function hpWeeklyReview(d){
   const plan=d?.planejamentoSemanal||{};
   const summary=d?.resumoSemanal||{};
@@ -2181,6 +2200,8 @@ async function loadMyPatientPortal(){
 
     ${hpWeeklyReview(d)}
 
+    ${hpAthleteProgressStory(d)}
+
     ${hpMobileInsightRail(d,readiness)}
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
@@ -2379,6 +2400,7 @@ async function loadMyPatientPortal(){
   if($('#consistencyCompassDetails'))$('#consistencyCompassDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#weeklyReviewAction'))$('#weeklyReviewAction').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-summary-card')||target.querySelector('.weekly-trend-card')||target.querySelector('.weekly-plan-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
+  if($('#athleteProgressStoryAction'))$('#athleteProgressStoryAction').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
   if($('#trainingLoadSnapshotDetails'))$('#trainingLoadSnapshotDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.individualized-load-athlete-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
@@ -6197,7 +6219,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.5';
+const HP_MVP_VERSION='0.15.6';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6214,6 +6236,7 @@ const HP_TRAINING_DAY_FLOW='v0.15.2';
 const HP_RECOVERY_DAY_FLOW='v0.15.3';
 const HP_END_OF_DAY_FLOW='v0.15.4';
 const HP_WEEKLY_REVIEW='v0.15.5';
+const HP_ATHLETE_PROGRESS_STORY='v0.15.6';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
