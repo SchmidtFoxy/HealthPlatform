@@ -1,4 +1,4 @@
-# HealthPlatform v0.14.3 — Mobile Data Views
+﻿# HealthPlatform v0.14.3 — Mobile Data Views
 
 > Versão funcional atual: **v0.14.3 — Mobile Data Views**.
 
@@ -10,6 +10,31 @@
 - Remove dependência de scroll horizontal nas principais visualizações do atleta e melhora leitura em até 390 px.
 - Nenhuma migration nova; schema permanece 38/38.
 - Smoke test ampliado para 1312 verificações.
+
+## Revisao v0.14.3-r4 — Rich Athlete Demo Seed Audit
+
+A baseline funcional continua em **v0.14.3 — Mobile Data Views**. A revisao r4 fecha o tooling de avaliacao com um atleta ficticio rico em historico: corrige a janela retroativa das metas, leva os treinos ate a semana atual e imprime auditoria/diagnostico de carga e performance ao final.
+
+Validacao de sintaxe antes do seed:
+
+```powershell
+.\VALIDAR-SEED-DEMO-RICO.ps1
+```
+
+Execucao local (API em `http://localhost:5180`):
+
+```powershell
+.\POPULAR-LUCATTI-DEMO-RICO.ps1 -SenhaAdmin 'SUA_SENHA_ADMIN'
+```
+
+Execucao contra Render ou outra API:
+
+```powershell
+.\POPULAR-LUCATTI-DEMO-RICO.ps1 -BaseUrl 'https://SEU-SERVICO.onrender.com' -SenhaAdmin 'SUA_SENHA_ADMIN'
+```
+
+O cenario e ficticio e serve exclusivamente para validacao funcional/visual.
+
 
 # HealthPlatform v0.14.2 — Mobile Content Hierarchy
 
@@ -347,3 +372,6 @@ No portal do atleta, a Home mobile agora muda sua hierarquia de acordo com o est
 
 
 > Render: a revisao v0.14.3-r1 adiciona compatibilidade idempotente para bancos demo persistidos de versoes antigas, preservando os dados existentes.
+
+### Revisao v0.14.3-r3 - seed rico
+Se uma tentativa anterior do `POPULAR-LUCATTI-DEMO-RICO.ps1` criou as metas mas falhou durante o treino, nao e necessario limpar o banco. A revisao r3 corrige o periodo das metas existentes e retoma a populacao de forma idempotente.

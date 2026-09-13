@@ -1,3 +1,27 @@
+﻿### v0.14.3-r4 — Rich Athlete Demo Seed Audit
+
+- Mantem a versao funcional 0.14.3 e o schema 38/38.
+- Corrige a janela historica das metas: os 56 dias agora ficam integralmente dentro do periodo configurado.
+- Estende o historico de treino ate a semana atual para alimentar corretamente carga interna recente, linha de base e PRs.
+- Adiciona auditoria final com contagem persistida de treinos, metas, diario e avaliacoes.
+- Adiciona diagnostico explicito de carga e performance/PR para diferenciar falta de dados de comportamento esperado.
+- Revisao de tooling/demo; nenhuma regra funcional, endpoint ou migration nova.
+
+### v0.14.3-r3 — Rich Athlete Demo Seed Fix
+
+- Torna o seed ASCII-safe e envia JSON explicitamente em UTF-8 para compatibilidade com Windows PowerShell 5.1.
+- Reaproveita o atleta Lucatti Demo e os dados existentes de forma idempotente.
+- Corrige o payload de treino que impedia a etapa de historico esportivo de continuar.
+- Revisao de tooling/demo; nenhuma migration nova.
+
+### v0.14.3-r2 — Rich Athlete Demo Seed
+
+- Mantem a versao funcional 0.14.3 e o schema 38/38.
+- Adiciona `POPULAR-LUCATTI-DEMO-RICO.ps1`, um cenario esportivo ficticio de 56 dias para avaliar a experiencia mobile com dados longitudinais.
+- O seed cobre prontidao, metas, hidratacao, peso, treino executado, RPE, progressao, ciclo esportivo, avaliacoes corporais, XP/missoes e contexto do Coach Diario.
+- Adiciona `VALIDAR-SEED-DEMO-RICO.ps1`, que usa o parser nativo do PowerShell para impedir regressao de sintaxe como `$key:` antes da execucao do seed.
+- Revisao de tooling/demo; nenhuma regra funcional, endpoint ou migration nova.
+
 
 ### v0.14.3-r1 — Render Schema Compatibility
 
@@ -1287,3 +1311,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Com o dia fechado, chamadas de ação repetitivas são ocultadas e a Home assume um estado mais calmo.
 - A adaptação reutiliza prontidão, resposta à sessão e execução do dia já existentes; sem nova regra clínica, score ou migration.
 - Schema permanece 38/38.
+
+## v0.14.3-r3 - Rich Athlete Demo Seed robustness
+- Corrige metas ja existentes cujo periodo nao cobria os 56 dias de historico do seed: o script agora atualiza `DataInicio`/`DataFim` antes de registrar o historico.
+- Torna `POPULAR-LUCATTI-DEMO-RICO.ps1` ASCII-safe para Windows PowerShell 5.1 e envia JSON explicitamente em UTF-8.
+- Remove caracteres especiais dos payloads de treino demonstrativo para evitar falha de desserializacao em ambientes Windows PowerShell legados.
+- Mantem `VERSION.txt = 0.14.3`; nenhuma alteracao de schema ou funcionalidade de produto.
