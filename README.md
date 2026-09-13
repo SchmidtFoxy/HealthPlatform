@@ -1,4 +1,4 @@
-# HealthPlatform v0.16.1 — Streak Intelligence
+# HealthPlatform — v0.16.2 Dynamic Missions
 
 > Versão funcional atual: **v0.16.1 — Streak Intelligence**.
 
@@ -512,3 +512,7 @@ A Home do atleta passa a reunir quatro perguntas operacionais em uma única cama
 A Home do atleta passa a resumir a evolução longitudinal em uma narrativa humana, usando os indicadores já calculados pela Evolução Esportiva. Não há novo schema nem prescrição automática.
 
 > Hotfix r1: corrigido o smoke test legado de identidade do MVP Preview para reconhecer a versão corrente v0.16.1.
+
+
+## v0.16.2 — Dynamic Missions
+A camada de missões agora reorganiza as missões contextuais já existentes conforme prontidão, estratégia do dia e recuperação. O objetivo é mostrar primeiro a ação mais útil para o momento, sem premiar intensidade desnecessária e sem substituir o plano profissional. Schema preservado em 38/38.

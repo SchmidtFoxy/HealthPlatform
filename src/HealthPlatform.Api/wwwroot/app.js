@@ -457,6 +457,37 @@ function hpStreakIntelligence(d){
   </section>`;
 }
 
+function hpDynamicMissions(d){
+  const context=d?.missoesContextuais2||{};
+  const focus=d?.focoGamificadoDoDia||{};
+  const readiness=d?.prontidaoDiaria||{};
+  const strategy=d?.estrategiaDoDia||{};
+  const game2=d?.gamificacao2||{};
+  const source=Array.isArray(context.missoes)?context.missoes:[];
+  const recommendation=String(readiness.recomendacaoTreino||strategy.intensidadeSugerida||'');
+  const protectedDay=['Recuperacao','Leve'].includes(recommendation)||['SemPressaoHoje','RecuperacaoProtegida'].includes(String(context.estado||''))||game2.estado==='PriorizarResposta';
+  const scoreMission=m=>{
+    const text=`${m?.titulo||''} ${m?.estadoContextual||''} ${m?.orientacaoContextual||''}`.toLowerCase();
+    let score=m?.concluido?-40:30;
+    if(protectedDay && /(recuper|sono|hidrata|dor|check|mobilidade|leve)/.test(text))score+=45;
+    if(!protectedDay && /(treino|movimento|execu|check|hidrata)/.test(text))score+=25;
+    if(String(focus.missaoCodigo||'') && String(m?.codigo||'')===String(focus.missaoCodigo))score+=60;
+    return score;
+  };
+  const ranked=[...source].sort((a,b)=>scoreMission(b)-scoreMission(a)).slice(0,3);
+  const primary=ranked[0];
+  const done=source.filter(x=>x.concluido).length;
+  const total=source.length||Number(context.totalMissoes||0);
+  const mode=protectedDay?'Missões adaptadas à recuperação':done===total&&total>0?'Semana consolidada':'Missões dinâmicas do momento';
+  const guidance=protectedDay?'Hoje o sistema prioriza comportamentos que protegem recuperação e adesão. Nenhuma missão exige treino para manter progresso.':'A prioridade muda conforme seus registros, prontidão e progresso semanal — não pela busca de intensidade.';
+  return `<section class="dynamic-missions ${protectedDay?'protected':'active'}" aria-label="Missões dinâmicas">
+    <div class="dynamic-missions-head"><div><span class="eyebrow">DYNAMIC MISSIONS</span><h3>${esc(mode)}</h3><p>${esc(guidance)}</p></div><span class="dynamic-missions-score">${done}/${total||0}</span></div>
+    ${primary?`<article class="dynamic-mission-primary"><small>PRÓXIMA MISSÃO ÚTIL</small><strong>${primary.concluido?'✓ ':''}${esc(primary.titulo||focus.missaoTitulo||'Próxima ação')}</strong><p>${esc(primary.orientacaoContextual||focus.orientacao||'Siga o próximo comportamento alinhado ao seu contexto.')}</p>${primary.meta!=null?`<span>${Math.min(Number(primary.progresso||0),Number(primary.meta||0))}/${Number(primary.meta||0)}${primary.recompensaXp?` • +${Number(primary.recompensaXp)} XP`:''}</span>`:''}</article>`:`<article class="dynamic-mission-primary done"><small>SEM PRESSÃO EXTRA</small><strong>Nenhuma missão pendente agora</strong><p>Seu próximo passo pode ser apenas manter os registros e seguir o plano definido.</p></article>`}
+    ${ranked.length>1?`<div class="dynamic-missions-list">${ranked.slice(1).map((m,i)=>`<div><span>${i+2}</span><p><strong>${m.concluido?'✓ ':''}${esc(m.titulo||'Missão')}</strong><small>${esc(m.estadoContextual||'contextual')}</small></p></div>`).join('')}</div>`:''}
+    <div class="dynamic-missions-footer"><span>Missões se adaptam ao contexto; não substituem o plano profissional e excesso não gera mérito extra.</span><button type="button" class="secondary" id="dynamicMissionsDetails">Ver todas as missões <span>→</span></button></div>
+  </section>`;
+}
+
 function hpAthleteProgressStory(d){
   const evo=d?.evolucaoEsportiva||{};
   const items=Array.isArray(evo.itens)?evo.itens:[];
@@ -2289,6 +2320,7 @@ async function loadMyPatientPortal(){
       <div class="mobile-disclosure-body">
     ${hpAthleteLevelSystem(d)}
     ${hpStreakIntelligence(d)}
+    ${hpDynamicMissions(d)}
     ${hpGamification2AthleteCard(d.gamificacao2)}
     <section class="card athlete-progression-card">
       <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
@@ -2454,6 +2486,7 @@ async function loadMyPatientPortal(){
   if($('#dailyClosureAction'))$('#dailyClosureAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#consistencyCompassDetails'))$('#consistencyCompassDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}};
   if($('#streakIntelligenceDetails'))$('#streakIntelligenceDetails').onclick=()=>{const target=$('.consistency-compass');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});else{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}}};
+  if($('#dynamicMissionsDetails'))$('#dynamicMissionsDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure)disclosure.open=true;requestAnimationFrame(()=>{const target=$('.contextual-missions-card')||$('.weekly-challenges-card');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});});};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#weeklyReviewAction'))$('#weeklyReviewAction').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-summary-card')||target.querySelector('.weekly-trend-card')||target.querySelector('.weekly-plan-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#athleteProgressStoryAction'))$('#athleteProgressStoryAction').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
@@ -6275,7 +6308,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.16.1';
+const HP_MVP_VERSION='0.16.2';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6295,6 +6328,7 @@ const HP_WEEKLY_REVIEW='v0.15.5';
 const HP_ATHLETE_PROGRESS_STORY='v0.15.6';
 const HP_ATHLETE_LEVEL_SYSTEM='v0.16.0';
 const HP_STREAK_INTELLIGENCE='v0.16.1';
+const HP_DYNAMIC_MISSIONS='v0.16.2';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

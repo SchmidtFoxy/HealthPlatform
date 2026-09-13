@@ -1,3 +1,11 @@
+# v0.16.2 — Dynamic Missions
+
+- Missões da gamificação passam a ser priorizadas dinamicamente com base em prontidão, estratégia do dia, foco gamificado e contexto semanal.
+- Dias de recuperação/leve priorizam comportamentos protetivos e não exigem treino para preservar progresso.
+- A prioridade visual muda sem duplicar o sistema de missões nem criar uma nova fonte de verdade.
+- Gamificação responsável reforçada: excesso e intensidade isolada não geram mérito adicional.
+- Sem migration nova; schema permanece 38/38.
+
 
 ## v0.16.1-r1 — MVP Preview Smoke Test Fix
 - Corrige falso negativo no check `[463/600]`: identidade do MVP Preview agora valida a versão corrente `v0.16.1`.
