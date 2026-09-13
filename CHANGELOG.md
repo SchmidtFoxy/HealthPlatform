@@ -1,3 +1,12 @@
+# v0.14.7 — Mobile Modals & Bottom Sheets
+
+- Consolida modais mobile como bottom sheets com safe-area, alvos de toque e entrada visual consistente.
+- Fecha overlays ao tocar no backdrop sem conflitar com o conteúdo interno.
+- Adiciona `role=dialog`, `aria-modal`, foco inicial e contenção de Tab dentro do modal.
+- Restaura o foco anterior ao fechar e bloqueia scroll/overscroll do fundo enquanto o overlay está aberto.
+- Mantém ações persistentes e respeita `prefers-reduced-motion`.
+- Sem migration nova; schema permanece 38/38.
+
 # v0.14.6 — Mobile Charts & Progress
 
 - Evolui gráficos SVG existentes para leitura mobile-first sem criar nova dependência visual.
@@ -1357,3 +1366,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Preserva validacoes historicas e nomes de artefatos de releases anteriores.
 - Mantem `TESTAR.ps1` em UTF-8 com BOM para Windows PowerShell 5.1.
 - Sem alteracao de schema, API ou regra funcional.
+
+
+## v0.14.7-r1 — Smoke Test MVP Preview Fix
+- Corrige asserts do TESTAR.ps1 que ainda buscavam `v0.14.6` no rótulo corrente do MVP Preview.
+- Preserva marcadores históricos como `HP_MOBILE_CHARTS_PROGRESS='v0.14.6'`.
+- Sem alteração de schema, migrations, endpoints ou regras funcionais.

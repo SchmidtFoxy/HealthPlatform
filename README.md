@@ -1,3 +1,7 @@
+# HealthPlatform v0.14.7 — Mobile Modals & Bottom Sheets
+
+A v0.14.7 continua a consolidação mobile: modais e ações rápidas passam a se comportar como bottom sheets consistentes, com backdrop clicável, foco acessível, navegação por teclado, bloqueio de scroll do fundo e respeito à safe-area. Não altera schema nem regras esportivas.
+
 # HealthPlatform v0.14.6 — Mobile Charts & Progress
 
 > Versão funcional atual: **v0.14.6 — Mobile Charts & Progress**.
@@ -421,3 +425,6 @@ Se uma tentativa anterior do `POPULAR-LUCATTI-DEMO-RICO.ps1` criou as metas mas 
 - Nenhuma alteracao funcional, de API, banco ou schema. `VERSION.txt` permanece `0.14.4`.
 
 > Hotfix v0.14.5-r1: o `TESTAR.ps1` foi ajustado para reconhecer `0.14.5` como versao corrente no healthcheck e nas validacoes equivalentes, preservando compatibilidade com Windows PowerShell 5.1.
+
+### v0.14.7-r1 — Smoke Test MVP Preview Fix
+Corrige as verificações do TESTAR.ps1 que ainda esperavam o rótulo visual v0.14.6 no MVP Preview. A aplicação permanece funcionalmente em v0.14.7; nenhuma regra, endpoint, migration ou schema foi alterado.

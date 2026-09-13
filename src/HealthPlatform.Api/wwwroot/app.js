@@ -5959,7 +5959,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.6';
+const HP_MVP_VERSION='0.14.7';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -5967,6 +5967,7 @@ const HP_MOBILE_DATA_VIEWS='v0.14.3';
 const HP_MOBILE_FORMS_INPUTS='v0.14.4';
 const HP_MOBILE_FEEDBACK_STATES='v0.14.5';
 const HP_MOBILE_CHARTS_PROGRESS='v0.14.6';
+const HP_MOBILE_MODALS_SHEETS='v0.14.7';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
@@ -6346,3 +6347,70 @@ async function openMedicationManager(patientId){
   $$('.medication-disable').forEach(b=>b.onclick=async()=>{try{await api(`/api/medicamentos/${b.dataset.id}`,{method:'DELETE'});toast('Medicamento desativado.');await openMedicationManager(patientId)}catch(err){toast(err.message,true)}})
 }
 function hpMedicationProfessionalCard(patientId){return `<section class="card full-card patient-medication-prof"><div class="card-head"><div><span class="eyebrow">TRATAMENTO</span><h3>Medicamentos e adesão</h3><small>Acompanhe tratamento informado/orientado e registros do paciente.</small></div><button class="ghost medications-manage" data-patient-id="${patientId}">Gerenciar medicamentos</button></div></section>`}
+
+
+// ===== v0.14.7 — Mobile Modals & Bottom Sheets =====
+let hpModalLastFocus=null;
+function hpVisibleModalBackdrop(){
+  return [...document.querySelectorAll('.modal-backdrop')].reverse().find(x=>!x.classList.contains('hidden'))||null;
+}
+function hpModalFocusable(modal){
+  return [...modal.querySelectorAll('button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);
+}
+function hpEnhanceModal(backdrop){
+  if(!backdrop||backdrop.dataset.hpModalActive==='true')return;
+  const modal=backdrop.querySelector('.modal,.modal-card');
+  if(!modal)return;
+  backdrop.dataset.hpModalActive='true';
+  hpModalLastFocus=document.activeElement;
+  modal.setAttribute('role','dialog');
+  modal.setAttribute('aria-modal','true');
+  modal.setAttribute('tabindex','-1');
+  document.body.classList.add('hp-modal-open');
+  const focusables=hpModalFocusable(modal);
+  (focusables[0]||modal).focus({preventScroll:true});
+}
+function hpReleaseModal(backdrop){
+  if(!backdrop)return;
+  delete backdrop.dataset.hpModalActive;
+  if(!hpVisibleModalBackdrop())document.body.classList.remove('hp-modal-open');
+  if(hpModalLastFocus&&document.contains(hpModalLastFocus))hpModalLastFocus.focus({preventScroll:true});
+  hpModalLastFocus=null;
+}
+function hpCloseModalBackdrop(backdrop){
+  if(!backdrop)return;
+  if(backdrop.id==='clinicalActionModal'){closeClinicalAction();return}
+  backdrop.classList.add('hidden');
+  hpReleaseModal(backdrop);
+}
+function hpInstallModalSheetExperience(){
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop=>{
+    backdrop.addEventListener('pointerdown',e=>{if(e.target===backdrop)backdrop.dataset.hpBackdropPressed='true'});
+    backdrop.addEventListener('pointerup',e=>{
+      const shouldClose=e.target===backdrop&&backdrop.dataset.hpBackdropPressed==='true';
+      delete backdrop.dataset.hpBackdropPressed;
+      if(shouldClose)hpCloseModalBackdrop(backdrop);
+    });
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Tab')return;
+    const backdrop=hpVisibleModalBackdrop();
+    const modal=backdrop?.querySelector('.modal,.modal-card');
+    if(!modal)return;
+    const focusables=hpModalFocusable(modal);
+    if(!focusables.length){e.preventDefault();modal.focus();return}
+    const first=focusables[0],last=focusables[focusables.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  });
+  const observer=new MutationObserver(records=>{
+    for(const record of records){
+      if(record.type!=='attributes'||record.attributeName!=='class')continue;
+      const backdrop=record.target;
+      if(!backdrop.classList?.contains('modal-backdrop'))continue;
+      if(backdrop.classList.contains('hidden'))hpReleaseModal(backdrop);else hpEnhanceModal(backdrop);
+    }
+  });
+  document.querySelectorAll('.modal-backdrop').forEach(x=>observer.observe(x,{attributes:true,attributeFilter:['class']}));
+}
+hpInstallModalSheetExperience();
