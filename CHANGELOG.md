@@ -1,3 +1,12 @@
+## v0.15.1 — Morning Check-in
+- Cria uma experiência matinal dedicada na Athlete Home 2.0 sem duplicar dados ou regras de prontidão.
+- O card matinal informa se o check-in está pendente ou concluído e resume os cinco sinais principais: sono, energia, dor, disposição e recuperação.
+- A ação de registrar/atualizar reutiliza o fluxo `openDailyReadiness` e o endpoint existente `/api/portal/me/prontidao`.
+- O formulário de prontidão ganha uma introdução visual curta com os cinco fatores, mantendo o preenchimento em menos de 1 minuto.
+- Responsividade específica para 720px e 390px, com fatores em trilho horizontal no mobile e suporte a `prefers-reduced-motion`.
+- Sem endpoint novo, sem migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1376 verificações.
+
 ## v0.15.0-r2 — Smoke Test CSS Token Fix
 
 - Corrige falso negativo no teste `[1365/1368]` da responsividade da Athlete Home 2.0.

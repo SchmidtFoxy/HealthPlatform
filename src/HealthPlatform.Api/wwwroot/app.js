@@ -243,6 +243,26 @@ function hpAthleteHome2(d,readiness,adaptiveHome){
   </section>`;
 }
 
+function hpMorningCheckin(readiness){
+  const done=!!readiness;
+  const score=done?`${readiness.score}/100`:'Ainda não feito';
+  const recommendation=done?(readiness.recomendacaoTreino==='Recuperacao'?'Recuperação':readiness.recomendacaoTreino):'Comece pelo corpo';
+  const detail=done?`Sono ${num(readiness.sonoHoras,1)}h • energia ${readiness.energiaNivel}/10 • dor ${readiness.dorNivel}/10`:'Sono, energia, dor, disposição e recuperação em menos de 1 minuto.';
+  const factors=done?[
+    ['🌙','Sono',`${num(readiness.sonoHoras,1)}h`],
+    ['⚡','Energia',`${readiness.energiaNivel}/10`],
+    ['●','Dor',`${readiness.dorNivel}/10`],
+    ['↗','Disposição',`${readiness.disposicaoNivel}/10`],
+    ['♻','Recuperação',`${readiness.recuperacaoNivel}/10`]
+  ]:[];
+  return `<section class="morning-checkin ${done?'done':'pending'}" aria-label="Morning Check-in">
+    <div class="morning-checkin-copy"><span class="eyebrow">MORNING CHECK-IN</span><h3>${done?'Seu contexto da manhã está atualizado':'Antes do treino, escute seu corpo'}</h3><p>${detail}</p></div>
+    <div class="morning-checkin-status"><small>PRONTIDÃO</small><strong>${score}</strong><span>${esc(recommendation)}</span></div>
+    ${done?`<div class="morning-checkin-factors">${factors.map(x=>`<span><i>${x[0]}</i><small>${x[1]}</small><b>${x[2]}</b></span>`).join('')}</div>`:''}
+    <button type="button" class="${done?'secondary':'primary'} morning-checkin-action" id="morningCheckinAction">${done?'Atualizar check-in':'Fazer check-in da manhã'}</button>
+  </section>`;
+}
+
 function hpTodayBrief(d,readiness){
   const strategy=d?.estrategiaDoDia||{};
   const hydration=d?.hidratacaoContextual||{};
@@ -2059,6 +2079,8 @@ async function loadMyPatientPortal(){
 
     ${hpAthleteHome2(d,readiness,adaptiveHome)}
 
+    ${hpMorningCheckin(readiness)}
+
     ${hpAdaptiveMobileHomeCue(adaptiveHome)}
 
     ${hpTodayBrief(d,readiness)}
@@ -2268,6 +2290,7 @@ async function loadMyPatientPortal(){
   </div>`;
 
   if($('#athleteHome2Body'))$('#athleteHome2Body').onclick=()=>openDailyReadiness(readiness);
+  if($('#morningCheckinAction'))$('#morningCheckinAction').onclick=()=>openDailyReadiness(readiness);
   if($('#athleteHome2Now'))$('#athleteHome2Now').onclick=()=>adaptiveHome.stage==='closed'?$('#dailyClosureAction')?.scrollIntoView({behavior:'smooth',block:'center'}):adaptiveHome.stage==='recovery'?(()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;target.scrollIntoView({behavior:'smooth',block:'start'})}})():readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
   if($('#athleteHome2Today'))$('#athleteHome2Today').onclick=()=>{const target=$('.today-actions-card');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});};
   if($('#athleteHome2Progress'))$('#athleteHome2Progress').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
@@ -2335,7 +2358,7 @@ function patientScaleField(label,name,value=5){
 function openDailyReadiness(current){
   const value=(key,fallback='')=>current&&current[key]!=null?current[key]:fallback;
   patientPortalModal('Check-in de prontidão',`
-    <div class="span-2 readiness-form-intro"><strong>Leva menos de 1 minuto.</strong><p>Responda pelo que seu corpo está mostrando hoje — não pelo treino que você gostaria de fazer.</p></div>
+    <div class="span-2 readiness-form-intro morning-checkin-intro"><span class="eyebrow">MORNING CHECK-IN</span><strong>Leva menos de 1 minuto.</strong><p>Responda pelo que seu corpo está mostrando hoje — não pelo treino que você gostaria de fazer.</p><div class="morning-checkin-guide"><span>🌙 Sono</span><span>⚡ Energia</span><span>● Dor</span><span>↗ Disposição</span><span>♻ Recuperação</span></div></div>
     ${field('Horas de sono','sonoHoras','number',`min="0" max="16" step="0.1" value="${value('sonoHoras',7.5)}" required`)}
     ${patientScaleField('Qualidade do sono','sonoQualidade',value('sonoQualidade',7))}
     ${patientScaleField('Energia','energiaNivel',value('energiaNivel',7))}
@@ -6036,7 +6059,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.0';
+const HP_MVP_VERSION='0.15.1';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6048,6 +6071,7 @@ const HP_MOBILE_MODALS_SHEETS='v0.14.7';
 const HP_ATHLETE_PROFILE_MOBILE='v0.14.8';
 const HP_MOBILE_ACCESSIBILITY_POLISH='v0.14.9';
 const HP_ATHLETE_HOME_2='v0.15.0';
+const HP_MORNING_CHECKIN='v0.15.1';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

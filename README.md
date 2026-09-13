@@ -1,3 +1,14 @@
+# HealthPlatform v0.15.1 — Morning Check-in
+
+> Versão funcional atual: **v0.15.1 — Morning Check-in**.
+
+A abertura do dia do atleta agora tem um ritual matinal dedicado e integrado à prontidão existente. A Home mostra se o check-in está pendente ou concluído, resume sono, energia, dor, disposição e recuperação, e oferece uma única ação para registrar ou atualizar o contexto corporal do dia. Nenhum endpoint ou schema novo foi criado: a experiência reutiliza `/api/portal/me/prontidao`.
+
+- Schema: **38/38**.
+- Migration nova: **nenhuma**.
+- Smoke test: **1376 verificações**.
+- Compatível com Windows PowerShell 5.1 (`TESTAR.ps1` em UTF-8 com BOM).
+
 ## v0.15.0 — Mobile Accessibility & Polish
 
 Fecha a série mobile 0.14.x com uma camada transversal de acessibilidade e acabamento: skip link, foco visível consistente, `aria-current` na navegação, região viva para anunciar troca de seção, alvos mínimos de toque, suporte a `prefers-contrast` e reforço de `prefers-reduced-motion`. A entrega não altera schema, endpoints ou regras clínico-esportivas.
