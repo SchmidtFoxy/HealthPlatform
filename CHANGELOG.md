@@ -1,4 +1,17 @@
+
+## v0.16.1-r1 — MVP Preview Smoke Test Fix
+- Corrige falso negativo no check `[463/600]`: identidade do MVP Preview agora valida a versão corrente `v0.16.1`.
+- Preserva `HP_ATHLETE_LEVEL_SYSTEM='v0.16.0'` como marcador histórico e não altera schema, API ou regras esportivas.
+
 # Changelog
+
+
+## v0.16.1 — Streak Intelligence
+- transforma streak em leitura de qualidade da sequência, combinando consistência, dias ativos, missões e contexto de recuperação;
+- diferencia sequência protegida, sustentável, em construção e retomada inteligente;
+- deixa explícito que recuperação planejada preserva a qualidade da adesão e não exige treino para manter streak;
+- evita premiar excesso ou transformar sequência em dívida de atividade;
+- reutiliza os dados atuais de gamificação e planejamento, sem endpoint, migration ou schema novo.
 
 ## v0.16.0 — Athlete Level System
 - inaugura a fase Gamificação 3.0 com uma leitura de nível baseada no XP e na consistência já existentes;

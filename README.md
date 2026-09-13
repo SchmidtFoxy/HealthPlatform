@@ -1,6 +1,8 @@
-# HealthPlatform v0.16.0 — Athlete Level System
+# HealthPlatform v0.16.1 — Streak Intelligence
 
-> Versão funcional atual: **v0.16.0 — Athlete Level System**.
+> Versão funcional atual: **v0.16.1 — Streak Intelligence**.
+
+A Gamificação 3.0 agora interpreta a sequência do atleta pela **qualidade da adesão**, não apenas pela contagem de dias. O Streak Intelligence combina consistência, dias ativos, missões e contexto de recuperação para diferenciar sequência sustentável, construção, retomada e sequência protegida. Recuperação planejada não vira falha, e treino extra não é necessário para preservar streak.
 
 A Gamificação 3.0 começa transformando o nível do atleta em uma leitura de **qualidade de adesão**, não de intensidade bruta. O portal mostra estágio atual, progresso de XP, consistência, streak, XP alinhado e sinais de excesso, deixando explícito que recuperação bem executada também conta como progresso e que treino pesado não recebe recompensa extra apenas por ser pesado.
 
@@ -508,3 +510,5 @@ A Home do atleta passa a reunir quatro perguntas operacionais em uma única cama
 
 ## v0.15.6 — Athlete Progress Story
 A Home do atleta passa a resumir a evolução longitudinal em uma narrativa humana, usando os indicadores já calculados pela Evolução Esportiva. Não há novo schema nem prescrição automática.
+
+> Hotfix r1: corrigido o smoke test legado de identidade do MVP Preview para reconhecer a versão corrente v0.16.1.

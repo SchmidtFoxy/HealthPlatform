@@ -432,6 +432,31 @@ function hpAthleteLevelSystem(d){
   </section>`;
 }
 
+function hpStreakIntelligence(d){
+  const game=d?.gamificacao||{};
+  const game2=d?.gamificacao2||{};
+  const missions=d?.missoesContextuais2||{};
+  const weekly=d?.planejamentoSemanal||{};
+  const summary=d?.resumoSemanal||{};
+  const streak=Math.max(0,Number(game.streakDias||0));
+  const active=Math.max(0,Number(game.diasAtivos14||0));
+  const consistency=Math.max(0,Math.min(100,Number(game.consistenciaScore||0)));
+  const weeklyState=String(summary.estado||weekly.estado||'Executando');
+  const protective=weeklyState==='Revisar'||weeklyState==='Proteger'||missions.estado==='SemPressaoHoje'||missions.estado==='RecuperacaoProtegida'||game2.estado==='PriorizarResposta';
+  const missionDone=Number(missions.missoesConcluidas||0);
+  const missionTotal=Number(missions.totalMissoes||0);
+  const quality=Math.max(0,Math.min(100,Math.round(consistency*.65+Math.min(14,active)/14*25+(missionTotal>0?Math.min(1,missionDone/missionTotal)*10:5))));
+  const tone=protective?'protected':quality>=80?'strong':quality>=55?'building':'restart';
+  const label=protective?'Sequência protegida':tone==='strong'?'Sequência sustentável':tone==='building'?'Sequência em construção':'Retomada inteligente';
+  const copy=protective?'Seu contexto pede recuperação. Respeitar o plano preserva a qualidade da sequência sem exigir treino para manter streak.':tone==='strong'?'Sua sequência combina repetição com boa adesão. Continue sem buscar intensidade extra só para manter o número.':tone==='building'?'A sequência está ganhando consistência. Priorize o próximo comportamento útil, não a perfeição.':'O streak é contexto, não dívida. Retome pelo próximo check-in ou ação prevista no plano.';
+  const protection=protective?'RECUPERAÇÃO CONTA':streak>=7?'SEM PRESSÃO POR MAIS':streak>0?'CONTINUE REPETÍVEL':'RECOMEÇO SEM PUNIÇÃO';
+  return `<section class="streak-intelligence ${tone}" aria-label="Inteligência de sequência">
+    <div class="streak-intelligence-head"><div><span class="eyebrow">STREAK INTELLIGENCE</span><h3>${esc(label)}</h3><p>${esc(copy)}</p></div><div class="streak-intelligence-ring" role="img" aria-label="Qualidade da sequência ${quality} de 100"><strong>${quality}</strong><span>/100</span></div></div>
+    <div class="streak-intelligence-grid"><article><small>STREAK</small><strong>${streak} dia${streak===1?'':'s'}</strong><span>sequência atual</span></article><article><small>DIAS ATIVOS</small><strong>${active}/14</strong><span>janela recente</span></article><article><small>CONSISTÊNCIA</small><strong>${consistency}/100</strong><span>qualidade da adesão</span></article><article><small>PROTEÇÃO</small><strong>${esc(protection)}</strong><span>sem compensação</span></article></div>
+    <div class="streak-intelligence-footer"><span>Streak não é obrigação de treinar. Recuperação planejada não vira falha e excesso não cria mérito extra.</span><button type="button" class="secondary" id="streakIntelligenceDetails">Ver consistência <span>→</span></button></div>
+  </section>`;
+}
+
 function hpAthleteProgressStory(d){
   const evo=d?.evolucaoEsportiva||{};
   const items=Array.isArray(evo.itens)?evo.itens:[];
@@ -2263,6 +2288,7 @@ async function loadMyPatientPortal(){
       <summary><span><b>Progresso e missões</b><small>XP, streak, ciclo e desafios da semana</small></span><i>⌄</i></summary>
       <div class="mobile-disclosure-body">
     ${hpAthleteLevelSystem(d)}
+    ${hpStreakIntelligence(d)}
     ${hpGamification2AthleteCard(d.gamificacao2)}
     <section class="card athlete-progression-card">
       <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
@@ -2427,6 +2453,7 @@ async function loadMyPatientPortal(){
   if($('#endOfDayFlowAction'))$('#endOfDayFlowAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#dailyClosureAction'))$('#dailyClosureAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#consistencyCompassDetails'))$('#consistencyCompassDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}};
+  if($('#streakIntelligenceDetails'))$('#streakIntelligenceDetails').onclick=()=>{const target=$('.consistency-compass');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});else{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}}};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#weeklyReviewAction'))$('#weeklyReviewAction').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-summary-card')||target.querySelector('.weekly-trend-card')||target.querySelector('.weekly-plan-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#athleteProgressStoryAction'))$('#athleteProgressStoryAction').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
@@ -6248,7 +6275,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.16.0';
+const HP_MVP_VERSION='0.16.1';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6267,6 +6294,7 @@ const HP_END_OF_DAY_FLOW='v0.15.4';
 const HP_WEEKLY_REVIEW='v0.15.5';
 const HP_ATHLETE_PROGRESS_STORY='v0.15.6';
 const HP_ATHLETE_LEVEL_SYSTEM='v0.16.0';
+const HP_STREAK_INTELLIGENCE='v0.16.1';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
