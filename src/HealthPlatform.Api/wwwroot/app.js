@@ -512,6 +512,33 @@ function hpWeeklyChallenges(d){
   </section>`;
 }
 
+
+function hpSeasonalProgress(d){
+  const cycle=d?.cicloEsportivoAtual||{};
+  if(!cycle?.nome)return '';
+  const game=d?.gamificacao||{};
+  const summary=d?.resumoSemanal||{};
+  const evolution=d?.evolucaoEsportiva||{};
+  const week=Math.max(1,Number(cycle.semanaAtual||1));
+  const total=Math.max(week,Number(cycle.totalSemanas||week));
+  const pct=Math.max(0,Math.min(100,Number(cycle.progressoTemporalPercentual??Math.round((week/total)*100))));
+  const workouts=Math.max(0,Number(cycle.treinosNoCiclo||0));
+  const readiness=cycle.mediaProntidao!=null?Number(cycle.mediaProntidao):null;
+  const consistency=Math.max(0,Math.min(100,Number(game.consistenciaScore||0)));
+  const weeklyState=String(summary.estado||'Em andamento');
+  const chapter=pct>=90?'Fechamento do ciclo':pct>=65?'Consolidação':pct>=35?'Construção':'Fundação';
+  const narrative=pct>=90?'Hora de revisar o ciclo inteiro e reconhecer o que foi sustentável antes de definir o próximo bloco.':pct>=65?'Você já tem base suficiente para observar padrões de consistência, resposta e recuperação ao longo do ciclo.':pct>=35?'O ciclo está ganhando forma. Priorize repetibilidade e resposta do corpo antes de perseguir mais carga.':'O início do ciclo serve para construir base, rotina e referências — não para acelerar resultados.';
+  const safety=weeklyState==='Revisar'||weeklyState==='Proteger'?'A semana pede proteção. Isso não interrompe a temporada: recuperação bem executada faz parte do progresso sazonal.':'Progresso sazonal valoriza continuidade do plano, não picos isolados de intensidade.';
+  const evoItems=Array.isArray(evolution.itens)?evolution.itens:[];
+  const positive=evoItems.filter(x=>/melhor|evolu|est[aá]vel|consisten|adequad|nova/i.test(`${x?.titulo||''} ${x?.resumo||''} ${x?.status||''}`)).length;
+  return `<section class="seasonal-progress" aria-label="Progresso sazonal">
+    <div class="seasonal-progress-head"><div><span class="eyebrow">SEASONAL PROGRESS</span><h3>${esc(chapter)} • Semana ${week}/${total}</h3><p>${esc(narrative)}</p></div><div class="seasonal-progress-orb" role="img" aria-label="Progresso do ciclo ${Math.round(pct)} por cento"><strong>${Math.round(pct)}%</strong><span>do ciclo</span></div></div>
+    <div class="seasonal-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><i style="width:${pct}%"></i></div>
+    <div class="seasonal-progress-grid"><article><small>CICLO</small><strong>${esc(cycle.nome||'Ciclo atual')}</strong><span>${esc(cycle.perfilEsportivo||'esportivo')}</span></article><article><small>TREINOS</small><strong>${workouts}</strong><span>no ciclo</span></article><article><small>PRONTIDÃO MÉDIA</small><strong>${readiness!=null?num(readiness,1):'—'}</strong><span>resposta acumulada</span></article><article><small>CONSISTÊNCIA</small><strong>${consistency}/100</strong><span>${positive?`${positive} sinais positivos`:'qualidade da adesão'}</span></article></div>
+    <div class="seasonal-progress-footer"><div><small>OBJETIVO DO CICLO</small><strong>${esc(cycle.objetivo||'Manter evolução sustentável dentro do plano.')}</strong></div><p>${esc(safety)}</p></div>
+  </section>`;
+}
+
 function hpAchievementFamilies(d){
   const game=d?.gamificacao||{};
   const achievements=Array.isArray(game.conquistasRecentes)?game.conquistasRecentes:[];
@@ -2374,6 +2401,7 @@ async function loadMyPatientPortal(){
     ${hpDynamicMissions(d)}
     ${hpAchievementFamilies(d)}
     ${hpWeeklyChallenges(d)}
+    ${hpSeasonalProgress(d)}
     ${hpGamification2AthleteCard(d.gamificacao2)}
     <section class="card athlete-progression-card">
       <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
@@ -6362,7 +6390,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.16.4';
+const HP_MVP_VERSION='0.16.5';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6385,6 +6413,7 @@ const HP_STREAK_INTELLIGENCE='v0.16.1';
 const HP_DYNAMIC_MISSIONS='v0.16.2';
 const HP_ACHIEVEMENT_FAMILIES='v0.16.3';
 const HP_WEEKLY_CHALLENGES='v0.16.4';
+const HP_SEASONAL_PROGRESS='v0.16.5';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

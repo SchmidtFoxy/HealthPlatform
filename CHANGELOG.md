@@ -1535,3 +1535,17 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Corrige o healthcheck inicial do `TESTAR.ps1` para aceitar a versão corrente `0.15.0`.
 - Atualiza a validação de identidade do `MVP Preview` para `v0.15.0`, preservando todos os marcadores históricos da linha `0.14.x`.
 - Nenhuma alteração funcional, de schema ou de migration.
+## v0.16.5 — Seasonal Progress
+- Fecha a primeira sequência da Gamificação 3.0 com uma leitura longitudinal do ciclo esportivo.
+- Reutiliza `cicloEsportivoAtual`, `gamificacao`, `resumoSemanal` e `evolucaoEsportiva`; não cria fonte paralela.
+- Organiza a temporada em Fundação, Construção, Consolidação e Fechamento do ciclo.
+- Mostra semana/total, progresso temporal, treinos do ciclo, prontidão média, consistência e objetivo do ciclo.
+- Mantém recuperação planejada como parte válida do progresso sazonal e evita premiar picos isolados de intensidade.
+- Schema permanece 38/38, sem migration nova.
+- Smoke test ampliado para 1464 verificações.
+
+
+
+## v0.16.5-r1 - MVP Preview smoke test fix
+- Corrige a validacao do badge MVP Preview para esperar v0.16.5.
+- Nenhuma alteracao funcional, de schema ou de dominio.

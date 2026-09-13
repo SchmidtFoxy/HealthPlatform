@@ -1,15 +1,18 @@
-# HealthPlatform — v0.16.4 Weekly Challenges
+# HealthPlatform — v0.16.5 Seasonal Progress
 
-> Versão funcional atual: **v0.16.4 — Weekly Challenges**.
-A Gamificação 3.0 agora organiza conquistas recentes em cinco famílias comportamentais — **Consistência, Recuperação, Execução, Evolução e Hábitos**. A leitura usa o sistema de conquistas já existente, sem criar badges paralelos, e deixa explícito que recuperação planejada e hábitos sustentáveis podem representar progresso tanto quanto performance.
+> Versão funcional atual: **v0.16.5 — Seasonal Progress**.
 
-A Gamificação 3.0 agora interpreta a sequência do atleta pela **qualidade da adesão**, não apenas pela contagem de dias. O Streak Intelligence combina consistência, dias ativos, missões e contexto de recuperação para diferenciar sequência sustentável, construção, retomada e sequência protegida. Recuperação planejada não vira falha, e treino extra não é necessário para preservar streak.
+A Gamificação 3.0 fecha sua primeira sequência com uma leitura de **progresso sazonal** baseada no ciclo esportivo já existente. O atleta passa a enxergar semana atual, percentual temporal do ciclo, treinos acumulados, prontidão média, consistência e objetivo do ciclo dentro de uma narrativa simples de Fundação → Construção → Consolidação → Fechamento.
 
-A Gamificação 3.0 começa transformando o nível do atleta em uma leitura de **qualidade de adesão**, não de intensidade bruta. O portal mostra estágio atual, progresso de XP, consistência, streak, XP alinhado e sinais de excesso, deixando explícito que recuperação bem executada também conta como progresso e que treino pesado não recebe recompensa extra apenas por ser pesado.
+A leitura não cria meta paralela nem premia picos isolados de intensidade. Semanas de recuperação/proteção continuam fazendo parte do progresso do ciclo, reforçando que continuidade e resposta ao corpo valem mais do que “forçar” a temporada.
 
 - Schema: **38/38**.
 - Migration nova: **nenhuma**.
-- Smoke test: **1448 verificações**.
+- Smoke test: **1464 verificações**.
+- Compatível com Windows PowerShell 5.1 (`TESTAR.ps1` em UTF-8 com BOM).
+
+---
+
 - Compatível com Windows PowerShell 5.1 (`TESTAR.ps1` em UTF-8 com BOM).
 
 ---
@@ -531,3 +534,7 @@ Conquistas recentes passam a ser organizadas por famílias de comportamento (Con
 - protege semanas de recuperação e reconhece adesão útil;
 - não exige compensação de treino perdido nem recompensa intensidade extra;
 - mantém schema 38/38 e não adiciona migration.
+
+## v0.16.5-r1 - MVP Preview smoke test fix
+- Corrige a validacao do badge MVP Preview para esperar v0.16.5.
+- Nenhuma alteracao funcional, de schema ou de dominio.
