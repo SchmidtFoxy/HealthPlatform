@@ -1,4 +1,4 @@
-## v0.14.9 — Mobile Accessibility & Polish
+## v0.15.0 — Mobile Accessibility & Polish
 
 Fecha a série mobile 0.14.x com uma camada transversal de acessibilidade e acabamento: skip link, foco visível consistente, `aria-current` na navegação, região viva para anunciar troca de seção, alvos mínimos de toque, suporte a `prefers-contrast` e reforço de `prefers-reduced-motion`. A entrega não altera schema, endpoints ou regras clínico-esportivas.
 
@@ -441,3 +441,13 @@ Corrige as verificações do TESTAR.ps1 que ainda esperavam o rótulo visual v0.
 
 ### Hotfix v0.14.9-r1
 O `TESTAR.ps1` teve o quoting do token `[aria-current="page"]` corrigido para sintaxe nativa do PowerShell 5.1. Nenhuma funcionalidade, endpoint, migration ou regra esportiva foi alterada.
+
+
+## v0.15.0 — Athlete Home 2.0
+A Home do atleta passa a reunir quatro perguntas operacionais em uma única camada: como estou, o que fazer agora, como vai o dia e como estou evoluindo. A implementação reutiliza prontidão, estratégia, hidratação, execução, gamificação e ciclo esportivo já existentes, sem migration nova.
+
+
+### v0.15.0-r1 — Smoke Test Current Version Fix
+- Corrige o healthcheck inicial do `TESTAR.ps1` para aceitar a versão corrente `0.15.0`.
+- Atualiza a validação de identidade do `MVP Preview` para `v0.15.0`, preservando todos os marcadores históricos da linha `0.14.x`.
+- Nenhuma alteração funcional, de schema ou de migration.

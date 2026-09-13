@@ -217,6 +217,32 @@ function hpHydrationPace(h){
   return `<section class="hydration-pace ${state}" aria-label="Ritmo de hidratação"><div class="hydration-pace-icon">💧</div><div class="hydration-pace-body"><span class="eyebrow">RITMO DE HIDRATAÇÃO</span><div class="hydration-pace-title"><h3>${title}</h3><strong>${num(pct,0)}%</strong></div><div class="hydration-pace-track"><i style="width:${pct}%"></i></div><div class="hydration-pace-meta"><span><b>${num(consumed,0)} ml</b> registrados</span><span><b>${remaining?num(remaining,0)+' ml':'Meta atingida'}</b> ${remaining?'restantes':'hoje'}</span></div><p>${copy}</p></div><button type="button" class="hydration-pace-action" id="hydrationPaceAction" aria-label="Registrar água">＋</button></section>`;
 }
 
+function hpAthleteHome2(d,readiness,adaptiveHome){
+  const strategy=d?.estrategiaDoDia||{};
+  const hydration=d?.hidratacaoContextual||{};
+  const execution=d?.execucaoDoDia||{};
+  const game=d?.gamificacao||{};
+  const cycle=d?.cicloEsportivoAtual||{};
+  const hydrationPct=hydration.progressoPercentual!=null?Math.max(0,Math.min(100,Number(hydration.progressoPercentual))):null;
+  const readinessValue=readiness?`${readiness.score}/100`:'Pendente';
+  const readinessDetail=readiness?`${readiness.recomendacaoTreino==='Recuperacao'?'Recuperação':readiness.recomendacaoTreino} • dor ${readiness.dorNivel}/10`:'Faça o check-in para contextualizar o dia';
+  const nowTitle=adaptiveHome?.stage==='closed'?'Dia concluído':adaptiveHome?.stage==='recovery'?'Recuperar e observar':readiness?'Seguir o treino do dia':'Fazer check-in matinal';
+  const nowDetail=adaptiveHome?.stage==='closed'?'Registros essenciais fechados por hoje':adaptiveHome?.stage==='recovery'?'Acompanhe resposta, hidratação e recuperação':readiness?`${esc(strategy.intensidadeSugerida||'Plano atual')}${strategy.rpeMin!=null&&strategy.rpeMax!=null?` • RPE ${strategy.rpeMin}-${strategy.rpeMax}`:''}`:'Leva menos de 1 minuto';
+  const todayDone=Number(execution.concluidos||0),todayPending=Number(execution.pendentes||0),todayTotal=todayDone+todayPending;
+  const progressLabel=execution.diaFechado?'100% fechado':todayTotal?`${Math.round(todayDone/todayTotal*100)}% do roteiro`:`${game.xpHoje||0} XP hoje`;
+  const cycleLabel=cycle.nome?`Semana ${cycle.semanaAtual||'—'}/${cycle.totalSemanas||'—'}`:`Nível ${game.nivel||1}`;
+  const cycleDetail=cycle.nome?esc(cycle.objetivo||cycle.perfilEsportivo||'Ciclo em andamento'):`${game.xpTotal||0} XP • streak ${game.streakDias||0} dia${Number(game.streakDias||0)===1?'':'s'}`;
+  return `<section class="athlete-home2" aria-label="Athlete Home 2.0">
+    <div class="athlete-home2-head"><div><span class="eyebrow">ATHLETE HOME 2.0</span><h2>Seu dia, sem precisar procurar</h2><p>Contexto, próxima ação e evolução reunidos em uma única leitura.</p></div><span class="athlete-home2-stage ${esc(adaptiveHome?.tone||'start')}">${adaptiveHome?.stage==='closed'?'Fechado':adaptiveHome?.stage==='recovery'?'Recuperação':readiness?'Em andamento':'Começar'}</span></div>
+    <div class="athlete-home2-grid">
+      <button type="button" class="athlete-home2-card body" id="athleteHome2Body"><small>COMO ESTOU</small><strong>${readinessValue}</strong><span>${esc(readinessDetail)}</span></button>
+      <button type="button" class="athlete-home2-card now" id="athleteHome2Now"><small>O QUE FAZER AGORA</small><strong>${nowTitle}</strong><span>${esc(nowDetail)}</span></button>
+      <button type="button" class="athlete-home2-card today" id="athleteHome2Today"><small>COMO VAI O DIA</small><strong>${progressLabel}</strong><span>${hydrationPct!=null?`Água ${num(hydrationPct,0)}% • `:''}${todayTotal?`${todayDone}/${todayTotal} essenciais`:'Registros e metas em acompanhamento'}</span></button>
+      <button type="button" class="athlete-home2-card progress" id="athleteHome2Progress"><small>COMO ESTOU EVOLUINDO</small><strong>${cycleLabel}</strong><span>${cycleDetail}</span></button>
+    </div>
+  </section>`;
+}
+
 function hpTodayBrief(d,readiness){
   const strategy=d?.estrategiaDoDia||{};
   const hydration=d?.hidratacaoContextual||{};
@@ -2031,6 +2057,8 @@ async function loadMyPatientPortal(){
       <div class="today-progress"><div><strong>${doneTasks}/${totalTasks}</strong><span>atividades acompanhadas</span></div><div class="today-progress-track"><i style="width:${completion}%"></i></div><b>${completion}%</b></div>
     </section>
 
+    ${hpAthleteHome2(d,readiness,adaptiveHome)}
+
     ${hpAdaptiveMobileHomeCue(adaptiveHome)}
 
     ${hpTodayBrief(d,readiness)}
@@ -2239,6 +2267,10 @@ async function loadMyPatientPortal(){
     </div>
   </div>`;
 
+  if($('#athleteHome2Body'))$('#athleteHome2Body').onclick=()=>openDailyReadiness(readiness);
+  if($('#athleteHome2Now'))$('#athleteHome2Now').onclick=()=>adaptiveHome.stage==='closed'?$('#dailyClosureAction')?.scrollIntoView({behavior:'smooth',block:'center'}):adaptiveHome.stage==='recovery'?(()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;target.scrollIntoView({behavior:'smooth',block:'start'})}})():readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
+  if($('#athleteHome2Today'))$('#athleteHome2Today').onclick=()=>{const target=$('.today-actions-card');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});};
+  if($('#athleteHome2Progress'))$('#athleteHome2Progress').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
   if($('#mobileNowPrimary'))$('#mobileNowPrimary').onclick=()=>readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
   if($('#todayBriefReadiness'))$('#todayBriefReadiness').onclick=()=>openDailyReadiness(readiness);
   if($('#todayBriefTraining'))$('#todayBriefTraining').onclick=()=>loadPatientSection('treino').catch(e=>toast(e.message,true));
@@ -6004,7 +6036,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.9';
+const HP_MVP_VERSION='0.15.0';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6015,6 +6047,7 @@ const HP_MOBILE_CHARTS_PROGRESS='v0.14.6';
 const HP_MOBILE_MODALS_SHEETS='v0.14.7';
 const HP_ATHLETE_PROFILE_MOBILE='v0.14.8';
 const HP_MOBILE_ACCESSIBILITY_POLISH='v0.14.9';
+const HP_ATHLETE_HOME_2='v0.15.0';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

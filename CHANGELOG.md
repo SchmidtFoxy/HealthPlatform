@@ -1,3 +1,19 @@
+## v0.15.0-r2 — Smoke Test CSS Token Fix
+
+- Corrige falso negativo no teste `[1365/1368]` da responsividade da Athlete Home 2.0.
+- A validação passa a conferir `display:grid` e `grid-template-columns` como tokens independentes, sem exigir que sejam adjacentes no CSS minificado.
+- Corrige também a mensagem de erro do badge MVP Preview para mencionar `v0.15.0`.
+- Sem alterações funcionais, schema ou migrations.
+
+# v0.15.0 — Athlete Home 2.0
+
+- inaugura a fase Athlete Experience 1.0;
+- adiciona uma camada operacional no topo da Home do atleta;
+- reúne “Como estou”, “O que fazer agora”, “Como vai o dia” e “Como estou evoluindo”;
+- reutiliza prontidão, estratégia do dia, hidratação, execução, gamificação e ciclo;
+- cards levam diretamente ao check-in, treino, registros e evolução;
+- mantém schema 38/38 e não adiciona migration.
+
 
 ## v0.14.9-r1 - PowerShell 5.1 smoke-test parser fix
 
@@ -1399,3 +1415,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Corrige asserts do TESTAR.ps1 que ainda buscavam `v0.14.6` no rótulo corrente do MVP Preview.
 - Preserva marcadores históricos como `HP_MOBILE_CHARTS_PROGRESS='v0.14.6'`.
 - Sem alteração de schema, migrations, endpoints ou regras funcionais.
+
+
+### v0.15.0-r1 — Smoke Test Current Version Fix
+- Corrige o healthcheck inicial do `TESTAR.ps1` para aceitar a versão corrente `0.15.0`.
+- Atualiza a validação de identidade do `MVP Preview` para `v0.15.0`, preservando todos os marcadores históricos da linha `0.14.x`.
+- Nenhuma alteração funcional, de schema ou de migration.
