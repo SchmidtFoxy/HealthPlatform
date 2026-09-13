@@ -1,4 +1,4 @@
-# HealthPlatform — v0.17.0 Seasonal Progress
+﻿# HealthPlatform — v0.17.1 Seasonal Progress
 
 > Versão funcional atual: **v0.16.5 — Seasonal Progress**.
 
@@ -544,3 +544,21 @@ Conquistas recentes passam a ser organizadas por famílias de comportamento (Con
 A fase profissional passa a tratar prescrição como um fluxo contínuo: avaliação/contexto → objetivo → treino/alimentação → revisão e publicação. O workspace reutiliza as bibliotecas e APIs já existentes; sugestões automatizadas ainda não são publicadas automaticamente e serão introduzidas em etapas posteriores sempre como apoio à decisão do profissional.
 
 O onboarding planejado separa cadastro essencial de uma avaliação esportiva/metabólica retomável, permitindo registrar bioimpedância/composição corporal, rotina, preferências, disponibilidade e objetivo antes de gerar uma proposta editável de hidratação, treino e alimentação.
+
+
+## v0.17.1 — Patient Intake & Body Assessment
+
+- Cadastro essencial permanece rápido e independente da bioimpedância.
+- Novo onboarding profissional retomável para avaliação inicial.
+- Composição corporal usa o endpoint existente de Avaliações: peso, altura, gordura, massa magra/gorda, cintura, abdômen, quadril, pressão e frequência cardíaca.
+- Bioimpedância/composição corporal é opcional: o paciente pode ser criado mesmo sem esses dados.
+- Após criar um paciente, o profissional pode completar a avaliação imediatamente ou fazer depois pelo prontuário.
+- Próxima etapa planejada: objetivo do tratamento + recomendação inicial assistida para revisão profissional.
+
+
+### v0.17.1-r1 — Smoke Test Intake Label Fix
+- Corrige falso negativo do smoke test herdado da v0.17.0: o fluxo profissional agora valida o rótulo atual “Avaliação inicial” em vez do antigo “Avaliação e contexto”.
+- Nenhuma alteração funcional, de API, schema ou migration.
+
+### Hotfix v0.17.1-r2
+Corrige apenas a validacao do acesso ao Patient Intake no `TESTAR.ps1` para Windows PowerShell 5.1. A implementacao do prontuario ja estava correta; o teste interpretava `$(` como subexpressao em vez de texto literal.

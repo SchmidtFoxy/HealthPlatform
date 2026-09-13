@@ -1,3 +1,12 @@
+﻿# v0.17.1 — Patient Intake & Body Assessment
+
+- Adiciona onboarding profissional guiado após o cadastro do paciente.
+- Separa cadastro essencial de avaliação corporal para não bloquear o primeiro atendimento.
+- Reutiliza Avaliações existentes para dados de antropometria/composição corporal e principais campos de bioimpedância já suportados.
+- Permite pular e retomar a avaliação pelo prontuário.
+- Nenhuma migration nova; schema permanece 38/38.
+- Mantém a decisão profissional como requisito para as próximas sugestões assistidas.
+
 # HealthPlatform v0.17.0 — Professional Prescription Workspace
 
 - inaugura a fase de experiência profissional de prescrição;
@@ -1559,3 +1568,14 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ## v0.16.5-r1 - MVP Preview smoke test fix
 - Corrige a validacao do badge MVP Preview para esperar v0.16.5.
 - Nenhuma alteracao funcional, de schema ou de dominio.
+
+
+### v0.17.1-r1 — Smoke Test Intake Label Fix
+- Corrige falso negativo do smoke test herdado da v0.17.0: o fluxo profissional agora valida o rótulo atual “Avaliação inicial” em vez do antigo “Avaliação e contexto”.
+- Nenhuma alteração funcional, de API, schema ou migration.
+
+## v0.17.1-r2 - Smoke Test Patient Intake Selector Fix
+- Corrige falso negativo no check 1477/1480 do `TESTAR.ps1`.
+- O seletor JavaScript `$('#patientIntake')` era validado dentro de aspas duplas do PowerShell, fazendo `$(` ser interpretado como subexpressao.
+- A validacao agora usa quoting literal compativel com Windows PowerShell 5.1.
+- Sem alteracoes funcionais, de schema, migrations ou API.
