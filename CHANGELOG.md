@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.16.0 — Athlete Level System
+- inaugura a fase Gamificação 3.0 com uma leitura de nível baseada no XP e na consistência já existentes;
+- apresenta identidades de progressão: Fundação, Ritmo, Consistente, Performance sustentável e Referência;
+- mostra progresso no nível, XP restante, consistência, streak, eventos alinhados e sinais de excesso;
+- reforça explicitamente que treino pesado não vale mais XP apenas por ser pesado e que recuperação adequada também é progresso;
+- reutiliza `gamificacao` e `gamificacao2`, sem endpoint, tabela ou migration nova;
+- mantém schema `38/38` e amplia o smoke test para `1424/1424`.
+
 ## v0.15.6 — Athlete Progress Story
 - transforma a evolução esportiva longitudinal já existente em uma narrativa curta e acionável para o atleta;
 - destaca até três sinais entre consistência, recuperação, carga, performance, nutrição, hidratação e ciclo;

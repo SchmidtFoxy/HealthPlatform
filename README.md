@@ -1,3 +1,16 @@
+# HealthPlatform v0.16.0 — Athlete Level System
+
+> Versão funcional atual: **v0.16.0 — Athlete Level System**.
+
+A Gamificação 3.0 começa transformando o nível do atleta em uma leitura de **qualidade de adesão**, não de intensidade bruta. O portal mostra estágio atual, progresso de XP, consistência, streak, XP alinhado e sinais de excesso, deixando explícito que recuperação bem executada também conta como progresso e que treino pesado não recebe recompensa extra apenas por ser pesado.
+
+- Schema: **38/38**.
+- Migration nova: **nenhuma**.
+- Smoke test: **1424 verificações**.
+- Compatível com Windows PowerShell 5.1 (`TESTAR.ps1` em UTF-8 com BOM).
+
+---
+
 # HealthPlatform v0.15.4 — End-of-Day Flow
 
 ## v0.15.6 — Weekly Review

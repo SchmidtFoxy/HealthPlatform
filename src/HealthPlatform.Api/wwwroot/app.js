@@ -404,6 +404,34 @@ function hpWeeklyAthleteRhythm(d){
 }
 
 
+function hpAthleteLevelSystem(d){
+  const game=d?.gamificacao||{};
+  const game2=d?.gamificacao2||{};
+  const level=Math.max(1,Number(game.nivel||1));
+  const xpLevel=Math.max(0,Number(game.xpNoNivel||0));
+  const xpNext=Math.max(1,Number(game.xpProximoNivel||500));
+  const pct=Math.min(100,Math.round((xpLevel/xpNext)*100));
+  const consistency=Math.max(0,Math.min(100,Number(game.consistenciaScore||0)));
+  const streak=Math.max(0,Number(game.streakDias||0));
+  const stages=[
+    {min:1,max:4,name:'Fundação',text:'Construa uma rotina que você consiga repetir.'},
+    {min:5,max:9,name:'Ritmo',text:'Regularidade começa a valer mais do que intensidade isolada.'},
+    {min:10,max:14,name:'Consistente',text:'Seu histórico já mostra uma base de autocuidado confiável.'},
+    {min:15,max:19,name:'Performance sustentável',text:'Evoluir agora significa equilibrar estímulo, recuperação e adesão.'},
+    {min:20,max:999,name:'Referência',text:'Seu nível reconhece constância de longo prazo, não excesso de carga.'}
+  ];
+  const stage=stages.find(x=>level>=x.min&&level<=x.max)||stages[0];
+  const aligned=Number(game2.eventosAlinhadosRecentes||0);
+  const excess=Number(game2.eventosExcessoRecentes||0);
+  const focus=game2.estado==='PriorizarResposta'?'Recuperar também é progresso':game2.estado==='ConstruirConsistencia'?'Construa sequência, não pressão':'Mantenha o comportamento que está funcionando';
+  return `<section class="athlete-level-system" aria-label="Sistema de nível do atleta">
+    <div class="athlete-level-system-head"><div><span class="eyebrow">ATHLETE LEVEL SYSTEM</span><h2>Nível ${level} • ${esc(stage.name)}</h2><p>${esc(stage.text)}</p></div><div class="athlete-level-orb"><small>NÍVEL</small><strong>${level}</strong><span>${pct}%</span></div></div>
+    <div class="athlete-level-progress"><div class="athlete-level-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div><div><span>${xpLevel}/${xpNext} XP neste nível</span><strong>${Math.max(0,xpNext-xpLevel)} XP para o nível ${level+1}</strong></div></div>
+    <div class="athlete-level-signals"><article><small>CONSISTÊNCIA</small><strong>${consistency}/100</strong><span>base da evolução</span></article><article><small>SEQUÊNCIA</small><strong>${streak} dia${streak===1?'':'s'}</strong><span>autocuidado repetido</span></article><article><small>XP ALINHADO</small><strong>${aligned}</strong><span>eventos recentes</span></article><article><small>EXCESSO</small><strong>${excess}</strong><span>não rende progresso extra</span></article></div>
+    <div class="athlete-level-principle"><div><small>FOCO DE PROGRESSÃO</small><strong>${esc(focus)}</strong><span>Treino pesado não vale mais por ser pesado. XP reconhece adesão, adequação à prontidão e recuperação bem executada.</span></div><span class="athlete-level-today">+${Number(game.xpHoje||0)} XP hoje</span></div>
+  </section>`;
+}
+
 function hpAthleteProgressStory(d){
   const evo=d?.evolucaoEsportiva||{};
   const items=Array.isArray(evo.itens)?evo.itens:[];
@@ -2234,6 +2262,7 @@ async function loadMyPatientPortal(){
     <details class="mobile-disclosure mobile-progress-disclosure">
       <summary><span><b>Progresso e missões</b><small>XP, streak, ciclo e desafios da semana</small></span><i>⌄</i></summary>
       <div class="mobile-disclosure-body">
+    ${hpAthleteLevelSystem(d)}
     ${hpGamification2AthleteCard(d.gamificacao2)}
     <section class="card athlete-progression-card">
       <div class="athlete-level"><span>NÍVEL</span><strong>${game.nivel||1}</strong></div>
@@ -6219,7 +6248,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.6';
+const HP_MVP_VERSION='0.16.0';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6237,6 +6266,7 @@ const HP_RECOVERY_DAY_FLOW='v0.15.3';
 const HP_END_OF_DAY_FLOW='v0.15.4';
 const HP_WEEKLY_REVIEW='v0.15.5';
 const HP_ATHLETE_PROGRESS_STORY='v0.15.6';
+const HP_ATHLETE_LEVEL_SYSTEM='v0.16.0';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
