@@ -1,12 +1,12 @@
-# HealthPlatform v0.15.1 — Morning Check-in
+# HealthPlatform v0.15.2 — Training Day Flow
 
-> Versão funcional atual: **v0.15.1 — Morning Check-in**.
+> Versão funcional atual: **v0.15.2 — Training Day Flow**.
 
-A abertura do dia do atleta agora tem um ritual matinal dedicado e integrado à prontidão existente. A Home mostra se o check-in está pendente ou concluído, resume sono, energia, dor, disposição e recuperação, e oferece uma única ação para registrar ou atualizar o contexto corporal do dia. Nenhum endpoint ou schema novo foi criado: a experiência reutiliza `/api/portal/me/prontidao`.
+O treino do atleta agora funciona como uma jornada contínua: o sistema usa o Morning Check-in e a prontidão como contexto, mostra a sessão prescrita, permite iniciar a execução e fecha o ciclo com duração, RPE e revisão. O fluxo não cria prescrição automática: a prontidão contextualiza a decisão e a ficha profissional continua sendo a referência.
 
 - Schema: **38/38**.
 - Migration nova: **nenhuma**.
-- Smoke test: **1376 verificações**.
+- Smoke test: **1384 verificações**.
 - Compatível com Windows PowerShell 5.1 (`TESTAR.ps1` em UTF-8 com BOM).
 
 ## v0.15.0 — Mobile Accessibility & Polish

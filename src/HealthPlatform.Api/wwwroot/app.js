@@ -3258,6 +3258,7 @@ async function loadPatientWorkout(){
     return;
   }
   host.innerHTML=patientPageHeader('TREINO',esc(p.nome),`${esc(p.objetivo||'Plano de exercícios')} • ${esc(p.profissional)}`)+`
+    ${hpTrainingDayFlow(home,p,h)}
     <div class="patient-plan-totals workout-totals">
       ${metric(p.totalSessoes,'','Treinos')}
       ${metric(p.totalExercicios,'','Exercícios')}
@@ -3312,12 +3313,41 @@ renderPatientTab = function(d){
   $('#newWorkoutFromTab').onclick=()=>openWorkoutForm(d.p);
 };
 
+function hpTrainingDayFlow(home,plano,historico){
+  const readiness=home?.prontidaoDiaria;
+  const strategy=home?.estrategiaDoDia||{};
+  const sessions=plano?.sessoes||[];
+  const executions=historico?.execucoes||[];
+  const today=todayISO();
+  const todayExecution=executions.find(x=>String(x.dataHoraInicioUtc||'').slice(0,10)===today);
+  const planned=sessions[0]||null;
+  const recommendation=readiness?.recomendacaoTreino||strategy?.intensidadeSugerida||'Aguardando check-in';
+  const needsRecovery=['Recuperacao','Leve'].includes(String(readiness?.recomendacaoTreino||''));
+  const stage=todayExecution?'done':!readiness?'checkin':'ready';
+  const title=todayExecution?'Sessão de hoje concluída':!readiness?'Comece pelo contexto do corpo':needsRecovery?'Treine respeitando a recuperação':'Seu treino está pronto';
+  const detail=todayExecution
+    ?`${todayExecution.duracaoMinutos||0} min${todayExecution.esforcoPercebido!=null?` • RPE ${todayExecution.esforcoPercebido}/10`:''}`
+    :!readiness?'Faça o Morning Check-in antes de decidir a intensidade.'
+    :`${esc(recommendation)}${planned?` • ${esc(planned.nome)}`:''}`;
+  return `<section class="training-day-flow ${stage}" aria-label="Training Day Flow">
+    <div class="training-day-flow-head"><div><span class="eyebrow">TRAINING DAY FLOW</span><h2>${title}</h2><p>${detail}</p></div><span class="training-day-flow-state">${todayExecution?'Concluído':!readiness?'Check-in':'Pronto'}</span></div>
+    <div class="training-day-flow-steps">
+      <article class="${readiness?'done':'active'}"><i>${readiness?'✓':'1'}</i><div><small>CONTEXTO</small><strong>${readiness?`${readiness.score}/100 • ${esc(recommendation)}`:'Morning Check-in'}</strong><span>${readiness?'Prontidão usada como contexto, sem alterar sua prescrição.':'Sono, energia, dor, disposição e recuperação.'}</span></div></article>
+      <article class="${todayExecution?'done':readiness?'active':''}"><i>${todayExecution?'✓':'2'}</i><div><small>EXECUTAR</small><strong>${planned?esc(planned.nome):'Sessão prescrita'}</strong><span>${needsRecovery?'Atenção à recuperação: respeite orientação e limites do plano.':'Registre o que realmente executar hoje.'}</span></div></article>
+      <article class="${todayExecution?'done':''}"><i>${todayExecution?'✓':'3'}</i><div><small>FECHAR</small><strong>RPE + duração</strong><span>${todayExecution?'Sessão já alimentando seu histórico esportivo.':'Conclua registrando esforço e como a sessão terminou.'}</span></div></article>
+    </div>
+    <button type="button" class="primary training-day-flow-action" id="trainingDayFlowAction">${todayExecution?'Revisar sessão':!readiness?'Fazer check-in':'Iniciar treino'}</button>
+    <small class="training-day-flow-safety">A prontidão orienta contexto e recuperação; a prescrição profissional continua sendo a referência do treino.</small>
+  </section>`;
+}
+
 const __loadPatientWorkout_v031 = loadPatientWorkout;
 loadPatientWorkout = async function(){
   const host=$('#patientPortalContent');
-  const [d,h]=await Promise.all([
+  const [d,h,home]=await Promise.all([
     api('/api/portal/me/treino'),
-    api('/api/portal/me/treinos/historico?dias=90')
+    api('/api/portal/me/treinos/historico?dias=90'),
+    api(`/api/portal/me/home?data=${todayISO()}`)
   ]);
   const p=d.plano;
   if(!p){
@@ -3352,6 +3382,15 @@ loadPatientWorkout = async function(){
         <button type="button" class="workout-execution-review" data-execution-id="${x.id}" aria-label="Revisar ${esc(x.sessao)}"><div><strong>${esc(x.sessao)}</strong><small>${fmtDateTime(x.dataHoraInicioUtc)}</small></div><span>${x.duracaoMinutos||0} min</span><span>${x.esforcoPercebido!=null?`RPE ${x.esforcoPercebido}/10`:'—'}</span><b class="workout-review-chevron" aria-hidden="true">›</b></button>`).join('')}</div>`:sectionEmpty('Nenhum treino registrado ainda.')}
     </section>`;
 
+  if($('#trainingDayFlowAction'))$('#trainingDayFlowAction').onclick=()=>{
+    const readiness=home?.prontidaoDiaria;
+    const today=todayISO();
+    const execution=(h.execucoes||[]).find(x=>String(x.dataHoraInicioUtc||'').slice(0,10)===today);
+    if(execution){openWorkoutSessionReview(execution);return;}
+    if(!readiness){openDailyReadiness(readiness);return;}
+    const sessao=(p.sessoes||[])[0];
+    if(sessao)openWorkoutExecutionForm(sessao);
+  };
   $$('.start-workout').forEach(b=>b.onclick=()=>{
     const sessao=(p.sessoes||[]).find(x=>x.id===b.dataset.session);
     if(sessao)openWorkoutExecutionForm(sessao);
@@ -3425,7 +3464,7 @@ function openWorkoutExecutionForm(sessao){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading"><span class="eyebrow">EXECUÇÃO</span><h2>${esc(sessao.nome)}</h2><p>Registre o que você realmente executou hoje.</p></div>
-    <form id="workoutExecutionForm" class="clinical-form workout-execution-form">
+    <div class="training-execution-journey"><span class="done"><i>✓</i> Contexto</span><span class="active"><i>2</i> Executar</span><span><i>3</i> Fechar</span></div><form id="workoutExecutionForm" class="clinical-form workout-execution-form">
       <div class="form-grid three workout-execution-meta">
         ${field('Duração (min)','duracao','number','min="0"')}
         ${field('Esforço geral (0-10)','rpe','number','min="0" max="10"')}
@@ -6059,7 +6098,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.1';
+const HP_MVP_VERSION='0.15.2';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6072,6 +6111,7 @@ const HP_ATHLETE_PROFILE_MOBILE='v0.14.8';
 const HP_MOBILE_ACCESSIBILITY_POLISH='v0.14.9';
 const HP_ATHLETE_HOME_2='v0.15.0';
 const HP_MORNING_CHECKIN='v0.15.1';
+const HP_TRAINING_DAY_FLOW='v0.15.2';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

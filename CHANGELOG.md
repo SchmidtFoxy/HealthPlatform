@@ -1,3 +1,13 @@
+## v0.15.2 — Training Day Flow
+- Integra a tela de treino em uma jornada diária de três etapas: Contexto → Executar → Fechar.
+- Reutiliza prontidão e estratégia do dia para contextualizar a sessão prescrita, sem alterar a prescrição profissional.
+- CTA adapta-se ao estado real do atleta: fazer check-in, iniciar treino ou revisar a sessão concluída no dia.
+- O fechamento mantém duração, RPE geral e detalhes executados no mesmo fluxo, alimentando o histórico esportivo existente.
+- Sinais de recuperação/treino leve ficam explícitos antes da execução, reforçando segurança e coerência com o plano.
+- Adiciona navegação visual da execução e responsividade específica para 720px/390px.
+- Sem endpoint novo, sem migration nova; schema permanece 38/38.
+- Smoke test ampliado para 1384 verificações.
+
 ## v0.15.1 — Morning Check-in
 - Cria uma experiência matinal dedicada na Athlete Home 2.0 sem duplicar dados ou regras de prontidão.
 - O card matinal informa se o check-in está pendente ou concluído e resume os cinco sinais principais: sono, energia, dor, disposição e recuperação.
