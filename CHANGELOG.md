@@ -1,3 +1,11 @@
+## v0.15.4 — End-of-Day Flow
+
+- Nova camada de encerramento diário no portal do atleta.
+- Revisão consolidada de corpo, sessão, hidratação e execução antes do fechamento.
+- CTA reutiliza `/api/portal/me/fechamento-dia`; nenhuma API ou migration nova.
+- Mensagem de segurança evita pressão para completar ou compensar pendências.
+- Smoke test ampliado para 1400 verificações.
+
 
 ## v0.15.3-r1 - Smoke Test Schema Check Fix
 

@@ -464,6 +464,37 @@ function hpDailyClosureCard(execution){
   </section>`;
 }
 
+function hpEndOfDayFlow(d){
+  const execution=d?.execucaoDoDia||{};
+  const hydration=d?.hidratacaoContextual||{};
+  const readiness=d?.prontidaoDiaria;
+  const response=d?.respostaSessao||{};
+  const closed=!!execution.diaFechado;
+  const completed=Number(execution.concluidos||0),pending=Number(execution.pendentes||0),total=completed+pending;
+  const progress=Math.max(0,Math.min(100,Number(execution.progressoPercentual||0)));
+  const hydrationPct=hydration.progressoPercentual!=null?Math.max(0,Math.min(100,Number(hydration.progressoPercentual))):null;
+  const trained=!!response.sessaoNome;
+  const status=closed?'closed':progress>=75?'ready':'open';
+  const title=closed?'Seu dia ficou registrado':progress>=75?'Seu dia está pronto para fechar':'Antes de encerrar, faça uma leitura rápida';
+  const copy=closed
+    ?`Percepção final ${execution.percepcaoDoDia??'—'}/10${execution.resumoFechamento?` • ${execution.resumoFechamento}`:''}`
+    :'Fechar o dia consolida o que aconteceu sem exigir perfeição nem criar metas extras.';
+  const workoutText=trained?`${response.sessaoNome}${response.rpeSessao!=null?` • RPE ${response.rpeSessao}/10`:''}`:'Sem sessão registrada hoje';
+  const hydrationText=hydrationPct!=null?`${num(hydrationPct,0)}% da meta`:(hydration.consumidoMl!=null?`${num(hydration.consumidoMl,0)} ml registrados`:'Sem registro de água');
+  const bodyText=readiness?`${readiness.score}/100 • ${readiness.recomendacaoTreino==='Recuperacao'?'Recuperação':readiness.recomendacaoTreino}`:'Check-in não registrado';
+  return `<section class="end-of-day-flow ${status}" aria-label="End-of-Day Flow">
+    <div class="end-of-day-flow-head"><div><span class="eyebrow">END-OF-DAY FLOW</span><h2>${esc(title)}</h2><p>${esc(copy)}</p></div><span class="end-of-day-flow-state">${closed?'Fechado':progress>=75?'Pronto':'Em aberto'}</span></div>
+    <div class="end-of-day-flow-review">
+      <article><small>CORPO</small><strong>${esc(bodyText)}</strong><span>Contexto da manhã preservado até o fechamento.</span></article>
+      <article><small>SESSÃO</small><strong>${esc(workoutText)}</strong><span>Treino e esforço entram no histórico quando registrados.</span></article>
+      <article><small>HIDRATAÇÃO</small><strong>${esc(hydrationText)}</strong><span>Use o realizado de hoje; não compense volume no fim do dia.</span></article>
+      <article><small>ROTEIRO</small><strong>${total?`${completed}/${total} essenciais`:'Sem itens essenciais'}</strong><span>${closed?'Fechamento concluído.':`${num(progress,0)}% acompanhado hoje.`}</span></article>
+    </div>
+    <div class="end-of-day-flow-footer"><div><small>${closed?'O fechamento pode ser atualizado se você precisar corrigir sua percepção.':'Percepção final + uma nota curta são suficientes para consolidar o dia.'}</small></div><button type="button" class="${closed?'secondary':'primary'} end-of-day-flow-action" id="endOfDayFlowAction">${closed?'Revisar fechamento':'Encerrar meu dia'}</button></div>
+    <small class="end-of-day-flow-safety">Fechar o dia registra contexto; não cria obrigação de completar pendências nem de compensar treino, alimentação ou hidratação.</small>
+  </section>`;
+}
+
 function hpConsistencyCompass(d,readiness){
   const game=d?.gamificacao||{};
   const missions=d?.missoesContextuais2||{};
@@ -2110,6 +2141,8 @@ async function loadMyPatientPortal(){
 
     ${hpHydrationPace(d.hidratacaoContextual)}
 
+    ${hpEndOfDayFlow(d)}
+
     ${hpDailyClosureCard(d.execucaoDoDia)}
 
     ${hpConsistencyCompass(d,readiness)}
@@ -2307,6 +2340,7 @@ async function loadMyPatientPortal(){
     if(d.respostaSessao?.sessaoNome){const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}}
     else loadPatientSection('treino').catch(e=>toast(e.message,true));
   };
+  if($('#endOfDayFlowAction'))$('#endOfDayFlowAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#dailyClosureAction'))$('#dailyClosureAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#consistencyCompassDetails'))$('#consistencyCompassDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
@@ -6128,7 +6162,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.3';
+const HP_MVP_VERSION='0.15.4';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6143,6 +6177,7 @@ const HP_ATHLETE_HOME_2='v0.15.0';
 const HP_MORNING_CHECKIN='v0.15.1';
 const HP_TRAINING_DAY_FLOW='v0.15.2';
 const HP_RECOVERY_DAY_FLOW='v0.15.3';
+const HP_END_OF_DAY_FLOW='v0.15.4';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

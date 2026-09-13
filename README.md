@@ -1,3 +1,18 @@
+# HealthPlatform v0.15.4 — End-of-Day Flow
+
+> Versão funcional atual: **v0.15.4 — End-of-Day Flow**.
+
+## v0.15.4 — End-of-Day Flow
+
+- fecha a experiência diária do atleta em uma leitura única de corpo, sessão, hidratação e roteiro;
+- reutiliza `execucaoDoDia`, `prontidaoDiaria`, `respostaSessao` e `hidratacaoContextual`;
+- usa o endpoint de fechamento já existente, sem criar backend ou estado paralelo;
+- deixa explícito que encerrar o dia não exige completar pendências nem compensar carga;
+- mantém o fechamento editável para correção da percepção final;
+- schema preservado em 38/38.
+
+---
+
 # HealthPlatform v0.15.3 — Recovery Day Flow
 
 > Versão funcional atual: **v0.15.3 — Recovery Day Flow**.
