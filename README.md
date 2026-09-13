@@ -1,4 +1,9 @@
-# HealthPlatform v0.14.7 — Mobile Modals & Bottom Sheets
+
+## v0.14.8 — Athlete Profile Mobile
+
+O portal do atleta ganhou uma area **Meu perfil** otimizada para celular. Ela reune identidade, nivel/XP, consistencia, streak, prontidao media do ciclo, objetivo e progresso do ciclo esportivo e o ultimo contexto corporal. A entrega reutiliza os dados ja existentes do portal e nao altera schema ou regras clinico-esportivas.
+
+# HealthPlatform v0.14.8 — Mobile Modals & Bottom Sheets
 
 A v0.14.7 continua a consolidação mobile: modais e ações rápidas passam a se comportar como bottom sheets consistentes, com backdrop clicável, foco acessível, navegação por teclado, bloqueio de scroll do fundo e respeito à safe-area. Não altera schema nem regras esportivas.
 

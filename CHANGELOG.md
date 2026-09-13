@@ -1,3 +1,13 @@
+# v0.14.8 — Athlete Profile Mobile
+
+- adiciona **Meu perfil** ao menu mobile do atleta;
+- consolida identidade esportiva, nivel, XP, streak e consistencia;
+- mostra ciclo atual, objetivo, semana, progresso e meta semanal;
+- resume ultima avaliacao corporal e dados basicos do atleta;
+- adiciona layouts responsivos para 720 px e 390 px;
+- preserva schema 38/38 e as regras clinico-esportivas existentes;
+- amplia o smoke test para 1352 verificacoes.
+
 # v0.14.7 — Mobile Modals & Bottom Sheets
 
 - Consolida modais mobile como bottom sheets com safe-area, alvos de toque e entrada visual consistente.

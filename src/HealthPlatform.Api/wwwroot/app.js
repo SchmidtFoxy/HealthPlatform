@@ -2413,17 +2413,62 @@ $('#patientLogoutButton')?.addEventListener('click',logout);
 
 // ===== v0.3.27 — Portal do paciente completo =====
 function patientSectionLoading(view='inicio'){
-  const labels={inicio:'Preparando seu dia',plano:'Carregando seu plano',treino:'Preparando seu treino',metas:'Atualizando suas metas',diario:'Abrindo seu diário',evolucao:'Carregando sua evolução',exames:'Buscando seus exames',solicitacoes:'Buscando solicitações',medicamentos:'Carregando medicamentos',jornada:'Montando sua jornada'};
+  const labels={inicio:'Preparando seu dia',plano:'Carregando seu plano',treino:'Preparando seu treino',metas:'Atualizando suas metas',diario:'Abrindo seu diário',evolucao:'Carregando sua evolução',exames:'Buscando seus exames',solicitacoes:'Buscando solicitações',medicamentos:'Carregando medicamentos',jornada:'Montando sua jornada',perfil:'Abrindo seu perfil esportivo'};
   return `<section class="patient-loading-state" role="status" aria-live="polite" aria-label="${esc(labels[view]||'Carregando')}"><div class="patient-loading-orb" aria-hidden="true"><i></i></div><strong>${esc(labels[view]||'Carregando')}</strong><span>Um instante...</span><div class="patient-loading-lines" aria-hidden="true"><i></i><i></i><i></i></div></section>`;
 }
+async function loadPatientProfile(){
+  const host=$('#patientPortalContent');
+  const d=await api(`/api/portal/me/home?data=${todayISO()}`);
+  const p=d.paciente||{},game=d.gamificacao||{},cycle=d.cicloEsportivoAtual||null,e=d.evolucaoCorporal||{};
+  const age=p.dataNascimento?Math.max(0,Math.floor((Date.now()-new Date(`${p.dataNascimento}T00:00:00`).getTime())/31557600000)):null;
+  const cyclePct=cycle?Math.min(100,Math.max(0,Number(cycle.progressoTemporalPercentual||0))):0;
+  host.innerHTML=`<div class="athlete-profile-mobile">
+    <section class="athlete-profile-hero card">
+      <div class="athlete-profile-avatar" aria-hidden="true">${initials(p.nome||state.user?.nome||'Atleta')}</div>
+      <div class="athlete-profile-identity"><span class="eyebrow">MEU PERFIL ESPORTIVO</span><h1>${esc(p.nome||state.user?.nome||'Atleta')}</h1><p>${cycle?`${esc(cycle.perfilEsportivo||'Atleta')} • ${esc(cycle.nome||'Ciclo ativo')}`:'Acompanhamento esportivo ativo'}</p></div>
+      <div class="athlete-profile-level"><small>NÍVEL</small><strong>${game.nivel||1}</strong><span>${game.xpTotal||0} XP</span></div>
+    </section>
+    <section class="athlete-profile-stats" aria-label="Resumo do atleta">
+      <article><small>Consistência</small><strong>${game.consistenciaScore||0}<span>/100</span></strong><p>regularidade recente</p></article>
+      <article><small>Streak</small><strong>${game.streakDias||0}<span> dias</span></strong><p>sequência de autocuidado</p></article>
+      <article><small>Prontidão média</small><strong>${cycle?.mediaProntidao!=null?num(cycle.mediaProntidao,1):'—'}</strong><p>${cycle?'no ciclo atual':'sem ciclo ativo'}</p></article>
+    </section>
+    <section class="card athlete-profile-cycle">
+      <div class="card-head"><div><span class="eyebrow">CICLO ATUAL</span><h3>${cycle?esc(cycle.nome):'Sem ciclo esportivo ativo'}</h3></div>${cycle?`<span class="pill Ativa">Semana ${cycle.semanaAtual}/${cycle.totalSemanas}</span>`:''}</div>
+      ${cycle?`<p>${esc(cycle.objetivo||'Mantenha consistência e siga o plano definido com seu profissional.')}</p><div class="athlete-profile-cycle-track" aria-label="${num(cyclePct,0)}% do ciclo concluído"><i style="width:${cyclePct}%"></i></div><div class="athlete-profile-cycle-meta"><span><b>${cycle.treinosNoCiclo||0}</b> treinos</span><span><b>${cycle.metaTreinosSemanais||'—'}</b> meta/semana</span><span><b>${num(cyclePct,0)}%</b> do ciclo</span></div>`:sectionEmpty('Seu profissional ainda não iniciou um ciclo esportivo.')}
+    </section>
+    <section class="card athlete-profile-body">
+      <div class="card-head"><div><span class="eyebrow">MEU CORPO</span><h3>Último contexto corporal</h3></div><button class="ghost" type="button" data-profile-jump="evolucao">Ver evolução</button></div>
+      <div class="athlete-profile-body-grid">
+        <span><small>Peso</small><b>${e.pesoKg!=null?`${num(e.pesoKg,1)} kg`:'—'}</b></span>
+        <span><small>IMC</small><b>${e.imc!=null?num(e.imc,1):'—'}</b></span>
+        <span><small>Gordura</small><b>${e.percentualGordura!=null?`${num(e.percentualGordura,1)}%`:'—'}</b></span>
+        <span><small>Cintura</small><b>${e.cinturaCm!=null?`${num(e.cinturaCm,1)} cm`:'—'}</b></span>
+      </div>
+      ${e.dataUtc?`<small class="muted-line">Última avaliação em ${fmtDate(e.dataUtc)}${e.variacaoPesoKg!=null?` • peso ${e.variacaoPesoKg>0?'+':''}${num(e.variacaoPesoKg,1)} kg desde a anterior`:''}</small>`:''}
+    </section>
+    <section class="card athlete-profile-personal">
+      <div class="card-head"><div><span class="eyebrow">IDENTIDADE</span><h3>Dados básicos</h3></div></div>
+      <div class="athlete-profile-personal-grid">
+        <div><small>Nome</small><strong>${esc(p.nome||'—')}</strong></div>
+        <div><small>Idade</small><strong>${age!=null?`${age} anos`:'—'}</strong></div>
+        <div><small>Sexo</small><strong>${esc(p.sexo||'—')}</strong></div>
+        <div><small>Perfil esportivo</small><strong>${esc(cycle?.perfilEsportivo||'—')}</strong></div>
+      </div>
+      <p class="muted-line">Seu perfil resume informações do acompanhamento. Ajustes clínicos e esportivos continuam sob orientação profissional.</p>
+    </section>
+  </div>`;
+  $$('[data-profile-jump]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.profileJump).catch(e=>toast(e.message,true)));
+}
+
 async function loadPatientSection(view='inicio'){
-  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada'];
+  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada','perfil'];
   if(!allowed.includes(view))view='inicio';
   $$('#patientPortalNav [data-patient-view]').forEach(b=>b.classList.toggle('active',b.dataset.patientView===view));
   const host=$('#patientPortalContent');
   host?.setAttribute('aria-busy','true');
   if(host)host.innerHTML=patientSectionLoading(view);
-  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney};
+  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney,perfil:loadPatientProfile};
   try{
     await loaders[view]();
     if(host){host.classList.remove('patient-view-enter');void host.offsetWidth;host.classList.add('patient-view-enter')}
@@ -5959,7 +6004,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.7';
+const HP_MVP_VERSION='0.14.8';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -5968,6 +6013,7 @@ const HP_MOBILE_FORMS_INPUTS='v0.14.4';
 const HP_MOBILE_FEEDBACK_STATES='v0.14.5';
 const HP_MOBILE_CHARTS_PROGRESS='v0.14.6';
 const HP_MOBILE_MODALS_SHEETS='v0.14.7';
+const HP_ATHLETE_PROFILE_MOBILE='v0.14.8';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
