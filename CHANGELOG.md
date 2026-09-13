@@ -1,3 +1,18 @@
+
+## v0.15.3-r1 - Smoke Test Schema Check Fix
+
+- Corrige falso negativo no teste 1391/1392 causado por `$migrationCount` nao inicializado.
+- A validacao de ausencia de migration agora confere o PREPARAR 38/38 e a inexistencia de `v0.15.3_recovery_day_flow.sql`, seguindo o mesmo padrao da v0.15.2.
+- Nenhuma alteracao funcional, de API, schema ou migration.
+
+## v0.15.3 — Recovery Day Flow
+
+- Novo fluxo de recuperação diária no portal do atleta.
+- Contexto, plano de recuperação e reavaliação ficam reunidos antes da ficha de treino quando a prontidão pede recuperação/leve.
+- Recuperação planejada passa a ser apresentada como execução correta do plano, sem incentivo a compensação de carga.
+- Integração somente com dados e ações existentes; schema permanece 38/38 e não há migration nova.
+- Smoke test ampliado para 1392 verificações.
+
 ## v0.15.2 — Training Day Flow
 - Integra a tela de treino em uma jornada diária de três etapas: Contexto → Executar → Fechar.
 - Reutiliza prontidão e estratégia do dia para contextualizar a sessão prescrita, sem alterar a prescrição profissional.

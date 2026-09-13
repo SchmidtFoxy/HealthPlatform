@@ -3313,6 +3313,30 @@ renderPatientTab = function(d){
   $('#newWorkoutFromTab').onclick=()=>openWorkoutForm(d.p);
 };
 
+function hpRecoveryDayFlow(home){
+  const readiness=home?.prontidaoDiaria;
+  const recommendation=String(readiness?.recomendacaoTreino||home?.estrategiaDoDia?.intensidadeSugerida||'');
+  const recoveryDay=['Recuperacao','Leve'].includes(recommendation);
+  if(!readiness||!recoveryDay)return '';
+  const plan=home?.planoRecuperacao||{};
+  const items=(plan.itens||[]).slice(0,3);
+  const closed=!!home?.execucaoDoDia?.diaFechado;
+  const state=closed?'done':'active';
+  const title=recommendation==='Recuperacao'?'Hoje, recuperar faz parte do plano':'Hoje pede uma execução mais leve';
+  const detail=plan.resumo||readiness.motivoRecomendacao||'Use os sinais do corpo como contexto e respeite a orientação profissional.';
+  const focus=plan.focoPrincipal||'Recuperação e qualidade';
+  return `<section class="recovery-day-flow ${state}" aria-label="Recovery Day Flow">
+    <div class="recovery-day-flow-head"><div><span class="eyebrow">RECOVERY DAY FLOW</span><h2>${esc(title)}</h2><p>${esc(detail)}</p></div><span class="recovery-day-flow-state">${closed?'Fechado':recommendation==='Recuperacao'?'Recuperar':'Leve'}</span></div>
+    <div class="recovery-day-flow-steps">
+      <article class="done"><i>✓</i><div><small>CONTEXTO</small><strong>${readiness.score}/100 • ${esc(recommendation==='Recuperacao'?'Recuperação':recommendation)}</strong><span>O check-in definiu o contexto; ele não substitui avaliação profissional.</span></div></article>
+      <article class="${closed?'done':'active'}"><i>${closed?'✓':'2'}</i><div><small>RECUPERAR</small><strong>${esc(focus)}</strong><span>${items.length?esc(items.map(x=>x.titulo).join(' • ')):'Hidratação, mobilidade, sono e manejo de carga conforme seu plano.'}</span></div></article>
+      <article class="${closed?'done':''}"><i>${closed?'✓':'3'}</i><div><small>REAVALIAR</small><strong>${closed?'Dia registrado':'Registre como você está'}</strong><span>${closed?'Seu fechamento já alimenta o histórico longitudinal.':'Observe resposta, dor, energia e recuperação sem pressão para compensar treino.'}</span></div></article>
+    </div>
+    <button type="button" class="primary recovery-day-flow-action" id="recoveryDayFlowAction">${closed?'Revisar meu dia':'Registrar como estou'}</button>
+    <small class="recovery-day-flow-safety">Recuperação planejada também é execução correta do plano. Não compense carga por conta própria.</small>
+  </section>`;
+}
+
 function hpTrainingDayFlow(home,plano,historico){
   const readiness=home?.prontidaoDiaria;
   const strategy=home?.estrategiaDoDia||{};
@@ -3356,6 +3380,8 @@ loadPatientWorkout = async function(){
   }
 
   host.innerHTML=patientPageHeader('TREINO',esc(p.nome),`${esc(p.objetivo||'Plano de exercícios')} • ${esc(p.profissional)}`)+`
+    ${hpRecoveryDayFlow(home)}
+    ${hpTrainingDayFlow(home,p,h)}
     <div class="patient-plan-totals workout-totals">
       ${metric(p.totalSessoes,'','Treinos')}
       ${metric(p.totalExercicios,'','Exercícios')}
@@ -3382,6 +3408,10 @@ loadPatientWorkout = async function(){
         <button type="button" class="workout-execution-review" data-execution-id="${x.id}" aria-label="Revisar ${esc(x.sessao)}"><div><strong>${esc(x.sessao)}</strong><small>${fmtDateTime(x.dataHoraInicioUtc)}</small></div><span>${x.duracaoMinutos||0} min</span><span>${x.esforcoPercebido!=null?`RPE ${x.esforcoPercebido}/10`:'—'}</span><b class="workout-review-chevron" aria-hidden="true">›</b></button>`).join('')}</div>`:sectionEmpty('Nenhum treino registrado ainda.')}
     </section>`;
 
+  if($('#recoveryDayFlowAction'))$('#recoveryDayFlowAction').onclick=()=>{
+    if(home?.execucaoDoDia?.diaFechado){loadPatientSection('inicio').catch(e=>toast(e.message,true));return;}
+    openPatientQuickLog();
+  };
   if($('#trainingDayFlowAction'))$('#trainingDayFlowAction').onclick=()=>{
     const readiness=home?.prontidaoDiaria;
     const today=todayISO();
@@ -6098,7 +6128,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.2';
+const HP_MVP_VERSION='0.15.3';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6112,6 +6142,7 @@ const HP_MOBILE_ACCESSIBILITY_POLISH='v0.14.9';
 const HP_ATHLETE_HOME_2='v0.15.0';
 const HP_MORNING_CHECKIN='v0.15.1';
 const HP_TRAINING_DAY_FLOW='v0.15.2';
+const HP_RECOVERY_DAY_FLOW='v0.15.3';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;

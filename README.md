@@ -1,6 +1,15 @@
-# HealthPlatform v0.15.2 — Training Day Flow
+# HealthPlatform v0.15.3 — Recovery Day Flow
 
-> Versão funcional atual: **v0.15.2 — Training Day Flow**.
+> Versão funcional atual: **v0.15.3 — Recovery Day Flow**.
+
+## v0.15.3 — Recovery Day Flow
+
+- Organiza dias de recuperação em **Contexto → Recuperar → Reavaliar**.
+- Ativa o fluxo somente quando a prontidão/intensidade contextual indica `Recuperacao` ou `Leve`.
+- Reutiliza `prontidaoDiaria`, `planoRecuperacao` e `execucaoDoDia`; não cria endpoint ou estado paralelo.
+- Permite registrar rapidamente como o atleta está pelo Quick Log, sem pressão para compensar carga.
+- Mantém o Training Day Flow disponível como referência da prescrição profissional.
+
 
 O treino do atleta agora funciona como uma jornada contínua: o sistema usa o Morning Check-in e a prontidão como contexto, mostra a sessão prescrita, permite iniciar a execução e fecha o ciclo com duração, RPE e revisão. O fluxo não cria prescrição automática: a prontidão contextualiza a decisão e a ficha profissional continua sendo a referência.
 
