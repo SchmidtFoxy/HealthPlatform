@@ -1,3 +1,13 @@
+# HealthPlatform v0.17.0 — Professional Prescription Workspace
+
+- inaugura a fase de experiência profissional de prescrição;
+- adiciona `Prescrições` à navegação profissional com um workspace dedicado a avaliação → objetivo → prescrição → revisão;
+- consolida contadores das bibliotecas existentes de planos de treino, sessões, planos alimentares e refeições;
+- permite continuar a prescrição a partir de pacientes recentes e adiciona atalho `Prescrição` no prontuário;
+- explicita o fluxo futuro de avaliação corporal/bioimpedância, objetivo terapêutico, preferências e sugestão assistida sempre sujeita à revisão profissional;
+- corrige a colisão JavaScript entre salvar refeição como modelo e salvar plano alimentar como modelo (`openSaveMealTemplate` duplicada);
+- mantém schema 38/38 e não cria migration.
+
 ## v0.16.4 — Weekly Challenges
 - Novo resumo contextual de desafios da semana na Home do atleta.
 - Reutiliza `gamificacao.desafiosSemana`, prontidão e contexto semanal.

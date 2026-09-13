@@ -1,4 +1,4 @@
-# HealthPlatform — v0.16.5 Seasonal Progress
+# HealthPlatform — v0.17.0 Seasonal Progress
 
 > Versão funcional atual: **v0.16.5 — Seasonal Progress**.
 
@@ -538,3 +538,9 @@ Conquistas recentes passam a ser organizadas por famílias de comportamento (Con
 ## v0.16.5-r1 - MVP Preview smoke test fix
 - Corrige a validacao do badge MVP Preview para esperar v0.16.5.
 - Nenhuma alteracao funcional, de schema ou de dominio.
+
+## v0.17.0 — Professional Prescription Workspace
+
+A fase profissional passa a tratar prescrição como um fluxo contínuo: avaliação/contexto → objetivo → treino/alimentação → revisão e publicação. O workspace reutiliza as bibliotecas e APIs já existentes; sugestões automatizadas ainda não são publicadas automaticamente e serão introduzidas em etapas posteriores sempre como apoio à decisão do profissional.
+
+O onboarding planejado separa cadastro essencial de uma avaliação esportiva/metabólica retomável, permitindo registrar bioimpedância/composição corporal, rotina, preferências, disponibilidade e objetivo antes de gerar uma proposta editável de hidratação, treino e alimentação.
