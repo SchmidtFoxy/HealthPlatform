@@ -1,3 +1,20 @@
+
+## v0.14.9-r1 - PowerShell 5.1 smoke-test parser fix
+
+- Corrige quoting do bloco `Mobile Accessibility & Polish` no `TESTAR.ps1`.
+- Mantem a versao funcional `0.14.9`, schema `38/38` e 1360 verificacoes.
+- Preserva UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
+# v0.14.9 — Mobile Accessibility & Polish
+
+- Fecha a série mobile 0.14.x com acessibilidade e acabamento transversal.
+- Adiciona skip link para o conteúdo principal e foco visível consistente.
+- Marca a seção atual com `aria-current=page` e anuncia mudanças de área em região `aria-live`.
+- Garante alvos mínimos de toque de 44 px nas principais ações mobile.
+- Adiciona tratamento para `prefers-contrast: more` e consolida `prefers-reduced-motion`.
+- Melhora wrapping de conteúdo em telas estreitas e semântica de navegação do atleta.
+- Preserva schema 38/38, endpoints e regras clínico-esportivas.
+- Smoke test ampliado para 1360 verificações.
+
 # v0.14.8 — Athlete Profile Mobile
 
 - adiciona **Meu perfil** ao menu mobile do atleta;

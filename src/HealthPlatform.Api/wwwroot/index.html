@@ -8,7 +8,9 @@
   <link rel="stylesheet" href="/app.css" />
 </head>
 <body>
-  <div id="toast" class="toast" aria-atomic="true"></div>
+  <a class="hp-skip-link" href="#patientPortalContent">Pular para o conteúdo</a>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="hpA11yStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <section id="loginView" class="login-shell">
     <div class="login-visual">
@@ -18,7 +20,7 @@
         <h1>Saúde, longevidade e alta performance.</h1>
         <p>Um acompanhamento integrado para avaliar, ajustar, monitorar e evoluir com decisões orientadas por dados.</p>
       </div>
-      <div class="login-quote">MVP Preview • v0.14.8</div>
+      <div class="login-quote">MVP Preview • v0.14.9</div>
     </div>
     <div class="login-panel">
       <form id="loginForm" class="login-card">
@@ -74,7 +76,7 @@
         <button id="patientLogoutButton" class="secondary">Sair</button>
       </div>
     </header>
-    <nav id="patientPortalNav" class="patient-portal-nav">
+    <nav id="patientPortalNav" class="patient-portal-nav" aria-label="Navegação do atleta">
       <button class="active" data-patient-view="inicio">Hoje</button>
       <button data-patient-view="treino">Treino</button>
       <button data-patient-view="plano">Plano</button>
@@ -87,7 +89,7 @@
       <button class="patient-secondary-nav" data-patient-view="jornada">Jornada</button>
       <button class="patient-more-trigger" id="patientMoreTrigger" type="button" aria-expanded="false" aria-controls="patientMoreSheet">Mais</button>
     </nav>
-    <main id="patientPortalContent" class="patient-portal-content"></main>
+    <main id="patientPortalContent" class="patient-portal-content" tabindex="-1"></main>
     <button id="patientQuickLogTrigger" class="patient-quick-log-trigger" type="button" aria-expanded="false" aria-controls="patientQuickLogSheet" aria-label="Abrir registros rápidos"><span>＋</span><small>Registrar</small></button>
     <div id="patientQuickLogBackdrop" class="patient-quick-log-backdrop hidden"></div>
     <aside id="patientQuickLogSheet" class="patient-quick-log-sheet" aria-hidden="true" aria-label="Registros rápidos">

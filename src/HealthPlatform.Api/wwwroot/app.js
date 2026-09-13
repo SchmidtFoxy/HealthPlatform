@@ -2464,7 +2464,7 @@ async function loadPatientProfile(){
 async function loadPatientSection(view='inicio'){
   const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada','perfil'];
   if(!allowed.includes(view))view='inicio';
-  $$('#patientPortalNav [data-patient-view]').forEach(b=>b.classList.toggle('active',b.dataset.patientView===view));
+  $$('#patientPortalNav [data-patient-view]').forEach(b=>{const active=b.dataset.patientView===view;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   const host=$('#patientPortalContent');
   host?.setAttribute('aria-busy','true');
   if(host)host.innerHTML=patientSectionLoading(view);
@@ -6004,7 +6004,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.14.8';
+const HP_MVP_VERSION='0.14.9';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6014,6 +6014,7 @@ const HP_MOBILE_FEEDBACK_STATES='v0.14.5';
 const HP_MOBILE_CHARTS_PROGRESS='v0.14.6';
 const HP_MOBILE_MODALS_SHEETS='v0.14.7';
 const HP_ATHLETE_PROFILE_MOBILE='v0.14.8';
+const HP_MOBILE_ACCESSIBILITY_POLISH='v0.14.9';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
@@ -6460,3 +6461,48 @@ function hpInstallModalSheetExperience(){
   document.querySelectorAll('.modal-backdrop').forEach(x=>observer.observe(x,{attributes:true,attributeFilter:['class']}));
 }
 hpInstallModalSheetExperience();
+
+
+// ===== v0.14.9 — Mobile Accessibility & Polish =====
+function hpAnnounce(message){
+  const live=$('#hpA11yStatus');
+  if(!live)return;
+  live.textContent='';
+  requestAnimationFrame(()=>{live.textContent=String(message||'')});
+}
+function hpEnhanceMobileAccessibility(root=document){
+  const scope=root?.querySelectorAll?root:document;
+  scope.querySelectorAll('button:not([aria-label])').forEach(button=>{
+    const text=(button.textContent||'').replace(/\s+/g,' ').trim();
+    if(text)button.setAttribute('aria-label',text);
+  });
+  scope.querySelectorAll('a[href],button,input,select,textarea,[tabindex]').forEach(el=>{
+    if(el.getAttribute('tabindex')==='-1')return;
+    if(!el.hasAttribute('data-hp-focusable'))el.setAttribute('data-hp-focusable','true');
+  });
+  scope.querySelectorAll('img:not([alt])').forEach(img=>img.setAttribute('alt',''));
+}
+const hpLoadPatientSectionA11y=loadPatientSection;
+loadPatientSection=async function(view='inicio'){
+  await hpLoadPatientSectionA11y(view);
+  const active=$(`#patientPortalNav [data-patient-view="${view}"]`);
+  const label=(active?.textContent||view).replace(/\s+/g,' ').trim();
+  hpAnnounce(`${label} carregado`);
+  hpEnhanceMobileAccessibility($('#patientPortalContent'));
+};
+function hpInstallAccessibilityPolish(){
+  hpEnhanceMobileAccessibility(document);
+  const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+  document.documentElement.dataset.hpReducedMotion=reduceMotion?.matches?'true':'false';
+  reduceMotion?.addEventListener?.('change',e=>document.documentElement.dataset.hpReducedMotion=e.matches?'true':'false');
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      if($('#patientMoreSheet')?.classList.contains('open'))closePatientMoreSheet();
+      if($('#patientQuickLogSheet')?.classList.contains('open'))closePatientQuickLog();
+    }
+  });
+  new MutationObserver(records=>{
+    records.forEach(record=>record.addedNodes.forEach(node=>{if(node.nodeType===1)hpEnhanceMobileAccessibility(node)}));
+  }).observe(document.body,{childList:true,subtree:true});
+}
+hpInstallAccessibilityPolish();

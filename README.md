@@ -1,3 +1,7 @@
+## v0.14.9 — Mobile Accessibility & Polish
+
+Fecha a série mobile 0.14.x com uma camada transversal de acessibilidade e acabamento: skip link, foco visível consistente, `aria-current` na navegação, região viva para anunciar troca de seção, alvos mínimos de toque, suporte a `prefers-contrast` e reforço de `prefers-reduced-motion`. A entrega não altera schema, endpoints ou regras clínico-esportivas.
+
 
 ## v0.14.8 — Athlete Profile Mobile
 
@@ -433,3 +437,7 @@ Se uma tentativa anterior do `POPULAR-LUCATTI-DEMO-RICO.ps1` criou as metas mas 
 
 ### v0.14.7-r1 — Smoke Test MVP Preview Fix
 Corrige as verificações do TESTAR.ps1 que ainda esperavam o rótulo visual v0.14.6 no MVP Preview. A aplicação permanece funcionalmente em v0.14.7; nenhuma regra, endpoint, migration ou schema foi alterado.
+
+
+### Hotfix v0.14.9-r1
+O `TESTAR.ps1` teve o quoting do token `[aria-current="page"]` corrigido para sintaxe nativa do PowerShell 5.1. Nenhuma funcionalidade, endpoint, migration ou regra esportiva foi alterada.
