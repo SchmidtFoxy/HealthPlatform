@@ -1,3 +1,14 @@
+## v0.15.5 — Weekly Review
+
+- adiciona `hpWeeklyReview(d)` à Home do atleta;
+- sintetiza treinos/meta semanal, consistência, missões e carga recente;
+- diferencia semana protegida, consolidada e em andamento;
+- apresenta foco contextual para a próxima semana com proteção explícita contra prescrição automática;
+- reutiliza `planejamentoSemanal`, `resumoSemanal`, `tendenciaSemanal`, `gamificacao` e `cargaIndividualizada`;
+- CTA abre os cards semanais detalhados já existentes;
+- mantém schema `38/38`, sem migration nova;
+- smoke test ampliado para `1408/1408`.
+
 ## v0.15.4 — End-of-Day Flow
 
 - Nova camada de encerramento diário no portal do atleta.

@@ -3671,3 +3671,15 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 @media(max-width:720px){.end-of-day-flow{padding:14px;border-radius:19px}.end-of-day-flow-head h2{font-size:18px}.end-of-day-flow-review{grid-template-columns:1fr 1fr}.end-of-day-flow-footer{display:grid}.end-of-day-flow-action{width:100%}}
 @media(max-width:390px){.end-of-day-flow-head{display:grid;gap:8px}.end-of-day-flow-state{justify-self:start}.end-of-day-flow-review{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.end-of-day-flow *{scroll-behavior:auto!important}}
+
+/* v0.15.5 — Weekly Review */
+.weekly-review{display:grid;gap:14px;padding:18px;border:1px solid rgba(33,83,102,.13);border-radius:22px;background:linear-gradient(150deg,#f8fbfc,#edf5f5);box-shadow:0 10px 28px rgba(17,61,74,.06)}
+.weekly-review.protect{background:linear-gradient(150deg,#fffaf0,#f7f0df);border-color:rgba(139,100,37,.16)}
+.weekly-review.steady{background:linear-gradient(150deg,#f5fcf9,#e9f6f0);border-color:rgba(34,119,83,.14)}
+.weekly-review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.weekly-review-head h2{margin:3px 0 4px;font-size:20px;line-height:1.15;color:#213f50}.weekly-review-head p{margin:0;max-width:720px;color:var(--muted,#667981);font-size:11px;line-height:1.5}.weekly-review-state{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:rgba(35,85,104,.08);color:#365f6e;font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.06em}.weekly-review.protect .weekly-review-state{background:rgba(156,111,37,.10);color:#805d25}.weekly-review.steady .weekly-review-state{background:rgba(31,126,86,.09);color:#2d6a4f}
+.weekly-review-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.weekly-review-grid article{display:grid;gap:4px;min-width:0;padding:12px;border-radius:16px;background:rgba(255,255,255,.86);border:1px solid rgba(36,77,91,.08)}.weekly-review-grid small,.weekly-review-next small{font-size:8px;font-weight:850;letter-spacing:.07em;color:#7a8a90}.weekly-review-grid strong{font-size:18px;line-height:1.1;color:#223f4c}.weekly-review-grid span{font-size:9.5px;line-height:1.4;color:#697b82;overflow-wrap:anywhere}
+.weekly-review-next{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:2px}.weekly-review-next>div{display:grid;gap:3px;min-width:0}.weekly-review-next strong{font-size:12px;color:#294957}.weekly-review-next span{font-size:9.5px;color:#6b7b82;line-height:1.4}.weekly-review-action{flex:0 0 auto;min-height:46px}
+@media(max-width:900px){.weekly-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.weekly-review{padding:14px;border-radius:19px}.weekly-review-head h2{font-size:18px}.weekly-review-next{display:grid}.weekly-review-action{width:100%}}
+@media(max-width:390px){.weekly-review-head{display:grid;gap:8px}.weekly-review-state{justify-self:start}.weekly-review-grid{grid-template-columns:1fr 1fr}.weekly-review-grid strong{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.weekly-review *{scroll-behavior:auto!important}}

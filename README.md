@@ -1,5 +1,10 @@
 # HealthPlatform v0.15.4 — End-of-Day Flow
 
+## v0.15.5 — Weekly Review
+
+A experiência do atleta agora fecha também o ciclo semanal. A Home reúne treino/meta, consistência, missões e carga recente em uma síntese curta, interpreta o estado da semana e sugere um foco contextual para a próxima semana sem substituir o plano profissional. O botão **Revisar semana completa** abre as análises semanais já existentes (planejamento, resumo e tendência), evitando duplicação de dados ou regras. Esta versão não altera o schema (38/38) nem adiciona migration.
+
+
 > Versão funcional atual: **v0.15.4 — End-of-Day Flow**.
 
 ## v0.15.4 — End-of-Day Flow

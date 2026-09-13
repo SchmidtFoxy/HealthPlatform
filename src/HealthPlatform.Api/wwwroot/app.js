@@ -404,6 +404,38 @@ function hpWeeklyAthleteRhythm(d){
 }
 
 
+function hpWeeklyReview(d){
+  const plan=d?.planejamentoSemanal||{};
+  const summary=d?.resumoSemanal||{};
+  const trend=d?.tendenciaSemanal||{};
+  const game=d?.gamificacao||{};
+  const load=d?.cargaIndividualizada||{};
+  if((!d?.planejamentoSemanal || plan.estado==='SemCiclo') && !d?.resumoSemanal && !d?.tendenciaSemanal)return '';
+  const completed=Number(summary.treinosConcluidosSemana ?? plan.treinosConcluidosSemana ?? 0);
+  const goal=Number(summary.metaTreinosSemana ?? plan.metaTreinosSemana ?? 0);
+  const adherence=goal>0?Math.min(100,Math.round((completed/goal)*100)):null;
+  const consistency=Number(game.consistenciaScore||0);
+  const weeklyState=String(summary.estado||plan.estado||'Executando');
+  const protectedWeek=weeklyState==='Revisar'||weeklyState==='Proteger';
+  const stableWeek=weeklyState==='Equilibrada'||weeklyState==='Consolidar';
+  const tone=protectedWeek?'protect':stableWeek?'steady':'active';
+  const loadLabel=load.posicaoHistorica||load.estado||'Sem comparação de carga';
+  const trendLabel=trend.resumo||summary.resumo||plan.resumo||'Use a semana como contexto para decidir o próximo passo.';
+  const challenges=(game.desafiosSemana||[]);
+  const challengesDone=challenges.filter(x=>x.concluido).length;
+  const nextFocus=protectedWeek?'Recuperação e retorno gradual':stableWeek?'Consolidar o que funcionou':completed<goal?'Retomar pelo próximo treino do plano':'Manter consistência sem buscar carga extra';
+  return `<section class="weekly-review ${tone}" aria-label="Revisão da semana esportiva">
+    <div class="weekly-review-head"><div><span class="eyebrow">WEEKLY REVIEW</span><h2>${protectedWeek?'Proteja a próxima semana':stableWeek?'Semana consolidada':'Feche a semana com contexto'}</h2><p>${esc(trendLabel)}</p></div><span class="weekly-review-state">${esc(weeklyState)}</span></div>
+    <div class="weekly-review-grid">
+      <article><small>TREINOS</small><strong>${goal>0?`${completed}/${goal}`:`${completed}`}</strong><span>${adherence!=null?`${adherence}% da meta`:'registrados na semana'}</span></article>
+      <article><small>CONSISTÊNCIA</small><strong>${consistency}/100</strong><span>${game.streakDias||0} dia${Number(game.streakDias||0)===1?'':'s'} de sequência</span></article>
+      <article><small>MISSÕES</small><strong>${challenges.length?`${challengesDone}/${challenges.length}`:'—'}</strong><span>${challenges.length?'concluídas':'sem missões ativas'}</span></article>
+      <article><small>CARGA</small><strong>${load.cargaAtual7!=null?num(load.cargaAtual7,0):'—'}</strong><span>${esc(loadLabel)}</span></article>
+    </div>
+    <div class="weekly-review-next"><div><small>FOCO DA PRÓXIMA SEMANA</small><strong>${esc(nextFocus)}</strong><span>Use esta síntese como contexto; o plano profissional continua sendo a referência.</span></div><button type="button" class="secondary weekly-review-action" id="weeklyReviewAction">Revisar semana completa <span>→</span></button></div>
+  </section>`;
+}
+
 function hpTrainingLoadSnapshot(d){
   const load=d?.cargaIndividualizada;
   if(!load || load.cargaAtual7==null)return '';
@@ -2147,6 +2179,8 @@ async function loadMyPatientPortal(){
 
     ${hpConsistencyCompass(d,readiness)}
 
+    ${hpWeeklyReview(d)}
+
     ${hpMobileInsightRail(d,readiness)}
 
     <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
@@ -2344,6 +2378,7 @@ async function loadMyPatientPortal(){
   if($('#dailyClosureAction'))$('#dailyClosureAction').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   if($('#consistencyCompassDetails'))$('#consistencyCompassDetails').onclick=()=>{const disclosure=$('.mobile-progress-disclosure');if(disclosure){disclosure.open=true;disclosure.scrollIntoView({behavior:'smooth',block:'start'});}};
   if($('#weeklyRhythmDetails'))$('#weeklyRhythmDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-plan-card')||target.querySelector('.weekly-summary-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
+  if($('#weeklyReviewAction'))$('#weeklyReviewAction').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.weekly-summary-card')||target.querySelector('.weekly-trend-card')||target.querySelector('.weekly-plan-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#trainingLoadSnapshotDetails'))$('#trainingLoadSnapshotDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.individualized-load-athlete-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
@@ -6162,7 +6197,7 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.15.4';
+const HP_MVP_VERSION='0.15.5';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
@@ -6178,6 +6213,7 @@ const HP_MORNING_CHECKIN='v0.15.1';
 const HP_TRAINING_DAY_FLOW='v0.15.2';
 const HP_RECOVERY_DAY_FLOW='v0.15.3';
 const HP_END_OF_DAY_FLOW='v0.15.4';
+const HP_WEEKLY_REVIEW='v0.15.5';
 
 function enhancePatientMobileFormControls(root=document){
   const scope=root?.querySelectorAll?root:document;
