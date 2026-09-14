@@ -3193,7 +3193,7 @@ renderPatientTab = function(d){
         <div class="record-top"><div><span class="eyebrow">V${t.versao||1} • ${fmtDate(t.dataInicio)}${t.dataFim?' — '+fmtDate(t.dataFim):''}</span><h4>${esc(t.nome)}</h4><small>${esc(t.profissionalNome||'')}</small></div><span class="pill ${t.status==='Ativo'?'Ativa':'Agendada'}">${esc(t.status)}</span></div>
         ${t.objetivo?`<p>${esc(t.objetivo)}</p>`:''}
         <div class="workout-progression-badges">${t.ajusteCargaPercentual?`<span>Carga ${t.ajusteCargaPercentual>0?'+':''}${num(t.ajusteCargaPercentual,1)}%</span>`:''}${t.ajusteSeries?`<span>Séries ${t.ajusteSeries>0?'+':''}${t.ajusteSeries}</span>`:''}${t.ajusteRepeticoes?`<span>Reps ${t.ajusteRepeticoes>0?'+':''}${t.ajusteRepeticoes}</span>`:''}${t.ajusteDescansoSegundos?`<span>Descanso ${t.ajusteDescansoSegundos>0?'+':''}${t.ajusteDescansoSegundos}s</span>`:''}</div>
-        <div class="workout-plan-actions"><button class="ghost workout-save-template" data-workout-id="${t.id}">Salvar como modelo</button><button class="secondary workout-progress" data-workout-id="${t.id}">Criar progressão</button></div>
+        <div class="workout-plan-actions"><button class="secondary workout-edit" data-workout-id="${t.id}">Editar treino</button><button class="ghost workout-save-template" data-workout-id="${t.id}">Salvar como modelo</button><button class="secondary workout-progress" data-workout-id="${t.id}">Criar progressão</button></div>
         <div class="workout-session-mini">${(t.sessoes||[]).map(s=>`<div class="workout-session-mini-row"><div><strong>${esc(s.nome)}</strong><span>${esc(s.diasSemana||'Dias livres')} • ${(s.itens||[]).length} exercício(s)</span></div><button class="ghost session-save-template" data-session-id="${s.id}" data-workout-id="${t.id}">Salvar sessão</button></div>`).join('')}</div>
       </article>`).join('')}</div>`:sectionEmpty('Nenhum plano de treino cadastrado.')}</section>`;
   const patientForWorkout=d.p||{id:state.patientId,nome:'Paciente'};
@@ -3205,6 +3205,7 @@ renderPatientTab = function(d){
   $$('.session-save-template').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>x.id===b.dataset.workoutId);const session=plan?.sessoes?.find(x=>x.id===b.dataset.sessionId);openSaveWorkoutSessionTemplate(session)});
   $$('.workout-save-template').forEach(b=>b.onclick=()=>openSaveWorkoutTemplate(treinos.find(x=>x.id===b.dataset.workoutId)));
   $$('.workout-progress').forEach(b=>b.onclick=()=>openWorkoutProgression(patientForWorkout,treinos.find(x=>x.id===b.dataset.workoutId)));
+  $$('.workout-edit').forEach(b=>b.onclick=()=>openWorkoutForm(patientForWorkout,treinos.find(x=>x.id===b.dataset.workoutId)));
   loadWorkoutPhases(patientForWorkout,treinos).catch(x=>console.warn('Fases de treino:',x));
 };
 
@@ -3214,50 +3215,78 @@ openClinicalForm = function(type,p){
   return __openClinicalForm_v030(type,p);
 };
 
-async function openWorkoutForm(p){
-  const box=$('#clinicalActionContent');
-  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">PLANO DE TREINO</span><h2>Novo plano</h2><p>${esc(p.nome)} • carregando exercícios...</p></div>`;
+async function openWorkoutForm(p,existingPlan=null){
+  const box=$('#clinicalActionContent'),editing=!!existingPlan;
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER 2.0 • v0.17.4</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • carregando exercícios...</p></div>`;
   try{
     let exercicios=await api('/api/exercicios');
-    const options=()=>`<option value="">Selecione...</option>${exercicios.map(x=>`<option value="${x.id}">${esc(x.nome)}${x.grupoMuscular?' • '+esc(x.grupoMuscular):''}</option>`).join('')}`;
-
-    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">PLANO DE TREINO</span><h2>Novo plano</h2><p>${esc(p.nome)} • ${exercicios.length} exercício(s) no catálogo</p></div>
-      <form id="workoutForm" class="clinical-form">
+    const exerciseLabel=x=>`${x.nome}${x.grupoMuscular?' • '+x.grupoMuscular:''}${x.equipamento?' • '+x.equipamento:''}`;
+    const options=(selected='')=>`<option value="">Selecione...</option>${exercicios.map(x=>`<option value="${x.id}" ${String(selected)===String(x.id)?'selected':''}>${esc(exerciseLabel(x))}</option>`).join('')}`;
+    const plan=existingPlan||{};
+    const tuning=state.recommendationTuningDraft?.patientId===p.id?state.recommendationTuningDraft:null;
+    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER 2.0 • v0.17.4</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • ${exercicios.length} exercício(s) no catálogo</p></div>
+      ${tuning?`<div class="workout-builder-context"><b>Contexto da sugestão profissional</b><span>${esc(tuning.goal||'Objetivo definido')} • ${tuning.strength||'—'} sessão(ões) de força • ${tuning.minutes||'—'} min/sessão</span><small>Use como referência. A ficha continua totalmente editável pelo profissional.</small></div>`:''}
+      <form id="workoutForm" class="clinical-form workout-builder2-form">
         <div class="form-grid builder-meta">
-          ${field('Nome do plano','nome','text','value="Plano de treino" required')}
-          ${field('Objetivo','objetivo')}
-          ${field('Data de início','dataInicio','date',`value="${todayISO()}" required`)}
-          ${field('Data final','dataFim','date')}
-          ${area('Orientações gerais','observacoes')}
+          ${field('Nome do plano','nome','text',`value="${esc(plan.nome||'Plano de treino')}" required`)}
+          ${field('Objetivo','objetivo','text',`value="${esc(plan.objetivo||tuning?.goal||'')}"`)}
+          ${field('Data de início','dataInicio','date',`value="${plan.dataInicio||todayISO()}" required`)}
+          ${field('Data final','dataFim','date',`value="${plan.dataFim||''}"`)}
+          <label class="span-2">Orientações gerais<textarea name="observacoes">${esc(plan.observacoes||'')}</textarea></label>
         </div>
-        <div class="builder-head"><div><h3>Treinos / dias</h3><p>Monte a ficha e a ordem dos exercícios.</p></div><div class="builder-head-actions"><button type="button" class="secondary" id="newExerciseCatalog">+ Exercício no catálogo</button><button type="button" class="secondary" id="addWorkoutSession">+ Treino</button></div></div>
+        <div class="builder-head"><div><h3>Sessões / dias</h3><p>Busque exercícios, duplique estruturas e ajuste a ficha sem perder o rascunho.</p></div><div class="builder-head-actions"><button type="button" class="secondary" id="newExerciseCatalog">+ Exercício no catálogo</button><button type="button" class="secondary" id="addWorkoutSession">+ Sessão</button></div></div>
         <div id="workoutSessions" class="builder-list"></div>
-        <div class="form-actions builder-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Salvar plano de treino</button></div>
+        <div class="form-actions builder-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">${editing?'Salvar alterações':'Salvar plano de treino'}</button></div>
       </form>`;
 
     const host=$('#workoutSessions');
-    function addSession(name='Treino A'){
-      const el=document.createElement('div');el.className='meal-builder workout-builder';
-      el.innerHTML=`<div class="meal-builder-head"><div class="form-grid three workout-session-fields"><label>Nome<input name="sessionName" value="${esc(name)}" required></label><label>Dias da semana<input name="days" placeholder="Segunda, quinta"></label><label>Observações<input name="sessionObs"></label></div><button type="button" class="icon-btn remove-workout-session">×</button></div>
+    const weekDays=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+    const longDay={Seg:'Segunda',Ter:'Terça',Qua:'Quarta',Qui:'Quinta',Sex:'Sexta','Sáb':'Sábado',Dom:'Domingo'};
+    const parseDays=value=>String(value||'').split(',').map(x=>x.trim().toLowerCase());
+    function dayPicker(selected=''){
+      const selectedDays=parseDays(selected);
+      return `<div class="workout-day-picker" data-day-picker>${weekDays.map(d=>{const full=longDay[d];const hit=selectedDays.some(x=>x===d.toLowerCase()||x===full.toLowerCase());return `<label><input type="checkbox" value="${full}" ${hit?'checked':''}><span>${d}</span></label>`}).join('')}</div>`;
+    }
+    function sessionDays(el){return [...el.querySelectorAll('[data-day-picker] input:checked')].map(x=>x.value).join(', ')||null}
+    function refreshExerciseSelects(){
+      $$('.workout-item-builder select[name=exerciseId]').forEach(sel=>{const current=sel.value;sel.innerHTML=options(current)});
+    }
+    function wireExerciseFilter(row){
+      const search=row.querySelector('[name=exerciseSearch]'),sel=row.querySelector('[name=exerciseId]');
+      search.oninput=()=>{const term=search.value.trim().toLowerCase();[...sel.options].forEach((o,i)=>{if(i===0)return;o.hidden=!!term&&!o.textContent.toLowerCase().includes(term)})};
+      sel.onchange=()=>{const opt=sel.selectedOptions[0];if(opt&&sel.value)search.value=opt.textContent};
+    }
+    function addSession(name='Treino A',source=null){
+      const el=document.createElement('div');el.className='meal-builder workout-builder workout-builder2-session';
+      el.innerHTML=`<div class="meal-builder-head workout-session-head"><div class="form-grid three workout-session-fields"><label>Nome<input name="sessionName" value="${esc(source?.nome||name)}" required></label><label>Observações<input name="sessionObs" value="${esc(source?.observacoes||'')}"></label><div><small class="field-label">Dias da semana</small>${dayPicker(source?.diasSemana||'')}</div></div><div class="workout-session-tools"><button type="button" class="ghost duplicate-workout-session">Duplicar</button><button type="button" class="icon-btn remove-workout-session">×</button></div></div>
         <div class="workout-items"></div><button type="button" class="ghost add-workout-item">+ Exercício</button>`;
       host.appendChild(el);
       $('.remove-workout-session',el).onclick=()=>el.remove();
       $('.add-workout-item',el).onclick=()=>addItem(el);
-      addItem(el);
+      $('.duplicate-workout-session',el).onclick=()=>{
+        const clone={nome:`${el.querySelector('[name=sessionName]').value.trim()} cópia`,observacoes:el.querySelector('[name=sessionObs]').value.trim(),diasSemana:sessionDays(el),itens:[...el.querySelectorAll('.workout-item-builder')].map(readItem)};
+        addSession(clone.nome,clone);
+      };
+      const items=source?.itens?.length?source.itens:[null];
+      items.forEach(item=>addItem(el,item));
     }
-    function addItem(session){
-      const list=$('.workout-items',session),row=document.createElement('div');row.className='workout-item-builder';
-      row.innerHTML=`<label>Exercício<select name="exerciseId" required>${options()}</select></label>
-        <label>Séries<input name="series" type="number" min="1" value="3" required></label>
-        <label>Repetições<input name="reps" value="10-12" required></label>
-        <label>Carga<input name="load" type="number" min="0" step="0.01"></label>
-        <label>Unidade<input name="loadUnit" value="kg"></label>
-        <label>Descanso (s)<input name="rest" type="number" min="0" value="60"></label>
-        <label>Tempo (s)<input name="time" type="number" min="0"></label>
-        <label>Observação<input name="itemObs"></label>
-        <button type="button" class="icon-btn remove-workout-item">×</button>`;
-      list.appendChild(row);
+    function readItem(r){return {exercicioId:r.querySelector('[name=exerciseId]').value,series:Number(r.querySelector('[name=series]').value||0),repeticoes:r.querySelector('[name=reps]').value.trim(),carga:r.querySelector('[name=load]').value?Number(r.querySelector('[name=load]').value):null,unidadeCarga:r.querySelector('[name=loadUnit]').value.trim()||null,descansoSegundos:r.querySelector('[name=rest]').value?Number(r.querySelector('[name=rest]').value):null,tempoSegundos:r.querySelector('[name=time]').value?Number(r.querySelector('[name=time]').value):null,observacoes:r.querySelector('[name=itemObs]').value.trim()||null}}
+    function addItem(session,item=null){
+      const list=$('.workout-items',session),row=document.createElement('div');row.className='workout-item-builder workout-item-builder2';
+      row.innerHTML=`<label class="workout-exercise-search">Buscar exercício<input name="exerciseSearch" type="search" placeholder="Nome, grupo muscular ou equipamento"></label>
+        <label>Exercício<select name="exerciseId" required>${options(item?.exercicioId||'')}</select></label>
+        <label>Séries<input name="series" type="number" min="1" value="${item?.series||3}" required></label>
+        <label>Repetições<input name="reps" value="${esc(item?.repeticoes||'10-12')}" required></label>
+        <label>Carga<input name="load" type="number" min="0" step="0.01" value="${item?.carga??''}"></label>
+        <label>Unidade<input name="loadUnit" value="${esc(item?.unidadeCarga||'kg')}"></label>
+        <label>Descanso (s)<input name="rest" type="number" min="0" value="${item?.descansoSegundos??60}"></label>
+        <label>Tempo (s)<input name="time" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
+        <label>Observação<input name="itemObs" value="${esc(item?.observacoes||'')}"></label>
+        <div class="workout-item-tools"><button type="button" class="ghost duplicate-workout-item">Duplicar</button><button type="button" class="icon-btn remove-workout-item">×</button></div>`;
+      list.appendChild(row);wireExerciseFilter(row);
+      if(item?.exercicioId){const opt=row.querySelector('[name=exerciseId]').selectedOptions[0];if(opt)row.querySelector('[name=exerciseSearch]').value=opt.textContent}
       $('.remove-workout-item',row).onclick=()=>row.remove();
+      $('.duplicate-workout-item',row).onclick=()=>addItem(session,readItem(row));
     }
 
     $('.clinical-back').onclick=()=>openClinicalActionMenu(p);
@@ -3266,44 +3295,28 @@ async function openWorkoutForm(p){
     $('#newExerciseCatalog').onclick=async()=>{
       const nome=prompt('Nome do exercício:');if(!nome)return;
       const grupo=prompt('Grupo muscular (opcional):')||null;
+      const equipamento=prompt('Equipamento (opcional):')||null;
       const videoUrl=prompt('Link do vídeo (opcional):')||null;
       try{
-        const novo=await api('/api/exercicios',{method:'POST',body:JSON.stringify({nome,grupoMuscular:grupo,equipamento:null,descricao:null,videoUrl})});
-        exercicios=await api('/api/exercicios');
-        toast(`Exercício "${novo.nome||nome}" adicionado. Reabrindo o construtor...`);
-        await openWorkoutForm(p);
+        const novo=await api('/api/exercicios',{method:'POST',body:JSON.stringify({nome,grupoMuscular:grupo,equipamento,descricao:null,videoUrl})});
+        exercicios=await api('/api/exercicios');refreshExerciseSelects();toast(`Exercício "${novo.nome||nome}" adicionado sem perder o rascunho.`);
       }catch(err){toast(err.message,true)}
     };
-    addSession();
+    if(existingPlan?.sessoes?.length)existingPlan.sessoes.forEach((x,i)=>addSession(x.nome||`Treino ${String.fromCharCode(65+i)}`,x));else addSession();
 
     $('#workoutForm').onsubmit=async e=>{
       e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');b.disabled=true;b.textContent='Salvando...';
       try{
-        const sessoes=[...f.querySelectorAll('.workout-builder')].map((s,si)=>({
-          nome:s.querySelector('[name=sessionName]').value.trim(),
-          diasSemana:s.querySelector('[name=days]').value.trim()||null,
-          ordem:si+1,
-          observacoes:s.querySelector('[name=sessionObs]').value.trim()||null,
-          itens:[...s.querySelectorAll('.workout-item-builder')].map((r,ri)=>({
-            exercicioId:r.querySelector('[name=exerciseId]').value,
-            ordem:ri+1,
-            series:Number(r.querySelector('[name=series]').value||0),
-            repeticoes:r.querySelector('[name=reps]').value.trim(),
-            carga:r.querySelector('[name=load]').value?Number(r.querySelector('[name=load]').value):null,
-            unidadeCarga:r.querySelector('[name=loadUnit]').value.trim()||null,
-            descansoSegundos:r.querySelector('[name=rest]').value?Number(r.querySelector('[name=rest]').value):null,
-            tempoSegundos:r.querySelector('[name=time]').value?Number(r.querySelector('[name=time]').value):null,
-            observacoes:r.querySelector('[name=itemObs]').value.trim()||null
-          })).filter(x=>x.exercicioId)
+        const sessoes=[...f.querySelectorAll('.workout-builder')].map((sess,si)=>({
+          nome:sess.querySelector('[name=sessionName]').value.trim(),diasSemana:sessionDays(sess),ordem:si+1,observacoes:sess.querySelector('[name=sessionObs]').value.trim()||null,
+          itens:[...sess.querySelectorAll('.workout-item-builder')].map((r,ri)=>({exercicioId:r.querySelector('[name=exerciseId]').value,ordem:ri+1,...readItem(r)})).filter(x=>x.exercicioId)
         }));
         if(!sessoes.length||!sessoes.some(x=>x.itens.length))throw new Error('Adicione pelo menos um exercício.');
-        await api(`/api/pacientes/${p.id}/treinos`,{method:'POST',body:JSON.stringify({
-          nome:val(f,'nome'),objetivo:val(f,'objetivo'),dataInicio:val(f,'dataInicio'),
-          dataFim:val(f,'dataFim'),status:'Ativo',observacoes:val(f,'observacoes'),sessoes
-        })});
-        state.patientTab='treinos';closeClinicalAction();toast('Plano de treino salvo.');await loadPatient();
+        const payload={nome:val(f,'nome'),objetivo:val(f,'objetivo'),dataInicio:val(f,'dataInicio'),dataFim:val(f,'dataFim'),status:existingPlan?.status||'Ativo',observacoes:val(f,'observacoes'),sessoes};
+        await api(editing?`/api/treinos/${existingPlan.id}`:`/api/pacientes/${p.id}/treinos`,{method:editing?'PUT':'POST',body:JSON.stringify(payload)});
+        state.patientTab='treinos';closeClinicalAction();toast(editing?'Plano de treino atualizado.':'Plano de treino salvo.');await loadPatient();
       }catch(err){toast(err.message,true)}
-      finally{b.disabled=false;b.textContent='Salvar plano de treino'}
+      finally{b.disabled=false;b.textContent=editing?'Salvar alterações':'Salvar plano de treino'}
     };
   }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
 }
@@ -6617,7 +6630,8 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.17.3';
+const HP_MVP_VERSION='0.17.4';
+const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
 const HP_PATIENT_INTAKE_BODY_ASSESSMENT='v0.17.1';
 const HP_TREATMENT_GOAL_INITIAL_RECOMMENDATION='v0.17.2';

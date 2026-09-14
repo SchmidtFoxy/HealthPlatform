@@ -1,4 +1,4 @@
-# HealthPlatform v0.17.3 — Recommendation Tuning Workspace
+# HealthPlatform v0.17.4 — Workout Builder 2.0
 
 A fase profissional agora permite transformar a sugestão inicial em um **rascunho realmente ajustável** antes de entrar nos builders. O profissional compara sugerido × ajustado e modifica hidratação, sessões de força, duração, refeições, condicionamento, direção nutricional e preferências em um único workspace.
 
@@ -582,3 +582,12 @@ Corrige apenas a validacao do acesso ao Patient Intake no `TESTAR.ps1` para Wind
 
 
 > Hotfix r1: corrige somente a validação do rótulo do passo de objetivo/sugestão no smoke test.
+
+
+## v0.17.4 — Workout Builder 2.0
+O construtor profissional de treino agora suporta edição integral do plano, busca rápida no catálogo, dias estruturados, duplicação de sessões/exercícios e criação de exercício sem perder o rascunho. O contexto da sugestão ajustada acompanha o profissional como referência, sem publicação automática.
+
+
+## v0.17.4-r1 — Smoke Test MVP Preview Fix
+- Normaliza os asserts históricos do MVP Preview para a versão corrente v0.17.4.
+- Nenhuma alteração funcional, de schema ou migration.

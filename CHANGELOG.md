@@ -1,3 +1,14 @@
+# Changelog
+
+## v0.17.4 — Workout Builder 2.0
+- adiciona edição completa de planos de treino existentes usando o PUT já disponível na API;
+- troca dias livres em texto por seletor estruturado de dias da semana;
+- adiciona busca local por nome/grupo/equipamento no catálogo de exercícios;
+- cadastrar exercício novo atualiza o construtor sem perder o rascunho;
+- permite duplicar sessões e exercícios para acelerar prescrições semelhantes;
+- leva o contexto do Recommendation Tuning para dentro do builder como referência profissional;
+- preserva schema 38/38 e não cria migration.
+
 # v0.17.3 — Recommendation Tuning Workspace
 
 - adiciona workspace de ajuste fino da recomendação inicial;
@@ -1604,3 +1615,8 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.17.2-r1 — Smoke Test Workspace Label Fix
 - Corrige falso negativo herdado do Professional Prescription Workspace: o passo 2 passou de 'Direção do tratamento' para 'Direção + sugestão inicial'.
 - Nenhuma alteração funcional, de schema ou de API.
+
+
+## v0.17.4-r1 — Smoke Test MVP Preview Fix
+- Normaliza os asserts históricos do MVP Preview para a versão corrente v0.17.4.
+- Nenhuma alteração funcional, de schema ou migration.
