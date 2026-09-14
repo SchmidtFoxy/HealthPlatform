@@ -112,10 +112,10 @@ async function loadPrescriptionWorkspace(){
     api('/api/modelos-refeicoes').catch(()=>[])
   ]);
   const list=patients?.itens||[];
-  content.innerHTML=`<section class="prescription-workspace-hero"><div><span class="eyebrow">PROFESSIONAL PRESCRIPTION WORKSPACE • v0.17.2</span><h3>Da avaliação à prescrição, sem perder o contexto do paciente.</h3><p>Organize avaliação corporal, objetivo, preferências, treino e alimentação em um único fluxo profissional. Sugestões futuras serão sempre propostas para revisão — nunca publicação automática.</p></div><button class="primary" id="workspaceNewPatient">+ Iniciar paciente</button></section>
+  content.innerHTML=`<section class="prescription-workspace-hero"><div><span class="eyebrow">PROFESSIONAL PRESCRIPTION WORKSPACE • v0.17.3</span><h3>Da avaliação à prescrição, sem perder o contexto do paciente.</h3><p>Organize avaliação corporal, objetivo, preferências, treino e alimentação em um único fluxo profissional. Sugestões futuras serão sempre propostas para revisão — nunca publicação automática.</p></div><button class="primary" id="workspaceNewPatient">+ Iniciar paciente</button></section>
   <div class="prescription-workspace-grid">
     <section class="card prescription-workspace-step"><span class="workspace-step-index">1</span><div><span class="eyebrow">ENTRADA • v0.17.1</span><h3>Cadastro + avaliação corporal</h3><p>Cadastre o essencial sem travar o atendimento. Depois complete composição corporal/bioimpedância quando os dados estiverem disponíveis.</p><button class="secondary" id="workspacePatients">Escolher paciente</button></div></section>
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">2</span><div><span class="eyebrow">OBJETIVO • v0.17.2</span><h3>Direção + sugestão inicial</h3><p>Hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção ou retorno ao exercício.</p><span class="workspace-status safe">Rascunho assistido para revisão profissional</span></div></section>
+    <section class="card prescription-workspace-step"><span class="workspace-step-index">2</span><div><span class="eyebrow">OBJETIVO • v0.17.2</span><h3>Direção + sugestão inicial</h3><p>Hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção ou retorno ao exercício.</p><span class="workspace-status safe">Rascunho assistido para revisão profissional</span><span class="workspace-status">Ajuste rápido disponível • v0.17.3</span></div></section>
     <section class="card prescription-workspace-step"><span class="workspace-step-index">3</span><div><span class="eyebrow">PRESCRIÇÃO</span><h3>Treino + alimentação</h3><p>Use bibliotecas, modelos e histórico para montar uma proposta personalizada e fácil de adaptar.</p><div class="workspace-library-stats"><b>${workoutModels.length||0}</b><span>modelos de treino</span><b>${mealModels.length||0}</b><span>modelos alimentares</span></div></div></section>
     <section class="card prescription-workspace-step"><span class="workspace-step-index">4</span><div><span class="eyebrow">REVISÃO</span><h3>Ajustar e publicar</h3><p>O profissional revisa metas, preferências, volume, refeições e substituições antes de atribuir ao paciente.</p><span class="workspace-status safe">Profissional mantém a decisão final</span></div></section>
   </div>
@@ -254,14 +254,83 @@ function renderInitialRecommendation(p,latest,form){
     </div>
     ${draft.preferences?`<div class="recommendation-preferences"><b>Preferências consideradas</b><span>${esc(draft.preferences)}</span></div>`:''}
     <div class="recommendation-safety"><b>Regra do workspace</b><span>Esta é uma heurística de protótipo para acelerar o raciocínio profissional. O profissional revisa hidratação, volume, intensidade, energia, macros, refeições, contraindicações e preferências antes de atribuir qualquer plano.</span></div>
-    <div class="form-actions"><button type="button" class="secondary" id="recommendationEditContext">Editar contexto</button><button type="button" class="secondary" id="recommendationOpenWorkout">Adaptar treino</button><button type="button" class="secondary" id="recommendationOpenNutrition">Adaptar alimentação</button><button type="button" class="primary" id="recommendationBackPatient">Voltar ao prontuário</button></div>
+    <div class="form-actions"><button type="button" class="secondary" id="recommendationEditContext">Editar contexto</button><button type="button" class="primary" id="recommendationTune">Ajustar sugestão</button><button type="button" class="secondary" id="recommendationOpenWorkout">Adaptar treino</button><button type="button" class="secondary" id="recommendationOpenNutrition">Adaptar alimentação</button><button type="button" class="secondary" id="recommendationBackPatient">Voltar ao prontuário</button></div>
   </section>`;
   $$('[data-water-delta]').forEach(b=>b.onclick=()=>{const target=$('[data-recommendation-water]');let current=Number(target.dataset.recommendationWater||0);if(!current)return;current=Math.max(500,current+Number(b.dataset.waterDelta||0));target.dataset.recommendationWater=current;target.textContent=`${current} ml/dia`;});
   $('#recommendationEditContext').onclick=()=>{out.innerHTML='';form.scrollIntoView({behavior:'smooth',block:'start'})};
+  $('#recommendationTune').onclick=()=>openRecommendationTuningWorkspace(p,draft,latest,form);
   $('#recommendationOpenWorkout').onclick=()=>{closeClinicalAction();state.patientId=p.id;state.patientTab='treinos';navigate('paciente')};
   $('#recommendationOpenNutrition').onclick=()=>{closeClinicalAction();state.patientId=p.id;state.patientTab='alimentacao';navigate('paciente')};
   $('#recommendationBackPatient').onclick=()=>{closeClinicalAction();openPatient(p.id)};
   out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+
+function openRecommendationTuningWorkspace(p,draft,latest,sourceForm){
+  const box=$('#clinicalActionContent');
+  if(!box)return;
+  const suggested={
+    water:Number(draft.hydrationTarget||0),
+    strength:Math.max(1,Math.min(Number(draft.days||3),Number((draft.strength.match(/\d+/)||['3'])[0]))),
+    minutes:Number(draft.minutes||60),
+    meals:Number(draft.meals||4),
+    conditioning:draft.conditioning||'',
+    nutrition:draft.nutrition||'',
+    preferences:draft.preferences||''
+  };
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">RECOMMENDATION TUNING • v0.17.3</span><h2>Ajustar sugestão</h2><p>${esc(p.nome)} • parta do rascunho e mude somente o que fizer sentido para este paciente.</p></div>
+  <section class="tuning-baseline"><div><small>Objetivo</small><b>${esc(draft.goal)}</b></div><div><small>Avaliação</small><b>${latest?`${num(latest.pesoKg||0)} kg • ${latest.percentualGordura!=null?`${num(latest.percentualGordura)}% gordura`:'composição parcial'}`:'contexto parcial'}</b></div><div><small>Regra</small><b>Profissional decide e publica</b></div></section>
+  <form id="recommendationTuningForm" class="clinical-form recommendation-tuning-form">
+    <div class="tuning-grid">
+      <label>Hidratação (ml/dia)<input name="water" type="number" min="500" max="8000" step="250" value="${suggested.water||''}" placeholder="Definir"></label>
+      <label>Sessões de força / semana<input name="strength" type="number" min="1" max="7" value="${suggested.strength}"></label>
+      <label>Duração por sessão (min)<input name="minutes" type="number" min="20" max="180" step="5" value="${suggested.minutes}"></label>
+      <label>Refeições / dia<input name="meals" type="number" min="2" max="8" value="${suggested.meals}"></label>
+    </div>
+    <label>Condicionamento<textarea name="conditioning" rows="2">${esc(suggested.conditioning)}</textarea></label>
+    <label>Direção nutricional<textarea name="nutrition" rows="3">${esc(suggested.nutrition)}</textarea></label>
+    <label>Preferências e restrições<textarea name="preferences" rows="2">${esc(suggested.preferences)}</textarea></label>
+    <div class="tuning-presets" aria-label="Atalhos de ajuste">
+      <button type="button" class="secondary" data-tuning-preset="simple">Simplificar rotina</button>
+      <button type="button" class="secondary" data-tuning-preset="recovery">Priorizar recuperação</button>
+      <button type="button" class="secondary" data-tuning-preset="reset">Restaurar sugerido</button>
+    </div>
+    <section class="tuning-diff" id="recommendationTuningDiff" aria-live="polite"></section>
+    <div class="recommendation-safety"><b>Revisão profissional obrigatória</b><span>Os ajustes permanecem como rascunho. Contraindicações, diagnóstico, medicamentos, preferências, disponibilidade e resposta do paciente devem ser considerados antes de atribuir treino ou alimentação.</span></div>
+    <div class="form-actions"><button type="button" class="secondary" id="tuningBack">Voltar à sugestão</button><button type="button" class="secondary" id="tuningWorkout">Levar para treino</button><button type="button" class="secondary" id="tuningNutrition">Levar para alimentação</button><button type="button" class="primary" id="tuningPatient">Revisar no prontuário</button></div>
+  </form>`;
+  const form=$('#recommendationTuningForm');
+  const read=()=>({water:Number(val(form,'water')||0),strength:Number(val(form,'strength')||0),minutes:Number(val(form,'minutes')||0),meals:Number(val(form,'meals')||0),conditioning:val(form,'conditioning')||'',nutrition:val(form,'nutrition')||'',preferences:val(form,'preferences')||''});
+  const renderDiff=()=>{
+    const a=read(),changes=[];
+    if(a.water!==suggested.water)changes.push(`Água: ${suggested.water||'—'} → ${a.water||'—'} ml`);
+    if(a.strength!==suggested.strength)changes.push(`Força: ${suggested.strength} → ${a.strength}x/sem`);
+    if(a.minutes!==suggested.minutes)changes.push(`Sessão: ${suggested.minutes} → ${a.minutes} min`);
+    if(a.meals!==suggested.meals)changes.push(`Refeições: ${suggested.meals} → ${a.meals}/dia`);
+    if(a.conditioning!==suggested.conditioning)changes.push('Condicionamento ajustado');
+    if(a.nutrition!==suggested.nutrition)changes.push('Direção nutricional ajustada');
+    if(a.preferences!==suggested.preferences)changes.push('Preferências atualizadas');
+    $('#recommendationTuningDiff').innerHTML=`<span class="eyebrow">SUGERIDO × AJUSTADO</span><h3>${changes.length?`${changes.length} ajuste(s) nesta proposta`:'Sugestão original preservada'}</h3>${changes.length?`<ul>${changes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p>Faça somente os ajustes necessários para individualizar o plano.</p>'}`;
+  };
+  form.oninput=renderDiff;
+  $$('[data-tuning-preset]').forEach(b=>b.onclick=()=>{
+    const kind=b.dataset.tuningPreset;
+    if(kind==='reset'){
+      form.elements.water.value=suggested.water||'';form.elements.strength.value=suggested.strength;form.elements.minutes.value=suggested.minutes;form.elements.meals.value=suggested.meals;form.elements.conditioning.value=suggested.conditioning;form.elements.nutrition.value=suggested.nutrition;form.elements.preferences.value=suggested.preferences;
+    }
+    if(kind==='simple'){
+      form.elements.strength.value=Math.max(2,Math.min(3,suggested.strength));form.elements.minutes.value=Math.min(60,suggested.minutes);form.elements.meals.value=Math.max(3,Math.min(4,suggested.meals));
+    }
+    if(kind==='recovery'){
+      form.elements.strength.value=Math.max(1,Math.min(3,suggested.strength));form.elements.minutes.value=Math.min(50,suggested.minutes);form.elements.conditioning.value='Movimento leve/moderado conforme tolerância e prontidão; sem compensar carga.';
+    }
+    renderDiff();
+  });
+  $('#tuningBack').onclick=()=>openTreatmentGoalRecommendation(p);
+  $('#tuningWorkout').onclick=()=>{state.recommendationTuningDraft={patientId:p.id,goal:draft.goal,...read()};closeClinicalAction();state.patientId=p.id;state.patientTab='treinos';navigate('paciente')};
+  $('#tuningNutrition').onclick=()=>{state.recommendationTuningDraft={patientId:p.id,goal:draft.goal,...read()};closeClinicalAction();state.patientId=p.id;state.patientTab='alimentacao';navigate('paciente')};
+  $('#tuningPatient').onclick=()=>{state.recommendationTuningDraft={patientId:p.id,goal:draft.goal,...read()};closeClinicalAction();openPatient(p.id)};
+  renderDiff();
 }
 
 function openPatient(id){state.patientId=id;state.patientTab='resumo';navigate('paciente')}
@@ -6548,10 +6617,11 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.17.2';
+const HP_MVP_VERSION='0.17.3';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
 const HP_PATIENT_INTAKE_BODY_ASSESSMENT='v0.17.1';
 const HP_TREATMENT_GOAL_INITIAL_RECOMMENDATION='v0.17.2';
+const HP_RECOMMENDATION_TUNING_WORKSPACE='v0.17.3';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';

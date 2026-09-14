@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HealthPlatform.Domain/HealthPlatform.Domain.csproj" />
+    <Project Path="src/HealthPlatform.Application/HealthPlatform.Application.csproj" />
+    <Project Path="src/HealthPlatform.Infrastructure/HealthPlatform.Infrastructure.csproj" />
+    <Project Path="src/HealthPlatform.Api/HealthPlatform.Api.csproj" />
+  </Folder>
+</Solution>

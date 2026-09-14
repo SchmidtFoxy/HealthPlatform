@@ -1,3 +1,14 @@
+# v0.17.3 — Recommendation Tuning Workspace
+
+- adiciona workspace de ajuste fino da recomendação inicial;
+- permite editar água, sessões de força, duração, refeições, condicionamento, direção nutricional e preferências;
+- mostra comparação **Sugerido × Ajustado** em tempo real;
+- inclui atalhos conservadores para simplificar rotina, priorizar recuperação ou restaurar a sugestão original;
+- mantém ajustes como rascunho e preserva decisão/publicação profissional;
+- prepara continuidade dos ajustes para Workout Builder 2.0 e Nutrition Builder 2.0;
+- mantém schema 38/38 e nenhuma migration nova;
+- amplia smoke test para 1496 verificações.
+
 # v0.17.2 — Treatment Goal & Initial Recommendation
 
 - seleção de objetivo: hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção e retorno ao exercício;
@@ -1588,3 +1599,8 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - O seletor JavaScript `$('#patientIntake')` era validado dentro de aspas duplas do PowerShell, fazendo `$(` ser interpretado como subexpressao.
 - A validacao agora usa quoting literal compativel com Windows PowerShell 5.1.
 - Sem alteracoes funcionais, de schema, migrations ou API.
+
+
+### v0.17.2-r1 — Smoke Test Workspace Label Fix
+- Corrige falso negativo herdado do Professional Prescription Workspace: o passo 2 passou de 'Direção do tratamento' para 'Direção + sugestão inicial'.
+- Nenhuma alteração funcional, de schema ou de API.
