@@ -1,5 +1,6 @@
-# HealthPlatform v0.17.7 — Diet & Meal Library
+# HealthPlatform v0.17.8 — Patient Preferences & Smart Adaptation
 
+Esta versão conecta preferências, rotina e anamnese ao rascunho profissional. O sistema sugere adaptações explicadas para hidratação, frequência/duração do treino e organização alimentar, sempre como rascunho revisável e nunca como prescrição/publicação automática.
 
 **Versão funcional:** `0.17.7`  
 **Schema:** `38/38` — sem migration nova.

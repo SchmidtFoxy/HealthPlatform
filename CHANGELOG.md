@@ -1,3 +1,11 @@
+## v0.17.8 — Patient Preferences & Smart Adaptation
+- adiciona Smart Adaptation ao Recommendation Tuning Workspace;
+- cruza preferências do rascunho com rotina/hidratação já registradas na anamnese;
+- oferece ajustes explicados e aplicáveis um a um, sem publicação automática;
+- cobre rotina apertada, disponibilidade semanal, hidratação progressiva, restrições alimentares, retorno ao exercício e qualidade de vida;
+- adiciona acesso "Preferências & adaptação" no prontuário;
+- preserva schema 38/38 e os builders/bibliotecas existentes.
+
 ## v0.17.7 — Diet & Meal Library
 - Centraliza modelos de dietas e refeições em uma biblioteca profissional.
 - Permite busca, filtro, edição, ativação/desativação e atribuição.
