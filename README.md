@@ -1,3 +1,12 @@
+# HealthPlatform v0.17.5 — Workout Library & Assignment
+
+A fase profissional agora possui uma biblioteca central de modelos de treino. O profissional pode pesquisar, ativar/desativar, editar metadados e atribuir uma cópia independente do modelo a qualquer paciente, preservando o original para reutilização. A cópia atribuída continua totalmente editável no Workout Builder 2.0.
+
+**Versão funcional:** `0.17.5`  
+**Schema:** `38/38` — nenhuma migration nova nesta versão.
+
+---
+
 # HealthPlatform v0.17.4 — Workout Builder 2.0
 
 A fase profissional agora permite transformar a sugestão inicial em um **rascunho realmente ajustável** antes de entrar nos builders. O profissional compara sugerido × ajustado e modifica hidratação, sessões de força, duração, refeições, condicionamento, direção nutricional e preferências em um único workspace.

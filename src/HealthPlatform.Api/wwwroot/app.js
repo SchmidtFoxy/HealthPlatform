@@ -116,17 +116,18 @@ async function loadPrescriptionWorkspace(){
   <div class="prescription-workspace-grid">
     <section class="card prescription-workspace-step"><span class="workspace-step-index">1</span><div><span class="eyebrow">ENTRADA • v0.17.1</span><h3>Cadastro + avaliação corporal</h3><p>Cadastre o essencial sem travar o atendimento. Depois complete composição corporal/bioimpedância quando os dados estiverem disponíveis.</p><button class="secondary" id="workspacePatients">Escolher paciente</button></div></section>
     <section class="card prescription-workspace-step"><span class="workspace-step-index">2</span><div><span class="eyebrow">OBJETIVO • v0.17.2</span><h3>Direção + sugestão inicial</h3><p>Hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção ou retorno ao exercício.</p><span class="workspace-status safe">Rascunho assistido para revisão profissional</span><span class="workspace-status">Ajuste rápido disponível • v0.17.3</span></div></section>
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">3</span><div><span class="eyebrow">PRESCRIÇÃO</span><h3>Treino + alimentação</h3><p>Use bibliotecas, modelos e histórico para montar uma proposta personalizada e fácil de adaptar.</p><div class="workspace-library-stats"><b>${workoutModels.length||0}</b><span>modelos de treino</span><b>${mealModels.length||0}</b><span>modelos alimentares</span></div></div></section>
+    <section class="card prescription-workspace-step"><span class="workspace-step-index">3</span><div><span class="eyebrow">PRESCRIÇÃO</span><h3>Treino + alimentação</h3><p>Use bibliotecas, modelos e histórico para montar uma proposta personalizada e fácil de adaptar.</p><div class="workspace-library-stats"><b>${workoutModels.length||0}</b><span>modelos de treino • biblioteca v0.17.5</span><b>${mealModels.length||0}</b><span>modelos alimentares</span></div></div></section>
     <section class="card prescription-workspace-step"><span class="workspace-step-index">4</span><div><span class="eyebrow">REVISÃO</span><h3>Ajustar e publicar</h3><p>O profissional revisa metas, preferências, volume, refeições e substituições antes de atribuir ao paciente.</p><span class="workspace-status safe">Profissional mantém a decisão final</span></div></section>
   </div>
   <div class="prescription-workspace-columns">
-    <section class="card"><div class="card-head"><div><span class="eyebrow">BIBLIOTECAS</span><h3>Base reutilizável</h3></div></div><div class="workspace-library-list"><div><strong>${workoutModels.length||0}</strong><span>Planos de treino</span></div><div><strong>${sessionModels.length||0}</strong><span>Sessões de treino</span></div><div><strong>${mealModels.length||0}</strong><span>Planos alimentares</span></div><div><strong>${mealLibrary.length||0}</strong><span>Refeições</span></div></div><p class="workspace-note">Objetivo: criar uma vez, adaptar rápido e atribuir para diferentes pacientes sem perder individualização.</p></section>
+    <section class="card"><div class="card-head"><div><span class="eyebrow">BIBLIOTECAS</span><h3>Base reutilizável</h3></div><button class="secondary" id="workspaceWorkoutLibrary">Biblioteca de treinos</button></div><div class="workspace-library-list"><div><strong>${workoutModels.length||0}</strong><span>Planos de treino</span></div><div><strong>${sessionModels.length||0}</strong><span>Sessões de treino</span></div><div><strong>${mealModels.length||0}</strong><span>Planos alimentares</span></div><div><strong>${mealLibrary.length||0}</strong><span>Refeições</span></div></div><p class="workspace-note">Crie uma vez, atribua uma cópia ao paciente e personalize sem alterar o modelo original.</p></section>
     <section class="card"><div class="card-head"><div><span class="eyebrow">PACIENTES RECENTES</span><h3>Continuar uma prescrição</h3></div><button class="ghost" id="workspaceAllPatients">Ver todos</button></div>${list.length?`<div class="workspace-patient-list">${list.map(p=>`<button type="button" data-workspace-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.profissao||'Paciente')}</small></span><i>›</i></button>`).join('')}</div>`:sectionEmpty('Nenhum paciente disponível.')}</section>
   </div>
   <section class="card workspace-roadmap"><div><span class="eyebrow">FLUXO-ALVO</span><h3>Avaliação → sugestão → ajuste → atribuição → acompanhamento</h3><p>A próxima evolução vai conectar bioimpedância/avaliação corporal e objetivo terapêutico a sugestões de hidratação, treino e alimentação para revisão profissional.</p></div></section>`;
   $('#workspaceNewPatient').onclick=openCreatePatient;
   $('#workspacePatients').onclick=()=>navigate('pacientes');
   $('#workspaceAllPatients').onclick=()=>navigate('pacientes');
+  $('#workspaceWorkoutLibrary').onclick=()=>openWorkoutLibrary();
   $$('[data-workspace-patient]').forEach(b=>b.onclick=()=>openPatient(b.dataset.workspacePatient));
 }
 async function loadPatients(search=''){const d=await api(`/api/pacientes?pagina=1&tamanhoPagina=50${search?`&busca=${encodeURIComponent(search)}`:''}`);content.innerHTML=`<div class="section-head"><div><h3>Pacientes</h3><p>${d.total} paciente(s) encontrado(s).</p></div><div class="toolbar"><div class="search-wrap"><input id="patientSearch" class="search-input" placeholder="Buscar nome, CPF, e-mail ou telefone" value="${esc(search)}"></div><button class="primary" id="newPatient">+ Novo paciente</button></div></div><div class="table-wrap">${d.itens.length?`<table class="data-table"><thead><tr><th>Paciente</th><th>Contato</th><th>CPF</th><th>Nascimento</th><th>Status</th></tr></thead><tbody>${d.itens.map(p=>`<tr data-patient="${p.id}"><td><div class="person-cell"><div class="mini-avatar">${initials(p.nome)}</div><div><strong>${esc(p.nome)}</strong><div class="muted-mini">${esc(p.profissao||'Profissão não informada')}</div></div></div></td><td>${esc(p.telefone||p.email||'—')}</td><td>${esc(p.cpf||'—')}</td><td>${p.dataNascimento?fmtDate(p.dataNascimento):'—'}</td><td><span class="pill ${p.ativo?'Ativa':'Cancelada'}">${p.ativo?'Ativo':'Inativo'}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum paciente encontrado.</div>'}</div>`;let timer;$('#patientSearch').oninput=e=>{clearTimeout(timer);timer=setTimeout(()=>loadPatients(e.target.value),300)};$('#newPatient').onclick=openCreatePatient;$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient))}
@@ -3187,7 +3188,7 @@ renderPatientTab = function(d){
   if(state.patientTab!=='treinos') return __renderPatientTab_v030(d);
   const box=$('#patientTabContent'),treinos=d.treinos||[];
   box.innerHTML=`<section class="card full-card">
-    <div class="card-head"><div><h3>Planos de treino</h3><small>${treinos.length} plano(s) • modelos aceleram novas prescrições</small></div><div class="workout-top-actions"><button class="ghost" id="sessionLibraryButton">Biblioteca de sessões</button><button class="secondary" id="workoutFromTemplate">Usar modelo</button><button class="primary" id="newWorkoutFromTab">+ Novo treino</button></div></div>
+    <div class="card-head"><div><h3>Planos de treino</h3><small>${treinos.length} plano(s) • modelos aceleram novas prescrições</small></div><div class="workout-top-actions"><button class="ghost" id="sessionLibraryButton">Biblioteca de sessões</button><button class="secondary" id="workoutFromTemplate">Atribuir da biblioteca</button><button class="primary" id="newWorkoutFromTab">+ Novo treino</button></div></div>
     ${treinos.length?`<div class="workout-plan-grid">${treinos.map(t=>`
       <article class="workout-plan-card">
         <div class="record-top"><div><span class="eyebrow">V${t.versao||1} • ${fmtDate(t.dataInicio)}${t.dataFim?' — '+fmtDate(t.dataFim):''}</span><h4>${esc(t.nome)}</h4><small>${esc(t.profissionalNome||'')}</small></div><span class="pill ${t.status==='Ativo'?'Ativa':'Agendada'}">${esc(t.status)}</span></div>
@@ -3199,7 +3200,7 @@ renderPatientTab = function(d){
   const patientForWorkout=d.p||{id:state.patientId,nome:'Paciente'};
   $('#newWorkoutFromTab').onclick=()=>openWorkoutForm(patientForWorkout);
   const workoutTemplateButton=$('#workoutFromTemplate');
-  if(workoutTemplateButton)workoutTemplateButton.onclick=()=>openWorkoutTemplatePicker(patientForWorkout);
+  if(workoutTemplateButton)workoutTemplateButton.onclick=()=>openWorkoutLibrary(patientForWorkout);
   const sessionLibraryButton=$('#sessionLibraryButton');
   if(sessionLibraryButton)sessionLibraryButton.onclick=()=>openWorkoutSessionLibrary(treinos);
   $$('.session-save-template').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>x.id===b.dataset.workoutId);const session=plan?.sessoes?.find(x=>x.id===b.dataset.sessionId);openSaveWorkoutSessionTemplate(session)});
@@ -3600,6 +3601,94 @@ async function openSaveWorkoutTemplate(plan){
   };
 }
 
+// ===== v0.17.5 — Workout Library & Assignment =====
+async function openWorkoutLibrary(patient=null){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.add('workout-modal-open');
+  $('#clinicalActionModal').classList.remove('hidden');
+  const patientLabel=patient?`<p>Paciente: <b>${esc(patient.nome)}</b> • a atribuição cria uma cópia independente.</p>`:'<p>Gerencie modelos reutilizáveis e atribua cópias independentes aos pacientes.</p>';
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">WORKOUT LIBRARY & ASSIGNMENT • v0.17.5</span><h2>Biblioteca de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
+  try{
+    const modelos=await api('/api/modelos-planos-treino?incluirInativos=true');
+    const active=modelos.filter(x=>x.ativo).length;
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">WORKOUT LIBRARY & ASSIGNMENT • v0.17.5</span><h2>Biblioteca de treinos</h2>${patientLabel}</div>
+      <div class="workout-library-summary"><span><small>Modelos</small><b>${modelos.length}</b></span><span><small>Ativos</small><b>${active}</b></span><span><small>Inativos</small><b>${modelos.length-active}</b></span></div>
+      <div class="workout-library-toolbar"><input id="workoutLibrarySearch" class="search-input" placeholder="Buscar por nome, objetivo ou descrição"><select id="workoutLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
+      <div id="workoutLibraryList" class="workout-library-grid"></div>
+      <div class="workout-library-guidance"><b>Como funciona</b><span>O modelo permanece intacto. Ao atribuir, o HealthPlatform cria uma nova ficha para o paciente, que pode ser adaptada livremente no Workout Builder 2.0.</span></div>
+      <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    const render=()=>{
+      const term=String($('#workoutLibrarySearch')?.value||'').trim().toLowerCase();
+      const status=$('#workoutLibraryStatus')?.value||'ativos';
+      const filtered=modelos.filter(m=>{
+        const matchStatus=status==='todos'||(status==='ativos'&&m.ativo)||(status==='inativos'&&!m.ativo);
+        const hay=`${m.nome||''} ${m.descricao||''} ${m.objetivo||''}`.toLowerCase();
+        return matchStatus&&(!term||hay.includes(term));
+      });
+      $('#workoutLibraryList').innerHTML=filtered.length?filtered.map(m=>`<article class="workout-library-card ${m.ativo?'':'is-inactive'}" data-library-model="${m.id}">
+        <div class="workout-library-card-head"><div><span class="eyebrow">${m.sessoes} sessão(ões) • ${m.exercicios} exercício(s)</span><h4>${esc(m.nome)}</h4></div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
+        <p>${esc(m.descricao||m.objetivo||'Modelo sem descrição.')}</p><small>${esc(m.profissionalNome||'')} ${m.objetivo?'• '+esc(m.objetivo):''}</small>
+        <div class="workout-library-actions">${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary library-edit">Editar modelo</button><button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button></div>
+      </article>`).join(''):`<div class="empty">Nenhum modelo encontrado com estes filtros.</div>`;
+      $$('.library-assign').forEach(btn=>btn.onclick=()=>{
+        const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
+        if(patient){openWorkoutTemplateCreateForm(patient,m);return}
+        openWorkoutLibraryPatientPicker(m);
+      });
+      $$('.library-edit').forEach(btn=>btn.onclick=()=>openWorkoutLibraryEdit(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel),patient));
+      $$('.library-toggle').forEach(btn=>btn.onclick=async()=>{
+        const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
+        try{
+          await api(`/api/modelos-planos-treino/${m.id}`,{method:'PUT',body:JSON.stringify({nome:m.nome,descricao:m.descricao||null,ativo:!m.ativo})});
+          toast(m.ativo?'Modelo desativado.':'Modelo reativado.');
+          openWorkoutLibrary(patient);
+        }catch(err){toast(err.message,true)}
+      });
+    };
+    $('#workoutLibrarySearch').oninput=render;
+    $('#workoutLibraryStatus').onchange=render;
+    render();
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+async function openWorkoutLibraryPatientPicker(modelo){
+  const box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="backToWorkoutLibrary">← Biblioteca</button><span class="eyebrow">ATRIBUIR MODELO</span><h2>${esc(modelo.nome)}</h2><p>Escolha o paciente que receberá uma cópia editável deste modelo.</p></div><div class="empty">Carregando pacientes...</div>`;
+  $('#backToWorkoutLibrary').onclick=()=>openWorkoutLibrary();
+  try{
+    const data=await api('/api/pacientes?pagina=1&tamanhoPagina=100');
+    const patients=data?.itens||[];
+    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="backToWorkoutLibrary">← Biblioteca</button><span class="eyebrow">ATRIBUIR MODELO</span><h2>${esc(modelo.nome)}</h2><p>Escolha o paciente. A ficha criada será independente do modelo.</p></div>
+      <input id="workoutAssignPatientSearch" class="search-input" placeholder="Buscar paciente">
+      <div id="workoutAssignPatientList" class="workout-assign-patient-list"></div>`;
+    $('#backToWorkoutLibrary').onclick=()=>openWorkoutLibrary();
+    const render=q=>{
+      const term=String(q||'').trim().toLowerCase();
+      const filtered=patients.filter(p=>!term||`${p.nome||''} ${p.email||''} ${p.telefone||''}`.toLowerCase().includes(term));
+      $('#workoutAssignPatientList').innerHTML=filtered.length?filtered.map(p=>`<button type="button" data-assign-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.email||p.telefone||'Paciente')}</small></span><i>›</i></button>`).join(''):`<div class="empty">Nenhum paciente encontrado.</div>`;
+      $$('[data-assign-patient]').forEach(btn=>btn.onclick=()=>openWorkoutTemplateCreateForm(patients.find(p=>p.id===btn.dataset.assignPatient),modelo));
+    };
+    render('');$('#workoutAssignPatientSearch').oninput=e=>render(e.target.value);
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+function openWorkoutLibraryEdit(modelo,patient=null){
+  const box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="backToWorkoutLibraryEdit">← Biblioteca</button><span class="eyebrow">EDITAR MODELO</span><h2>${esc(modelo.nome)}</h2><p>Edite apenas a identidade do modelo. As fichas já atribuídas aos pacientes não são alteradas.</p></div>
+    <form id="workoutLibraryEditForm" class="clinical-form"><div class="form-grid">${field('Nome','nome','text',`value="${esc(modelo.nome)}" required`)}${area('Descrição','descricao',`placeholder="Quando usar este modelo?"`)}<label class="checkbox-line"><input type="checkbox" name="ativo" ${modelo.ativo?'checked':''}> Modelo ativo para novas atribuições</label></div><div class="form-actions"><button type="button" class="secondary" id="cancelWorkoutLibraryEdit">Cancelar</button><button class="primary" type="submit">Salvar modelo</button></div></form>`;
+  const form=$('#workoutLibraryEditForm');
+  form.elements.descricao.value=modelo.descricao||'';
+  $('#backToWorkoutLibraryEdit').onclick=$('#cancelWorkoutLibraryEdit').onclick=()=>openWorkoutLibrary(patient);
+  form.onsubmit=async e=>{
+    e.preventDefault();const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
+    try{
+      await api(`/api/modelos-planos-treino/${modelo.id}`,{method:'PUT',body:JSON.stringify({nome:val(form,'nome'),descricao:val(form,'descricao')||null,ativo:form.elements.ativo.checked})});
+      toast('Modelo de treino atualizado.');openWorkoutLibrary(patient);
+    }catch(err){toast(err.message,true)}finally{btn.disabled=false}
+  };
+}
+
 async function openWorkoutTemplatePicker(p){
   const box=$('#clinicalActionContent');
   $('#clinicalActionModal').classList.add('workout-modal-open');
@@ -3662,7 +3751,7 @@ function openWorkoutTemplateCreateForm(p,modelo){
     <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button type="submit" class="primary">Criar treino</button></div>
   </form>`;
 
-  $('#backToWorkoutTemplates').onclick=()=>openWorkoutTemplatePicker(p);
+  $('#backToWorkoutTemplates').onclick=()=>openWorkoutLibrary(p);
   $('[data-close-clinical-form]').onclick=closeClinicalAction;
 
   const f=$('#workoutTemplateCreateForm');
@@ -6630,8 +6719,9 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.17.4';
+const HP_MVP_VERSION='0.17.5';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
+const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
 const HP_PATIENT_INTAKE_BODY_ASSESSMENT='v0.17.1';
 const HP_TREATMENT_GOAL_INITIAL_RECOMMENDATION='v0.17.2';

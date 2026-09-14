@@ -1,3 +1,13 @@
+# v0.17.5 — Workout Library & Assignment
+
+- biblioteca profissional central de modelos de treino;
+- busca e filtro por modelos ativos/inativos;
+- edição de nome/descrição e ativação/desativação sem alterar fichas já atribuídas;
+- atribuição rápida de modelo para um paciente, criando cópia independente e editável;
+- acesso à biblioteca pelo Workspace de Prescrições e pela aba Treinos do paciente;
+- integração direta com o Workout Builder 2.0 para personalização pós-atribuição;
+- sem migration nova; schema permanece 38/38.
+
 # Changelog
 
 ## v0.17.4 — Workout Builder 2.0
