@@ -1,14 +1,13 @@
-# v0.17.5 — Workout Library & Assignment
-
-- biblioteca profissional central de modelos de treino;
-- busca e filtro por modelos ativos/inativos;
-- edição de nome/descrição e ativação/desativação sem alterar fichas já atribuídas;
-- atribuição rápida de modelo para um paciente, criando cópia independente e editável;
-- acesso à biblioteca pelo Workspace de Prescrições e pela aba Treinos do paciente;
-- integração direta com o Workout Builder 2.0 para personalização pós-atribuição;
-- sem migration nova; schema permanece 38/38.
-
 # Changelog
+
+## v0.17.6 — Nutrition Builder 2.0
+
+- Adiciona edição completa do plano alimentar existente no mesmo builder de criação.
+- Adiciona busca de alimentos sem desmontar o rascunho atual.
+- Adiciona duplicação rápida de refeições e itens.
+- Mostra meta × prescrito e total estimado enquanto o profissional monta o plano.
+- Integra o rascunho da Recommendation Tuning como contexto opcional.
+- Mantém schema 38/38 e todos os endpoints existentes.
 
 ## v0.17.4 — Workout Builder 2.0
 - adiciona edição completa de planos de treino existentes usando o PUT já disponível na API;
