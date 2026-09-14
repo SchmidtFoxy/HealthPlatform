@@ -1,4 +1,13 @@
-﻿# v0.17.1 — Patient Intake & Body Assessment
+# v0.17.2 — Treatment Goal & Initial Recommendation
+
+- seleção de objetivo: hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção e retorno ao exercício;
+- rascunho inicial editável de hidratação, frequência de treino e direção nutricional;
+- disponibilidade semanal, duração, refeições/dia, nível e preferências/restrições entram no contexto;
+- hidratação usa uma faixa-base de protótipo (30–35 ml/kg) somente como rascunho, com ajuste rápido de ±250 ml;
+- nada é publicado automaticamente; o profissional mantém a decisão final;
+- mantém schema 38/38 e nenhuma migration nova.
+
+# v0.17.1 — Patient Intake & Body Assessment
 
 - Adiciona onboarding profissional guiado após o cadastro do paciente.
 - Separa cadastro essencial de avaliação corporal para não bloquear o primeiro atendimento.

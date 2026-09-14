@@ -112,10 +112,10 @@ async function loadPrescriptionWorkspace(){
     api('/api/modelos-refeicoes').catch(()=>[])
   ]);
   const list=patients?.itens||[];
-  content.innerHTML=`<section class="prescription-workspace-hero"><div><span class="eyebrow">PROFESSIONAL PRESCRIPTION WORKSPACE • v0.17.1</span><h3>Da avaliação à prescrição, sem perder o contexto do paciente.</h3><p>Organize avaliação corporal, objetivo, preferências, treino e alimentação em um único fluxo profissional. Sugestões futuras serão sempre propostas para revisão — nunca publicação automática.</p></div><button class="primary" id="workspaceNewPatient">+ Iniciar paciente</button></section>
+  content.innerHTML=`<section class="prescription-workspace-hero"><div><span class="eyebrow">PROFESSIONAL PRESCRIPTION WORKSPACE • v0.17.2</span><h3>Da avaliação à prescrição, sem perder o contexto do paciente.</h3><p>Organize avaliação corporal, objetivo, preferências, treino e alimentação em um único fluxo profissional. Sugestões futuras serão sempre propostas para revisão — nunca publicação automática.</p></div><button class="primary" id="workspaceNewPatient">+ Iniciar paciente</button></section>
   <div class="prescription-workspace-grid">
     <section class="card prescription-workspace-step"><span class="workspace-step-index">1</span><div><span class="eyebrow">ENTRADA • v0.17.1</span><h3>Cadastro + avaliação corporal</h3><p>Cadastre o essencial sem travar o atendimento. Depois complete composição corporal/bioimpedância quando os dados estiverem disponíveis.</p><button class="secondary" id="workspacePatients">Escolher paciente</button></div></section>
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">2</span><div><span class="eyebrow">OBJETIVO</span><h3>Direção do tratamento</h3><p>Hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção ou retorno ao exercício.</p><span class="workspace-status">Sugestão assistida entra nas próximas etapas</span></div></section>
+    <section class="card prescription-workspace-step"><span class="workspace-step-index">2</span><div><span class="eyebrow">OBJETIVO • v0.17.2</span><h3>Direção + sugestão inicial</h3><p>Hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção ou retorno ao exercício.</p><span class="workspace-status safe">Rascunho assistido para revisão profissional</span></div></section>
     <section class="card prescription-workspace-step"><span class="workspace-step-index">3</span><div><span class="eyebrow">PRESCRIÇÃO</span><h3>Treino + alimentação</h3><p>Use bibliotecas, modelos e histórico para montar uma proposta personalizada e fácil de adaptar.</p><div class="workspace-library-stats"><b>${workoutModels.length||0}</b><span>modelos de treino</span><b>${mealModels.length||0}</b><span>modelos alimentares</span></div></div></section>
     <section class="card prescription-workspace-step"><span class="workspace-step-index">4</span><div><span class="eyebrow">REVISÃO</span><h3>Ajustar e publicar</h3><p>O profissional revisa metas, preferências, volume, refeições e substituições antes de atribuir ao paciente.</p><span class="workspace-status safe">Profissional mantém a decisão final</span></div></section>
   </div>
@@ -172,9 +172,96 @@ async function openPatientIntake(patient){
     try{
       const body={consultaId:null,dataUtc:val(f,'dataUtc')?new Date(val(f,'dataUtc')).toISOString():null,pesoKg:dec(f,'pesoKg'),alturaM:dec(f,'alturaM'),percentualGordura:dec(f,'percentualGordura'),massaMagraKg:dec(f,'massaMagraKg'),massaGordaKg:dec(f,'massaGordaKg'),cinturaCm:dec(f,'cinturaCm'),abdomenCm:dec(f,'abdomenCm'),quadrilCm:dec(f,'quadrilCm'),pressaoSistolica:integer(f,'pressaoSistolica'),pressaoDiastolica:integer(f,'pressaoDiastolica'),frequenciaCardiaca:integer(f,'frequenciaCardiaca')};
       await api(`/api/pacientes/${p.id}/avaliacoes`,{method:'POST',body:JSON.stringify(body)});
-      closeClinicalAction();toast('Avaliação corporal salva. Próxima etapa: objetivo do tratamento.');state.patientTab='avaliacoes';await loadPatient();
+      toast('Avaliação corporal salva. Próxima etapa: objetivo do tratamento.');await openTreatmentGoalRecommendation(p);
     }catch(err){toast(err.message,true)}finally{b.disabled=false;b.textContent='Salvar avaliação e continuar'}
   };
+}
+
+async function openTreatmentGoalRecommendation(patient){
+  const p=typeof patient==='string'?await api(`/api/pacientes/${patient}`):patient;
+  if(!p?.id){toast('Paciente não identificado para objetivo e sugestão.',true);return}
+  state.patientId=p.id;
+  $('#clinicalActionModal').classList.remove('hidden');
+  const box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">TREATMENT GOAL • v0.17.2</span><h2>Objetivo & sugestão inicial</h2><p>${esc(p.nome)} • proposta inicial para revisão profissional, nunca publicação automática.</p></div><div class="intake-loading">Montando contexto...</div>`;
+  let assessments=[];
+  try{assessments=await api(`/api/pacientes/${p.id}/avaliacoes`)}catch{}
+  const latest=(assessments||[])[0]||null;
+  const weight=Number(latest?.pesoKg||0);
+  const height=Number(latest?.alturaM||0);
+  const bmi=weight>0&&height>0?weight/(height*height):null;
+  const goals=[
+    ['Hipertrofia','Ganho de massa com progressão sustentável'],
+    ['Perda de peso','Redução de peso preservando capacidade funcional'],
+    ['Recomposição corporal','Melhorar composição corporal sem foco exclusivo na balança'],
+    ['Condicionamento','Aumentar capacidade física e tolerância ao esforço'],
+    ['Qualidade de vida','Criar rotina sustentável de movimento, alimentação e recuperação'],
+    ['Manutenção','Preservar resultados e estabilidade de hábitos'],
+    ['Retorno ao exercício','Retomar exposição de forma gradual e protegida']
+  ];
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">TREATMENT GOAL • v0.17.2</span><h2>Objetivo & sugestão inicial</h2><p>${esc(p.nome)} • avaliação → objetivo → rascunho editável.</p></div>
+  <div class="intake-progress"><span class="intake-status done">✓ Cadastro</span><span class="intake-status ${latest?'done':'pending'}">${latest?'✓':'○'} Composição corporal</span><span class="intake-status pending">3 Objetivo</span><span class="intake-status pending">4 Sugestão</span></div>
+  <section class="recommendation-context"><div><span class="eyebrow">CONTEXTO DISPONÍVEL</span><h3>${latest?'Avaliação corporal encontrada':'Sem avaliação corporal completa'}</h3><p>${latest?'O rascunho usa os dados disponíveis abaixo.':'É possível gerar um rascunho conservador e completar a avaliação depois.'}</p></div><div class="recommendation-context-grid"><span><small>Peso</small><b>${weight?`${num(weight)} kg`:'—'}</b></span><span><small>Gordura corporal</small><b>${latest?.percentualGordura!=null?`${num(latest.percentualGordura)}%`:'—'}</b></span><span><small>IMC contextual</small><b>${bmi?num(bmi.toFixed(1)):'—'}</b></span></div></section>
+  <form id="treatmentGoalForm" class="clinical-form treatment-goal-form">
+    <div class="recommendation-goals"><span class="eyebrow">OBJETIVO PRINCIPAL</span><div class="goal-choice-grid">${goals.map((g,i)=>`<label class="goal-choice"><input type="radio" name="goal" value="${esc(g[0])}" ${i===0?'checked':''}><span><b>${esc(g[0])}</b><small>${esc(g[1])}</small></span></label>`).join('')}</div></div>
+    <div class="form-grid recommendation-inputs">
+      ${field('Dias disponíveis / semana','availableDays','number','min="1" max="7" value="4"')}
+      ${field('Tempo por sessão (min)','sessionMinutes','number','min="20" max="180" step="5" value="60"')}
+      ${field('Refeições preferidas / dia','mealsPerDay','number','min="2" max="8" value="4"')}
+      <label>Nível atual<select name="experience"><option value="Iniciante">Iniciante</option><option value="Intermediario" selected>Intermediário</option><option value="Avancado">Avançado</option><option value="Retorno">Retorno após pausa</option></select></label>
+    </div>
+    <label>Preferências / restrições relevantes<textarea name="preferences" rows="2" placeholder="Ex.: não come ovo, treina ter/qui/sáb, café da manhã rápido..."></textarea></label>
+    <div class="form-actions"><button type="button" class="secondary" id="goalBackAssessment">Voltar à avaliação</button><button class="primary" type="submit">Gerar sugestão inicial</button></div>
+  </form>
+  <div id="initialRecommendationResult"></div>`;
+  $('#goalBackAssessment').onclick=()=>openPatientIntake(p);
+  $('#treatmentGoalForm').onsubmit=e=>{e.preventDefault();renderInitialRecommendation(p,latest,e.target)};
+}
+
+function buildInitialRecommendationDraft(goal,weight,days,minutes,meals,experience,preferences){
+  const safeDays=Math.max(1,Math.min(7,Number(days)||3));
+  const safeMinutes=Math.max(20,Math.min(180,Number(minutes)||60));
+  const safeMeals=Math.max(2,Math.min(8,Number(meals)||4));
+  const hydrationLow=weight>0?Math.round((weight*30)/250)*250:null;
+  const hydrationHigh=weight>0?Math.round((weight*35)/250)*250:null;
+  const hydrationTarget=weight>0?Math.round((((hydrationLow+hydrationHigh)/2))/250)*250:null;
+  const presets={
+    'Hipertrofia':{strength:[3,Math.min(5,safeDays)],conditioning:'0–2 sessões leves conforme recuperação',nutrition:'Energia em manutenção ou leve superávit; proteína distribuída ao longo do dia.',focus:'progressão de força/volume com recuperação adequada'},
+    'Perda de peso':{strength:[2,Math.min(4,safeDays)],conditioning:'2–4 exposições aeróbias ajustadas à rotina',nutrition:'Déficit energético moderado a ser definido pelo profissional; preservar proteína e saciedade.',focus:'aderência + força + atividade sustentável'},
+    'Recomposição corporal':{strength:[3,Math.min(5,safeDays)],conditioning:'1–3 sessões complementares',nutrition:'Energia próxima da manutenção, com proteína adequada e distribuição prática das refeições.',focus:'consistência e resposta de composição corporal'},
+    'Condicionamento':{strength:[2,Math.min(3,safeDays)],conditioning:'2–4 sessões de condicionamento progressivo',nutrition:'Manutenção energética como ponto de partida; ajustar carboidratos à demanda de treino.',focus:'capacidade física sem sacrificar recuperação'},
+    'Qualidade de vida':{strength:[2,Math.min(3,safeDays)],conditioning:'2–3 blocos leves/moderados de movimento',nutrition:'Regularidade alimentar, fibras, variedade e hidratação antes de metas agressivas.',focus:'rotina simples e sustentável'},
+    'Manutenção':{strength:[2,Math.min(4,safeDays)],conditioning:'1–3 sessões conforme preferência',nutrition:'Manter estrutura atual e ajustar somente onde adesão ou contexto pedirem.',focus:'preservar resultados com baixo atrito'},
+    'Retorno ao exercício':{strength:[2,Math.min(3,safeDays)],conditioning:'movimento leve e progressivo conforme tolerância',nutrition:'Priorizar regularidade, hidratação e suporte à recuperação; evitar restrições agressivas.',focus:'retomar exposição gradualmente'}
+  };
+  const p=presets[goal]||presets['Qualidade de vida'];
+  const maxStrength=Math.max(p.strength[0],p.strength[1]);
+  return {goal,hydrationLow,hydrationHigh,hydrationTarget,strength:`${p.strength[0]}–${maxStrength} sessões/semana`,conditioning:p.conditioning,nutrition:p.nutrition,focus:p.focus,days:safeDays,minutes:safeMinutes,meals:safeMeals,experience,preferences:preferences||''};
+}
+
+function renderInitialRecommendation(p,latest,form){
+  const goal=val(form,'goal')||'Qualidade de vida';
+  const draft=buildInitialRecommendationDraft(goal,Number(latest?.pesoKg||0),val(form,'availableDays'),val(form,'sessionMinutes'),val(form,'mealsPerDay'),val(form,'experience'),val(form,'preferences'));
+  const hydration=draft.hydrationTarget?`${draft.hydrationTarget} ml/dia`:'Definir após peso disponível';
+  const hydrationRange=draft.hydrationLow?`Faixa-base do rascunho: ${draft.hydrationLow}–${draft.hydrationHigh} ml/dia`:'Peso não disponível: profissional define o alvo inicial.';
+  const out=$('#initialRecommendationResult');
+  out.innerHTML=`<section class="initial-recommendation" data-goal="${esc(draft.goal)}"><div class="recommendation-head"><div><span class="eyebrow">SUGESTÃO INICIAL • REVISÃO PROFISSIONAL</span><h3>${esc(draft.goal)}</h3><p>Rascunho gerado a partir do contexto disponível. Nada é publicado automaticamente.</p></div><span class="pill Agendada">Não publicado</span></div>
+    <div class="recommendation-grid">
+      <article><span>💧</span><small>Hidratação</small><strong data-recommendation-water="${draft.hydrationTarget||0}">${hydration}</strong><p>${hydrationRange}</p><div class="recommendation-tune"><button type="button" data-water-delta="-250">− 250</button><button type="button" data-water-delta="250">+ 250</button></div></article>
+      <article><span>🏋️</span><small>Treino de força</small><strong>${esc(draft.strength)}</strong><p>${esc(draft.focus)} • ${draft.minutes} min/sessão • ${draft.days} dia(s) disponíveis.</p></article>
+      <article><span>🫀</span><small>Condicionamento</small><strong>${esc(draft.conditioning)}</strong><p>Ajustar intensidade à prontidão, histórico e plano profissional.</p></article>
+      <article><span>🥗</span><small>Direção nutricional</small><strong>${draft.meals} refeições como estrutura inicial</strong><p>${esc(draft.nutrition)}</p></article>
+    </div>
+    ${draft.preferences?`<div class="recommendation-preferences"><b>Preferências consideradas</b><span>${esc(draft.preferences)}</span></div>`:''}
+    <div class="recommendation-safety"><b>Regra do workspace</b><span>Esta é uma heurística de protótipo para acelerar o raciocínio profissional. O profissional revisa hidratação, volume, intensidade, energia, macros, refeições, contraindicações e preferências antes de atribuir qualquer plano.</span></div>
+    <div class="form-actions"><button type="button" class="secondary" id="recommendationEditContext">Editar contexto</button><button type="button" class="secondary" id="recommendationOpenWorkout">Adaptar treino</button><button type="button" class="secondary" id="recommendationOpenNutrition">Adaptar alimentação</button><button type="button" class="primary" id="recommendationBackPatient">Voltar ao prontuário</button></div>
+  </section>`;
+  $$('[data-water-delta]').forEach(b=>b.onclick=()=>{const target=$('[data-recommendation-water]');let current=Number(target.dataset.recommendationWater||0);if(!current)return;current=Math.max(500,current+Number(b.dataset.waterDelta||0));target.dataset.recommendationWater=current;target.textContent=`${current} ml/dia`;});
+  $('#recommendationEditContext').onclick=()=>{out.innerHTML='';form.scrollIntoView({behavior:'smooth',block:'start'})};
+  $('#recommendationOpenWorkout').onclick=()=>{closeClinicalAction();state.patientId=p.id;state.patientTab='treinos';navigate('paciente')};
+  $('#recommendationOpenNutrition').onclick=()=>{closeClinicalAction();state.patientId=p.id;state.patientTab='alimentacao';navigate('paciente')};
+  $('#recommendationBackPatient').onclick=()=>{closeClinicalAction();openPatient(p.id)};
+  out.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function openPatient(id){state.patientId=id;state.patientTab='resumo';navigate('paciente')}
@@ -182,7 +269,7 @@ function tabButton(id,label){return `<button class="patient-tab ${state.patientT
 function info(label,value){return `<div class="info-box"><small>${label}</small><strong>${esc(value||'—')}</strong></div>`}
 function metric(value,suffix,label){return `<div class="metric"><strong>${value??'—'}${value!=null?suffix:''}</strong><small>${label}</small></div>`}
 function sectionEmpty(msg){return `<div class="empty compact">${msg}</div>`}
-async function loadPatient(){if(!state.patientId){navigate('pacientes');return}const id=state.patientId;const [p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo]=await Promise.all([api(`/api/pacientes/${id}`),api(`/api/pacientes/${id}/timeline?limite=50`),api(`/api/pacientes/${id}/portal/home?data=${todayISO()}`),api(`/api/pacientes/${id}/resumo-clinico`),api(`/api/pacientes/${id}/consultas`),api(`/api/pacientes/${id}/evolucoes`),api(`/api/pacientes/${id}/anamneses`),api(`/api/pacientes/${id}/avaliacoes`),api(`/api/pacientes/${id}/exames`),api(`/api/pacientes/${id}/planos-alimentares`),api(`/api/pacientes/${id}/metas?incluirEncerradas=true`),api(`/api/pacientes/${id}/diario`),api(`/api/pacientes/${id}/relatorios`),api(`/api/pacientes/${id}/treinos`),api(`/api/pacientes/${id}/treinos/historico?dias=90`),api(`/api/pacientes/${id}/monitoramento?dias=7`),api(`/api/pacientes/${id}/protocolo-acompanhamento?offsetMinutos=${state.offset}`) ]);content.innerHTML=`<div class="patient-page"><div class="patient-page-head"><button class="back-link" id="backPatients">← Pacientes</button><div class="patient-hero page"><div class="big-avatar">${initials(p.nome)}</div><div class="patient-title"><div class="eyebrow">PRONTUÁRIO DIGITAL</div><h2>${esc(p.nome)}</h2><p>${esc(p.profissao||'Paciente')} • ${p.dataNascimento?fmtDate(p.dataNascimento):'Nascimento não informado'}</p></div><div class="patient-head-actions"><span class="pill ${p.ativo?'Ativa':'Cancelada'}">${p.ativo?'Ativo':'Inativo'}</span><button class="secondary" id="patientAccess">Acesso do paciente</button><button class="secondary" id="editPatient">Editar dados</button><button class="secondary" id="patientIntake">Avaliação inicial</button><button class="secondary" id="openPrescriptionWorkspace">Prescrição</button><button class="primary" id="registerClinical">+ Registrar</button></div></div><div class="patient-info-grid">${info('Telefone',p.telefone)}${info('E-mail',p.email)}${info('CPF',p.cpf)}${info('Sexo',p.sexo)}</div></div><div class="patient-tabs">${tabButton('resumo','Resumo')}${tabButton('consultas',`Consultas ${consultas.length}`)}${tabButton('evolucoes',`Evoluções ${evolucoes.length}`)}${tabButton('anamnese',`Anamnese ${anamneses.length}`)}${tabButton('avaliacoes',`Avaliações ${avaliacoes.length}`)}${tabButton('exames',`Exames ${exames.length}`)}${tabButton('alimentacao',`Plano alimentar ${planos.length}`)}${tabButton('treinos',`Treinos ${treinos.length}`)}${tabButton('metas',`Metas ${metas.length}`)}${tabButton('diario',`Diário ${diario.length}`)}${tabButton('relatorios',`Relatórios ${relatorios.length}`)}${tabButton('timeline','Timeline')}</div><div id="patientTabContent"></div></div>`;$('#backPatients').onclick=()=>navigate('pacientes');$('#registerClinical').onclick=()=>openClinicalActionMenu(p);$('#patientAccess').onclick=()=>openPatientAccess(p);$('#editPatient').onclick=()=>openEditPatientForm(p);$('#patientIntake').onclick=()=>openPatientIntake(p);$('#openPrescriptionWorkspace').onclick=()=>navigate('prescricoes');const data={p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo};$$('.patient-tab').forEach(b=>b.onclick=()=>{state.patientTab=b.dataset.tab;$$('.patient-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.patientTab));renderPatientTab(data)});renderPatientTab(data)}
+async function loadPatient(){if(!state.patientId){navigate('pacientes');return}const id=state.patientId;const [p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo]=await Promise.all([api(`/api/pacientes/${id}`),api(`/api/pacientes/${id}/timeline?limite=50`),api(`/api/pacientes/${id}/portal/home?data=${todayISO()}`),api(`/api/pacientes/${id}/resumo-clinico`),api(`/api/pacientes/${id}/consultas`),api(`/api/pacientes/${id}/evolucoes`),api(`/api/pacientes/${id}/anamneses`),api(`/api/pacientes/${id}/avaliacoes`),api(`/api/pacientes/${id}/exames`),api(`/api/pacientes/${id}/planos-alimentares`),api(`/api/pacientes/${id}/metas?incluirEncerradas=true`),api(`/api/pacientes/${id}/diario`),api(`/api/pacientes/${id}/relatorios`),api(`/api/pacientes/${id}/treinos`),api(`/api/pacientes/${id}/treinos/historico?dias=90`),api(`/api/pacientes/${id}/monitoramento?dias=7`),api(`/api/pacientes/${id}/protocolo-acompanhamento?offsetMinutos=${state.offset}`) ]);content.innerHTML=`<div class="patient-page"><div class="patient-page-head"><button class="back-link" id="backPatients">← Pacientes</button><div class="patient-hero page"><div class="big-avatar">${initials(p.nome)}</div><div class="patient-title"><div class="eyebrow">PRONTUÁRIO DIGITAL</div><h2>${esc(p.nome)}</h2><p>${esc(p.profissao||'Paciente')} • ${p.dataNascimento?fmtDate(p.dataNascimento):'Nascimento não informado'}</p></div><div class="patient-head-actions"><span class="pill ${p.ativo?'Ativa':'Cancelada'}">${p.ativo?'Ativo':'Inativo'}</span><button class="secondary" id="patientAccess">Acesso do paciente</button><button class="secondary" id="editPatient">Editar dados</button><button class="secondary" id="patientIntake">Avaliação inicial</button><button class="secondary" id="patientGoalRecommendation">Objetivo & sugestão</button><button class="secondary" id="openPrescriptionWorkspace">Prescrição</button><button class="primary" id="registerClinical">+ Registrar</button></div></div><div class="patient-info-grid">${info('Telefone',p.telefone)}${info('E-mail',p.email)}${info('CPF',p.cpf)}${info('Sexo',p.sexo)}</div></div><div class="patient-tabs">${tabButton('resumo','Resumo')}${tabButton('consultas',`Consultas ${consultas.length}`)}${tabButton('evolucoes',`Evoluções ${evolucoes.length}`)}${tabButton('anamnese',`Anamnese ${anamneses.length}`)}${tabButton('avaliacoes',`Avaliações ${avaliacoes.length}`)}${tabButton('exames',`Exames ${exames.length}`)}${tabButton('alimentacao',`Plano alimentar ${planos.length}`)}${tabButton('treinos',`Treinos ${treinos.length}`)}${tabButton('metas',`Metas ${metas.length}`)}${tabButton('diario',`Diário ${diario.length}`)}${tabButton('relatorios',`Relatórios ${relatorios.length}`)}${tabButton('timeline','Timeline')}</div><div id="patientTabContent"></div></div>`;$('#backPatients').onclick=()=>navigate('pacientes');$('#registerClinical').onclick=()=>openClinicalActionMenu(p);$('#patientAccess').onclick=()=>openPatientAccess(p);$('#editPatient').onclick=()=>openEditPatientForm(p);$('#patientIntake').onclick=()=>openPatientIntake(p);$('#patientGoalRecommendation').onclick=()=>openTreatmentGoalRecommendation(p);$('#openPrescriptionWorkspace').onclick=()=>navigate('prescricoes');const data={p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo};$$('.patient-tab').forEach(b=>b.onclick=()=>{state.patientTab=b.dataset.tab;$$('.patient-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.patientTab));renderPatientTab(data)});renderPatientTab(data)}
 function hpMonitoringCard(d,protocolo,paciente){
   const itens=(protocolo?.itens||[]).filter(x=>x.ativo);
   const hasMetrics=d&&(d.metricas||[]).some(x=>x.total);
@@ -6461,9 +6548,10 @@ loadPatientWorkout=async function(){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.17.1';
+const HP_MVP_VERSION='0.17.2';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
 const HP_PATIENT_INTAKE_BODY_ASSESSMENT='v0.17.1';
+const HP_TREATMENT_GOAL_INITIAL_RECOMMENDATION='v0.17.2';
 const HP_MOBILE_UI_FOUNDATION='v0.14.3';
 const HP_MOBILE_NAVIGATION_SHELL='v0.14.3';
 const HP_MOBILE_CONTENT_HIERARCHY='v0.14.3';
