@@ -1,6 +1,7 @@
-# HealthPlatform v0.17.6 — Nutrition Builder 2.0
+# HealthPlatform v0.17.7 — Diet & Meal Library
 
-**Versão funcional:** `0.17.6`  
+
+**Versão funcional:** `0.17.7`  
 **Schema:** `38/38` — sem migration nova.
 
 ## Destaques
@@ -16,3 +17,13 @@
 ## Segurança de produto
 
 O builder organiza e acelera a prescrição, mas não publica recomendações automaticamente nem substitui a decisão profissional.
+
+
+## v0.17.7 — Diet & Meal Library
+- Biblioteca profissional central de planos alimentares e refeições.
+- Busca e filtro por modelos ativos/inativos.
+- Edição de nome, descrição/categoria e status dos modelos.
+- Atribuição de dieta cria cópia independente para o paciente.
+- Refeições modelo podem ser inseridas em planos alimentares ativos.
+- Integração pelo Workspace de Prescrições e pela aba Alimentação do paciente.
+- Sem nova migration; schema permanece 38/38.

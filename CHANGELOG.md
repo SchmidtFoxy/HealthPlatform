@@ -1,3 +1,11 @@
+## v0.17.7 — Diet & Meal Library
+- Centraliza modelos de dietas e refeições em uma biblioteca profissional.
+- Permite busca, filtro, edição, ativação/desativação e atribuição.
+- Dietas atribuídas geram cópias independentes para personalização.
+- Refeições podem ser inseridas em planos ativos do paciente.
+- Integração com Professional Prescription Workspace e Nutrition Builder 2.0.
+- Schema preservado em 38/38.
+
 # Changelog
 
 ## v0.17.6 — Nutrition Builder 2.0
