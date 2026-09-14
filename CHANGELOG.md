@@ -1,3 +1,15 @@
+## v0.17.9-r1 — Smoke Test Workspace Label Fix
+- Corrige falso negativo no check histórico do Professional Prescription Workspace.
+- O smoke test passa a validar o rótulo atual `Revisar & publicar` em vez do legado `Ajustar e publicar`.
+- Nenhuma alteração funcional, de API, schema ou migrations.
+
+## v0.17.9 — Review, Publish & Versioning
+- revisão conjunta do plano de treino e plano alimentar do paciente;
+- histórico visual de versões com status;
+- publicação explícita de uma versão, inativando a anterior sem apagar histórico;
+- acesso pelo prontuário e integração com builders existentes;
+- sem migration: schema permanece 38/38.
+
 ## v0.17.8 — Patient Preferences & Smart Adaptation
 - adiciona Smart Adaptation ao Recommendation Tuning Workspace;
 - cruza preferências do rascunho com rotina/hidratação já registradas na anamnese;

@@ -1,4 +1,8 @@
-# HealthPlatform v0.17.8 — Patient Preferences & Smart Adaptation
+# HealthPlatform v0.17.9 — Review, Publish & Versioning
+
+Fecha a fase Professional Prescription Experience com revisão conjunta de treino e alimentação, publicação explícita e histórico de versões preservado.
+
+# HealthPlatform v0.17.9 — Patient Preferences & Smart Adaptation
 
 Esta versão conecta preferências, rotina e anamnese ao rascunho profissional. O sistema sugere adaptações explicadas para hidratação, frequência/duração do treino e organização alimentar, sempre como rascunho revisável e nunca como prescrição/publicação automática.
 
@@ -28,3 +32,6 @@ O builder organiza e acelera a prescrição, mas não publica recomendações au
 - Refeições modelo podem ser inseridas em planos alimentares ativos.
 - Integração pelo Workspace de Prescrições e pela aba Alimentação do paciente.
 - Sem nova migration; schema permanece 38/38.
+
+
+> Revisão r1: corrige apenas o smoke test legado do fluxo profissional; versão funcional permanece 0.17.9.
