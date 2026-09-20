@@ -1815,3 +1815,24 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Atualiza o gate histórico `[1505/1512]` para reconhecer a identidade atual `AESYN • WORKOUT TEMPLATE LIBRARY 2.0 • v0.18.8`.
 - Preserva o fluxo de biblioteca, atribuição e cópia independente por paciente.
 - Nenhuma alteração funcional, de schema ou migration.
+
+
+## 0.18.9 — Program Builder 1.0
+- Biblioteca profissional de programas de treino.
+- Programas independentes de paciente.
+- Composição por treinos-modelo existentes.
+- Múltiplas fases por programa.
+- Duração em semanas por fase.
+- Agenda semanal com slots de Segunda a Domingo.
+- Duplicação e reordenação de fases/dias.
+- Resumo de semanas, fases, sessões e modelos distintos.
+- Preview completo do ciclo.
+- Busca, filtro por objetivo e ordenação de programas.
+- Duplicação, exclusão, exportação e importação JSON.
+- Acesso direto pelo Professional Workout Studio e pela Workout Template Library.
+- Persistência local nesta primeira fase; schema 38/38 preservado e sem migration nova.
+
+
+### v0.18.9-r1 — estabilização do gate MVP Preview
+- Atualiza o gate legado `[463/600]` para reconhecer a identidade corrente da AESYN em `v0.18.9`.
+- Nenhuma alteração funcional, de schema ou migration.

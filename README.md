@@ -19,3 +19,7 @@ A fase profissional de treino passa a priorizar velocidade de produção e reuso
 
 ## v0.18.8 — Workout Template Library 2.0
 A biblioteca de treino passa a funcionar como catálogo profissional: filtros por objetivo e status, favoritos locais, ordenação por tamanho/recência, chips de objetivo e preview completo da composição do treino antes de editar ou atribuir. O fluxo continua independente de paciente e atribuições continuam criando cópias independentes.
+
+
+## v0.18.9 — Program Builder 1.0
+O Workout Studio passa a permitir montar programas independentes de paciente usando treinos-modelo como blocos. Cada programa pode ter múltiplas fases, duração em semanas e agenda semanal própria. Nesta primeira versão, programas são persistidos no navegador e podem ser exportados/importados em JSON, mantendo o schema 38/38 intacto.

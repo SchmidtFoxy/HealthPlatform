@@ -201,7 +201,7 @@ async function loadPrescriptionWorkspace(){
   ]);
   const list=patients?.itens||[];
   const activeExercises=exercises.filter(x=>x.ativo).length;
-  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.7</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button></div></section>
+  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.7</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspacePrograms">Programas</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button></div></section>
   <div class="workout-studio-kpis">
     <article><span>Exercícios ativos</span><strong>${activeExercises}</strong><small>${exercises.length-activeExercises} inativo(s)</small></article>
     <article><span>Treinos-modelo</span><strong>${workoutModels.length||0}</strong><small>independentes de paciente</small></article>
@@ -213,12 +213,14 @@ async function loadPrescriptionWorkspace(){
     <section class="card workout-studio-library-card"><div class="card-head"><div><span class="eyebrow">STANDALONE WORKOUT TEMPLATES</span><h3>Treinos sem paciente vinculado</h3></div><button class="primary" id="workspaceWorkoutLibrary">Biblioteca de treinos</button></div><p>Monte Upper/Lower, Full Body, hipertrofia, força, retorno, mobilidade ou qualquer protocolo antes da consulta. Depois atribua uma cópia independente ao paciente.</p><div class="workspace-library-list"><div><strong>${workoutModels.length||0}</strong><span>Planos-modelo</span></div><div><strong>${sessionModels.length||0}</strong><span>Sessões-modelo</span></div><div><strong>${workoutModels.reduce((n,x)=>n+(x.exercicios||0),0)}</strong><span>Exercícios nos modelos</span></div><div><strong>${workoutModels.filter(x=>x.ativo).length}</strong><span>Modelos disponíveis</span></div></div></section>
   </div>
   <div class="prescription-workspace-columns workout-studio-columns secondary-zone">
-    <section class="card"><div class="card-head"><div><span class="eyebrow">ATALHOS PROFISSIONAIS</span><h3>Produção de conteúdo clínico-esportivo</h3></div></div><div class="workout-studio-quick-actions"><button class="secondary" id="workspaceNewWorkoutTemplate2">+ Novo treino-modelo</button><button class="secondary" id="workspaceExerciseLibrary3">+ Popular exercícios</button><button class="secondary" id="workspaceNutritionLibrary">Dietas & refeições</button><button class="ghost" id="workspaceAllPatients">Pacientes</button></div><p class="workspace-note">O treino-modelo pertence à biblioteca do profissional. Só vira ficha de paciente quando você explicitamente atribui uma cópia.</p></section>
+    <section class="card"><div class="card-head"><div><span class="eyebrow">ATALHOS PROFISSIONAIS</span><h3>Produção de conteúdo clínico-esportivo</h3></div></div><div class="workout-studio-quick-actions"><button class="secondary" id="workspaceNewWorkoutTemplate2">+ Novo treino-modelo</button><button class="secondary" id="workspaceProgramBuilder">+ Novo programa</button><button class="secondary" id="workspaceExerciseLibrary3">+ Popular exercícios</button><button class="secondary" id="workspaceNutritionLibrary">Dietas & refeições</button><button class="ghost" id="workspaceAllPatients">Pacientes</button></div><p class="workspace-note">O treino-modelo pertence à biblioteca do profissional. Só vira ficha de paciente quando você explicitamente atribui uma cópia.</p></section>
     <section class="card"><div class="card-head"><div><span class="eyebrow">PACIENTES RECENTES</span><h3>Atribuir algo já preparado</h3></div><button class="ghost" id="workspacePatients">Ver todos</button></div>${list.length?`<div class="workspace-patient-list">${list.map(p=>`<button type="button" data-workspace-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.profissao||'Paciente')}</small></span><i>›</i></button>`).join('')}</div>`:sectionEmpty('Nenhum paciente disponível. Sua biblioteca pode continuar crescendo mesmo assim.')}</section>
   </div>
   <section class="card workspace-roadmap workout-studio-flow"><div><span class="eyebrow">NOVO FLUXO-ALVO</span><h3>Exercícios → treino-modelo → biblioteca → atribuição → adaptação</h3><p>O paciente deixa de ser pré-requisito para construir a oferta. A AESYN passa a tratar a biblioteca de treino como patrimônio reutilizável do profissional.</p></div></section>`;
   $('#workspaceNewWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
   $('#workspaceNewWorkoutTemplate2').onclick=()=>openStandaloneWorkoutBuilder();
+  $('#workspacePrograms').onclick=()=>openWorkoutProgramLibrary();
+  $('#workspaceProgramBuilder').onclick=()=>openWorkoutProgramBuilder();
   $('#workspaceExerciseLibrary').onclick=()=>openExerciseLibrary2();
   $('#workspaceExerciseLibrary2').onclick=()=>openExerciseLibrary2();
   $('#workspaceExerciseLibrary3').onclick=()=>openExerciseLibrary2();
@@ -2038,6 +2040,7 @@ async function openDietMealLibrary(patient=null,initialTab='plans'){
     <div id="dietLibraryList" class="diet-library-grid"></div><div class="workout-library-guidance"><b>Como funciona</b><span>Planos atribuídos viram cópias independentes. Refeições podem ser inseridas em planos ativos sem alterar o modelo original.</span></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
     $('[data-close-clinical-form]').onclick=closeClinicalAction;
     $('#newStandaloneWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
+    $('#openWorkoutProgramsFromLibrary').onclick=()=>openWorkoutProgramLibrary();
     $('#openExerciseLibraryFromWorkout').onclick=()=>openExerciseLibrary2();
     const render=()=>{
       const q=String($('#dietLibrarySearch').value||'').trim().toLowerCase(), status=$('#dietLibraryStatus').value;
@@ -4250,7 +4253,7 @@ async function openWorkoutLibrary(patient=null){
 
     box.innerHTML=`<div class="modal-heading workout-library2-heading">
         <div><span class="eyebrow">AESYN • WORKOUT TEMPLATE LIBRARY 2.0 • v0.18.8</span><h2>Catálogo profissional de treinos</h2>${patientLabel}</div>
-        <div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div>
+        <div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openWorkoutProgramsFromLibrary">Programas</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div>
       </div>
       <div class="workout-library-summary workout-library2-summary">
         <span><small>Modelos</small><b>${modelos.length}</b></span>
@@ -4433,6 +4436,314 @@ async function openWorkoutTemplateQuickPreview(modelo,patient=null){
     box.innerHTML=`<div class="card empty">${esc(err.message)}</div><div class="form-actions"><button type="button" class="secondary" id="backFromWorkoutPreview">Voltar</button></div>`;
     $('#backFromWorkoutPreview').onclick=()=>openWorkoutLibrary(patient);
   }
+}
+
+
+// ===== v0.18.9 — Program Builder 1.0 =====
+const HP_PROGRAM_BUILDER_1='v0.18.9';
+const AESYN_PROGRAM_STORAGE='aesyn.workoutPrograms.v1';
+
+function aesynWorkoutPrograms(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(AESYN_PROGRAM_STORAGE)||'[]');
+    return Array.isArray(raw)?raw:[];
+  }catch{return []}
+}
+function aesynSaveWorkoutPrograms(programs){
+  localStorage.setItem(AESYN_PROGRAM_STORAGE,JSON.stringify(programs));
+}
+function aesynProgramId(){
+  return `prog-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+function aesynProgramWeeks(program){
+  return (program.fases||[]).reduce((n,x)=>n+Math.max(1,Number(x.semanas||1)),0);
+}
+function aesynProgramSessions(program){
+  return (program.fases||[]).reduce((n,f)=>n+(f.dias||[]).filter(x=>x.modeloId).length,0);
+}
+function aesynProgramTemplateIds(program){
+  return [...new Set((program.fases||[]).flatMap(f=>(f.dias||[]).map(d=>d.modeloId).filter(Boolean)))];
+}
+function aesynProgramDownload(program){
+  const blob=new Blob([JSON.stringify(program,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`aesyn-programa-${String(program.nome||'programa').toLowerCase().replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'programa'}.json`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),800);
+}
+function aesynProgramDuplicate(id){
+  const programs=aesynWorkoutPrograms();
+  const source=programs.find(x=>x.id===id);
+  if(!source)return null;
+  const copy=JSON.parse(JSON.stringify(source));
+  copy.id=aesynProgramId();
+  copy.nome=`${copy.nome} • cópia`;
+  copy.createdAtUtc=new Date().toISOString();
+  copy.updatedAtUtc=copy.createdAtUtc;
+  programs.unshift(copy);
+  aesynSaveWorkoutPrograms(programs);
+  return copy;
+}
+
+async function openWorkoutProgramLibrary(){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.add('workout-modal-open');
+  $('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • PROGRAM BUILDER 1.0 • v0.18.9</span><h2>Programas profissionais</h2><p>Carregando programas e treinos-modelo...</p></div>`;
+  try{
+    const workoutModels=await api('/api/modelos-planos-treino?incluirInativos=true');
+    let programs=aesynWorkoutPrograms();
+
+    const renderShell=()=>{
+      const objectives=[...new Set(programs.map(x=>x.objetivo).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+      box.innerHTML=`<div class="modal-heading program-library-heading">
+        <div><span class="eyebrow">AESYN • PROGRAM BUILDER 1.0 • v0.18.9</span><h2>Programas profissionais</h2><p>Agrupe treinos-modelo em ciclos de semanas e fases antes de existir qualquer paciente vinculado.</p></div>
+        <div class="program-library-actions"><button class="primary" id="newWorkoutProgram">+ Novo programa</button><button class="secondary" id="backToWorkoutTemplatesFromPrograms">Treinos-modelo</button><label class="secondary program-import-label">Importar JSON<input id="programImportInput" type="file" accept=".json,application/json" hidden></label></div>
+      </div>
+      <div class="program-library-summary">
+        <span><small>Programas</small><b>${programs.length}</b></span>
+        <span><small>Semanas planejadas</small><b>${programs.reduce((n,p)=>n+aesynProgramWeeks(p),0)}</b></span>
+        <span><small>Fases</small><b>${programs.reduce((n,p)=>n+(p.fases||[]).length,0)}</b></span>
+        <span><small>Treinos-modelo disponíveis</small><b>${workoutModels.filter(x=>x.ativo).length}</b></span>
+      </div>
+      <div class="program-library-toolbar">
+        <input id="programLibrarySearch" class="search-input" placeholder="Buscar programa, objetivo ou descrição">
+        <select id="programLibraryObjective"><option value="">Todos os objetivos</option>${objectives.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select>
+        <select id="programLibrarySort"><option value="recentes">Mais recentes</option><option value="nome">Nome A–Z</option><option value="semanas">Maior duração</option><option value="fases">Mais fases</option></select>
+      </div>
+      <div id="programLibraryList" class="program-library-grid"></div>
+      <div class="workout-library-guidance"><b>Programa é diferente de ficha</b><span>O programa organiza semanas, fases e treinos-modelo. Nesta etapa ele continua independente de paciente e pode ser exportado/importado como JSON para backup ou transporte.</span></div>
+      <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+
+      $('[data-close-clinical-form]').onclick=closeClinicalAction;
+      $('#newWorkoutProgram').onclick=()=>openWorkoutProgramBuilder(null,workoutModels);
+      $('#backToWorkoutTemplatesFromPrograms').onclick=()=>openWorkoutLibrary();
+      $('#programImportInput').onchange=async e=>{
+        const file=e.target.files?.[0]; if(!file)return;
+        try{
+          const parsed=JSON.parse(await file.text());
+          if(!parsed||!parsed.nome||!Array.isArray(parsed.fases))throw new Error('Arquivo de programa inválido.');
+          const imported={...parsed,id:aesynProgramId(),createdAtUtc:new Date().toISOString(),updatedAtUtc:new Date().toISOString()};
+          programs.unshift(imported);aesynSaveWorkoutPrograms(programs);toast('Programa importado.');renderShell();
+        }catch(err){toast(err.message,true)}
+      };
+
+      const renderList=()=>{
+        const term=String($('#programLibrarySearch')?.value||'').trim().toLowerCase();
+        const objective=$('#programLibraryObjective')?.value||'';
+        const sort=$('#programLibrarySort')?.value||'recentes';
+        let filtered=programs.filter(p=>{
+          const hay=`${p.nome||''} ${p.objetivo||''} ${p.descricao||''}`.toLowerCase();
+          return (!term||hay.includes(term))&&(!objective||p.objetivo===objective);
+        });
+        if(sort==='nome')filtered.sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||'')));
+        else if(sort==='semanas')filtered.sort((a,b)=>aesynProgramWeeks(b)-aesynProgramWeeks(a));
+        else if(sort==='fases')filtered.sort((a,b)=>(b.fases||[]).length-(a.fases||[]).length);
+        else filtered.sort((a,b)=>new Date(b.updatedAtUtc||0)-new Date(a.updatedAtUtc||0));
+
+        $('#programLibraryList').innerHTML=filtered.length?filtered.map(p=>`
+          <article class="program-card" data-program-id="${esc(p.id)}">
+            <div class="program-card-head"><div><span class="eyebrow">${aesynProgramWeeks(p)} SEMANA(S) • ${(p.fases||[]).length} FASE(S)</span><h4>${esc(p.nome)}</h4></div><span class="pill">${esc(p.objetivo||'Programa')}</span></div>
+            <p>${esc(p.descricao||'Programa sem descrição.')}</p>
+            <div class="program-card-kpis"><span><b>${aesynProgramSessions(p)}</b><small>sessões/semana nas fases</small></span><span><b>${aesynProgramTemplateIds(p).length}</b><small>treinos-modelo usados</small></span></div>
+            <div class="program-card-actions"><button class="primary program-preview">Visualizar</button><button class="secondary program-edit">Editar</button><button class="ghost program-duplicate">Duplicar</button><button class="ghost program-export">Exportar</button><button class="ghost danger program-delete">Excluir</button></div>
+          </article>`).join(''):`<div class="empty">Nenhum programa encontrado. Crie o primeiro para organizar sua cartela em ciclos.</div>`;
+
+        $$('.program-preview').forEach(btn=>btn.onclick=()=>{
+          const id=btn.closest('[data-program-id]').dataset.programId;
+          openWorkoutProgramPreview(programs.find(x=>x.id===id),workoutModels);
+        });
+        $$('.program-edit').forEach(btn=>btn.onclick=()=>{
+          const id=btn.closest('[data-program-id]').dataset.programId;
+          openWorkoutProgramBuilder(programs.find(x=>x.id===id),workoutModels);
+        });
+        $$('.program-duplicate').forEach(btn=>btn.onclick=()=>{
+          const id=btn.closest('[data-program-id]').dataset.programId;
+          aesynProgramDuplicate(id);toast('Programa duplicado.');programs=aesynWorkoutPrograms();renderShell();
+        });
+        $$('.program-export').forEach(btn=>btn.onclick=()=>{
+          const id=btn.closest('[data-program-id]').dataset.programId;
+          const p=programs.find(x=>x.id===id);if(p)aesynProgramDownload(p);
+        });
+        $$('.program-delete').forEach(btn=>btn.onclick=()=>{
+          const id=btn.closest('[data-program-id]').dataset.programId;
+          const p=programs.find(x=>x.id===id);
+          if(!confirm(`Excluir o programa "${p?.nome||'selecionado'}"?`))return;
+          programs=programs.filter(x=>x.id!==id);aesynSaveWorkoutPrograms(programs);toast('Programa excluído.');renderShell();
+        });
+      };
+
+      $('#programLibrarySearch').oninput=renderList;
+      $('#programLibraryObjective').onchange=renderList;
+      $('#programLibrarySort').onchange=renderList;
+      renderList();
+    };
+    renderShell();
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+async function openWorkoutProgramBuilder(program=null,workoutModels=null){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.add('workout-modal-open');
+  $('#clinicalActionModal').classList.remove('hidden');
+  try{
+    const modelos=workoutModels||await api('/api/modelos-planos-treino?incluirInativos=true');
+    const active=modelos.filter(x=>x.ativo);
+    const modelOptions=(selected='')=>`<option value="">— descanso / livre —</option>${active.map(m=>`<option value="${m.id}" ${String(m.id)===String(selected)?'selected':''}>${esc(m.nome)}${m.objetivo?' • '+esc(m.objetivo):''}</option>`).join('')}`;
+
+    box.innerHTML=`<div class="modal-heading program-builder-heading">
+      <div><button type="button" class="back-link" id="backToProgramLibrary">← Programas</button><span class="eyebrow">AESYN • PROGRAM BUILDER 1.0 • v0.18.9</span><h2>${program?'Editar programa':'Novo programa'}</h2><p>Organize fases, duração e distribuição semanal usando seus treinos-modelo.</p></div>
+      <div class="program-builder-heading-actions"><button class="secondary" type="button" id="programOpenWorkoutLibrary">Biblioteca de treinos</button></div>
+    </div>
+    <form id="workoutProgramForm" class="clinical-form program-builder-form">
+      <section class="card program-meta">
+        <div class="form-grid">
+          ${field('Nome do programa','nome','text',`value="${esc(program?.nome||'')}" placeholder="Ex.: Hipertrofia 12 semanas" required`)}
+          ${field('Objetivo','objetivo','text',`value="${esc(program?.objetivo||'')}" placeholder="Ex.: Hipertrofia / força / retorno"`)}
+          ${area('Descrição','descricao','placeholder="Perfil indicado, proposta e contexto do programa."')}
+          ${area('Orientações gerais','observacoes','placeholder="Regras de progressão, deload, atenção técnica..."')}
+        </div>
+      </section>
+
+      <div class="program-builder-summary">
+        <span><small>Duração total</small><b id="programWeeksCount">0</b><i>semanas</i></span>
+        <span><small>Fases</small><b id="programPhasesCount">0</b><i>blocos</i></span>
+        <span><small>Prescrições semanais</small><b id="programSessionsCount">0</b><i>slots</i></span>
+        <span><small>Treinos distintos</small><b id="programTemplatesCount">0</b><i>modelos</i></span>
+      </div>
+
+      <div class="program-phase-toolbar"><div><strong>Fases do programa</strong><small>Ex.: Base → volume → intensificação → deload.</small></div><button type="button" class="primary" id="programAddPhase">+ Nova fase</button></div>
+      <div id="programPhases" class="program-phase-list"></div>
+
+      <div class="form-actions program-savebar"><span>Programa profissional independente de paciente.</span><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button type="submit" class="primary">${program?'Salvar programa':'Criar programa'}</button></div>
+    </form>`;
+
+    const f=$('#workoutProgramForm');
+    f.elements.descricao.value=program?.descricao||'';
+    f.elements.observacoes.value=program?.observacoes||'';
+    $('#backToProgramLibrary').onclick=()=>openWorkoutProgramLibrary();
+    $('#programOpenWorkoutLibrary').onclick=()=>openWorkoutLibrary();
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    const host=$('#programPhases');
+
+    const weekdays=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+
+    const updateSummary=()=>{
+      const phases=[...host.querySelectorAll('.program-phase')];
+      const weeks=phases.reduce((n,p)=>n+Math.max(1,Number(p.querySelector('[name=phaseWeeks]')?.value||1)),0);
+      const slots=[...host.querySelectorAll('.program-day-row')].filter(r=>r.querySelector('[name=programModel]')?.value);
+      const ids=new Set(slots.map(r=>r.querySelector('[name=programModel]').value));
+      $('#programWeeksCount').textContent=weeks;
+      $('#programPhasesCount').textContent=phases.length;
+      $('#programSessionsCount').textContent=slots.length;
+      $('#programTemplatesCount').textContent=ids.size;
+      phases.forEach((p,i)=>{const el=p.querySelector('.program-phase-index');if(el)el.textContent=`FASE ${i+1}`});
+    };
+    const move=(node,dir)=>{
+      const parent=node.parentElement;
+      if(dir<0&&node.previousElementSibling)parent.insertBefore(node,node.previousElementSibling);
+      if(dir>0&&node.nextElementSibling)parent.insertBefore(node.nextElementSibling,node);
+      updateSummary();
+    };
+    const readPhase=section=>({
+      id:section.dataset.phaseId||aesynProgramId(),
+      nome:section.querySelector('[name=phaseName]').value.trim(),
+      semanas:Math.max(1,Number(section.querySelector('[name=phaseWeeks]').value||1)),
+      observacoes:section.querySelector('[name=phaseNotes]').value.trim()||null,
+      dias:[...section.querySelectorAll('.program-day-row')].map(row=>({
+        dia:row.querySelector('[name=programDay]').value,
+        modeloId:row.querySelector('[name=programModel]').value||null,
+        observacoes:row.querySelector('[name=programDayNotes]').value.trim()||null
+      }))
+    });
+
+    function addDay(section,data=null){
+      const rows=section.querySelector('.program-days');
+      const row=document.createElement('div');
+      row.className='program-day-row';
+      row.innerHTML=`<label>Dia<select name="programDay">${weekdays.map(d=>`<option ${d===data?.dia?'selected':''}>${d}</option>`).join('')}</select></label><label class="program-model-field">Treino-modelo<select name="programModel">${modelOptions(data?.modeloId||'')}</select></label><label>Nota<input name="programDayNotes" value="${esc(data?.observacoes||'')}" placeholder="Opcional"></label><div class="program-day-actions"><button type="button" class="icon-btn day-up">↑</button><button type="button" class="icon-btn day-down">↓</button><button type="button" class="icon-btn danger day-remove">×</button></div>`;
+      rows.appendChild(row);
+      row.querySelector('.day-remove').onclick=()=>{row.remove();updateSummary()};
+      row.querySelector('.day-up').onclick=()=>move(row,-1);
+      row.querySelector('.day-down').onclick=()=>move(row,1);
+      row.querySelectorAll('input,select').forEach(x=>x.addEventListener('change',updateSummary));
+      updateSummary();
+    }
+
+    function addPhase(data=null){
+      const section=document.createElement('section');
+      section.className='card program-phase';
+      section.dataset.phaseId=data?.id||aesynProgramId();
+      section.innerHTML=`<div class="program-phase-head"><div><span class="eyebrow program-phase-index">FASE ${host.children.length+1}</span><div class="program-phase-fields"><label>Nome<input name="phaseName" value="${esc(data?.nome||`Fase ${host.children.length+1}`)}" required></label><label>Duração (semanas)<input name="phaseWeeks" type="number" min="1" max="52" value="${data?.semanas||4}"></label></div></div><div class="program-phase-actions"><button type="button" class="icon-btn phase-up">↑</button><button type="button" class="icon-btn phase-down">↓</button><button type="button" class="ghost phase-duplicate">Duplicar fase</button><button type="button" class="ghost danger phase-remove">Remover</button></div></div><label>Orientações da fase<input name="phaseNotes" value="${esc(data?.observacoes||'')}" placeholder="Volume, intensidade, progressão, deload..."></label><div class="program-days"></div><button type="button" class="secondary program-add-day">+ Adicionar dia</button>`;
+      host.appendChild(section);
+      section.querySelector('.phase-remove').onclick=()=>{section.remove();updateSummary()};
+      section.querySelector('.phase-up').onclick=()=>move(section,-1);
+      section.querySelector('.phase-down').onclick=()=>move(section,1);
+      section.querySelector('.program-add-day').onclick=()=>addDay(section);
+      section.querySelector('.phase-duplicate').onclick=()=>{
+        const clone=readPhase(section);clone.id=aesynProgramId();clone.nome=`${clone.nome} • cópia`;addPhase(clone);
+      };
+      section.querySelector('[name=phaseWeeks]').oninput=updateSummary;
+      (data?.dias||[]).forEach(d=>addDay(section,d));
+      if(!(data?.dias||[]).length){
+        ['Segunda','Terça','Quinta','Sexta'].forEach(d=>addDay(section,{dia:d}));
+      }
+      updateSummary();
+    }
+
+    $('#programAddPhase').onclick=()=>addPhase();
+    (program?.fases||[]).forEach(addPhase);
+    if(!(program?.fases||[]).length)addPhase();
+
+    f.onsubmit=e=>{
+      e.preventDefault();
+      try{
+        const fases=[...host.querySelectorAll('.program-phase')].map(readPhase);
+        if(!fases.length)throw new Error('Adicione pelo menos uma fase.');
+        if(!fases.some(x=>x.dias.some(d=>d.modeloId)))throw new Error('Associe pelo menos um treino-modelo ao programa.');
+        const now=new Date().toISOString();
+        const payload={
+          id:program?.id||aesynProgramId(),
+          nome:val(f,'nome'),
+          objetivo:val(f,'objetivo')||null,
+          descricao:val(f,'descricao')||null,
+          observacoes:val(f,'observacoes')||null,
+          fases,
+          createdAtUtc:program?.createdAtUtc||now,
+          updatedAtUtc:now,
+          storageVersion:1
+        };
+        const programs=aesynWorkoutPrograms();
+        const idx=programs.findIndex(x=>x.id===payload.id);
+        if(idx>=0)programs[idx]=payload;else programs.unshift(payload);
+        aesynSaveWorkoutPrograms(programs);
+        toast(program?'Programa atualizado.':'Programa criado.');
+        openWorkoutProgramLibrary();
+      }catch(err){toast(err.message,true)}
+    };
+    updateSummary();
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+async function openWorkoutProgramPreview(program,workoutModels=null){
+  const box=$('#clinicalActionContent');
+  if(!program){toast('Programa não encontrado.',true);return}
+  try{
+    const modelos=workoutModels||await api('/api/modelos-planos-treino?incluirInativos=true');
+    const map=new Map(modelos.map(x=>[String(x.id),x]));
+    box.innerHTML=`<div class="modal-heading program-preview-heading">
+      <div><button type="button" class="back-link" id="backToProgramLibraryFromPreview">← Programas</button><span class="eyebrow">AESYN • PROGRAM PREVIEW • v0.18.9</span><h2>${esc(program.nome)}</h2><p>${esc(program.descricao||program.objetivo||'Programa profissional de treinamento.')}</p></div>
+      <div class="program-preview-actions"><button class="primary" id="editProgramFromPreview">Editar programa</button><button class="secondary" id="exportProgramFromPreview">Exportar JSON</button></div>
+    </div>
+    <div class="program-preview-summary"><span><small>Duração</small><b>${aesynProgramWeeks(program)} semanas</b></span><span><small>Fases</small><b>${(program.fases||[]).length}</b></span><span><small>Treinos distintos</small><b>${aesynProgramTemplateIds(program).length}</b></span><span><small>Objetivo</small><b>${esc(program.objetivo||'—')}</b></span></div>
+    <div class="program-preview-phases">${(program.fases||[]).map((phase,pi)=>`<section class="card program-preview-phase"><div class="program-preview-phase-head"><div><span class="eyebrow">FASE ${pi+1}</span><h4>${esc(phase.nome)}</h4></div><span class="pill">${phase.semanas} semana(s)</span></div>${phase.observacoes?`<p>${esc(phase.observacoes)}</p>`:''}<div class="program-preview-week">${(phase.dias||[]).map(d=>{const m=map.get(String(d.modeloId));return `<div class="program-preview-day ${d.modeloId?'has-workout':'is-rest'}"><span>${esc(d.dia)}</span><b>${esc(m?.nome||(d.modeloId?'Modelo indisponível':'Descanso / livre'))}</b><small>${esc(d.observacoes||m?.objetivo||'')}</small></div>`}).join('')}</div></section>`).join('')}</div>
+    <div class="workout-library-guidance"><b>Planejamento mestre</b><span>O programa organiza sua oferta antes de qualquer paciente existir. A atribuição completa de programas ao paciente fica separada da biblioteca mestre.</span></div>`;
+    $('#backToProgramLibraryFromPreview').onclick=()=>openWorkoutProgramLibrary();
+    $('#editProgramFromPreview').onclick=()=>openWorkoutProgramBuilder(program,modelos);
+    $('#exportProgramFromPreview').onclick=()=>aesynProgramDownload(program);
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
 }
 
 async function openWorkoutLibraryPatientPicker(modelo){
@@ -7734,7 +8045,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.8';
+const HP_MVP_VERSION='0.18.9';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
