@@ -1676,3 +1676,15 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.18.0-r1 — Correção do gate visual legado
 - Atualiza os gates [493/600] a [498/600] do `TESTAR.ps1` para validar AESYN em vez da identidade RS anterior.
 - Mantém `VERSION.txt` em `0.18.0`; não altera schema nem comportamento funcional.
+
+
+## v0.18.1 — Professional Performance Dashboard
+
+- **r1:** corrige o gate histórico `[468/600]` do `TESTAR.ps1` para validar o novo Professional Performance Dashboard AESYN em vez do hero legado do MVP Preview.
+- Nova Home profissional AESYN com command center de acompanhamento e performance.
+- KPIs de pacientes ativos, consultas do dia, pacientes em foco e retornos pendentes.
+- Integra `api/insights/dashboard` à visão profissional para priorização de sinais existentes.
+- Visão de operação com agenda, próximos atendimentos e pacientes recentes.
+- Guardrail explícito: insights organizam contexto para revisão profissional e não substituem avaliação médica.
+- Responsividade específica do dashboard AESYN.
+- Sem migration nova; schema permanece 38/38.

@@ -102,7 +102,94 @@ $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
 function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['AESYN • PERFORMANCE CLÍNICA','Performance'],pacientes:['AESYN • ACOMPANHAMENTO','Pacientes'],prescricoes:['AESYN • PLANO INTEGRADO','Treino & Nutrição'],agenda:['AESYN • CONSULTAS','Agenda'],paciente:['AESYN • PERFORMANCE PROFILE','Paciente']};const title=titles[view]||titles.dashboard;$('#pageEyebrow').textContent=title[0];$('#pageTitle').textContent=title[1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,prescricoes:loadPrescriptionWorkspace,agenda:loadAgenda,paciente:loadPatient}[view]||loadDashboard)().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
 function stat(label,value,hint){return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value??0}</div><div class="hint">${hint}</div></div>`}
 function agendaRow(x){return `<div class="list-row clickable" data-patient="${x.pacienteId}"><div class="time-badge">${fmtTime(x.dataHoraLocal)}</div><div class="row-main"><strong>${esc(x.pacienteNome)}</strong><small>${esc(x.motivo||'Consulta')}</small></div><span class="pill ${esc(x.status)}">${esc(x.status)}</span></div>`}
-async function loadDashboard(){const d=await api(`/api/profissional/dashboard?offsetMinutos=${state.offset}`),agenda=d.agendaHoje||[],proximas=d.proximasConsultas||[],atencao=d.pacientesQuePrecisamAtencao||[];content.innerHTML=`<section class="mvp-dashboard-hero"><div><span class="eyebrow">MVP PREVIEW • AMBIENTE DE DEMONSTRAÇÃO</span><h3>Olá, ${esc((d.profissionalNome||'Profissional').split(' ')[0])} 👋</h3><p>Explore os fluxos como se fosse um dia real de atendimento. A ideia desta versão é descobrir o que funciona, o que incomoda e o que ainda está faltando.</p></div><div class="mvp-dashboard-actions"><button class="primary" id="goPatients">+ Novo paciente</button><button class="secondary" id="goAgendaHero">Abrir agenda</button><button class="ghost" id="openMvpGuideHero">Roteiro da demo</button></div></section><div class="stats-grid">${stat('Pacientes ativos',d.pacientesAtivos,'na organização')}${stat('Consultas hoje',d.consultasHoje,`${d.confirmadasHoje} confirmada(s)`)}${stat('Atendidos / 30 dias',d.pacientesAtendidosUltimos30Dias,'pacientes distintos')}${stat('Retornos pendentes',d.retornosPendentes,'sem consulta futura')}${stat('Faltas hoje',d.faltasHoje,'acompanhamento')}</div><div class="dashboard-grid"><div class="stack"><section class="card"><div class="card-head"><h3>Agenda de hoje</h3><button class="ghost" id="goAgenda">Ver agenda →</button></div>${agenda.length?`<div class="list">${agenda.map(agendaRow).join('')}</div>`:'<div class="empty">Nenhuma consulta para hoje.</div>'}</section><section class="card"><div class="card-head"><h3>Próximas consultas</h3><small>${proximas.length} agendada(s)</small></div>${proximas.length?`<div class="list">${proximas.map(agendaRow).join('')}</div>`:'<div class="empty">Nenhuma próxima consulta.</div>'}</section></div><div class="stack"><section class="card"><div class="card-head"><h3>Precisam de atenção</h3><small>acompanhamento</small></div>${atencao.length?atencao.map(x=>`<div class="attention-row clickable" data-patient="${x.pacienteId}"><div><strong>${esc(x.nome)}</strong><small>${x.retornoPendente?'Retorno pendente • ':''}${x.diasSemRegistroDiario>=999?'Sem registros no diário':`${x.diasSemRegistroDiario} dia(s) sem registro`}</small></div><span class="attention-dot"></span></div>`).join(''):'<div class="empty">Nenhuma pendência importante.</div>'}</section><section class="card"><div class="card-head"><h3>Pacientes recentes</h3><small>novos cadastros</small></div>${(d.pacientesRecentes||[]).map(x=>`<div class="list-row clickable" data-patient="${x.pacienteId}"><div class="mini-avatar">${initials(x.nome)}</div><div class="row-main"><strong>${esc(x.nome)}</strong><small>Cadastrado em ${fmtDate(x.dataCadastroUtc)}</small></div><span>›</span></div>`).join('')||'<div class="empty">Sem pacientes recentes.</div>'}</section></div></div>`;$('#goAgenda').onclick=()=>navigate('agenda');$('#goPatients').onclick=openCreatePatient;if($('#goAgendaHero'))$('#goAgendaHero').onclick=()=>navigate('agenda');if($('#openMvpGuideHero'))$('#openMvpGuideHero').onclick=openMvpGuide;$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient))}
+async function loadDashboard(){
+  const [d,insights]=await Promise.all([
+    api(`/api/profissional/dashboard?offsetMinutos=${state.offset}`),
+    api('/api/insights/dashboard?limite=8').catch(()=>null)
+  ]);
+  const agenda=d.agendaHoje||[],proximas=d.proximasConsultas||[],atencao=d.pacientesQuePrecisamAtencao||[];
+  const insightPatients=insights?.pacientes||[];
+  const high=Number(insights?.alta||0),medium=Number(insights?.media||0),withInsights=Number(insights?.pacientesComInsights||0);
+  const active=Math.max(0,Number(d.pacientesAtivos||0));
+  const monitored=Math.max(0,active-withInsights);
+  const adherencePct=active?Math.max(0,Math.min(100,Math.round((monitored/active)*100))):100;
+  const attentionCount=new Set([...atencao.map(x=>String(x.pacienteId)),...insightPatients.filter(x=>x.severidadeMaxima==='Alta'||x.severidadeMaxima==='Media').map(x=>String(x.pacienteId))]).size;
+  const performanceStatus=high>0?'Atenção prioritária':medium>0?'Acompanhamento ativo':'Operação estável';
+  const performanceTone=high>0?'critical':medium>0?'watch':'stable';
+  const insightRows=insightPatients.slice(0,6).map(x=>{
+    const first=(x.insights||[])[0];
+    const severity=(x.severidadeMaxima||'Baixa').toLowerCase();
+    return `<button class="performance-patient-row" data-patient="${x.pacienteId}"><span class="performance-severity ${severity}"></span><span class="performance-patient-main"><strong>${esc(x.pacienteNome)}</strong><small>${esc(first?.titulo||`${x.total} sinal(is) para revisar`)}</small></span><span class="performance-count">${x.total}</span><span class="performance-arrow">›</span></button>`
+  }).join('');
+  content.innerHTML=`
+  <section class="aesyn-performance-hero">
+    <div class="aesyn-performance-heading">
+      <span class="eyebrow">AESYN PERFORMANCE • PROFESSIONAL COMMAND CENTER • v0.18.1</span>
+      <h3>Bom trabalho, ${esc((d.profissionalNome||'Profissional').split(' ')[0])}.</h3>
+      <p>Uma leitura objetiva da operação clínica, do acompanhamento e dos sinais que merecem sua atenção hoje.</p>
+    </div>
+    <div class="aesyn-performance-state ${performanceTone}">
+      <small>STATUS DO ACOMPANHAMENTO</small>
+      <strong>${performanceStatus}</strong>
+      <span>${attentionCount} paciente(s) em foco agora</span>
+    </div>
+    <div class="aesyn-performance-actions">
+      <button class="primary" id="goPatients">+ Novo paciente</button>
+      <button class="secondary" id="goAgendaHero">Abrir agenda</button>
+      <button class="ghost" id="goPrescriptionHero">Treino & Nutrição</button>
+    </div>
+  </section>
+
+  <section class="performance-kpi-grid" aria-label="Indicadores AESYN Performance">
+    <article class="performance-kpi"><span>Pacientes ativos</span><strong>${active}</strong><small>${d.pacientesAtendidosUltimos30Dias||0} atendido(s) em 30 dias</small></article>
+    <article class="performance-kpi"><span>Consultas hoje</span><strong>${d.consultasHoje||0}</strong><small>${d.confirmadasHoje||0} confirmada(s) • ${d.realizadasHoje||0} realizada(s)</small></article>
+    <article class="performance-kpi focus"><span>Precisam de atenção</span><strong>${attentionCount}</strong><small>${high} alta • ${medium} média prioridade</small></article>
+    <article class="performance-kpi"><span>Retornos pendentes</span><strong>${d.retornosPendentes||0}</strong><small>sem consulta futura</small></article>
+  </section>
+
+  <div class="performance-overview-grid">
+    <section class="card performance-command-card">
+      <div class="card-head"><div><span class="eyebrow">PERFORMANCE OVERVIEW</span><h3>Visão do acompanhamento</h3></div><span class="performance-sync">DADOS AO VIVO</span></div>
+      <div class="performance-ring-row">
+        <div class="performance-ring" style="--performance:${adherencePct}"><div><strong>${adherencePct}%</strong><span>sem alertas</span></div></div>
+        <div class="performance-breakdown">
+          <div><span class="signal-dot high"></span><p><strong>${high}</strong><small>Sinais de alta prioridade</small></p></div>
+          <div><span class="signal-dot medium"></span><p><strong>${medium}</strong><small>Sinais de média prioridade</small></p></div>
+          <div><span class="signal-dot stable"></span><p><strong>${monitored}</strong><small>Pacientes sem insights ativos</small></p></div>
+        </div>
+      </div>
+      <div class="performance-note">Os sinais organizam contexto clínico e esportivo para revisão profissional; não substituem avaliação médica.</div>
+    </section>
+
+    <section class="card performance-attention-card">
+      <div class="card-head"><div><span class="eyebrow">PRIORIDADE</span><h3>Pacientes em foco</h3></div><button class="ghost" id="goAllPatients">Todos →</button></div>
+      <div class="performance-patient-list">${insightRows||atencao.slice(0,6).map(x=>`<button class="performance-patient-row" data-patient="${x.pacienteId}"><span class="performance-severity media"></span><span class="performance-patient-main"><strong>${esc(x.nome)}</strong><small>${x.retornoPendente?'Retorno pendente • ':''}${x.diasSemRegistroDiario>=999?'Sem check-ins recentes':`${x.diasSemRegistroDiario} dia(s) sem check-in`}</small></span><span class="performance-arrow">›</span></button>`).join('')||'<div class="performance-empty"><strong>Nenhum paciente em alerta.</strong><span>A operação está estável neste momento.</span></div>'}</div>
+    </section>
+  </div>
+
+  <div class="performance-day-grid">
+    <section class="card">
+      <div class="card-head"><div><span class="eyebrow">HOJE</span><h3>Agenda clínica</h3></div><button class="ghost" id="goAgenda">Ver agenda →</button></div>
+      ${agenda.length?`<div class="list">${agenda.slice(0,6).map(agendaRow).join('')}</div>`:'<div class="performance-empty"><strong>Agenda livre.</strong><span>Nenhuma consulta programada para hoje.</span></div>'}
+    </section>
+    <section class="card">
+      <div class="card-head"><div><span class="eyebrow">CONTINUIDADE</span><h3>Próximos atendimentos</h3></div><small>${proximas.length} agendada(s)</small></div>
+      ${proximas.length?`<div class="list">${proximas.slice(0,6).map(agendaRow).join('')}</div>`:'<div class="performance-empty"><strong>Sem próximas consultas.</strong><span>Use a agenda para organizar os próximos acompanhamentos.</span></div>'}
+    </section>
+  </div>
+
+  <section class="card performance-recent-card">
+    <div class="card-head"><div><span class="eyebrow">BASE ATIVA</span><h3>Pacientes recentes</h3></div><button class="ghost" id="goRecentPatients">Abrir pacientes →</button></div>
+    <div class="performance-recent-grid">${(d.pacientesRecentes||[]).slice(0,4).map(x=>`<button class="performance-recent-patient" data-patient="${x.pacienteId}"><div class="mini-avatar">${initials(x.nome)}</div><span><strong>${esc(x.nome)}</strong><small>Desde ${fmtDate(x.dataCadastroUtc)}</small></span><b>›</b></button>`).join('')||'<div class="performance-empty"><span>Sem pacientes recentes.</span></div>'}</div>
+  </section>`;
+  $('#goAgenda').onclick=()=>navigate('agenda');
+  $('#goPatients').onclick=openCreatePatient;
+  if($('#goAgendaHero'))$('#goAgendaHero').onclick=()=>navigate('agenda');
+  if($('#goPrescriptionHero'))$('#goPrescriptionHero').onclick=()=>navigate('prescricoes');
+  if($('#goAllPatients'))$('#goAllPatients').onclick=()=>navigate('pacientes');
+  if($('#goRecentPatients'))$('#goRecentPatients').onclick=()=>navigate('pacientes');
+  $$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));
+}
 async function loadPrescriptionWorkspace(){
   const [patients,workoutModels,mealModels,sessionModels,mealLibrary]=await Promise.all([
     api('/api/pacientes?pagina=1&tamanhoPagina=8'),
@@ -7075,7 +7162,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.0';
+const HP_MVP_VERSION='0.18.1';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
