@@ -1,3 +1,19 @@
+
+### v0.18.5-r3 — Smoke test current-version gate fix
+- Corrige gates históricos do `TESTAR.ps1` que ainda comparavam `VERSION.txt` com `0.18.4`.
+- Preserva tokens históricos de funcionalidades anteriores; apenas a versão corrente esperada passa a ser `0.18.5`.
+- Sem alteração funcional, de schema ou migration.
+
+
+
+### v0.18.5-r2 — Windows PowerShell UTF-8 parser hardening
+- `TESTAR.ps1` agora e distribuido com UTF-8 BOM para compatibilidade com Windows PowerShell 5.1 e literais acentuados/setas usados pelos gates historicos.
+- Nenhuma alteracao funcional, de schema ou migration.
+
+## v0.18.5-r1 — Exams Timeline & Trends (test gate fix)
+- Corrige gates legados do `TESTAR.ps1` que ainda esperavam `VERSION.txt = 0.18.4`.
+- Atualiza a validação do MVP Preview para a versão empacotada `0.18.5`.
+- Sem alteração funcional, de banco ou de schema.
 # v0.18.4 — AESYN Exams Core
 
 - Nova experiência laboratorial dentro do Patient Performance Profile.
@@ -1717,3 +1733,13 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Guardrail explícito: insights organizam contexto para revisão profissional e não substituem avaliação médica.
 - Responsividade específica do dashboard AESYN.
 - Sem migration nova; schema permanece 38/38.
+
+
+## v0.18.5 — Exams Timeline & Trends
+- Evolui o Exams Core com comparação neutra entre a última medição e a anterior para marcadores numéricos.
+- Adiciona delta absoluto/percentual, direção numérica (subiu, desceu, sem variação) e data da medição sem classificar a direção como melhora/piora clínica.
+- Adiciona comparação contextual entre as duas últimas coletas e linha do tempo laboratorial por coleta.
+- Mantém o Exams Core v0.18.4 como base e adiciona guardrail explícito de interpretação profissional.
+- Layout responsivo dedicado para desktop, tablet e mobile.
+- Schema permanece 38/38; nenhuma migration nova.
+- Smoke test ampliado para 1592 verificações.

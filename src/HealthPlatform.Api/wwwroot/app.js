@@ -7194,7 +7194,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.4';
+const HP_MVP_VERSION='0.18.5';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -7843,4 +7843,76 @@ renderPatientTab=function(d){
     return;
   }
   return __renderPatientTab_v0184(d);
+};
+
+
+// ===== v0.18.5 — AESYN Exams Timeline & Trends =====
+const HP_EXAMS_TIMELINE_TRENDS='v0.18.5';
+function hpExamTrendRows(exams){
+  const groups=new Map();
+  hpExamFlatten(exams).forEach(r=>{
+    const value=hpFinite(r.valorNumerico);if(value===null)return;
+    const name=r.marcadorNome||r.marcador||'Marcador';
+    if(!groups.has(name))groups.set(name,[]);
+    groups.get(name).push({...r,value});
+  });
+  return [...groups.entries()].map(([name,points])=>{
+    points.sort((a,b)=>new Date(a.dataColetaUtc||0)-new Date(b.dataColetaUtc||0));
+    if(points.length<2)return null;
+    const first=points[0],previous=points[points.length-2],latest=points[points.length-1];
+    const delta=latest.value-previous.value;
+    const pct=previous.value!==0?(delta/Math.abs(previous.value))*100:null;
+    const direction=Math.abs(delta)<0.000001?'stable':delta>0?'up':'down';
+    return {name,first,previous,latest,delta,pct,direction,count:points.length,unit:latest.unidade||previous.unidade||''};
+  }).filter(Boolean).sort((a,b)=>new Date(b.latest.dataColetaUtc||0)-new Date(a.latest.dataColetaUtc||0));
+}
+function hpExamDirectionLabel(row){
+  if(row.direction==='stable')return 'Sem variação';
+  return row.direction==='up'?'Subiu':'Desceu';
+}
+function hpExamTimelineRows(exams){
+  return (exams||[]).slice().sort((a,b)=>new Date(b.dataColetaUtc||0)-new Date(a.dataColetaUtc||0)).map(exam=>{
+    const results=exam.resultados||[];
+    const review=results.filter(r=>hpExamStatus(r).key==='review').length;
+    return {...exam,total:results.length,review};
+  });
+}
+function hpExamsTimelineTrends(d){
+  const exams=d.exames||[],trends=hpExamTrendRows(exams),timeline=hpExamTimelineRows(exams);
+  const latest=timeline[0],previous=timeline[1];
+  const comparable=trends.length;
+  const changed=trends.filter(x=>x.direction!=='stable').length;
+  return `<div class="exams-timeline-trends" data-exams-timeline-trends="v0.18.5">
+    ${hpExamsCore(d)}
+    <section class="exams-timeline-hero">
+      <div><span class="eyebrow">AESYN • EXAMS TIMELINE & TRENDS • v0.18.5</span><h3>Da coleta isolada para uma trajetória comparável.</h3><p>Compare o marcador atual com a coleta anterior, acompanhe a direção numérica e navegue pela linha do tempo laboratorial sem transformar variação em diagnóstico.</p></div>
+      <div class="exams-timeline-summary"><small>SÉRIES COMPARÁVEIS</small><strong>${comparable}</strong><span>${changed} com variação numérica entre as duas últimas medições</span></div>
+    </section>
+    <div class="exams-trend-grid">
+      <section class="card exams-comparison-card span-2">
+        <div class="card-head"><div><span class="eyebrow">COMPARAÇÃO</span><h3>Última medição × anterior</h3><small>Direção numérica dos marcadores com histórico suficiente</small></div><span class="exams-core-chip">${comparable} marcador(es)</span></div>
+        ${trends.length?`<div class="exams-comparison-table"><div class="exams-comparison-head"><span>Marcador</span><span>Anterior</span><span>Atual</span><span>Δ</span><span>Direção</span></div>${trends.slice(0,12).map(x=>{const st=hpExamStatus(x.latest);return `<div class="exams-comparison-row"><div><strong>${esc(x.name)}</strong><small>${x.count} medições • ${fmtDate(x.latest.dataColetaUtc)}</small></div><span>${num(x.previous.value,2)} ${esc(x.unit)}</span><span>${num(x.latest.value,2)} ${esc(x.unit)}</span><b class="${x.delta===0?'neutral':x.delta>0?'up':'down'}">${x.delta>0?'+':''}${num(x.delta,2)}${x.pct===null?'':` • ${x.pct>0?'+':''}${num(x.pct,1)}%`}</b><em class="${x.direction}">${hpExamDirectionLabel(x)} • ${st.label}</em></div>`}).join('')}</div>`:sectionEmpty('Ainda não existem duas medições numéricas do mesmo marcador para comparar.')}
+      </section>
+      <section class="card exams-collection-compare">
+        <div class="card-head"><div><span class="eyebrow">COLETAS</span><h3>Contexto recente</h3><small>Duas últimas coletas registradas</small></div></div>
+        <div class="exams-collection-compare-grid">
+          ${[latest,previous].map((x,i)=>x?`<article><small>${i===0?'ATUAL':'ANTERIOR'}</small><strong>${fmtDate(x.dataColetaUtc)}</strong><span>${esc(x.laboratorio||'Laboratório não informado')}</span><div><b>${x.total}</b> marcadores <b class="${x.review?'review':''}">${x.review}</b> para revisão</div></article>`:'<article class="empty"><small>SEM COLETA</small><strong>—</strong><span>Histórico insuficiente</span></article>').join('')}
+        </div>
+      </section>
+      <section class="card exams-lab-timeline span-3">
+        <div class="card-head"><div><span class="eyebrow">TIMELINE</span><h3>Linha do tempo laboratorial</h3><small>Coletas em ordem cronológica, com volume e sinais para revisão</small></div><span class="exams-core-chip">${timeline.length} coleta(s)</span></div>
+        ${timeline.length?`<div class="exams-lab-timeline-list">${timeline.slice(0,12).map((x,i)=>`<article><i>${timeline.length-i}</i><div><small>${fmtDate(x.dataColetaUtc)}</small><strong>${esc(x.laboratorio||'Laboratório não informado')}</strong><span>${x.total} marcador(es)</span></div><b class="${x.review?'review':'ok'}">${x.review?`${x.review} revisar`:'Sem alertas por referência'}</b></article>`).join('')}</div>`:sectionEmpty('Nenhuma coleta registrada para montar a linha do tempo.')}
+      </section>
+      <section class="card exams-trend-guardrail span-3"><div><span class="eyebrow">LEITURA RESPONSÁVEL</span><h3>Subir ou descer não significa melhorar ou piorar.</h3><p>A direção exibida é apenas a diferença numérica entre medições. Interpretação clínica depende do marcador, método, referência, objetivo terapêutico e contexto individual.</p></div><span class="profile-context-badge">Contexto profissional</span></section>
+    </div>
+  </div>`;
+}
+const __renderPatientTab_v0185=renderPatientTab;
+renderPatientTab=function(d){
+  if(state.patientTab==='exames'){
+    const box=$('#patientTabContent');
+    if(box)box.innerHTML=hpExamsTimelineTrends(d);
+    return;
+  }
+  return __renderPatientTab_v0185(d);
 };
