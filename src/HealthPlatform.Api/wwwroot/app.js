@@ -7194,7 +7194,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.3';
+const HP_MVP_VERSION='0.18.4';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -7717,8 +7717,8 @@ function hpInstallAccessibilityPolish(){
 hpInstallAccessibilityPolish();
 
 
-// ===== v0.18.3 — AESYN Evolution Dashboard =====
-const HP_EVOLUTION_DASHBOARD='v0.18.3';
+// ===== v0.18.4 — AESYN Evolution Dashboard =====
+const HP_EVOLUTION_DASHBOARD='v0.18.4';
 function hpEvolutionDashboard(d){
   const portal=d.portal||{},evals=(d.avaliacoes||[]).slice().sort((a,b)=>new Date(a.dataUtc||0)-new Date(b.dataUtc||0));
   const exams=d.exames||[],history=d.treinosHistorico||{},protocol=d.protocolo||{};
@@ -7736,9 +7736,9 @@ function hpEvolutionDashboard(d){
   exams.slice(0,2).forEach(x=>milestones.push({date:x.dataColetaUtc,title:'Exames laboratoriais',detail:`${(x.resultados||[]).length} marcador(es)`}));
   milestones.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
   const readinessTone=readiness.score==null?'neutral':Number(readiness.score)>=75?'good':Number(readiness.score)>=55?'watch':'attention';
-  return `<div class="evolution-dashboard" data-evolution-dashboard="v0.18.3">
+  return `<div class="evolution-dashboard" data-evolution-dashboard="v0.18.4">
     <section class="evolution-dashboard-hero">
-      <div><span class="eyebrow">AESYN • EVOLUTION DASHBOARD • v0.18.3</span><h3>Evolução que conecta corpo, rotina e performance.</h3><p>Uma leitura longitudinal dos dados já registrados, organizada para revisão profissional e tomada de decisão contextual.</p></div>
+      <div><span class="eyebrow">AESYN • EVOLUTION DASHBOARD • v0.18.4</span><h3>Evolução que conecta corpo, rotina e performance.</h3><p>Uma leitura longitudinal dos dados já registrados, organizada para revisão profissional e tomada de decisão contextual.</p></div>
       <div class="evolution-readiness ${readinessTone}"><small>PRONTIDÃO ATUAL</small><strong>${readiness.score!=null?`${num(readiness.score,0)}/100`:'—'}</strong><span>${esc(readiness.recomendacaoTreino||'Sem check-in hoje')}</span></div>
     </section>
     <div class="evolution-kpi-grid">
@@ -7771,4 +7771,76 @@ renderPatientTab=function(d){
     return;
   }
   return __renderPatientTab_v0183(d);
+};
+
+
+// ===== v0.18.4 — AESYN Exams Core =====
+const HP_EXAMS_CORE='v0.18.4';
+function hpExamFlatten(exams){
+  return (exams||[]).flatMap(exam=>(exam.resultados||[]).map(result=>({
+    ...result,
+    exameId:exam.id,
+    dataColetaUtc:exam.dataColetaUtc,
+    laboratorio:exam.laboratorio,
+    profissionalNome:exam.profissionalNome
+  }))).sort((a,b)=>new Date(b.dataColetaUtc||0)-new Date(a.dataColetaUtc||0));
+}
+function hpExamMarkerSeries(exams){
+  const map=new Map();
+  hpExamFlatten(exams).forEach(r=>{
+    const value=hpFinite(r.valorNumerico);if(value===null)return;
+    const name=r.marcadorNome||r.marcador||'Marcador';
+    if(!map.has(name))map.set(name,{unit:r.unidade||'',points:[]});
+    map.get(name).points.push({date:r.dataColetaUtc,value});
+  });
+  for(const v of map.values())v.points.sort((a,b)=>new Date(a.date||0)-new Date(b.date||0));
+  return [...map.entries()].sort((a,b)=>b[1].points.length-a[1].points.length);
+}
+function hpExamStatus(r){
+  const c=String(r.classificacao||'');
+  if(!c)return {key:'neutral',label:'Sem referência'};
+  if(c==='DentroDaReferencia')return {key:'ok',label:'Dentro da referência'};
+  return {key:'review',label:'Revisar'};
+}
+function hpExamsCore(d){
+  const exams=(d.exames||[]).slice().sort((a,b)=>new Date(b.dataColetaUtc||0)-new Date(a.dataColetaUtc||0));
+  const rows=hpExamFlatten(exams),series=hpExamMarkerSeries(exams);
+  const review=rows.filter(r=>hpExamStatus(r).key==='review');
+  const numeric=rows.filter(r=>hpFinite(r.valorNumerico)!==null);
+  const unique=new Set(rows.map(r=>r.marcadorNome||r.marcador).filter(Boolean));
+  const lastExam=exams[0];
+  const historical=series.filter(([,v])=>v.points.length>=2);
+  return `<div class="exams-core" data-exams-core="v0.18.4">
+    <section class="exams-core-hero">
+      <div><span class="eyebrow">AESYN • EXAMS CORE • v0.18.4</span><h3>Exames em contexto, não isolados.</h3><p>Resultados laboratoriais organizados por coleta, marcador e tendência para apoiar a revisão profissional ao longo do acompanhamento.</p></div>
+      <div class="exams-core-latest"><small>ÚLTIMA COLETA</small><strong>${lastExam?fmtDate(lastExam.dataColetaUtc):'—'}</strong><span>${lastExam?esc(lastExam.laboratorio||'Laboratório não informado'):'Nenhuma coleta registrada'}</span></div>
+    </section>
+    <div class="exams-core-kpis">
+      <article><small>COLETAS</small><strong>${exams.length}</strong><span>histórico registrado</span></article>
+      <article><small>MARCADORES</small><strong>${unique.size}</strong><span>marcadores distintos</span></article>
+      <article><small>RESULTADOS NUMÉRICOS</small><strong>${numeric.length}</strong><span>disponíveis para tendência</span></article>
+      <article class="${review.length?'needs-review':''}"><small>PARA REVISÃO</small><strong>${review.length}</strong><span>fora da referência registrada</span></article>
+    </div>
+    <div class="exams-core-grid">
+      <section class="card exams-review-card"><div class="card-head"><div><span class="eyebrow">REVISÃO</span><h3>Marcadores que pedem contexto</h3><small>Resultados recentes fora da referência registrada</small></div><span class="exams-core-chip">${review.length} resultado(s)</span></div>
+        ${review.length?`<div class="exams-review-list">${review.slice(0,8).map(r=>`<article><div><strong>${esc(r.marcadorNome||r.marcador||'Marcador')}</strong><small>${fmtDate(r.dataColetaUtc)}${r.laboratorio?' • '+esc(r.laboratorio):''}</small></div><span>${r.valorNumerico!=null?num(r.valorNumerico,2):esc(r.valorTexto||'—')} ${esc(r.unidade||'')}</span><b>Revisar</b></article>`).join('')}</div>`:sectionEmpty('Nenhum resultado recente fora da referência registrada.')}
+      </section>
+      <section class="card exams-history-card"><div class="card-head"><div><span class="eyebrow">HISTÓRICO</span><h3>Coletas laboratoriais</h3><small>${exams.length} coleta(s) registradas</small></div></div>
+        ${exams.length?`<div class="exams-collection-list">${exams.map((x,index)=>`<details ${index===0?'open':''}><summary><div><strong>${fmtDate(x.dataColetaUtc)}</strong><small>${esc(x.laboratorio||'Laboratório não informado')}</small></div><span>${(x.resultados||[]).length} marcador(es)</span></summary><div class="exams-marker-table">${(x.resultados||[]).map(r=>{const st=hpExamStatus(r);return `<div><strong>${esc(r.marcadorNome||'Marcador')}</strong><span>${r.valorNumerico!=null?num(r.valorNumerico,2):esc(r.valorTexto||'—')} ${esc(r.unidade||'')}</span><b class="${st.key}">${st.label}</b></div>`}).join('')}</div></details>`).join('')}</div>`:sectionEmpty('Nenhum exame registrado.')}
+      </section>
+      <section class="card exams-trends-card span-2"><div class="card-head"><div><span class="eyebrow">TENDÊNCIAS</span><h3>Evolução laboratorial</h3><small>Marcadores numéricos com duas ou mais coletas</small></div><span class="exams-core-chip">${historical.length} série(s)</span></div>
+        ${historical.length?hpMetricChartGrid(historical.slice(0,6).map(([name,v])=>hpLineChart(name,v.points,v.unit?` ${v.unit}`:''))):`<div class="analytics-empty">Ainda não existem marcadores numéricos com duas ou mais coletas para desenhar uma tendência.</div>`}
+      </section>
+      <section class="card exams-context-card span-2"><div><span class="eyebrow">AESYN • CONTEXTO CLÍNICO</span><h3>Resultado é dado. Interpretação depende do contexto.</h3><p>Referências laboratoriais variam entre métodos, laboratórios e características individuais. A plataforma organiza histórico e tendência para revisão profissional; não realiza diagnóstico automático.</p></div><span class="profile-context-badge">Revisão profissional</span></section>
+    </div>
+  </div>`;
+}
+const __renderPatientTab_v0184=renderPatientTab;
+renderPatientTab=function(d){
+  if(state.patientTab==='exames'){
+    const box=$('#patientTabContent');
+    if(box)box.innerHTML=hpExamsCore(d);
+    return;
+  }
+  return __renderPatientTab_v0184(d);
 };

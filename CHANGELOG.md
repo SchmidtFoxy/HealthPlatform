@@ -1,3 +1,13 @@
+# v0.18.4 — AESYN Exams Core
+
+- Nova experiência laboratorial dentro do Patient Performance Profile.
+- KPIs de coletas, marcadores, resultados numéricos e itens para revisão.
+- Histórico expansível por coleta e marcador.
+- Tendências laboratoriais nativas para marcadores com duas ou mais coletas.
+- Guardrail explícito: organização e tendência apoiam revisão profissional, sem diagnóstico automático.
+- Responsividade desktop/tablet/mobile.
+- Sem alteração de schema; baseline permanece 38/38.
+
 # Changelog
 
 ## 0.18.3 — Evolution Dashboard
