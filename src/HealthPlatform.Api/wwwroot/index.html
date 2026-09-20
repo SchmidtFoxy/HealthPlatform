@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#123746" />
-  <title>RS HealthPlatform • MVP Preview</title>
+  <meta name="theme-color" content="#0B3B36" />
+  <meta name="application-name" content="AESYN Performance • HealthPlatform" />
+  <title>AESYN Performance • MVP Preview</title>
   <link rel="stylesheet" href="/app.css" />
 </head>
 <body>
@@ -14,21 +15,24 @@
 
   <section id="loginView" class="login-shell">
     <div class="login-visual">
-      <div class="brand brand-large"><span class="brand-mark">RS</span><span>HealthPlatform</span><span class="mvp-brand-badge">MVP Preview</span></div>
+      <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge">MVP Preview</span></div>
       <div class="hero-copy">
-        <div class="eyebrow">CIÊNCIA. ESTRATÉGIA. RESULTADO.</div>
-        <h1>Saúde, longevidade e alta performance.</h1>
-        <p>Um acompanhamento integrado para avaliar, ajustar, monitorar e evoluir com decisões orientadas por dados.</p>
+        <div class="eyebrow">SAÚDE • PERFORMANCE • EVOLUÇÃO</div>
+        <h1>Saúde e performance <em>em sincronia.</em></h1>
+        <p>Consulta médica, acompanhamento contínuo e dados conectados para transformar decisões em evolução real.</p>
+        <div class="aesyn-hero-points" aria-label="Pilares AESYN Performance">
+          <span>Consulta médica</span><span>Check-ins</span><span>Treino</span><span>Nutrição</span><span>Exames</span><span>Evolução</span>
+        </div>
       </div>
-      <div class="login-quote">MVP Preview • v0.17.9</div>
+      <div class="login-quote"><b>AESYN PERFORMANCE</b><span>Ciência. Tecnologia. Cuidado humano.</span><small>MVP Preview • v0.18.0</small></div>
     </div>
     <div class="login-panel">
       <form id="loginForm" class="login-card">
-        <div class="mobile-brand brand"><span class="brand-mark">RS</span><span>HealthPlatform</span></div>
+        <div class="mobile-brand brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
         <div>
-          <span class="eyebrow">RS • ÁREA SEGURA</span>
-          <h2>Bem-vindo de volta</h2>
-          <p>Entre com seu acesso profissional ou de paciente.</p>
+          <span class="eyebrow">AESYN • ÁREA SEGURA</span>
+          <h2>Bem-vindo à AESYN</h2>
+          <p>Sua saúde. Seus dados. Sua evolução.</p>
         </div>
         <label>E-mail<input id="email" type="email" autocomplete="username" value="admin@healthplatform.local" required /></label>
         <label>Senha<input id="senha" type="password" autocomplete="current-password" value="" placeholder="Senha configurada para esta demo" required /></label>
@@ -42,7 +46,7 @@
 
   <section id="activationView" class="login-shell hidden">
     <div class="login-visual">
-      <div class="brand brand-large"><span class="brand-mark">RS</span><span>HealthPlatform</span></div>
+      <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
       <div class="hero-copy">
         <div class="eyebrow">PRIMEIRO ACESSO</div>
         <h1>Ative seu portal de acompanhamento.</h1>
@@ -67,7 +71,7 @@
 
   <div id="patientAppView" class="patient-portal-shell hidden">
     <header class="patient-portal-top">
-      <div class="brand"><span class="brand-mark">RS</span><span>HealthPlatform</span><span class="mvp-brand-badge compact">Demo</span></div>
+      <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge compact">Demo</span></div>
       <div class="patient-portal-user">
         <div class="avatar" id="patientAvatar">PA</div>
         <div><strong id="patientUserName">Paciente</strong><small>Meu acompanhamento</small></div>
@@ -121,13 +125,13 @@
 
   <div id="appView" class="app-shell hidden">
     <aside class="sidebar">
-      <div class="brand"><span class="brand-mark">RS</span><span>HealthPlatform</span><span class="mvp-brand-badge compact">Demo</span></div>
+      <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge compact">Demo</span></div>
       <nav>
-        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Visão geral</button>
-        <button class="nav-item" data-view="central-dia"><span>☀</span> Hoje</button>
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Performance</button>
+        <button class="nav-item" data-view="central-dia"><span>☀</span> Acompanhamento</button>
         <button class="nav-item" data-view="carteira"><span>◫</span> Carteira</button>
         <button class="nav-item" data-view="pacientes"><span>♙</span> Pacientes</button>
-        <button class="nav-item" data-view="prescricoes"><span>✦</span> Prescrições</button>
+        <button class="nav-item" data-view="prescricoes"><span>✦</span> Treino & Nutrição</button>
         <button class="nav-item" data-view="agenda"><span>▦</span> Agenda</button>
         <button class="nav-item" data-view="pendencias"><span>✓</span> Pendências</button>
         <button class="nav-item" data-view="solicitacoes-profissional"><span>⇄</span> Solicitações</button>
@@ -147,11 +151,11 @@
       <header class="topbar">
         <button id="menuButton" class="menu-button">☰</button>
         <div>
-          <div id="pageEyebrow" class="eyebrow">RS • ÁREA PROFISSIONAL</div>
+          <div id="pageEyebrow" class="eyebrow">AESYN • PERFORMANCE CLÍNICA</div>
           <h2 id="pageTitle">Visão geral</h2>
         </div>
         <div class="topbar-actions">
-          <span class="mvp-top-pill">MVP • DEMO</span>
+          <span class="mvp-top-pill">AESYN • DEMO</span>
           <button class="ghost mvp-guide-button" id="mvpGuideButton" type="button">Roteiro da demo</button>
           <button class="notification-button" id="notificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="notificationBadge">0</span></button>
           <div class="user-chip"><div class="avatar" id="avatar">AD</div><div><strong id="userName">Administrador</strong><small id="userType">Administrador</small></div></div>

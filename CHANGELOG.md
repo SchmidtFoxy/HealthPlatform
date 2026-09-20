@@ -1,4 +1,19 @@
+## v0.18.0-r2 — Correção de gate legado do Prescription Workspace
+- Corrige o teste histórico de acesso ao Professional Prescription Workspace para validar a rota e o carregador reais, sem depender do título antigo da interface.
+- Preserva o rebranding AESYN Performance e todas as regras de negócio da v0.18.0.
+- Sem migration e sem alteração de schema.
+
+## v0.18.0 — AESYN Performance Foundation
+
+- Reposiciona a experiência visual como **AESYN Performance** sem renomear a arquitetura interna HealthPlatform.
+- Aplica a identidade visual AESYN: verde petróleo `#0B3B36`, esmeralda `#19C98B`, off-white `#F6F8F7`, grafite `#111817` e cinza frio `#A7B2AF`.
+- Redesenha login e branding do profissional/paciente para saúde e performance em sincronia.
+- Reorganiza a linguagem principal para Performance, Acompanhamento e Treino & Nutrição.
+- Mantém backend, banco, APIs e features da v0.17.9 sem alteração de schema.
+- Prepara a interface para a próxima fase: Performance Dashboard, Performance Profile, evolução e exames.
+
 ## v0.17.9-r1 — Smoke Test Workspace Label Fix
+
 - Corrige falso negativo no check histórico do Professional Prescription Workspace.
 - O smoke test passa a validar o rótulo atual `Revisar & publicar` em vez do legado `Ajustar e publicar`.
 - Nenhuma alteração funcional, de API, schema ou migrations.
@@ -1657,3 +1672,7 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ## v0.17.4-r1 — Smoke Test MVP Preview Fix
 - Normaliza os asserts históricos do MVP Preview para a versão corrente v0.17.4.
 - Nenhuma alteração funcional, de schema ou migration.
+
+### v0.18.0-r1 — Correção do gate visual legado
+- Atualiza os gates [493/600] a [498/600] do `TESTAR.ps1` para validar AESYN em vez da identidade RS anterior.
+- Mantém `VERSION.txt` em `0.18.0`; não altera schema nem comportamento funcional.
