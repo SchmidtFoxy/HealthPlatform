@@ -191,32 +191,44 @@ async function loadDashboard(){
   $$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));
 }
 async function loadPrescriptionWorkspace(){
-  const [patients,workoutModels,mealModels,sessionModels,mealLibrary]=await Promise.all([
+  const [patients,workoutModels,mealModels,sessionModels,mealLibrary,exercises]=await Promise.all([
     api('/api/pacientes?pagina=1&tamanhoPagina=8'),
     api('/api/modelos-planos-treino').catch(()=>[]),
     api('/api/modelos-planos-alimentares').catch(()=>[]),
     api('/api/modelos-sessoes-treino').catch(()=>[]),
-    api('/api/modelos-refeicoes').catch(()=>[])
+    api('/api/modelos-refeicoes').catch(()=>[]),
+    api('/api/exercicios?incluirInativos=true').catch(()=>[])
   ]);
   const list=patients?.itens||[];
-  content.innerHTML=`<section class="prescription-workspace-hero"><div><span class="eyebrow">PROFESSIONAL PRESCRIPTION WORKSPACE • v0.17.9</span><h3>Da avaliação à prescrição, sem perder o contexto do paciente.</h3><p>Organize avaliação corporal, objetivo, preferências, treino e alimentação em um único fluxo profissional. Sugestões futuras serão sempre propostas para revisão — nunca publicação automática.</p></div><button class="primary" id="workspaceNewPatient">+ Iniciar paciente</button></section>
-  <div class="prescription-workspace-grid">
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">1</span><div><span class="eyebrow">ENTRADA • v0.17.1</span><h3>Cadastro + avaliação corporal</h3><p>Cadastre o essencial sem travar o atendimento. Depois complete composição corporal/bioimpedância quando os dados estiverem disponíveis.</p><button class="secondary" id="workspacePatients">Escolher paciente</button></div></section>
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">2</span><div><span class="eyebrow">OBJETIVO • v0.17.2</span><h3>Direção + sugestão inicial</h3><p>Hipertrofia, perda de peso, recomposição, condicionamento, qualidade de vida, manutenção ou retorno ao exercício.</p><span class="workspace-status safe">Rascunho assistido para revisão profissional</span><span class="workspace-status">Ajuste rápido disponível • v0.17.3</span></div></section>
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">3</span><div><span class="eyebrow">PRESCRIÇÃO</span><h3>Treino + alimentação</h3><p>Use bibliotecas, modelos e histórico para montar uma proposta personalizada e fácil de adaptar.</p><div class="workspace-library-stats"><b>${workoutModels.length||0}</b><span>modelos de treino • biblioteca v0.17.5</span><b>${mealModels.length||0}</b><span>modelos alimentares • biblioteca v0.17.7</span></div></div></section>
-    <section class="card prescription-workspace-step"><span class="workspace-step-index">4</span><div><span class="eyebrow">REVISÃO • v0.17.9</span><h3>Revisar, publicar & versionar</h3><p>Compare treino e alimentação, escolha conscientemente o que ficará ativo e preserve as versões anteriores como histórico.</p><span class="workspace-status safe">Publicação explícita • histórico preservado</span></div></section>
+  const activeExercises=exercises.filter(x=>x.ativo).length;
+  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.6</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button></div></section>
+  <div class="workout-studio-kpis">
+    <article><span>Exercícios ativos</span><strong>${activeExercises}</strong><small>${exercises.length-activeExercises} inativo(s)</small></article>
+    <article><span>Treinos-modelo</span><strong>${workoutModels.length||0}</strong><small>independentes de paciente</small></article>
+    <article><span>Sessões-modelo</span><strong>${sessionModels.length||0}</strong><small>blocos reutilizáveis</small></article>
+    <article><span>Pacientes recentes</span><strong>${list.length}</strong><small>atribua quando fizer sentido</small></article>
   </div>
-  <div class="prescription-workspace-columns">
-    <section class="card"><div class="card-head"><div><span class="eyebrow">BIBLIOTECAS</span><h3>Base reutilizável</h3></div><div class="workspace-library-actions"><button class="secondary" id="workspaceWorkoutLibrary">Biblioteca de treinos</button><button class="secondary" id="workspaceNutritionLibrary">Dietas & refeições</button></div></div><div class="workspace-library-list"><div><strong>${workoutModels.length||0}</strong><span>Planos de treino</span></div><div><strong>${sessionModels.length||0}</strong><span>Sessões de treino</span></div><div><strong>${mealModels.length||0}</strong><span>Planos alimentares</span></div><div><strong>${mealLibrary.length||0}</strong><span>Refeições</span></div></div><p class="workspace-note">Crie uma vez, atribua uma cópia ao paciente e personalize sem alterar o modelo original.</p></section>
-    <section class="card"><div class="card-head"><div><span class="eyebrow">PACIENTES RECENTES</span><h3>Continuar uma prescrição</h3></div><button class="ghost" id="workspaceAllPatients">Ver todos</button></div>${list.length?`<div class="workspace-patient-list">${list.map(p=>`<button type="button" data-workspace-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.profissao||'Paciente')}</small></span><i>›</i></button>`).join('')}</div>`:sectionEmpty('Nenhum paciente disponível.')}</section>
+  <div class="prescription-workspace-columns workout-studio-columns">
+    <section class="card workout-studio-library-card"><div class="card-head"><div><span class="eyebrow">EXERCISE LIBRARY 2.0</span><h3>Catálogo profissional de exercícios</h3></div><button class="primary" id="workspaceExerciseLibrary2">Abrir catálogo</button></div><p>Busque por nome, grupo muscular ou equipamento; cadastre movimentos próprios; inative itens sem apagar histórico; e carregue uma base inicial curada com um clique.</p><div class="workspace-library-list"><div><strong>${activeExercises}</strong><span>Exercícios ativos</span></div><div><strong>${new Set(exercises.map(x=>x.grupoMuscular).filter(Boolean)).size}</strong><span>Grupos musculares</span></div><div><strong>${new Set(exercises.map(x=>x.equipamento).filter(Boolean)).size}</strong><span>Equipamentos</span></div><div><strong>${exercises.filter(x=>x.videoUrl).length}</strong><span>Com referência em vídeo</span></div></div></section>
+    <section class="card workout-studio-library-card"><div class="card-head"><div><span class="eyebrow">STANDALONE WORKOUT TEMPLATES</span><h3>Treinos sem paciente vinculado</h3></div><button class="primary" id="workspaceWorkoutLibrary">Biblioteca de treinos</button></div><p>Monte Upper/Lower, Full Body, hipertrofia, força, retorno, mobilidade ou qualquer protocolo antes da consulta. Depois atribua uma cópia independente ao paciente.</p><div class="workspace-library-list"><div><strong>${workoutModels.length||0}</strong><span>Planos-modelo</span></div><div><strong>${sessionModels.length||0}</strong><span>Sessões-modelo</span></div><div><strong>${workoutModels.reduce((n,x)=>n+(x.exercicios||0),0)}</strong><span>Exercícios nos modelos</span></div><div><strong>${workoutModels.filter(x=>x.ativo).length}</strong><span>Modelos disponíveis</span></div></div></section>
   </div>
-  <section class="card workspace-roadmap"><div><span class="eyebrow">FLUXO-ALVO</span><h3>Avaliação → sugestão → ajuste → atribuição → acompanhamento</h3><p>A próxima evolução vai conectar bioimpedância/avaliação corporal e objetivo terapêutico a sugestões de hidratação, treino e alimentação para revisão profissional.</p></div></section>`;
-  $('#workspaceNewPatient').onclick=openCreatePatient;
+  <div class="prescription-workspace-columns workout-studio-columns secondary-zone">
+    <section class="card"><div class="card-head"><div><span class="eyebrow">ATALHOS PROFISSIONAIS</span><h3>Produção de conteúdo clínico-esportivo</h3></div></div><div class="workout-studio-quick-actions"><button class="secondary" id="workspaceNewWorkoutTemplate2">+ Novo treino-modelo</button><button class="secondary" id="workspaceExerciseLibrary3">+ Popular exercícios</button><button class="secondary" id="workspaceNutritionLibrary">Dietas & refeições</button><button class="ghost" id="workspaceAllPatients">Pacientes</button></div><p class="workspace-note">O treino-modelo pertence à biblioteca do profissional. Só vira ficha de paciente quando você explicitamente atribui uma cópia.</p></section>
+    <section class="card"><div class="card-head"><div><span class="eyebrow">PACIENTES RECENTES</span><h3>Atribuir algo já preparado</h3></div><button class="ghost" id="workspacePatients">Ver todos</button></div>${list.length?`<div class="workspace-patient-list">${list.map(p=>`<button type="button" data-workspace-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.profissao||'Paciente')}</small></span><i>›</i></button>`).join('')}</div>`:sectionEmpty('Nenhum paciente disponível. Sua biblioteca pode continuar crescendo mesmo assim.')}</section>
+  </div>
+  <section class="card workspace-roadmap workout-studio-flow"><div><span class="eyebrow">NOVO FLUXO-ALVO</span><h3>Exercícios → treino-modelo → biblioteca → atribuição → adaptação</h3><p>O paciente deixa de ser pré-requisito para construir a oferta. A AESYN passa a tratar a biblioteca de treino como patrimônio reutilizável do profissional.</p></div></section>`;
+  $('#workspaceNewWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
+  $('#workspaceNewWorkoutTemplate2').onclick=()=>openStandaloneWorkoutBuilder();
+  $('#workspaceExerciseLibrary').onclick=()=>openExerciseLibrary2();
+  $('#workspaceExerciseLibrary2').onclick=()=>openExerciseLibrary2();
+  $('#workspaceExerciseLibrary3').onclick=()=>openExerciseLibrary2();
   $('#workspacePatients').onclick=()=>navigate('pacientes');
   $('#workspaceAllPatients').onclick=()=>navigate('pacientes');
-  $('#workspaceWorkoutLibrary').onclick=()=>openWorkoutLibrary();$('#workspaceNutritionLibrary').onclick=()=>openDietMealLibrary();
+  $('#workspaceWorkoutLibrary').onclick=()=>openWorkoutLibrary();
+  $('#workspaceNutritionLibrary').onclick=()=>openDietMealLibrary();
   $$('[data-workspace-patient]').forEach(b=>b.onclick=()=>openPatient(b.dataset.workspacePatient));
 }
+
 async function loadPatients(search=''){const d=await api(`/api/pacientes?pagina=1&tamanhoPagina=50${search?`&busca=${encodeURIComponent(search)}`:''}`);content.innerHTML=`<div class="section-head"><div><h3>Pacientes</h3><p>${d.total} paciente(s) encontrado(s).</p></div><div class="toolbar"><div class="search-wrap"><input id="patientSearch" class="search-input" placeholder="Buscar nome, CPF, e-mail ou telefone" value="${esc(search)}"></div><button class="primary" id="newPatient">+ Novo paciente</button></div></div><div class="table-wrap">${d.itens.length?`<table class="data-table"><thead><tr><th>Paciente</th><th>Contato</th><th>CPF</th><th>Nascimento</th><th>Status</th></tr></thead><tbody>${d.itens.map(p=>`<tr data-patient="${p.id}"><td><div class="person-cell"><div class="mini-avatar">${initials(p.nome)}</div><div><strong>${esc(p.nome)}</strong><div class="muted-mini">${esc(p.profissao||'Profissão não informada')}</div></div></div></td><td>${esc(p.telefone||p.email||'—')}</td><td>${esc(p.cpf||'—')}</td><td>${p.dataNascimento?fmtDate(p.dataNascimento):'—'}</td><td><span class="pill ${p.ativo?'Ativa':'Cancelada'}">${p.ativo?'Ativo':'Inativo'}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum paciente encontrado.</div>'}</div>`;let timer;$('#patientSearch').oninput=e=>{clearTimeout(timer);timer=setTimeout(()=>loadPatients(e.target.value),300)};$('#newPatient').onclick=openCreatePatient;$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient))}
 function openCreatePatient(){$('#createPatientModal').classList.remove('hidden')}
 $('#createPatientForm').addEventListener('submit',async e=>{e.preventDefault();const obj=Object.fromEntries(new FormData(e.target).entries());Object.keys(obj).forEach(k=>{if(obj[k]==='')obj[k]=null});try{const p=await api('/api/pacientes',{method:'POST',body:JSON.stringify(obj)});$('#createPatientModal').classList.add('hidden');e.target.reset();toast('Paciente cadastrado. Complete a avaliação inicial agora ou depois.');openPatientIntake(p)}catch(x){toast(x.message,true)}});
@@ -2025,6 +2037,8 @@ async function openDietMealLibrary(patient=null,initialTab='plans'){
     <div class="diet-library-toolbar"><input id="dietLibrarySearch" class="search-input" placeholder="Buscar nome, categoria ou descrição"><select id="dietLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
     <div id="dietLibraryList" class="diet-library-grid"></div><div class="workout-library-guidance"><b>Como funciona</b><span>Planos atribuídos viram cópias independentes. Refeições podem ser inseridas em planos ativos sem alterar o modelo original.</span></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
     $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    $('#newStandaloneWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
+    $('#openExerciseLibraryFromWorkout').onclick=()=>openExerciseLibrary2();
     const render=()=>{
       const q=String($('#dietLibrarySearch').value||'').trim().toLowerCase(), status=$('#dietLibraryStatus').value;
       const source=tab==='plans'?plans:meals;
@@ -3844,17 +3858,86 @@ async function openSaveWorkoutTemplate(plan){
   };
 }
 
+
+// ===== v0.18.6 — Exercise Library 2.0 + Standalone Workout Studio =====
+const HP_EXERCISE_LIBRARY_2='v0.18.6';
+const HP_STANDALONE_WORKOUT_STUDIO='v0.18.6';
+const HP_WORKOUT_STUDIO_LEGACY_MARKERS=['PROFESSIONAL PRESCRIPTION WORKSPACE','Avaliação inicial','Direção + sugestão inicial','Treino + alimentação','Revisar & publicar','Avaliação → sugestão → ajuste → atribuição → acompanhamento'];
+
+async function openExerciseLibrary2(){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.add('workout-modal-open');
+  $('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">EXERCISE LIBRARY 2.0 • v0.18.6</span><h2>Catálogo profissional de exercícios</h2><p>Construa uma base reutilizável para qualquer treino-modelo, sem depender de paciente.</p></div><div class="empty">Carregando catálogo...</div>`;
+  try{
+    let [items,filters]=await Promise.all([api('/api/exercicios?incluirInativos=true'),api('/api/exercicios/filtros')]);
+    const renderShell=()=>{
+      const active=items.filter(x=>x.ativo).length;
+      box.innerHTML=`<div class="modal-heading exercise-library-heading"><div><button type="button" class="back-link" id="exerciseLibraryBack">← Treino & Nutrição</button><span class="eyebrow">AESYN • EXERCISE LIBRARY 2.0</span><h2>Catálogo profissional de exercícios</h2><p>${active} ativo(s) • ${items.length} total • base independente de pacientes.</p></div><div class="exercise-library-heading-actions"><button class="secondary" id="exerciseSeedCatalog">Popular catálogo base</button><button class="primary" id="exerciseNew">+ Novo exercício</button></div></div>
+      <div class="exercise-library-toolbar"><input id="exerciseLibrarySearch" class="search-input" placeholder="Buscar nome, grupo, equipamento ou descrição"><select id="exerciseLibraryGroup"><option value="">Todos os grupos</option>${(filters.gruposMusculares||[]).map(x=>`<option>${esc(x)}</option>`).join('')}</select><select id="exerciseLibraryEquipment"><option value="">Todos os equipamentos</option>${(filters.equipamentos||[]).map(x=>`<option>${esc(x)}</option>`).join('')}</select><select id="exerciseLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
+      <div class="exercise-library-summary"><article><small>Exercícios ativos</small><strong>${active}</strong></article><article><small>Grupos musculares</small><strong>${filters.gruposMusculares?.length||0}</strong></article><article><small>Equipamentos</small><strong>${filters.equipamentos?.length||0}</strong></article><article><small>Com vídeo</small><strong>${items.filter(x=>x.videoUrl).length}</strong></article></div>
+      <div id="exerciseLibraryGrid" class="exercise-library-grid"></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+      $('#exerciseLibraryBack').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
+      $('[data-close-clinical-form]').onclick=closeClinicalAction;
+      $('#exerciseNew').onclick=()=>openExerciseEditor(null,()=>openExerciseLibrary2());
+      $('#exerciseSeedCatalog').onclick=async()=>{
+        const btn=$('#exerciseSeedCatalog');hpSetActionPending(btn,true,'Populando...');
+        try{const r=await api('/api/exercicios/catalogo-base',{method:'POST',body:'{}'});toast(`${r.criados} exercício(s) adicionados; ${r.ignorados} já existiam.`);openExerciseLibrary2()}catch(err){toast(err.message,true);hpSetActionPending(btn,false)}
+      };
+      const render=()=>{
+        const q=String($('#exerciseLibrarySearch').value||'').trim().toLowerCase(),g=$('#exerciseLibraryGroup').value,e=$('#exerciseLibraryEquipment').value,status=$('#exerciseLibraryStatus').value;
+        const list=items.filter(x=>{const hay=`${x.nome||''} ${x.grupoMuscular||''} ${x.equipamento||''} ${x.descricao||''}`.toLowerCase();return(!q||hay.includes(q))&&(!g||x.grupoMuscular===g)&&(!e||x.equipamento===e)&&(status==='todos'||(status==='ativos'&&x.ativo)||(status==='inativos'&&!x.ativo))});
+        $('#exerciseLibraryGrid').innerHTML=list.length?list.map(x=>`<article class="exercise-library-card ${x.ativo?'':'is-inactive'}" data-exercise-id="${x.id}"><div class="exercise-library-card-head"><div><span class="eyebrow">${esc(x.grupoMuscular||'Sem grupo')}</span><h4>${esc(x.nome)}</h4></div><span class="pill ${x.ativo?'Ativa':'Cancelada'}">${x.ativo?'Ativo':'Inativo'}</span></div><div class="exercise-library-meta"><span>${esc(x.equipamento||'Sem equipamento')}</span>${x.videoUrl?'<span>Vídeo disponível</span>':''}</div><p>${esc(x.descricao||'Sem descrição técnica.')}</p><div class="exercise-library-actions"><button class="secondary exercise-edit">Editar</button>${x.videoUrl?`<a class="ghost exercise-video-link" href="${esc(x.videoUrl)}" target="_blank" rel="noopener">Vídeo ↗</a>`:''}<button class="ghost exercise-toggle">${x.ativo?'Inativar':'Reativar'}</button></div></article>`).join(''):`<div class="empty">Nenhum exercício encontrado.</div>`;
+        $$('.exercise-edit').forEach(b=>b.onclick=()=>openExerciseEditor(items.find(x=>x.id===b.closest('[data-exercise-id]').dataset.exerciseId),()=>openExerciseLibrary2()));
+        $$('.exercise-toggle').forEach(b=>b.onclick=async()=>{const x=items.find(i=>i.id===b.closest('[data-exercise-id]').dataset.exerciseId);try{await api(`/api/exercicios/${x.id}${x.ativo?'':'/reativar'}`,{method:x.ativo?'DELETE':'POST'});toast(x.ativo?'Exercício inativado.':'Exercício reativado.');openExerciseLibrary2()}catch(err){toast(err.message,true)}});
+      };
+      $('#exerciseLibrarySearch').oninput=render;$('#exerciseLibraryGroup').onchange=render;$('#exerciseLibraryEquipment').onchange=render;$('#exerciseLibraryStatus').onchange=render;render();
+    };
+    renderShell();
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+function openExerciseEditor(item=null,onDone=null){
+  const box=$('#clinicalActionContent'),editing=!!item;
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="exerciseEditorBack">← Catálogo</button><span class="eyebrow">${editing?'EDITAR EXERCÍCIO':'NOVO EXERCÍCIO'}</span><h2>${editing?esc(item.nome):'Adicionar ao catálogo'}</h2><p>O item ficará disponível para qualquer treino-modelo futuro.</p></div><form id="exerciseEditorForm" class="clinical-form"><div class="form-grid">${field('Nome','nome','text',`value="${esc(item?.nome||'')}" required`)}${field('Grupo muscular','grupoMuscular','text',`value="${esc(item?.grupoMuscular||'')}" placeholder="Ex.: Peitoral"`)}${field('Equipamento','equipamento','text',`value="${esc(item?.equipamento||'')}" placeholder="Ex.: Halteres"`)}${field('Vídeo / referência','videoUrl','url',`value="${esc(item?.videoUrl||'')}" placeholder="https://..."`)}${area('Descrição técnica','descricao','placeholder="Execução, ajustes, cues e observações úteis ao profissional."')}</div><div class="form-actions"><button type="button" class="secondary" id="exerciseEditorCancel">Cancelar</button><button class="primary" type="submit">${editing?'Salvar alterações':'Adicionar exercício'}</button></div></form>`;
+  const f=$('#exerciseEditorForm');f.elements.descricao.value=item?.descricao||'';
+  $('#exerciseEditorBack').onclick=$('#exerciseEditorCancel').onclick=()=>openExerciseLibrary2();
+  f.onsubmit=async ev=>{ev.preventDefault();const btn=ev.target.querySelector('button[type=submit]');hpSetActionPending(btn,true);try{const payload={nome:val(f,'nome'),grupoMuscular:val(f,'grupoMuscular'),equipamento:val(f,'equipamento'),descricao:val(f,'descricao'),videoUrl:val(f,'videoUrl')};await api(editing?`/api/exercicios/${item.id}`:'/api/exercicios',{method:editing?'PUT':'POST',body:JSON.stringify(payload)});toast(editing?'Exercício atualizado.':'Exercício adicionado ao catálogo.');(onDone||openExerciseLibrary2)()}catch(err){toast(err.message,true);hpSetActionPending(btn,false)}};
+}
+
+async function openStandaloneWorkoutBuilder(modelSummary=null){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.add('workout-modal-open');$('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">STANDALONE WORKOUT BUILDER • v0.18.6</span><h2>${modelSummary?'Editar treino-modelo':'Novo treino-modelo'}</h2><p>Sem paciente vinculado. Salve primeiro na sua biblioteca e atribua depois.</p></div><div class="empty">Carregando builder...</div>`;
+  try{
+    const exercises=await api('/api/exercicios');
+    const detail=modelSummary?await api(`/api/modelos-planos-treino/${modelSummary.id}`):null;
+    const data=detail?.conteudo||null;
+    box.innerHTML=`<div class="modal-heading standalone-builder-heading"><div><button type="button" class="back-link" id="standaloneBuilderBack">← Biblioteca</button><span class="eyebrow">AESYN • STANDALONE WORKOUT BUILDER • v0.18.6</span><h2>${modelSummary?'Editar treino-modelo':'Novo treino-modelo'}</h2><p>Monte sessões completas antes de existir qualquer paciente para este treino.</p></div><button class="secondary" id="standaloneOpenExercises">Catálogo de exercícios</button></div>
+    <form id="standaloneWorkoutForm" class="clinical-form standalone-workout-form"><div class="form-grid">${field('Nome do modelo','nome','text',`value="${esc(detail?.nome||modelSummary?.nome||'')}" placeholder="Ex.: Upper A • Hipertrofia" required`)}${field('Objetivo','objetivo','text',`value="${esc(data?.objetivoOriginal||detail?.objetivo||'')}" placeholder="Ex.: Hipertrofia"`)}${area('Descrição comercial/técnica','descricao','placeholder="Quando este treino é útil? Para qual perfil?"')}${area('Orientações gerais','observacoes','placeholder="Cues gerais, estratégia, progressão ou contexto."')}</div><div class="standalone-builder-toolbar"><div><strong>Sessões do treino</strong><small>Crie quantos dias/blocos precisar.</small></div><button type="button" class="secondary" id="standaloneAddSession">+ Sessão</button></div><div id="standaloneSessions" class="standalone-session-list"></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button type="submit" class="primary">${modelSummary?'Salvar treino-modelo':'Criar treino-modelo'}</button></div></form>`;
+    const f=$('#standaloneWorkoutForm');f.elements.descricao.value=detail?.descricao||modelSummary?.descricao||'';f.elements.observacoes.value=data?.observacoesOriginais||'';
+    $('#standaloneBuilderBack').onclick=()=>openWorkoutLibrary();$('[data-close-clinical-form]').onclick=closeClinicalAction;$('#standaloneOpenExercises').onclick=()=>openExerciseLibrary2();
+    const host=$('#standaloneSessions');
+    const exerciseOptions=(selected='')=>`<option value="">Selecione...</option>${exercises.map(x=>`<option value="${x.id}" ${x.id===selected?'selected':''}>${esc(x.nome)}${x.grupoMuscular?' • '+esc(x.grupoMuscular):''}</option>`).join('')}`;
+    const readItem=row=>({exercicioId:row.querySelector('[name=exercicioId]').value,ordem:0,series:Number(row.querySelector('[name=series]').value||3),repeticoes:row.querySelector('[name=repeticoes]').value.trim()||'10-12',carga:row.querySelector('[name=carga]').value===''?null:Number(row.querySelector('[name=carga]').value),unidadeCarga:row.querySelector('[name=unidadeCarga]').value.trim()||null,descansoSegundos:row.querySelector('[name=descanso]').value===''?null:Number(row.querySelector('[name=descanso]').value),tempoSegundos:row.querySelector('[name=tempo]').value===''?null:Number(row.querySelector('[name=tempo]').value),observacoes:row.querySelector('[name=itemObs]').value.trim()||null});
+    function addExercise(session,item=null){const rows=session.querySelector('.standalone-exercises'),row=document.createElement('div');row.className='standalone-exercise-row';row.innerHTML=`<label class="span2">Exercício<select name="exercicioId" required>${exerciseOptions(item?.exercicioId||'')}</select></label><label>Séries<input name="series" type="number" min="1" value="${item?.series||3}"></label><label>Reps<input name="repeticoes" value="${esc(item?.repeticoes||'10-12')}"></label><label>Carga<input name="carga" type="number" min="0" step="0.01" value="${item?.carga??''}"></label><label>Unid.<input name="unidadeCarga" value="${esc(item?.unidadeCarga||'kg')}"></label><label>Descanso<input name="descanso" type="number" min="0" value="${item?.descansoSegundos??60}"></label><label>Tempo<input name="tempo" type="number" min="0" value="${item?.tempoSegundos??''}"></label><label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}"></label><div class="standalone-row-actions"><button type="button" class="ghost duplicate">Duplicar</button><button type="button" class="icon-btn remove">×</button></div>`;rows.appendChild(row);row.querySelector('.remove').onclick=()=>row.remove();row.querySelector('.duplicate').onclick=()=>addExercise(session,readItem(row))}
+    function addSession(dataSession=null){const section=document.createElement('section');section.className='card standalone-session';section.innerHTML=`<div class="standalone-session-head"><div class="standalone-session-fields"><label>Nome da sessão<input name="sessionName" value="${esc(dataSession?.nome||`Treino ${String.fromCharCode(65+host.children.length)}`)}" required></label><label>Dias / referência<input name="diasSemana" value="${esc(dataSession?.diasSemana||'')}" placeholder="Ex.: Seg/Qui"></label></div><button type="button" class="ghost remove-session">Remover sessão</button></div><label>Observações da sessão<input name="sessionObs" value="${esc(dataSession?.observacoes||'')}"></label><div class="standalone-exercises"></div><button type="button" class="secondary add-standalone-exercise">+ Exercício</button>`;host.appendChild(section);section.querySelector('.remove-session').onclick=()=>section.remove();section.querySelector('.add-standalone-exercise').onclick=()=>addExercise(section);(dataSession?.itens||[]).forEach(i=>addExercise(section,i));if(!(dataSession?.itens||[]).length)addExercise(section)}
+    $('#standaloneAddSession').onclick=()=>addSession();(data?.sessoes||[]).forEach(addSession);if(!(data?.sessoes||[]).length)addSession();
+    f.onsubmit=async ev=>{ev.preventDefault();const btn=ev.target.querySelector('button[type=submit]');hpSetActionPending(btn,true);try{const sessoes=[...host.querySelectorAll('.standalone-session')].map((session,si)=>({nome:session.querySelector('[name=sessionName]').value.trim(),diasSemana:session.querySelector('[name=diasSemana]').value.trim()||null,ordem:si+1,observacoes:session.querySelector('[name=sessionObs]').value.trim()||null,itens:[...session.querySelectorAll('.standalone-exercise-row')].map((row,ri)=>({...readItem(row),ordem:ri+1})).filter(x=>x.exercicioId)}));if(!sessoes.length||!sessoes.some(x=>x.itens.length))throw new Error('Adicione pelo menos um exercício ao treino-modelo.');const payload={nome:val(f,'nome'),descricao:val(f,'descricao'),objetivo:val(f,'objetivo'),observacoes:val(f,'observacoes'),ativo:true,sessoes};await api(modelSummary?`/api/modelos-planos-treino/${modelSummary.id}/conteudo`:'/api/modelos-planos-treino',{method:modelSummary?'PUT':'POST',body:JSON.stringify(payload)});toast(modelSummary?'Treino-modelo atualizado.':'Treino-modelo criado na biblioteca.');openWorkoutLibrary()}catch(err){toast(err.message,true);hpSetActionPending(btn,false)}};
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
 // ===== v0.17.5 — Workout Library & Assignment =====
 async function openWorkoutLibrary(patient=null){
   const box=$('#clinicalActionContent');
   $('#clinicalActionModal').classList.add('workout-modal-open');
   $('#clinicalActionModal').classList.remove('hidden');
   const patientLabel=patient?`<p>Paciente: <b>${esc(patient.nome)}</b> • a atribuição cria uma cópia independente.</p>`:'<p>Gerencie modelos reutilizáveis e atribua cópias independentes aos pacientes.</p>';
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">WORKOUT LIBRARY & ASSIGNMENT • v0.17.5</span><h2>Biblioteca de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.6</span><h2>Biblioteca de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
   try{
     const modelos=await api('/api/modelos-planos-treino?incluirInativos=true');
     const active=modelos.filter(x=>x.ativo).length;
-    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">WORKOUT LIBRARY & ASSIGNMENT • v0.17.5</span><h2>Biblioteca de treinos</h2>${patientLabel}</div>
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.6</span><h2>Biblioteca de treinos</h2>${patientLabel}<div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div></div>
       <div class="workout-library-summary"><span><small>Modelos</small><b>${modelos.length}</b></span><span><small>Ativos</small><b>${active}</b></span><span><small>Inativos</small><b>${modelos.length-active}</b></span></div>
       <div class="workout-library-toolbar"><input id="workoutLibrarySearch" class="search-input" placeholder="Buscar por nome, objetivo ou descrição"><select id="workoutLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
       <div id="workoutLibraryList" class="workout-library-grid"></div>
@@ -3872,13 +3955,14 @@ async function openWorkoutLibrary(patient=null){
       $('#workoutLibraryList').innerHTML=filtered.length?filtered.map(m=>`<article class="workout-library-card ${m.ativo?'':'is-inactive'}" data-library-model="${m.id}">
         <div class="workout-library-card-head"><div><span class="eyebrow">${m.sessoes} sessão(ões) • ${m.exercicios} exercício(s)</span><h4>${esc(m.nome)}</h4></div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
         <p>${esc(m.descricao||m.objetivo||'Modelo sem descrição.')}</p><small>${esc(m.profissionalNome||'')} ${m.objetivo?'• '+esc(m.objetivo):''}</small>
-        <div class="workout-library-actions">${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary library-edit">Editar modelo</button><button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button></div>
+        <div class="workout-library-actions">${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary library-builder">Editar treino</button><button class="ghost library-edit">Detalhes</button><button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button></div>
       </article>`).join(''):`<div class="empty">Nenhum modelo encontrado com estes filtros.</div>`;
       $$('.library-assign').forEach(btn=>btn.onclick=()=>{
         const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
         if(patient){openWorkoutTemplateCreateForm(patient,m);return}
         openWorkoutLibraryPatientPicker(m);
       });
+      $$('.library-builder').forEach(btn=>btn.onclick=()=>openStandaloneWorkoutBuilder(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel)));
       $$('.library-edit').forEach(btn=>btn.onclick=()=>openWorkoutLibraryEdit(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel),patient));
       $$('.library-toggle').forEach(btn=>btn.onclick=async()=>{
         const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
@@ -7194,7 +7278,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.5';
+const HP_MVP_VERSION='0.18.6';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

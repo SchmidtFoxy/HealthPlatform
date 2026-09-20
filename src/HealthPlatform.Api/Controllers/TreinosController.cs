@@ -76,6 +76,8 @@ public sealed class TreinosController(
     public async Task<IActionResult> ListarExercicios(
         [FromQuery] bool incluirInativos = false,
         [FromQuery] string? busca = null,
+        [FromQuery] string? grupoMuscular = null,
+        [FromQuery] string? equipamento = null,
         CancellationToken ct = default)
     {
         var query = db.Exercicios.AsNoTracking()
@@ -90,8 +92,15 @@ public sealed class TreinosController(
             query = query.Where(x =>
                 x.Nome.ToLower().Contains(termo) ||
                 (x.GrupoMuscular != null && x.GrupoMuscular.ToLower().Contains(termo)) ||
-                (x.Equipamento != null && x.Equipamento.ToLower().Contains(termo)));
+                (x.Equipamento != null && x.Equipamento.ToLower().Contains(termo)) ||
+                (x.Descricao != null && x.Descricao.ToLower().Contains(termo)));
         }
+
+        if (!string.IsNullOrWhiteSpace(grupoMuscular))
+            query = query.Where(x => x.GrupoMuscular == grupoMuscular.Trim());
+
+        if (!string.IsNullOrWhiteSpace(equipamento))
+            query = query.Where(x => x.Equipamento == equipamento.Trim());
 
         var itens = await query.OrderBy(x => x.GrupoMuscular).ThenBy(x => x.Nome)
             .Select(x => new
@@ -104,11 +113,75 @@ public sealed class TreinosController(
         return Ok(itens);
     }
 
+    [HttpGet("api/exercicios/filtros")]
+    public async Task<IActionResult> FiltrosExercicios(CancellationToken ct)
+    {
+        var query = db.Exercicios.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo);
+
+        var gruposMusculares = await query
+            .Where(x => x.GrupoMuscular != null && x.GrupoMuscular != "")
+            .Select(x => x.GrupoMuscular!)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToListAsync(ct);
+
+        var equipamentos = await query
+            .Where(x => x.Equipamento != null && x.Equipamento != "")
+            .Select(x => x.Equipamento!)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToListAsync(ct);
+
+        return Ok(new { gruposMusculares, equipamentos });
+    }
+
+    [HttpPost("api/exercicios/catalogo-base")]
+    public async Task<IActionResult> PopularCatalogoBase(CancellationToken ct)
+    {
+        var existentes = await db.Exercicios
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .ToListAsync(ct);
+        var nomes = existentes.Select(NormalizarNomeCatalogo).ToHashSet();
+        var criados = 0;
+        var ignorados = 0;
+
+        foreach (var baseItem in CatalogoBaseExercicios())
+        {
+            if (!nomes.Add(NormalizarNomeCatalogo(baseItem.Nome)))
+            {
+                ignorados++;
+                continue;
+            }
+
+            var item = new Exercicio
+            {
+                OrganizacaoId = currentUser.OrganizationId,
+                Nome = baseItem.Nome,
+                GrupoMuscular = baseItem.GrupoMuscular,
+                Equipamento = baseItem.Equipamento,
+                Descricao = baseItem.Descricao,
+                Ativo = true
+            };
+            db.Exercicios.Add(item);
+            criados++;
+        }
+
+        Auditar("SEED_BASE_CATALOG", nameof(Exercicio), Guid.Empty, null, new { criados, ignorados });
+        await db.SaveChangesAsync(ct);
+        return Ok(new { criados, ignorados, totalCatalogoBase = criados + ignorados });
+    }
+
     [HttpPost("api/exercicios")]
     public async Task<IActionResult> CriarExercicio(UpsertExercicioRequest request, CancellationToken ct)
     {
         var erro = ValidarExercicio(request);
         if (erro is not null) return BadRequest(new { message = erro });
+
+        var nomeNormalizado = request.Nome.Trim().ToLower();
+        if (await db.Exercicios.AnyAsync(x => x.OrganizacaoId == currentUser.OrganizationId && x.Nome.ToLower() == nomeNormalizado, ct))
+            return Conflict(new { message = "Ja existe um exercicio com este nome no catalogo." });
 
         var item = new Exercicio
         {
@@ -731,4 +804,94 @@ public sealed class TreinosController(
 
     private static string? Limpar(string? valor)
         => string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
+
+    private sealed record ExercicioBase(string Nome, string GrupoMuscular, string Equipamento, string Descricao);
+
+    private static string NormalizarNomeCatalogo(string nome) => nome.Trim().ToLowerInvariant();
+
+    private static IReadOnlyCollection<ExercicioBase> CatalogoBaseExercicios() => new[]
+    {
+        new ExercicioBase("Supino reto com barra", "Peitoral", "Barra", "Pressão horizontal com foco em peitoral, tríceps e estabilização escapular."),
+        new ExercicioBase("Supino inclinado com halteres", "Peitoral", "Halteres", "Pressão inclinada com amplitude controlada e foco na porção clavicular do peitoral."),
+        new ExercicioBase("Supino reto com halteres", "Peitoral", "Halteres", "Pressão horizontal unilateral independente, favorecendo amplitude e controle."),
+        new ExercicioBase("Crucifixo na máquina", "Peitoral", "Máquina", "Adução horizontal do ombro com trajetória guiada e tensão contínua."),
+        new ExercicioBase("Crossover na polia", "Peitoral", "Polia", "Adução horizontal em cabo com ajuste de altura e foco em controle."),
+        new ExercicioBase("Flexão de braços", "Peitoral", "Peso corporal", "Pressão horizontal em cadeia fechada com tronco estável."),
+        new ExercicioBase("Remada curvada com barra", "Costas", "Barra", "Puxada horizontal com quadril estabilizado e foco em dorsais e romboides."),
+        new ExercicioBase("Remada baixa na polia", "Costas", "Polia", "Puxada horizontal guiada com controle escapular."),
+        new ExercicioBase("Remada unilateral com halter", "Costas", "Halteres", "Puxada unilateral com apoio e foco em amplitude da dorsal."),
+        new ExercicioBase("Puxada alta pronada", "Costas", "Polia", "Puxada vertical com pegada pronada, priorizando grande dorsal."),
+        new ExercicioBase("Puxada alta neutra", "Costas", "Polia", "Puxada vertical com pegada neutra e trajetória confortável para ombros."),
+        new ExercicioBase("Barra fixa pronada", "Costas", "Peso corporal", "Puxada vertical em cadeia fechada com controle corporal."),
+        new ExercicioBase("Pulldown com braços estendidos", "Costas", "Polia", "Extensão de ombro com cotovelos quase fixos e foco em dorsais."),
+        new ExercicioBase("Desenvolvimento militar com barra", "Ombros", "Barra", "Pressão vertical com controle de tronco e trajetória sobre a cabeça."),
+        new ExercicioBase("Desenvolvimento com halteres", "Ombros", "Halteres", "Pressão vertical bilateral independente para deltoides e tríceps."),
+        new ExercicioBase("Elevação lateral com halteres", "Ombros", "Halteres", "Abdução de ombro com foco em deltoide lateral e controle de amplitude."),
+        new ExercicioBase("Elevação lateral na polia", "Ombros", "Polia", "Abdução com tensão contínua e ajuste fino da trajetória."),
+        new ExercicioBase("Crucifixo inverso na máquina", "Ombros", "Máquina", "Abdução horizontal com foco em deltoide posterior e musculatura escapular."),
+        new ExercicioBase("Face pull", "Ombros", "Polia", "Puxada alta com rotação externa e foco em deltoide posterior/escápulas."),
+        new ExercicioBase("Rosca direta com barra", "Bíceps", "Barra", "Flexão de cotovelo bilateral com tronco estável."),
+        new ExercicioBase("Rosca alternada com halteres", "Bíceps", "Halteres", "Flexão alternada de cotovelo com supinação controlada."),
+        new ExercicioBase("Rosca martelo", "Bíceps", "Halteres", "Flexão de cotovelo em pegada neutra com ênfase braquial/braquiorradial."),
+        new ExercicioBase("Rosca Scott", "Bíceps", "Máquina", "Flexão de cotovelo com braço apoiado e menor compensação de ombro."),
+        new ExercicioBase("Tríceps na polia com barra", "Tríceps", "Polia", "Extensão de cotovelo com ombros estabilizados."),
+        new ExercicioBase("Tríceps corda", "Tríceps", "Polia", "Extensão de cotovelo com pegada neutra e separação ao final."),
+        new ExercicioBase("Tríceps francês unilateral", "Tríceps", "Halteres", "Extensão de cotovelo acima da cabeça com foco na cabeça longa."),
+        new ExercicioBase("Paralelas", "Tríceps", "Peso corporal", "Pressão em cadeia fechada envolvendo tríceps, peitoral e cintura escapular."),
+        new ExercicioBase("Agachamento livre", "Quadríceps", "Barra", "Agachamento multiarticular com controle de joelho, quadril e tronco."),
+        new ExercicioBase("Agachamento frontal", "Quadríceps", "Barra", "Agachamento com carga anterior e maior demanda de tronco/quadríceps."),
+        new ExercicioBase("Leg press 45°", "Quadríceps", "Máquina", "Extensão combinada de joelho e quadril em trajetória guiada."),
+        new ExercicioBase("Cadeira extensora", "Quadríceps", "Máquina", "Extensão de joelho em cadeia aberta com amplitude ajustável."),
+        new ExercicioBase("Afundo com halteres", "Quadríceps", "Halteres", "Padrão unilateral com flexão de joelho/quadril e controle do equilíbrio."),
+        new ExercicioBase("Passada caminhando", "Quadríceps", "Halteres", "Avanço alternado dinâmico com demanda de estabilidade unilateral."),
+        new ExercicioBase("Agachamento búlgaro", "Quadríceps", "Halteres", "Agachamento unilateral com pé posterior elevado."),
+        new ExercicioBase("Levantamento terra romeno", "Posterior de coxa", "Barra", "Dobradiça de quadril com joelhos semiflexionados e foco em posteriores/glúteos."),
+        new ExercicioBase("Stiff com halteres", "Posterior de coxa", "Halteres", "Dobradiça de quadril com carga bilateral independente."),
+        new ExercicioBase("Mesa flexora", "Posterior de coxa", "Máquina", "Flexão de joelho em decúbito com resistência guiada."),
+        new ExercicioBase("Cadeira flexora", "Posterior de coxa", "Máquina", "Flexão de joelho sentado com estabilização de quadril."),
+        new ExercicioBase("Nordic curl", "Posterior de coxa", "Peso corporal", "Flexão de joelho excêntrica de alta demanda para isquiotibiais."),
+        new ExercicioBase("Hip thrust com barra", "Glúteos", "Barra", "Extensão de quadril com apoio torácico e pico de contração em glúteos."),
+        new ExercicioBase("Elevação pélvica", "Glúteos", "Peso corporal", "Extensão de quadril em solo para glúteos e estabilizadores."),
+        new ExercicioBase("Abdução de quadril na máquina", "Glúteos", "Máquina", "Abdução de quadril guiada com foco em glúteo médio."),
+        new ExercicioBase("Coice na polia", "Glúteos", "Polia", "Extensão de quadril unilateral em cabo."),
+        new ExercicioBase("Step-up", "Glúteos", "Caixa", "Subida unilateral em caixa com extensão de joelho e quadril."),
+        new ExercicioBase("Panturrilha em pé", "Panturrilhas", "Máquina", "Flexão plantar com joelhos estendidos e foco em gastrocnêmio."),
+        new ExercicioBase("Panturrilha sentada", "Panturrilhas", "Máquina", "Flexão plantar com joelhos flexionados e maior participação do sóleo."),
+        new ExercicioBase("Panturrilha no leg press", "Panturrilhas", "Máquina", "Flexão plantar em plataforma com joelhos estendidos."),
+        new ExercicioBase("Prancha frontal", "Core", "Peso corporal", "Estabilização anti-extensão com alinhamento entre tronco e pelve."),
+        new ExercicioBase("Prancha lateral", "Core", "Peso corporal", "Estabilização lateral com foco em oblíquos e cintura pélvica."),
+        new ExercicioBase("Dead bug", "Core", "Peso corporal", "Controle lombo-pélvico com movimentação alternada de membros."),
+        new ExercicioBase("Pallof press", "Core", "Polia", "Exercício anti-rotação em posição estável."),
+        new ExercicioBase("Abdominal na polia", "Core", "Polia", "Flexão de tronco resistida com controle pélvico."),
+        new ExercicioBase("Farmer walk", "Core", "Halteres", "Caminhada carregada para pegada, core e estabilidade global."),
+        new ExercicioBase("Levantamento terra convencional", "Corpo inteiro", "Barra", "Dobradiça multiarticular para cadeia posterior, tronco e pegada."),
+        new ExercicioBase("Kettlebell swing", "Corpo inteiro", "Kettlebell", "Dobradiça balística de quadril com potência e condicionamento."),
+        new ExercicioBase("Goblet squat", "Quadríceps", "Kettlebell", "Agachamento com carga anterior próxima ao tronco."),
+        new ExercicioBase("Thruster com halteres", "Corpo inteiro", "Halteres", "Agachamento seguido de pressão vertical em movimento integrado."),
+        new ExercicioBase("Remo ergométrico", "Cardio", "Ergômetro", "Condicionamento cíclico de corpo inteiro com resistência ajustável."),
+        new ExercicioBase("Bicicleta ergométrica", "Cardio", "Bicicleta", "Condicionamento cíclico de baixo impacto com controle de carga."),
+        new ExercicioBase("Caminhada inclinada", "Cardio", "Esteira", "Condicionamento contínuo com inclinação ajustável e menor impacto que corrida."),
+        new ExercicioBase("Corrida na esteira", "Cardio", "Esteira", "Condicionamento contínuo ou intervalado com velocidade ajustável."),
+        new ExercicioBase("Escada ergométrica", "Cardio", "Máquina", "Condicionamento com padrão repetido de subida e demanda de membros inferiores."),
+        new ExercicioBase("Mobilidade de tornozelo na parede", "Mobilidade", "Peso corporal", "Mobilidade de dorsiflexão com joelho avançando sobre o pé sem perder contato do calcanhar."),
+        new ExercicioBase("90/90 de quadril", "Mobilidade", "Peso corporal", "Mobilidade ativa/passiva de rotação interna e externa de quadril."),
+        new ExercicioBase("Rotação torácica em quatro apoios", "Mobilidade", "Peso corporal", "Mobilidade torácica com pelve estável."),
+        new ExercicioBase("Alongamento de flexores do quadril", "Mobilidade", "Peso corporal", "Posição de avanço com controle pélvico para flexores do quadril."),
+        new ExercicioBase("Wall slide", "Mobilidade", "Peso corporal", "Elevação de braços na parede com controle escapular e torácico."),
+        new ExercicioBase("Copenhagen plank", "Adutores", "Banco", "Estabilização lateral com foco em adutores e core."),
+        new ExercicioBase("Adução de quadril na máquina", "Adutores", "Máquina", "Adução de quadril guiada com amplitude controlada."),
+        new ExercicioBase("Sled push", "Condicionamento", "Trenó", "Empurrar trenó com foco em potência/condicionamento e baixa fase excêntrica."),
+        new ExercicioBase("Battle rope", "Condicionamento", "Corda naval", "Ondulações de corda para condicionamento e resistência de membros superiores."),
+        new ExercicioBase("Box jump", "Potência", "Caixa", "Salto vertical para caixa com aterrissagem controlada."),
+        new ExercicioBase("Medicine ball slam", "Potência", "Medicine ball", "Arremesso explosivo ao solo com participação global."),
+        new ExercicioBase("Landmine press unilateral", "Ombros", "Landmine", "Pressão diagonal unilateral com trajetória amigável ao ombro."),
+        new ExercicioBase("Remada cavalinho", "Costas", "Landmine", "Puxada horizontal com barra ancorada e foco em dorsais/romboides."),
+        new ExercicioBase("Agachamento no hack", "Quadríceps", "Máquina", "Agachamento guiado com suporte de tronco e foco em membros inferiores."),
+        new ExercicioBase("Glute ham raise", "Posterior de coxa", "Máquina", "Extensão/flexão combinada para posteriores e glúteos com alta demanda."),
+        new ExercicioBase("Reverse fly na polia", "Ombros", "Polia", "Abdução horizontal em cabo com foco em deltoide posterior."),
+        new ExercicioBase("Rosca na polia baixa", "Bíceps", "Polia", "Flexão de cotovelo com tensão contínua em cabo."),
+        new ExercicioBase("Tríceps testa com barra W", "Tríceps", "Barra W", "Extensão de cotovelo deitado com foco em tríceps."),
+        new ExercicioBase("Good morning", "Posterior de coxa", "Barra", "Dobradiça de quadril com barra apoiada e tronco rigidamente controlado.")
+    };
+
 }

@@ -47,6 +47,14 @@ public sealed class ModelosPlanosTreinoController(
         string? ObservacoesOriginais,
         IReadOnlyCollection<TemplateSessaoTreino> Sessoes);
 
+    public sealed record UpsertModeloTreinoStandaloneRequest(
+        string Nome,
+        string? Descricao,
+        string? Objetivo,
+        string? Observacoes,
+        bool Ativo,
+        IReadOnlyCollection<TemplateSessaoTreino> Sessoes);
+
     [HttpGet("api/modelos-planos-treino")]
     public async Task<IActionResult> Listar(
         [FromQuery] bool incluirInativos = false,
@@ -74,6 +82,99 @@ public sealed class ModelosPlanosTreinoController(
             .ToListAsync(ct);
 
         return Ok(modelos.Select(x => ToResponse(x)).ToList());
+    }
+
+    [HttpGet("api/modelos-planos-treino/{id:guid}")]
+    public async Task<IActionResult> ObterModelo(Guid id, CancellationToken ct = default)
+    {
+        var modelo = await db.ModelosPlanosTreino.AsNoTracking()
+            .Include(x => x.Profissional)
+            .FirstOrDefaultAsync(x => x.Id == id && x.OrganizacaoId == currentUser.OrganizationId, ct);
+        if (modelo is null)
+            return NotFound(new { message = "Modelo de treino nao encontrado." });
+
+        return Ok(ToDetailedResponse(modelo));
+    }
+
+    [HttpPost("api/modelos-planos-treino")]
+    public async Task<IActionResult> CriarModeloStandalone(
+        UpsertModeloTreinoStandaloneRequest request,
+        CancellationToken ct = default)
+    {
+        var erro = await ValidarModeloStandalone(request, ct);
+        if (erro is not null)
+            return BadRequest(new { message = erro });
+
+        var profissional = await GetProfissionalAtual(ct);
+        if (profissional is null)
+            return Conflict(new { message = "Perfil profissional ativo nao encontrado." });
+
+        var conteudo = new TemplateTreinoConteudo(
+            Limpar(request.Objetivo),
+            Limpar(request.Observacoes),
+            request.Sessoes.OrderBy(x => x.Ordem).ToList());
+
+        var modelo = new ModeloPlanoTreino
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            ProfissionalId = profissional.Id,
+            Nome = request.Nome.Trim(),
+            Descricao = Limpar(request.Descricao),
+            ConteudoJson = JsonSerializer.Serialize(conteudo),
+            Ativo = request.Ativo
+        };
+
+        db.ModelosPlanosTreino.Add(modelo);
+        Auditar("CREATE_STANDALONE", modelo, null, new
+        {
+            modelo.Nome,
+            modelo.Descricao,
+            modelo.Ativo,
+            Sessoes = conteudo.Sessoes.Count,
+            Exercicios = conteudo.Sessoes.Sum(x => x.Itens.Count)
+        });
+        await db.SaveChangesAsync(ct);
+        return Ok(ToDetailedResponse(modelo, profissional.Nome));
+    }
+
+    [HttpPut("api/modelos-planos-treino/{id:guid}/conteudo")]
+    public async Task<IActionResult> AtualizarConteudoStandalone(
+        Guid id,
+        UpsertModeloTreinoStandaloneRequest request,
+        CancellationToken ct = default)
+    {
+        var modelo = await db.ModelosPlanosTreino
+            .Include(x => x.Profissional)
+            .FirstOrDefaultAsync(x => x.Id == id && x.OrganizacaoId == currentUser.OrganizationId, ct);
+        if (modelo is null)
+            return NotFound(new { message = "Modelo de treino nao encontrado." });
+
+        var erro = await ValidarModeloStandalone(request, ct);
+        if (erro is not null)
+            return BadRequest(new { message = erro });
+
+        var antes = new { modelo.Nome, modelo.Descricao, modelo.Ativo, modelo.ConteudoJson };
+        var conteudo = new TemplateTreinoConteudo(
+            Limpar(request.Objetivo),
+            Limpar(request.Observacoes),
+            request.Sessoes.OrderBy(x => x.Ordem).ToList());
+
+        modelo.Nome = request.Nome.Trim();
+        modelo.Descricao = Limpar(request.Descricao);
+        modelo.Ativo = request.Ativo;
+        modelo.ConteudoJson = JsonSerializer.Serialize(conteudo);
+        modelo.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("UPDATE_STANDALONE", modelo, antes, new
+        {
+            modelo.Nome,
+            modelo.Descricao,
+            modelo.Ativo,
+            Sessoes = conteudo.Sessoes.Count,
+            Exercicios = conteudo.Sessoes.Sum(x => x.Itens.Count)
+        });
+        await db.SaveChangesAsync(ct);
+        return Ok(ToDetailedResponse(modelo));
     }
 
     [HttpPost("api/treinos/{planoId:guid}/salvar-como-modelo")]
@@ -332,6 +433,54 @@ public sealed class ModelosPlanosTreinoController(
             sessoes = conteudo?.Sessoes.Count ?? 0,
             exercicios = conteudo?.Sessoes.Sum(s => s.Itens.Count) ?? 0,
             objetivo = conteudo?.ObjetivoOriginal,
+            x.CreatedAtUtc,
+            x.UpdatedAtUtc
+        };
+    }
+
+    private async Task<string?> ValidarModeloStandalone(
+        UpsertModeloTreinoStandaloneRequest request,
+        CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(request.Nome))
+            return "Nome do modelo e obrigatorio.";
+        if (request.Sessoes is null || request.Sessoes.Count == 0)
+            return "Adicione pelo menos uma sessao ao treino-modelo.";
+        if (request.Sessoes.Any(x => string.IsNullOrWhiteSpace(x.Nome)))
+            return "Todas as sessoes precisam de nome.";
+        if (!request.Sessoes.SelectMany(x => x.Itens).Any())
+            return "Adicione pelo menos um exercicio ao treino-modelo.";
+        if (request.Sessoes.SelectMany(x => x.Itens).Any(x => x.Series <= 0 || string.IsNullOrWhiteSpace(x.Repeticoes)))
+            return "Series e repeticoes devem estar preenchidas em todos os exercicios.";
+
+        var ids = request.Sessoes.SelectMany(x => x.Itens).Select(x => x.ExercicioId).Distinct().ToArray();
+        var validos = await db.Exercicios.AsNoTracking()
+            .Where(x => ids.Contains(x.Id) && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+        if (ids.Except(validos).Any())
+            return "O treino-modelo possui exercicios inativos ou indisponiveis no catalogo.";
+
+        return null;
+    }
+
+    private object ToDetailedResponse(ModeloPlanoTreino x, string? profissionalNome = null)
+    {
+        TemplateTreinoConteudo? conteudo = null;
+        try { conteudo = JsonSerializer.Deserialize<TemplateTreinoConteudo>(x.ConteudoJson); } catch { }
+
+        return new
+        {
+            x.Id,
+            x.Nome,
+            x.Descricao,
+            x.Ativo,
+            x.ProfissionalId,
+            profissionalNome = profissionalNome ?? x.Profissional?.Nome,
+            objetivo = conteudo?.ObjetivoOriginal,
+            conteudo,
+            sessoes = conteudo?.Sessoes.Count ?? 0,
+            exercicios = conteudo?.Sessoes.Sum(s => s.Itens.Count) ?? 0,
             x.CreatedAtUtc,
             x.UpdatedAtUtc
         };

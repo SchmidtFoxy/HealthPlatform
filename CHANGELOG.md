@@ -1,3 +1,13 @@
+# v0.18.6 — Exercise Library 2.0 + Standalone Workout Studio
+
+- Novo catálogo profissional de exercícios com busca, filtros, CRUD e ativação/inativação.
+- Endpoint de catálogo-base adiciona dezenas de exercícios sem duplicar nomes existentes.
+- Treinos-modelo agora podem nascer e ser editados sem qualquer paciente vinculado.
+- Builder standalone suporta múltiplas sessões, séries, repetições, carga, descanso, tempo e observações.
+- Professional Prescription Workspace reposicionado como AESYN Professional Workout Studio.
+- A atribuição ao paciente continua explícita e cria uma cópia independente do modelo.
+- Sem alteração de schema ou migration.
+
 
 ### v0.18.5-r3 — Smoke test current-version gate fix
 - Corrige gates históricos do `TESTAR.ps1` que ainda comparavam `VERSION.txt` com `0.18.4`.
@@ -1743,3 +1753,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Layout responsivo dedicado para desktop, tablet e mobile.
 - Schema permanece 38/38; nenhuma migration nova.
 - Smoke test ampliado para 1592 verificações.
+
+### v0.18.6-r1 — estabilização do smoke test
+- Corrige gate legado `[463/600]` do MVP Preview para validar `v0.18.6` em vez de `v0.18.5`.
+- Sem alteração funcional, de schema ou migration.
+
+### v0.18.6-r2 — estabilização do smoke test
+- Atualiza o gate histórico da Workout Library para reconhecer a identidade atual `AESYN • STANDALONE WORKOUT LIBRARY • v0.18.6`.
+- Preserva o marcador funcional `HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5'` e todos os comportamentos legados de atribuição.
+- Nenhuma alteração de schema, migration ou regra de negócio.
