@@ -1762,3 +1762,33 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Atualiza o gate histórico da Workout Library para reconhecer a identidade atual `AESYN • STANDALONE WORKOUT LIBRARY • v0.18.6`.
 - Preserva o marcador funcional `HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5'` e todos os comportamentos legados de atribuição.
 - Nenhuma alteração de schema, migration ou regra de negócio.
+
+
+## 0.18.7 — Workout Builder 3.0
+- Presets rápidos: hipertrofia, força, resistência e técnica/retorno.
+- Busca contextual de exercícios dentro de cada item do treino.
+- Filtros por grupo muscular e equipamento no builder.
+- Duplicação e reordenação de exercícios.
+- Duplicação e reordenação de sessões completas.
+- Resumo vivo de sessões, exercícios e séries prescritas.
+- Duplicação completa de treino-modelo sem paciente.
+- Workout Library atualizada para o fluxo 3.0.
+- Layout responsivo aprimorado.
+- Schema 38/38 preservado; nenhuma migration nova.
+
+
+### v0.18.7-r1 — estabilização do smoke test
+- Corrige o healthcheck inicial do `TESTAR.ps1` para esperar a versão corrente `0.18.7`.
+- Nenhuma alteração funcional, de schema ou migration.
+
+
+### v0.18.7-r2 — estabilização de versionamento do smoke test
+- Atualiza gates legados de `VERSION.txt`, health endpoint e MVP Preview para a versão corrente `0.18.7`.
+- Preserva marcadores históricos de nascimento das features da v0.18.6.
+- Nenhuma alteração funcional, de schema ou migration.
+
+
+### v0.18.7-r3 — estabilização do gate Standalone Workout Builder
+- Atualiza o gate legado que procurava `Sem paciente vinculado`.
+- O teste passa a validar a copy atual `O modelo permanece independente de paciente.` do Workout Builder 3.0.
+- Nenhuma alteração funcional, de schema ou migration.

@@ -11,3 +11,7 @@ Esta versão desloca o foco para a produção profissional de treinos: catálogo
 - sessões e prescrições completas dentro do modelo;
 - atribuição posterior continua criando cópia independente para o paciente;
 - sem migration nova; schema 38/38 preservado.
+
+
+## v0.18.7 — Workout Builder 3.0
+A fase profissional de treino passa a priorizar velocidade de produção e reuso. O builder standalone agora oferece presets de prescrição, busca contextual por exercício/grupo/equipamento, duplicação e ordenação de exercícios e sessões, resumo dinâmico de volume prescrito e duplicação completa de modelos. Continua sem exigir paciente vinculado e sem migration nova.

@@ -201,7 +201,7 @@ async function loadPrescriptionWorkspace(){
   ]);
   const list=patients?.itens||[];
   const activeExercises=exercises.filter(x=>x.ativo).length;
-  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.6</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button></div></section>
+  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.7</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button></div></section>
   <div class="workout-studio-kpis">
     <article><span>Exercícios ativos</span><strong>${activeExercises}</strong><small>${exercises.length-activeExercises} inativo(s)</small></article>
     <article><span>Treinos-modelo</span><strong>${workoutModels.length||0}</strong><small>independentes de paciente</small></article>
@@ -3905,26 +3905,318 @@ function openExerciseEditor(item=null,onDone=null){
   f.onsubmit=async ev=>{ev.preventDefault();const btn=ev.target.querySelector('button[type=submit]');hpSetActionPending(btn,true);try{const payload={nome:val(f,'nome'),grupoMuscular:val(f,'grupoMuscular'),equipamento:val(f,'equipamento'),descricao:val(f,'descricao'),videoUrl:val(f,'videoUrl')};await api(editing?`/api/exercicios/${item.id}`:'/api/exercicios',{method:editing?'PUT':'POST',body:JSON.stringify(payload)});toast(editing?'Exercício atualizado.':'Exercício adicionado ao catálogo.');(onDone||openExerciseLibrary2)()}catch(err){toast(err.message,true);hpSetActionPending(btn,false)}};
 }
 
+
+const HP_WORKOUT_BUILDER_3='v0.18.7';
+
 async function openStandaloneWorkoutBuilder(modelSummary=null){
   const box=$('#clinicalActionContent');
-  $('#clinicalActionModal').classList.add('workout-modal-open');$('#clinicalActionModal').classList.remove('hidden');
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">STANDALONE WORKOUT BUILDER • v0.18.6</span><h2>${modelSummary?'Editar treino-modelo':'Novo treino-modelo'}</h2><p>Sem paciente vinculado. Salve primeiro na sua biblioteca e atribua depois.</p></div><div class="empty">Carregando builder...</div>`;
+  $('#clinicalActionModal').classList.add('workout-modal-open');
+  $('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • WORKOUT BUILDER 3.0 • v0.18.7</span><h2>${modelSummary?'Editar treino-modelo':'Novo treino-modelo'}</h2><p>Builder profissional independente de paciente.</p></div><div class="empty">Carregando builder...</div>`;
+
   try{
     const exercises=await api('/api/exercicios');
     const detail=modelSummary?await api(`/api/modelos-planos-treino/${modelSummary.id}`):null;
     const data=detail?.conteudo||null;
-    box.innerHTML=`<div class="modal-heading standalone-builder-heading"><div><button type="button" class="back-link" id="standaloneBuilderBack">← Biblioteca</button><span class="eyebrow">AESYN • STANDALONE WORKOUT BUILDER • v0.18.6</span><h2>${modelSummary?'Editar treino-modelo':'Novo treino-modelo'}</h2><p>Monte sessões completas antes de existir qualquer paciente para este treino.</p></div><button class="secondary" id="standaloneOpenExercises">Catálogo de exercícios</button></div>
-    <form id="standaloneWorkoutForm" class="clinical-form standalone-workout-form"><div class="form-grid">${field('Nome do modelo','nome','text',`value="${esc(detail?.nome||modelSummary?.nome||'')}" placeholder="Ex.: Upper A • Hipertrofia" required`)}${field('Objetivo','objetivo','text',`value="${esc(data?.objetivoOriginal||detail?.objetivo||'')}" placeholder="Ex.: Hipertrofia"`)}${area('Descrição comercial/técnica','descricao','placeholder="Quando este treino é útil? Para qual perfil?"')}${area('Orientações gerais','observacoes','placeholder="Cues gerais, estratégia, progressão ou contexto."')}</div><div class="standalone-builder-toolbar"><div><strong>Sessões do treino</strong><small>Crie quantos dias/blocos precisar.</small></div><button type="button" class="secondary" id="standaloneAddSession">+ Sessão</button></div><div id="standaloneSessions" class="standalone-session-list"></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button type="submit" class="primary">${modelSummary?'Salvar treino-modelo':'Criar treino-modelo'}</button></div></form>`;
-    const f=$('#standaloneWorkoutForm');f.elements.descricao.value=detail?.descricao||modelSummary?.descricao||'';f.elements.observacoes.value=data?.observacoesOriginais||'';
-    $('#standaloneBuilderBack').onclick=()=>openWorkoutLibrary();$('[data-close-clinical-form]').onclick=closeClinicalAction;$('#standaloneOpenExercises').onclick=()=>openExerciseLibrary2();
+    const groups=[...new Set(exercises.map(x=>x.grupoMuscular).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    const equipment=[...new Set(exercises.map(x=>x.equipamento).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+
+    box.innerHTML=`<div class="modal-heading standalone-builder-heading builder3-heading">
+      <div>
+        <button type="button" class="back-link" id="standaloneBuilderBack">← Biblioteca</button>
+        <span class="eyebrow">AESYN • WORKOUT BUILDER 3.0 • v0.18.7</span>
+        <h2>${modelSummary?'Editar treino-modelo':'Novo treino-modelo'}</h2>
+        <p>Construa, organize e padronize sua cartela antes de vincular qualquer paciente.</p>
+      </div>
+      <div class="builder3-heading-actions">
+        <button class="secondary" type="button" id="standaloneOpenExercises">Catálogo de exercícios</button>
+        <button class="secondary" type="button" id="builder3DuplicateTemplate" ${modelSummary?'':'disabled'}>Duplicar modelo</button>
+      </div>
+    </div>
+
+    <form id="standaloneWorkoutForm" class="clinical-form standalone-workout-form builder3-form">
+      <section class="builder3-meta card">
+        <div class="form-grid">
+          ${field('Nome do modelo','nome','text',`value="${esc(detail?.nome||modelSummary?.nome||'')}" placeholder="Ex.: Upper A • Hipertrofia" required`)}
+          ${field('Objetivo','objetivo','text',`value="${esc(data?.objetivoOriginal||detail?.objetivo||'')}" placeholder="Ex.: Hipertrofia"`)}
+          ${area('Descrição comercial/técnica','descricao','placeholder="Quando este treino é útil? Para qual perfil?"')}
+          ${area('Orientações gerais','observacoes','placeholder="Cues gerais, estratégia, progressão ou contexto."')}
+        </div>
+      </section>
+
+      <section class="builder3-commandbar">
+        <div class="builder3-presets">
+          <span class="eyebrow">PRESCRIÇÃO RÁPIDA</span>
+          <button type="button" class="chip builder3-preset" data-preset="hipertrofia">Hipertrofia</button>
+          <button type="button" class="chip builder3-preset" data-preset="forca">Força</button>
+          <button type="button" class="chip builder3-preset" data-preset="resistencia">Resistência</button>
+          <button type="button" class="chip builder3-preset" data-preset="tecnica">Técnica / retorno</button>
+        </div>
+        <div class="builder3-defaults">
+          <label>Séries padrão<input id="builderDefaultSeries" type="number" min="1" value="3"></label>
+          <label>Reps padrão<input id="builderDefaultReps" value="10-12"></label>
+          <label>Descanso<input id="builderDefaultRest" type="number" min="0" value="60"></label>
+        </div>
+      </section>
+
+      <section class="builder3-summary card">
+        <div><small>Sessões</small><strong id="builder3SessionCount">0</strong></div>
+        <div><small>Exercícios</small><strong id="builder3ExerciseCount">0</strong></div>
+        <div><small>Séries prescritas</small><strong id="builder3SetCount">0</strong></div>
+        <div><small>Catálogo disponível</small><strong>${exercises.length}</strong></div>
+      </section>
+
+      <div class="standalone-builder-toolbar builder3-session-toolbar">
+        <div><strong>Sessões do treino</strong><small>Duplique, ordene e adapte dias inteiros sem reconstruir a ficha.</small></div>
+        <button type="button" class="primary" id="standaloneAddSession">+ Nova sessão</button>
+      </div>
+
+      <div id="standaloneSessions" class="standalone-session-list builder3-session-list"></div>
+
+      <div class="form-actions builder3-savebar">
+        <span id="builder3SaveHint">O modelo permanece independente de paciente.</span>
+        <button type="button" class="secondary" data-close-clinical-form>Cancelar</button>
+        <button type="submit" class="primary">${modelSummary?'Salvar Workout Builder':'Criar treino-modelo'}</button>
+      </div>
+    </form>`;
+
+    const f=$('#standaloneWorkoutForm');
+    f.elements.descricao.value=detail?.descricao||modelSummary?.descricao||'';
+    f.elements.observacoes.value=data?.observacoesOriginais||'';
+
+    $('#standaloneBuilderBack').onclick=()=>openWorkoutLibrary();
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    $('#standaloneOpenExercises').onclick=()=>openExerciseLibrary2();
+
     const host=$('#standaloneSessions');
-    const exerciseOptions=(selected='')=>`<option value="">Selecione...</option>${exercises.map(x=>`<option value="${x.id}" ${x.id===selected?'selected':''}>${esc(x.nome)}${x.grupoMuscular?' • '+esc(x.grupoMuscular):''}</option>`).join('')}`;
-    const readItem=row=>({exercicioId:row.querySelector('[name=exercicioId]').value,ordem:0,series:Number(row.querySelector('[name=series]').value||3),repeticoes:row.querySelector('[name=repeticoes]').value.trim()||'10-12',carga:row.querySelector('[name=carga]').value===''?null:Number(row.querySelector('[name=carga]').value),unidadeCarga:row.querySelector('[name=unidadeCarga]').value.trim()||null,descansoSegundos:row.querySelector('[name=descanso]').value===''?null:Number(row.querySelector('[name=descanso]').value),tempoSegundos:row.querySelector('[name=tempo]').value===''?null:Number(row.querySelector('[name=tempo]').value),observacoes:row.querySelector('[name=itemObs]').value.trim()||null});
-    function addExercise(session,item=null){const rows=session.querySelector('.standalone-exercises'),row=document.createElement('div');row.className='standalone-exercise-row';row.innerHTML=`<label class="span2">Exercício<select name="exercicioId" required>${exerciseOptions(item?.exercicioId||'')}</select></label><label>Séries<input name="series" type="number" min="1" value="${item?.series||3}"></label><label>Reps<input name="repeticoes" value="${esc(item?.repeticoes||'10-12')}"></label><label>Carga<input name="carga" type="number" min="0" step="0.01" value="${item?.carga??''}"></label><label>Unid.<input name="unidadeCarga" value="${esc(item?.unidadeCarga||'kg')}"></label><label>Descanso<input name="descanso" type="number" min="0" value="${item?.descansoSegundos??60}"></label><label>Tempo<input name="tempo" type="number" min="0" value="${item?.tempoSegundos??''}"></label><label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}"></label><div class="standalone-row-actions"><button type="button" class="ghost duplicate">Duplicar</button><button type="button" class="icon-btn remove">×</button></div>`;rows.appendChild(row);row.querySelector('.remove').onclick=()=>row.remove();row.querySelector('.duplicate').onclick=()=>addExercise(session,readItem(row))}
-    function addSession(dataSession=null){const section=document.createElement('section');section.className='card standalone-session';section.innerHTML=`<div class="standalone-session-head"><div class="standalone-session-fields"><label>Nome da sessão<input name="sessionName" value="${esc(dataSession?.nome||`Treino ${String.fromCharCode(65+host.children.length)}`)}" required></label><label>Dias / referência<input name="diasSemana" value="${esc(dataSession?.diasSemana||'')}" placeholder="Ex.: Seg/Qui"></label></div><button type="button" class="ghost remove-session">Remover sessão</button></div><label>Observações da sessão<input name="sessionObs" value="${esc(dataSession?.observacoes||'')}"></label><div class="standalone-exercises"></div><button type="button" class="secondary add-standalone-exercise">+ Exercício</button>`;host.appendChild(section);section.querySelector('.remove-session').onclick=()=>section.remove();section.querySelector('.add-standalone-exercise').onclick=()=>addExercise(section);(dataSession?.itens||[]).forEach(i=>addExercise(section,i));if(!(dataSession?.itens||[]).length)addExercise(section)}
-    $('#standaloneAddSession').onclick=()=>addSession();(data?.sessoes||[]).forEach(addSession);if(!(data?.sessoes||[]).length)addSession();
-    f.onsubmit=async ev=>{ev.preventDefault();const btn=ev.target.querySelector('button[type=submit]');hpSetActionPending(btn,true);try{const sessoes=[...host.querySelectorAll('.standalone-session')].map((session,si)=>({nome:session.querySelector('[name=sessionName]').value.trim(),diasSemana:session.querySelector('[name=diasSemana]').value.trim()||null,ordem:si+1,observacoes:session.querySelector('[name=sessionObs]').value.trim()||null,itens:[...session.querySelectorAll('.standalone-exercise-row')].map((row,ri)=>({...readItem(row),ordem:ri+1})).filter(x=>x.exercicioId)}));if(!sessoes.length||!sessoes.some(x=>x.itens.length))throw new Error('Adicione pelo menos um exercício ao treino-modelo.');const payload={nome:val(f,'nome'),descricao:val(f,'descricao'),objetivo:val(f,'objetivo'),observacoes:val(f,'observacoes'),ativo:true,sessoes};await api(modelSummary?`/api/modelos-planos-treino/${modelSummary.id}/conteudo`:'/api/modelos-planos-treino',{method:modelSummary?'PUT':'POST',body:JSON.stringify(payload)});toast(modelSummary?'Treino-modelo atualizado.':'Treino-modelo criado na biblioteca.');openWorkoutLibrary()}catch(err){toast(err.message,true);hpSetActionPending(btn,false)}};
-  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+    const defaultSeries=()=>Math.max(1,Number($('#builderDefaultSeries')?.value||3));
+    const defaultReps=()=>String($('#builderDefaultReps')?.value||'10-12').trim()||'10-12';
+    const defaultRest=()=>Math.max(0,Number($('#builderDefaultRest')?.value||60));
+
+    const exerciseLabel=x=>`${x.nome}${x.grupoMuscular?' • '+x.grupoMuscular:''}${x.equipamento?' • '+x.equipamento:''}`;
+    const exerciseOptions=(selected='',term='',group='',equip='')=>{
+      const t=String(term||'').trim().toLowerCase();
+      const filtered=exercises.filter(x=>{
+        const hay=`${x.nome||''} ${x.grupoMuscular||''} ${x.equipamento||''}`.toLowerCase();
+        return (!t||hay.includes(t))&&(!group||x.grupoMuscular===group)&&(!equip||x.equipamento===equip);
+      });
+      const selectedItem=exercises.find(x=>String(x.id)===String(selected));
+      const rows=[...filtered];
+      if(selectedItem&&!rows.some(x=>x.id===selectedItem.id))rows.unshift(selectedItem);
+      return `<option value="">Selecione...</option>${rows.map(x=>`<option value="${x.id}" ${String(x.id)===String(selected)?'selected':''}>${esc(exerciseLabel(x))}</option>`).join('')}`;
+    };
+    const groupOptions=()=>`<option value="">Todos os grupos</option>${groups.map(x=>`<option>${esc(x)}</option>`).join('')}`;
+    const equipmentOptions=()=>`<option value="">Todos equipamentos</option>${equipment.map(x=>`<option>${esc(x)}</option>`).join('')}`;
+
+    const readItem=row=>({
+      exercicioId:row.querySelector('[name=exercicioId]').value,
+      ordem:0,
+      series:Number(row.querySelector('[name=series]').value||defaultSeries()),
+      repeticoes:row.querySelector('[name=repeticoes]').value.trim()||defaultReps(),
+      carga:row.querySelector('[name=carga]').value===''?null:Number(row.querySelector('[name=carga]').value),
+      unidadeCarga:row.querySelector('[name=unidadeCarga]').value.trim()||null,
+      descansoSegundos:row.querySelector('[name=descanso]').value===''?null:Number(row.querySelector('[name=descanso]').value),
+      tempoSegundos:row.querySelector('[name=tempo]').value===''?null:Number(row.querySelector('[name=tempo]').value),
+      observacoes:row.querySelector('[name=itemObs]').value.trim()||null
+    });
+
+    const updateSummary=()=>{
+      const sessions=[...host.querySelectorAll('.standalone-session')];
+      const rows=[...host.querySelectorAll('.standalone-exercise-row')];
+      const sets=rows.reduce((n,row)=>n+Math.max(0,Number(row.querySelector('[name=series]')?.value||0)),0);
+      $('#builder3SessionCount').textContent=sessions.length;
+      $('#builder3ExerciseCount').textContent=rows.filter(r=>r.querySelector('[name=exercicioId]')?.value).length;
+      $('#builder3SetCount').textContent=sets;
+      sessions.forEach((s,i)=>{
+        const badge=s.querySelector('.builder3-session-index');
+        if(badge)badge.textContent=`Sessão ${i+1}`;
+      });
+    };
+
+    const moveNode=(node,dir)=>{
+      const parent=node.parentElement;
+      if(dir<0&&node.previousElementSibling)parent.insertBefore(node,node.previousElementSibling);
+      if(dir>0&&node.nextElementSibling)parent.insertBefore(node.nextElementSibling,node);
+      updateSummary();
+    };
+
+    function addExercise(session,item=null){
+      const rows=session.querySelector('.standalone-exercises');
+      const row=document.createElement('div');
+      row.className='standalone-exercise-row builder3-exercise-row';
+      row.innerHTML=`
+        <div class="builder3-exercise-picker span2">
+          <div class="builder3-exercise-searchbar">
+            <input class="builder3-exercise-search" placeholder="Buscar exercício no catálogo">
+            <select class="builder3-group-filter">${groupOptions()}</select>
+            <select class="builder3-equipment-filter">${equipmentOptions()}</select>
+          </div>
+          <label>Exercício<select name="exercicioId" required>${exerciseOptions(item?.exercicioId||'')}</select></label>
+        </div>
+        <label>Séries<input name="series" type="number" min="1" value="${item?.series??defaultSeries()}"></label>
+        <label>Reps<input name="repeticoes" value="${esc(item?.repeticoes||defaultReps())}"></label>
+        <label>Carga<input name="carga" type="number" min="0" step="0.01" value="${item?.carga??''}"></label>
+        <label>Unid.<input name="unidadeCarga" value="${esc(item?.unidadeCarga||'kg')}"></label>
+        <label>Descanso<input name="descanso" type="number" min="0" value="${item?.descansoSegundos??defaultRest()}"></label>
+        <label>Tempo<input name="tempo" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
+        <label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}" placeholder="Cues, RIR/RPE, técnica, progressão..."></label>
+        <div class="standalone-row-actions builder3-row-actions">
+          <button type="button" class="icon-btn row-up" title="Subir">↑</button>
+          <button type="button" class="icon-btn row-down" title="Descer">↓</button>
+          <button type="button" class="ghost duplicate">Duplicar</button>
+          <button type="button" class="icon-btn remove" title="Remover">×</button>
+        </div>`;
+      rows.appendChild(row);
+
+      const select=row.querySelector('[name=exercicioId]');
+      const refreshOptions=()=>{
+        const selected=select.value;
+        select.innerHTML=exerciseOptions(
+          selected,
+          row.querySelector('.builder3-exercise-search').value,
+          row.querySelector('.builder3-group-filter').value,
+          row.querySelector('.builder3-equipment-filter').value
+        );
+        select.value=selected;
+      };
+      row.querySelector('.builder3-exercise-search').oninput=refreshOptions;
+      row.querySelector('.builder3-group-filter').onchange=refreshOptions;
+      row.querySelector('.builder3-equipment-filter').onchange=refreshOptions;
+      row.querySelector('.remove').onclick=()=>{row.remove();updateSummary()};
+      row.querySelector('.duplicate').onclick=()=>{addExercise(session,readItem(row));updateSummary()};
+      row.querySelector('.row-up').onclick=()=>moveNode(row,-1);
+      row.querySelector('.row-down').onclick=()=>moveNode(row,1);
+      row.querySelectorAll('input,select').forEach(x=>x.addEventListener('change',updateSummary));
+      updateSummary();
+    }
+
+    function sessionDataFromDom(section){
+      return {
+        nome:section.querySelector('[name=sessionName]').value.trim(),
+        diasSemana:section.querySelector('[name=diasSemana]').value.trim()||null,
+        ordem:0,
+        observacoes:section.querySelector('[name=sessionObs]').value.trim()||null,
+        itens:[...section.querySelectorAll('.standalone-exercise-row')].map(readItem)
+      };
+    }
+
+    function addSession(dataSession=null){
+      const section=document.createElement('section');
+      section.className='card standalone-session builder3-session';
+      section.innerHTML=`
+        <div class="standalone-session-head builder3-session-head">
+          <div class="builder3-session-title">
+            <span class="eyebrow builder3-session-index">Sessão ${host.children.length+1}</span>
+            <div class="standalone-session-fields">
+              <label>Nome da sessão<input name="sessionName" value="${esc(dataSession?.nome||`Treino ${String.fromCharCode(65+host.children.length)}`)}" required></label>
+              <label>Dias / referência<input name="diasSemana" value="${esc(dataSession?.diasSemana||'')}" placeholder="Ex.: Seg/Qui"></label>
+            </div>
+          </div>
+          <div class="builder3-session-actions">
+            <button type="button" class="icon-btn session-up" title="Subir sessão">↑</button>
+            <button type="button" class="icon-btn session-down" title="Descer sessão">↓</button>
+            <button type="button" class="ghost duplicate-session">Duplicar sessão</button>
+            <button type="button" class="ghost remove-session">Remover sessão</button>
+          </div>
+        </div>
+        <label>Observações da sessão<input name="sessionObs" value="${esc(dataSession?.observacoes||'')}" placeholder="Objetivo do dia, aquecimento, intensidade, cuidados..."></label>
+        <div class="standalone-exercises"></div>
+        <button type="button" class="secondary add-standalone-exercise">+ Exercício</button>`;
+      host.appendChild(section);
+
+      section.querySelector('.remove-session').onclick=()=>{section.remove();updateSummary()};
+      section.querySelector('.add-standalone-exercise').onclick=()=>addExercise(section);
+      section.querySelector('.duplicate-session').onclick=()=>{
+        const clone=sessionDataFromDom(section);
+        clone.nome=`${clone.nome} • cópia`;
+        addSession(clone);
+      };
+      section.querySelector('.session-up').onclick=()=>moveNode(section,-1);
+      section.querySelector('.session-down').onclick=()=>moveNode(section,1);
+      (dataSession?.itens||[]).forEach(i=>addExercise(section,i));
+      if(!(dataSession?.itens||[]).length)addExercise(section);
+      updateSummary();
+    }
+
+    const presets={
+      hipertrofia:{series:3,reps:'8-12',rest:75},
+      forca:{series:5,reps:'3-5',rest:180},
+      resistencia:{series:3,reps:'15-20',rest:45},
+      tecnica:{series:2,reps:'8-10',rest:90}
+    };
+    $$('.builder3-preset').forEach(btn=>btn.onclick=()=>{
+      const p=presets[btn.dataset.preset];
+      $('#builderDefaultSeries').value=p.series;
+      $('#builderDefaultReps').value=p.reps;
+      $('#builderDefaultRest').value=p.rest;
+      toast(`Preset ${btn.textContent.trim()} aplicado aos próximos exercícios.`);
+    });
+
+    $('#standaloneAddSession').onclick=()=>addSession();
+    (data?.sessoes||[]).forEach(addSession);
+    if(!(data?.sessoes||[]).length)addSession();
+
+    if(modelSummary){
+      $('#builder3DuplicateTemplate').onclick=async()=>{
+        try{
+          const d=await api(`/api/modelos-planos-treino/${modelSummary.id}`);
+          const content=d.conteudo||{};
+          const payload={
+            nome:`${d.nome} • cópia`,
+            descricao:d.descricao||null,
+            objetivo:content.objetivoOriginal||d.objetivo||null,
+            observacoes:content.observacoesOriginais||null,
+            ativo:true,
+            sessoes:content.sessoes||[]
+          };
+          const created=await api('/api/modelos-planos-treino',{method:'POST',body:JSON.stringify(payload)});
+          toast('Cópia criada na biblioteca.');
+          openStandaloneWorkoutBuilder(created);
+        }catch(err){toast(err.message,true)}
+      };
+    }
+
+    f.onsubmit=async ev=>{
+      ev.preventDefault();
+      const btn=ev.target.querySelector('button[type=submit]');
+      hpSetActionPending(btn,true);
+      try{
+        const sessoes=[...host.querySelectorAll('.standalone-session')].map((session,si)=>({
+          nome:session.querySelector('[name=sessionName]').value.trim(),
+          diasSemana:session.querySelector('[name=diasSemana]').value.trim()||null,
+          ordem:si+1,
+          observacoes:session.querySelector('[name=sessionObs]').value.trim()||null,
+          itens:[...session.querySelectorAll('.standalone-exercise-row')]
+            .map((row,ri)=>({...readItem(row),ordem:ri+1}))
+            .filter(x=>x.exercicioId)
+        }));
+        if(!sessoes.length||!sessoes.some(x=>x.itens.length))
+          throw new Error('Adicione pelo menos um exercício ao treino-modelo.');
+
+        const payload={
+          nome:val(f,'nome'),
+          descricao:val(f,'descricao'),
+          objetivo:val(f,'objetivo'),
+          observacoes:val(f,'observacoes'),
+          ativo:true,
+          sessoes
+        };
+        await api(
+          modelSummary?`/api/modelos-planos-treino/${modelSummary.id}/conteudo`:'/api/modelos-planos-treino',
+          {method:modelSummary?'PUT':'POST',body:JSON.stringify(payload)}
+        );
+        toast(modelSummary?'Treino-modelo atualizado.':'Treino-modelo criado na biblioteca.');
+        openWorkoutLibrary();
+      }catch(err){
+        toast(err.message,true);
+        hpSetActionPending(btn,false);
+      }
+    };
+
+    updateSummary();
+  }catch(err){
+    box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`;
+  }
 }
 
 // ===== v0.17.5 — Workout Library & Assignment =====
@@ -3933,15 +4225,15 @@ async function openWorkoutLibrary(patient=null){
   $('#clinicalActionModal').classList.add('workout-modal-open');
   $('#clinicalActionModal').classList.remove('hidden');
   const patientLabel=patient?`<p>Paciente: <b>${esc(patient.nome)}</b> • a atribuição cria uma cópia independente.</p>`:'<p>Gerencie modelos reutilizáveis e atribua cópias independentes aos pacientes.</p>';
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.6</span><h2>Biblioteca de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.7</span><h2>Biblioteca de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
   try{
     const modelos=await api('/api/modelos-planos-treino?incluirInativos=true');
     const active=modelos.filter(x=>x.ativo).length;
-    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.6</span><h2>Biblioteca de treinos</h2>${patientLabel}<div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div></div>
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.7</span><h2>Biblioteca de treinos</h2>${patientLabel}<div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div></div>
       <div class="workout-library-summary"><span><small>Modelos</small><b>${modelos.length}</b></span><span><small>Ativos</small><b>${active}</b></span><span><small>Inativos</small><b>${modelos.length-active}</b></span></div>
       <div class="workout-library-toolbar"><input id="workoutLibrarySearch" class="search-input" placeholder="Buscar por nome, objetivo ou descrição"><select id="workoutLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
       <div id="workoutLibraryList" class="workout-library-grid"></div>
-      <div class="workout-library-guidance"><b>Como funciona</b><span>O modelo permanece intacto. Ao atribuir, o AESYN cria uma nova ficha para o paciente, que pode ser adaptada livremente no Workout Builder 2.0.</span></div>
+      <div class="workout-library-guidance"><b>Como funciona</b><span>O modelo permanece intacto. Ao atribuir, o AESYN cria uma nova ficha para o paciente, que pode ser adaptada livremente no Workout Builder 3.0.</span></div>
       <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
     $('[data-close-clinical-form]').onclick=closeClinicalAction;
     const render=()=>{
@@ -3955,7 +4247,7 @@ async function openWorkoutLibrary(patient=null){
       $('#workoutLibraryList').innerHTML=filtered.length?filtered.map(m=>`<article class="workout-library-card ${m.ativo?'':'is-inactive'}" data-library-model="${m.id}">
         <div class="workout-library-card-head"><div><span class="eyebrow">${m.sessoes} sessão(ões) • ${m.exercicios} exercício(s)</span><h4>${esc(m.nome)}</h4></div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
         <p>${esc(m.descricao||m.objetivo||'Modelo sem descrição.')}</p><small>${esc(m.profissionalNome||'')} ${m.objetivo?'• '+esc(m.objetivo):''}</small>
-        <div class="workout-library-actions">${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary library-builder">Editar treino</button><button class="ghost library-edit">Detalhes</button><button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button></div>
+        <div class="workout-library-actions">${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary library-builder">Editar treino</button><button class="ghost library-duplicate">Duplicar</button><button class="ghost library-edit">Detalhes</button><button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button></div>
       </article>`).join(''):`<div class="empty">Nenhum modelo encontrado com estes filtros.</div>`;
       $$('.library-assign').forEach(btn=>btn.onclick=()=>{
         const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
@@ -3963,6 +4255,16 @@ async function openWorkoutLibrary(patient=null){
         openWorkoutLibraryPatientPicker(m);
       });
       $$('.library-builder').forEach(btn=>btn.onclick=()=>openStandaloneWorkoutBuilder(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel)));
+      $$('.library-duplicate').forEach(btn=>btn.onclick=async()=>{
+        const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
+        try{
+          const d=await api(`/api/modelos-planos-treino/${m.id}`);
+          const c=d.conteudo||{};
+          await api('/api/modelos-planos-treino',{method:'POST',body:JSON.stringify({nome:`${d.nome} • cópia`,descricao:d.descricao||null,objetivo:c.objetivoOriginal||d.objetivo||null,observacoes:c.observacoesOriginais||null,ativo:true,sessoes:c.sessoes||[]})});
+          toast('Treino-modelo duplicado.');
+          openWorkoutLibrary(patient);
+        }catch(err){toast(err.message,true)}
+      });
       $$('.library-edit').forEach(btn=>btn.onclick=()=>openWorkoutLibraryEdit(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel),patient));
       $$('.library-toggle').forEach(btn=>btn.onclick=async()=>{
         const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
@@ -7278,7 +7580,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.6';
+const HP_MVP_VERSION='0.18.7';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
