@@ -1678,6 +1678,16 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Mantém `VERSION.txt` em `0.18.0`; não altera schema nem comportamento funcional.
 
 
+## v0.18.2 — Patient Performance Profile
+- Reestruturação do prontuário profissional como Performance Profile AESYN.
+- Snapshot integrado de prontidão, corpo, treino, nutrição, check-ins, exames e hidratação.
+- Navegação contextual por dimensão de acompanhamento.
+- Ações de prescrição e registro priorizadas; ações secundárias agrupadas.
+- Nova faixa de contexto integrado na visão geral.
+- Layout responsivo dedicado.
+- Schema preservado em 38/38; nenhuma migration adicionada.
+
+
 ## v0.18.1 — Professional Performance Dashboard
 
 - **r1:** corrige o gate histórico `[468/600]` do `TESTAR.ps1` para validar o novo Professional Performance Dashboard AESYN em vez do hero legado do MVP Preview.
