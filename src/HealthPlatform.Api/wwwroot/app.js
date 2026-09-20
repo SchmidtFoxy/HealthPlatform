@@ -4220,43 +4220,134 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
 }
 
 // ===== v0.17.5 — Workout Library & Assignment =====
+const HP_WORKOUT_TEMPLATE_LIBRARY_2='v0.18.8';
+
+function aesynWorkoutFavoriteIds(){
+  try{return new Set(JSON.parse(localStorage.getItem('aesyn.workoutTemplateFavorites')||'[]'))}
+  catch{return new Set()}
+}
+function aesynSaveWorkoutFavoriteIds(ids){
+  localStorage.setItem('aesyn.workoutTemplateFavorites',JSON.stringify([...ids]));
+}
+function aesynToggleWorkoutFavorite(id){
+  const ids=aesynWorkoutFavoriteIds();
+  if(ids.has(id))ids.delete(id);else ids.add(id);
+  aesynSaveWorkoutFavoriteIds(ids);
+  return ids.has(id);
+}
+
 async function openWorkoutLibrary(patient=null){
   const box=$('#clinicalActionContent');
   $('#clinicalActionModal').classList.add('workout-modal-open');
   $('#clinicalActionModal').classList.remove('hidden');
-  const patientLabel=patient?`<p>Paciente: <b>${esc(patient.nome)}</b> • a atribuição cria uma cópia independente.</p>`:'<p>Gerencie modelos reutilizáveis e atribua cópias independentes aos pacientes.</p>';
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.7</span><h2>Biblioteca de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
+  const patientLabel=patient?`<p>Paciente: <b>${esc(patient.nome)}</b> • a atribuição cria uma cópia independente.</p>`:'<p>Monte sua cartela antes dos pacientes chegarem e reutilize modelos sem reconstruir prescrições.</p>';
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • WORKOUT TEMPLATE LIBRARY 2.0 • v0.18.8</span><h2>Catálogo profissional de treinos</h2>${patientLabel}</div><div class="empty">Carregando biblioteca...</div>`;
   try{
     const modelos=await api('/api/modelos-planos-treino?incluirInativos=true');
     const active=modelos.filter(x=>x.ativo).length;
-    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">AESYN • STANDALONE WORKOUT LIBRARY • v0.18.7</span><h2>Biblioteca de treinos</h2>${patientLabel}<div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div></div>
-      <div class="workout-library-summary"><span><small>Modelos</small><b>${modelos.length}</b></span><span><small>Ativos</small><b>${active}</b></span><span><small>Inativos</small><b>${modelos.length-active}</b></span></div>
-      <div class="workout-library-toolbar"><input id="workoutLibrarySearch" class="search-input" placeholder="Buscar por nome, objetivo ou descrição"><select id="workoutLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
-      <div id="workoutLibraryList" class="workout-library-grid"></div>
-      <div class="workout-library-guidance"><b>Como funciona</b><span>O modelo permanece intacto. Ao atribuir, o AESYN cria uma nova ficha para o paciente, que pode ser adaptada livremente no Workout Builder 3.0.</span></div>
+    const objectives=[...new Set(modelos.map(x=>String(x.objetivo||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    let favorites=aesynWorkoutFavoriteIds();
+
+    box.innerHTML=`<div class="modal-heading workout-library2-heading">
+        <div><span class="eyebrow">AESYN • WORKOUT TEMPLATE LIBRARY 2.0 • v0.18.8</span><h2>Catálogo profissional de treinos</h2>${patientLabel}</div>
+        <div class="workout-library-top-actions"><button class="primary" id="newStandaloneWorkoutTemplate">+ Novo treino-modelo</button><button class="secondary" id="openExerciseLibraryFromWorkout">Exercícios</button></div>
+      </div>
+      <div class="workout-library-summary workout-library2-summary">
+        <span><small>Modelos</small><b>${modelos.length}</b></span>
+        <span><small>Ativos</small><b>${active}</b></span>
+        <span><small>Objetivos</small><b>${objectives.length}</b></span>
+        <span><small>Favoritos</small><b id="workoutFavoriteCount">${modelos.filter(x=>favorites.has(String(x.id))).length}</b></span>
+      </div>
+      <div class="workout-library2-objectives" id="workoutLibraryObjectiveChips">
+        <button type="button" class="chip is-active" data-workout-objective="">Todos</button>
+        ${objectives.slice(0,10).map(o=>`<button type="button" class="chip" data-workout-objective="${esc(o)}">${esc(o)}</button>`).join('')}
+      </div>
+      <div class="workout-library-toolbar workout-library2-toolbar">
+        <input id="workoutLibrarySearch" class="search-input" placeholder="Buscar por nome, objetivo ou descrição">
+        <select id="workoutLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select>
+        <select id="workoutLibraryObjective"><option value="">Todos os objetivos</option>${objectives.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select>
+        <select id="workoutLibrarySort"><option value="nome">Nome A–Z</option><option value="favoritos">Favoritos primeiro</option><option value="sessoes">Mais sessões</option><option value="exercicios">Mais exercícios</option><option value="recentes">Mais recentes</option></select>
+      </div>
+      <div class="workout-library2-resultbar"><span id="workoutLibraryResultCount"></span><label><input type="checkbox" id="workoutLibraryFavoritesOnly"> Só favoritos</label></div>
+      <div id="workoutLibraryList" class="workout-library-grid workout-library2-grid"></div>
+      <div class="workout-library-guidance"><b>Biblioteca primeiro, paciente depois</b><span>Crie e refine sua cartela profissional sem paciente vinculado. Quando precisar, atribua uma cópia independente e personalize apenas o que aquele paciente necessita.</span></div>
       <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+
     $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    $('#newStandaloneWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
+    $('#openExerciseLibraryFromWorkout').onclick=()=>openExerciseLibrary2();
+
     const render=()=>{
       const term=String($('#workoutLibrarySearch')?.value||'').trim().toLowerCase();
       const status=$('#workoutLibraryStatus')?.value||'ativos';
-      const filtered=modelos.filter(m=>{
+      const objective=$('#workoutLibraryObjective')?.value||'';
+      const sort=$('#workoutLibrarySort')?.value||'nome';
+      const favoritesOnly=$('#workoutLibraryFavoritesOnly')?.checked||false;
+
+      let filtered=modelos.filter(m=>{
         const matchStatus=status==='todos'||(status==='ativos'&&m.ativo)||(status==='inativos'&&!m.ativo);
+        const matchObjective=!objective||String(m.objetivo||'')===objective;
+        const matchFavorite=!favoritesOnly||favorites.has(String(m.id));
         const hay=`${m.nome||''} ${m.descricao||''} ${m.objetivo||''}`.toLowerCase();
-        return matchStatus&&(!term||hay.includes(term));
+        return matchStatus&&matchObjective&&matchFavorite&&(!term||hay.includes(term));
       });
-      $('#workoutLibraryList').innerHTML=filtered.length?filtered.map(m=>`<article class="workout-library-card ${m.ativo?'':'is-inactive'}" data-library-model="${m.id}">
-        <div class="workout-library-card-head"><div><span class="eyebrow">${m.sessoes} sessão(ões) • ${m.exercicios} exercício(s)</span><h4>${esc(m.nome)}</h4></div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
-        <p>${esc(m.descricao||m.objetivo||'Modelo sem descrição.')}</p><small>${esc(m.profissionalNome||'')} ${m.objetivo?'• '+esc(m.objetivo):''}</small>
-        <div class="workout-library-actions">${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary library-builder">Editar treino</button><button class="ghost library-duplicate">Duplicar</button><button class="ghost library-edit">Detalhes</button><button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button></div>
-      </article>`).join(''):`<div class="empty">Nenhum modelo encontrado com estes filtros.</div>`;
+
+      const byName=(a,b)=>String(a.nome||'').localeCompare(String(b.nome||''));
+      if(sort==='favoritos')filtered.sort((a,b)=>(favorites.has(String(b.id))?1:0)-(favorites.has(String(a.id))?1:0)||byName(a,b));
+      else if(sort==='sessoes')filtered.sort((a,b)=>(b.sessoes||0)-(a.sessoes||0)||byName(a,b));
+      else if(sort==='exercicios')filtered.sort((a,b)=>(b.exercicios||0)-(a.exercicios||0)||byName(a,b));
+      else if(sort==='recentes')filtered.sort((a,b)=>new Date(b.updatedAtUtc||b.createdAtUtc||0)-new Date(a.updatedAtUtc||a.createdAtUtc||0));
+      else filtered.sort(byName);
+
+      $('#workoutLibraryResultCount').textContent=`${filtered.length} modelo(s) visível(is)`;
+      $('#workoutFavoriteCount').textContent=modelos.filter(x=>favorites.has(String(x.id))).length;
+
+      $('#workoutLibraryList').innerHTML=filtered.length?filtered.map(m=>{
+        const fav=favorites.has(String(m.id));
+        return `<article class="workout-library-card workout-library2-card ${m.ativo?'':'is-inactive'} ${fav?'is-favorite':''}" data-library-model="${m.id}">
+          <div class="workout-library-card-head">
+            <div>
+              <span class="eyebrow">${m.sessoes} sessão(ões) • ${m.exercicios} exercício(s)</span>
+              <h4>${esc(m.nome)}</h4>
+            </div>
+            <button type="button" class="workout-favorite-toggle ${fav?'is-active':''}" title="${fav?'Remover dos favoritos':'Adicionar aos favoritos'}" aria-label="Favoritar modelo">★</button>
+          </div>
+          <div class="workout-library2-tags">
+            ${m.objetivo?`<span class="pill">${esc(m.objetivo)}</span>`:''}
+            <span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span>
+          </div>
+          <p>${esc(m.descricao||'Modelo sem descrição.')}</p>
+          <small>${esc(m.profissionalNome||'Biblioteca profissional')}</small>
+          <div class="workout-library-actions">
+            ${m.ativo?`<button class="primary library-assign">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}
+            <button class="secondary library-preview">Visualizar</button>
+            <button class="secondary library-builder">Editar treino</button>
+            <button class="ghost library-duplicate">Duplicar</button>
+            <button class="ghost library-edit">Detalhes</button>
+            <button class="ghost library-toggle">${m.ativo?'Desativar':'Reativar'}</button>
+          </div>
+        </article>`}).join(''):`<div class="empty">Nenhum modelo encontrado com estes filtros.</div>`;
+
+      $$('.workout-favorite-toggle').forEach(btn=>btn.onclick=e=>{
+        e.stopPropagation();
+        const id=String(btn.closest('[data-library-model]').dataset.libraryModel);
+        aesynToggleWorkoutFavorite(id);
+        favorites=aesynWorkoutFavoriteIds();
+        render();
+      });
+
+      $$('.library-preview').forEach(btn=>btn.onclick=()=>{
+        const m=modelos.find(x=>String(x.id)===String(btn.closest('[data-library-model]').dataset.libraryModel));
+        openWorkoutTemplateQuickPreview(m,patient);
+      });
       $$('.library-assign').forEach(btn=>btn.onclick=()=>{
-        const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
+        const m=modelos.find(x=>String(x.id)===String(btn.closest('[data-library-model]').dataset.libraryModel));
         if(patient){openWorkoutTemplateCreateForm(patient,m);return}
         openWorkoutLibraryPatientPicker(m);
       });
-      $$('.library-builder').forEach(btn=>btn.onclick=()=>openStandaloneWorkoutBuilder(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel)));
+      $$('.library-builder').forEach(btn=>btn.onclick=()=>openStandaloneWorkoutBuilder(modelos.find(x=>String(x.id)===String(btn.closest('[data-library-model]').dataset.libraryModel))));
       $$('.library-duplicate').forEach(btn=>btn.onclick=async()=>{
-        const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
+        const m=modelos.find(x=>String(x.id)===String(btn.closest('[data-library-model]').dataset.libraryModel));
         try{
           const d=await api(`/api/modelos-planos-treino/${m.id}`);
           const c=d.conteudo||{};
@@ -4265,9 +4356,9 @@ async function openWorkoutLibrary(patient=null){
           openWorkoutLibrary(patient);
         }catch(err){toast(err.message,true)}
       });
-      $$('.library-edit').forEach(btn=>btn.onclick=()=>openWorkoutLibraryEdit(modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel),patient));
+      $$('.library-edit').forEach(btn=>btn.onclick=()=>openWorkoutLibraryEdit(modelos.find(x=>String(x.id)===String(btn.closest('[data-library-model]').dataset.libraryModel)),patient));
       $$('.library-toggle').forEach(btn=>btn.onclick=async()=>{
-        const m=modelos.find(x=>x.id===btn.closest('[data-library-model]').dataset.libraryModel);
+        const m=modelos.find(x=>String(x.id)===String(btn.closest('[data-library-model]').dataset.libraryModel));
         try{
           await api(`/api/modelos-planos-treino/${m.id}`,{method:'PUT',body:JSON.stringify({nome:m.nome,descricao:m.descricao||null,ativo:!m.ativo})});
           toast(m.ativo?'Modelo desativado.':'Modelo reativado.');
@@ -4275,10 +4366,73 @@ async function openWorkoutLibrary(patient=null){
         }catch(err){toast(err.message,true)}
       });
     };
+
     $('#workoutLibrarySearch').oninput=render;
     $('#workoutLibraryStatus').onchange=render;
+    $('#workoutLibraryObjective').onchange=render;
+    $('#workoutLibrarySort').onchange=render;
+    $('#workoutLibraryFavoritesOnly').onchange=render;
+    $$('[data-workout-objective]').forEach(btn=>btn.onclick=()=>{
+      $$('[data-workout-objective]').forEach(x=>x.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      $('#workoutLibraryObjective').value=btn.dataset.workoutObjective||'';
+      render();
+    });
     render();
   }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+async function openWorkoutTemplateQuickPreview(modelo,patient=null){
+  const box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="backFromWorkoutPreview">← Biblioteca</button><span class="eyebrow">AESYN • QUICK TEMPLATE PREVIEW</span><h2>${esc(modelo.nome)}</h2><p>Carregando composição do treino...</p></div>`;
+  $('#backFromWorkoutPreview').onclick=()=>openWorkoutLibrary(patient);
+  try{
+    const [detail,exercises]=await Promise.all([
+      api(`/api/modelos-planos-treino/${modelo.id}`),
+      api('/api/exercicios')
+    ]);
+    const exerciseMap=new Map(exercises.map(x=>[String(x.id),x]));
+    const sessoes=detail.conteudo?.sessoes||[];
+    const totalSets=sessoes.flatMap(s=>s.itens||[]).reduce((sum,i)=>sum+Number(i.series||0),0);
+
+    box.innerHTML=`<div class="modal-heading workout-preview-heading">
+      <div><button type="button" class="back-link" id="backFromWorkoutPreview">← Biblioteca</button><span class="eyebrow">AESYN • QUICK TEMPLATE PREVIEW • v0.18.8</span><h2>${esc(detail.nome)}</h2><p>${esc(detail.descricao||detail.objetivo||'Modelo profissional de treino.')}</p></div>
+      <div class="workout-preview-actions">${detail.ativo?`<button class="primary" id="previewAssignWorkout">${patient?'Atribuir ao paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary" id="previewEditWorkout">Abrir no Builder 3.0</button></div>
+    </div>
+    <div class="workout-preview-summary">
+      <span><small>Sessões</small><b>${sessoes.length}</b></span>
+      <span><small>Exercícios</small><b>${sessoes.reduce((n,s)=>n+(s.itens||[]).length,0)}</b></span>
+      <span><small>Séries prescritas</small><b>${totalSets}</b></span>
+      <span><small>Objetivo</small><b>${esc(detail.objetivo||'—')}</b></span>
+    </div>
+    <div class="workout-preview-sessions">
+      ${sessoes.map((s,si)=>`<section class="card workout-preview-session">
+        <div class="workout-preview-session-head"><div><span class="eyebrow">SESSÃO ${si+1}</span><h4>${esc(s.nome)}</h4></div>${s.diasSemana?`<span class="pill">${esc(s.diasSemana)}</span>`:''}</div>
+        ${s.observacoes?`<p>${esc(s.observacoes)}</p>`:''}
+        <div class="workout-preview-exercises">
+          ${(s.itens||[]).map((i,ii)=>{
+            const ex=exerciseMap.get(String(i.exercicioId));
+            return `<div class="workout-preview-exercise">
+              <span class="workout-preview-order">${ii+1}</span>
+              <div><b>${esc(ex?.nome||'Exercício')}</b><small>${esc(ex?.grupoMuscular||'')} ${ex?.equipamento?'• '+esc(ex.equipamento):''}</small></div>
+              <strong>${i.series} × ${esc(i.repeticoes||'—')}</strong>
+              <small>${i.descansoSegundos!=null?`${i.descansoSegundos}s descanso`:''}${i.carga!=null?` • ${i.carga}${esc(i.unidadeCarga||'kg')}`:''}</small>
+            </div>`}).join('')}
+        </div>
+      </section>`).join('')}
+    </div>
+    <div class="workout-library-guidance"><b>Modelo mestre preservado</b><span>A visualização é somente leitura. Editar abre o Builder 3.0; atribuir cria uma cópia independente para o paciente.</span></div>`;
+
+    $('#backFromWorkoutPreview').onclick=()=>openWorkoutLibrary(patient);
+    $('#previewEditWorkout').onclick=()=>openStandaloneWorkoutBuilder(modelo);
+    if($('#previewAssignWorkout'))$('#previewAssignWorkout').onclick=()=>{
+      if(patient){openWorkoutTemplateCreateForm(patient,modelo);return}
+      openWorkoutLibraryPatientPicker(modelo);
+    };
+  }catch(err){
+    box.innerHTML=`<div class="card empty">${esc(err.message)}</div><div class="form-actions"><button type="button" class="secondary" id="backFromWorkoutPreview">Voltar</button></div>`;
+    $('#backFromWorkoutPreview').onclick=()=>openWorkoutLibrary(patient);
+  }
 }
 
 async function openWorkoutLibraryPatientPicker(modelo){
@@ -7580,7 +7734,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.7';
+const HP_MVP_VERSION='0.18.8';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

@@ -1792,3 +1792,26 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Atualiza o gate legado que procurava `Sem paciente vinculado`.
 - O teste passa a validar a copy atual `O modelo permanece independente de paciente.` do Workout Builder 3.0.
 - Nenhuma alteração funcional, de schema ou migration.
+
+
+## 0.18.8 — Workout Template Library 2.0
+- Catálogo profissional de treinos-modelo.
+- Filtro por objetivo, status e favoritos.
+- Ordenação por nome, favoritos, sessões, exercícios e atualização recente.
+- Favoritos persistidos localmente no navegador.
+- Chips rápidos por objetivo.
+- Quick Template Preview com sessões, exercícios, séries, reps, carga e descanso.
+- Preview integra a Exercise Library para resolver nomes e metadados dos exercícios.
+- Fluxo de atribuição continua gerando cópia independente por paciente.
+- Schema 38/38 preservado; nenhuma migration nova.
+
+
+### v0.18.8-r1 — estabilização do gate MVP Preview
+- Atualiza o gate legado `[463/600]` para reconhecer a identidade corrente da AESYN em `v0.18.8`.
+- Nenhuma alteração funcional, de schema ou migration.
+
+
+### v0.18.8-r2 — estabilização do gate Workout Library
+- Atualiza o gate histórico `[1505/1512]` para reconhecer a identidade atual `AESYN • WORKOUT TEMPLATE LIBRARY 2.0 • v0.18.8`.
+- Preserva o fluxo de biblioteca, atribuição e cópia independente por paciente.
+- Nenhuma alteração funcional, de schema ou migration.
