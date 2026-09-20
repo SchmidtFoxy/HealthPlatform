@@ -4096,3 +4096,9 @@ body{background:var(--aesyn-offwhite);color:var(--aesyn-graphite)}
   .program-preview-week{grid-template-columns:1fr}
   .program-savebar{grid-template-columns:1fr}
 }
+
+/* ===== v0.18.10 — Server-side Program Catalog ===== */
+.program-server-banner{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:12px 14px;margin:10px 0 14px;border:1px solid rgba(25,201,139,.28);background:rgba(25,201,139,.07);border-radius:14px}
+.program-server-banner b{color:var(--primary)}
+.program-server-banner span{color:var(--muted);font-size:13px}
+@media(max-width:720px){.program-server-banner{display:grid}}

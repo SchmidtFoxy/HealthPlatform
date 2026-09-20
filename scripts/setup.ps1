@@ -407,6 +407,52 @@ if ($initialMigrationExistedBeforeSetup -and -not $v0103Migration) {
     Write-Host "    Instalacao nova: InitialCreate ja representa o modelo v0.10.3; migration incremental dispensada." -ForegroundColor DarkGray
 }
 
+# v0.18.10: catalogo server-side de programas adiciona uma entidade EF real.
+# v0.18.10 — snapshot EF sincronizado + SQL idempotente.
+# Limpa qualquer migration experimental deixada por revisoes anteriores.
+$v01810StaleMigrations = @()
+if (Test-Path $migrationsPath) {
+    $v01810StaleMigrations = Get-ChildItem $migrationsPath -File -ErrorAction SilentlyContinue |
+        Where-Object {
+            $_.Name -like "*V01810ProgramasTreinoModelo*.cs" -or
+            ((Get-Content $_.FullName -Raw -ErrorAction SilentlyContinue) -match 'V01810ProgramasTreinoModelo')
+        }
+}
+
+if ($v01810StaleMigrations.Count -gt 0) {
+    Write-Host "    Limpando migration EF experimental v0.18.10 de tentativa anterior..." -ForegroundColor Yellow
+    foreach ($migrationFile in $v01810StaleMigrations) {
+        Write-Host "      removendo $($migrationFile.Name)" -ForegroundColor DarkGray
+        Remove-Item $migrationFile.FullName -Force -ErrorAction SilentlyContinue
+    }
+
+    foreach ($buildDir in @(
+        ".\src\HealthPlatform.Infrastructure\bin",
+        ".\src\HealthPlatform.Infrastructure\obj",
+        ".\src\HealthPlatform.Api\bin",
+        ".\src\HealthPlatform.Api\obj"
+    )) {
+        if (Test-Path $buildDir) {
+            Remove-Item $buildDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    Write-Host "    Migration experimental removida; ModelSnapshot v0.18.10 sera a referencia EF." -ForegroundColor DarkGray
+
+    Invoke-NativeStep "[4.95/39] Restaurando pacotes apos limpeza de artefatos..." {
+        dotnet restore
+    }
+} else {
+    Write-Host "    Nenhuma migration EF experimental v0.18.10 encontrada." -ForegroundColor DarkGray
+}
+
+if (-not (Test-Path ".\src\HealthPlatform.Infrastructure\obj\project.assets.json") -or
+    -not (Test-Path ".\src\HealthPlatform.Api\obj\project.assets.json")) {
+    Invoke-NativeStep "[4.96/39] Garantindo restore antes da recompilacao..." {
+        dotnet restore
+    }
+}
+
 Invoke-NativeStep "[5/38] Recompilando com as migrations..." { dotnet build .\HealthPlatform.slnx --no-restore }
 
 Invoke-NativeStep "[6/38] Atualizando banco..." {
@@ -541,8 +587,13 @@ Invoke-NativeStep "[37/38] Aplicando upgrade v0.6.4 (ciclos esportivos)..." {
     Get-Content .\scripts\sql\v0.6.4_ciclos_esportivos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
-Invoke-NativeStep "[38/38] Aplicando upgrade v0.10.3 (eventos de progressao supervisionada)..." {
+# Compatibilidade historica: [38/38] Aplicando upgrade v0.10.3
+Invoke-NativeStep "[38/39] Aplicando upgrade v0.10.3 (eventos de progressao supervisionada)..." {
     Get-Content .\scripts\sql\v0.10.3_eventos_progressao_supervisionada.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+}
+
+Invoke-NativeStep "[39/39] Aplicando upgrade v0.18.10 (programas de treino server-side)..." {
+    Get-Content .\scripts\sql\v0.18.10_programas_treino_modelo.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
 }
 
 Write-Host ""

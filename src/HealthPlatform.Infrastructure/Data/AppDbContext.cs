@@ -42,6 +42,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<RevisaoFase> RevisoesFases => Set<RevisaoFase>();
     public DbSet<ModeloSessaoTreino> ModelosSessoesTreino => Set<ModeloSessaoTreino>();
     public DbSet<ModeloPlanoTreino> ModelosPlanosTreino => Set<ModeloPlanoTreino>();
+    public DbSet<ProgramaTreinoModelo> ProgramasTreinoModelo => Set<ProgramaTreinoModelo>();
     public DbSet<SessaoTreino> SessoesTreino => Set<SessaoTreino>();
     public DbSet<ItemTreino> ItensTreino => Set<ItemTreino>();
     public DbSet<ExecucaoTreino> ExecucoesTreino => Set<ExecucaoTreino>();
@@ -391,6 +392,21 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.HasOne(x => x.Organizacao).WithMany(x => x.ModelosPlanosTreino)
                 .HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.Profissional).WithMany(x => x.ModelosPlanosTreino)
+                .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<ProgramaTreinoModelo>(entity =>
+        {
+            entity.ToTable("ProgramasTreinoModelo");
+            entity.Property(x => x.Nome).HasMaxLength(180).IsRequired();
+            entity.Property(x => x.Objetivo).HasMaxLength(160);
+            entity.Property(x => x.Descricao).HasMaxLength(1200);
+            entity.Property(x => x.ConteudoJson).IsRequired();
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Ativo, x.Nome });
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Objetivo });
+            entity.HasOne(x => x.Organizacao).WithMany(x => x.ProgramasTreinoModelo)
+                .HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Profissional).WithMany(x => x.ProgramasTreinoModelo)
                 .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
         });
 

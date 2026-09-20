@@ -22,6 +22,7 @@ public class Profissional : BaseEntity
     public ICollection<PlanoAlimentar> PlanosAlimentares { get; set; } = new List<PlanoAlimentar>();
     public ICollection<ModeloPlanoAlimentar> ModelosPlanosAlimentares { get; set; } = new List<ModeloPlanoAlimentar>();
     public ICollection<ModeloPlanoTreino> ModelosPlanosTreino { get; set; } = new List<ModeloPlanoTreino>();
+    public ICollection<ProgramaTreinoModelo> ProgramasTreinoModelo { get; set; } = new List<ProgramaTreinoModelo>();
     public ICollection<ModeloRefeicao> ModelosRefeicoes { get; set; } = new List<ModeloRefeicao>();
     public ICollection<ModeloSessaoTreino> ModelosSessoesTreino { get; set; } = new List<ModeloSessaoTreino>();
     public ICollection<MetaPaciente> Metas { get; set; } = new List<MetaPaciente>();

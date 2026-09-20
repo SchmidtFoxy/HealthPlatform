@@ -23,3 +23,7 @@ A biblioteca de treino passa a funcionar como catálogo profissional: filtros po
 
 ## v0.18.9 — Program Builder 1.0
 O Workout Studio passa a permitir montar programas independentes de paciente usando treinos-modelo como blocos. Cada programa pode ter múltiplas fases, duração em semanas e agenda semanal própria. Nesta primeira versão, programas são persistidos no navegador e podem ser exportados/importados em JSON, mantendo o schema 38/38 intacto.
+
+
+## v0.18.10 — Server-side Program Catalog
+Programas profissionais deixam de depender do localStorage e passam a ser persistidos no banco por organização/profissional. A versão adiciona CRUD server-side, duplicação, importação JSON via API e migração assistida dos programas locais da v0.18.9.

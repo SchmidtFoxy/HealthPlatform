@@ -1545,6 +1545,55 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("ModelosPlanosTreino", (string)null);
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.ProgramaTreinoModelo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ConteudoJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .HasMaxLength(1200)
+                        .HasColumnType("character varying(1200)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("character varying(180)");
+
+                    b.Property<string>("Objetivo")
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<Guid>("OrganizacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfissionalId");
+
+                    b.HasIndex("OrganizacaoId", "Ativo", "Nome");
+
+                    b.HasIndex("OrganizacaoId", "Objetivo");
+
+                    b.ToTable("ProgramasTreinoModelo", (string)null);
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.ModeloRefeicao", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3578,6 +3627,25 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("Profissional");
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.ProgramaTreinoModelo", b =>
+                {
+                    b.HasOne("HealthPlatform.Domain.Entities.Organizacao", "Organizacao")
+                        .WithMany("ProgramasTreinoModelo")
+                        .HasForeignKey("OrganizacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HealthPlatform.Domain.Entities.Profissional", "Profissional")
+                        .WithMany("ProgramasTreinoModelo")
+                        .HasForeignKey("ProfissionalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Organizacao");
+
+                    b.Navigation("Profissional");
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.ModeloRefeicao", b =>
                 {
                     b.HasOne("HealthPlatform.Domain.Entities.Organizacao", "Organizacao")
@@ -4083,6 +4151,8 @@ namespace HealthPlatform.Infrastructure.Migrations
 
                     b.Navigation("ModelosPlanosTreino");
 
+                    b.Navigation("ProgramasTreinoModelo");
+
                     b.Navigation("ModelosRefeicoes");
 
                     b.Navigation("ModelosSessoesTreino");
@@ -4189,6 +4259,8 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("ModelosPlanosAlimentares");
 
                     b.Navigation("ModelosPlanosTreino");
+
+                    b.Navigation("ProgramasTreinoModelo");
 
                     b.Navigation("ModelosRefeicoes");
 

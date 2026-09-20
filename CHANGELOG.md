@@ -1836,3 +1836,52 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ### v0.18.9-r1 — estabilização do gate MVP Preview
 - Atualiza o gate legado `[463/600]` para reconhecer a identidade corrente da AESYN em `v0.18.9`.
 - Nenhuma alteração funcional, de schema ou migration.
+
+
+## 0.18.10 — Server-side Program Catalog
+- Nova entidade `ProgramaTreinoModelo`.
+- CRUD completo em `/api/programas-treino`.
+- Program Builder passa a persistir no servidor.
+- Migração assistida do localStorage legado.
+- Migration EF incremental e SQL idempotente.
+- Setup ampliado para `39/39`.
+
+
+### v0.18.10-r1 — estabilização do gate MVP Preview
+- Atualiza o gate legado `[463/600]` para reconhecer corretamente a identidade AESYN em `v0.18.10`.
+- Nenhuma alteração funcional, de schema ou migration.
+
+
+### v0.18.10-r2 — correção da migration EF
+- Corrige a geração de `V01810ProgramasTreinoModelo`: o comando não usa mais `--no-build`.
+- A causa era a migration sendo calculada a partir da DLL compilada antes da nova entidade, o que podia gerar migration vazia e causar `PendingModelChangesWarning` em `[6/38]`.
+- O setup agora detecta e remove uma migration v0.18.10 vazia antes de regenerá-la.
+- Nenhuma nova funcionalidade; versão funcional permanece `0.18.10`.
+
+
+### v0.18.10-r3 — sincronização forçada do ModelSnapshot
+- Corrige definitivamente o `PendingModelChangesWarning` da v0.18.10.
+- Se `V01810ProgramasTreinoModelo` existir mas ainda não estiver aplicada, o setup a remove via `dotnet ef migrations remove --force` e gera novamente.
+- Isso restaura e recria o `AppDbContextModelSnapshot` a partir do modelo atual, evitando reaproveitar uma migration/snapshot inconsistente de tentativas anteriores.
+- Se a migration já estiver aplicada, ela é preservada.
+
+
+### v0.18.10-r4 — snapshot EF fix definitivo
+- Remove a geração dinâmica de `V01810ProgramasTreinoModelo`.
+- `AppDbContextModelSnapshot` passa a incluir `ProgramaTreinoModelo`.
+- A criação física da tabela continua pelo SQL idempotente `[39/39]`.
+- O setup limpa qualquer migration experimental v0.18.10 deixada por r1/r2/r3 e remove `bin/obj` relacionados para impedir que a migration antiga sobreviva no assembly.
+- Corrige tanto `PendingModelChangesWarning` quanto `The name 'V01810ProgramasTreinoModelo' is used by an existing migration`.
+
+
+### v0.18.10-r5 — restore após limpeza de obj/bin
+- Corrige `NETSDK1004` no `[5/38]`.
+- Como a r4 remove `obj/` e `bin/` para limpar migrations antigas, o setup agora executa `dotnet restore` imediatamente após a limpeza.
+- Adiciona verificação defensiva antes da recompilação para garantir que `project.assets.json` exista.
+- Nenhuma alteração funcional; versão permanece `0.18.10`.
+
+
+### v0.18.10-r6 — estabilização do gate de preview de programas
+- Atualiza o gate histórico `[1629/1634]` para reconhecer o preview server-side atual.
+- Substitui a expectativa de copy `Planejamento mestre` por `Fonte: servidor AESYN`.
+- Nenhuma alteração funcional, de schema ou migration.

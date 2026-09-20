@@ -20,6 +20,7 @@ public class Organizacao : BaseEntity
     public ICollection<EvolucaoClinica> EvolucoesClinicas { get; set; } = new List<EvolucaoClinica>();
     public ICollection<ModeloPlanoAlimentar> ModelosPlanosAlimentares { get; set; } = new List<ModeloPlanoAlimentar>();
     public ICollection<ModeloPlanoTreino> ModelosPlanosTreino { get; set; } = new List<ModeloPlanoTreino>();
+    public ICollection<ProgramaTreinoModelo> ProgramasTreinoModelo { get; set; } = new List<ProgramaTreinoModelo>();
     public ICollection<ModeloRefeicao> ModelosRefeicoes { get; set; } = new List<ModeloRefeicao>();
     public ICollection<ModeloSessaoTreino> ModelosSessoesTreino { get; set; } = new List<ModeloSessaoTreino>();
     public ICollection<FaseNutricional> FasesNutricionais { get; set; } = new List<FaseNutricional>();
