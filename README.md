@@ -1,11 +1,22 @@
-# AESYN Performance v0.18.2 — Patient Performance Profile
+# AESYN Performance v0.18.3 — Evolution Dashboard
 
 A camada de produto do HealthPlatform passa a se apresentar como **AESYN Performance**: consulta médica, acompanhamento pelo app, métricas e check-ins, treino, nutrição, exames e dashboards de evolução em uma única jornada.
 
 A arquitetura técnica permanece `HealthPlatform` nesta fase para preservar compatibilidade de solution, assemblies, APIs, banco e deploy. A v0.18.0 é uma evolução visual e de posicionamento, sem migration nova.
 
-**Versão funcional:** `0.18.2`  
+**Versão funcional:** `0.18.3`  
 **Schema:** `38/38` — sem migration nova.
+
+
+## v0.18.3 — Evolution Dashboard
+
+- nova aba **Evolução** no Performance Profile;
+- leitura longitudinal integrando corpo, treino, adesão, hidratação, prontidão e exames;
+- KPIs de evolução corporal e performance;
+- gráficos corporais e de progressão de carga reaproveitando os dados já existentes;
+- contexto laboratorial recente e linha do tempo de marcos;
+- experiência responsiva e read-only, sem nova migration;
+- guardrail explícito: tendências apoiam revisão profissional e não substituem avaliação médica.
 
 ## v0.18.2 — Patient Performance Profile
 
@@ -73,4 +84,4 @@ O builder organiza e acelera a prescrição, mas não publica recomendações au
 - Sem nova migration; schema permanece 38/38.
 
 
-> A v0.18.0 estabelece a identidade AESYN; a versão funcional atual é 0.18.2.
+> A v0.18.0 estabelece a identidade AESYN; a versão funcional atual é 0.18.3.

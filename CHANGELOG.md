@@ -1,3 +1,12 @@
+# Changelog
+
+## 0.18.3 — Evolution Dashboard
+
+- adiciona dashboard longitudinal de evolução dentro do Patient Performance Profile;
+- integra avaliação corporal, treino, adesão, prontidão, hidratação e exames em uma leitura única;
+- adiciona KPIs, gráficos, contexto laboratorial e timeline de marcos;
+- mantém schema 38/38 e não adiciona migration.
+
 ## v0.18.0-r2 — Correção de gate legado do Prescription Workspace
 - Corrige o teste histórico de acesso ao Professional Prescription Workspace para validar a rota e o carregador reais, sem depender do título antigo da interface.
 - Preserva o rebranding AESYN Performance e todas as regras de negócio da v0.18.0.
