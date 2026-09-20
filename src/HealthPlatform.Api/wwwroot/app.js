@@ -4488,7 +4488,117 @@ async function openWorkoutProgramBuilder(program=null,workoutModels=null){
  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
 }
 
-async function openWorkoutProgramPreview(program,workoutModels=null){const box=$('#clinicalActionContent');if(!program){toast('Programa não encontrado.',true);return}try{const modelos=workoutModels||await api('/api/modelos-planos-treino?incluirInativos=true');const map=new Map(modelos.map(x=>[String(x.id),x]));box.innerHTML=`<div class="modal-heading program-preview-heading"><div><button type="button" class="back-link" id="backToProgramLibraryFromPreview">← Programas</button><span class="eyebrow">AESYN • SERVER PROGRAM PREVIEW • v0.18.10</span><h2>${esc(program.nome)}</h2><p>${esc(program.descricao||program.objetivo||'Programa profissional de treinamento.')}</p></div><div class="program-preview-actions"><button class="primary" id="editProgramFromPreview">Editar programa</button><button class="secondary" id="exportProgramFromPreview">Exportar JSON</button></div></div><div class="program-preview-summary"><span><small>Duração</small><b>${aesynProgramWeeks(program)} semanas</b></span><span><small>Fases</small><b>${(program.fases||[]).length}</b></span><span><small>Treinos distintos</small><b>${program.modelosDistintos??aesynProgramTemplateIds(program).length}</b></span><span><small>Objetivo</small><b>${esc(program.objetivo||'—')}</b></span></div><div class="program-preview-phases">${(program.fases||[]).map((phase,pi)=>`<section class="card program-preview-phase"><div class="program-preview-phase-head"><div><span class="eyebrow">FASE ${pi+1}</span><h4>${esc(phase.nome)}</h4></div><span class="pill">${phase.semanas} semana(s)</span></div>${phase.observacoes?`<p>${esc(phase.observacoes)}</p>`:''}<div class="program-preview-week">${(phase.dias||[]).map(d=>{const modelId=d.modeloPlanoTreinoId||d.modeloId;const m=map.get(String(modelId));return `<div class="program-preview-day ${modelId?'has-workout':'is-rest'}"><span>${esc(d.dia)}</span><b>${esc(m?.nome||(modelId?'Modelo indisponível':'Descanso / livre'))}</b><small>${esc(d.observacoes||m?.objetivo||'')}</small></div>`}).join('')}</div></section>`).join('')}</div><div class="program-server-banner"><b>Fonte: servidor AESYN</b><span>Este programa não depende do armazenamento local do navegador.</span></div>`;$('#backToProgramLibraryFromPreview').onclick=()=>openWorkoutProgramLibrary();$('#editProgramFromPreview').onclick=()=>openWorkoutProgramBuilder(program,modelos);$('#exportProgramFromPreview').onclick=()=>aesynProgramDownload(program)}catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}}
+const HP_PROGRAM_ASSIGNMENT_PUBLISH='v0.18.11';
+
+async function openWorkoutProgramPreview(program,workoutModels=null){const box=$('#clinicalActionContent');if(!program){toast('Programa não encontrado.',true);return}try{const modelos=workoutModels||await api('/api/modelos-planos-treino?incluirInativos=true');const map=new Map(modelos.map(x=>[String(x.id),x]));box.innerHTML=`<div class="modal-heading program-preview-heading"><div><button type="button" class="back-link" id="backToProgramLibraryFromPreview">← Programas</button><span class="eyebrow">AESYN • SERVER PROGRAM PREVIEW • v0.18.10</span><h2>${esc(program.nome)}</h2><p>${esc(program.descricao||program.objetivo||'Programa profissional de treinamento.')}</p></div><div class="program-preview-actions"><button class="primary" id="assignProgramFromPreview">Atribuir a paciente</button><button class="secondary" id="editProgramFromPreview">Editar programa</button><button class="secondary" id="exportProgramFromPreview">Exportar JSON</button></div></div><div class="program-preview-summary"><span><small>Duração</small><b>${aesynProgramWeeks(program)} semanas</b></span><span><small>Fases</small><b>${(program.fases||[]).length}</b></span><span><small>Treinos distintos</small><b>${program.modelosDistintos??aesynProgramTemplateIds(program).length}</b></span><span><small>Objetivo</small><b>${esc(program.objetivo||'—')}</b></span></div><div class="program-preview-phases">${(program.fases||[]).map((phase,pi)=>`<section class="card program-preview-phase"><div class="program-preview-phase-head"><div><span class="eyebrow">FASE ${pi+1}</span><h4>${esc(phase.nome)}</h4></div><span class="pill">${phase.semanas} semana(s)</span></div>${phase.observacoes?`<p>${esc(phase.observacoes)}</p>`:''}<div class="program-preview-week">${(phase.dias||[]).map(d=>{const modelId=d.modeloPlanoTreinoId||d.modeloId;const m=map.get(String(modelId));return `<div class="program-preview-day ${modelId?'has-workout':'is-rest'}"><span>${esc(d.dia)}</span><b>${esc(m?.nome||(modelId?'Modelo indisponível':'Descanso / livre'))}</b><small>${esc(d.observacoes||m?.objetivo||'')}</small></div>`}).join('')}</div></section>`).join('')}</div><div class="program-server-banner"><b>Fonte: servidor AESYN</b><span>Este programa não depende do armazenamento local do navegador.</span></div>`;$('#backToProgramLibraryFromPreview').onclick=()=>openWorkoutProgramLibrary();$('#assignProgramFromPreview').onclick=()=>openWorkoutProgramAssignmentPicker(program,modelos);
+    $('#editProgramFromPreview').onclick=()=>openWorkoutProgramBuilder(program,modelos);$('#exportProgramFromPreview').onclick=()=>aesynProgramDownload(program)}catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}}
+
+
+
+async function openWorkoutProgramAssignmentPicker(program,workoutModels=null){
+  const box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="backToProgramPreview">← Programa</button><span class="eyebrow">AESYN • PROGRAM ASSIGNMENT • v0.18.11</span><h2>Atribuir ${esc(program.nome)}</h2><p>Escolha o paciente que receberá as fases e planos derivados deste programa.</p></div><div class="empty">Carregando pacientes...</div>`;
+  $('#backToProgramPreview').onclick=()=>openWorkoutProgramPreview(program,workoutModels);
+  try{
+    const data=await api('/api/pacientes?pagina=1&tamanhoPagina=100');
+    const patients=data?.itens||[];
+    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="backToProgramPreview">← Programa</button><span class="eyebrow">AESYN • PROGRAM ASSIGNMENT • v0.18.11</span><h2>Atribuir ${esc(program.nome)}</h2><p>Selecione o paciente para configurar a publicação.</p></div>
+      <input id="programAssignPatientSearch" class="search-input" placeholder="Buscar paciente">
+      <div id="programAssignPatientList" class="workout-assign-patient-list"></div>`;
+    $('#backToProgramPreview').onclick=()=>openWorkoutProgramPreview(program,workoutModels);
+    const render=q=>{
+      const term=String(q||'').trim().toLowerCase();
+      const filtered=patients.filter(p=>!term||`${p.nome||''} ${p.email||''} ${p.telefone||''}`.toLowerCase().includes(term));
+      $('#programAssignPatientList').innerHTML=filtered.length?filtered.map(p=>`<button type="button" data-program-assign-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.email||p.telefone||'Paciente')}</small></span><i>›</i></button>`).join(''):`<div class="empty">Nenhum paciente encontrado.</div>`;
+      $$('[data-program-assign-patient]').forEach(btn=>btn.onclick=()=>openWorkoutProgramPublishForm(
+        patients.find(p=>p.id===btn.dataset.programAssignPatient),
+        program,
+        workoutModels
+      ));
+    };
+    render('');
+    $('#programAssignPatientSearch').oninput=e=>render(e.target.value);
+  }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+function openWorkoutProgramPublishForm(patient,program,workoutModels=null){
+  const box=$('#clinicalActionContent');
+  const weeks=aesynProgramWeeks(program);
+  const phaseCount=(program.fases||[]).length;
+  const end=new Date();
+  const today=todayISO();
+
+  box.innerHTML=`<div class="modal-heading">
+    <button type="button" class="back-link" id="backToProgramPatients">← Pacientes</button>
+    <span class="eyebrow">AESYN • REVIEW & PUBLISH • v0.18.11</span>
+    <h2>Publicar programa</h2>
+    <p>${esc(program.nome)} → ${esc(patient.nome)}</p>
+  </div>
+  <div class="program-publish-summary">
+    <span><small>Programa</small><b>${esc(program.nome)}</b></span>
+    <span><small>Duração</small><b>${weeks} semana(s)</b></span>
+    <span><small>Fases</small><b>${phaseCount}</b></span>
+    <span><small>Paciente</small><b>${esc(patient.nome)}</b></span>
+  </div>
+  <form id="programPublishForm" class="clinical-form">
+    <section class="card program-publish-review">
+      <h4>O que será criado</h4>
+      <p>Uma ficha de treino por fase, com as sessões e exercícios copiados dos treinos-modelo do programa. As fases também serão registradas na linha longitudinal do paciente.</p>
+      <div class="program-publish-phases">${(program.fases||[]).map((f,i)=>`<div><span>Fase ${i+1}</span><b>${esc(f.nome)}</b><small>${f.semanas} semana(s) • ${(f.dias||[]).filter(d=>d.modeloPlanoTreinoId||d.modeloId).length} dia(s) prescritos</small></div>`).join('')}</div>
+    </section>
+    <div class="form-grid">
+      ${field('Data de início','dataInicio','date',`value="${today}" required`)}
+      ${area('Observação da publicação','observacoes','placeholder="Opcional. Contexto específico para este paciente."')}
+      <label class="checkbox-line"><input type="checkbox" name="ativarPrimeiraFase" checked> Ativar a primeira fase imediatamente</label>
+      <label class="checkbox-line"><input type="checkbox" name="concluirPlanosAtivos"> Concluir planos de treino ativos anteriores</label>
+    </div>
+    <div class="program-publish-warning"><b>Publicação cria cópias clínicas</b><span>Alterações futuras no programa mestre não modificam automaticamente as fichas já publicadas para o paciente.</span></div>
+    <div class="form-actions"><button type="button" class="secondary" id="cancelProgramPublish">Cancelar</button><button type="submit" class="primary">Publicar programa</button></div>
+  </form>`;
+
+  $('#backToProgramPatients').onclick=$('#cancelProgramPublish').onclick=()=>openWorkoutProgramAssignmentPicker(program,workoutModels);
+
+  const f=$('#programPublishForm');
+  f.onsubmit=async e=>{
+    e.preventDefault();
+    const btn=f.querySelector('button[type=submit]');
+    hpSetActionPending(btn,true);
+    try{
+      const result=await api(`/api/pacientes/${patient.id}/programas-treino/${program.id}/atribuir`,{
+        method:'POST',
+        body:JSON.stringify({
+          dataInicio:val(f,'dataInicio'),
+          concluirPlanosAtivos:f.elements.concluirPlanosAtivos.checked,
+          ativarPrimeiraFase:f.elements.ativarPrimeiraFase.checked,
+          observacoes:val(f,'observacoes')||null
+        })
+      });
+      box.innerHTML=`<div class="program-publish-success">
+        <span class="eyebrow">AESYN • PROGRAMA PUBLICADO</span>
+        <h2>${esc(program.nome)}</h2>
+        <p>O programa foi transformado em acompanhamento executável para ${esc(patient.nome)}.</p>
+        <div class="program-library-summary">
+          <span><small>Fases criadas</small><b>${result.fasesCriadas?.length||0}</b></span>
+          <span><small>Planos criados</small><b>${result.planosCriados?.length||0}</b></span>
+          <span><small>Início</small><b>${esc(result.dataInicio||'—')}</b></span>
+          <span><small>Fim previsto</small><b>${esc(result.dataFim||'—')}</b></span>
+        </div>
+        <div class="form-actions"><button class="secondary" id="publishedBackToPrograms">Voltar aos programas</button><button class="primary" id="publishedOpenPatient">Abrir paciente</button></div>
+      </div>`;
+      $('#publishedBackToPrograms').onclick=()=>openWorkoutProgramLibrary();
+      $('#publishedOpenPatient').onclick=async()=>{
+        state.selectedPatientId=patient.id;
+        state.patientTab='treinos';
+        closeClinicalAction();
+        await loadPatient();
+      };
+      toast('Programa publicado para o paciente.');
+    }catch(err){
+      toast(err.message,true);
+      hpSetActionPending(btn,false);
+    }
+  };
+}
 
 async function openWorkoutLibraryPatientPicker(modelo){
   const box=$('#clinicalActionContent');
@@ -7789,7 +7899,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.10';
+const HP_MVP_VERSION='0.18.11';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

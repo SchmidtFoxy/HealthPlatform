@@ -1885,3 +1885,24 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Atualiza o gate histórico `[1629/1634]` para reconhecer o preview server-side atual.
 - Substitui a expectativa de copy `Planejamento mestre` por `Fonte: servidor AESYN`.
 - Nenhuma alteração funcional, de schema ou migration.
+
+
+## 0.18.11 — Program Assignment & Publish
+- Novo fluxo profissional de atribuição de programa a paciente.
+- Picker de paciente diretamente no preview do programa.
+- Review & Publish antes da materialização.
+- Publicação cria um plano por fase e uma fase longitudinal correspondente.
+- Treinos-modelo são copiados com sessões, exercícios, carga, repetições e descansos.
+- Dia do programa é aplicado em `DiasSemana`.
+- Validação de templates/exercícios ativos antes da publicação.
+- Opção de concluir planos ativos anteriores.
+- Primeira fase pode iniciar como `Ativo` / `EmAndamento`.
+- Programa mestre permanece independente das cópias clínicas publicadas.
+- Tela de sucesso com resumo e acesso direto ao paciente.
+- Sem migration nova; baseline permanece 39/39.
+
+
+### v0.18.11-r1 — correção de compilação do Assignment Controller
+- Remove caractere `\` espúrio no início de `ProgramaTreinoAssignmentController.cs`.
+- Corrige `CS1056: Caractere inesperado '\'` no `[3/38] Compilando...`.
+- Nenhuma alteração funcional, de schema ou migration.
