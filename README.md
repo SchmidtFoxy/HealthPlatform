@@ -29,5 +29,16 @@ O Workout Studio passa a permitir montar programas independentes de paciente usa
 Programas profissionais deixam de depender do localStorage e passam a ser persistidos no banco por organização/profissional. A versão adiciona CRUD server-side, duplicação, importação JSON via API e migração assistida dos programas locais da v0.18.9.
 
 
+## v0.18.12 — Professional Workout & Nutrition Flow Hardening
+
+- Corrige `+ Novo treino/plano` no prontuário: o Workout Builder agora abre o modal diretamente.
+- Corrige overflow e espaçamento do Workout Builder em desktop, tablet e celular.
+- Reforça o acesso a Programas de treino com estado de erro e retry.
+- Reorganiza as ações profissionais de Treino e Nutrição no paciente.
+- Adiciona `+ Adicionar treino` a um plano existente para criar Treino B/C/D sem remontar o plano.
+- Mantém `Editar / agregar` para ajustar sessões e exercícios já salvos.
+- Expõe `+ Montar dieta`, modelos de dieta e modelos de refeição diretamente no paciente.
+- Sem alteração de schema; baseline de banco permanece 39/39.
+
 ## v0.18.11 — Program Assignment & Publish
 O catálogo profissional de programas passa a ter um fluxo de publicação para pacientes. A partir do preview do programa, o profissional escolhe o paciente, revisa início/opções e publica. Cada fase do programa é materializada em um `PlanoTreino` e uma `FaseTreino`, usando os treinos-modelo como fonte, sem alterar o programa mestre. Não há migration nova; a versão reutiliza o schema 39/39.

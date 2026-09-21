@@ -4125,3 +4125,70 @@ body{background:var(--aesyn-offwhite);color:var(--aesyn-graphite)}
 @media(max-width:430px){
   .program-publish-summary{grid-template-columns:1fr}
 }
+
+
+/* ===== v0.18.12 — Professional Workout & Nutrition Flow Hardening ===== */
+.pro-flow-card,.pro-flow-card *{box-sizing:border-box}
+.pro-flow-head{align-items:flex-start;gap:16px}
+.pro-flow-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.pro-workout-plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.pro-workout-plan-card,.pro-nutrition-plan-card{min-width:0;overflow:hidden}
+.pro-workout-sessions{display:grid;gap:7px;margin:12px 0}
+.pro-workout-session{display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft,#f7faf9)}
+.pro-workout-session .session-letter{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#dff8ef;color:#08735f;font-weight:900;font-size:11px}
+.pro-workout-session>div{display:grid;gap:2px;min-width:0}.pro-workout-session strong,.pro-workout-session small{overflow-wrap:anywhere}
+.pro-plan-actions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.nutrition-catalog-ready{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px;margin:2px 0 14px;border:1px solid #cfe7df;border-radius:14px;background:#f2fbf7}
+.nutrition-catalog-ready>div{display:grid;gap:3px;min-width:0}.nutrition-catalog-ready strong{color:#0b5d4e}.nutrition-catalog-ready span{font-size:11px;color:var(--muted)}
+.nutrition-plan-grid-v1812{display:grid;gap:14px}.nutrition-meal-summary-v1812{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}
+.nutrition-meal-summary-v1812>div{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:11px;min-width:0}
+.nutrition-meal-summary-v1812>div>span{grid-row:1/3;width:24px;height:24px;border-radius:8px;background:#edf6f3;display:grid;place-items:center;font-size:10px;font-weight:850;color:#0b6958}.nutrition-meal-summary-v1812 strong,.nutrition-meal-summary-v1812 small{min-width:0;overflow-wrap:anywhere}
+
+#clinicalActionModal.workout-modal-open .clinical-form,
+#clinicalActionModal.workout-modal-open .workout-builder2-form,
+#clinicalActionModal.workout-modal-open .builder-list,
+#clinicalActionModal.workout-modal-open .workout-builder2-session,
+#clinicalActionModal.workout-modal-open .workout-items,
+#clinicalActionModal.workout-modal-open .workout-item-builder2,
+#clinicalActionModal.workout-modal-open label{min-width:0;max-width:100%}
+#clinicalActionModal.workout-modal-open input,
+#clinicalActionModal.workout-modal-open select,
+#clinicalActionModal.workout-modal-open textarea{width:100%;max-width:100%;min-width:0}
+#clinicalActionModal.workout-modal-open .workout-builder2-session{overflow:hidden}
+#clinicalActionModal.workout-modal-open .workout-item-builder2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;align-items:end;overflow:hidden}
+#clinicalActionModal.workout-modal-open .workout-exercise-search{grid-column:span 2}
+#clinicalActionModal.workout-modal-open .workout-item-builder2>label:nth-of-type(2){grid-column:span 2}
+#clinicalActionModal.workout-modal-open .workout-item-tools{grid-column:1/-1;display:flex;justify-content:flex-end;gap:7px;min-width:0}
+#clinicalActionModal.workout-modal-open .workout-session-fields{min-width:0}
+#clinicalActionModal.workout-modal-open .builder-meta>*{min-width:0}
+.program-load-error{display:grid;gap:10px;justify-items:start}
+.program-load-error span{max-width:720px;overflow-wrap:anywhere}
+
+@media(max-width:900px){
+  .pro-workout-plan-grid{grid-template-columns:1fr}
+  .pro-flow-head{display:grid}
+  .pro-flow-actions{justify-content:flex-start}
+  #clinicalActionModal.workout-modal-open .workout-item-builder2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #clinicalActionModal.workout-modal-open .workout-exercise-search,
+  #clinicalActionModal.workout-modal-open .workout-item-builder2>label:nth-of-type(2){grid-column:1/-1}
+}
+@media(max-width:720px){
+  .pro-flow-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .pro-flow-actions button{width:100%;min-height:44px}
+  .nutrition-catalog-ready{align-items:stretch;flex-direction:column}
+  .nutrition-meal-summary-v1812{grid-template-columns:1fr}
+  #clinicalActionModal.workout-modal-open .workout-item-builder2{grid-template-columns:1fr 1fr}
+  #clinicalActionModal.workout-modal-open .workout-session-fields{grid-template-columns:1fr!important}
+  #clinicalActionModal.workout-modal-open .workout-session-fields>*{grid-column:1!important}
+  #clinicalActionModal.workout-modal-open .builder-meta{grid-template-columns:1fr!important}
+  #clinicalActionModal.workout-modal-open .builder-meta>*{grid-column:1!important}
+}
+@media(max-width:430px){
+  .pro-flow-actions{grid-template-columns:1fr}
+  .pro-plan-actions{display:grid;grid-template-columns:1fr}
+  .pro-plan-actions button{width:100%}
+  #clinicalActionModal.workout-modal-open .workout-item-builder2{grid-template-columns:1fr}
+  #clinicalActionModal.workout-modal-open .workout-exercise-search,
+  #clinicalActionModal.workout-modal-open .workout-item-builder2>label:nth-of-type(2),
+  #clinicalActionModal.workout-modal-open .workout-item-tools{grid-column:1}
+}

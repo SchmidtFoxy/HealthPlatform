@@ -3476,7 +3476,10 @@ openClinicalForm = function(type,p){
   return __openClinicalForm_v030(type,p);
 };
 
-async function openWorkoutForm(p,existingPlan=null){
+async function openWorkoutForm(p,existingPlan=null,options={}){
+  const modal=$('#clinicalActionModal');
+  modal.classList.remove('hidden','nutrition-modal-open');
+  modal.classList.add('workout-modal-open');
   const box=$('#clinicalActionContent'),editing=!!existingPlan;
   box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER 2.0 • v0.17.4</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • carregando exercícios...</p></div>`;
   try{
@@ -3564,6 +3567,13 @@ async function openWorkoutForm(p,existingPlan=null){
       }catch(err){toast(err.message,true)}
     };
     if(existingPlan?.sessoes?.length)existingPlan.sessoes.forEach((x,i)=>addSession(x.nome||`Treino ${String.fromCharCode(65+i)}`,x));else addSession();
+    if(options?.addSession){
+      const nextName=`Treino ${String.fromCharCode(65+host.children.length)}`;
+      addSession(nextName);
+      const created=host.lastElementChild;
+      requestAnimationFrame(()=>created?.scrollIntoView({behavior:'smooth',block:'start'}));
+      toast(`${nextName} adicionado ao plano. Complete a sessão e salve as alterações.`);
+    }
 
     $('#workoutForm').onsubmit=async e=>{
       e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');b.disabled=true;b.textContent='Salvando...';
@@ -4470,7 +4480,11 @@ async function openWorkoutProgramLibrary(){
     $$('.program-preview').forEach(btn=>btn.onclick=()=>{const id=btn.closest('[data-program-id]').dataset.programId;openWorkoutProgramPreview(programs.find(x=>String(x.id)===String(id)),workoutModels)});$$('.program-edit').forEach(btn=>btn.onclick=()=>{const id=btn.closest('[data-program-id]').dataset.programId;openWorkoutProgramBuilder(programs.find(x=>String(x.id)===String(id)),workoutModels)});$$('.program-duplicate').forEach(btn=>btn.onclick=async()=>{const id=btn.closest('[data-program-id]').dataset.programId;try{await api(`/api/programas-treino/${id}/duplicar`,{method:'POST'});toast('Programa duplicado no servidor.');openWorkoutProgramLibrary()}catch(err){toast(err.message,true)}});$$('.program-export').forEach(btn=>btn.onclick=()=>{const id=btn.closest('[data-program-id]').dataset.programId;const p=programs.find(x=>String(x.id)===String(id));if(p)aesynProgramDownload(p)});$$('.program-delete').forEach(btn=>btn.onclick=async()=>{const id=btn.closest('[data-program-id]').dataset.programId;const p=programs.find(x=>String(x.id)===String(id));if(!confirm(`Excluir o programa "${p?.nome||'selecionado'}" do servidor?`))return;try{await api(`/api/programas-treino/${id}`,{method:'DELETE'});toast('Programa excluído.');openWorkoutProgramLibrary()}catch(err){toast(err.message,true)}})};
    $('#programLibrarySearch').oninput=renderList;$('#programLibraryObjective').onchange=renderList;$('#programLibrarySort').onchange=renderList;renderList();
   };renderShell();
- }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+ }catch(err){
+   box.innerHTML=`<div class="program-load-error card empty"><strong>Não foi possível abrir os programas.</strong><span>${esc(err.message)}</span><div class="form-actions"><button class="primary" id="retryWorkoutPrograms">Tentar novamente</button><button class="secondary" id="backWorkoutProgramsToLibrary">Biblioteca de treinos</button></div></div>`;
+   $('#retryWorkoutPrograms').onclick=()=>openWorkoutProgramLibrary();
+   $('#backWorkoutProgramsToLibrary').onclick=()=>openWorkoutLibrary();
+ }
 }
 
 async function openWorkoutProgramBuilder(program=null,workoutModels=null){
@@ -7899,7 +7913,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.11';
+const HP_MVP_VERSION='0.18.12';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -8620,4 +8634,120 @@ renderPatientTab=function(d){
     return;
   }
   return __renderPatientTab_v0185(d);
+};
+
+
+// ===== v0.18.12 — Professional Workout & Nutrition Flow Hardening =====
+const HP_PRO_WORKOUT_NUTRITION_HARDENING='v0.18.12';
+
+function hpWorkoutPlanSessionLabel(index,name){
+  const fallback=`Treino ${String.fromCharCode(65+index)}`;
+  return name||fallback;
+}
+
+function hpRenderWorkoutProfessionalFlow(d){
+  const box=$('#patientTabContent'),treinos=d.treinos||[],patient=d.p||{id:state.patientId,nome:'Paciente'};
+  box.innerHTML=`<section class="card full-card pro-flow-card" data-pro-workout-flow="v0.18.12">
+    <div class="card-head pro-flow-head">
+      <div><span class="eyebrow">AESYN • WORKOUT FLOW HARDENING • v0.18.12</span><h3>Planos de treino</h3><small>${treinos.length} plano(s) • construa A/B/C/D no mesmo plano ou comece outro plano do zero.</small></div>
+      <div class="workout-top-actions pro-flow-actions">
+        <button class="ghost" id="sessionLibraryButtonV1812">Sessões-modelo</button>
+        <button class="secondary" id="workoutLibraryV1812">Treinos-modelo</button>
+        <button class="secondary" id="workoutProgramsV1812">Programas de treino</button>
+        <button class="primary" id="newWorkoutFromTabV1812">+ Novo plano</button>
+      </div>
+    </div>
+    ${treinos.length?`<div class="workout-plan-grid pro-workout-plan-grid">${treinos.map(t=>`
+      <article class="workout-plan-card pro-workout-plan-card" data-workout-plan="${t.id}">
+        <div class="record-top"><div><span class="eyebrow">V${t.versao||1} • ${fmtDate(t.dataInicio)}${t.dataFim?' — '+fmtDate(t.dataFim):''}</span><h4>${esc(t.nome)}</h4><small>${esc(t.profissionalNome||'')}</small></div><span class="pill ${t.status==='Ativo'?'Ativa':'Agendada'}">${esc(t.status)}</span></div>
+        ${t.objetivo?`<p>${esc(t.objetivo)}</p>`:''}
+        <div class="pro-workout-sessions">
+          ${(t.sessoes||[]).length?(t.sessoes||[]).map((s,i)=>`<div class="pro-workout-session"><span class="session-letter">${String.fromCharCode(65+i)}</span><div><strong>${esc(hpWorkoutPlanSessionLabel(i,s.nome))}</strong><small>${esc(s.diasSemana||'Dias livres')} • ${(s.itens||[]).length} exercício(s)</small></div></div>`).join(''):'<div class="empty compact">Plano ainda sem sessões.</div>'}
+        </div>
+        <div class="workout-plan-actions pro-plan-actions">
+          <button class="primary workout-add-session-v1812" data-workout-id="${t.id}">+ Adicionar treino</button>
+          <button class="secondary workout-edit-v1812" data-workout-id="${t.id}">Editar / agregar</button>
+          <button class="ghost workout-save-template-v1812" data-workout-id="${t.id}">Salvar como modelo</button>
+          <button class="ghost workout-progress-v1812" data-workout-id="${t.id}">Criar progressão</button>
+        </div>
+      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano de treino cadastrado. Use “+ Novo plano” para começar pelo Treino A.')}</section>`;
+
+  $('#newWorkoutFromTabV1812').onclick=()=>openWorkoutForm(patient);
+  $('#workoutLibraryV1812').onclick=()=>openWorkoutLibrary(patient);
+  $('#workoutProgramsV1812').onclick=()=>openWorkoutProgramLibrary();
+  $('#sessionLibraryButtonV1812').onclick=()=>openWorkoutSessionLibrary(treinos);
+
+  $$('.workout-add-session-v1812').forEach(b=>b.onclick=()=>{
+    const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));
+    if(plan)openWorkoutForm(patient,plan,{addSession:true});
+  });
+  $$('.workout-edit-v1812').forEach(b=>b.onclick=()=>{
+    const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));
+    if(plan)openWorkoutForm(patient,plan);
+  });
+  $$('.workout-save-template-v1812').forEach(b=>b.onclick=()=>{
+    const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));
+    if(plan)openSaveWorkoutTemplate(plan);
+  });
+  $$('.workout-progress-v1812').forEach(b=>b.onclick=()=>{
+    const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));
+    if(plan)openWorkoutProgression(patient,plan);
+  });
+
+  loadWorkoutPhases(patient,treinos).catch(x=>console.warn('Fases de treino:',x));
+}
+
+function hpRenderNutritionProfessionalFlow(d){
+  const box=$('#patientTabContent'),planos=d.planos||[],patient=d.p||d.portal?.paciente||{id:state.patientId,nome:'Paciente'};
+  box.innerHTML=`<section class="card full-card pro-flow-card nutrition-pro-flow" data-pro-nutrition-flow="v0.18.12">
+    <div class="card-head pro-flow-head">
+      <div><span class="eyebrow">AESYN • NUTRITION PROFESSIONAL FLOW • v0.18.12</span><h3>Nutrição</h3><small>${planos.length} plano(s) • monte dieta, use modelos e acesse a biblioteca de refeições sem sair do paciente.</small></div>
+      <div class="nutrition-top-actions pro-flow-actions">
+        <button class="ghost" id="nutritionMealModelsV1812">Modelos de refeição</button>
+        <button class="secondary" id="nutritionDietModelsV1812">Modelos de dieta</button>
+        <button class="primary" id="newMealPlanV1812">+ Montar dieta</button>
+      </div>
+    </div>
+    <div class="nutrition-catalog-ready">
+      <div><strong>Catálogo alimentar conectado</strong><span>O Nutrition Builder usa os alimentos ativos do banco para busca, gramagem e cálculo estimado de macros.</span></div>
+      <button class="secondary" id="nutritionOpenLibraryV1812">Dietas & refeições</button>
+    </div>
+    ${planos.length?`<div class="nutrition-plan-grid-v1812">${planos.map(p=>`
+      <article class="food-plan nutrition-version-card pro-nutrition-plan-card">
+        <div class="record-top"><div><span class="eyebrow">${esc(p.status)} • V${p.versao||1} • início ${fmtDate(p.dataInicio)}</span><h4>${esc(p.nome)}</h4><small>${esc(p.profissionalNome||'')}</small></div>
+          <div class="macro-summary"><b>${num(p.totaisDiarios?.calorias,0)} kcal</b><span>P ${num(p.totaisDiarios?.proteinasG)}g</span><span>C ${num(p.totaisDiarios?.carboidratosG)}g</span><span>G ${num(p.totaisDiarios?.gordurasG)}g</span></div>
+        </div>
+        ${nutritionTargetPanel(p)}
+        <div class="nutrition-meal-summary-v1812">${(p.refeicoes||[]).map((r,i)=>`<div><span>${i+1}</span><strong>${esc(r.nome)}</strong><small>${r.horario?String(r.horario).slice(0,5):'--:--'} • ${(r.itens||[]).length} item(ns) • ${num(r.totais?.calorias,0)} kcal</small></div>`).join('')||'<div class="empty compact">Sem refeições cadastradas.</div>'}</div>
+        <div class="nutrition-plan-actions pro-plan-actions">
+          <button class="primary nutrition-edit-v1812" data-plan-id="${p.id}">Editar dieta</button>
+          <button class="secondary nutrition-progress-v1812" data-plan-id="${p.id}">Criar progressão</button>
+          <button class="ghost nutrition-save-template-v1812" data-plan-id="${p.id}">Salvar como modelo</button>
+        </div>
+      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano alimentar registrado. Use “+ Montar dieta” para criar o primeiro.')}</section>`;
+
+  $('#newMealPlanV1812').onclick=()=>openMealPlanForm(patient);
+  $('#nutritionDietModelsV1812').onclick=()=>openDietMealLibrary(patient,'plans');
+  $('#nutritionMealModelsV1812').onclick=()=>openDietMealLibrary(patient,'meals');
+  $('#nutritionOpenLibraryV1812').onclick=()=>openDietMealLibrary(patient,'plans');
+
+  $$('.nutrition-edit-v1812').forEach(b=>b.onclick=()=>{
+    const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));
+    if(plan)openMealPlanForm(patient,plan);
+  });
+  $$('.nutrition-progress-v1812').forEach(b=>b.onclick=()=>{
+    const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));
+    if(plan)openNutritionProgression(patient,plan);
+  });
+  $$('.nutrition-save-template-v1812').forEach(b=>b.onclick=()=>{
+    const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));
+    if(plan)openSaveMealPlanTemplate(plan);
+  });
+}
+
+const __renderPatientTab_v01812=renderPatientTab;
+renderPatientTab=function(d){
+  if(state.patientTab==='treinos'){hpRenderWorkoutProfessionalFlow(d);return}
+  if(state.patientTab==='alimentacao'){hpRenderNutritionProfessionalFlow(d);return}
+  return __renderPatientTab_v01812(d);
 };

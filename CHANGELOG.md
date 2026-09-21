@@ -1,3 +1,13 @@
+
+## 0.18.12 — Professional Workout & Nutrition Flow Hardening
+
+- Correção do botão de novo treino no paciente.
+- Responsividade reforçada do Workout Builder.
+- Fluxo explícito para adicionar Treino B/C/D ao mesmo plano.
+- Ações de editar/agregar treino preservando sessões já salvas.
+- Navegação profissional de Programas de treino endurecida com retry.
+- Fluxo de Nutrição reorganizado para montar dieta e acessar modelos.
+- Sem mudança de schema.
 # v0.18.6 — Exercise Library 2.0 + Standalone Workout Studio
 
 - Novo catálogo profissional de exercícios com busca, filtros, CRUD e ativação/inativação.
