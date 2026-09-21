@@ -4192,3 +4192,30 @@ body{background:var(--aesyn-offwhite);color:var(--aesyn-graphite)}
   #clinicalActionModal.workout-modal-open .workout-item-builder2>label:nth-of-type(2),
   #clinicalActionModal.workout-modal-open .workout-item-tools{grid-column:1}
 }
+
+
+/* ===== v0.18.13 — Nutrition Builder Large Catalog ===== */
+.nutrition-food-search{display:grid;gap:4px;min-width:0}
+.nutrition-food-search input{width:100%;min-width:0}
+.nutrition-search-hint{font-size:10px;color:var(--muted);line-height:1.3}
+.nutrition-meal-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.nutrition-meal-live-total{display:flex;align-items:center;gap:9px;flex-wrap:wrap;text-align:right}
+.nutrition-meal-live-total strong{color:#0b6958;font-size:13px}
+.nutrition-meal-live-total span{font-size:10px;color:var(--muted)}
+.nutrition-meal-presets{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8fbfa}
+.nutrition-meal-presets>span{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-right:3px}
+.nutrition-meal-presets button{border:1px solid #cfe3dc;background:white;color:#0b5d4e;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:750;cursor:pointer}
+.nutrition-meal-presets button:hover{background:#eaf8f3}
+.nutrition-builder2-form .meal-item-main{min-width:0}
+.nutrition-builder2-form .meal-item-main select{min-width:0;max-width:100%;width:100%}
+.nutrition-builder2-form .nutrition-item-builder2{min-width:0;overflow:hidden}
+@media(max-width:720px){
+  .nutrition-meal-footer{align-items:stretch;flex-direction:column}
+  .nutrition-meal-live-total{text-align:left;justify-content:flex-start}
+  .nutrition-meal-presets{align-items:stretch}
+}
+@media(max-width:430px){
+  .nutrition-meal-presets{display:grid;grid-template-columns:1fr 1fr}
+  .nutrition-meal-presets>span{grid-column:1/-1}
+  .nutrition-meal-presets button{width:100%}
+}

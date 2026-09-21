@@ -1,3 +1,13 @@
+## 0.18.13 — Nutrition Builder Large Catalog
+
+- Otimização do Nutrition Builder para catálogos de milhares de alimentos.
+- Busca inteligente e normalizada com limite de resultados.
+- Totais nutricionais por refeição em tempo real.
+- Estruturas rápidas de 3–6 refeições.
+- Comparação de fibras incluída nas metas.
+- Melhorias de responsividade.
+- Sem mudança de schema.
+
 
 ## 0.18.12 — Professional Workout & Nutrition Flow Hardening
 

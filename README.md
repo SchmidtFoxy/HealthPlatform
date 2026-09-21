@@ -29,6 +29,19 @@ O Workout Studio passa a permitir montar programas independentes de paciente usa
 Programas profissionais deixam de depender do localStorage e passam a ser persistidos no banco por organização/profissional. A versão adiciona CRUD server-side, duplicação, importação JSON via API e migração assistida dos programas locais da v0.18.9.
 
 
+## v0.18.13 — Nutrition Builder Large Catalog
+
+- Nutrition Builder preparado para catálogos com milhares de alimentos.
+- Busca normalizada sem acentos, por múltiplos termos, nome e categoria.
+- Ranking prioriza correspondência exata, prefixo e aliases PT-BR.
+- Cada seletor mostra no máximo 120 resultados filtrados, evitando renderizar 10 mil opções em cada linha.
+- Busca com debounce para reduzir custo de renderização.
+- Totais ao vivo por refeição e total diário.
+- Metas agora com comparação também de fibras.
+- Estruturas rápidas de 3, 4, 5 ou 6 refeições.
+- Layout mobile reforçado.
+- Sem alteração de schema; baseline permanece 39/39.
+
 ## v0.18.12 — Professional Workout & Nutrition Flow Hardening
 
 - Corrige `+ Novo treino/plano` no prontuário: o Workout Builder agora abre o modal diretamente.
