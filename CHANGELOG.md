@@ -1,3 +1,31 @@
+## 0.18.16 — Workout Builder Delete + Weekly Patient Plan
+
+- Remoção funcional e touch-friendly de exercícios no builder.
+- Seleção do treino do dia usando os dias prescritos.
+- Visão semanal completa do plano no portal do paciente.
+- Navegação do resumo semanal para cada ficha de treino.
+- Mobile UX reforçada.
+- Sem mudança de schema.
+
+## 0.18.15 — Nutrition Review & Publish 2.0
+
+- Revisão nutricional antes da publicação.
+- Histórico e seleção de versões.
+- Comparativo prescrito × meta para kcal/macros/fibra.
+- Revisão de refeições e orientações.
+- Publicação explícita com histórico preservado.
+- Integração direta na aba Nutrição.
+- Sem mudança de schema.
+
+## 0.18.14 — Nutrition Templates 2.0
+
+- Biblioteca de modelos de dieta/refeição refeita para uso profissional.
+- Correção do erro de abertura de Modelos em Nutrição.
+- Busca, filtros, categorias e ordenação.
+- Atribuição/inserção, edição e ativação/desativação.
+- KPIs e estados de erro/empty state.
+- Sem mudança de schema.
+
 ## 0.18.13 — Nutrition Builder Large Catalog
 
 - Otimização do Nutrition Builder para catálogos de milhares de alimentos.

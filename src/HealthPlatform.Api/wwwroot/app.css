@@ -4219,3 +4219,174 @@ body{background:var(--aesyn-offwhite);color:var(--aesyn-graphite)}
   .nutrition-meal-presets>span{grid-column:1/-1}
   .nutrition-meal-presets button{width:100%}
 }
+
+
+/* ===== v0.18.14 — Nutrition Templates 2.0 ===== */
+.nutrition-template-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.nutrition-template-kpis article{display:grid;gap:3px;min-width:0;padding:12px;border:1px solid var(--line);border-radius:13px;background:#f8fbfa}
+.nutrition-template-kpis span,.nutrition-template-kpis small{font-size:10px;color:var(--muted)}
+.nutrition-template-kpis strong{font-size:20px;color:#0b5d4e}
+.nutrition-template-tabs{margin-bottom:10px}
+.nutrition-template-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) auto auto auto auto;gap:8px;align-items:center;margin-bottom:12px}
+.nutrition-template-toolbar>*{min-width:0;max-width:100%}
+.nutrition-template-card{min-width:0;overflow:hidden}
+.nutrition-template-card p{overflow-wrap:anywhere}
+.nutrition-template-meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;color:var(--muted);font-size:10px}
+.nutrition-template-meta span{padding:5px 7px;border-radius:8px;background:#f3f7f6}
+.nutrition-template-guidance{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border:1px solid #cfe7df;border-radius:13px;background:#f2fbf7}
+.nutrition-template-guidance>div{display:grid;gap:3px;min-width:0}
+.nutrition-template-guidance strong{color:#0b5d4e}
+.nutrition-template-guidance span{font-size:11px;color:var(--muted)}
+.nutrition-template-empty{display:grid;gap:5px}
+.nutrition-template-load-error{display:grid;gap:10px;justify-items:start}
+@media(max-width:980px){
+  .nutrition-template-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nutrition-template-toolbar{grid-template-columns:1fr 1fr}
+  .nutrition-template-toolbar .search-input{grid-column:1/-1}
+}
+@media(max-width:620px){
+  .nutrition-template-kpis{grid-template-columns:1fr 1fr}
+  .nutrition-template-toolbar{grid-template-columns:1fr}
+  .nutrition-template-toolbar .search-input{grid-column:1}
+  .nutrition-template-guidance{align-items:stretch;flex-direction:column}
+  .nutrition-template-guidance button{width:100%}
+}
+@media(max-width:430px){
+  .nutrition-template-kpis{grid-template-columns:1fr}
+}
+
+
+/* ===== v0.18.15 — Nutrition Review & Publish 2.0 ===== */
+.nutrition-publish-summary-v1815{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.nutrition-publish-summary-v1815 article{display:grid;gap:3px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#f8fbfa;min-width:0}
+.nutrition-publish-summary-v1815 span,.nutrition-publish-summary-v1815 small{font-size:10px;color:var(--muted)}
+.nutrition-publish-summary-v1815 strong{font-size:18px;color:#0b5d4e;overflow-wrap:anywhere}
+.nutrition-review-selected-v1815{margin-bottom:14px}
+.nutrition-review-metrics-v1815{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0}
+.nutrition-review-metric{display:grid;gap:3px;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fbfcfc;min-width:0}
+.nutrition-review-metric small,.nutrition-review-metric span{font-size:9px;color:var(--muted)}
+.nutrition-review-metric strong{font-size:14px;overflow-wrap:anywhere}
+.nutrition-review-metric.good{border-color:#b7e5d3;background:#f2fbf7}.nutrition-review-metric.watch{border-color:#eadcae;background:#fffaf0}.nutrition-review-metric.attention{border-color:#efc1bd;background:#fff6f5}
+.nutrition-review-meals-v1815{display:grid;gap:7px;margin:12px 0}
+.nutrition-review-meals-v1815 article{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:11px}
+.nutrition-review-meals-v1815 article>span{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;background:#edf6f3;color:#0b6958;font-size:10px;font-weight:800}
+.nutrition-review-meals-v1815 article>div{display:grid;gap:2px;min-width:0}.nutrition-review-meals-v1815 small{font-size:9px;color:var(--muted)}
+.nutrition-review-notes-v1815,.nutrition-review-safety-v1815{display:grid;gap:4px;padding:11px 12px;border-radius:11px;margin:10px 0}
+.nutrition-review-notes-v1815{background:#f7f9f8;border:1px solid var(--line)}.nutrition-review-safety-v1815{background:#f2fbf7;border:1px solid #cfe7df}
+.nutrition-review-notes-v1815 span,.nutrition-review-safety-v1815 span{font-size:10px;color:var(--muted)}
+.nutrition-review-primary-actions-v1815,.nutrition-review-version-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.nutrition-review-version-list-v1815{display:grid;gap:8px}
+.nutrition-review-version{display:grid;gap:9px;padding:11px;border:1px solid var(--line);border-radius:12px}
+.nutrition-review-version.is-active{border-color:#9dd8c4;background:#f2fbf7}
+.nutrition-review-version-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.nutrition-review-version-head>div{min-width:0}.nutrition-review-version-head h4{margin:2px 0;overflow-wrap:anywhere}
+.nutrition-review-mini-macros{display:flex;gap:6px;flex-wrap:wrap}.nutrition-review-mini-macros span{padding:5px 7px;border-radius:8px;background:#f3f7f6;font-size:9px;color:var(--muted)}
+.nutrition-review-load-error-v1815{display:grid;gap:10px;justify-items:start}
+@media(max-width:900px){.nutrition-review-metrics-v1815{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){
+  .nutrition-publish-summary-v1815{grid-template-columns:1fr}
+  .nutrition-review-metrics-v1815{grid-template-columns:1fr 1fr}
+  .nutrition-review-meals-v1815 article{grid-template-columns:auto minmax(0,1fr)}
+  .nutrition-review-meals-v1815 article>div:last-child{grid-column:2}
+}
+@media(max-width:430px){
+  .nutrition-review-metrics-v1815{grid-template-columns:1fr}
+  .nutrition-review-primary-actions-v1815,.nutrition-review-version-actions{display:grid;grid-template-columns:1fr}
+  .nutrition-review-primary-actions-v1815 button,.nutrition-review-version-actions button{width:100%}
+}
+
+
+/* ===== v0.18.16 — Workout Builder Delete + Weekly Patient Plan ===== */
+#clinicalActionModal.workout-modal-open .remove-workout-item{
+  min-height:38px;
+  padding:8px 11px;
+  border:1px solid #e3b7b4;
+  border-radius:10px;
+  background:#fff6f5;
+  color:#a23d36;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+}
+#clinicalActionModal.workout-modal-open .remove-workout-item:hover{background:#fdeceb;border-color:#d9918b}
+#clinicalActionModal.workout-modal-open .remove-workout-item:active{transform:translateY(1px)}
+#clinicalActionModal.workout-modal-open .workout-item-tools{overflow:visible!important}
+
+.patient-weekly-workout-v1816{
+  display:grid;
+  gap:12px;
+  margin:0 0 16px;
+  padding:16px;
+  border:1px solid rgba(18,92,76,.13);
+  border-radius:20px;
+  background:linear-gradient(145deg,#f8fcfa,#eef8f4);
+  box-shadow:0 8px 24px rgba(22,86,73,.05);
+}
+.patient-weekly-workout-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.patient-weekly-workout-head h2{margin:3px 0 3px;font-size:20px;color:#173f38}
+.patient-weekly-workout-head p{margin:0;color:var(--muted);font-size:11px}
+.weekly-workout-count{padding:6px 9px;border-radius:999px;background:#dff3eb;color:#17634e;font-size:9px;font-weight:850;white-space:nowrap}
+.patient-weekly-workout-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.patient-weekly-workout-card{
+  appearance:none;
+  display:grid;
+  gap:6px;
+  min-width:0;
+  padding:12px;
+  border:1px solid rgba(28,89,76,.12);
+  border-radius:14px;
+  background:#fff;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.patient-weekly-workout-card:hover{border-color:#8fcdbb;box-shadow:0 6px 18px rgba(27,91,76,.07)}
+.patient-weekly-workout-card.today{border-color:#65bca4;background:#f0fbf7}
+.weekly-workout-card-top{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.weekly-workout-card-top>span{font-size:9px;font-weight:850;color:#5d7770;text-transform:uppercase;letter-spacing:.05em}
+.weekly-workout-card-top>b{padding:3px 6px;border-radius:999px;background:#15886e;color:white;font-size:8px;letter-spacing:.05em}
+.patient-weekly-workout-card>strong{font-size:13px;overflow-wrap:anywhere}
+.patient-weekly-workout-card>small{font-size:10px;color:var(--muted);overflow-wrap:anywhere}
+.patient-weekly-workout-card>div:last-child{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:5px;border-top:1px solid var(--line)}
+.patient-weekly-workout-card>div:last-child span,.patient-weekly-workout-card>div:last-child i{font-size:9px;color:var(--muted)}
+.patient-weekly-workout-card>div:last-child i{font-style:normal;color:#14745f;font-weight:800}
+.patient-weekly-workout-help{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border-radius:11px;background:rgba(255,255,255,.68)}
+.patient-weekly-workout-help p{margin:0;font-size:10px;line-height:1.4;color:var(--muted)}
+.patient-workout-session.weekly-focus-v1816{outline:2px solid #6fc5ad;outline-offset:2px;box-shadow:0 0 0 6px rgba(111,197,173,.12)!important}
+
+@media(max-width:900px){
+  .patient-weekly-workout-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  #clinicalActionModal.workout-modal-open .workout-item-tools{
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  #clinicalActionModal.workout-modal-open .workout-item-tools button{width:100%;min-height:44px}
+  .patient-weekly-workout-v1816{padding:14px;border-radius:18px;margin-top:2px}
+  .patient-weekly-workout-head h2{font-size:18px}
+  .patient-weekly-workout-grid{
+    display:flex;
+    overflow-x:auto;
+    gap:9px;
+    margin:0 -2px;
+    padding:2px 2px 6px;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+  }
+  .patient-weekly-workout-grid::-webkit-scrollbar{display:none}
+  .patient-weekly-workout-card{
+    flex:0 0 min(78vw,285px);
+    scroll-snap-align:start;
+    min-height:132px;
+  }
+  .patient-workout-session .card-head{align-items:stretch;flex-direction:column}
+  .patient-workout-session .start-workout{width:100%;min-height:44px}
+}
+@media(max-width:430px){
+  #clinicalActionModal.workout-modal-open .workout-item-tools{grid-template-columns:1fr}
+  .patient-weekly-workout-head{display:grid}
+  .weekly-workout-count{justify-self:start}
+  .patient-weekly-workout-card{flex-basis:84vw}
+}

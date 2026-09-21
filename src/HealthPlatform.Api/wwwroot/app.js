@@ -2039,9 +2039,6 @@ async function openDietMealLibrary(patient=null,initialTab='plans'){
     <div class="diet-library-toolbar"><input id="dietLibrarySearch" class="search-input" placeholder="Buscar nome, categoria ou descrição"><select id="dietLibraryStatus"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select></div>
     <div id="dietLibraryList" class="diet-library-grid"></div><div class="workout-library-guidance"><b>Como funciona</b><span>Planos atribuídos viram cópias independentes. Refeições podem ser inseridas em planos ativos sem alterar o modelo original.</span></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
     $('[data-close-clinical-form]').onclick=closeClinicalAction;
-    $('#newStandaloneWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
-    $('#openWorkoutProgramsFromLibrary').onclick=()=>openWorkoutProgramLibrary();
-    $('#openExerciseLibraryFromWorkout').onclick=()=>openExerciseLibrary2();
     const render=()=>{
       const q=String($('#dietLibrarySearch').value||'').trim().toLowerCase(), status=$('#dietLibraryStatus').value;
       const source=tab==='plans'?plans:meals;
@@ -3546,10 +3543,16 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
         <label>Descanso (s)<input name="rest" type="number" min="0" value="${item?.descansoSegundos??60}"></label>
         <label>Tempo (s)<input name="time" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
         <label>Observação<input name="itemObs" value="${esc(item?.observacoes||'')}"></label>
-        <div class="workout-item-tools"><button type="button" class="ghost duplicate-workout-item">Duplicar</button><button type="button" class="icon-btn remove-workout-item">×</button></div>`;
+        <div class="workout-item-tools"><button type="button" class="ghost duplicate-workout-item">Duplicar</button><button type="button" class="danger remove-workout-item" aria-label="Remover exercício" title="Remover exercício">Remover exercício</button></div>`;
       list.appendChild(row);wireExerciseFilter(row);
       if(item?.exercicioId){const opt=row.querySelector('[name=exerciseId]').selectedOptions[0];if(opt)row.querySelector('[name=exerciseSearch]').value=opt.textContent}
-      $('.remove-workout-item',row).onclick=()=>row.remove();
+      $('.remove-workout-item',row).onclick=e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        const exercise=row.querySelector('[name=exerciseId]')?.selectedOptions?.[0]?.textContent?.trim()||'Exercício';
+        row.remove();
+        toast(`${exercise} removido do treino.`);
+      };
       $('.duplicate-workout-item',row).onclick=()=>addItem(session,readItem(row));
     }
 
@@ -4897,7 +4900,7 @@ function hpTrainingDayFlow(home,plano,historico){
   const executions=historico?.execucoes||[];
   const today=todayISO();
   const todayExecution=executions.find(x=>String(x.dataHoraInicioUtc||'').slice(0,10)===today);
-  const planned=sessions[0]||null;
+  const planned=hpWorkoutTodaySession(plano);
   const recommendation=readiness?.recomendacaoTreino||strategy?.intensidadeSugerida||'Aguardando check-in';
   const needsRecovery=['Recuperacao','Leve'].includes(String(readiness?.recomendacaoTreino||''));
   const stage=todayExecution?'done':!readiness?'checkin':'ready';
@@ -4935,6 +4938,7 @@ loadPatientWorkout = async function(){
   host.innerHTML=patientPageHeader('TREINO',esc(p.nome),`${esc(p.objetivo||'Plano de exercícios')} • ${esc(p.profissional)}`)+`
     ${hpRecoveryDayFlow(home)}
     ${hpTrainingDayFlow(home,p,h)}
+    ${hpPatientWeeklyWorkoutPlan(p)}
     <div class="patient-plan-totals workout-totals">
       ${metric(p.totalSessoes,'','Treinos')}
       ${metric(p.totalExercicios,'','Exercícios')}
@@ -4943,7 +4947,7 @@ loadPatientWorkout = async function(){
     </div>
     ${p.observacoes?`<article class="card workout-guidance"><strong>Orientações</strong><p>${esc(p.observacoes)}</p></article>`:''}
     <div class="patient-workout-list">${(p.sessoes||[]).map(s=>`
-      <article class="card patient-workout-session">
+      <article class="card patient-workout-session" id="patient-session-${s.id}" data-full-session="${s.id}">
         <div class="card-head"><div><span class="eyebrow">${esc(s.diasSemana||'DIAS LIVRES')}</span><h3>${esc(s.nome)}</h3></div><button class="primary start-workout" data-session="${s.id}">Registrar treino</button></div>
         ${s.observacoes?`<p class="muted">${esc(s.observacoes)}</p>`:''}
         <div class="patient-exercise-list">${(s.itens||[]).map((i,idx)=>`
@@ -4971,11 +4975,19 @@ loadPatientWorkout = async function(){
     const execution=(h.execucoes||[]).find(x=>String(x.dataHoraInicioUtc||'').slice(0,10)===today);
     if(execution){openWorkoutSessionReview(execution);return;}
     if(!readiness){openDailyReadiness(readiness);return;}
-    const sessao=(p.sessoes||[])[0];
+    const sessao=hpWorkoutTodaySession(p);
     if(sessao)openWorkoutExecutionForm(sessao);
   };
+  $$('.patient-weekly-workout-card').forEach(b=>b.onclick=()=>{
+    const target=document.getElementById(`patient-session-${b.dataset.weekSession}`);
+    if(target){
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+      target.classList.add('weekly-focus-v1816');
+      setTimeout(()=>target.classList.remove('weekly-focus-v1816'),1400);
+    }
+  });
   $$('.start-workout').forEach(b=>b.onclick=()=>{
-    const sessao=(p.sessoes||[]).find(x=>x.id===b.dataset.session);
+    const sessao=(p.sessoes||[]).find(x=>String(x.id)===String(b.dataset.session));
     if(sessao)openWorkoutExecutionForm(sessao);
   });
   $$('.workout-execution-review').forEach(b=>b.onclick=()=>{
@@ -7990,7 +8002,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.13';
+const HP_MVP_VERSION='0.18.16';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -8842,3 +8854,355 @@ const HP_NUTRITION_BUILDER_2_SEARCH_LABEL='Buscar alimento por nome ou categoria
 const HP_NUTRITION_LARGE_CATALOG='v0.18.13';
 const HP_NUTRITION_FOOD_SEARCH_LIMIT=120;
 const HP_NUTRITION_SEARCH_DEBOUNCE_MS=120;
+
+
+// ===== v0.18.14 — Nutrition Templates 2.0 =====
+const HP_NUTRITION_TEMPLATES_2='v0.18.14';
+
+function hpNutritionTemplateNormalize(value){
+  return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+
+function hpNutritionTemplateSort(list,mode){
+  const data=[...(list||[])];
+  if(mode==='name-desc')return data.sort((a,b)=>String(b.nome||'').localeCompare(String(a.nome||''),'pt-BR'));
+  if(mode==='items-desc')return data.sort((a,b)=>Number(b.itens||0)-Number(a.itens||0)||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+  if(mode==='meals-desc')return data.sort((a,b)=>Number(b.refeicoes||0)-Number(a.refeicoes||0)||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+  return data.sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+}
+
+async function hpOpenNutritionTemplates2(patient=null,initialTab='plans'){
+  const box=$('#clinicalActionContent');
+  const modal=$('#clinicalActionModal');
+  modal.classList.add('nutrition-modal-open');
+  modal.classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION TEMPLATES 2.0 • v0.18.14</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • escolha um modelo e aplique uma cópia independente.`:'Organize dietas e refeições reutilizáveis para acelerar a prescrição.'}</p></div><div class="empty">Carregando modelos...</div>`;
+
+  try{
+    const [plans,meals]=await Promise.all([
+      api('/api/modelos-planos-alimentares?incluirInativos=true'),
+      api('/api/modelos-refeicoes?incluirInativos=true')
+    ]);
+
+    let tab=initialTab==='meals'?'meals':'plans';
+    const categories=[...new Set((meals||[]).map(x=>String(x.categoria||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
+    const activePlans=(plans||[]).filter(x=>x.ativo).length;
+    const activeMeals=(meals||[]).filter(x=>x.ativo).length;
+    const totalPlanMeals=(plans||[]).reduce((n,x)=>n+Number(x.refeicoes||0),0);
+    const totalItems=(plans||[]).reduce((n,x)=>n+Number(x.itens||0),0)+(meals||[]).reduce((n,x)=>n+Number(x.itens||0),0);
+
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION TEMPLATES 2.0 • v0.18.14</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • modelos viram cópias independentes.`:'Crie uma cartela reutilizável de dietas e refeições.'}</p></div>
+      <div class="nutrition-template-kpis">
+        <article><span>Dietas ativas</span><strong>${activePlans}</strong><small>${plans.length-activePlans} inativa(s)</small></article>
+        <article><span>Refeições ativas</span><strong>${activeMeals}</strong><small>${meals.length-activeMeals} inativa(s)</small></article>
+        <article><span>Refeições nos planos</span><strong>${totalPlanMeals}</strong><small>blocos reutilizáveis</small></article>
+        <article><span>Itens catalogados</span><strong>${totalItems}</strong><small>entre planos e refeições</small></article>
+      </div>
+      <div class="diet-library-tabs nutrition-template-tabs">
+        <button id="dietLibPlansV1814" class="${tab==='plans'?'active':''}">Modelos de dieta (${plans.length})</button>
+        <button id="dietLibMealsV1814" class="${tab==='meals'?'active':''}">Modelos de refeição (${meals.length})</button>
+      </div>
+      <div class="nutrition-template-toolbar">
+        <input id="nutritionTemplateSearchV1814" class="search-input" type="search" autocomplete="off" placeholder="Buscar modelo, categoria ou descrição">
+        <select id="nutritionTemplateStatusV1814"><option value="ativos">Ativos</option><option value="todos">Todos</option><option value="inativos">Inativos</option></select>
+        <select id="nutritionTemplateCategoryV1814"><option value="">Todas as categorias</option>${categories.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select>
+        <select id="nutritionTemplateSortV1814"><option value="name">Nome A–Z</option><option value="name-desc">Nome Z–A</option><option value="items-desc">Mais itens</option><option value="meals-desc">Mais refeições</option></select>
+        <button class="ghost" id="nutritionTemplateReloadV1814">↻ Atualizar</button>
+      </div>
+      <div id="nutritionTemplateListV1814" class="diet-library-grid nutrition-template-grid"></div>
+      <div class="nutrition-template-guidance">
+        <div><strong>Como criar modelos?</strong><span>Monte uma dieta no paciente e use “Salvar como modelo”. Em cada refeição, use “Salvar refeição” para criar blocos reutilizáveis.</span></div>
+        ${patient?`<button class="primary" id="nutritionTemplateNewDietV1814">+ Montar dieta para ${esc(patient.nome)}</button>`:''}
+      </div>
+      <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+    if($('#nutritionTemplateNewDietV1814'))$('#nutritionTemplateNewDietV1814').onclick=()=>openMealPlanForm(patient);
+    $('#nutritionTemplateReloadV1814').onclick=()=>hpOpenNutritionTemplates2(patient,tab);
+
+    const render=()=>{
+      const q=hpNutritionTemplateNormalize($('#nutritionTemplateSearchV1814').value);
+      const status=$('#nutritionTemplateStatusV1814').value;
+      const category=$('#nutritionTemplateCategoryV1814').value;
+      const sort=$('#nutritionTemplateSortV1814').value;
+      let source=tab==='plans'?plans:meals;
+
+      source=source.filter(m=>{
+        const activeOk=status==='todos'||(status==='ativos'&&m.ativo)||(status==='inativos'&&!m.ativo);
+        const catOk=tab==='plans'||!category||String(m.categoria||'')===category;
+        const hay=hpNutritionTemplateNormalize(`${m.nome||''} ${m.descricao||''} ${m.categoria||''} ${m.profissionalNome||''}`);
+        const searchOk=!q||q.split(/\s+/).filter(Boolean).every(t=>hay.includes(t));
+        return activeOk&&catOk&&searchOk;
+      });
+      source=hpNutritionTemplateSort(source,sort);
+
+      const list=$('#nutritionTemplateListV1814');
+      list.innerHTML=source.length?source.map(m=>{
+        if(tab==='plans')return `<article class="diet-library-card nutrition-template-card ${m.ativo?'':'is-inactive'}" data-diet-model="${m.id}">
+          <div class="workout-library-card-head"><div><span class="eyebrow">${Number(m.refeicoes||0)} refeição(ões) • ${Number(m.itens||0)} item(ns)</span><h4>${esc(m.nome)}</h4></div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
+          <p>${esc(m.descricao||'Modelo sem descrição.')}</p>
+          <div class="nutrition-template-meta">${m.metaCalorias!=null?`<span><b>${num(m.metaCalorias,0)}</b> kcal alvo</span>`:''}<span>${esc(m.profissionalNome||'Profissional')}</span></div>
+          <div class="workout-library-actions">${m.ativo?`<button class="primary diet-plan-assign-v1814">${patient?'Usar neste paciente':'Atribuir a paciente'}</button>`:''}<button class="secondary diet-plan-edit-v1814">Editar dados</button><button class="ghost diet-plan-toggle-v1814">${m.ativo?'Desativar':'Reativar'}</button></div>
+        </article>`;
+        return `<article class="diet-library-card nutrition-template-card ${m.ativo?'':'is-inactive'}" data-meal-model="${m.id}">
+          <div class="workout-library-card-head"><div><span class="eyebrow">${esc(m.categoria||'SEM CATEGORIA')} • ${Number(m.itens||0)} item(ns)</span><h4>${esc(m.nome)}</h4></div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
+          <p>${esc(m.descricao||'Modelo sem descrição.')}</p>
+          <div class="nutrition-template-meta"><span>${m.horario?`Horário-base ${String(m.horario).slice(0,5)}`:'Horário flexível'}</span><span>${esc(m.profissionalNome||'Profissional')}</span></div>
+          <div class="workout-library-actions">${m.ativo?`<button class="primary meal-model-insert-v1814">${patient?'Inserir no plano':'Inserir para paciente'}</button>`:''}<button class="secondary meal-model-edit-v1814">Editar dados</button><button class="ghost meal-model-toggle-v1814">${m.ativo?'Desativar':'Reativar'}</button></div>
+        </article>`;
+      }).join(''):`<div class="empty nutrition-template-empty"><strong>Nenhum modelo encontrado.</strong><span>Ajuste os filtros ou salve uma dieta/refeição como modelo.</span></div>`;
+
+      $$('.diet-plan-assign-v1814').forEach(b=>b.onclick=()=>{
+        const m=plans.find(x=>String(x.id)===String(b.closest('[data-diet-model]').dataset.dietModel));
+        if(m)(patient?openMealTemplateCreateForm(patient,m):openDietLibraryPatientPicker(m,'plan'));
+      });
+      $$('.meal-model-insert-v1814').forEach(b=>b.onclick=()=>{
+        const m=meals.find(x=>String(x.id)===String(b.closest('[data-meal-model]').dataset.mealModel));
+        if(m)(patient?openMealLibraryPlanPicker(patient,m):openDietLibraryPatientPicker(m,'meal'));
+      });
+      $$('.diet-plan-edit-v1814').forEach(b=>b.onclick=()=>{
+        const m=plans.find(x=>String(x.id)===String(b.closest('[data-diet-model]').dataset.dietModel));
+        if(m)openDietPlanModelEdit(m,patient);
+      });
+      $$('.meal-model-edit-v1814').forEach(b=>b.onclick=()=>{
+        const m=meals.find(x=>String(x.id)===String(b.closest('[data-meal-model]').dataset.mealModel));
+        if(m)openMealModelEdit(m,patient);
+      });
+      $$('.diet-plan-toggle-v1814').forEach(b=>b.onclick=async()=>{
+        const m=plans.find(x=>String(x.id)===String(b.closest('[data-diet-model]').dataset.dietModel));
+        if(!m)return;
+        try{
+          await api(`/api/modelos-planos-alimentares/${m.id}`,{method:'PUT',body:JSON.stringify({nome:m.nome,descricao:m.descricao||null,ativo:!m.ativo})});
+          toast(m.ativo?'Modelo desativado.':'Modelo reativado.');
+          hpOpenNutritionTemplates2(patient,'plans');
+        }catch(err){toast(err.message,true)}
+      });
+      $$('.meal-model-toggle-v1814').forEach(b=>b.onclick=async()=>{
+        const m=meals.find(x=>String(x.id)===String(b.closest('[data-meal-model]').dataset.mealModel));
+        if(!m)return;
+        try{
+          await api(`/api/modelos-refeicoes/${m.id}`,{method:'PUT',body:JSON.stringify({nome:m.nome,categoria:m.categoria||null,descricao:m.descricao||null,ativo:!m.ativo})});
+          toast(m.ativo?'Refeição desativada.':'Refeição reativada.');
+          hpOpenNutritionTemplates2(patient,'meals');
+        }catch(err){toast(err.message,true)}
+      });
+    };
+
+    $('#dietLibPlansV1814').onclick=()=>{
+      tab='plans';
+      $('#dietLibPlansV1814').classList.add('active');
+      $('#dietLibMealsV1814').classList.remove('active');
+      $('#nutritionTemplateCategoryV1814').disabled=true;
+      render();
+    };
+    $('#dietLibMealsV1814').onclick=()=>{
+      tab='meals';
+      $('#dietLibMealsV1814').classList.add('active');
+      $('#dietLibPlansV1814').classList.remove('active');
+      $('#nutritionTemplateCategoryV1814').disabled=false;
+      render();
+    };
+    $('#nutritionTemplateSearchV1814').oninput=render;
+    $('#nutritionTemplateStatusV1814').onchange=render;
+    $('#nutritionTemplateCategoryV1814').onchange=render;
+    $('#nutritionTemplateSortV1814').onchange=render;
+    $('#nutritionTemplateCategoryV1814').disabled=tab==='plans';
+    render();
+  }catch(err){
+    box.innerHTML=`<div class="card empty nutrition-template-load-error"><strong>Não foi possível abrir os modelos de nutrição.</strong><span>${esc(err.message)}</span><div class="form-actions"><button class="primary" id="retryNutritionTemplatesV1814">Tentar novamente</button><button class="secondary" data-close-clinical-form>Fechar</button></div></div>`;
+    $('#retryNutritionTemplatesV1814').onclick=()=>hpOpenNutritionTemplates2(patient,initialTab);
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+  }
+}
+
+// All existing entry points now use the hardened v0.18.14 library.
+openDietMealLibrary=hpOpenNutritionTemplates2;
+
+
+// ===== v0.18.15 — Nutrition Review & Publish 2.0 =====
+const HP_NUTRITION_REVIEW_PUBLISH_2='v0.18.15';
+
+function hpNutritionDeviation(current,target){
+  if(target==null||Number(target)===0)return null;
+  const diff=Number(current||0)-Number(target||0);
+  const pct=(diff/Number(target))*100;
+  return {diff,pct};
+}
+
+function hpNutritionReviewMetric(label,current,target,unit,digits=0){
+  const d=hpNutritionDeviation(current,target);
+  const tone=d==null?'neutral':Math.abs(d.pct)<=5?'good':Math.abs(d.pct)<=12?'watch':'attention';
+  return `<article class="nutrition-review-metric ${tone}">
+    <small>${esc(label)}</small>
+    <strong>${num(current,digits)} ${unit}</strong>
+    <span>${target==null?'sem meta':`meta ${num(target,digits)} ${unit} • ${d.diff>=0?'+':''}${num(d.diff,digits)} ${unit}`}</span>
+  </article>`;
+}
+
+function hpNutritionReviewCard(plan,activeId){
+  const totals=plan.totaisDiarios||{};
+  const isActive=String(plan.id)===String(activeId)||plan.status==='Ativo';
+  const meals=plan.refeicoes||[];
+  return `<article class="nutrition-review-version ${isActive?'is-active':''}" data-nutrition-review-plan="${plan.id}">
+    <div class="nutrition-review-version-head">
+      <div><span class="eyebrow">V${plan.versao||1} • ${esc(plan.status||'Rascunho')}</span><h4>${esc(plan.nome||'Plano alimentar')}</h4><small>${fmtDate(plan.dataInicio)}${plan.dataFim?` — ${fmtDate(plan.dataFim)}`:''} • ${meals.length} refeição(ões)</small></div>
+      ${isActive?'<span class="pill Ativa">Publicado</span>':'<span class="pill Agendada">Disponível</span>'}
+    </div>
+    <div class="nutrition-review-mini-macros">
+      <span><b>${num(totals.calorias,0)}</b> kcal</span>
+      <span><b>${num(totals.proteinasG)}</b> P</span>
+      <span><b>${num(totals.carboidratosG)}</b> C</span>
+      <span><b>${num(totals.gordurasG)}</b> G</span>
+      <span><b>${num(totals.fibrasG)}</b> fibra</span>
+    </div>
+    <div class="nutrition-review-version-actions">
+      <button class="secondary nutrition-review-open-v1815" data-plan-id="${plan.id}">Revisar detalhes</button>
+      ${!isActive?`<button class="primary nutrition-review-publish-v1815" data-plan-id="${plan.id}">Publicar versão</button>`:''}
+    </div>
+  </article>`;
+}
+
+async function hpOpenNutritionReviewPublish2(patient,preferredPlanId=null){
+  const p=typeof patient==='string'?await api(`/api/pacientes/${patient}`):patient;
+  if(!p?.id){toast('Paciente não identificado para revisão nutricional.',true);return}
+  const modal=$('#clinicalActionModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('nutrition-modal-open');
+  const box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION REVIEW & PUBLISH 2.0 • v0.18.15</span><h2>Revisar & publicar alimentação</h2><p>${esc(p.nome)} • carregando histórico nutricional...</p></div><div class="intake-loading">Carregando versões...</div>`;
+
+  try{
+    const plans=await api(`/api/pacientes/${p.id}/planos-alimentares`);
+    const sorted=[...(plans||[])].sort((a,b)=>(Number(b.versao||0)-Number(a.versao||0))||String(b.dataInicio||'').localeCompare(String(a.dataInicio||'')));
+    const active=sorted.find(x=>x.status==='Ativo')||null;
+    let selected=sorted.find(x=>String(x.id)===String(preferredPlanId))||active||sorted[0]||null;
+
+    const render=()=>{
+      const totals=selected?.totaisDiarios||{};
+      const meals=selected?.refeicoes||[];
+      box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION REVIEW & PUBLISH 2.0 • v0.18.15</span><h2>Revisar & publicar alimentação</h2><p>${esc(p.nome)} • publicação explícita com histórico preservado.</p></div>
+        <section class="nutrition-publish-summary-v1815">
+          <article><span>Versão publicada</span><strong>${esc(active?.nome||'Nenhuma')}</strong><small>${active?`V${active.versao||1} • ${fmtDate(active.dataInicio)}`:'Escolha uma versão abaixo'}</small></article>
+          <article><span>Versões disponíveis</span><strong>${sorted.length}</strong><small>${sorted.filter(x=>x.status!=='Ativo').length} fora de publicação</small></article>
+          <article><span>Refeições da revisão</span><strong>${meals.length}</strong><small>${selected?esc(selected.nome):'Nenhum plano selecionado'}</small></article>
+        </section>
+        ${selected?`<section class="card nutrition-review-selected-v1815">
+          <div class="card-head"><div><span class="eyebrow">REVISÃO DA VERSÃO • V${selected.versao||1}</span><h3>${esc(selected.nome)}</h3><small>${esc(selected.profissionalNome||'Profissional')} • ${fmtDate(selected.dataInicio)}${selected.dataFim?` — ${fmtDate(selected.dataFim)}`:''}</small></div><span class="pill ${selected.status==='Ativo'?'Ativa':'Agendada'}">${esc(selected.status||'Rascunho')}</span></div>
+          <div class="nutrition-review-metrics-v1815">
+            ${hpNutritionReviewMetric('Calorias',totals.calorias,selected.metaCalorias,'kcal',0)}
+            ${hpNutritionReviewMetric('Proteína',totals.proteinasG,selected.metaProteinasG,'g',1)}
+            ${hpNutritionReviewMetric('Carboidrato',totals.carboidratosG,selected.metaCarboidratosG,'g',1)}
+            ${hpNutritionReviewMetric('Gordura',totals.gordurasG,selected.metaGordurasG,'g',1)}
+            ${hpNutritionReviewMetric('Fibra',totals.fibrasG,selected.metaFibrasG,'g',1)}
+          </div>
+          <div class="nutrition-review-meals-v1815">
+            ${meals.map((r,i)=>`<article><span>${i+1}</span><div><strong>${esc(r.nome)}</strong><small>${r.horario?String(r.horario).slice(0,5):'Horário livre'} • ${(r.itens||[]).length} item(ns)</small></div><div><b>${num(r.totais?.calorias,0)} kcal</b><small>P ${num(r.totais?.proteinasG)} • C ${num(r.totais?.carboidratosG)} • G ${num(r.totais?.gordurasG)}</small></div></article>`).join('')||'<div class="empty compact">Nenhuma refeição cadastrada.</div>'}
+          </div>
+          ${selected.observacoes?`<div class="nutrition-review-notes-v1815"><strong>Orientações gerais</strong><span>${esc(selected.observacoes)}</span></div>`:''}
+          <div class="nutrition-review-safety-v1815"><b>Checklist antes de publicar</b><span>Revise metas, horários, quantidades, substituições e orientações. A publicação torna esta a versão ativa e preserva as anteriores no histórico.</span></div>
+          <div class="nutrition-review-primary-actions-v1815">
+            <button class="secondary" id="nutritionReviewEditV1815">Editar esta versão</button>
+            <button class="ghost" id="nutritionReviewTemplatesV1815">Modelos de dieta</button>
+            ${selected.status!=='Ativo'?'<button class="primary" id="nutritionReviewPublishSelectedV1815">Publicar esta versão</button>':'<span class="pill Ativa">Esta versão está publicada</span>'}
+          </div>
+        </section>`:`<div class="empty"><strong>Nenhum plano alimentar encontrado.</strong><span>Monte uma dieta ou aplique um modelo antes de publicar.</span><button class="primary" id="nutritionReviewCreateV1815">+ Montar dieta</button></div>`}
+        <section class="card nutrition-review-history-v1815"><div class="card-head"><div><span class="eyebrow">HISTÓRICO</span><h3>Versões do plano alimentar</h3></div></div><div class="nutrition-review-version-list-v1815">${sorted.map(x=>hpNutritionReviewCard(x,active?.id)).join('')||'<div class="empty compact">Sem versões.</div>'}</div></section>
+        <div class="form-actions"><button class="secondary" id="nutritionReviewBackV1815">Voltar ao prontuário</button></div>`;
+
+      if($('#nutritionReviewCreateV1815'))$('#nutritionReviewCreateV1815').onclick=()=>openMealPlanForm(p);
+      if($('#nutritionReviewEditV1815'))$('#nutritionReviewEditV1815').onclick=()=>openMealPlanForm(p,selected);
+      if($('#nutritionReviewTemplatesV1815'))$('#nutritionReviewTemplatesV1815').onclick=()=>openDietMealLibrary(p,'plans');
+      if($('#nutritionReviewPublishSelectedV1815'))$('#nutritionReviewPublishSelectedV1815').onclick=async()=>{
+        try{
+          await hpPublishPlanVersion('nutrition',p.id,selected.id);
+          await hpOpenNutritionReviewPublish2(p,selected.id);
+        }catch(err){toast(err.message,true)}
+      };
+      $$('.nutrition-review-open-v1815').forEach(btn=>btn.onclick=()=>{
+        selected=sorted.find(x=>String(x.id)===String(btn.dataset.planId))||selected;
+        render();
+      });
+      $$('.nutrition-review-publish-v1815').forEach(btn=>btn.onclick=async()=>{
+        const plan=sorted.find(x=>String(x.id)===String(btn.dataset.planId));
+        if(!plan)return;
+        try{
+          await hpPublishPlanVersion('nutrition',p.id,plan.id);
+          await hpOpenNutritionReviewPublish2(p,plan.id);
+        }catch(err){toast(err.message,true)}
+      });
+      $('#nutritionReviewBackV1815').onclick=()=>{closeClinicalAction();state.patientTab='alimentacao';openPatient(p.id)};
+    };
+    render();
+  }catch(err){
+    box.innerHTML=`<div class="card empty nutrition-review-load-error-v1815"><strong>Não foi possível carregar a revisão nutricional.</strong><span>${esc(err.message)}</span><div class="form-actions"><button class="primary" id="nutritionReviewRetryV1815">Tentar novamente</button><button class="secondary" data-close-clinical-form>Fechar</button></div></div>`;
+    $('#nutritionReviewRetryV1815').onclick=()=>hpOpenNutritionReviewPublish2(p,preferredPlanId);
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;
+  }
+}
+
+// Add the review/publish entry point to the patient nutrition tab without
+// replacing the stable v0.18.12 renderer.
+const __hpRenderNutritionProfessionalFlow_v01815=hpRenderNutritionProfessionalFlow;
+hpRenderNutritionProfessionalFlow=function(d){
+  __hpRenderNutritionProfessionalFlow_v01815(d);
+  const actions=document.querySelector('.nutrition-pro-flow .pro-flow-actions');
+  if(actions&&!document.querySelector('#nutritionReviewPublishV1815')){
+    actions.insertAdjacentHTML('afterbegin','<button class="secondary" id="nutritionReviewPublishV1815">Revisar & publicar</button>');
+    $('#nutritionReviewPublishV1815').onclick=()=>hpOpenNutritionReviewPublish2(d.p||d.portal?.paciente||state.patientId);
+  }
+};
+
+
+// ===== v0.18.16 — Workout Builder Delete + Weekly Patient Plan =====
+const HP_WORKOUT_DELETE_WEEKLY_PLAN='v0.18.16';
+
+function hpWorkoutDayToken(value){
+  return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+
+function hpWorkoutTodayAliases(){
+  const day=new Date().getDay();
+  return [
+    ['dom','domingo'],
+    ['seg','segunda','segunda-feira'],
+    ['ter','terca','terça','terca-feira','terça-feira'],
+    ['qua','quarta','quarta-feira'],
+    ['qui','quinta','quinta-feira'],
+    ['sex','sexta','sexta-feira'],
+    ['sab','sábado','sabado']
+  ][day].map(hpWorkoutDayToken);
+}
+
+function hpWorkoutSessionMatchesToday(session){
+  const raw=hpWorkoutDayToken(session?.diasSemana);
+  if(!raw||raw.includes('livre'))return false;
+  return hpWorkoutTodayAliases().some(alias=>raw.includes(alias));
+}
+
+function hpWorkoutTodaySession(plan){
+  const sessions=plan?.sessoes||[];
+  return sessions.find(hpWorkoutSessionMatchesToday)||sessions[0]||null;
+}
+
+function hpPatientWeeklyWorkoutPlan(plan){
+  const sessions=plan?.sessoes||[];
+  if(!sessions.length)return '';
+  const today=hpWorkoutTodaySession(plan);
+  return `<section class="patient-weekly-workout-v1816" data-patient-weekly-workout="v0.18.16">
+    <div class="patient-weekly-workout-head">
+      <div><span class="eyebrow">SEU PLANO COMPLETO</span><h2>Treinos da semana</h2><p>Veja toda a ficha, não só o treino sugerido para hoje.</p></div>
+      <span class="weekly-workout-count">${sessions.length} treino(s)</span>
+    </div>
+    <div class="patient-weekly-workout-grid">
+      ${sessions.map((s,index)=>`
+        <button type="button" class="patient-weekly-workout-card ${String(s.id)===String(today?.id)?'today':''}" data-week-session="${s.id}">
+          <div class="weekly-workout-card-top"><span>Treino ${String.fromCharCode(65+index)}</span>${String(s.id)===String(today?.id)?'<b>HOJE</b>':''}</div>
+          <strong>${esc(s.nome||`Treino ${String.fromCharCode(65+index)}`)}</strong>
+          <small>${esc(s.diasSemana||'Dias livres')}</small>
+          <div><span>${(s.itens||[]).length} exercício(s)</span><i>Ver ficha ›</i></div>
+        </button>`).join('')}
+    </div>
+    <div class="patient-weekly-workout-help"><span>💡</span><p>O destaque “Hoje” serve como atalho. Sua programação completa continua disponível abaixo.</p></div>
+  </section>`;
+}

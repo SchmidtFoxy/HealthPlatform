@@ -29,6 +29,44 @@ O Workout Studio passa a permitir montar programas independentes de paciente usa
 Programas profissionais deixam de depender do localStorage e passam a ser persistidos no banco por organização/profissional. A versão adiciona CRUD server-side, duplicação, importação JSON via API e migração assistida dos programas locais da v0.18.9.
 
 
+## v0.18.16 — Workout Builder Delete + Weekly Patient Plan
+
+- Corrige a remoção de exercícios no Workout Builder.
+- Troca o pequeno `×` por uma ação explícita `Remover exercício`, com área de toque adequada no mobile.
+- Mantém duplicação e remoção independentes por exercício.
+- Treino do dia agora tenta respeitar `diasSemana` antes de usar fallback.
+- Adiciona `Treinos da semana` no portal do paciente com todas as sessões do plano.
+- Destaque visual para a sessão de hoje sem esconder a programação completa.
+- Cards semanais levam diretamente à ficha completa da sessão.
+- Melhora leitura e execução da ficha no celular.
+- Sem alteração de schema; baseline permanece 39/39.
+
+## v0.18.15 — Nutrition Review & Publish 2.0
+
+- Novo fluxo profissional específico para revisar e publicar planos alimentares.
+- Entrada `Revisar & publicar` diretamente na aba Nutrição do paciente.
+- Histórico de versões com plano ativo destacado.
+- Revisão de kcal, proteína, carboidrato, gordura e fibra contra as metas.
+- Revisão das refeições, horários, itens e orientações antes da publicação.
+- Publicação explícita preservando versões anteriores no histórico.
+- Atalhos para editar a versão e abrir modelos de dieta.
+- Retry em caso de falha e layout responsivo.
+- Sem alteração de schema; baseline permanece 39/39.
+
+## v0.18.14 — Nutrition Templates 2.0
+
+- Corrige o erro de abertura da biblioteca de modelos nutricionais causado por handlers de botões inexistentes.
+- Biblioteca profissional única para modelos de dieta e modelos de refeição.
+- KPIs de dietas, refeições, blocos e itens.
+- Busca normalizada por nome, descrição, categoria e profissional.
+- Filtros por status e categoria.
+- Ordenação por nome, quantidade de itens ou refeições.
+- Atribuição de dieta ao paciente e inserção de refeição em plano existente.
+- Edição, ativação e desativação de modelos.
+- Empty state, retry e atualização da biblioteca.
+- CTA para montar nova dieta quando aberto dentro do paciente.
+- Sem alteração de schema; baseline permanece 39/39.
+
 ## v0.18.13 — Nutrition Builder Large Catalog
 
 - Nutrition Builder preparado para catálogos com milhares de alimentos.
