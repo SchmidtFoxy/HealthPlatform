@@ -5016,6 +5016,32 @@ function hpTrainingDayFlow(home,plano,historico){
   </section>`;
 }
 
+// ===== v0.19.5 — Patient Advanced Technique Guidance =====
+const HP_PATIENT_ADVANCED_TECHNIQUE_GUIDANCE='v0.19.5';
+function hpWorkoutTechniqueMeta(item){
+  const raw=String(item?.observacoes||'').trim();
+  let m=raw.match(/^\[BISET(?:\s+([^\]]+))?\]\s*/i);
+  if(m)return {type:'biset',label:'BISET',title:'Exercício conjugado',group:(m[1]||'').trim(),note:raw.slice(m[0].length).trim(),detail:'Execute este exercício em sequência com o outro exercício do mesmo BISET, respeitando a prescrição.'};
+  m=raw.match(/^\[DROP\s+-([\d.,]+)%\s+x(\d+)\]\s*/i);
+  if(m){const reduction=Number(String(m[1]).replace(',','.'))||45,steps=Number(m[2])||1;return {type:'drop',label:'DROP',title:'Drop set',reduction,steps,note:raw.slice(m[0].length).trim(),detail:`Após a série prescrita, reduza aproximadamente ${num(reduction,0)}% da carga e continue por ${steps} etapa(s), conforme orientação profissional.`};}
+  m=raw.match(/^\[PROGRESSAO\s+\+([\d.,]+)%(?:\s+•\s+([^\]]+))?\]\s*/i);
+  if(m){const increase=Number(String(m[1]).replace(',','.'))||5,rule=(m[2]||'').trim();return {type:'progression',label:'PROGRESSÃO',title:'Progressão de carga',increase,rule,note:raw.slice(m[0].length).trim(),detail:rule?`Aumente ${num(increase,0)}% quando cumprir: ${rule}.`:`Progressão alvo de ${num(increase,0)}% conforme acompanhamento profissional.`};}
+  return {type:'normal',label:'',title:'',note:raw,detail:''};
+}
+function hpWorkoutTechniqueBadge(item){
+  const t=hpWorkoutTechniqueMeta(item);if(t.type==='normal')return '';
+  return `<span class="workout-technique-badge ${t.type}">${esc(t.label)}${t.type==='biset'&&t.group?` ${esc(t.group)}`:''}</span>`;
+}
+function hpWorkoutTechniqueGuidance(item){
+  const t=hpWorkoutTechniqueMeta(item);if(t.type==='normal')return t.note?`<p class="workout-technique-note">${esc(t.note)}</p>`:'';
+  const prescribed=Number(item?.carga);
+  let calc='';
+  if(t.type==='drop'&&Number.isFinite(prescribed)&&prescribed>0){const next=prescribed*(1-t.reduction/100);calc=`<small>Carga de referência após redução: ~${num(next,1)} ${esc(item.unidadeCarga||'kg')}</small>`;}
+  if(t.type==='progression'&&Number.isFinite(prescribed)&&prescribed>0){const next=prescribed*(1+t.increase/100);calc=`<small>Próxima carga de referência: ~${num(next,1)} ${esc(item.unidadeCarga||'kg')}</small>`;}
+  return `<div class="workout-technique-guidance ${t.type}"><div><b>${esc(t.title)}</b><span>${esc(t.detail)}</span>${calc}</div>${t.note?`<p>${esc(t.note)}</p>`:''}</div>`;
+}
+function hpWorkoutTechniqueClass(item){return `technique-${hpWorkoutTechniqueMeta(item).type}`;}
+
 // ===== v0.19.3 — Patient Workout Access Hub =====
 const HP_PATIENT_WORKOUT_ACCESS_HUB='v0.19.3';
 function hpWorkoutLetter(index){
@@ -5066,10 +5092,11 @@ loadPatientWorkout = async function(){
         <div class="card-head"><div><span class="eyebrow">${esc(s.diasSemana||'DIAS LIVRES')}</span><h3>${esc(s.nome)}</h3></div><button class="primary start-workout" data-session="${s.id}">Registrar treino</button></div>
         ${s.observacoes?`<p class="muted">${esc(s.observacoes)}</p>`:''}
         <div class="patient-exercise-list">${(s.itens||[]).map((i,idx)=>`
-          <div class="patient-exercise-card">
+          <div class="patient-exercise-card ${hpWorkoutTechniqueClass(i)}">
             <div class="exercise-order">${idx+1}</div>
-            <div class="exercise-main"><div class="exercise-title"><strong>${esc(i.exercicio)}</strong>${i.grupoMuscular?`<small>${esc(i.grupoMuscular)}${i.equipamento?' • '+esc(i.equipamento):''}</small>`:''}</div>
+            <div class="exercise-main"><div class="exercise-title"><strong>${esc(i.exercicio)}</strong>${hpWorkoutTechniqueBadge(i)}${i.grupoMuscular?`<small>${esc(i.grupoMuscular)}${i.equipamento?' • '+esc(i.equipamento):''}</small>`:''}</div>
               <div class="exercise-prescription"><b>${i.series} × ${esc(i.repeticoes)}</b>${i.carga!=null?`<span>${num(i.carga)} ${esc(i.unidadeCarga||'kg')}</span>`:''}${i.descansoSegundos!=null?`<span>${i.descansoSegundos}s descanso</span>`:''}</div>
+              ${hpWorkoutTechniqueGuidance(i)}
             </div>
             ${i.videoUrl?`<a class="exercise-video" href="${esc(i.videoUrl)}" target="_blank" rel="noopener noreferrer">▶ Vídeo</a>`:''}
           </div>`).join('')}</div>
@@ -5185,8 +5212,9 @@ function openWorkoutExecutionForm(sessao){
         ${field('Horário de início','inicio','datetime-local',`value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"`)}
       </div>
       <div class="execution-items">${(sessao.itens||[]).map(i=>`
-        <div class="execution-item" data-item="${i.id}">
-          <div class="execution-item-head"><strong>${esc(i.exercicio)}</strong><small>Prescrito: ${i.series} × ${esc(i.repeticoes)}${i.carga!=null?' • '+num(i.carga)+' '+esc(i.unidadeCarga||'kg'):''}</small></div>
+        <div class="execution-item ${hpWorkoutTechniqueClass(i)}" data-item="${i.id}">
+          <div class="execution-item-head"><div><strong>${esc(i.exercicio)}</strong>${hpWorkoutTechniqueBadge(i)}</div><small>Prescrito: ${i.series} × ${esc(i.repeticoes)}${i.carga!=null?' • '+num(i.carga)+' '+esc(i.unidadeCarga||'kg'):''}</small></div>
+          ${hpWorkoutTechniqueGuidance(i)}
           <label>Séries<input name="series" type="number" min="0" value="${i.series}"></label>
           <label>Repetições<input name="reps" value="${esc(i.repeticoes)}"></label>
           <label>Carga<input name="load" type="number" min="0" step="0.01" value="${i.carga??''}"></label>
@@ -8121,7 +8149,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.4';
+const HP_MVP_VERSION='0.19.5';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

@@ -1,4 +1,4 @@
-## v0.19.4 — Advanced Workout Techniques Builder
+## v0.19.5 — Advanced Workout Techniques Builder
 
 - Workout Builder profissional passa a oferecer técnica avançada por exercício: Normal, BISET/conjugado, DROP set ou Progressão de carga.
 - BISET cria um par de exercício conjugado e mantém um identificador de grupo na prescrição.

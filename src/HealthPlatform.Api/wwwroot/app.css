@@ -4909,3 +4909,17 @@ html[data-theme="dark"] .theme-toggle:hover{color:#63dfbe!important;border-color
 .advanced-technique-config{display:none;grid-template-columns:minmax(130px,220px) minmax(180px,1fr);gap:10px;align-items:end;padding-top:12px;border-top:1px solid var(--border)}.advanced-technique-config.active{display:grid}.advanced-technique-config>small{grid-column:1/-1;color:var(--muted);line-height:1.45}.builder3-exercise-row.has-advanced-technique{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--accent) 72%,transparent)}
 html[data-theme="dark"] .advanced-technique-panel{background:#101516;border-color:#273031}.add-biset-pair{white-space:nowrap}
 @media(max-width:760px){.advanced-technique-head{align-items:stretch;flex-direction:column}.advanced-technique-head label{min-width:0}.advanced-technique-config{grid-template-columns:1fr}}
+
+/* ===== v0.19.5 — Patient Advanced Technique Guidance ===== */
+.workout-technique-badge{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);font-size:9px;font-weight:950;letter-spacing:.08em;vertical-align:middle;background:var(--surface-2);color:var(--muted)}
+.workout-technique-badge.biset{border-color:rgba(57,217,174,.35);color:var(--accent)}
+.workout-technique-badge.drop{border-color:rgba(244,174,75,.36);color:#d99127}
+.workout-technique-badge.progression{border-color:rgba(112,153,255,.36);color:#6f91eb}
+.workout-technique-guidance{grid-column:1/-1;margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.workout-technique-guidance>div{display:grid;gap:3px}.workout-technique-guidance b{font-size:11px}.workout-technique-guidance span,.workout-technique-guidance small{color:var(--muted);font-size:10px;line-height:1.45}.workout-technique-guidance p{margin:7px 0 0;padding-top:7px;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}
+.workout-technique-guidance.biset{box-shadow:inset 3px 0 0 rgba(57,217,174,.7)}.workout-technique-guidance.drop{box-shadow:inset 3px 0 0 rgba(244,174,75,.72)}.workout-technique-guidance.progression{box-shadow:inset 3px 0 0 rgba(112,153,255,.72)}
+.patient-exercise-card.technique-biset,.execution-item.technique-biset{border-color:rgba(57,217,174,.28)}
+.patient-exercise-card.technique-drop,.execution-item.technique-drop{border-color:rgba(244,174,75,.25)}
+.patient-exercise-card.technique-progression,.execution-item.technique-progression{border-color:rgba(112,153,255,.25)}
+.execution-item-head>div{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.execution-item-head .workout-technique-badge{margin-left:0}
+@media(max-width:720px){.workout-technique-guidance{padding:10px}.workout-technique-badge{margin-left:5px}.execution-item-head>div{align-items:flex-start}}

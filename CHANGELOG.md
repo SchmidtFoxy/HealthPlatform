@@ -1,3 +1,12 @@
+## v0.19.5 — Patient Advanced Technique Guidance
+- Leva BISET, DROP set e progressão de carga para a experiência de execução do paciente.
+- Interpreta os marcadores estruturados gerados pelo Workout Builder sem nova migration.
+- BISET passa a exibir agrupamento e orientação de execução conjugada.
+- DROP exibe percentual, etapas e carga de referência calculada quando há carga prescrita.
+- Progressão exibe gatilho profissional e próxima carga de referência quando aplicável.
+- Identidade visual das técnicas segue o dark theme premium do AESYN.
+- Nenhuma alteração de schema; baseline permanece 39/39.
+
 ## v0.19.4 — Advanced Workout Techniques Builder
 
 - Adiciona BISET/conjugado, DROP set e Progressão de carga ao Workout Builder profissional.
