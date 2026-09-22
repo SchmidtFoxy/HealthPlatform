@@ -1,3 +1,13 @@
+## v0.19.6 — Patient Progress Photos & Markup
+- Novo slot profissional de fotos de evolução corporal dentro do perfil do paciente.
+- Upload autenticado de JPEG/PNG/WebP com limite de 8 MB, validação de assinatura e segregação por organização/paciente.
+- Arquivos ficam fora do `wwwroot` e só são lidos por endpoint autenticado, evitando exposição pública das fotos clínicas.
+- Galeria longitudinal com posição (frente, costas e laterais), data e observação.
+- Comparação lado a lado entre duas datas.
+- Ferramenta de desenho sobre a imagem; a anotação é salva como cópia e preserva a foto original.
+- Persistência clínica reutiliza o Diário do Paciente, sem migration nova nesta etapa.
+- Remove versão histórica visível do Command Center e detalhe de infraestrutura da mensagem de login.
+
 ## v0.19.5 — Patient Advanced Technique Guidance
 - Leva BISET, DROP set e progressão de carga para a experiência de execução do paciente.
 - Interpreta os marcadores estruturados gerados pelo Workout Builder sem nova migration.

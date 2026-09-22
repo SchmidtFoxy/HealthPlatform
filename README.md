@@ -1,3 +1,9 @@
+## v0.19.6 — Patient Progress Photos & Markup
+
+O perfil profissional do paciente passa a oferecer galeria de evolução visual, upload protegido, comparação entre datas e marcação gráfica não destrutiva sobre cópias das fotos.
+
+> Produção: os arquivos são gravados em `App_Data/evolucao`. Em deploy com container, monte `App_Data` em volume persistente antes de usar o recurso com dados reais.
+
 ## v0.19.5 — Advanced Workout Techniques Builder
 
 - Workout Builder profissional passa a oferecer técnica avançada por exercício: Normal, BISET/conjugado, DROP set ou Progressão de carga.
