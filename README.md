@@ -1,4 +1,4 @@
-## v0.19.2 — Production HTTPS & Proxy Hardening
+## v0.19.3 — Patient Workout Access Hub
 
 - HTTPS preparado para reverse proxy Nginx/Render com `X-Forwarded-Proto`.
 - HSTS habilitado fora de Development.

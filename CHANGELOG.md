@@ -1,3 +1,11 @@
+## v0.19.3 — Patient Workout Access Hub
+
+- Paciente passa a visualizar todos os treinos/sessões liberados da ficha em atalhos A, B, C...
+- Qualquer treino disponível pode ser iniciado diretamente pelo paciente, sem ficar preso apenas ao treino sugerido para o dia.
+- Mantidos prontidão diária, recomendação contextual e prescrição profissional como referência, sem bloquear a escolha de sessão liberada.
+- Hub responsivo para uso mobile-first e integrado ao tema claro/escuro AESYN.
+- Sem alteração de schema ou migration.
+
 # v0.19.2 — Production Experience Cleanup
 
 ## v0.19.2-r1 — Production Experience Cleanup hardening

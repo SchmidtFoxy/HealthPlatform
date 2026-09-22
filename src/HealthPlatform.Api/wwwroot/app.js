@@ -4986,6 +4986,25 @@ function hpTrainingDayFlow(home,plano,historico){
   </section>`;
 }
 
+// ===== v0.19.3 — Patient Workout Access Hub =====
+const HP_PATIENT_WORKOUT_ACCESS_HUB='v0.19.3';
+function hpWorkoutLetter(index){
+  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return index<alphabet.length?alphabet[index]:String(index+1);
+}
+function hpPatientWorkoutAccessHub(plano){
+  const sessoes=[...(plano?.sessoes||[])].sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+  if(!sessoes.length)return '';
+  return `<section class="patient-workout-access-hub" aria-label="Todos os treinos disponíveis">
+    <div class="patient-workout-access-head"><div><span class="eyebrow">MEUS TREINOS</span><h3>Escolha o treino que quer fazer hoje</h3><p>Todos os treinos liberados pelo seu profissional ficam disponíveis aqui. Você pode iniciar qualquer sessão da sua ficha.</p></div><span class="patient-workout-access-count">${sessoes.length} disponível(is)</span></div>
+    <div class="patient-workout-access-grid">${sessoes.map((s,index)=>`<button type="button" class="patient-workout-access-card" data-access-session="${s.id}">
+      <span class="patient-workout-access-letter">${hpWorkoutLetter(index)}</span>
+      <span class="patient-workout-access-copy"><small>TREINO ${hpWorkoutLetter(index)}</small><strong>${esc(s.nome)}</strong><em>${(s.itens||[]).length} exercício(s)${s.diasSemana?` • ${esc(s.diasSemana)}`:''}</em></span>
+      <span class="patient-workout-access-action">Iniciar ›</span>
+    </button>`).join('')}</div>
+  </section>`;
+}
+
 const __loadPatientWorkout_v031 = loadPatientWorkout;
 loadPatientWorkout = async function(){
   const host=$('#patientPortalContent');
@@ -5003,6 +5022,7 @@ loadPatientWorkout = async function(){
   host.innerHTML=patientPageHeader('TREINO',esc(p.nome),`${esc(p.objetivo||'Plano de exercícios')} • ${esc(p.profissional)}`)+`
     ${hpRecoveryDayFlow(home)}
     ${hpTrainingDayFlow(home,p,h)}
+    ${hpPatientWorkoutAccessHub(p)}
     ${hpPatientWeeklyWorkoutPlan(p)}
     <div class="patient-plan-totals workout-totals">
       ${metric(p.totalSessoes,'','Treinos')}
@@ -5043,6 +5063,10 @@ loadPatientWorkout = async function(){
     const sessao=hpWorkoutTodaySession(p);
     if(sessao)openWorkoutExecutionForm(sessao);
   };
+  $$('.patient-workout-access-card').forEach(b=>b.onclick=()=>{
+    const sessao=(p.sessoes||[]).find(x=>String(x.id)===String(b.dataset.accessSession));
+    if(sessao)openWorkoutExecutionForm(sessao);
+  });
   $$('.patient-weekly-workout-card').forEach(b=>b.onclick=()=>{
     const target=document.getElementById(`patient-session-${b.dataset.weekSession}`);
     if(target){
@@ -8067,7 +8091,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.2';
+const HP_MVP_VERSION='0.19.3';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
