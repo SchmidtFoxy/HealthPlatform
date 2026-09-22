@@ -1,3 +1,18 @@
+# v0.19.2 — Production Experience Cleanup
+
+## v0.19.2-r1 — Production Experience Cleanup hardening
+- Corrige gates históricos que ainda exigiam textos de MVP/demo já removidos da interface.
+- Remove badges visíveis “Demo” das áreas profissional e do paciente.
+- Converte a Central de Ajuda para linguagem operacional de produção.
+- Remove referência visível a “MVP local” do convite do paciente.
+- Mantém versão funcional pública em 0.19.2, sem alteração de schema.
+
+- Remove linguagem visível de demo/MVP Preview da home e do shell autenticado.
+- Substitui o roteiro de demonstração por uma Central de Ajuda AESYN adequada ao uso em produção.
+- Remove versão técnica da superfície pública de login; a versão permanece disponível no health endpoint e nos artefatos operacionais.
+- Mantém identidade AESYN, tema premium e hardening HTTPS da v0.19.1.
+- Sem alteração de schema.
+
 ## v0.19.1 — Production HTTPS & Proxy Hardening
 
 - Adiciona processamento explícito de `X-Forwarded-For` e `X-Forwarded-Proto` antes do pipeline HTTPS.

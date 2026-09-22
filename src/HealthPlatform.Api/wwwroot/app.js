@@ -2794,7 +2794,7 @@ async function openPatientAccess(p){
         const email=e.target.elements.email.value.trim();
         const invite=await api(`/api/pacientes/${p.id}/acesso`,{method:'POST',body:JSON.stringify({email})});
         const link=`${location.origin}/?ativarPaciente=1&email=${encodeURIComponent(invite.email)}&token=${encodeURIComponent(invite.activationToken)}`;
-        $('#patientInviteResult').innerHTML=`<div class="invite-result"><strong>Convite gerado</strong><p>Envie este link ao paciente. Neste MVP local ele pode ser copiado manualmente.</p><textarea id="patientInviteLink" readonly>${esc(link)}</textarea><button class="secondary" id="copyPatientInvite">Copiar link</button></div>`;
+        $('#patientInviteResult').innerHTML=`<div class="invite-result"><strong>Convite gerado</strong><p>Envie este link ao paciente para que ele acesse o acompanhamento com segurança.</p><textarea id="patientInviteLink" readonly>${esc(link)}</textarea><button class="secondary" id="copyPatientInvite">Copiar link</button></div>`;
         $('#copyPatientInvite').onclick=async()=>{await navigator.clipboard.writeText(link);toast('Link de ativação copiado.')};
       }catch(err){toast(err.message,true)}
     };
@@ -8067,7 +8067,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.1';
+const HP_MVP_VERSION='0.19.2';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -8159,42 +8159,40 @@ function openMvpGuide(){
   if(!modal||!box)return;
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading">
-      <span class="eyebrow">MVP PREVIEW • v${HP_MVP_VERSION}</span>
-      <h2>Roteiro rápido para testar o sistema</h2>
-      <p>Não precisa testar tudo de uma vez. Use o sistema como usaria no dia a dia e anote principalmente onde você hesitar, procurar demais ou sentir falta de alguma coisa.</p>
+      <span class="eyebrow">CENTRAL DE AJUDA AESYN</span>
+      <h2>Guia rápido da plataforma</h2>
+      <p>Não precisa testar tudo de uma vez. Use este guia para conhecer os principais fluxos da plataforma e localizar rapidamente os recursos do acompanhamento.</p>
     </div>
     <div class="mvp-guide-grid">
-      ${hpMvpChecklistItem('01','Cadastre ou escolha um paciente','Veja se encontrar, abrir e entender o prontuário parece natural.')}
-      ${hpMvpChecklistItem('02','Simule uma consulta','Registre consulta, avaliação, anamnese ou evolução e observe se falta algum campo importante.')}
-      ${hpMvpChecklistItem('03','Monte alimentação e treino','Teste criação, edição, fases, metas, sessões e progressão como faria com um paciente real fictício.')}
-      ${hpMvpChecklistItem('04','Use os acompanhamentos','Confira check-ins, gráficos, alertas, pendências, follow-up e sinais de evolução.')}
-      ${hpMvpChecklistItem('05','Entre como paciente','Avalie se o portal mostra o que um paciente realmente precisa enxergar sem informação demais.')}
-      ${hpMvpChecklistItem('06','Procure atritos','Anote botões difíceis de achar, telas cheias, nomes confusos, passos repetitivos e qualquer comportamento estranho.')}
+      ${hpMvpChecklistItem('01','Acesse o prontuário','Localize o paciente e consulte rapidamente histórico, avaliações e informações relevantes do acompanhamento.')}
+      ${hpMvpChecklistItem('02','Registre o atendimento','Documente consulta, avaliação, anamnese e evolução clínica em um fluxo contínuo.')}
+      ${hpMvpChecklistItem('03','Prescreva o plano','Organize treino, alimentação, metas, sessões e progressões conforme a estratégia definida para o paciente.')}
+      ${hpMvpChecklistItem('04','Acompanhe a evolução','Consulte check-ins, gráficos, alertas, pendências, follow-up e sinais de evolução ao longo do tempo.')}
+      ${hpMvpChecklistItem('05','Visualize como paciente','Confira como o plano, os treinos e as informações de saúde aparecem na experiência do paciente.')}
+      ${hpMvpChecklistItem('06','Use a Central de Ajuda','Volte a este guia sempre que precisar localizar os principais fluxos da plataforma.')}
     </div>
     <div class="mvp-feedback-card">
-      <strong>O feedback mais valioso agora</strong>
-      <p><b>Faltou:</b> algo que você procurou e não encontrou.<br><b>Confundiu:</b> algo que existe, mas você não entendeu de primeira.<br><b>Demorou:</b> algo que exige cliques demais.<br><b>Quebrou:</b> qualquer erro, comportamento estranho ou dado incoerente.</p>
+      <strong>Precisa registrar uma observação?</strong>
+      <p>Use o modelo de suporte para informar a tela, o fluxo e o que aconteceu. Isso facilita a identificação e o acompanhamento da solicitação.</p>
     </div>
-    <div class="form-actions"><button class="secondary" type="button" id="copyMvpFeedbackTemplate">Copiar modelo de feedback</button><button class="primary" type="button" data-close-mvp-guide>Começar a testar</button></div>`;
+    <div class="form-actions"><button class="secondary" type="button" id="copyMvpFeedbackTemplate">Copiar modelo de suporte</button><button class="primary" type="button" data-close-mvp-guide>Fechar ajuda</button></div>`;
 
   const close=()=>closeClinicalAction();
   $('[data-close-mvp-guide]').onclick=close;
   $('#copyMvpFeedbackTemplate').onclick=async()=>{
-    const template=`AESYN Performance MVP v${HP_MVP_VERSION}
+    const template=`AESYN Performance
 
 TELA/FLUXO:
-O QUE EU ESTAVA TENTANDO FAZER:
-
-FALTOU:
-CONFUNDIU:
-DEMOROU:
-QUEBROU/BUG:
-SUGESTÃO:
+O QUE EU ESTAVA FAZENDO:
+DESCRIÇÃO:
+RESULTADO ESPERADO:
+RESULTADO ENCONTRADO:
+OBSERVAÇÕES:
 
 PRIORIDADE: baixa / média / alta`;
     try{
       await navigator.clipboard.writeText(template);
-      toast('Modelo de feedback copiado.');
+      toast('Modelo de suporte copiado.');
     }catch{
       toast('Não foi possível copiar automaticamente.',true);
     }
@@ -8205,8 +8203,8 @@ function hpInstallMvpPreviewUi(){
   const guide=$('#mvpGuideButton');
   if(guide)guide.onclick=openMvpGuide;
 
-  document.body.dataset.mvp='preview';
-  document.body.dataset.mvpVersion=HP_MVP_VERSION;
+  document.body.dataset.environment='production';
+  
 
   // Escape fecha a camada mais provável sem alterar dados.
   document.addEventListener('keydown',e=>{
@@ -8226,7 +8224,7 @@ function hpInstallMvpPreviewUi(){
     $('.sidebar')?.classList.remove('open');
   });
 
-  // Melhora a mensagem quando o navegador estiver offline durante a demo.
+  // Melhora a mensagem quando o navegador estiver offline.
   window.addEventListener('offline',()=>toast('Sem conexão. Aguarde a internet voltar para continuar.',true));
   window.addEventListener('online',()=>toast('Conexão restabelecida.'));
 }

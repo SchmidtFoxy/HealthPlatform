@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0B3B36" />
   <meta name="application-name" content="AESYN Performance • HealthPlatform" />
-  <title>AESYN Performance • MVP Preview</title>
+  <title>AESYN Performance</title>
   <link rel="stylesheet" href="/app.css" />
 </head>
 <body>
@@ -15,12 +15,12 @@
 
   <section id="loginView" class="login-shell">
     <header class="aesyn-public-header">
-      <div class="brand aesyn-public-brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>SAÚDE • PERFORMANCE • LONGEVIDADE</small></span><span class="mvp-brand-badge">MVP Preview</span></div>
+      <div class="brand aesyn-public-brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>SAÚDE • PERFORMANCE • LONGEVIDADE</small></span></div>
       <nav class="aesyn-public-nav" aria-label="Apresentação AESYN"><span>Soluções</span><span>Como funciona</span><span>Para quem é</span><span>Ciência</span><span>Contato</span></nav>
       <div class="aesyn-public-access"><span>Já tem conta?</span><a href="#loginForm">Entrar</a></div>
     </header>
     <div class="login-visual">
-      <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge">MVP Preview</span></div>
+      <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
       <div class="hero-copy">
         <div class="eyebrow">SAÚDE • PERFORMANCE • EVOLUÇÃO</div>
         <h1>Saúde e performance <em>em sincronia.</em></h1>
@@ -29,7 +29,7 @@
           <span>Consulta médica</span><span>Check-ins</span><span>Treino</span><span>Nutrição</span><span>Exames</span><span>Evolução</span>
         </div>
       </div>
-      <div class="login-quote"><b>AESYN PERFORMANCE</b><span>Ciência. Tecnologia. Cuidado humano.</span><small>MVP Preview • v0.19.1</small></div>
+      <div class="login-quote"><b>AESYN PERFORMANCE</b><span>Ciência. Tecnologia. Cuidado humano.</span><small>Saúde • Performance • Longevidade</small></div>
     </div>
     <div class="login-panel">
       <form id="loginForm" class="login-card">
@@ -41,10 +41,10 @@
           <p>Sua saúde. Seus dados. Sua evolução.</p>
         </div>
         <label>E-mail<input id="email" type="email" autocomplete="username" value="admin@healthplatform.local" required /></label>
-        <label>Senha<input id="senha" type="password" autocomplete="current-password" value="" placeholder="Senha configurada para esta demo" required /></label>
+        <label>Senha<input id="senha" type="password" autocomplete="current-password" value="" placeholder="Digite sua senha" required /></label>
         <button id="loginButton" class="primary full" type="submit">Entrar</button>
         <div id="loginMessage" class="login-message hidden" role="alert"></div>
-        <div class="dev-note"><strong>Ambiente de demonstração.</strong> Use somente dados fictícios. A senha profissional é a configurada no ambiente da demo; a senha local antiga não é preenchida automaticamente.</div>
+        <div class="dev-note"><strong>Ambiente AESYN.</strong> Seus dados e acessos são protegidos conforme as configurações do ambiente.</div>
       </form>
     </div>
   </section>
@@ -90,7 +90,7 @@
 
   <div id="patientAppView" class="patient-portal-shell hidden">
     <header class="patient-portal-top">
-      <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge compact">Demo</span></div>
+      <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
       <div class="patient-portal-user">
         <div class="avatar" id="patientAvatar">PA</div>
         <div><strong id="patientUserName">Paciente</strong><small>Meu acompanhamento</small></div>
@@ -147,7 +147,7 @@
 
   <div id="appView" class="app-shell hidden">
     <aside class="sidebar">
-      <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge compact">Demo</span></div>
+      <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
       <nav>
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> Performance</button>
         <button class="nav-item" data-view="central-dia"><span>☀</span> Acompanhamento</button>
@@ -177,8 +177,8 @@
           <h2 id="pageTitle">Visão geral</h2>
         </div>
         <div class="topbar-actions">
-          <span class="mvp-top-pill">AESYN • DEMO</span>
-          <button class="ghost mvp-guide-button" id="mvpGuideButton" type="button">Roteiro da demo</button>
+          <span class="mvp-top-pill">AESYN</span>
+          <button class="ghost mvp-guide-button" id="mvpGuideButton" type="button">Ajuda</button>
           <button class="theme-toggle professional" type="button" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">◐ <span>Tema</span></button>
           <button class="notification-button" id="notificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="notificationBadge">0</span></button>
           <div class="user-chip"><div class="avatar" id="avatar">AD</div><div><strong id="userName">Administrador</strong><small id="userType">Administrador</small></div></div>
