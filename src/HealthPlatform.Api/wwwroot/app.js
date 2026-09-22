@@ -3543,14 +3543,14 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
   modal.classList.remove('hidden','nutrition-modal-open');
   modal.classList.add('workout-modal-open');
   const box=$('#clinicalActionContent'),editing=!!existingPlan;
-  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER 2.0 • v0.17.4</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • carregando exercícios...</p></div>`;
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • carregando exercícios...</p></div>`;
   try{
     let exercicios=await api('/api/exercicios');
     const exerciseLabel=x=>`${x.nome}${x.grupoMuscular?' • '+x.grupoMuscular:''}${x.equipamento?' • '+x.equipamento:''}`;
     const options=(selected='')=>`<option value="">Selecione...</option>${exercicios.map(x=>`<option value="${x.id}" ${String(selected)===String(x.id)?'selected':''}>${esc(exerciseLabel(x))}</option>`).join('')}`;
     const plan=existingPlan||{};
     const tuning=state.recommendationTuningDraft?.patientId===p.id?state.recommendationTuningDraft:null;
-    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER 2.0 • v0.17.4</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • ${exercicios.length} exercício(s) no catálogo</p></div>
+    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • ${exercicios.length} exercício(s) no catálogo</p></div>
       ${tuning?`<div class="workout-builder-context"><b>Contexto da sugestão profissional</b><span>${esc(tuning.goal||'Objetivo definido')} • ${tuning.strength||'—'} sessão(ões) de força • ${tuning.minutes||'—'} min/sessão</span><small>Use como referência. A ficha continua totalmente editável pelo profissional.</small></div>`:''}
       <form id="workoutForm" class="clinical-form workout-builder2-form">
         <div class="form-grid builder-meta">
@@ -4098,7 +4098,13 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
       unidadeCarga:row.querySelector('[name=unidadeCarga]').value.trim()||null,
       descansoSegundos:row.querySelector('[name=descanso]').value===''?null:Number(row.querySelector('[name=descanso]').value),
       tempoSegundos:row.querySelector('[name=tempo]').value===''?null:Number(row.querySelector('[name=tempo]').value),
-      observacoes:row.querySelector('[name=itemObs]').value.trim()||null
+      observacoes:row.querySelector('[name=itemObs]').value.trim()||null,
+      tecnica:row.querySelector('[name=tecnica]')?.value||'Normal',
+      grupoBiset:row.querySelector('[name=grupoBiset]')?.value.trim()||null,
+      dropReducaoPercentual:row.querySelector('[name=dropReducao]')?.value===''?null:Number(row.querySelector('[name=dropReducao]')?.value),
+      dropEtapas:row.querySelector('[name=dropEtapas]')?.value===''?null:Number(row.querySelector('[name=dropEtapas]')?.value),
+      progressaoCargaPercentual:row.querySelector('[name=progressaoCarga]')?.value===''?null:Number(row.querySelector('[name=progressaoCarga]')?.value),
+      progressaoRegra:row.querySelector('[name=progressaoRegra]')?.value.trim()||null
     });
 
     const updateSummary=()=>{
@@ -4140,7 +4146,13 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
         <label>Unid.<input name="unidadeCarga" value="${esc(item?.unidadeCarga||'kg')}"></label>
         <label>Descanso<input name="descanso" type="number" min="0" value="${item?.descansoSegundos??defaultRest()}"></label>
         <label>Tempo<input name="tempo" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
-        <label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}" placeholder="Cues, RIR/RPE, técnica, progressão..."></label>
+        <label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}" placeholder="Cues, RIR/RPE e orientações do exercício"></label>
+        <section class="advanced-technique-panel span2" data-technique-panel>
+          <div class="advanced-technique-head"><div><small>TÉCNICA AVANÇADA</small><strong>BISET, DROP ou progressão de carga</strong></div><label>Estratégia<select name="tecnica"><option value="Normal">Normal</option><option value="Biset">BISET / conjugado</option><option value="DropSet">DROP set</option><option value="ProgressaoCarga">Progressão de carga</option></select></label></div>
+          <div class="advanced-technique-config" data-technique="Biset"><label>Grupo Biset<input name="grupoBiset" value="${esc(item?.grupoBiset||'')}" placeholder="Ex.: B1"></label><button type="button" class="secondary add-biset-pair">+ Agregar exercício conjugado</button><small>Os exercícios com o mesmo grupo são executados em sequência antes do descanso.</small></div>
+          <div class="advanced-technique-config" data-technique="DropSet"><label>Redução da carga (%)<input name="dropReducao" type="number" min="10" max="80" step="1" value="${item?.dropReducaoPercentual??45}"></label><label>Etapas adicionais<input name="dropEtapas" type="number" min="1" max="5" value="${item?.dropEtapas??1}"></label><small>Referência inicial de 45%; o profissional pode ajustar conforme a prescrição.</small></div>
+          <div class="advanced-technique-config" data-technique="ProgressaoCarga"><label>Progressão alvo (%)<input name="progressaoCarga" type="number" min="0" max="100" step="0.5" value="${item?.progressaoCargaPercentual??5}"></label><label>Regra / gatilho<input name="progressaoRegra" value="${esc(item?.progressaoRegra||'')}" placeholder="Ex.: ao completar 12 reps com RIR ≥ 2"></label><small>A progressão é uma orientação prescrita; a execução continua sendo registrada normalmente.</small></div>
+        </section>
         <div class="standalone-row-actions builder3-row-actions">
           <button type="button" class="icon-btn row-up" title="Subir">↑</button>
           <button type="button" class="icon-btn row-down" title="Descer">↓</button>
@@ -4150,6 +4162,21 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
       rows.appendChild(row);
 
       const select=row.querySelector('[name=exercicioId]');
+      const techniqueSelect=row.querySelector('[name=tecnica]');
+      const syncTechnique=()=>{
+        const value=techniqueSelect?.value||'Normal';
+        row.querySelectorAll('[data-technique]').forEach(x=>x.classList.toggle('active',x.dataset.technique===value));
+        row.classList.toggle('has-advanced-technique',value!=='Normal');
+      };
+      if(techniqueSelect){techniqueSelect.value=item?.tecnica||'Normal';techniqueSelect.onchange=()=>{syncTechnique();updateSummary()}}
+      row.querySelector('.add-biset-pair').onclick=()=>{
+        let group=row.querySelector('[name=grupoBiset]').value.trim();
+        if(!group){group=`B${Math.max(1,session.querySelectorAll('.standalone-exercise-row').length)}`;row.querySelector('[name=grupoBiset]').value=group}
+        const base=readItem(row);
+        addExercise(session,{...base,exercicioId:'',tecnica:'Biset',grupoBiset:group,observacoes:null});
+        toast(`Par ${group} criado. Selecione o exercício conjugado.`);
+      };
+      syncTechnique();
       const refreshOptions=()=>{
         const selected=select.value;
         select.innerHTML=exerciseOptions(
@@ -4299,6 +4326,9 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
     box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`;
   }
 }
+
+// ===== v0.19.4 — Advanced Workout Techniques Builder =====
+const HP_ADVANCED_WORKOUT_TECHNIQUES='v0.19.4';
 
 // ===== v0.17.5 — Workout Library & Assignment =====
 const HP_WORKOUT_TEMPLATE_LIBRARY_2='v0.18.8';
@@ -8091,7 +8121,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.3';
+const HP_MVP_VERSION='0.19.4';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

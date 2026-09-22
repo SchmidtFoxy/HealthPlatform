@@ -1,3 +1,13 @@
+## v0.19.4 — Advanced Workout Techniques Builder
+
+- Adiciona BISET/conjugado, DROP set e Progressão de carga ao Workout Builder profissional.
+- BISET pode agregar automaticamente um segundo exercício ao mesmo grupo.
+- DROP permite redução percentual e múltiplas etapas.
+- Progressão aceita percentual alvo e regra de aplicação.
+- Preserva as técnicas no JSON do treino-modelo e gera orientação legível ao criar ficha do paciente.
+- Remove referências visíveis de versão do cabeçalho do Workout Builder visitado nesta entrega.
+- Sem alteração de schema.
+
 ## v0.19.3 — Patient Workout Access Hub
 
 - Paciente passa a visualizar todos os treinos/sessões liberados da ficha em atalhos A, B, C...
@@ -2020,3 +2030,8 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Remove superfícies brancas remanescentes no dashboard profissional em dark mode.
 - Reequilibra contraste de tipografia, bordas, inputs, tabelas, KPIs e cards legados.
 - Mantém a versão funcional pública 0.19.0; revisão visual sem alteração de schema.
+
+## v0.19.4-r1 — Smoke Gate Production Label Fix
+- Corrige o gate histórico do Workout Builder 2.0 para validar marcadores estruturais, sem exigir o rótulo visual legado `WORKOUT BUILDER 2.0 • v0.17.4`.
+- Mantém a interface de produção sem referências visíveis de versões históricas.
+- Nenhuma alteração funcional ou de schema.

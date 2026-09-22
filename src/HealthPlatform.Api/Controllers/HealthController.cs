@@ -19,7 +19,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             var payload = new
             {
                 status = databaseOk ? "ok" : "degraded",
-                version = "0.19.3",
+                version = "0.19.4",
                 database = databaseOk ? "connected" : "unavailable",
                 utc = DateTime.UtcNow
             };
@@ -33,7 +33,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             return StatusCode(StatusCodes.Status503ServiceUnavailable, new
             {
                 status = "degraded",
-                version = "0.19.3",
+                version = "0.19.4",
                 database = "unavailable",
                 utc = DateTime.UtcNow
             });

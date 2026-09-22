@@ -1,3 +1,13 @@
+## v0.19.4 — Advanced Workout Techniques Builder
+
+- Workout Builder profissional passa a oferecer técnica avançada por exercício: Normal, BISET/conjugado, DROP set ou Progressão de carga.
+- BISET cria um par de exercício conjugado e mantém um identificador de grupo na prescrição.
+- DROP permite configurar percentual de redução de carga e quantidade de etapas adicionais.
+- Progressão de carga permite definir percentual alvo e regra/gatilho clínico-esportivo.
+- Técnicas são persistidas de forma estruturada nos treinos-modelo e convertidas em orientação legível ao atribuir o modelo ao paciente.
+- Mantém o banco atual sem migration nesta etapa; a estrutura avançada vive no conteúdo versionado dos modelos.
+- Interface continua mobile-first e adequada ao tema escuro premium AESYN.
+
 ## v0.19.3 — Patient Workout Access Hub
 
 - HTTPS preparado para reverse proxy Nginx/Render com `X-Forwarded-Proto`.

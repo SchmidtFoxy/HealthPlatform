@@ -33,7 +33,13 @@ public sealed class ModelosPlanosTreinoController(
         string? UnidadeCarga,
         int? DescansoSegundos,
         int? TempoSegundos,
-        string? Observacoes);
+        string? Observacoes,
+        string? Tecnica = null,
+        string? GrupoBiset = null,
+        decimal? DropReducaoPercentual = null,
+        int? DropEtapas = null,
+        decimal? ProgressaoCargaPercentual = null,
+        string? ProgressaoRegra = null);
 
     public sealed record TemplateSessaoTreino(
         string Nome,
@@ -376,7 +382,7 @@ public sealed class ModelosPlanosTreinoController(
                     UnidadeCarga = i.UnidadeCarga,
                     DescansoSegundos = i.DescansoSegundos,
                     TempoSegundos = i.TempoSegundos,
-                    Observacoes = i.Observacoes
+                    Observacoes = ObservacaoComTecnica(i)
                 });
             }
 
@@ -409,6 +415,25 @@ public sealed class ModelosPlanosTreinoController(
             modeloId = modelo.Id,
             modeloNome = modelo.Nome
         });
+    }
+
+    private static string? ObservacaoComTecnica(TemplateItemTreino item)
+    {
+        var tecnica = (item.Tecnica ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(tecnica) || tecnica.Equals("Normal", StringComparison.OrdinalIgnoreCase))
+            return Limpar(item.Observacoes);
+
+        string marcador = tecnica switch
+        {
+            "Biset" => $"[BISET{(string.IsNullOrWhiteSpace(item.GrupoBiset) ? string.Empty : $" {item.GrupoBiset}")}]",
+            "DropSet" => $"[DROP -{item.DropReducaoPercentual ?? 45m:0.#}% x{Math.Max(1, item.DropEtapas ?? 1)}]",
+            "ProgressaoCarga" => $"[PROGRESSAO +{item.ProgressaoCargaPercentual ?? 5m:0.#}%{(string.IsNullOrWhiteSpace(item.ProgressaoRegra) ? string.Empty : $" • {item.ProgressaoRegra}")}]",
+            _ => $"[{tecnica.ToUpperInvariant()}]"
+        };
+
+        return string.IsNullOrWhiteSpace(item.Observacoes)
+            ? marcador
+            : $"{marcador} {item.Observacoes.Trim()}";
     }
 
     private async Task<Profissional?> GetProfissionalAtual(CancellationToken ct) =>
