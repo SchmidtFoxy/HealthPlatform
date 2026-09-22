@@ -1,3 +1,10 @@
+## v0.19.1 — Production HTTPS & Proxy Hardening
+
+- HTTPS preparado para reverse proxy Nginx/Render com `X-Forwarded-Proto`.
+- HSTS habilitado fora de Development.
+- Guia operacional em `PRODUCAO-HTTPS.md`.
+- Sem alteração de schema.
+
 # AESYN Performance — v0.19.0
 
 ## AESYN Identity & Patient Navigation Foundation

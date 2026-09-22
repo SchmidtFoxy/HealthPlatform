@@ -1,3 +1,12 @@
+## v0.19.1 — Production HTTPS & Proxy Hardening
+
+- Adiciona processamento explícito de `X-Forwarded-For` e `X-Forwarded-Proto` antes do pipeline HTTPS.
+- Habilita HSTS em ambientes fora de Development.
+- Mantém HTTPS redirection sem criar loop atrás do Nginx/Render quando o proxy informa o esquema original.
+- Atualiza Swagger, Health, Preview e versão pública para 0.19.1.
+- Adiciona `PRODUCAO-HTTPS.md` com configuração de Nginx e validação operacional.
+- Sem alteração de schema/banco de dados.
+
 
 ## v0.19.0-r5 — AESYN Organic Graphite Home
 - Refinamento visual da home pública com base grafite/preta e petróleo restrito a profundidade.
