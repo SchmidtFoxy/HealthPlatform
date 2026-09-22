@@ -45,6 +45,48 @@ function hpPatientFeedbackState(kind='empty',title='Nada por aqui',message='',ac
 }
 async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout();throw new Error('Sua sessão expirou.')}if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
 function setLoading(){content.innerHTML='<div class="card"><div class="skeleton" style="width:35%;margin-bottom:18px"></div><div class="skeleton" style="height:180px"></div></div>'}
+const HP_THEME_KEY='hp_aesyn_theme';
+const HP_THEME_CHOICE_KEY='hp_aesyn_theme_chosen';
+function hpApplyTheme(theme){
+  const normalized=theme==='dark'?'dark':'light';
+  document.documentElement.dataset.theme=normalized;
+  document.documentElement.style.colorScheme=normalized;
+  localStorage.setItem(HP_THEME_KEY,normalized);
+  document.querySelectorAll('[data-theme-toggle]').forEach(b=>{
+    b.setAttribute('aria-label',normalized==='dark'?'Usar tema claro':'Usar tema escuro');
+    b.title=normalized==='dark'?'Usar tema claro':'Usar tema escuro';
+  });
+}
+function hpOpenThemeChoice(){
+  const modal=$('#themeChoiceModal');
+  if(!modal)return;
+  modal.classList.remove('hidden');
+  document.body.classList.add('theme-choice-open');
+  modal.querySelector('[data-theme-choice]')?.focus();
+}
+function hpCloseThemeChoice(){
+  $('#themeChoiceModal')?.classList.add('hidden');
+  document.body.classList.remove('theme-choice-open');
+}
+function hpMaybeOpenThemeChoice(){
+  if(!localStorage.getItem(HP_THEME_CHOICE_KEY)) window.setTimeout(hpOpenThemeChoice,80);
+}
+function hpToggleTheme(){
+  hpApplyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+  localStorage.setItem(HP_THEME_CHOICE_KEY,'true');
+}
+function hpInstallThemeUi(){
+  hpApplyTheme(localStorage.getItem(HP_THEME_KEY)||'light');
+  document.querySelectorAll('[data-theme-toggle]').forEach(b=>b.addEventListener('click',hpToggleTheme));
+  document.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>{
+    hpApplyTheme(b.dataset.themeChoice);
+    localStorage.setItem(HP_THEME_CHOICE_KEY,'true');
+    hpCloseThemeChoice();
+    toast(`Tema ${b.dataset.themeChoice==='dark'?'escuro':'claro'} aplicado.`);
+  }));
+}
+document.addEventListener('DOMContentLoaded',hpInstallThemeUi);
+
 function showApp(){
   $('#loginView').classList.add('hidden');
   $('#activationView')?.classList.add('hidden');
@@ -85,6 +127,7 @@ $('#loginForm').addEventListener('submit',async e=>{
     state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario};
     localStorage.setItem('hp_token',state.token);localStorage.setItem('hp_user',JSON.stringify(state.user));
     showApp();
+    hpMaybeOpenThemeChoice();
   }catch(x){
     const text=String(x?.message||'Não foi possível entrar.');
     if(msg){
@@ -2199,7 +2242,7 @@ function openEditPatientForm(p){
 
 function clinical(label,value){return `<div class="clinical-field"><small>${label}</small><p>${esc(value||'—')}</p></div>`}function diaryIcon(t){return ({sono:'☾',hidratacao:'💧',alimentacao:'◉',treino:'↗',sintoma:'!',humor:'☺'}[String(t||'').toLowerCase()]||'•')}
 async function loadAgenda(){const iso=todayISO(state.selectedDate),d=await api(`/api/agenda?data=${iso}&offsetMinutos=${state.offset}`),label=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(state.selectedDate);content.innerHTML=`<div class="agenda-header"><div><h3>Agenda</h3><p>${d.total} atendimento(s) neste dia.</p></div><div class="date-nav"><button class="secondary" id="prevDay">←</button><div class="date-title">${label}</div><button class="secondary" id="nextDay">→</button></div></div><div class="stats-grid agenda-stats">${stat('Total',d.total,'consultas')}${stat('Agendadas',d.agendadas,'aguardando')}${stat('Confirmadas',d.confirmadas,'confirmadas')}${stat('Realizadas',d.realizadas,'concluídas')}${stat('Faltas',d.faltas,'não compareceu')}</div><div class="agenda-list">${d.consultas.length?d.consultas.map(c=>`<div class="agenda-item"><div class="agenda-time">${fmtTime(c.dataHoraLocal)}</div><div class="agenda-bar"></div><div class="agenda-person clickable" data-patient="${c.pacienteId}"><strong>${esc(c.pacienteNome)}</strong><small>${esc(c.motivo||'Consulta')} • ${esc(c.telefone||c.email||'sem contato')}</small></div><div class="agenda-actions"><span class="pill ${esc(c.status)}">${esc(c.status)}</span>${c.status==='Agendada'?`<button class="secondary confirm" data-id="${c.id}">Confirmar</button>`:''}</div></div>`).join(''):'<div class="card empty">Nenhuma consulta neste dia.</div>'}</div>`;$('#prevDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()-1);loadAgenda()};$('#nextDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()+1);loadAgenda()};$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));$$('.confirm').forEach(x=>x.onclick=async()=>{try{await api(`/api/agenda/consultas/${x.dataset.id}/status?offsetMinutos=${state.offset}`,{method:'PATCH',body:JSON.stringify({status:'Confirmada'})});toast('Consulta confirmada.');loadAgenda()}catch(e){toast(e.message,true)}})}
-if(state.token)showApp();
+if(state.token){showApp();hpMaybeOpenThemeChoice();}
 
 /* v0.3.27 - edição clínica + agenda operacional */
 const __renderPatientTab_v024 = renderPatientTab;
@@ -3263,14 +3306,36 @@ async function loadPatientProfile(){
   $$('[data-profile-jump]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.profileJump).catch(e=>toast(e.message,true)));
 }
 
+async function loadPatientHealth(){
+  const host=$('#patientPortalContent');
+  const home=await api(`/api/portal/me/home?data=${todayISO()}`).catch(()=>null);
+  const readiness=home?.prontidaoHoje||home?.prontidao||null;
+  const exams=home?.examesRecentes||[];
+  const recovery=home?.recuperacaoHoje||home?.planoRecuperacao||null;
+  host.innerHTML=`<div class="patient-health-hub-v0190">
+    <section class="patient-health-hero-v0190">
+      <div><span class="eyebrow">SAÚDE • AESYN</span><h1>Seu acompanhamento em um só lugar</h1><p>Exames, monitoramento, recuperação e seus registros diários conectados ao plano.</p></div>
+      <span class="patient-health-status-v0190">${readiness?'Contexto atualizado':'Atualize seu dia'}</span>
+    </section>
+    <section class="patient-health-grid-v0190">
+      <button type="button" data-health-view="exames"><span>◇</span><div><small>EXAMES LABORATORIAIS</small><strong>Resultados e tendências</strong><p>${Array.isArray(exams)&&exams.length?`${exams.length} registro(s) recente(s)`:'Consulte seus exames publicados'}</p></div><b>›</b></button>
+      <button type="button" data-health-view="evolucao"><span>↗</span><div><small>MONITORAMENTO</small><strong>Evolução longitudinal</strong><p>Peso, medidas, composição e sinais acompanhados ao longo do tempo.</p></div><b>›</b></button>
+      <button type="button" data-health-view="inicio"><span>♻</span><div><small>RECUPERAÇÃO</small><strong>${esc(recovery?.focoPrincipal||'Prontidão e recuperação')}</strong><p>${esc(recovery?.resumo||'Sono, dor, treino e recuperação reunidos no contexto de hoje.')}</p></div><b>›</b></button>
+      <button type="button" data-health-view="diario"><span>●</span><div><small>COMO ESTOU</small><strong>${readiness?'Check-in registrado':'Faça seu check-in'}</strong><p>${readiness?'Revise seus registros e percepções do dia.':'Registre energia, dor, sono e outras percepções.'}</p></div><b>›</b></button>
+    </section>
+    <p class="patient-health-note-v0190">Os dados ajudam no acompanhamento longitudinal e não substituem avaliação profissional.</p>
+  </div>`;
+  $$('[data-health-view]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.healthView).catch(e=>toast(e.message,true)));
+}
+
 async function loadPatientSection(view='inicio'){
-  const allowed=['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada','perfil'];
+  const allowed=['inicio','plano','treino','saude','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada','perfil'];
   if(!allowed.includes(view))view='inicio';
   $$('#patientPortalNav [data-patient-view]').forEach(b=>{const active=b.dataset.patientView===view;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   const host=$('#patientPortalContent');
   host?.setAttribute('aria-busy','true');
   if(host)host.innerHTML=patientSectionLoading(view);
-  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney,perfil:loadPatientProfile};
+  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,saude:loadPatientHealth,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney,perfil:loadPatientProfile};
   try{
     await loaders[view]();
     if(host){host.classList.remove('patient-view-enter');void host.offsetWidth;host.classList.add('patient-view-enter')}
@@ -8002,7 +8067,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.18.16';
+const HP_MVP_VERSION='0.19.0';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

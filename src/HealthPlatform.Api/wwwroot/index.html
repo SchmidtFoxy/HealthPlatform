@@ -14,6 +14,11 @@
   <div id="hpA11yStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <section id="loginView" class="login-shell">
+    <header class="aesyn-public-header">
+      <div class="brand aesyn-public-brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>SAÚDE • PERFORMANCE • LONGEVIDADE</small></span><span class="mvp-brand-badge">MVP Preview</span></div>
+      <nav class="aesyn-public-nav" aria-label="Apresentação AESYN"><span>Soluções</span><span>Como funciona</span><span>Para quem é</span><span>Ciência</span><span>Contato</span></nav>
+      <div class="aesyn-public-access"><span>Já tem conta?</span><a href="#loginForm">Entrar</a></div>
+    </header>
     <div class="login-visual">
       <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge">MVP Preview</span></div>
       <div class="hero-copy">
@@ -24,10 +29,11 @@
           <span>Consulta médica</span><span>Check-ins</span><span>Treino</span><span>Nutrição</span><span>Exames</span><span>Evolução</span>
         </div>
       </div>
-      <div class="login-quote"><b>AESYN PERFORMANCE</b><span>Ciência. Tecnologia. Cuidado humano.</span><small>MVP Preview • v0.18.16</small></div>
+      <div class="login-quote"><b>AESYN PERFORMANCE</b><span>Ciência. Tecnologia. Cuidado humano.</span><small>MVP Preview • v0.19.0</small></div>
     </div>
     <div class="login-panel">
       <form id="loginForm" class="login-card">
+        <div class="login-card-logo"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>SAÚDE • PERFORMANCE • LONGEVIDADE</small></span></div>
         <div class="mobile-brand brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
         <div>
           <span class="eyebrow">AESYN • ÁREA SEGURA</span>
@@ -69,6 +75,19 @@
     </div>
   </section>
 
+  <div id="themeChoiceModal" class="theme-choice-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="themeChoiceTitle">
+    <section class="theme-choice-card">
+      <span class="eyebrow">PRIMEIRO ACESSO</span>
+      <div class="theme-choice-brand brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
+      <h2 id="themeChoiceTitle">Como você prefere visualizar a AESYN?</h2>
+      <p>Escolha o tema inicial. Você poderá alterar depois pelo botão <strong>Tema</strong>.</p>
+      <div class="theme-choice-grid">
+        <button type="button" data-theme-choice="light"><span class="theme-preview light"><i></i><b></b></span><strong>Claro</strong><small>Leitura limpa e luminosa</small></button>
+        <button type="button" data-theme-choice="dark"><span class="theme-preview dark"><i></i><b></b></span><strong>Escuro</strong><small>Menos brilho, mesma hierarquia</small></button>
+      </div>
+    </section>
+  </div>
+
   <div id="patientAppView" class="patient-portal-shell hidden">
     <header class="patient-portal-top">
       <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span><span class="mvp-brand-badge compact">Demo</span></div>
@@ -77,6 +96,7 @@
         <div><strong id="patientUserName">Paciente</strong><small>Meu acompanhamento</small></div>
         <button id="globalSearchButton" class="global-search-button" title="Busca global">⌕ <span>Buscar</span><kbd>Ctrl K</kbd></button>
         <button class="notification-button" id="patientNotificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="patientNotificationBadge">0</span></button>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">◐ <span>Tema</span></button>
         <button id="patientLogoutButton" class="secondary">Sair</button>
       </div>
     </header>
@@ -84,7 +104,8 @@
       <button class="active" data-patient-view="inicio">Hoje</button>
       <button data-patient-view="treino">Treino</button>
       <button data-patient-view="plano">Plano</button>
-      <button data-patient-view="evolucao">Evolução</button>
+      <button data-patient-view="saude">Saúde</button>
+      <button class="patient-secondary-nav" data-patient-view="evolucao">Evolução</button>
       <button class="patient-secondary-nav" data-patient-view="metas">Metas</button>
       <button class="patient-secondary-nav" data-patient-view="diario">Diário</button>
       <button class="patient-secondary-nav" data-patient-view="exames">Exames</button>
@@ -114,6 +135,7 @@
       <div class="patient-more-grid">
         <button data-patient-more-view="metas"><span>◎</span><b>Metas</b><small>Objetivos do dia</small></button>
         <button data-patient-more-view="diario"><span>✎</span><b>Diário</b><small>Registros e sintomas</small></button>
+        <button data-patient-more-view="saude"><span>✚</span><b>Saúde</b><small>Exames, monitoramento e recuperação</small></button>
         <button data-patient-more-view="exames"><span>◇</span><b>Exames</b><small>Resultados recentes</small></button>
         <button data-patient-more-view="solicitacoes"><span>⇄</span><b>Solicitações</b><small>Pendências do cuidado</small></button>
         <button data-patient-more-view="medicamentos"><span>✚</span><b>Medicamentos</b><small>Rotina acompanhada</small></button>
@@ -157,6 +179,7 @@
         <div class="topbar-actions">
           <span class="mvp-top-pill">AESYN • DEMO</span>
           <button class="ghost mvp-guide-button" id="mvpGuideButton" type="button">Roteiro da demo</button>
+          <button class="theme-toggle professional" type="button" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">◐ <span>Tema</span></button>
           <button class="notification-button" id="notificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="notificationBadge">0</span></button>
           <div class="user-chip"><div class="avatar" id="avatar">AD</div><div><strong id="userName">Administrador</strong><small id="userType">Administrador</small></div></div>
         </div>

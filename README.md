@@ -1,16 +1,14 @@
-# AESYN Performance — v0.18.6
+# AESYN Performance — v0.19.0
 
-## Exercise Library 2.0 + Standalone Workout Studio
+## AESYN Identity & Patient Navigation Foundation
 
-Esta versão desloca o foco para a produção profissional de treinos: catálogo amplo de exercícios, base inicial curada e treino-modelo totalmente independente de paciente.
+A v0.19.0 inicia a nova fase do AESYN com identidade verde-petróleo, escolha de tema claro/escuro e uma navegação do paciente mais orientada ao cuidado integrado: Hoje, Treino, Plano e Saúde. O novo hub Saúde reúne acesso a exames, monitoramento, recuperação e registros de como o paciente está.
 
-- catálogo profissional pesquisável e filtrável;
-- população opcional de uma base inicial com dezenas de exercícios;
-- CRUD e ativação/inativação preservando histórico;
-- criação e edição de treinos-modelo sem paciente;
-- sessões e prescrições completas dentro do modelo;
-- atribuição posterior continua criando cópia independente para o paciente;
-- sem migration nova; schema 38/38 preservado.
+- nova identidade visual AESYN;
+- tema claro/escuro persistente;
+- novo hub Saúde;
+- navegação mobile-first reorganizada;
+- sem migration nova; schema 39/39 preservado.
 
 
 ## v0.18.7 — Workout Builder 3.0

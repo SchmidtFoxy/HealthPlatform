@@ -1,3 +1,25 @@
+
+## v0.19.0-r5 — AESYN Organic Graphite Home
+- Refinamento visual da home pública com base grafite/preta e petróleo restrito a profundidade.
+- Verde AESYN passa a atuar como cor de acento em vez de dominar o plano de fundo.
+- Símbolo central preservado com tratamento mais orgânico, camadas radiais e linhas sutis.
+- Cards de pilares e cabeçalho público migrados para superfícies neutras escuras.
+- Card de login suavizado para off-white, reduzindo contraste agressivo com o fundo.
+
+
+### v0.19.0-r2
+- Corrige o suporte semântico de tema com `color-scheme: light/dark`, alinhando controles nativos do navegador ao tema AESYN.
+- Mantém a versão funcional pública em 0.19.0; trata-se apenas de revisão do pacote.
+## 0.19.0 — AESYN Identity & Patient Navigation Foundation
+
+- Nova identidade visual AESYN em verde-petróleo e menta, com monograma atualizado.
+- Escolha de tema claro/escuro no primeiro login, persistida no navegador e alterável depois.
+- Navegação principal do paciente reorganizada para Hoje, Treino, Plano e Saúde.
+- Novo hub Saúde com Exames laboratoriais, Monitoramento, Recuperação e Como estou.
+- Dark mode reforçado para superfícies legadas do portal e área profissional.
+- Fundação visual preparada para a próxima fase de treino, nutrição, fotos e integrações.
+- Sem mudança de schema.
+
 ## 0.18.16 — Workout Builder Delete + Weekly Patient Plan
 
 - Remoção funcional e touch-friendly de exercícios no builder.
@@ -1954,3 +1976,15 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Remove caractere `\` espúrio no início de `ProgramaTreinoAssignmentController.cs`.
 - Corrige `CS1056: Caractere inesperado '\'` no `[3/38] Compilando...`.
 - Nenhuma alteração funcional, de schema ou migration.
+
+## v0.19.0-r3 — AESYN Brand Reference Alignment
+- Home/login alinhada ao template visual AESYN enviado.
+- Símbolo oficial aplicado a partir da referência visual enviada.
+- Paleta petróleo/mint refinada.
+- Tema escuro corrigido para superfícies petróleo, incluindo cards do dashboard.
+
+### v0.19.0-r4 — Premium Neutral Dark Theme
+- Refina o tema escuro para base quase preta/grafite, com verde AESYN reservado para destaques e estados.
+- Remove superfícies brancas remanescentes no dashboard profissional em dark mode.
+- Reequilibra contraste de tipografia, bordas, inputs, tabelas, KPIs e cards legados.
+- Mantém a versão funcional pública 0.19.0; revisão visual sem alteração de schema.
