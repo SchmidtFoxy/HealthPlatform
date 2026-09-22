@@ -1,3 +1,12 @@
+## v0.19.7 — Metabolic Energy Calculator
+
+- Adiciona cálculo profissional de TMB e GET dentro do Nutrition Builder.
+- Usa Mifflin-St Jeor e disponibiliza Katch-McArdle quando há massa magra registrada.
+- Pré-preenche peso/altura pela avaliação mais recente e idade/sexo pelo cadastro do paciente.
+- Inclui fatores de atividade configuráveis e permite aplicar o GET como meta calórica editável.
+- Mantém o resultado como estimativa de apoio: a decisão final continua sob revisão do profissional.
+- Remove rótulo visual legado de versão do Nutrition Builder.
+
 ## v0.19.6 — Patient Progress Photos & Markup
 
 O perfil profissional do paciente passa a oferecer galeria de evolução visual, upload protegido, comparação entre datas e marcação gráfica não destrutiva sobre cópias das fotos.

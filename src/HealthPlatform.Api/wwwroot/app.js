@@ -8116,18 +8116,92 @@ function hpNutritionBuilderRead(form){
   return {nome:val(form,'nome'),dataInicio:val(form,'dataInicio'),dataFim:val(form,'dataFim')||null,status:val(form,'status')||'Ativo',observacoes:val(form,'observacoes')||null,metaCalorias:dec(form,'metaCalorias'),metaProteinasG:dec(form,'metaProteinasG'),metaCarboidratosG:dec(form,'metaCarboidratosG'),metaGordurasG:dec(form,'metaGordurasG'),metaFibrasG:dec(form,'metaFibrasG'),refeicoes};
 }
 
+
+// ===== v0.19.7 — Metabolic Energy Calculator =====
+const HP_METABOLIC_ENERGY_CALCULATOR='v0.19.7';
+const HP_ACTIVITY_FACTORS={
+  sedentario:{label:'Sedentário',factor:1.2,help:'Pouca atividade física estruturada.'},
+  leve:{label:'Levemente ativo',factor:1.375,help:'Atividade leve em parte da semana.'},
+  moderado:{label:'Moderadamente ativo',factor:1.55,help:'Treinos regulares e rotina ativa.'},
+  alto:{label:'Muito ativo',factor:1.725,help:'Treino intenso/frequente ou rotina fisicamente exigente.'},
+  extremo:{label:'Extremamente ativo',factor:1.9,help:'Volume muito alto de treinamento e/ou trabalho físico intenso.'}
+};
+function hpAgeFromBirthDate(value){
+  if(!value)return null;
+  const born=new Date(`${String(value).slice(0,10)}T12:00:00`);if(Number.isNaN(born.getTime()))return null;
+  const now=new Date();let age=now.getFullYear()-born.getFullYear();
+  const m=now.getMonth()-born.getMonth();if(m<0||(m===0&&now.getDate()<born.getDate()))age--;
+  return age>0?age:null;
+}
+function hpNormalizeSex(value){
+  const s=String(value||'').trim().toLowerCase();
+  if(/^m|masc|male|homem/.test(s))return 'masculino';
+  if(/^f|fem|female|mulher/.test(s))return 'feminino';
+  return '';
+}
+async function hpLoadMetabolicContext(p){
+  const result={patient:p||{},latest:null};
+  try{result.patient=await api(`/api/pacientes/${p.id}`)}catch{}
+  try{const rows=await api(`/api/pacientes/${p.id}/avaliacoes`);result.latest=Array.isArray(rows)&&rows.length?rows[0]:null}catch{}
+  return result;
+}
+function hpMetabolicCalculatorCard(context){
+  const patient=context?.patient||{},a=context?.latest||{};
+  const weight=a.pesoKg??'';
+  const height=a.alturaM?Number(a.alturaM)*100:'';
+  const age=hpAgeFromBirthDate(patient.dataNascimento)??'';
+  const sex=hpNormalizeSex(patient.sexo);
+  const lean=a.massaMagraKg??'';
+  return `<section class="metabolic-calculator" data-metabolic-calculator="v0.19.7">
+    <div class="metabolic-calculator-head"><div><span class="eyebrow">PLANEJAMENTO ENERGÉTICO</span><strong>TMB e gasto energético estimado</strong><small>Use como apoio ao raciocínio profissional. Valores são estimativas e permanecem editáveis.</small></div><span class="metabolic-source-badge">${a?.id?'Avaliação mais recente':'Preenchimento manual'}</span></div>
+    <div class="metabolic-input-grid">
+      <label>Peso (kg)<input type="number" step="0.1" min="1" name="metabolicWeight" value="${esc(weight)}" placeholder="80"></label>
+      <label>Altura (cm)<input type="number" step="0.1" min="50" max="260" name="metabolicHeight" value="${esc(height)}" placeholder="180"></label>
+      <label>Idade<input type="number" step="1" min="14" max="120" name="metabolicAge" value="${esc(age)}" placeholder="35"></label>
+      <label>Sexo biológico<select name="metabolicSex"><option value="">Selecione</option><option value="masculino" ${sex==='masculino'?'selected':''}>Masculino</option><option value="feminino" ${sex==='feminino'?'selected':''}>Feminino</option></select></label>
+      <label>Fórmula<select name="metabolicFormula"><option value="mifflin">Mifflin-St Jeor</option>${lean?'<option value="katch">Katch-McArdle (massa magra)</option>':''}</select></label>
+      <label>Nível de atividade<select name="metabolicActivity">${Object.entries(HP_ACTIVITY_FACTORS).map(([key,x])=>`<option value="${key}" ${key==='moderado'?'selected':''}>${x.label} × ${x.factor}</option>`).join('')}</select></label>
+    </div>
+    ${lean?`<div class="metabolic-lean-mass"><span>Massa magra disponível</span><strong>${num(lean,1)} kg</strong><small>Permite usar Katch-McArdle como estimativa alternativa.</small></div>`:''}
+    <div class="metabolic-results" id="metabolicResults"><div><small>TMB estimada</small><strong>—</strong><span>kcal/dia</span></div><div><small>GET estimado</small><strong>—</strong><span>kcal/dia</span></div><div><small>Fator atividade</small><strong>—</strong><span>multiplicador</span></div></div>
+    <div class="metabolic-actions"><small id="metabolicFormulaNote">Preencha os dados para calcular.</small><button type="button" class="secondary" id="applyMetabolicCalories" disabled>Usar GET como meta calórica</button></div>
+  </section>`;
+}
+function hpBindMetabolicCalculator(form,context,refreshPlan){
+  const box=form.querySelector('[data-metabolic-calculator]');if(!box)return;
+  const lean=Number(context?.latest?.massaMagraKg||0);
+  const $n=n=>box.querySelector(`[name=${n}]`);
+  const output=box.querySelector('#metabolicResults'),note=box.querySelector('#metabolicFormulaNote'),apply=box.querySelector('#applyMetabolicCalories');
+  const calculate=()=>{
+    const w=Number($n('metabolicWeight').value),h=Number($n('metabolicHeight').value),age=Number($n('metabolicAge').value),sex=$n('metabolicSex').value,formula=$n('metabolicFormula').value,activity=$n('metabolicActivity').value;
+    const factor=HP_ACTIVITY_FACTORS[activity]?.factor||1.2;
+    let bmr=null,formulaLabel='';
+    if(formula==='katch'&&lean>0){bmr=370+(21.6*lean);formulaLabel='Katch-McArdle com massa magra registrada';}
+    else if(w>0&&h>0&&age>0&&sex){bmr=(10*w)+(6.25*h)-(5*age)+(sex==='masculino'?5:-161);formulaLabel='Mifflin-St Jeor';}
+    const get=bmr?bmr*factor:null;
+    output.innerHTML=`<div><small>TMB estimada</small><strong>${bmr?Math.round(bmr):'—'}</strong><span>kcal/dia</span></div><div><small>GET estimado</small><strong>${get?Math.round(get):'—'}</strong><span>kcal/dia</span></div><div><small>Fator atividade</small><strong>${factor.toFixed(3)}</strong><span>${esc(HP_ACTIVITY_FACTORS[activity]?.label||'')}</span></div>`;
+    note.textContent=bmr?`${formulaLabel}. Resultado é uma estimativa clínica e pode ser ajustado pelo profissional.`:'Preencha peso, altura, idade e sexo para calcular.';
+    apply.disabled=!get;apply.dataset.kcal=get?String(Math.round(get)):'';
+  };
+  box.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',calculate));
+  box.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculate));
+  apply.onclick=()=>{const kcal=Number(apply.dataset.kcal||0);if(!kcal)return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('GET aplicado como meta calórica. Revise antes de salvar.');};
+  calculate();
+}
+
 openMealPlanForm=async function(p,existingPlan=null){
   const box=$('#clinicalActionContent');
   $('#clinicalActionModal').classList.add('nutrition-modal-open');$('#clinicalActionModal').classList.remove('hidden');
-  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">NUTRITION BUILDER • LARGE CATALOG UX • v0.18.13</span><h2>${existingPlan?'Editar plano alimentar':'Novo plano alimentar'}</h2><p>${esc(p.nome)} • carregando catálogo...</p></div>`;
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">NUTRITION BUILDER</span><h2>${existingPlan?'Editar plano alimentar':'Novo plano alimentar'}</h2><p>${esc(p.nome)} • carregando catálogo...</p></div>`;
   $('.clinical-back').onclick=()=>openClinicalActionMenu(p);
   try{
     const alimentos=await api('/api/alimentos');
     if(!alimentos.length){box.innerHTML+=`<div class="empty">Nenhum alimento ativo no catálogo. Cadastre alimentos antes de montar o plano.</div>`;return}
+    const metabolicContext=await hpLoadMetabolicContext(p);
     const tuning=state.recommendationTuningDraft?.patientId===p.id?state.recommendationTuningDraft:null;
     const initialMeals=existingPlan?.refeicoes?.length?existingPlan.refeicoes:Array.from({length:Math.max(1,Math.min(6,Number(tuning?.meals||1)))},(_,i)=>({nome:i===0?'Café da manhã':`Refeição ${i+1}`,horario:i===0?'08:00':null,itens:[]}));
     const metaVal=(key)=>existingPlan?.[key]??'';
-    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">NUTRITION BUILDER • LARGE CATALOG UX • v0.18.13</span><h2>${existingPlan?'Editar plano alimentar':'Novo plano alimentar'}</h2><p>${esc(p.nome)} • ${alimentos.length} alimento(s) disponíveis</p></div>
+    box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">NUTRITION BUILDER</span><h2>${existingPlan?'Editar plano alimentar':'Novo plano alimentar'}</h2><p>${esc(p.nome)} • ${alimentos.length} alimento(s) disponíveis</p></div>
       ${tuning?`<section class="nutrition-builder-context"><div><span class="eyebrow">CONTEXTO DA SUGESTÃO PROFISSIONAL</span><strong>${esc(tuning.goal||'Objetivo definido')}</strong><small>${tuning.meals||'—'} refeições/dia • ${esc(tuning.nutrition||'direção nutricional a revisar')}</small></div><p>${esc(tuning.preferences||'Sem preferências adicionais registradas.')}</p><small>Use como referência. O plano continua totalmente editável pelo profissional.</small></section>`:''}
       <form id="nutritionBuilder2Form" class="clinical-form nutrition-builder2-form">
         <div class="form-grid builder-meta">
@@ -8137,6 +8211,7 @@ openMealPlanForm=async function(p,existingPlan=null){
           <label>Status<select name="status"><option value="Ativo" ${existingPlan?.status==='Ativo'?'selected':''}>Ativo</option><option value="Concluido" ${existingPlan?.status==='Concluido'?'selected':''}>Concluído</option><option value="Pausado" ${existingPlan?.status==='Pausado'?'selected':''}>Pausado</option></select></label>
           <label class="span-2">Orientações gerais<textarea name="observacoes" rows="3">${esc(existingPlan?.observacoes||'')}</textarea></label>
         </div>
+        ${hpMetabolicCalculatorCard(metabolicContext)}
         <section class="nutrition-builder2-targets"><div><strong>Metas diárias</strong><small>Compare meta × prescrito enquanto monta.</small></div><div class="nutrition-target-inputs">
           ${field('Calorias','metaCalorias','number',`step="1" min="1" value="${metaVal('metaCalorias')}" placeholder="2200"`)}
           ${field('Proteína (g)','metaProteinasG','number',`step="0.1" min="0" value="${metaVal('metaProteinasG')}"`)}
@@ -8159,6 +8234,7 @@ openMealPlanForm=async function(p,existingPlan=null){
     $('.clinical-back').onclick=()=>openClinicalActionMenu(p);$('[data-close-clinical-form]').onclick=closeClinicalAction;
     const form=$('#nutritionBuilder2Form'),list=$('#mealBuilders');
     const refresh=()=>hpNutritionBuilderUpdatePreview(alimentos);
+    hpBindMetabolicCalculator(form,metabolicContext,refresh);
     const bindMeals=()=>list.querySelectorAll('.nutrition-meal-builder2').forEach(m=>{if(m.dataset.hpMealBound)return;m.dataset.hpMealBound='1';hpNutritionBuilderBindMeal(m,alimentos,refresh)});
     bindMeals();
     $('#nutritionBuilderAddMeal').onclick=()=>{const idx=list.children.length+1;list.insertAdjacentHTML('beforeend',hpNutritionMealBuilder(alimentos,null,idx));bindMeals();refresh()};
@@ -8215,7 +8291,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.6';
+const HP_MVP_VERSION='0.19.7';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -9087,7 +9163,7 @@ async function hpOpenNutritionTemplates2(patient=null,initialTab='plans'){
   const modal=$('#clinicalActionModal');
   modal.classList.add('nutrition-modal-open');
   modal.classList.remove('hidden');
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION TEMPLATES 2.0 • v0.18.14</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • escolha um modelo e aplique uma cópia independente.`:'Organize dietas e refeições reutilizáveis para acelerar a prescrição.'}</p></div><div class="empty">Carregando modelos...</div>`;
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">BIBLIOTECA PROFISSIONAL DE NUTRIÇÃO</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • escolha um modelo e aplique uma cópia independente.`:'Organize dietas e refeições reutilizáveis para acelerar a prescrição.'}</p></div><div class="empty">Carregando modelos...</div>`;
 
   try{
     const [plans,meals]=await Promise.all([
@@ -9103,7 +9179,7 @@ async function hpOpenNutritionTemplates2(patient=null,initialTab='plans'){
     const totalPlanMeals=(plans||[]).reduce((n,x)=>n+Number(x.refeicoes||0),0);
     const totalItems=(plans||[]).reduce((n,x)=>n+Number(x.itens||0),0)+(meals||[]).reduce((n,x)=>n+Number(x.itens||0),0);
 
-    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION TEMPLATES 2.0 • v0.18.14</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • modelos viram cópias independentes.`:'Crie uma cartela reutilizável de dietas e refeições.'}</p></div>
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">BIBLIOTECA PROFISSIONAL DE NUTRIÇÃO</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • modelos viram cópias independentes.`:'Crie uma cartela reutilizável de dietas e refeições.'}</p></div>
       <div class="nutrition-template-kpis">
         <article><span>Dietas ativas</span><strong>${activePlans}</strong><small>${plans.length-activePlans} inativa(s)</small></article>
         <article><span>Refeições ativas</span><strong>${activeMeals}</strong><small>${meals.length-activeMeals} inativa(s)</small></article>
@@ -9281,7 +9357,7 @@ async function hpOpenNutritionReviewPublish2(patient,preferredPlanId=null){
   modal.classList.remove('hidden');
   modal.classList.add('nutrition-modal-open');
   const box=$('#clinicalActionContent');
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION REVIEW & PUBLISH 2.0 • v0.18.15</span><h2>Revisar & publicar alimentação</h2><p>${esc(p.nome)} • carregando histórico nutricional...</p></div><div class="intake-loading">Carregando versões...</div>`;
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">REVISÃO E PUBLICAÇÃO NUTRICIONAL</span><h2>Revisar & publicar alimentação</h2><p>${esc(p.nome)} • carregando histórico nutricional...</p></div><div class="intake-loading">Carregando versões...</div>`;
 
   try{
     const plans=await api(`/api/pacientes/${p.id}/planos-alimentares`);
@@ -9292,7 +9368,7 @@ async function hpOpenNutritionReviewPublish2(patient,preferredPlanId=null){
     const render=()=>{
       const totals=selected?.totaisDiarios||{};
       const meals=selected?.refeicoes||[];
-      box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION REVIEW & PUBLISH 2.0 • v0.18.15</span><h2>Revisar & publicar alimentação</h2><p>${esc(p.nome)} • publicação explícita com histórico preservado.</p></div>
+      box.innerHTML=`<div class="modal-heading"><span class="eyebrow">REVISÃO E PUBLICAÇÃO NUTRICIONAL</span><h2>Revisar & publicar alimentação</h2><p>${esc(p.nome)} • publicação explícita com histórico preservado.</p></div>
         <section class="nutrition-publish-summary-v1815">
           <article><span>Versão publicada</span><strong>${esc(active?.nome||'Nenhuma')}</strong><small>${active?`V${active.versao||1} • ${fmtDate(active.dataInicio)}`:'Escolha uma versão abaixo'}</small></article>
           <article><span>Versões disponíveis</span><strong>${sorted.length}</strong><small>${sorted.filter(x=>x.status!=='Ativo').length} fora de publicação</small></article>

@@ -4930,3 +4930,15 @@ html[data-theme="dark"] .advanced-technique-panel{background:#101516;border-colo
 html[data-theme="dark"] .evolution-photo-card,html[data-theme="dark"] .evolution-photo-privacy,html[data-theme="dark"] .evolution-photo-guidance,html[data-theme="dark"] .evolution-photo-file{background:#111516;border-color:#242b2c}
 @media(max-width:760px){.evolution-photo-head{display:grid}.evolution-photo-actions{width:100%}.evolution-photo-actions button{flex:1}.evolution-compare-controls,.evolution-compare-stage{grid-template-columns:1fr}.evolution-compare-stage{min-height:0}.evolution-photo-privacy,.evolution-photo-guidance{display:grid}.evolution-photo-grid{grid-template-columns:1fr 1fr}.evolution-photo-card-actions{display:grid}.evolution-annotator-toolbar{align-items:stretch;display:grid}}
 @media(max-width:480px){.evolution-photo-grid{grid-template-columns:1fr}}
+
+
+/* ===== v0.19.7 — Metabolic Energy Calculator ===== */
+.metabolic-calculator{margin:18px 0;padding:20px;border:1px solid var(--border);border-radius:20px;background:linear-gradient(145deg,rgba(57,217,174,.055),rgba(255,255,255,.018));box-shadow:inset 0 1px rgba(255,255,255,.025)}
+.metabolic-calculator-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}.metabolic-calculator-head strong{display:block;font-size:1.08rem;margin:3px 0 4px}.metabolic-calculator-head small{color:var(--muted)}
+.metabolic-source-badge{flex:none;padding:6px 10px;border-radius:999px;border:1px solid rgba(57,217,174,.18);background:rgba(57,217,174,.07);color:var(--accent);font-size:.72rem;font-weight:700}
+.metabolic-input-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.metabolic-input-grid label{display:grid;gap:6px;font-size:.78rem;color:var(--muted)}
+.metabolic-lean-mass{margin-top:12px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid var(--border)}.metabolic-lean-mass span,.metabolic-lean-mass small{color:var(--muted)}.metabolic-lean-mass strong{color:var(--text)}
+.metabolic-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.metabolic-results>div{padding:14px;border-radius:14px;background:var(--surface-2,rgba(255,255,255,.03));border:1px solid var(--border);display:grid;gap:2px}.metabolic-results small,.metabolic-results span{color:var(--muted)}.metabolic-results strong{font-size:1.35rem;color:var(--text)}
+.metabolic-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px}.metabolic-actions small{max-width:68%;color:var(--muted);line-height:1.45}
+@media(max-width:760px){.metabolic-input-grid,.metabolic-results{grid-template-columns:1fr 1fr}.metabolic-calculator-head,.metabolic-actions{align-items:stretch;flex-direction:column}.metabolic-actions small{max-width:none}.metabolic-source-badge{align-self:flex-start}}
+@media(max-width:480px){.metabolic-input-grid,.metabolic-results{grid-template-columns:1fr}}
