@@ -16,7 +16,9 @@ public sealed record ExecucaoItemTreinoRequest(
     string? UnidadeCarga,
     int? EsforcoPercebido,
     bool Concluido,
-    string? Observacoes);
+    string? Observacoes,
+    Guid? ExercicioAlternativoId,
+    string? MotivoAlternativa);
 
 public sealed record RegistrarExecucaoTreinoRequest(
     Guid SessaoTreinoId,
@@ -50,7 +52,7 @@ public sealed class ExecucoesTreinoPacienteController(
 
         var sessao = await db.SessoesTreino.AsNoTracking()
             .Include(x => x.PlanoTreino)
-            .Include(x => x.Itens)
+            .Include(x => x.Itens).ThenInclude(x => x.Exercicio)
             .FirstOrDefaultAsync(x =>
                 x.Id == request.SessaoTreinoId &&
                 x.PlanoTreino.PacienteId == paciente.Id &&
@@ -66,6 +68,24 @@ public sealed class ExecucoesTreinoPacienteController(
         var validIds = sessao.Itens.Select(x => x.Id).ToHashSet();
         if (request.Itens.Any(x => !validIds.Contains(x.ItemTreinoId)))
             return BadRequest(new { message = "Existe item informado que nao pertence a esta sessao." });
+
+        var idsAlternativos = request.Itens.Where(x => x.ExercicioAlternativoId.HasValue)
+            .Select(x => x.ExercicioAlternativoId!.Value).Distinct().ToArray();
+        var alternativas = idsAlternativos.Length == 0
+            ? new Dictionary<Guid, Exercicio>()
+            : await db.Exercicios.AsNoTracking()
+                .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo && idsAlternativos.Contains(x.Id))
+                .ToDictionaryAsync(x => x.Id, ct);
+
+        foreach (var solicitado in request.Itens.Where(x => x.ExercicioAlternativoId.HasValue))
+        {
+            var original = sessao.Itens.First(x => x.Id == solicitado.ItemTreinoId).Exercicio;
+            if (!alternativas.TryGetValue(solicitado.ExercicioAlternativoId!.Value, out var alternativa))
+                return BadRequest(new { message = "Exercicio alternativo invalido ou indisponivel." });
+            if (!string.IsNullOrWhiteSpace(original.GrupoMuscular) &&
+                !string.Equals(original.GrupoMuscular.Trim(), alternativa.GrupoMuscular?.Trim(), StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { message = "A alternativa precisa pertencer ao mesmo grupo muscular do exercicio prescrito." });
+        }
 
         if (request.Itens.Any(x =>
             (x.SeriesRealizadas.HasValue && x.SeriesRealizadas < 0) ||
@@ -103,7 +123,9 @@ public sealed class ExecucoesTreinoPacienteController(
                 UnidadeCarga = Limpar(i.UnidadeCarga),
                 EsforcoPercebido = i.EsforcoPercebido,
                 Concluido = i.Concluido,
-                Observacoes = Limpar(i.Observacoes)
+                Observacoes = MontarObservacaoItem(i.Observacoes, i.ExercicioAlternativoId,
+                    i.ExercicioAlternativoId.HasValue && alternativas.TryGetValue(i.ExercicioAlternativoId.Value, out var alternativa) ? alternativa.Nome : null,
+                    i.MotivoAlternativa)
             });
         }
 
@@ -200,6 +222,17 @@ public sealed class ExecucoesTreinoPacienteController(
             i.Observacoes
         })
     };
+
+    private static string? MontarObservacaoItem(string? observacao, Guid? exercicioAlternativoId, string? exercicioAlternativoNome, string? motivo)
+    {
+        var texto = Limpar(observacao);
+        if (!exercicioAlternativoId.HasValue || string.IsNullOrWhiteSpace(exercicioAlternativoNome))
+            return texto;
+
+        static string Safe(string? x) => (x ?? string.Empty).Replace("|", "/").Replace("]", ")").Trim();
+        var marcador = $"[AESYN_ALT_EXERCICIO:{exercicioAlternativoId.Value}|{Safe(exercicioAlternativoNome)}|{Safe(motivo)}]";
+        return string.IsNullOrWhiteSpace(texto) ? marcador : $"{marcador} {texto}";
+    }
 
     private static string? Limpar(string? x)
         => string.IsNullOrWhiteSpace(x) ? null : x.Trim();

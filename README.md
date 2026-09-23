@@ -1,4 +1,8 @@
-﻿## v0.19.16 — Workout Progression Engine
+## v0.19.18 — Patient ↔ Professional Chat
+
+Chat contextual paciente-profissional com notificações, assunto por contexto, SLA de até 24h úteis e aviso explícito de não emergência. Persiste no acompanhamento existente sem nova migration.
+
+## v0.19.17 — Workout Progression Engine
 
 Progressão assistida por histórico de execução e regras configuradas pelo profissional, com visão para paciente e profissional. O sistema não altera a prescrição automaticamente.
 

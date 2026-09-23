@@ -1,4 +1,25 @@
-﻿## v0.19.16 — Workout Progression Engine
+
+## v0.19.18-r1 — correção de compilação do Patient Professional Chat
+- Corrige `ChatAcompanhamentoController`: `Consulta` não possui `OrganizacaoId`.
+- O filtro de segurança por organização passa a usar `Consulta.Paciente.OrganizacaoId`, mantendo isolamento organizacional sem alterar schema.
+- Nenhuma migration nova; versão funcional permanece `0.19.18`.
+## v0.19.18 — Patient Professional Chat
+- Chat direto paciente ↔ profissional dentro da plataforma.
+- Contextos: geral, nutrição, treino, exames, medicamentos/suplementos e recuperação.
+- Notificação automática ao destinatário a cada nova mensagem.
+- SLA informativo de até 24h úteis e aviso de não emergência.
+- Reutiliza InteracaoAcompanhamento e NotificacaoInterna; sem migration nova.
+
+# v0.19.17 — Smart Exercise Alternatives
+
+- Alternativas de exercício no fluxo de execução do paciente.
+- Ranking limitado ao mesmo grupo muscular e catálogo da organização.
+- Contextos para equipamento ocupado, falta de equipamento e preferência.
+- Dor/desconforto bloqueia troca automática e orienta revisão profissional.
+- Adaptação fica registrada de forma estruturada no histórico da execução.
+- Sem migration nesta versão.
+
+## v0.19.16 — Workout Progression Engine
 - Cruza regras de progressão configuradas com histórico real de carga, repetições, RPE e tendência.
 - Classifica exercícios em candidato à progressão, manter/observar ou construindo base.
 - Exibe orientação contextual ao paciente e painel de revisão ao profissional.
