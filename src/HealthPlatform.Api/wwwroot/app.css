@@ -4942,3 +4942,16 @@ html[data-theme="dark"] .evolution-photo-card,html[data-theme="dark"] .evolution
 .metabolic-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px}.metabolic-actions small{max-width:68%;color:var(--muted);line-height:1.45}
 @media(max-width:760px){.metabolic-input-grid,.metabolic-results{grid-template-columns:1fr 1fr}.metabolic-calculator-head,.metabolic-actions{align-items:stretch;flex-direction:column}.metabolic-actions small{max-width:none}.metabolic-source-badge{align-self:flex-start}}
 @media(max-width:480px){.metabolic-input-grid,.metabolic-results{grid-template-columns:1fr}}
+
+
+/* ===== v0.19.8 — Weight Goal & Calorie Target Planner ===== */
+.weight-goal-planner{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.weight-goal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}.weight-goal-head strong{display:block;font-size:1rem;margin:3px 0 4px}.weight-goal-head small{color:var(--muted)}
+.weight-goal-badge{flex:none;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.035);border:1px solid var(--border);color:var(--muted);font-size:.72rem;font-weight:700}
+.weight-goal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.weight-goal-grid label{display:grid;gap:6px;font-size:.78rem;color:var(--muted)}
+.weight-goal-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.weight-goal-results>div{padding:14px;border-radius:14px;background:var(--surface-2,rgba(255,255,255,.03));border:1px solid var(--border);display:grid;gap:2px}.weight-goal-results small,.weight-goal-results span{color:var(--muted)}.weight-goal-results strong{font-size:1.25rem;color:var(--text)}
+.weight-goal-safety{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.025);color:var(--muted);font-size:.78rem;line-height:1.45}.weight-goal-safety.ok{border-color:rgba(57,217,174,.22);background:rgba(57,217,174,.045)}.weight-goal-safety.warning{border-color:rgba(242,180,72,.28);background:rgba(242,180,72,.055);color:var(--text)}
+.weight-goal-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px}.weight-goal-actions small{max-width:68%;color:var(--muted);line-height:1.45}
+@media(max-width:900px){.weight-goal-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.weight-goal-head,.weight-goal-actions{align-items:stretch;flex-direction:column}.weight-goal-results{grid-template-columns:1fr}.weight-goal-actions small{max-width:none}.weight-goal-badge{align-self:flex-start}}
+@media(max-width:480px){.weight-goal-grid{grid-template-columns:1fr}}

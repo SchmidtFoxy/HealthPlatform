@@ -1,3 +1,10 @@
+## v0.19.8 — Weight Goal & Calorie Target Planner
+
+- Adiciona objetivo de perder, manter ou ganhar peso com peso-alvo e prazo em semanas.
+- Calcula ajuste energético e alvo calórico diário teórico a partir do GET, mantendo aplicação manual/editável pelo profissional.
+- Exibe ritmo estimado, alertas para metas agressivas e aviso quando o alvo fica abaixo da TMB estimada.
+- Usa aproximação explícita de 7.700 kcal/kg somente para planejamento, sem tratar a projeção como garantia clínica.
+
 ## v0.19.7 — Metabolic Energy Calculator
 
 - Adiciona cálculo profissional de TMB e GET dentro do Nutrition Builder.

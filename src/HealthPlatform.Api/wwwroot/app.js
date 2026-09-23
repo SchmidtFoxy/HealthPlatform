@@ -8165,13 +8165,70 @@ function hpMetabolicCalculatorCard(context){
     ${lean?`<div class="metabolic-lean-mass"><span>Massa magra disponível</span><strong>${num(lean,1)} kg</strong><small>Permite usar Katch-McArdle como estimativa alternativa.</small></div>`:''}
     <div class="metabolic-results" id="metabolicResults"><div><small>TMB estimada</small><strong>—</strong><span>kcal/dia</span></div><div><small>GET estimado</small><strong>—</strong><span>kcal/dia</span></div><div><small>Fator atividade</small><strong>—</strong><span>multiplicador</span></div></div>
     <div class="metabolic-actions"><small id="metabolicFormulaNote">Preencha os dados para calcular.</small><button type="button" class="secondary" id="applyMetabolicCalories" disabled>Usar GET como meta calórica</button></div>
+    ${hpWeightGoalPlannerCard(weight)}
   </section>`;
 }
+// ===== v0.19.8 — Weight Goal & Calorie Target Planner =====
+const HP_WEIGHT_GOAL_CALORIE_TARGET='v0.19.8';
+const HP_ENERGY_EQUIVALENT_KCAL_PER_KG=7700;
+function hpWeightGoalPlannerCard(currentWeight){
+  return `<section class="weight-goal-planner" data-weight-goal-planner="v0.19.8">
+    <div class="weight-goal-head"><div><span class="eyebrow">OBJETIVO E PRAZO</span><strong>Meta de peso e alvo energético</strong><small>Projete um alvo teórico a partir do GET. O profissional continua responsável por revisar e ajustar a estratégia.</small></div><span class="weight-goal-badge">Planejamento</span></div>
+    <div class="weight-goal-grid">
+      <label>Objetivo<select name="weightGoalType"><option value="perder">Perder peso</option><option value="manter">Manter peso</option><option value="ganhar">Ganhar peso</option></select></label>
+      <label>Peso atual (kg)<input type="number" step="0.1" min="1" name="weightGoalCurrent" value="${esc(currentWeight||'')}" placeholder="80"></label>
+      <label>Peso desejado (kg)<input type="number" step="0.1" min="1" name="weightGoalTarget" placeholder="75"></label>
+      <label>Prazo (semanas)<input type="number" step="1" min="1" max="104" name="weightGoalWeeks" value="12"></label>
+    </div>
+    <div class="weight-goal-results" id="weightGoalResults">
+      <div><small>Ajuste energético</small><strong>—</strong><span>kcal/dia</span></div>
+      <div><small>Alvo diário teórico</small><strong>—</strong><span>kcal/dia</span></div>
+      <div><small>Ritmo estimado</small><strong>—</strong><span>kg/semana</span></div>
+    </div>
+    <div class="weight-goal-safety" id="weightGoalSafety">Calcule primeiro o GET e informe a meta de peso.</div>
+    <div class="weight-goal-actions"><small>Estimativa matemática baseada em ~7.700 kcal por kg. Não prevê adaptações metabólicas, retenção hídrica ou mudanças de composição corporal.</small><button type="button" class="secondary" id="applyWeightGoalCalories" disabled>Usar alvo como meta calórica</button></div>
+  </section>`;
+}
+function hpCalculateWeightGoal({get,bmr,current,target,weeks,type}){
+  if(!(get>0)||!(current>0)||!(weeks>0))return null;
+  if(type==='manter')return {adjustment:0,targetCalories:get,weeklyChange:0,deltaKg:0,warning:''};
+  if(!(target>0))return null;
+  const deltaKg=target-current;
+  if((type==='perder'&&deltaKg>=0)||(type==='ganhar'&&deltaKg<=0))return {invalidDirection:true,deltaKg};
+  const days=weeks*7;
+  const adjustment=(deltaKg*HP_ENERGY_EQUIVALENT_KCAL_PER_KG)/days;
+  const targetCalories=get+adjustment;
+  const weeklyChange=deltaKg/weeks;
+  const weeklyPercent=Math.abs(weeklyChange/current)*100;
+  const warnings=[];
+  if(weeklyPercent>1)warnings.push(`Ritmo de ${weeklyPercent.toFixed(1)}% do peso/semana: revise a agressividade da meta.`);
+  if(bmr>0&&targetCalories<bmr)warnings.push('O alvo calculado ficou abaixo da TMB estimada; requer revisão profissional antes de uso.');
+  if(targetCalories<1200)warnings.push('Alvo energético muito baixo para aplicação automática. Revise prazo e objetivo.');
+  return {adjustment,targetCalories,weeklyChange,deltaKg,weeklyPercent,warning:warnings.join(' ')};
+}
+
 function hpBindMetabolicCalculator(form,context,refreshPlan){
   const box=form.querySelector('[data-metabolic-calculator]');if(!box)return;
   const lean=Number(context?.latest?.massaMagraKg||0);
   const $n=n=>box.querySelector(`[name=${n}]`);
   const output=box.querySelector('#metabolicResults'),note=box.querySelector('#metabolicFormulaNote'),apply=box.querySelector('#applyMetabolicCalories');
+  let currentGet=null,currentBmr=null;
+  const goalBox=box.querySelector('[data-weight-goal-planner]'),goalOutput=box.querySelector('#weightGoalResults'),goalSafety=box.querySelector('#weightGoalSafety'),goalApply=box.querySelector('#applyWeightGoalCalories');
+  const calculateGoal=()=>{
+    if(!goalBox)return;
+    const type=goalBox.querySelector('[name=weightGoalType]').value;
+    const current=Number(goalBox.querySelector('[name=weightGoalCurrent]').value||0);
+    const target=Number(goalBox.querySelector('[name=weightGoalTarget]').value||0);
+    const weeks=Number(goalBox.querySelector('[name=weightGoalWeeks]').value||0);
+    const result=hpCalculateWeightGoal({get:currentGet,bmr:currentBmr,current,target,weeks,type});
+    if(!result){goalOutput.innerHTML='<div><small>Ajuste energético</small><strong>—</strong><span>kcal/dia</span></div><div><small>Alvo diário teórico</small><strong>—</strong><span>kcal/dia</span></div><div><small>Ritmo estimado</small><strong>—</strong><span>kg/semana</span></div>';goalSafety.textContent='Calcule primeiro o GET e informe a meta de peso.';goalSafety.className='weight-goal-safety';goalApply.disabled=true;goalApply.dataset.kcal='';return;}
+    if(result.invalidDirection){goalSafety.textContent=type==='perder'?'Para perda, o peso desejado deve ser menor que o atual.':'Para ganho, o peso desejado deve ser maior que o atual.';goalSafety.className='weight-goal-safety warning';goalApply.disabled=true;goalApply.dataset.kcal='';return;}
+    const adjustment=Math.round(result.adjustment);
+    const targetCalories=Math.round(result.targetCalories);
+    goalOutput.innerHTML=`<div><small>Ajuste energético</small><strong>${adjustment>0?'+':''}${adjustment}</strong><span>kcal/dia</span></div><div><small>Alvo diário teórico</small><strong>${targetCalories}</strong><span>kcal/dia</span></div><div><small>Ritmo estimado</small><strong>${result.weeklyChange>0?'+':''}${result.weeklyChange.toFixed(2)}</strong><span>kg/semana</span></div>`;
+    goalSafety.textContent=result.warning||'Projeção dentro dos alertas básicos do sistema. Revise contexto clínico e adesão antes de aplicar.';goalSafety.className=`weight-goal-safety${result.warning?' warning':' ok'}`;
+    goalApply.disabled=!!result.warning&&targetCalories<1200;goalApply.dataset.kcal=String(targetCalories);
+  };
   const calculate=()=>{
     const w=Number($n('metabolicWeight').value),h=Number($n('metabolicHeight').value),age=Number($n('metabolicAge').value),sex=$n('metabolicSex').value,formula=$n('metabolicFormula').value,activity=$n('metabolicActivity').value;
     const factor=HP_ACTIVITY_FACTORS[activity]?.factor||1.2;
@@ -8179,13 +8236,18 @@ function hpBindMetabolicCalculator(form,context,refreshPlan){
     if(formula==='katch'&&lean>0){bmr=370+(21.6*lean);formulaLabel='Katch-McArdle com massa magra registrada';}
     else if(w>0&&h>0&&age>0&&sex){bmr=(10*w)+(6.25*h)-(5*age)+(sex==='masculino'?5:-161);formulaLabel='Mifflin-St Jeor';}
     const get=bmr?bmr*factor:null;
+    currentBmr=bmr;currentGet=get;
+    if(goalBox&&w>0){const currentInput=goalBox.querySelector('[name=weightGoalCurrent]');if(!currentInput.dataset.manual){currentInput.value=String(w);}}
     output.innerHTML=`<div><small>TMB estimada</small><strong>${bmr?Math.round(bmr):'—'}</strong><span>kcal/dia</span></div><div><small>GET estimado</small><strong>${get?Math.round(get):'—'}</strong><span>kcal/dia</span></div><div><small>Fator atividade</small><strong>${factor.toFixed(3)}</strong><span>${esc(HP_ACTIVITY_FACTORS[activity]?.label||'')}</span></div>`;
     note.textContent=bmr?`${formulaLabel}. Resultado é uma estimativa clínica e pode ser ajustado pelo profissional.`:'Preencha peso, altura, idade e sexo para calcular.';
     apply.disabled=!get;apply.dataset.kcal=get?String(Math.round(get)):'';
+    calculateGoal();
   };
-  box.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',calculate));
-  box.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculate));
+  box.querySelectorAll('.metabolic-input-grid input,.metabolic-input-grid select').forEach(x=>x.addEventListener('input',calculate));
+  box.querySelectorAll('.metabolic-input-grid select').forEach(x=>x.addEventListener('change',calculate));
+  if(goalBox){goalBox.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',()=>{if(x.name==='weightGoalCurrent')x.dataset.manual='1';calculateGoal();}));goalBox.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculateGoal));}
   apply.onclick=()=>{const kcal=Number(apply.dataset.kcal||0);if(!kcal)return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('GET aplicado como meta calórica. Revise antes de salvar.');};
+  if(goalApply)goalApply.onclick=()=>{const kcal=Number(goalApply.dataset.kcal||0);if(!kcal)return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('Alvo energético aplicado. A projeção continua editável e deve ser revisada pelo profissional.');};
   calculate();
 }
 
@@ -8291,7 +8353,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.7';
+const HP_MVP_VERSION='0.19.8';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
