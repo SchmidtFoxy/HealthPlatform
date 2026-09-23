@@ -26,4 +26,5 @@ public class PlanoAlimentar : BaseEntity
     public ICollection<PlanoAlimentar> VersoesDerivadas { get; set; } = new List<PlanoAlimentar>();
     public ICollection<RefeicaoPlanoAlimentar> Refeicoes { get; set; } = new List<RefeicaoPlanoAlimentar>();
     public ICollection<FaseNutricional> FasesNutricionais { get; set; } = new List<FaseNutricional>();
+    public ICollection<ProgramacaoNutricionalDia> ProgramacoesCalendario { get; set; } = new List<ProgramacaoNutricionalDia>();
 }

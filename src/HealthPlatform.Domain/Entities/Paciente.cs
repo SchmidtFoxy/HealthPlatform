@@ -22,6 +22,7 @@ public class Paciente : BaseEntity
     public ICollection<ExameLaboratorial> ExamesLaboratoriais { get; set; } = new List<ExameLaboratorial>();
     public ICollection<RelatorioClinico> RelatoriosClinicos { get; set; } = new List<RelatorioClinico>();
     public ICollection<PlanoAlimentar> PlanosAlimentares { get; set; } = new List<PlanoAlimentar>();
+    public ICollection<ProgramacaoNutricionalDia> ProgramacoesNutricionais { get; set; } = new List<ProgramacaoNutricionalDia>();
     public ICollection<MetaPaciente> Metas { get; set; } = new List<MetaPaciente>();
     public ICollection<RegistroDiarioPaciente> RegistrosDiario { get; set; } = new List<RegistroDiarioPaciente>();
     public ICollection<PlanoTreino> PlanosTreino { get; set; } = new List<PlanoTreino>();

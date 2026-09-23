@@ -1,4 +1,4 @@
-:root{
+﻿:root{
   --bg:#f5f7fb;--surface:#ffffff;--surface-2:#eef3f8;--text:#172033;--muted:#6f7b8d;--line:#e3e8ef;
   --navy:#0c1829;--navy-2:#13243b;--accent:#20b486;--accent-dark:#16966f;--accent-soft:#e7f7f1;
   --danger:#e45d68;--warning:#e8a23a;--shadow:0 18px 50px rgba(15,32,53,.10);--radius:20px;
@@ -5036,3 +5036,109 @@ html[data-theme="dark"] .meal-manager-toolbar{background:linear-gradient(135deg,
 .smart-food-equivalence-panel.hidden{display:none!important}.smart-equivalence-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.smart-equivalence-head>div{display:grid;gap:3px}.smart-equivalence-head strong{font-size:1rem}.smart-equivalence-head small{color:#66736f}.smart-equivalence-target{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.smart-equivalence-target span,.smart-equivalence-macros span{padding:5px 8px;border-radius:999px;background:rgba(7,80,71,.08);font-size:.78rem;font-weight:700}.smart-equivalence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.smart-equivalence-card{display:grid;gap:9px;padding:13px;border:1px solid rgba(7,80,71,.13);border-radius:14px;background:rgba(255,255,255,.72)}.smart-equivalence-card>div:first-child{display:grid;gap:2px}.smart-equivalence-card small{color:#66736f}.smart-equivalence-card>b{font-size:1.08rem}.smart-equivalence-macros{display:flex;gap:5px;flex-wrap:wrap}.smart-equivalence-empty{grid-column:1/-1;padding:18px;text-align:center;color:#687470;border:1px dashed rgba(7,80,71,.2);border-radius:12px}
 html[data-theme="dark"] .smart-food-equivalence-panel{background:linear-gradient(145deg,#111617,#0c1011);border-color:#25302e;box-shadow:0 18px 40px rgba(0,0,0,.24)}html[data-theme="dark"] .smart-equivalence-card{background:#151a1b;border-color:#25302e}html[data-theme="dark"] .smart-equivalence-head strong,html[data-theme="dark"] .smart-equivalence-card strong,html[data-theme="dark"] .smart-equivalence-card>b{color:#edf3f1}html[data-theme="dark"] .smart-equivalence-head small,html[data-theme="dark"] .smart-equivalence-card small,html[data-theme="dark"] .smart-equivalence-empty{color:#8f9b98}html[data-theme="dark"] .smart-equivalence-target span,html[data-theme="dark"] .smart-equivalence-macros span{background:#1b2422;color:#b9d8cf}
 @media(max-width:900px){.smart-equivalence-grid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.smart-equivalence-grid{grid-template-columns:1fr}.smart-equivalence-head{display:grid}.smart-equivalence-head .ghost{justify-self:start}}
+
+/* ===== v0.19.14 — Nutrition Calendar ===== */
+.nutrition-calendar-modal .modal-panel{max-width:1180px}
+.nutrition-calendar-shell{display:grid;gap:14px}
+.nutrition-calendar-toolbar{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:16px;background:var(--panel-soft)}
+.nutrition-calendar-toolbar>div:nth-child(2){display:flex;flex-direction:column;text-align:center}.nutrition-calendar-toolbar small{color:var(--muted);margin-top:2px}
+.nutrition-calendar-weekdays,.nutrition-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.nutrition-calendar-weekdays span{text-align:center;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted);padding:4px}
+.nutrition-calendar-day{min-height:112px;text-align:left;padding:10px;border-radius:14px;border:1px solid var(--border);background:var(--panel);color:var(--text);display:flex;flex-direction:column;gap:4px;transition:.16s ease;overflow:hidden}.nutrition-calendar-day:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--accent) 50%,var(--border))}.nutrition-calendar-day.has-plan{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel))}.nutrition-calendar-day.is-selected{outline:2px solid color-mix(in srgb,var(--accent) 65%,transparent);border-color:var(--accent)}.nutrition-calendar-day.is-today .nutrition-calendar-number{background:var(--accent);color:#07110f}.nutrition-calendar-day.is-outside{opacity:.18;pointer-events:none}.nutrition-calendar-number{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-weight:800}.nutrition-calendar-day strong{font-size:12px;line-height:1.25}.nutrition-calendar-day small{font-size:10px;color:var(--muted)}.nutrition-calendar-day em{font-size:10px;font-style:normal;color:var(--accent);margin-top:auto}.nutrition-calendar-empty{font-size:11px;color:var(--muted);margin-top:auto}
+.nutrition-calendar-editor{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.6fr);gap:18px;padding:18px;border:1px solid var(--border);border-radius:16px;background:var(--panel)}.nutrition-calendar-editor h3{margin:4px 0}.nutrition-calendar-editor p{color:var(--muted);margin:4px 0 0}.nutrition-calendar-day-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.nutrition-calendar-day-form label{display:grid;gap:6px}.nutrition-calendar-day-form .span-2{grid-column:1/-1}.nutrition-calendar-editor-actions{grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.nutrition-calendar-swap{display:flex!important;grid-auto-flow:column;align-items:center;gap:6px!important;color:var(--muted);font-size:12px}.nutrition-calendar-swap input{width:145px}
+html[data-theme="dark"] .nutrition-calendar-day{box-shadow:none}html[data-theme="dark"] .nutrition-calendar-day.has-plan{background:linear-gradient(145deg,#12191a,#0e1213)}
+@media(max-width:800px){.nutrition-calendar-toolbar{grid-template-columns:1fr}.nutrition-calendar-toolbar>div:nth-child(2){text-align:left}.nutrition-calendar-weekdays,.nutrition-calendar-grid{gap:4px}.nutrition-calendar-day{min-height:82px;padding:7px}.nutrition-calendar-day small,.nutrition-calendar-day em{display:none}.nutrition-calendar-editor{grid-template-columns:1fr}.nutrition-calendar-day-form{grid-template-columns:1fr}.nutrition-calendar-day-form .span-2{grid-column:auto}.nutrition-calendar-editor-actions{grid-column:auto;justify-content:stretch}.nutrition-calendar-editor-actions button{flex:1}.nutrition-calendar-swap{width:100%;justify-content:space-between}}
+
+
+/* ===== v0.19.14-r1 — Dark Surface Hardening ===== */
+/* Remove superfícies claras residuais em telas profissionais no tema escuro. */
+html[data-theme="dark"] .insight-summary>div,
+html[data-theme="dark"] .insight-card,
+html[data-theme="dark"] .pending-card,
+html[data-theme="dark"] .follow-queue-card,
+html[data-theme="dark"] .management-engagement>div,
+html[data-theme="dark"] .dashboard-management-metrics>div,
+html[data-theme="dark"] .record-card,
+html[data-theme="dark"] .clinical-sheet,
+html[data-theme="dark"] .exam-block,
+html[data-theme="dark"] .food-plan,
+html[data-theme="dark"] .goal-card,
+html[data-theme="dark"] .patient-page-head{
+  background:#0f1314!important;
+  color:#e8eeec!important;
+  border-color:#283031!important;
+  box-shadow:none!important;
+}
+html[data-theme="dark"] .insight-summary .high{background:#211615!important;border-color:#4a2925!important}
+html[data-theme="dark"] .insight-summary .medium{background:#201b12!important;border-color:#4a3a1f!important}
+html[data-theme="dark"] .insight-summary .low{background:#121a23!important;border-color:#24364c!important}
+html[data-theme="dark"] .insight-icon,
+html[data-theme="dark"] .pending-check,
+html[data-theme="dark"] .followup-channel,
+html[data-theme="dark"] .insight-value{
+  background:#171d1e!important;
+  color:#d9e2df!important;
+  border-color:#2b3435!important;
+}
+html[data-theme="dark"] .insight-disclaimer{
+  background:#121718!important;
+  color:#8f9a97!important;
+  border:1px solid #252d2e!important;
+}
+html[data-theme="dark"] .insight-body p,
+html[data-theme="dark"] .insight-body small,
+html[data-theme="dark"] .pending-main p,
+html[data-theme="dark"] .pending-main small,
+html[data-theme="dark"] .follow-queue-name small,
+html[data-theme="dark"] .follow-queue-details b,
+html[data-theme="dark"] .management-engagement span{
+  color:#96a19e!important;
+}
+html[data-theme="dark"] .mini-insight.insight-high{background:#2a1917!important;color:#f0a097!important}
+html[data-theme="dark"] .mini-insight.insight-medium{background:#282011!important;color:#e8c16b!important}
+html[data-theme="dark"] .mini-insight.insight-low{background:#141e2a!important;color:#91b8eb!important}
+html[data-theme="dark"] .pill.insight-high{background:#2a1917!important;color:#f0a097!important}
+html[data-theme="dark"] .pill.insight-medium{background:#282011!important;color:#e8c16b!important}
+html[data-theme="dark"] .pill.insight-low{background:#141e2a!important;color:#91b8eb!important}
+
+/* Carteira e listas: força grafite mesmo quando regras legadas declaram #fff. */
+html[data-theme="dark"] .portfolio-patient-card,
+html[data-theme="dark"] .portfolio-metrics>div{
+  background:#101415!important;
+  color:#e7eeeb!important;
+}
+html[data-theme="dark"] .portfolio-patient-card{border-color:#283031!important;border-top-color:var(--portfolio-accent)!important}
+html[data-theme="dark"] .portfolio-metrics>div{border-color:#293233!important}
+
+/* Tabela de pacientes e demais tabelas profissionais. */
+html[data-theme="dark"] .table-wrap{background:#0f1314!important;border-color:#252d2e!important}
+html[data-theme="dark"] .data-table th{background:#121718!important;color:#8d9996!important}
+html[data-theme="dark"] .data-table tbody tr,
+html[data-theme="dark"] .data-table tbody tr:nth-child(odd),
+html[data-theme="dark"] .data-table tbody tr:nth-child(even){background:#0f1314!important;color:#e2e9e7!important}
+html[data-theme="dark"] .data-table tbody tr:hover{background:#151b1c!important}
+html[data-theme="dark"] .data-table td{background:transparent!important;color:#dce4e1!important;border-color:#272f30!important}
+html[data-theme="dark"] .person-cell strong{color:#edf3f1!important}
+html[data-theme="dark"] .mini-avatar{background:#16312a!important;color:#74dfbf!important}
+
+/* Perfil do paciente: cabeçalho e insights sem placas brancas. */
+html[data-theme="dark"] .patient-page-head{background:#0d1112!important}
+html[data-theme="dark"] .patient-page-head .back-link{color:#9ca7a4!important}
+html[data-theme="dark"] .patient-page-head .patient-info-item,
+html[data-theme="dark"] .patient-page-head .info-box{background:#121718!important;border-color:#283031!important;color:#e7eeeb!important}
+html[data-theme="dark"] .patient-insights-section{background:#0f1314!important}
+
+/* Pendências e follow-up. */
+html[data-theme="dark"] .pending-card{border-left-color:var(--insight-accent,#607080)!important}
+html[data-theme="dark"] .follow-queue-card{border-left-color:var(--follow-accent)!important}
+html[data-theme="dark"] .follow-queue-details span{color:#d9e1df!important}
+
+/* Gestão operacional. */
+html[data-theme="dark"] .management-engagement>div,
+html[data-theme="dark"] .dashboard-management-metrics>div{background:#111617!important;border-color:#293132!important}
+html[data-theme="dark"] .management-bar-row>div{background:#242b2c!important}
+html[data-theme="dark"] .management-week-series i{background:#a7b1ae!important}
+
+/* Guardrail de produção: componentes genéricos que ainda carreguem superfícies brancas. */
+html[data-theme="dark"] .card[style*="background:#fff"],
+html[data-theme="dark"] article[style*="background:#fff"],
+html[data-theme="dark"] section[style*="background:#fff"]{background:#0f1314!important;color:#e8eeec!important}

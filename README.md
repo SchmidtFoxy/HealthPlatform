@@ -1,4 +1,4 @@
-## v0.19.13 — Meal & Portion Manager 2.0
+## v0.19.14 — Nutrition Calendar
 
 - Gerenciador profissional de refeições e porções no Nutrition Builder.
 - Medidas domésticas com conversão bidirecional para gramas.

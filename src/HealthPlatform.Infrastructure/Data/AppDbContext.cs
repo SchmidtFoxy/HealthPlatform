@@ -26,6 +26,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<RelatorioClinico> RelatoriosClinicos => Set<RelatorioClinico>();
     public DbSet<Alimento> Alimentos => Set<Alimento>();
     public DbSet<PlanoAlimentar> PlanosAlimentares => Set<PlanoAlimentar>();
+    public DbSet<ProgramacaoNutricionalDia> ProgramacoesNutricionaisDia => Set<ProgramacaoNutricionalDia>();
     public DbSet<FaseNutricional> FasesNutricionais => Set<FaseNutricional>();
     public DbSet<ModeloRefeicao> ModelosRefeicoes => Set<ModeloRefeicao>();
     public DbSet<ModeloPlanoAlimentar> ModelosPlanosAlimentares => Set<ModeloPlanoAlimentar>();
@@ -307,6 +308,17 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.HasOne(x => x.Paciente).WithMany(x => x.PlanosAlimentares).HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.Profissional).WithMany(x => x.PlanosAlimentares).HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.PlanoOrigem).WithMany(x => x.VersoesDerivadas).HasForeignKey(x => x.PlanoOrigemId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<ProgramacaoNutricionalDia>(entity =>
+        {
+            entity.ToTable("ProgramacoesNutricionaisDia");
+            entity.Property(x => x.Contexto).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.Observacoes).HasMaxLength(800);
+            entity.HasIndex(x => new { x.PacienteId, x.Data }).IsUnique();
+            entity.HasIndex(x => x.PlanoAlimentarId);
+            entity.HasOne(x => x.Paciente).WithMany(x => x.ProgramacoesNutricionais).HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.PlanoAlimentar).WithMany(x => x.ProgramacoesCalendario).HasForeignKey(x => x.PlanoAlimentarId).OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<RefeicaoPlanoAlimentar>(entity =>

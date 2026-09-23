@@ -1,3 +1,18 @@
+﻿
+## v0.19.14-r1 - Migration snapshot + dark surface hardening
+- Corrige o snapshot/model target da migration `V01914CalendarioNutricional`, eliminando `PendingModelChangesWarning` no `database update`.
+- Adiciona o Designer da migration e mantém snapshot sincronizado com `ProgramacaoNutricionalDia`.
+- Completa o tema escuro em Central de Atenção, Carteira, Pacientes, Perfil, Pendências, Follow-up e Gestão Operacional.
+- Remove superfícies brancas residuais no dark mode sem alterar a identidade do tema claro.
+# v0.19.14 — Nutrition Calendar
+
+- Calendário nutricional mensal por paciente, com persistência no PostgreSQL.
+- Cada dia pode apontar para uma versão de plano alimentar e um contexto (padrão, treino, descanso, viagem ou flexível).
+- Cópia de semana para a semana seguinte, preservando os cardápios configurados.
+- Troca de dois dias programados sem alterar os planos originais.
+- Navegação mensal e edição rápida diretamente na aba Alimentação do paciente.
+- Nova migration `V01914CalendarioNutricional`.
+
 # v0.19.13 — Smart Food Equivalences
 
 - Adiciona busca de alternativas alimentares equivalentes diretamente no Nutrition Builder.
