@@ -1,4 +1,4 @@
-## v0.19.14 — Nutrition Calendar
+﻿## v0.19.15 — Nutrition Calendar
 
 - Gerenciador profissional de refeições e porções no Nutrition Builder.
 - Medidas domésticas com conversão bidirecional para gramas.

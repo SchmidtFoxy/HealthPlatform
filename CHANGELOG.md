@@ -1,4 +1,16 @@
-﻿
+﻿## v0.19.15-r3 — Smart Meal Swap gate hardening
+
+- Corrige o gate do Smart Meal Swap para validar `SimilaridadePercentual` no contrato de resposta, onde a propriedade realmente é declarada.
+- Mantém a versão funcional v0.19.15 e não altera comportamento da API.
+
+## v0.19.15 — Smart Meal Swap
+- Paciente pode pedir uma troca para uma refeição já prescrita e nutricionalmente próxima.
+- Alternativas são ranqueadas por proximidade de calorias e macronutrientes.
+- A troca é registrada como adaptação com motivo, preservando o plano original para revisão profissional.
+- Assets web agora usam cache busting por versão para evitar CSS/JS antigos após atualização.
+- Reforço adicional das superfícies do tema escuro profissional.
+
+
 ## v0.19.14-r1 - Migration snapshot + dark surface hardening
 - Corrige o snapshot/model target da migration `V01914CalendarioNutricional`, eliminando `PendingModelChangesWarning` no `database update`.
 - Adiciona o Designer da migration e mantém snapshot sincronizado com `ProgramacaoNutricionalDia`.

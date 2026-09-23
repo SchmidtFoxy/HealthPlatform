@@ -57,6 +57,15 @@ public record PortalHidratacaoContextualResponse(
     decimal? MetaMl, decimal? ConsumidoMl, decimal? ProgressoPercentual, int? TreinoMinutos, int? TreinoRpe,
     string Estado, string NivelAtencao, string Mensagem, IReadOnlyCollection<string> Sinais);
 
+public sealed record PortalAlternativaRefeicaoResponse(
+    Guid RefeicaoId, Guid PlanoAlimentarId, string PlanoNome, string Nome, TimeOnly? Horario,
+    decimal Calorias, decimal ProteinasG, decimal CarboidratosG, decimal GordurasG, decimal FibrasG,
+    decimal SimilaridadePercentual, IReadOnlyCollection<string> Itens);
+public sealed record PortalAlternativasRefeicaoResponse(
+    Guid RefeicaoOriginalId, string RefeicaoOriginalNome, decimal CaloriasOriginais,
+    decimal ProteinasOriginaisG, decimal CarboidratosOriginaisG, decimal GordurasOriginaisG,
+    IReadOnlyCollection<PortalAlternativaRefeicaoResponse> Alternativas);
+
 public sealed record RegistrarAdesaoRefeicaoRequest(string Status, string? Observacao);
 
 public record PortalPlanoAtualResponse(

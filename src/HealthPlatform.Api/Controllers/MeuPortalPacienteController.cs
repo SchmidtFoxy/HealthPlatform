@@ -159,6 +159,71 @@ public sealed class MeuPortalPacienteController(
     }
 
 
+    [HttpGet("refeicoes/{refeicaoId:guid}/alternativas")]
+    public async Task<ActionResult<PortalAlternativasRefeicaoResponse>> AlternativasRefeicao(
+        Guid refeicaoId, CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue) return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var original = await db.RefeicoesPlanoAlimentar.AsNoTracking()
+            .Include(x => x.PlanoAlimentar)
+            .Include(x => x.Itens).ThenInclude(x => x.Alimento)
+            .FirstOrDefaultAsync(x => x.Id == refeicaoId && x.PlanoAlimentar.PacienteId == pacienteId.Value &&
+                x.PlanoAlimentar.Status == "Ativo" && x.PlanoAlimentar.DataInicio <= hoje &&
+                (!x.PlanoAlimentar.DataFim.HasValue || x.PlanoAlimentar.DataFim.Value >= hoje), ct);
+        if (original is null) return NotFound(new { message = "Refeicao ativa nao encontrada." });
+
+        var planosDoCalendario = await db.ProgramacoesNutricionaisDia.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId.Value && x.Data >= hoje.AddDays(-7) && x.Data <= hoje.AddDays(35))
+            .Select(x => x.PlanoAlimentarId).Distinct().ToListAsync(ct);
+        var planosPermitidos = planosDoCalendario.Append(original.PlanoAlimentarId).Distinct().ToArray();
+
+        var candidatas = await db.RefeicoesPlanoAlimentar.AsNoTracking()
+            .Include(x => x.PlanoAlimentar)
+            .Include(x => x.Itens).ThenInclude(x => x.Alimento)
+            .Where(x => x.Id != refeicaoId && x.PlanoAlimentar.PacienteId == pacienteId.Value &&
+                planosPermitidos.Contains(x.PlanoAlimentarId))
+            .ToListAsync(ct);
+
+        static (decimal kcal, decimal p, decimal c, decimal g, decimal f) Totais(RefeicaoPlanoAlimentar r)
+        {
+            decimal kcal=0,p=0,c=0,g=0,f=0;
+            foreach (var item in r.Itens)
+            {
+                var fator = item.QuantidadeGramas / 100m;
+                kcal += item.Alimento.CaloriasPor100g * fator;
+                p += item.Alimento.ProteinasPor100g * fator;
+                c += item.Alimento.CarboidratosPor100g * fator;
+                g += item.Alimento.GordurasPor100g * fator;
+                f += item.Alimento.FibrasPor100g * fator;
+            }
+            return (Math.Round(kcal,1),Math.Round(p,1),Math.Round(c,1),Math.Round(g,1),Math.Round(f,1));
+        }
+        static decimal Desvio(decimal atual, decimal alvo) => alvo <= 0 ? 0 : Math.Abs(atual-alvo)/alvo;
+
+        var ot = Totais(original);
+        var alternativas = candidatas.Select(r =>
+        {
+            var t = Totais(r);
+            var score = Desvio(t.kcal,ot.kcal)*.42m + Desvio(t.p,ot.p)*.28m + Desvio(t.c,ot.c)*.18m + Desvio(t.g,ot.g)*.12m;
+            var similaridade = Math.Max(0m, 100m - Math.Min(100m, score*100m));
+            return new { r, t, similaridade };
+        })
+        .OrderByDescending(x => x.similaridade)
+        .ThenBy(x => x.r.Ordem)
+        .Take(6)
+        .Select(x => new PortalAlternativaRefeicaoResponse(
+            x.r.Id, x.r.PlanoAlimentarId, x.r.PlanoAlimentar.Nome, x.r.Nome, x.r.Horario,
+            x.t.kcal, x.t.p, x.t.c, x.t.g, x.t.f, Math.Round(x.similaridade,0),
+            x.r.Itens.OrderBy(i => i.CreatedAtUtc).Select(i => $"{i.Alimento.Nome} ({Math.Round(i.QuantidadeGramas,0)} g)").Take(5).ToArray()))
+        .ToArray();
+
+        return Ok(new PortalAlternativasRefeicaoResponse(
+            original.Id, original.Nome, ot.kcal, ot.p, ot.c, ot.g, alternativas));
+    }
+
     [HttpPost("refeicoes/{refeicaoId:guid}/adesao")]
     public async Task<ActionResult<PortalAdesaoNutricionalResponse>> RegistrarAdesaoRefeicao(
         Guid refeicaoId, RegistrarAdesaoRefeicaoRequest request, CancellationToken ct)

@@ -1,4 +1,4 @@
-const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
+﻿const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const initials=(n='')=>n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'HP';
@@ -701,7 +701,7 @@ function hpReadinessProfessionalCard(readiness){
 function hpNutritionAdherenceAthleteCard(n){
   if(!n||n.estado==='SemPlano')return '';
   const rows=n.refeicoes||[];
-  return `<section class="card nutrition-adherence-card athlete"><div class="card-head"><div><span class="eyebrow">ALIMENTAÇÃO • HOJE</span><h3>${n.refeicoesRegistradas}/${n.refeicoesPlanejadas} refeições registradas</h3></div><span class="pill ${n.estado==='Revisar'?'Alta':n.estado==='BoaAdesao'?'Ativa':'Agendada'}">${n.adequacaoRegistradaPercentual!=null?num(n.adequacaoRegistradaPercentual,0)+'%':'em andamento'}</span></div><p>${esc(n.mensagem||'')}</p><div class="recovery-signal-list">${rows.map(x=>`<div class="recovery-signal ${x.status==='NaoRealizada'?'alta':x.status==='Adaptada'?'media':'baixa'}"><strong>${x.horario?String(x.horario).slice(0,5)+' • ':''}${esc(x.nome)}</strong><small>${esc(x.status==='Pendente'?'Ainda não registrada':x.status)}${x.observacao?' • '+esc(x.observacao):''}</small><div class="meal-adherence-actions" data-meal="${x.refeicaoId}"><button class="ghost meal-adherence" data-status="Realizada">Realizada</button><button class="ghost meal-adherence" data-status="Adaptada">Adaptada</button><button class="ghost meal-adherence" data-status="NaoRealizada">Não realizada</button></div></div>`).join('')}</div><small class="muted-line">O registro mede execução do plano, não valor moral da alimentação. Não compense refeições fora do plano sem orientação profissional.</small></section>`;
+  return `<section class="card nutrition-adherence-card athlete"><div class="card-head"><div><span class="eyebrow">ALIMENTAÇÃO • HOJE</span><h3>${n.refeicoesRegistradas}/${n.refeicoesPlanejadas} refeições registradas</h3></div><span class="pill ${n.estado==='Revisar'?'Alta':n.estado==='BoaAdesao'?'Ativa':'Agendada'}">${n.adequacaoRegistradaPercentual!=null?num(n.adequacaoRegistradaPercentual,0)+'%':'em andamento'}</span></div><p>${esc(n.mensagem||'')}</p><div class="recovery-signal-list">${rows.map(x=>`<div class="recovery-signal ${x.status==='NaoRealizada'?'alta':x.status==='Adaptada'?'media':'baixa'}"><strong>${x.horario?String(x.horario).slice(0,5)+' • ':''}${esc(x.nome)}</strong><small>${esc(x.status==='Pendente'?'Ainda não registrada':x.status)}${x.observacao?' • '+esc(x.observacao):''}</small><div class="meal-adherence-actions" data-meal="${x.refeicaoId}"><button class="ghost meal-adherence" data-status="Realizada">Realizada</button><button class="ghost meal-adherence" data-status="Adaptada">Adaptada</button><button class="ghost meal-adherence" data-status="NaoRealizada">Não realizada</button><button class="ghost meal-smart-swap" data-meal-swap="${x.refeicaoId}" data-meal-name="${esc(x.nome)}">Trocar refeição</button></div></div>`).join('')}</div><small class="muted-line">O registro mede execução do plano, não valor moral da alimentação. Não compense refeições fora do plano sem orientação profissional.</small></section>`;
 }
 function hpNutritionAdherenceProfessionalCard(n){
   if(!n||n.estado==='SemPlano')return '';
@@ -709,6 +709,22 @@ function hpNutritionAdherenceProfessionalCard(n){
 }
 
 
+
+async function hpOpenSmartMealSwap(refeicaoId,refeicaoNome){
+  try{
+    const data=await api(`/api/portal/me/refeicoes/${refeicaoId}/alternativas`);
+    const alternatives=data.alternativas||[];
+    if(!alternatives.length){toast('Ainda não há outra refeição prescrita compatível para trocar hoje.',true);return;}
+    const cards=alternatives.map((a,i)=>`<label class="patient-meal-swap-option"><input type="radio" name="alternativeMeal" value="${a.refeicaoId}" ${i===0?'checked':''}><div><div class="patient-meal-swap-head"><strong>${esc(a.nome)}</strong><span>${num(a.similaridadePercentual,0)}% compatível</span></div><small>${esc(a.planoNome)}${a.horario?' • '+String(a.horario).slice(0,5):''}</small><div class="patient-meal-swap-macros"><b>${num(a.calorias,0)} kcal</b><span>P ${num(a.proteinasG,1)}g</span><span>C ${num(a.carboidratosG,1)}g</span><span>G ${num(a.gordurasG,1)}g</span></div><p>${(a.itens||[]).map(esc).join(' • ')}</p></div></label>`).join('');
+    patientPortalModal('Trocar refeição',`<div class="span-2 patient-meal-swap-intro" data-smart-meal-swap="v0.19.15"><strong>${esc(refeicaoNome||data.refeicaoOriginalNome||'Refeição atual')}</strong><span>${num(data.caloriasOriginais,0)} kcal • P ${num(data.proteinasOriginaisG,1)}g • C ${num(data.carboidratosOriginaisG,1)}g • G ${num(data.gordurasOriginaisG,1)}g</span><small>As opções abaixo vêm de refeições já prescritas para você e são ordenadas por proximidade nutricional.</small></div><div class="span-2 patient-meal-swap-list">${cards}</div><label class="span-2">Por que quer trocar?<select name="swapReason" required><option value="Não gostei desta refeição">Não gostei desta refeição</option><option value="Não tenho os alimentos agora">Não tenho os alimentos agora</option><option value="Estou fora de casa">Estou fora de casa</option><option value="Quero algo mais prático">Quero algo mais prático</option><option value="Outro motivo">Outro motivo</option></select></label>`,async f=>{
+      const selected=f.querySelector('input[name=alternativeMeal]:checked');
+      const alt=alternatives.find(x=>String(x.refeicaoId)===String(selected?.value));
+      if(!alt)throw new Error('Escolha uma alternativa.');
+      const reason=val(f,'swapReason');
+      await api(`/api/portal/me/refeicoes/${refeicaoId}/adesao`,{method:'POST',body:JSON.stringify({status:'Adaptada',observacao:`Troca AESYN: ${alt.nome} | ${reason}`})});
+    });
+  }catch(e){toast(e.message||'Não foi possível buscar alternativas.',true)}
+}
 
 function hpHydrationPace(h){
   if(!h||h.estado==='SemMeta')return '';
@@ -3210,6 +3226,7 @@ async function loadMyPatientPortal(){
       await loadMyPatientPortal();
     }catch(e){toast(e.message||'Não foi possível registrar a refeição.',true)}
   });
+  $$('.meal-smart-swap').forEach(btn=>btn.onclick=()=>hpOpenSmartMealSwap(btn.dataset.mealSwap,btn.dataset.mealName));
   if($('#closeAthleteDay'))$('#closeAthleteDay').onclick=()=>openCloseAthleteDay(d.execucaoDoDia);
   $('#patientAddDiary').onclick=openMyDiaryForm;
   if($('#patientOpenRequestsToday'))$('#patientOpenRequestsToday').onclick=()=>loadPatientSection('solicitacoes').catch(e=>toast(e.message,true));
@@ -8529,7 +8546,8 @@ async function openNutritionCalendar(patient,plans){
   try{await load();await render()}catch(err){box.innerHTML=`<div class="modal-heading"><span class="eyebrow">PLANEJAMENTO NUTRICIONAL</span><h2>Calendário nutricional</h2></div><div class="empty">${esc(err.message)}</div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;$$('[data-close-clinical-form]').forEach(b=>b.onclick=closeClinicalAction)}
 }
 
-const HP_MVP_VERSION='0.19.14';
+const HP_SMART_MEAL_SWAP='v0.19.15';
+const HP_MVP_VERSION='0.19.15';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
