@@ -8166,6 +8166,7 @@ function hpMetabolicCalculatorCard(context){
     <div class="metabolic-results" id="metabolicResults"><div><small>TMB estimada</small><strong>—</strong><span>kcal/dia</span></div><div><small>GET estimado</small><strong>—</strong><span>kcal/dia</span></div><div><small>Fator atividade</small><strong>—</strong><span>multiplicador</span></div></div>
     <div class="metabolic-actions"><small id="metabolicFormulaNote">Preencha os dados para calcular.</small><button type="button" class="secondary" id="applyMetabolicCalories" disabled>Usar GET como meta calórica</button></div>
     ${hpWeightGoalPlannerCard(weight)}
+    ${hpMacroTargetPlannerCard(weight)}
   </section>`;
 }
 // ===== v0.19.8 — Weight Goal & Calorie Target Planner =====
@@ -8207,6 +8208,33 @@ function hpCalculateWeightGoal({get,bmr,current,target,weeks,type}){
   return {adjustment,targetCalories,weeklyChange,deltaKg,weeklyPercent,warning:warnings.join(' ')};
 }
 
+// ===== v0.19.9 — Macro Targets by Body Weight =====
+const HP_MACRO_TARGETS_BY_WEIGHT='v0.19.9';
+const HP_MACRO_REFERENCE_RANGES={protein:{min:2,max:3},fat:{min:.8,max:1.2},carb:{min:3,max:7}};
+function hpMacroTargetPlannerCard(currentWeight){
+  return `<section class="macro-target-planner" data-macro-target-planner="v0.19.9">
+    <div class="macro-target-head"><div><span class="eyebrow">DISTRIBUIÇÃO DE MACROS</span><strong>Metas por peso corporal</strong><small>Converta g/kg em metas diárias. As faixas são referências configuráveis e não substituem a decisão profissional.</small></div><span class="macro-target-badge">Editável</span></div>
+    <div class="macro-target-grid">
+      <label>Peso de referência (kg)<input type="number" step="0.1" min="1" name="macroWeight" value="${esc(currentWeight||'')}" placeholder="80"></label>
+      <label>Proteína (g/kg)<input type="number" step="0.1" min="0" max="6" name="macroProteinPerKg" value="2.0"><small>Referência: 2–3 g/kg</small></label>
+      <label>Lipídios (g/kg)<input type="number" step="0.1" min="0" max="3" name="macroFatPerKg" value="1.0"><small>Referência: 0,8–1,2 g/kg</small></label>
+      <label>Carboidratos (g/kg)<input type="number" step="0.1" min="0" max="12" name="macroCarbPerKg" value="4.0"><small>Referência: 3–7 g/kg</small></label>
+    </div>
+    <div class="macro-target-results" id="macroTargetResults">
+      <div><small>Proteína</small><strong>—</strong><span>g/dia</span></div><div><small>Lipídios</small><strong>—</strong><span>g/dia</span></div><div><small>Carboidratos</small><strong>—</strong><span>g/dia</span></div><div><small>Energia dos macros</small><strong>—</strong><span>kcal/dia</span></div>
+    </div>
+    <div class="macro-target-balance" id="macroTargetBalance">Informe o peso para calcular as metas.</div>
+    <div class="macro-target-actions"><small>4 kcal/g para proteína e carboidrato; 9 kcal/g para lipídios. Ajuste livremente conforme objetivo, tolerância, modalidade esportiva e contexto clínico.</small><button type="button" class="secondary" id="applyMacroTargets" disabled>Usar como metas diárias</button></div>
+  </section>`;
+}
+function hpCalculateMacroTargets({weight,proteinPerKg,fatPerKg,carbPerKg,targetCalories}){
+  if(!(weight>0))return null;
+  const protein=weight*Math.max(0,proteinPerKg||0),fat=weight*Math.max(0,fatPerKg||0),carb=weight*Math.max(0,carbPerKg||0);
+  const calories=(protein*4)+(fat*9)+(carb*4);
+  const delta=targetCalories>0?calories-targetCalories:null;
+  return {protein,fat,carb,calories,delta};
+}
+
 function hpBindMetabolicCalculator(form,context,refreshPlan){
   const box=form.querySelector('[data-metabolic-calculator]');if(!box)return;
   const lean=Number(context?.latest?.massaMagraKg||0);
@@ -8214,6 +8242,16 @@ function hpBindMetabolicCalculator(form,context,refreshPlan){
   const output=box.querySelector('#metabolicResults'),note=box.querySelector('#metabolicFormulaNote'),apply=box.querySelector('#applyMetabolicCalories');
   let currentGet=null,currentBmr=null;
   const goalBox=box.querySelector('[data-weight-goal-planner]'),goalOutput=box.querySelector('#weightGoalResults'),goalSafety=box.querySelector('#weightGoalSafety'),goalApply=box.querySelector('#applyWeightGoalCalories');
+  const macroBox=box.querySelector('[data-macro-target-planner]'),macroOutput=box.querySelector('#macroTargetResults'),macroBalance=box.querySelector('#macroTargetBalance'),macroApply=box.querySelector('#applyMacroTargets');
+  const calculateMacros=()=>{
+    if(!macroBox)return;
+    const weight=Number(macroBox.querySelector('[name=macroWeight]').value||0),proteinPerKg=Number(macroBox.querySelector('[name=macroProteinPerKg]').value||0),fatPerKg=Number(macroBox.querySelector('[name=macroFatPerKg]').value||0),carbPerKg=Number(macroBox.querySelector('[name=macroCarbPerKg]').value||0),targetCalories=Number(form.elements.metaCalorias?.value||0);
+    const result=hpCalculateMacroTargets({weight,proteinPerKg,fatPerKg,carbPerKg,targetCalories});
+    if(!result){macroOutput.innerHTML='<div><small>Proteína</small><strong>—</strong><span>g/dia</span></div><div><small>Lipídios</small><strong>—</strong><span>g/dia</span></div><div><small>Carboidratos</small><strong>—</strong><span>g/dia</span></div><div><small>Energia dos macros</small><strong>—</strong><span>kcal/dia</span></div>';macroBalance.textContent='Informe o peso para calcular as metas.';macroBalance.className='macro-target-balance';macroApply.disabled=true;return;}
+    macroOutput.innerHTML=`<div><small>Proteína</small><strong>${num(result.protein,1)}</strong><span>g/dia</span></div><div><small>Lipídios</small><strong>${num(result.fat,1)}</strong><span>g/dia</span></div><div><small>Carboidratos</small><strong>${num(result.carb,1)}</strong><span>g/dia</span></div><div><small>Energia dos macros</small><strong>${num(result.calories,0)}</strong><span>kcal/dia</span></div>`;
+    if(targetCalories>0){const delta=Math.round(result.delta);macroBalance.textContent=`Comparação com meta calórica: ${delta>0?'+':''}${delta} kcal. Ajuste os g/kg até a distribuição ficar coerente com a estratégia.`;macroBalance.className=`macro-target-balance${Math.abs(delta)<=100?' ok':' warning'}`;}else{macroBalance.textContent='Defina uma meta calórica para comparar a energia estimada dos macros.';macroBalance.className='macro-target-balance';}
+    macroApply.disabled=false;macroApply.dataset.protein=String(result.protein);macroApply.dataset.fat=String(result.fat);macroApply.dataset.carb=String(result.carb);
+  };
   const calculateGoal=()=>{
     if(!goalBox)return;
     const type=goalBox.querySelector('[name=weightGoalType]').value;
@@ -8242,12 +8280,16 @@ function hpBindMetabolicCalculator(form,context,refreshPlan){
     note.textContent=bmr?`${formulaLabel}. Resultado é uma estimativa clínica e pode ser ajustado pelo profissional.`:'Preencha peso, altura, idade e sexo para calcular.';
     apply.disabled=!get;apply.dataset.kcal=get?String(Math.round(get)):'';
     calculateGoal();
+    if(macroBox&&w>0){const mw=macroBox.querySelector('[name=macroWeight]');if(!mw.dataset.manual)mw.value=String(w);}
+    calculateMacros();
   };
   box.querySelectorAll('.metabolic-input-grid input,.metabolic-input-grid select').forEach(x=>x.addEventListener('input',calculate));
   box.querySelectorAll('.metabolic-input-grid select').forEach(x=>x.addEventListener('change',calculate));
   if(goalBox){goalBox.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',()=>{if(x.name==='weightGoalCurrent')x.dataset.manual='1';calculateGoal();}));goalBox.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculateGoal));}
+  if(macroBox){macroBox.querySelectorAll('input').forEach(x=>x.addEventListener('input',()=>{if(x.name==='macroWeight')x.dataset.manual='1';calculateMacros();}));form.elements.metaCalorias?.addEventListener('input',calculateMacros);}
   apply.onclick=()=>{const kcal=Number(apply.dataset.kcal||0);if(!kcal)return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('GET aplicado como meta calórica. Revise antes de salvar.');};
   if(goalApply)goalApply.onclick=()=>{const kcal=Number(goalApply.dataset.kcal||0);if(!kcal)return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('Alvo energético aplicado. A projeção continua editável e deve ser revisada pelo profissional.');};
+  if(macroApply)macroApply.onclick=()=>{const protein=Number(macroApply.dataset.protein||0),fat=Number(macroApply.dataset.fat||0),carb=Number(macroApply.dataset.carb||0);if(!(protein||fat||carb))return;form.elements.metaProteinasG.value=protein.toFixed(1);form.elements.metaGordurasG.value=fat.toFixed(1);form.elements.metaCarboidratosG.value=carb.toFixed(1);['metaProteinasG','metaGordurasG','metaCarboidratosG'].forEach(n=>form.elements[n].dispatchEvent(new Event('input',{bubbles:true})));refreshPlan?.();toast('Metas de macronutrientes aplicadas. Revise e ajuste antes de salvar o plano.');};
   calculate();
 }
 
@@ -8353,7 +8395,7 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
-const HP_MVP_VERSION='0.19.8';
+const HP_MVP_VERSION='0.19.9';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

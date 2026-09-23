@@ -4955,3 +4955,16 @@ html[data-theme="dark"] .evolution-photo-card,html[data-theme="dark"] .evolution
 @media(max-width:900px){.weight-goal-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.weight-goal-head,.weight-goal-actions{align-items:stretch;flex-direction:column}.weight-goal-results{grid-template-columns:1fr}.weight-goal-actions small{max-width:none}.weight-goal-badge{align-self:flex-start}}
 @media(max-width:480px){.weight-goal-grid{grid-template-columns:1fr}}
+
+
+/* ===== v0.19.9 — Macro Targets by Body Weight ===== */
+.macro-target-planner{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.macro-target-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}.macro-target-head strong{display:block;font-size:1rem;margin:3px 0 4px}.macro-target-head small{color:var(--muted)}
+.macro-target-badge{flex:none;padding:6px 10px;border-radius:999px;background:rgba(57,217,174,.055);border:1px solid rgba(57,217,174,.18);color:var(--accent);font-size:.72rem;font-weight:700}
+.macro-target-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.macro-target-grid label{display:grid;gap:6px;font-size:.78rem;color:var(--muted)}.macro-target-grid label small{font-size:.68rem;color:var(--muted)}
+.macro-target-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.macro-target-results>div{padding:14px;border-radius:14px;background:var(--surface-2,rgba(255,255,255,.03));border:1px solid var(--border);display:grid;gap:2px}.macro-target-results small,.macro-target-results span{color:var(--muted)}.macro-target-results strong{font-size:1.2rem;color:var(--text)}
+.macro-target-balance{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.025);color:var(--muted);font-size:.78rem;line-height:1.45}.macro-target-balance.ok{border-color:rgba(57,217,174,.22);background:rgba(57,217,174,.045)}.macro-target-balance.warning{border-color:rgba(242,180,72,.28);background:rgba(242,180,72,.055);color:var(--text)}
+.macro-target-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px}.macro-target-actions small{max-width:68%;color:var(--muted);line-height:1.45}
+@media(max-width:900px){.macro-target-grid,.macro-target-results{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.macro-target-head,.macro-target-actions{align-items:stretch;flex-direction:column}.macro-target-actions small{max-width:none}.macro-target-badge{align-self:flex-start}}
+@media(max-width:480px){.macro-target-grid,.macro-target-results{grid-template-columns:1fr}}

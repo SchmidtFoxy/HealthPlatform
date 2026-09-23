@@ -1,3 +1,11 @@
+## v0.19.9 — Macro Targets by Body Weight
+
+- Adiciona planejamento profissional de proteína, lipídios e carboidratos em g/kg de peso corporal.
+- Usa como referências configuráveis as faixas 2–3 g/kg de proteína, 0,8–1,2 g/kg de lipídios e 3–7 g/kg de carboidratos, sem tratá-las como prescrição universal.
+- Converte automaticamente g/kg em gramas por dia e estima o valor energético dos macros com 4/4/9 kcal por grama.
+- Compara a energia dos macros com a meta calórica e destaca diferenças para revisão.
+- Permite aplicar as metas ao plano alimentar com um clique, preservando edição manual pelo profissional.
+
 ## v0.19.8 — Weight Goal & Calorie Target Planner
 
 - Adiciona objetivo de perder, manter ou ganhar peso com peso-alvo e prazo em semanas.
