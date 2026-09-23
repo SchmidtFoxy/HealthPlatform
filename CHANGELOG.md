@@ -1,4 +1,10 @@
-﻿## v0.19.15-r3 — Smart Meal Swap gate hardening
+﻿## v0.19.16 — Workout Progression Engine
+- Cruza regras de progressão configuradas com histórico real de carga, repetições, RPE e tendência.
+- Classifica exercícios em candidato à progressão, manter/observar ou construindo base.
+- Exibe orientação contextual ao paciente e painel de revisão ao profissional.
+- Não aplica aumento automaticamente; decisão permanece profissional.
+
+## v0.19.15-r3 — Smart Meal Swap gate hardening
 
 - Corrige o gate do Smart Meal Swap para validar `SimilaridadePercentual` no contrato de resposta, onde a propriedade realmente é declarada.
 - Mantém a versão funcional v0.19.15 e não altera comportamento da API.

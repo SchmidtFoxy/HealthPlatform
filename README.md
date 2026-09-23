@@ -1,4 +1,8 @@
-﻿## v0.19.15 — Nutrition Calendar
+﻿## v0.19.16 — Workout Progression Engine
+
+Progressão assistida por histórico de execução e regras configuradas pelo profissional, com visão para paciente e profissional. O sistema não altera a prescrição automaticamente.
+
+## v0.19.15 — Nutrition Calendar
 
 - Gerenciador profissional de refeições e porções no Nutrition Builder.
 - Medidas domésticas com conversão bidirecional para gramas.

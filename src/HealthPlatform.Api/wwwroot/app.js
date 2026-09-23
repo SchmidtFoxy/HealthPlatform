@@ -1,4 +1,4 @@
-﻿const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
+const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const initials=(n='')=>n.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'HP';
@@ -5206,7 +5206,7 @@ loadPatientWorkout = async function(){
         <div class="card-head"><div><span class="eyebrow">${esc(s.diasSemana||'DIAS LIVRES')}</span><h3>${esc(s.nome)}</h3></div><button class="primary start-workout" data-session="${s.id}">Registrar treino</button></div>
         ${s.observacoes?`<p class="muted">${esc(s.observacoes)}</p>`:''}
         <div class="patient-exercise-list">${(s.itens||[]).map((i,idx)=>`
-          <div class="patient-exercise-card ${hpWorkoutTechniqueClass(i)}">
+          <div class="patient-exercise-card ${hpWorkoutTechniqueClass(i)}" data-item-id="${i.id}" data-exercise-id="${i.exercicioId||''}">
             <div class="exercise-order">${idx+1}</div>
             <div class="exercise-main"><div class="exercise-title"><strong>${esc(i.exercicio)}</strong>${hpWorkoutTechniqueBadge(i)}${i.grupoMuscular?`<small>${esc(i.grupoMuscular)}${i.equipamento?' • '+esc(i.equipamento):''}</small>`:''}</div>
               <div class="exercise-prescription"><b>${i.series} × ${esc(i.repeticoes)}</b>${i.carga!=null?`<span>${num(i.carga)} ${esc(i.unidadeCarga||'kg')}</span>`:''}${i.descansoSegundos!=null?`<span>${i.descansoSegundos}s descanso</span>`:''}</div>
@@ -5326,7 +5326,7 @@ function openWorkoutExecutionForm(sessao){
         ${field('Horário de início','inicio','datetime-local',`value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"`)}
       </div>
       <div class="execution-items">${(sessao.itens||[]).map(i=>`
-        <div class="execution-item ${hpWorkoutTechniqueClass(i)}" data-item="${i.id}">
+        <div class="execution-item ${hpWorkoutTechniqueClass(i)}" data-item="${i.id}" data-exercise-id="${i.exercicioId||''}">
           <div class="execution-item-head"><div><strong>${esc(i.exercicio)}</strong>${hpWorkoutTechniqueBadge(i)}</div><small>Prescrito: ${i.series} × ${esc(i.repeticoes)}${i.carga!=null?' • '+num(i.carga)+' '+esc(i.unidadeCarga||'kg'):''}</small></div>
           ${hpWorkoutTechniqueGuidance(i)}
           <label>Séries<input name="series" type="number" min="0" value="${i.series}"></label>
@@ -5371,6 +5371,97 @@ function openWorkoutExecutionForm(sessao){
   };
 }
 
+
+// ===== v0.19.16 — Workout Progression Engine =====
+const HP_WORKOUT_PROGRESSION_ENGINE='v0.19.16';
+
+function hpProgressionNumber(value){
+  if(value===null||value===undefined||value==='')return null;
+  const numbers=String(value).match(/\d+(?:[.,]\d+)?/g)||[];
+  if(!numbers.length)return null;
+  return Math.max(...numbers.map(x=>Number(x.replace(',','.'))).filter(Number.isFinite));
+}
+function hpProgressionTargetReps(item,meta){
+  const fromRule=hpProgressionNumber(meta?.rule);
+  if(fromRule!==null&&fromRule<=100)return fromRule;
+  return hpProgressionNumber(item?.repeticoes);
+}
+function hpProgressionRoundLoad(value,unit){
+  if(!Number.isFinite(value))return null;
+  const step=String(unit||'kg').toLowerCase()==='kg'?0.5:1;
+  return Math.round(value/step)*step;
+}
+function hpWorkoutProgressionDecision(item,series){
+  const meta=hpWorkoutTechniqueMeta(item);
+  if(meta.type!=='progression')return null;
+  const registros=Number(series?.registros||0);
+  const prescribed=Number(item?.carga);
+  const last=Number(series?.ultimaCarga);
+  const base=Number.isFinite(last)&&last>0?last:(Number.isFinite(prescribed)&&prescribed>0?prescribed:null);
+  const targetReps=hpProgressionTargetReps(item,meta);
+  const actualReps=hpProgressionNumber(series?.ultimaExecucao?.repeticoesRealizadas);
+  const rawRpe=series?.ultimaExecucao?.esforcoPercebido;
+  const rpe=rawRpe===null||rawRpe===undefined||rawRpe===''?null:Number(rawRpe);
+  const repsOk=targetReps===null||actualReps===null||actualReps>=targetReps;
+  const effortOk=!Number.isFinite(rpe)||rpe<=8;
+  const trendOk=!series||series.tendenciaCarga!=='AbaixoDaBase';
+  const hasBase=registros>=2&&base!==null;
+  const candidate=hasBase&&repsOk&&effortOk&&trendOk;
+  const suggested=candidate?hpProgressionRoundLoad(base*(1+Number(meta.increase||5)/100),series?.unidade||item?.unidadeCarga):base;
+  let stateKey='baseline',label='Construindo base',message='Registre pelo menos duas execuções comparáveis antes de considerar uma progressão.';
+  if(hasBase&&!candidate){
+    stateKey='maintain';label='Manter e observar';
+    if(!repsOk)message=`A execução recente ainda não alcançou ${targetReps} repetição(ões) de referência.`;
+    else if(!effortOk)message=`RPE ${rpe}/10 na última execução: mantenha a carga e reavalie antes de subir.`;
+    else if(!trendOk)message='A tendência recente ficou abaixo da base; priorize consistência antes de aumentar a carga.';
+    else message='Mantenha a carga atual e siga coletando resposta ao treino.';
+  }else if(candidate){
+    stateKey='candidate';label='Candidato à progressão';
+    message=`Os registros recentes atendem aos critérios observáveis. Pela regra configurada (+${num(meta.increase||5,1)}%), a próxima referência fica em ~${num(suggested,1)} ${series?.unidade||item?.unidadeCarga||'kg'}.`;
+  }
+  return {state:stateKey,label,message,suggested,current:base,registros,targetReps,actualReps,rpe,rule:meta.rule||'',increase:meta.increase||5};
+}
+function hpWorkoutProgressionEngineCard(item,series,compact=false){
+  const d=hpWorkoutProgressionDecision(item,series);if(!d)return '';
+  return `<div class="workout-progression-engine ${d.state}" data-workout-progression-engine="v0.19.16"><div class="workout-progression-engine-head"><span>PROGRESSÃO ASSISTIDA</span><b>${esc(d.label)}</b></div><p>${d.message}</p>${d.rule?`<small>Regra prescrita: ${esc(d.rule)}</small>`:''}${!compact?`<div class="workout-progression-engine-meta"><span><b>${d.registros}</b> registros</span><span><b>${d.current!=null?num(d.current,1):'—'}</b> carga recente</span><span><b>${d.rpe!=null&&Number.isFinite(d.rpe)?num(d.rpe,0)+'/10':'—'}</b> RPE recente</span></div>`:''}<em>O AESYN organiza os dados; qualquer ajuste continua subordinado à prescrição e revisão profissional.</em></div>`;
+}
+function hpWorkoutProgressionSeriesMap(progress){
+  const map=new Map();(progress?.exercicios||[]).forEach(x=>map.set(String(x.exercicioId),x));return map;
+}
+async function hpInjectPatientWorkoutProgressionEngine(){
+  const host=$('#patientPortalContent');if(!host||!host.isConnected)return;
+  try{
+    const [planData,progress]=await Promise.all([api('/api/portal/me/treino'),api('/api/portal/me/treinos/progressao-exercicios?dias=120')]);
+    if(!host.isConnected)return;
+    const map=hpWorkoutProgressionSeriesMap(progress),items=[];
+    (planData?.plano?.sessoes||[]).forEach(s=>(s.itens||[]).forEach(i=>items.push(i)));
+    const decisions=items.map(i=>hpWorkoutProgressionDecision(i,map.get(String(i.exercicioId)))).filter(Boolean);
+    if(decisions.length){
+      const summary=document.createElement('section');summary.className='card workout-progression-summary';summary.dataset.workoutProgressionSummary='v0.19.16';
+      summary.innerHTML=`<div class="card-head"><div><span class="eyebrow">WORKOUT PROGRESSION ENGINE</span><h3>Progressão orientada pelo seu histórico</h3><small>O sistema cruza a regra configurada pelo profissional com as execuções registradas.</small></div><span class="analytics-badge">${decisions.length} monitorado(s)</span></div><div class="workout-progression-summary-grid"><span><b>${decisions.filter(x=>x.state==='candidate').length}</b> candidatos</span><span><b>${decisions.filter(x=>x.state==='maintain').length}</b> manter</span><span><b>${decisions.filter(x=>x.state==='baseline').length}</b> criando base</span></div>`;
+      const list=host.querySelector('.patient-workout-list');if(list)host.insertBefore(summary,list);
+    }
+    items.forEach(i=>{
+      const card=host.querySelector(`.patient-exercise-card[data-item-id="${i.id}"]`);if(!card||card.querySelector('[data-workout-progression-engine]'))return;
+      const html=hpWorkoutProgressionEngineCard(i,map.get(String(i.exercicioId)),true);if(html)card.querySelector('.exercise-main')?.insertAdjacentHTML('beforeend',html);
+    });
+  }catch(err){console.warn('Progressão assistida do paciente indisponível:',err)}
+}
+const __loadPatientWorkout_v01916=loadPatientWorkout;
+loadPatientWorkout=async function(){await __loadPatientWorkout_v01916();await hpInjectPatientWorkoutProgressionEngine();};
+
+async function hpInjectProfessionalWorkoutProgressionEngine(patient,treinos){
+  const host=$('#patientTabContent');if(!host||!patient?.id||host.querySelector('[data-professional-progression-engine]'))return;
+  const progress=await api(`/api/pacientes/${patient.id}/treinos/progressao-exercicios?dias=120`);
+  if(!host.isConnected)return;
+  const map=hpWorkoutProgressionSeriesMap(progress),items=[];
+  (treinos||[]).forEach(t=>(t.sessoes||[]).forEach(s=>(s.itens||[]).forEach(i=>items.push({...i,planoNome:t.nome,sessaoNome:s.nome}))));
+  const monitored=items.map(i=>({item:i,decision:hpWorkoutProgressionDecision(i,map.get(String(i.exercicioId)))})).filter(x=>x.decision);
+  if(!monitored.length)return;
+  const section=document.createElement('section');section.className='card full-card professional-progression-engine';section.dataset.professionalProgressionEngine='v0.19.16';
+  section.innerHTML=`<div class="card-head"><div><span class="eyebrow">WORKOUT PROGRESSION ENGINE</span><h3>Progressão de carga assistida</h3><small>Priorize exercícios que já atingiram critérios observáveis da regra prescrita.</small></div><span class="analytics-badge">${monitored.filter(x=>x.decision.state==='candidate').length} candidato(s)</span></div><div class="professional-progression-list">${monitored.map(({item,decision})=>`<article class="${decision.state}"><div><strong>${esc(item.exercicio||'Exercício')}</strong><small>${esc(item.planoNome||'Plano')} • ${esc(item.sessaoNome||'Sessão')}</small></div><span>${esc(decision.label)}</span><p>${esc(decision.message)}</p></article>`).join('')}</div><p class="muted-line">Sugestões baseadas exclusivamente no histórico registrado e nas regras configuradas. A decisão de alterar a prescrição permanece com o profissional.</p>`;
+  host.appendChild(section);
+}
 
 // ===== v0.3.27 — Gráficos de evolução + painel analítico =====
 function hpFinite(v){
@@ -8547,7 +8638,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.15';
+const HP_MVP_VERSION='0.19.16';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -9327,6 +9418,7 @@ function hpRenderWorkoutProfessionalFlow(d){
   });
 
   loadWorkoutPhases(patient,treinos).catch(x=>console.warn('Fases de treino:',x));
+  hpInjectProfessionalWorkoutProgressionEngine(patient,treinos).catch(x=>console.warn('Workout Progression Engine:',x));
 }
 
 function hpRenderNutritionProfessionalFlow(d){
