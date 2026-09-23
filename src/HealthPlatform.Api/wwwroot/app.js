@@ -8710,7 +8710,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.22';
+const HP_MVP_VERSION='0.19.23';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -10037,3 +10037,47 @@ function hpRenderPatientContextTimeline(box,timeline,patient){
 
 // ===== v0.19.22 — Positive Progress / AESYN XP =====
 const HP_POSITIVE_PROGRESS_XP='v0.19.22';
+
+
+// ===== v0.19.23 — Passive Monitoring Foundation =====
+const HP_PASSIVE_MONITORING_FOUNDATION='v0.19.23';
+function hpPassiveMonitoringMetricValue(m){
+  if(m?.total!=null && ['Passos','SonoMinutos','EnergiaAtiva','Distancia','MinutosAtivos'].includes(m.metrica)) return `${num(m.total,1)} ${esc(m.unidade||'')}`;
+  if(m?.ultimoValor!=null) return `${num(m.ultimoValor,1)} ${esc(m.unidade||'')}`;
+  return '—';
+}
+function hpPassiveMonitoringCard(data,{professional=false}={}){
+  const metrics=data?.metricas||[],sources=(data?.fontes||[]).filter(x=>Number(x.amostras||0)>0);
+  return `<section class="card passive-monitoring-card ${professional?'professional':'athlete'}" data-passive-monitoring="v0.19.23">
+    <div class="card-head"><div><span class="eyebrow">AESYN • MONITORAMENTO PASSIVO</span><h3>${professional?'Sinais coletados fora do app':'Seus sinais conectados'}</h3><p>Base preparada para Apple Health, Health Connect e Garmin, com leitura longitudinal sem alterar sua conduta automaticamente.</p></div><span class="pill ${data?.totalAmostras?'Ativa':''}">${data?.totalAmostras||0} amostra(s)</span></div>
+    <div class="passive-monitoring-sources">${sources.length?sources.map(s=>`<span class="${s.comDadosRecentes?'recent':'stale'}"><i></i><b>${esc(s.rotulo||s.fonte)}</b><small>${s.ultimaSincronizacaoUtc?fmtDateTime(s.ultimaSincronizacaoUtc):'sem sincronização'}</small></span>`).join(''):`<div class="passive-monitoring-empty"><strong>Nenhuma fonte sincronizada ainda</strong><small>A infraestrutura está pronta para receber dados normalizados dos conectores.</small></div>`}</div>
+    ${metrics.length?`<div class="passive-monitoring-grid">${metrics.slice(0,7).map(m=>`<article><small>${esc(m.rotulo||m.metrica)}</small><strong>${hpPassiveMonitoringMetricValue(m)}</strong>${m.variacaoPercentual7Dias!=null?`<span>${m.variacaoPercentual7Dias>0?'+':''}${num(m.variacaoPercentual7Dias,1)}% vs. 7 dias anteriores</span>`:'<span>sem comparação semanal</span>'}</article>`).join('')}</div>`:''}
+    <p class="passive-monitoring-safety">${esc(data?.mensagemSeguranca||'Dados passivos apoiam a observação longitudinal e não substituem avaliação profissional.')}</p>
+  </section>`;
+}
+async function hpInjectProfessionalPassiveMonitoring(patientId,host){
+  if(!host||host.querySelector('[data-passive-monitoring]'))return;
+  try{
+    const data=await api(`/api/pacientes/${patientId}/monitoramento-passivo?dias=14`);
+    const anchor=host.querySelector('.performance-profile-context');
+    if(anchor)anchor.insertAdjacentHTML('afterend',hpPassiveMonitoringCard(data,{professional:true}));
+    else host.insertAdjacentHTML('afterbegin',hpPassiveMonitoringCard(data,{professional:true}));
+  }catch(err){console.warn('Passive monitoring professional summary unavailable',err)}
+}
+const __renderPatientTab_v01923=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v01923(d);
+  const host=$('#patientTabContent');
+  if(host&&state.patientTab==='resumo'&&state.patientId)hpInjectProfessionalPassiveMonitoring(state.patientId,host);
+};
+const __loadPatientHealth_v01923=loadPatientHealth;
+loadPatientHealth=async function(){
+  await __loadPatientHealth_v01923();
+  const host=$('#patientPortalContent');
+  if(!host||host.querySelector('[data-passive-monitoring]'))return;
+  try{
+    const data=await api('/api/portal/me/monitoramento-passivo?dias=14');
+    const anchor=host.querySelector('.patient-health-hero-v0190');
+    if(anchor)anchor.insertAdjacentHTML('afterend',hpPassiveMonitoringCard(data,{professional:false}));
+  }catch(err){console.warn('Passive monitoring patient summary unavailable',err)}
+};

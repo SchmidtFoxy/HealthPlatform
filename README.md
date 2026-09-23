@@ -1,3 +1,7 @@
+## v0.19.23 — Passive Monitoring Foundation
+
+Cria a camada normalizada para receber sinais de Apple Health, Health Connect e Garmin sem acoplar o produto a um provedor específico. A fundação aceita passos, sono, frequência cardíaca de repouso, HRV, energia ativa, distância e minutos ativos, com deduplicação por origem, resumo longitudinal e visualização para paciente/profissional. Os conectores OAuth/nativos continuam como adaptadores futuros; nenhum dado passivo gera diagnóstico ou mudança automática de conduta.
+
 ## v0.19.22 — Positive Progress / AESYN XP
 
 Evolui a gamificação para um modelo explicitamente positivo: XP acumulado nunca diminui, semanas mais leves não apagam progresso e descanso planejado não deve gerar compensação. O portal mostra XP dos últimos 7 dias, dias com progresso, avanço de nível, consistência e principais fontes de XP.

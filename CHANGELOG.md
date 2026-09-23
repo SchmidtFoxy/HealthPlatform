@@ -1,3 +1,14 @@
+## v0.19.23 — Passive Monitoring Foundation
+
+- Adiciona pipeline normalizado de monitoramento passivo usando a trilha já existente de registros do paciente, sem migration nova.
+- Prepara fontes `AppleHealth`, `HealthConnect` e `Garmin` para adaptadores futuros.
+- Suporta passos, sono em minutos, FC de repouso, HRV, energia ativa, distância e minutos ativos.
+- Implementa validação temporal, limite de lote e deduplicação por ID externo ou fonte+métrica+horário.
+- Adiciona endpoints para importação pelo paciente, resumo do paciente, leitura profissional e descoberta das fontes suportadas.
+- Exibe resumo no hub Saúde do paciente e na visão geral profissional, com dark mode e responsividade.
+- Mantém separação entre dado observado e interpretação: não gera diagnóstico, prescrição ou alteração automática de conduta.
+- Versão pública: `0.19.23`.
+
 ## v0.19.22-r3 — Positive Progress / AESYN XP — PowerShell Encoding Gate Fix
 
 - Corrige o gate da política de XP positivo para não depender de frases acentuadas lidas de arquivos C# UTF-8 sem BOM pelo Windows PowerShell 5.
