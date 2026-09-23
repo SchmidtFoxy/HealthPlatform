@@ -1,3 +1,12 @@
+## v0.19.12 — Meal & Portion Manager 2.0
+
+- Gerenciador profissional de refeições e porções no Nutrition Builder.
+- Medidas domésticas com conversão bidirecional para gramas.
+- Ajustes rápidos de porção por alimento e escala da refeição inteira.
+- Reordenação de refeições e distribuição automática das metas diárias.
+- Refeições persistidas podem ser salvas na biblioteca profissional como modelo.
+- Sem migration de banco nesta versão.
+
 ## v0.19.11 — Dark UI Consistency
 
 - Adiciona planejamento profissional de proteína, lipídios e carboidratos em g/kg de peso corporal.

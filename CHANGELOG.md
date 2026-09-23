@@ -1,3 +1,13 @@
+
+## v0.19.12-r1 — Meal & Portion Manager 2.0
+- Ajusta os rótulos de duplicação no Nutrition Builder para “Duplicar refeição” e “Duplicar alimento”, alinhando a interface ao gate funcional e deixando a ação mais clara em produção.
+# v0.19.12 — Meal & Portion Manager 2.0
+
+- Nutrição: porções inteligentes, medidas domésticas e equivalência em gramas integradas ao Builder atual.
+- Nutrição: escala rápida de porções por alimento/refeição.
+- Nutrição: ordenar refeições, distribuir metas e salvar refeições existentes como modelos reutilizáveis.
+- Produção: versão pública atualizada para 0.19.12.
+
 # v0.19.11 — Dark UI Consistency
 
 - Padroniza a Carteira de Pacientes no tema escuro premium do AESYN.

@@ -7985,17 +7985,23 @@ function hpNutritionSubRow(alimentos,sub=null){
 function hpNutritionItemRow(alimentos,item=null){
   const selected=item?.alimentoId||item?.foodId||'';
   const subs=item?.substituicoes||[];
-  return `<div class="meal-item-builder nutrition-item-builder2">
+  const qty=Number(item?.quantidade??100)||100, grams=Number(item?.quantidadeGramas??100)||100;
+  const unit=String(item?.unidade||'g');
+  const per=qty>0?Math.round((grams/qty)*100)/100:(hpDefaultGramsPerMeasure(unit)||1);
+  return `<div class="meal-item-builder nutrition-item-builder2" data-meal-portion-manager="v0.19.12">
     <div class="nutrition-food-search"><input name="foodSearch" type="search" autocomplete="off" placeholder="Buscar alimento: arroz, frango, banana, iogurte..."><small class="nutrition-search-hint">Busca inteligente por nome e categoria • catálogo grande otimizado</small></div>
-    <div class="meal-item-main">
+    <div class="meal-item-main meal-portion-main">
       <select name="foodId">${hpNutritionFoodOptions(alimentos,selected)}</select>
-      <input name="qty" type="number" step="0.01" value="${item?.quantidade??100}" placeholder="Qtd">
-      <input name="unit" value="${esc(item?.unidade||'g')}" placeholder="Unid.">
-      <input name="grams" type="number" step="0.01" value="${item?.quantidadeGramas??100}" placeholder="Gramas">
-      <button type="button" class="secondary duplicate-nutrition-item">Duplicar</button>
+      <input name="qty" type="number" step="0.01" min="0" value="${qty}" placeholder="Qtd">
+      <select name="unit" aria-label="Forma de medida">${hpFoodMeasureOptions(unit)}</select>
+      <input name="gramsPerUnit" type="number" step="0.01" min="0.01" value="${per}" placeholder="g/medida" title="Quantos gramas existem em uma medida">
+      <input name="grams" type="number" step="0.01" min="0" value="${grams}" placeholder="Gramas">
+      <button type="button" class="secondary duplicate-nutrition-item">Duplicar alimento</button>
       <button type="button" class="secondary add-sub">+ Substituição</button>
       <button type="button" class="remove-builder-row" aria-label="Remover alimento">×</button>
     </div>
+    <div class="food-measure-hint">${unit==='g'?`${num(grams,0)} g`:`${num(qty,2)} ${esc(unit)} • ${num(per,1)} g/medida`} • ajuste qualquer campo e o AESYN recalcula</div>
+    <div class="portion-quick-tools"><span>Porção rápida</span><button type="button" data-portion-factor="0.75">¾×</button><button type="button" data-portion-factor="0.9">−10%</button><button type="button" data-portion-factor="1.1">+10%</button><button type="button" data-portion-factor="1.25">1¼×</button></div>
     <div class="item-macro-preview">Selecione um alimento para calcular os macros.</div>
     <div class="substitution-list">${subs.map(x=>hpNutritionSubRow(alimentos,x)).join('')}</div>
   </div>`;
@@ -8004,10 +8010,10 @@ function hpNutritionItemRow(alimentos,item=null){
 function hpNutritionMealBuilder(alimentos,meal=null,index=1){
   const items=meal?.itens?.length?meal.itens:[null];
   const time=meal?.horario?String(meal.horario).slice(0,5):(index===1?'08:00':'12:00');
-  return `<section class="meal-builder nutrition-meal-builder2" data-meal-index="${index}">
+  return `<section class="meal-builder nutrition-meal-builder2" data-meal-index="${index}" data-meal-id="${esc(meal?.id||'')}" data-meal-manager="v0.19.12">
     <div class="meal-builder-head">
       <div class="meal-meta"><input name="mealName" placeholder="Nome da refeição" value="${esc(meal?.nome||(index===1?'Café da manhã':'Refeição '+index))}"><input name="mealTime" type="time" value="${time}"></div>
-      <div class="nutrition-meal-actions"><button type="button" class="secondary duplicate-nutrition-meal">Duplicar refeição</button><button type="button" class="remove-meal secondary">Remover refeição</button></div>
+      <div class="nutrition-meal-actions"><button type="button" class="ghost move-meal-up" title="Mover para cima">↑</button><button type="button" class="ghost move-meal-down" title="Mover para baixo">↓</button><button type="button" class="secondary duplicate-nutrition-meal">Duplicar refeição</button><button type="button" class="secondary save-meal-template" ${meal?.id?'':'disabled'} title="Disponível após salvar o plano">Salvar refeição</button><button type="button" class="remove-meal secondary">Remover</button></div>
     </div>
     <div class="meal-target-builder"><small>META DESTA REFEIÇÃO • OPCIONAL</small><div>
       <input name="mealMetaCalorias" type="number" min="1" step="1" placeholder="kcal" value="${meal?.metas?.calorias??meal?.metaCalorias??''}">
@@ -8018,7 +8024,7 @@ function hpNutritionMealBuilder(alimentos,meal=null,index=1){
     </div></div>
     <div class="meal-items">${items.map(x=>hpNutritionItemRow(alimentos,x)).join('')}</div>
     <div class="nutrition-meal-footer">
-      <button type="button" class="ghost add-meal-item">+ Adicionar alimento</button>
+      <div class="meal-scale-tools"><button type="button" class="ghost add-meal-item">+ Adicionar alimento</button><span>Escalar porções:</span><button type="button" data-meal-scale="0.8">80%</button><button type="button" data-meal-scale="1.1">+10%</button><button type="button" data-meal-scale="1.2">120%</button></div>
       <div class="nutrition-meal-live-total" aria-live="polite"><strong>0 kcal</strong><span>P 0g • C 0g • G 0g • Fibra 0g</span></div>
     </div>
   </section>`;
@@ -8038,33 +8044,25 @@ function hpNutritionBuilderRefreshItem(row,alimentos){
 function hpNutritionBuilderBindItem(row,alimentos,onChange){
   const select=row.querySelector('[name=foodId]');
   const search=row.querySelector('[name=foodSearch]');
+  const qty=row.querySelector('[name=qty]'), unit=row.querySelector('[name=unit]'), grams=row.querySelector('[name=grams]'), per=row.querySelector('[name=gramsPerUnit]');
   if(search){
     let timer=null;
-    search.oninput=()=>{
-      clearTimeout(timer);
-      timer=setTimeout(()=>{
-        const current=select.value;
-        select.innerHTML=hpNutritionFoodOptions(alimentos,current,search.value);
-        if([...select.options].some(o=>o.value===current))select.value=current;
-        const hint=row.querySelector('.nutrition-search-hint');
-        if(hint)hint.textContent=search.value.trim()?`Resultados filtrados para “${search.value.trim()}”`:`Busca inteligente por nome e categoria • ${(alimentos||[]).length} alimentos disponíveis`;
-      },120);
-    };
+    search.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{const current=select.value;select.innerHTML=hpNutritionFoodOptions(alimentos,current,search.value);if([...select.options].some(o=>o.value===current))select.value=current;const hint=row.querySelector('.nutrition-search-hint');if(hint)hint.textContent=search.value.trim()?`Resultados filtrados para “${search.value.trim()}”`:`Busca inteligente por nome e categoria • ${(alimentos||[]).length} alimentos disponíveis`;},120)};
   }
-  const refresh=()=>{hpNutritionBuilderRefreshItem(row,alimentos);onChange?.()};
+  const renderMeasureHint=()=>{const h=row.querySelector('.food-measure-hint');if(!h)return;const factor=Number(per?.value||0);h.textContent=factor>0?`${num(Number(qty?.value||0),2)} ${unit?.value||'g'} × ${num(factor,1)} g = ${num(Number(grams?.value||0),1)} g • ajuste qualquer campo e o AESYN recalcula`:'Informe a equivalência em gramas para esta medida.'};
+  const refresh=()=>{hpNutritionBuilderRefreshItem(row,alimentos);renderMeasureHint();onChange?.()};
+  const syncFromMeasure=()=>{const q=Number(qty?.value||0),factor=Number(per?.value||0);if(q>=0&&factor>0)grams.value=String(Math.round(q*factor*100)/100);refresh()};
+  const syncFromGrams=()=>{const g=Number(grams?.value||0),factor=Number(per?.value||0);if(g>=0&&factor>0)qty.value=String(Math.round((g/factor)*100)/100);refresh()};
   select.onchange=refresh;
-  ['qty','grams'].forEach(n=>{const el=row.querySelector(`[name=${n}]`);if(el)el.oninput=refresh});
+  if(unit)unit.onchange=()=>{const d=hpDefaultGramsPerMeasure(unit.value);if(d!=null){per.value=String(d);per.readOnly=true}else{per.readOnly=false;if(!(Number(per.value)>0))per.value=''}syncFromMeasure()};
+  if(qty)qty.oninput=syncFromMeasure;if(per)per.oninput=syncFromMeasure;if(grams)grams.oninput=syncFromGrams;
+  row.querySelectorAll('[data-portion-factor]').forEach(b=>b.onclick=()=>{const factor=Number(b.dataset.portionFactor||1);const current=Number(grams?.value||0);if(current>0){grams.value=String(Math.round(current*factor*10)/10);syncFromGrams()}});
   row.querySelector('.remove-builder-row').onclick=()=>{const list=row.parentElement;if(list.children.length>1){row.remove();onChange?.()}};
   row.querySelector('.add-sub').onclick=()=>{const list=row.querySelector('.substitution-list');list.insertAdjacentHTML('beforeend',hpNutritionSubRow(alimentos));const sub=list.lastElementChild;sub.querySelector('.remove-sub').onclick=()=>sub.remove()};
   row.querySelectorAll('.remove-sub').forEach(b=>b.onclick=()=>b.closest('.substitution-row')?.remove());
-  row.querySelector('.duplicate-nutrition-item').onclick=()=>{
-    const clone=row.cloneNode(true);
-    row.after(clone);
-    hpNutritionBuilderBindItem(clone,alimentos,onChange);
-    hpNutritionBuilderRefreshItem(clone,alimentos);
-    onChange?.();
-  };
-  hpNutritionBuilderRefreshItem(row,alimentos);
+  row.querySelector('.duplicate-nutrition-item').onclick=()=>{const clone=row.cloneNode(true);row.after(clone);delete clone.dataset.hpBound;hpNutritionBuilderBindItem(clone,alimentos,onChange);hpNutritionBuilderRefreshItem(clone,alimentos);onChange?.()};
+  const d=hpDefaultGramsPerMeasure(unit?.value);if(per&&d!=null){per.readOnly=true;if(!(Number(per.value)>0))per.value=String(d)}
+  refresh();
 }
 
 function hpNutritionBuilderBindMeal(meal,alimentos,onChange){
@@ -8074,13 +8072,12 @@ function hpNutritionBuilderBindMeal(meal,alimentos,onChange){
   meal.querySelector('.add-meal-item').onclick=()=>{items.insertAdjacentHTML('beforeend',hpNutritionItemRow(alimentos));bindAll();onChange?.()};
   meal.querySelector('.remove-meal').onclick=()=>{const all=$$('#mealBuilders .nutrition-meal-builder2');if(all.length>1){meal.remove();onChange?.()}};
   meal.querySelector('.duplicate-nutrition-meal').onclick=()=>{
-    const clone=meal.cloneNode(true);
-    meal.after(clone);
-    clone.dataset.hpBound='';
-    clone.querySelectorAll('.nutrition-item-builder2').forEach(x=>delete x.dataset.hpBound);
-    hpNutritionBuilderBindMeal(clone,alimentos,onChange);
-    onChange?.();
+    const clone=meal.cloneNode(true);meal.after(clone);clone.dataset.hpBound='';clone.dataset.mealId='';clone.querySelectorAll('.nutrition-item-builder2').forEach(x=>delete x.dataset.hpBound);const save=clone.querySelector('.save-meal-template');if(save)save.disabled=true;hpNutritionBuilderBindMeal(clone,alimentos,onChange);onChange?.();
   };
+  meal.querySelector('.move-meal-up')?.addEventListener('click',()=>{const prev=meal.previousElementSibling;if(prev){meal.parentElement.insertBefore(meal,prev);onChange?.()}});
+  meal.querySelector('.move-meal-down')?.addEventListener('click',()=>{const next=meal.nextElementSibling;if(next){meal.parentElement.insertBefore(next,meal);onChange?.()}});
+  meal.querySelectorAll('[data-meal-scale]').forEach(btn=>btn.onclick=()=>{const factor=Number(btn.dataset.mealScale||1);meal.querySelectorAll('.nutrition-item-builder2 [name=grams]').forEach(g=>{const value=Number(g.value||0);if(value>0){g.value=String(Math.round(value*factor*10)/10);g.dispatchEvent(new Event('input',{bubbles:true}))}});toast(`Porções da refeição ajustadas para ${Math.round(factor*100)}%.`)});
+  meal.querySelector('.save-meal-template')?.addEventListener('click',async()=>{const id=meal.dataset.mealId;if(!id){toast('Salve o plano primeiro para transformar esta refeição em modelo.',true);return}const name=prompt('Nome do modelo de refeição:',meal.querySelector('[name=mealName]')?.value||'Refeição');if(!name)return;try{await api(`/api/refeicoes-plano/${id}/salvar-como-modelo`,{method:'POST',body:JSON.stringify({nome:name.trim(),categoria:'Favoritas',descricao:'Salva pelo Gerenciador de Refeições AESYN.'})});toast('Refeição salva na biblioteca profissional.')}catch(e){toast(e.message||'Não foi possível salvar a refeição.',true)}});
   meal.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>onChange?.()));
 }
 
@@ -8352,7 +8349,8 @@ openMealPlanForm=async function(p,existingPlan=null){
           ${field('Gordura (g)','metaGordurasG','number',`step="0.1" min="0" value="${metaVal('metaGordurasG')}"`)}
           ${field('Fibra (g)','metaFibrasG','number',`step="0.1" min="0" value="${metaVal('metaFibrasG')}"`)}
         </div><div id="nutritionBuilder2TargetDiff" class="nutrition-builder2-diff"></div></section>
-        <div class="builder-head"><div><h3>Refeições</h3><p>Busque entre milhares de alimentos sem carregar 10 mil opções em cada campo.</p></div><button type="button" class="secondary" id="nutritionBuilderAddMeal">+ Refeição</button></div>
+        <div class="builder-head"><div><h3>Refeições</h3><p>Monte o dia por refeições, porções e metas sem fazer conta manual.</p></div><button type="button" class="secondary" id="nutritionBuilderAddMeal">+ Refeição</button></div>
+        <section class="meal-manager-toolbar" data-meal-portion-manager="v0.19.12"><div><span class="eyebrow">GERENCIADOR DE REFEIÇÕES & PORÇÕES</span><strong>Controle o dia inteiro em um único lugar</strong><small>Distribua metas, reorganize refeições, escale porções e salve combinações recorrentes.</small></div><div><button type="button" class="secondary" id="nutritionDistributeTargets">Distribuir metas igualmente</button><button type="button" class="ghost" id="nutritionNormalizePortions">Normalizar medidas</button></div></section>
         <div class="nutrition-meal-presets" id="nutritionMealPresets">
           <span>Estrutura rápida:</span>
           <button type="button" data-meal-preset="3">3 refeições</button>
@@ -8370,6 +8368,8 @@ openMealPlanForm=async function(p,existingPlan=null){
     hpBindMetabolicCalculator(form,metabolicContext,refresh);
     const bindMeals=()=>list.querySelectorAll('.nutrition-meal-builder2').forEach(m=>{if(m.dataset.hpMealBound)return;m.dataset.hpMealBound='1';hpNutritionBuilderBindMeal(m,alimentos,refresh)});
     bindMeals();
+    $('#nutritionDistributeTargets').onclick=()=>{const meals=[...list.querySelectorAll('.nutrition-meal-builder2')];if(!meals.length)return;const targets=[['mealMetaCalorias','metaCalorias',0],['mealMetaProteinasG','metaProteinasG',1],['mealMetaCarboidratosG','metaCarboidratosG',1],['mealMetaGordurasG','metaGordurasG',1],['mealMetaFibrasG','metaFibrasG',1]];targets.forEach(([mealName,dayName,decimals])=>{const total=Number(form.elements[dayName]?.value||0);if(total>0){const each=total/meals.length;meals.forEach(m=>{const el=m.querySelector(`[name=${mealName}]`);if(el)el.value=each.toFixed(decimals)})}});refresh();toast('Metas diárias distribuídas entre as refeições. Você pode ajustar cada uma livremente.')};
+    $('#nutritionNormalizePortions').onclick=()=>{list.querySelectorAll('.nutrition-item-builder2').forEach(row=>{const unit=row.querySelector('[name=unit]'),per=row.querySelector('[name=gramsPerUnit]'),grams=row.querySelector('[name=grams]'),qty=row.querySelector('[name=qty]');const d=hpDefaultGramsPerMeasure(unit?.value);if(d!=null&&per){per.value=String(d);per.readOnly=true;if(qty&&grams){grams.value=String(Math.round(Number(qty.value||0)*d*100)/100);grams.dispatchEvent(new Event('input',{bubbles:true}))}}});refresh();toast('Medidas padronizadas onde existe equivalência direta.')};
     $('#nutritionBuilderAddMeal').onclick=()=>{const idx=list.children.length+1;list.insertAdjacentHTML('beforeend',hpNutritionMealBuilder(alimentos,null,idx));bindMeals();refresh()};
     const presetStructure={
       3:[['Café da manhã','08:00'],['Almoço','12:30'],['Jantar','19:30']],
@@ -8424,8 +8424,9 @@ renderPatientTab=function(d){
 
 
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
+const HP_MEAL_PORTION_MANAGER_2='v0.19.12';
 const HP_DARK_UI_CONSISTENCY='v0.19.11';
-const HP_MVP_VERSION='0.19.11';
+const HP_MVP_VERSION='0.19.12';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
