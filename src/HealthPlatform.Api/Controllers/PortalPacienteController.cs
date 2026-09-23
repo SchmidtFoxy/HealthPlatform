@@ -200,6 +200,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
         var gamificacao2 = Gamificacao2Service.Montar(gamificacao, readinessContextualTreino, deloadRecuperacaoPlanejada, respostaSessao, retornoGradual);
         var missoesContextuais2 = MissoesContextuais2Service.Montar(gamificacao, gamificacao2, readinessContextualTreino, deloadRecuperacaoPlanejada, respostaSessao, retornoGradual);
         var focoGamificadoDoDia = FocoGamificadoDiaService.Montar(gamificacao2, missoesContextuais2);
+        var progressoPositivo = await ProgressoPositivoService.MontarAsync(db, pacienteId, dia, gamificacao, ct);
         var relatorioEsportivoProfissional = RelatorioEsportivoProfissionalService.Montar(
             dia, ciclo, painelMedicinaEsporte, alertasClinicoEsportivos, mapaCorporalLongitudinal,
             cargaIndividualizada, blocoTreinamento, deloadRecuperacaoPlanejada, readinessContextualTreino,
@@ -216,6 +217,7 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
             gamificacao2,
             missoesContextuais2,
             focoGamificadoDoDia,
+            progressoPositivo,
             ciclo,
             metasDoCiclo,
             checkpointDoCiclo,

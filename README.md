@@ -1,3 +1,7 @@
+## v0.19.22 — Positive Progress / AESYN XP
+
+Evolui a gamificação para um modelo explicitamente positivo: XP acumulado nunca diminui, semanas mais leves não apagam progresso e descanso planejado não deve gerar compensação. O portal mostra XP dos últimos 7 dias, dias com progresso, avanço de nível, consistência e principais fontes de XP.
+
 ## v0.19.21 — Patient Timeline & Context
 
 Timeline longitudinal profissional que reúne prontuário, corpo, exames, nutrição, treino, check-ins, chat, metas, rotina e eventos de adesão. Os eventos são agrupados por dia, filtráveis por dimensão e apresentados com contexto cruzado sem inferir causalidade clínica.

@@ -1,3 +1,27 @@
+## v0.19.22-r3 — Positive Progress / AESYN XP — PowerShell Encoding Gate Fix
+
+- Corrige o gate da política de XP positivo para não depender de frases acentuadas lidas de arquivos C# UTF-8 sem BOM pelo Windows PowerShell 5.
+- Mantém a política funcional existente intacta; o teste passa a validar tokens ASCII estáveis (`XP negativo`, `progresso`, `excesso de treino`).
+- Nenhuma alteração funcional, de banco ou de versão pública.
+
+## v0.19.22-r2 — Positive Progress / AESYN XP — Gate Fix
+
+- Corrige o gate do `TESTAR.ps1` que procurava propriedades PascalCase do DTO dentro do serviço.
+- O serviço agora é validado pelos identificadores reais `xpSemana`, `diasComProgresso7` e `faltamXp`.
+- As propriedades públicas `XpSemana`, `DiasComProgresso7` e `XpAteProximoNivel` passam a ser validadas no arquivo de contracts, onde de fato são declaradas.
+- Nenhuma alteração funcional, de banco ou de versão pública.
+
+## v0.19.22-r1 — Correção do gate Positive Progress
+
+- Corrige strings do `TESTAR.ps1` que usavam escape `\"` inválido no Windows PowerShell.
+- Mantém a versão funcional v0.19.22 e todas as funcionalidades de Positive Progress / AESYN XP.
+
+## 0.19.22 - Positive Progress / AESYN XP
+- Adiciona resumo de progresso positivo com XP semanal, dias com progresso, avanço de nível e fontes de XP.
+- Reforça a regra de XP cumulativo: não existe XP negativo e semanas leves não apagam progresso.
+- Adiciona cards dedicados para paciente e profissional, com dark mode e responsividade.
+- Mantém descanso/recuperação protegidos contra mecânicas de compensação.
+
 # v0.19.21 — Patient Timeline & Context
 
 - Evolui a timeline profissional para uma leitura longitudinal integrada de contexto.

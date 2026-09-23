@@ -527,6 +527,12 @@ public record PortalGamificacaoResponse(
     int StreakDias, int XpHoje, int DiasAtivos14, IReadOnlyCollection<PortalEventoXpResponse> EventosRecentes,
     IReadOnlyCollection<PortalDesafioSemanalResponse> DesafiosSemana, IReadOnlyCollection<PortalConquistaResponse> ConquistasRecentes);
 
+public record PortalProgressoPositivoDestaqueResponse(string Fonte, int Xp, int Dias);
+public record PortalProgressoPositivoResponse(
+    string Estado, string TendenciaSemanal, int XpTotal, int Nivel, int XpSemana, int XpSemanaAnterior,
+    int DiasComProgresso7, int StreakDias, int ConsistenciaScore, decimal ProgressoNivelPercentual, int XpAteProximoNivel,
+    string Resumo, IReadOnlyCollection<PortalProgressoPositivoDestaqueResponse> Destaques, string MensagemSeguranca);
+
 public record PortalGamificacao2SinalResponse(string Codigo, string Categoria, string Estado, string Titulo, string Descricao);
 public record PortalGamificacao2Response(
     string Estado, string Titulo, string FocoAtual, string Mensagem, int XpTotal, int Nivel, int ConsistenciaScore, int StreakDias,
@@ -554,6 +560,7 @@ public record PortalPacienteHomeResponse(
     PortalGamificacao2Response Gamificacao2,
     PortalMissoesContextuais2Response MissoesContextuais2,
     PortalFocoGamificadoDiaResponse FocoGamificadoDoDia,
+    PortalProgressoPositivoResponse ProgressoPositivo,
     PortalCicloEsportivoResponse? CicloEsportivoAtual,
     PortalMetasCicloResponse MetasDoCiclo,
     PortalCheckpointCicloResponse CheckpointDoCiclo,
