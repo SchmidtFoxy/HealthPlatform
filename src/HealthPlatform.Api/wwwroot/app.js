@@ -7997,12 +7997,14 @@ function hpNutritionItemRow(alimentos,item=null){
       <input name="gramsPerUnit" type="number" step="0.01" min="0.01" value="${per}" placeholder="g/medida" title="Quantos gramas existem em uma medida">
       <input name="grams" type="number" step="0.01" min="0" value="${grams}" placeholder="Gramas">
       <button type="button" class="secondary duplicate-nutrition-item">Duplicar alimento</button>
+      <button type="button" class="secondary smart-food-equivalents">Alternativas equivalentes</button>
       <button type="button" class="secondary add-sub">+ Substituição</button>
       <button type="button" class="remove-builder-row" aria-label="Remover alimento">×</button>
     </div>
     <div class="food-measure-hint">${unit==='g'?`${num(grams,0)} g`:`${num(qty,2)} ${esc(unit)} • ${num(per,1)} g/medida`} • ajuste qualquer campo e o AESYN recalcula</div>
     <div class="portion-quick-tools"><span>Porção rápida</span><button type="button" data-portion-factor="0.75">¾×</button><button type="button" data-portion-factor="0.9">−10%</button><button type="button" data-portion-factor="1.1">+10%</button><button type="button" data-portion-factor="1.25">1¼×</button></div>
     <div class="item-macro-preview">Selecione um alimento para calcular os macros.</div>
+    <div class="smart-food-equivalence-panel hidden" data-smart-food-equivalence="v0.19.13"></div>
     <div class="substitution-list">${subs.map(x=>hpNutritionSubRow(alimentos,x)).join('')}</div>
   </div>`;
 }
@@ -8041,6 +8043,46 @@ function hpNutritionBuilderRefreshItem(row,alimentos){
   preview.textContent=`${num(Number(a.caloriasPor100g||0)*f,0)} kcal • P ${num(Number(a.proteinasPor100g||0)*f)}g • C ${num(Number(a.carboidratosPor100g||0)*f)}g • G ${num(Number(a.gordurasPor100g||0)*f)}g`;
 }
 
+const HP_SMART_FOOD_EQUIVALENCES='v0.19.13';
+const HP_SMART_EQUIVALENCE_DEFAULT_TOLERANCE=10;
+function hpNutritionFoodMacros(food,grams){
+  const f=Math.max(0,Number(grams||0))/100;
+  return {kcal:Number(food?.caloriasPor100g||0)*f,p:Number(food?.proteinasPor100g||0)*f,c:Number(food?.carboidratosPor100g||0)*f,g:Number(food?.gordurasPor100g||0)*f,fib:Number(food?.fibrasPor100g||0)*f};
+}
+function hpNutritionEquivalenceScore(target,candidate){
+  const rel=(a,b,floor=1)=>Math.abs(a-b)/Math.max(Math.abs(a),floor);
+  return (rel(target.kcal,candidate.kcal,50)*0.34)+(rel(target.p,candidate.p,5)*0.31)+(rel(target.c,candidate.c,8)*0.20)+(rel(target.g,candidate.g,4)*0.15);
+}
+function hpFindSmartFoodEquivalences(alimentos,sourceFood,sourceGrams,tolerance=HP_SMART_EQUIVALENCE_DEFAULT_TOLERANCE){
+  if(!sourceFood||!(sourceGrams>0))return [];
+  const target=hpNutritionFoodMacros(sourceFood,sourceGrams);
+  const targetKcal=Math.max(target.kcal,1);
+  return (alimentos||[]).filter(x=>String(x.id)!==String(sourceFood.id)&&Number(x.caloriasPor100g||0)>0).map(food=>{
+    const grams=Math.max(1,Math.min(600,(targetKcal/Number(food.caloriasPor100g||1))*100));
+    const macros=hpNutritionFoodMacros(food,grams);
+    let score=hpNutritionEquivalenceScore(target,macros);
+    if(sourceFood.categoria&&food.categoria&&String(sourceFood.categoria).toLowerCase()===String(food.categoria).toLowerCase())score*=0.86;
+    const kcalDiff=Math.abs(macros.kcal-target.kcal)/Math.max(target.kcal,1)*100;
+    return {food,grams,macros,score,kcalDiff};
+  }).filter(x=>x.kcalDiff<=Math.max(5,Number(tolerance||10)*1.5)).sort((a,b)=>a.score-b.score).slice(0,6);
+}
+function hpRenderSmartFoodEquivalences(row,alimentos){
+  const panel=row.querySelector('.smart-food-equivalence-panel');if(!panel)return;
+  const food=(alimentos||[]).find(x=>String(x.id)===String(row.querySelector('[name=foodId]')?.value));
+  const grams=Number(row.querySelector('[name=grams]')?.value||0);
+  if(!food||!(grams>0)){panel.classList.remove('hidden');panel.innerHTML='<div class="smart-equivalence-empty">Selecione um alimento e informe a porção para buscar alternativas equivalentes.</div>';return;}
+  const target=hpNutritionFoodMacros(food,grams);
+  const options=hpFindSmartFoodEquivalences(alimentos,food,grams,HP_SMART_EQUIVALENCE_DEFAULT_TOLERANCE);
+  panel.classList.remove('hidden');
+  panel.innerHTML=`<div class="smart-equivalence-head"><div><span class="eyebrow">TROCAR SEM SAIR DO PLANO</span><strong>Alternativas próximas de ${esc(food.nome)}</strong><small>Compara calorias e distribuição de macros. Revise antes de aplicar ao plano.</small></div><button type="button" class="ghost close-smart-equivalence">Fechar</button></div><div class="smart-equivalence-target"><span>${num(target.kcal,0)} kcal</span><span>P ${num(target.p)}g</span><span>C ${num(target.c)}g</span><span>G ${num(target.g)}g</span></div><div class="smart-equivalence-grid">${options.length?options.map((x,i)=>`<article class="smart-equivalence-card"><div><strong>${esc(x.food.nome)}</strong><small>${esc(x.food.categoria||'Alternativa nutricional')}</small></div><b>${num(x.grams,0)} g</b><div class="smart-equivalence-macros"><span>${num(x.macros.kcal,0)} kcal</span><span>P ${num(x.macros.p)}g</span><span>C ${num(x.macros.c)}g</span><span>G ${num(x.macros.g)}g</span></div><small>dif. energética ${num(x.kcalDiff,1)}%</small><button type="button" class="secondary apply-smart-equivalence" data-food-id="${x.food.id}" data-grams="${x.grams.toFixed(2)}">Usar esta alternativa</button></article>`).join(''):'<div class="smart-equivalence-empty">Nenhuma alternativa próxima foi encontrada no catálogo atual.</div>'}</div>`;
+  panel.querySelector('.close-smart-equivalence')?.addEventListener('click',()=>panel.classList.add('hidden'));
+  panel.querySelectorAll('.apply-smart-equivalence').forEach(btn=>btn.addEventListener('click',()=>{
+    const select=row.querySelector('[name=foodId]'),unit=row.querySelector('[name=unit]'),per=row.querySelector('[name=gramsPerUnit]'),qty=row.querySelector('[name=qty]'),gramsInput=row.querySelector('[name=grams]');
+    select.value=btn.dataset.foodId;unit.value='g';per.value='1';per.readOnly=true;gramsInput.value=String(Math.round(Number(btn.dataset.grams||0)*10)/10);qty.value=gramsInput.value;
+    select.dispatchEvent(new Event('change',{bubbles:true}));gramsInput.dispatchEvent(new Event('input',{bubbles:true}));panel.classList.add('hidden');toast('Alternativa aplicada mantendo uma composição próxima. Revise a refeição antes de salvar.');
+  }));
+}
+
 function hpNutritionBuilderBindItem(row,alimentos,onChange){
   const select=row.querySelector('[name=foodId]');
   const search=row.querySelector('[name=foodSearch]');
@@ -8060,6 +8102,7 @@ function hpNutritionBuilderBindItem(row,alimentos,onChange){
   row.querySelector('.remove-builder-row').onclick=()=>{const list=row.parentElement;if(list.children.length>1){row.remove();onChange?.()}};
   row.querySelector('.add-sub').onclick=()=>{const list=row.querySelector('.substitution-list');list.insertAdjacentHTML('beforeend',hpNutritionSubRow(alimentos));const sub=list.lastElementChild;sub.querySelector('.remove-sub').onclick=()=>sub.remove()};
   row.querySelectorAll('.remove-sub').forEach(b=>b.onclick=()=>b.closest('.substitution-row')?.remove());
+  row.querySelector('.smart-food-equivalents')?.addEventListener('click',()=>hpRenderSmartFoodEquivalences(row,alimentos));
   row.querySelector('.duplicate-nutrition-item').onclick=()=>{const clone=row.cloneNode(true);row.after(clone);delete clone.dataset.hpBound;hpNutritionBuilderBindItem(clone,alimentos,onChange);hpNutritionBuilderRefreshItem(clone,alimentos);onChange?.()};
   const d=hpDefaultGramsPerMeasure(unit?.value);if(per&&d!=null){per.readOnly=true;if(!(Number(per.value)>0))per.value=String(d)}
   refresh();
@@ -8426,7 +8469,7 @@ renderPatientTab=function(d){
 // ===== v0.3.39 — MVP Preview / polimento de demonstração =====
 const HP_MEAL_PORTION_MANAGER_2='v0.19.12';
 const HP_DARK_UI_CONSISTENCY='v0.19.11';
-const HP_MVP_VERSION='0.19.12';
+const HP_MVP_VERSION='0.19.13';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

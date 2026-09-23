@@ -1,3 +1,11 @@
+# v0.19.13 — Smart Food Equivalences
+
+- Adiciona busca de alternativas alimentares equivalentes diretamente no Nutrition Builder.
+- Ranqueia opções por proximidade de calorias e macronutrientes, com ajuste automático da porção em gramas.
+- Prioriza alimentos da mesma categoria quando disponível e mostra até seis alternativas.
+- A aplicação é sempre explícita pelo profissional e permanece editável antes de salvar/publicar o plano.
+- Interface responsiva compatível com os temas claro e escuro.
+
 
 ## v0.19.12-r1 — Meal & Portion Manager 2.0
 - Ajusta os rótulos de duplicação no Nutrition Builder para “Duplicar refeição” e “Duplicar alimento”, alinhando a interface ao gate funcional e deixando a ação mais clara em produção.
