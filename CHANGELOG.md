@@ -1,3 +1,13 @@
+# v0.19.19 — Deviation & Adherence Events
+
+- Registra eventos estruturados quando a execução difere do plano, sem transformar cada ocorrência em notificação.
+- Nutrição: captura refeições adaptadas e não realizadas, incluindo o contexto informado pelo paciente.
+- Treino: captura substituições de exercícios e itens não concluídos durante a execução.
+- Adiciona API profissional de histórico, recorrência e prioridade para alimentar a futura Central de Atenção.
+- Perfil profissional ganha resumo de desvios dos últimos 30 dias, com recorrências e separação por nutrição/treino.
+- Não altera automaticamente treino, dieta ou conduta profissional.
+- Sem migration nova: utiliza o registro diário já existente como trilha estruturada e auditável.
+
 
 ## v0.19.18-r1 — correção de compilação do Patient Professional Chat
 - Corrige `ChatAcompanhamentoController`: `Consulta` não possui `OrganizacaoId`.

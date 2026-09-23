@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using HealthPlatform.Api.Contracts.Diario;
 using HealthPlatform.Api.Contracts.Metas;
 using HealthPlatform.Api.Contracts.Portal;
@@ -260,6 +260,21 @@ public sealed class MeuPortalPacienteController(
         item.Escala = null;
         item.UpdatedAtUtc = DateTime.UtcNow;
         Auditar(novo ? "CREATE" : "UPDATE", "AdesaoRefeicao", item.Id, null, new { refeicaoId, status });
+
+        if (status is "Adaptada" or "NaoRealizada")
+        {
+            var prioridade = status == "NaoRealizada" ? 2 : 1;
+            var titulo = status == "NaoRealizada" ? "Refeição não realizada" : "Refeição adaptada";
+            var detalhe = status == "NaoRealizada"
+                ? "O paciente registrou que não realizou uma refeição planejada."
+                : "O paciente registrou uma adaptação em relação à refeição planejada.";
+            await EventoDesvioAdesaoService.RegistrarAsync(
+                db, pacienteId.Value, DateTime.UtcNow, "Nutricao", status, titulo,
+                string.IsNullOrWhiteSpace(request.Observacao) ? detalhe : $"{detalhe} {request.Observacao.Trim()}",
+                $"REFEICAO:{refeicaoId}:{dia:yyyy-MM-dd}:{status}", prioridade,
+                new { refeicaoId, status, observacao = request.Observacao }, ct);
+        }
+
         await db.SaveChangesAsync(ct);
 
         return Ok(await AdesaoNutricionalService.MontarAsync(db, pacienteId.Value, dia, ct));

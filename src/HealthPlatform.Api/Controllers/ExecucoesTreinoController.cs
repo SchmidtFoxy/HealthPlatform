@@ -131,6 +131,38 @@ public sealed class ExecucoesTreinoPacienteController(
 
         db.ExecucoesTreino.Add(execucao);
 
+        foreach (var solicitado in request.Itens)
+        {
+            var itemPrescrito = sessao.Itens.First(x => x.Id == solicitado.ItemTreinoId);
+            if (solicitado.ExercicioAlternativoId.HasValue &&
+                alternativas.TryGetValue(solicitado.ExercicioAlternativoId.Value, out var alternativaEscolhida))
+            {
+                await EventoDesvioAdesaoService.RegistrarAsync(
+                    db, paciente.Id, inicio, "Treino", "ExercicioAlternativo", "Exercício substituído",
+                    $"{itemPrescrito.Exercicio.Nome} foi substituído por {alternativaEscolhida.Nome}. Motivo: {Limpar(solicitado.MotivoAlternativa) ?? "não informado"}.",
+                    $"TREINO:{execucao.Id}:{solicitado.ItemTreinoId}:ALTERNATIVA", 1,
+                    new
+                    {
+                        execucaoId = execucao.Id,
+                        itemTreinoId = solicitado.ItemTreinoId,
+                        exercicioOriginalId = itemPrescrito.ExercicioId,
+                        exercicioOriginal = itemPrescrito.Exercicio.Nome,
+                        exercicioAlternativoId = alternativaEscolhida.Id,
+                        exercicioAlternativo = alternativaEscolhida.Nome,
+                        motivo = Limpar(solicitado.MotivoAlternativa)
+                    }, ct);
+            }
+
+            if (!solicitado.Concluido)
+            {
+                await EventoDesvioAdesaoService.RegistrarAsync(
+                    db, paciente.Id, inicio, "Treino", "ExercicioNaoConcluido", "Exercício não concluído",
+                    $"{itemPrescrito.Exercicio.Nome} ficou sem conclusão nesta execução.",
+                    $"TREINO:{execucao.Id}:{solicitado.ItemTreinoId}:NAO_CONCLUIDO", 2,
+                    new { execucaoId = execucao.Id, itemTreinoId = solicitado.ItemTreinoId, exercicio = itemPrescrito.Exercicio.Nome }, ct);
+            }
+        }
+
         var dataTreino = DateOnly.FromDateTime(inicio);
         var recomendacao = await db.ProntidoesDiarias.AsNoTracking()
             .Where(x => x.PacienteId == paciente.Id && x.Data == dataTreino)

@@ -8682,7 +8682,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.18';
+const HP_MVP_VERSION='0.19.19';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -9923,3 +9923,30 @@ async function loadProfessionalPatientChat(patient,host=$('#patientTabContent'))
   hpBindChatForm(`/api/chat/pacientes/${patient.id}/mensagens`,()=>loadProfessionalPatientChat(patient,host));
   setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},20);
 }
+
+// ===== v0.19.19 — Deviation & Adherence Events =====
+const HP_DEVIATION_ADHERENCE_EVENTS='v0.19.19';
+function hpDeviationPriorityLabel(v){return Number(v)>=3?'Prioridade':Number(v)===2?'Atenção':'Informativo'}
+function hpDeviationPriorityClass(v){return Number(v)>=3?'high':Number(v)===2?'medium':'low'}
+function hpDeviationAdherenceCard(data){
+  const events=data?.eventos||[], recurrent=data?.recorrencias||[];
+  return `<section class="card full-card deviation-adherence-card" data-deviation-adherence="v0.19.19">
+    <div class="card-head"><div><span class="eyebrow">ADESÃO • ÚLTIMOS ${data?.dias||30} DIAS</span><h3>Execuções diferentes do planejado</h3><small>O AESYN registra padrões para revisão profissional; não altera prescrições automaticamente.</small></div><span class="pill ${Number(data?.prioridadeMaior||0)>=2?'Alta':'Ativa'}">${data?.total||0} evento(s)</span></div>
+    <div class="deviation-adherence-stats"><article><strong>${data?.ultimos7Dias||0}</strong><span>últimos 7 dias</span></article><article><strong>${recurrent.length}</strong><span>padrões recorrentes</span></article><article><strong>${(data?.categorias||[]).find(x=>x.categoria==='Nutricao')?.total||0}</strong><span>nutrição</span></article><article><strong>${(data?.categorias||[]).find(x=>x.categoria==='Treino')?.total||0}</strong><span>treino</span></article></div>
+    ${recurrent.length?`<div class="deviation-recurrence-list">${recurrent.slice(0,4).map(x=>`<div><span class="deviation-dot ${hpDeviationPriorityClass(x.prioridade)}"></span><strong>${esc(x.categoria)} • ${esc(x.tipo)}</strong><small>${x.total} ocorrência(s) • recorrente</small></div>`).join('')}</div>`:''}
+    <div class="deviation-event-list">${events.length?events.slice(0,8).map(x=>`<article><span class="deviation-dot ${hpDeviationPriorityClass(x.prioridade)}"></span><div><strong>${esc(x.titulo)}</strong><small>${fmtDateTime(x.dataHoraUtc)} • ${esc(x.categoria)} • ${hpDeviationPriorityLabel(x.prioridade)}</small><p>${esc(x.detalhe||'')}</p></div></article>`).join(''):'<div class="empty compact">Nenhum desvio relevante registrado neste período.</div>'}</div>
+  </section>`;
+}
+async function hpInjectDeviationAdherence(patientId,host){
+  if(!host||host.querySelector('[data-deviation-adherence]'))return;
+  try{
+    const data=await api(`/api/pacientes/${patientId}/desvios-adesao?dias=30`);
+    host.insertAdjacentHTML('beforeend',hpDeviationAdherenceCard(data));
+  }catch(err){console.warn('Deviation adherence card unavailable',err)}
+}
+const __renderPatientTab_v01919=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v01919(d);
+  const host=$('#patientTabContent');
+  if(host&&state.patientTab==='resumo'&&state.patientId)hpInjectDeviationAdherence(state.patientId,host);
+};
