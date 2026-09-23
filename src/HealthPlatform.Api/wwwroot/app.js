@@ -6842,6 +6842,21 @@ function hpCentralPatient(x){
   </article>`;
 }
 
+function hpAttentionLevelClass(level){
+  return level==='Prioridade'?'priority':level==='Atencao'?'attention':'observe';
+}
+function hpProfessionalAttentionPatient(x){
+  const signals=(x.sinais||[]).slice(0,3);
+  return `<article class="professional-attention-item ${hpAttentionLevelClass(x.nivel)}" data-attention-patient="${x.pacienteId}">
+    <div class="professional-attention-main">
+      <div class="mini-avatar">${initials(x.pacienteNome)}</div>
+      <div><div class="professional-attention-title"><strong>${esc(x.pacienteNome)}</strong><span class="attention-level ${hpAttentionLevelClass(x.nivel)}">${esc(x.nivel==='Atencao'?'Atenção':x.nivel)}</span></div><p>${esc(x.resumo||'')}</p><small>${x.eventos7Dias||0} evento(s) em 7 dias • ${x.recorrencias||0} padrão(ões) recorrente(s)</small></div>
+    </div>
+    ${signals.length?`<div class="professional-attention-signals">${signals.map(s=>`<span>${esc(s)}</span>`).join('')}</div>`:''}
+    <button class="ghost professional-attention-open" data-id="${x.pacienteId}">Revisar paciente →</button>
+  </article>`;
+}
+
 async function loadCentralDia(){
   const d=await api(`/api/central-dia?offsetMinutos=${hpBrowserOffsetMinutes()}`);
   content.innerHTML=`<div class="section-head">
@@ -6855,7 +6870,14 @@ async function loadCentralDia(){
     ${stat('Pendências prioritárias',d.pendenciasPrioritarias,'alta ou vencendo')}
     ${stat('Solicitações para revisar',d.solicitacoesParaRevisao,'respostas recebidas')}
     ${stat('Solicitações vencidas',d.solicitacoesVencidas,'paciente precisa agir')}
+    ${stat('Em atenção',d.pacientesEmAtencao||0,'priorização inteligente')}
+    ${stat('Eventos de adesão',d.eventosAdesao7Dias||0,'últimos 7 dias')}
   </div>
+  <section class="card professional-attention-card" data-professional-attention="v0.19.20">
+    <div class="card-head"><div><span class="eyebrow">AESYN • ATENÇÃO PROFISSIONAL</span><h3>Quem merece atenção hoje</h3><small>Padrões recorrentes, desvios relevantes e pendências são agregados para evitar ruído.</small></div><span class="attention-center-count">${d.pacientesEmAtencao||0}</span></div>
+    <div class="professional-attention-list">${d.atencoes?.length?d.atencoes.map(hpProfessionalAttentionPatient).join(''):hpCentralEmpty('Nenhum paciente com sinal relevante para priorização agora.')}</div>
+    <p class="professional-attention-note">A central organiza atenção; não diagnostica e não altera treino, dieta, medicamento ou conduta automaticamente.</p>
+  </section>
   <div class="central-day-grid">
     <section class="card">
       <div class="card-head"><div><h3>Agenda de hoje</h3><small>${d.consultasHoje} consulta(s)</small></div><button class="ghost" id="centralOpenAgenda">Abrir agenda →</button></div>
@@ -6890,6 +6912,8 @@ async function loadCentralDia(){
   $$('.central-open-patient').forEach(b=>b.onclick=e=>{e.stopPropagation();openPatient(b.dataset.id)});
   $$('.central-register-contact').forEach(b=>b.onclick=()=>openPortfolioContact(b.dataset.id,b.dataset.name));
   $$('[data-central-patient]').forEach(x=>x.onclick=e=>{if(!e.target.closest('button'))openPatient(x.dataset.centralPatient)});
+  $$('.professional-attention-open').forEach(b=>b.onclick=e=>{e.stopPropagation();openPatient(b.dataset.id)});
+  $$('[data-attention-patient]').forEach(x=>x.onclick=e=>{if(!e.target.closest('button'))openPatient(x.dataset.attentionPatient)});
 }
 
 const __loadDashboard_v0314=loadDashboard;
@@ -6900,7 +6924,7 @@ loadDashboard=async function(){
     const section=document.createElement('section');
     section.className='card dashboard-central-day';
     section.innerHTML=`<div class="card-head">
-      <div><h3>Hoje</h3><small>${d.consultasHoje} consulta(s) • ${d.followUpsVencidos+d.followUpsHoje} follow-up(s) • ${d.pendenciasPrioritarias} pendência(s) • ${d.solicitacoesParaRevisao} solicitação(ões) para revisar</small></div>
+      <div><h3>Hoje</h3><small>${d.consultasHoje} consulta(s) • ${d.followUpsVencidos+d.followUpsHoje} follow-up(s) • ${d.pendenciasPrioritarias} pendência(s) • ${d.pacientesEmAtencao||0} paciente(s) em atenção</small></div>
       <button class="ghost" id="openCentralDay">Abrir central →</button>
     </div>
     <div class="dashboard-central-day-metrics">
@@ -6909,6 +6933,7 @@ loadDashboard=async function(){
       <div><strong>${d.followUpsHoje}</strong><span>Follow-ups hoje</span></div>
       <div><strong>${d.pendenciasPrioritarias}</strong><span>Pendências</span></div>
       <div><strong>${d.solicitacoesParaRevisao}</strong><span>Solicitações p/ revisar</span></div>
+      <div><strong>${d.pacientesEmAtencao||0}</strong><span>Em atenção</span></div>
     </div>`;
     content.appendChild(section);
     $('#openCentralDay').onclick=()=>navigate('central-dia');
@@ -8682,7 +8707,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.19';
+const HP_MVP_VERSION='0.19.20';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -9926,6 +9951,7 @@ async function loadProfessionalPatientChat(patient,host=$('#patientTabContent'))
 
 // ===== v0.19.19 — Deviation & Adherence Events =====
 const HP_DEVIATION_ADHERENCE_EVENTS='v0.19.19';
+const HP_PROFESSIONAL_ATTENTION_CENTER='v0.19.20';
 function hpDeviationPriorityLabel(v){return Number(v)>=3?'Prioridade':Number(v)===2?'Atenção':'Informativo'}
 function hpDeviationPriorityClass(v){return Number(v)>=3?'high':Number(v)===2?'medium':'low'}
 function hpDeviationAdherenceCard(data){

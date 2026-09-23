@@ -1,3 +1,13 @@
+# v0.19.20 — Professional Attention Center
+
+- Evolui a Central do Dia com uma camada de priorização profissional baseada em sinais realmente acionáveis.
+- Agrega eventos de desvio/adesão dos últimos 14 dias e destaca recorrências em nutrição e treino.
+- Cruza recorrências com pendências de alta prioridade e follow-ups vencidos para reduzir ruído e evitar alertas isolados sem contexto.
+- Classifica os pacientes em Observação, Atenção ou Prioridade e mostra os principais sinais que justificam a revisão.
+- Inclui resumo no dashboard e acesso direto ao perfil do paciente.
+- Mantém limite explícito: a central organiza atenção, não diagnostica e não modifica prescrições automaticamente.
+- Sem nova migration.
+
 # v0.19.19 — Deviation & Adherence Events
 
 - Registra eventos estruturados quando a execução difere do plano, sem transformar cada ocorrência em notificação.

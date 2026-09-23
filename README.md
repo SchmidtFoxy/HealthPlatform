@@ -1,4 +1,4 @@
-## v0.19.19 — Patient ↔ Professional Chat
+## v0.19.20 — Patient ↔ Professional Chat
 
 Chat contextual paciente-profissional com notificações, assunto por contexto, SLA de até 24h úteis e aviso explícito de não emergência. Persiste no acompanhamento existente sem nova migration.
 

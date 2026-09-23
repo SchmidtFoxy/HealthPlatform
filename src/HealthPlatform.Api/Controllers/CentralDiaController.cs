@@ -50,6 +50,18 @@ public sealed record CentralDiaSolicitacaoResponse(
     string Status,
     bool Vencida);
 
+public sealed record CentralDiaAtencaoResponse(
+    Guid PacienteId,
+    string PacienteNome,
+    string Nivel,
+    int Score,
+    int Eventos7Dias,
+    int Recorrencias,
+    int PendenciasAlta,
+    bool FollowUpVencido,
+    string Resumo,
+    IReadOnlyCollection<string> Sinais);
+
 public sealed record CentralDiaResponse(
     DateTime GeradoEmUtc,
     int ConsultasHoje,
@@ -59,6 +71,9 @@ public sealed record CentralDiaResponse(
     int SolicitacoesParaRevisao,
     int SolicitacoesVencidas,
     int PacientesRevisao,
+    int PacientesEmAtencao,
+    int EventosAdesao7Dias,
+    IReadOnlyCollection<CentralDiaAtencaoResponse> Atencoes,
     IReadOnlyCollection<CentralDiaConsultaResponse> Consultas,
     IReadOnlyCollection<CentralDiaFollowUpResponse> FollowUps,
     IReadOnlyCollection<CentralDiaPendenciaResponse> Pendencias,
@@ -219,6 +234,21 @@ public sealed class CentralDiaController(
             .Select(x => new { x.PacienteId, x.Severidade })
             .ToListAsync(ct);
 
+        var desdeDesvios = agoraUtc.AddDays(-14);
+        var registrosDesvio = await db.RegistrosDiarioPaciente.AsNoTracking()
+            .Where(x => pacienteIds.Contains(x.PacienteId) &&
+                        x.Tipo == EventoDesvioAdesaoService.TipoRegistro &&
+                        x.DataHoraUtc >= desdeDesvios)
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Take(1000)
+            .ToListAsync(ct);
+
+        var desvios = registrosDesvio
+            .Select(x => new { x.PacienteId, Evento = EventoDesvioAdesaoService.Ler(x) })
+            .Where(x => x.Evento is not null)
+            .Select(x => new { x.PacienteId, Evento = x.Evento! })
+            .ToList();
+
         var revisao = new List<CentralDiaPacienteResponse>();
 
         foreach (var p in pacientes)
@@ -257,6 +287,76 @@ public sealed class CentralDiaController(
             .Take(10)
             .ToList();
 
+        var seteDias = agoraUtc.AddDays(-7);
+        var atencoes = new List<CentralDiaAtencaoResponse>();
+
+        foreach (var p in pacientes)
+        {
+            var eventosPaciente = desvios
+                .Where(x => x.PacienteId == p.Id)
+                .Select(x => x.Evento)
+                .ToList();
+            var eventos7 = eventosPaciente.Count(x => x.DataHoraUtc >= seteDias);
+            var recorrencias = eventosPaciente
+                .GroupBy(x => new { x.Categoria, x.Tipo })
+                .Where(g => g.Count() >= 2)
+                .OrderByDescending(g => g.Max(x => x.Prioridade))
+                .ThenByDescending(g => g.Count())
+                .ToList();
+            var pendenciasAltaPaciente = pendenciasAbertas.Count(x => x.PacienteId == p.Id && x.Severidade == "Alta");
+            var followUpVencido = followups.Any(x => x.PacienteId == p.Id && x.Faixa == "Vencido");
+            var maiorPrioridade = eventosPaciente.Count == 0 ? 0 : eventosPaciente.Max(x => x.Prioridade);
+
+            var score = maiorPrioridade * 15;
+            score += Math.Min(eventos7, 5) * 4;
+            score += Math.Min(recorrencias.Count, 3) * 15;
+            score += Math.Min(pendenciasAltaPaciente, 2) * 20;
+            if (followUpVencido) score += 20;
+
+            // A Central de Atenção só promove sinais úteis: recorrência, prioridade real ou pendência operacional.
+            if (score < 20 || (maiorPrioridade < 2 && recorrencias.Count == 0 && pendenciasAltaPaciente == 0 && !followUpVencido))
+                continue;
+
+            var nivel = maiorPrioridade >= 3 || score >= 60 ? "Prioridade"
+                : score >= 30 ? "Atencao"
+                : "Observacao";
+
+            var sinais = new List<string>();
+            foreach (var grupo in recorrencias.Take(3))
+                sinais.Add($"{grupo.Key.Categoria}: {grupo.Key.Tipo} recorrente ({grupo.Count()}x)");
+            if (eventos7 > 0) sinais.Add($"{eventos7} evento(s) de adesao em 7 dias");
+            if (pendenciasAltaPaciente > 0) sinais.Add($"{pendenciasAltaPaciente} pendencia(s) de alta prioridade");
+            if (followUpVencido) sinais.Add("follow-up vencido");
+
+            var resumo = recorrencias.Count > 0
+                ? "Padrao recorrente detectado; revisar contexto antes de ajustar a conduta."
+                : maiorPrioridade >= 3
+                    ? "Evento recente de maior prioridade pede revisao profissional."
+                    : pendenciasAltaPaciente > 0 || followUpVencido
+                        ? "Ha pendencia operacional relevante para acompanhamento."
+                        : "Sinais recentes merecem observacao profissional.";
+
+            atencoes.Add(new CentralDiaAtencaoResponse(
+                p.Id,
+                p.Nome,
+                nivel,
+                score,
+                eventos7,
+                recorrencias.Count,
+                pendenciasAltaPaciente,
+                followUpVencido,
+                resumo,
+                sinais));
+        }
+
+        var atencoesOrdenadas = atencoes
+            .OrderByDescending(x => x.Nivel == "Prioridade")
+            .ThenByDescending(x => x.Score)
+            .ThenBy(x => x.PacienteNome)
+            .Take(12)
+            .ToList();
+        var eventosAdesao7Dias = desvios.Count(x => x.Evento.DataHoraUtc >= seteDias);
+
         return Ok(new CentralDiaResponse(
             agoraUtc,
             consultas.Count,
@@ -266,6 +366,9 @@ public sealed class CentralDiaController(
             solicitacoesParaRevisao,
             solicitacoesVencidas,
             revisaoOrdenada.Count,
+            atencoesOrdenadas.Count,
+            eventosAdesao7Dias,
+            atencoesOrdenadas,
             consultas,
             followups,
             pendencias,
