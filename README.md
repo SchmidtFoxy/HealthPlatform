@@ -1,7 +1,6 @@
-## v0.19.20 — Patient ↔ Professional Chat
+## v0.19.21 — Patient Timeline & Context
 
-Chat contextual paciente-profissional com notificações, assunto por contexto, SLA de até 24h úteis e aviso explícito de não emergência. Persiste no acompanhamento existente sem nova migration.
-
+Timeline longitudinal profissional que reúne prontuário, corpo, exames, nutrição, treino, check-ins, chat, metas, rotina e eventos de adesão. Os eventos são agrupados por dia, filtráveis por dimensão e apresentados com contexto cruzado sem inferir causalidade clínica.
 ## v0.19.17 — Workout Progression Engine
 
 Progressão assistida por histórico de execução e regras configuradas pelo profissional, com visão para paciente e profissional. O sistema não altera a prescrição automaticamente.

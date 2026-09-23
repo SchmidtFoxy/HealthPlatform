@@ -6,4 +6,8 @@ public sealed record TimelineItemResponse(
     DateTime DataUtc,
     string Titulo,
     string? Resumo,
-    object Detalhes);
+    object Detalhes,
+    string Categoria = "Clinico",
+    int Prioridade = 0,
+    string? ContextoChave = null,
+    string Fonte = "Prontuario");

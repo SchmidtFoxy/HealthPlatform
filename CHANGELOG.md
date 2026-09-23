@@ -1,3 +1,13 @@
+# v0.19.21 — Patient Timeline & Context
+
+- Evolui a timeline profissional para uma leitura longitudinal integrada de contexto.
+- Conecta prontuário, corpo, exames, nutrição, treino, check-ins, chat, metas, rotina e eventos de adesão em uma sequência única.
+- Adiciona categorias, fonte, prioridade e chave de contexto aos eventos da timeline.
+- Inclui execuções de treino, planos de treino, check-ins, mensagens do acompanhamento e desvios de adesão na timeline.
+- Agrupa eventos por dia e destaca quando dimensões diferentes ocorreram no mesmo período, sem inferir causalidade clínica.
+- Adiciona filtros por dimensão e indicadores dos últimos 7 dias, sinais de atenção e dias com contexto.
+- Mantém isolamento por organização e não exige migration nova.
+
 # v0.19.20 — Professional Attention Center
 
 - Evolui a Central do Dia com uma camada de priorização profissional baseada em sinais realmente acionáveis.

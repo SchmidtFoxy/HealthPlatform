@@ -13,13 +13,15 @@ namespace HealthPlatform.Api.Controllers;
 public class TimelineController(AppDbContext db, CurrentUser currentUser) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<TimelineItemResponse>>> Get(Guid pacienteId, CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyCollection<TimelineItemResponse>>> Get(Guid pacienteId, [FromQuery] int limite = 120, CancellationToken ct = default)
     {
         var pacienteExiste = await db.Pacientes.AsNoTracking().AnyAsync(x =>
             x.Id == pacienteId && x.OrganizacaoId == currentUser.OrganizationId, ct);
 
         if (!pacienteExiste)
             return NotFound(new { message = "Paciente nao encontrado." });
+
+        limite = Math.Clamp(limite, 30, 250);
 
         var consultas = await db.Consultas.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
@@ -118,10 +120,68 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
             .ToListAsync(ct);
 
         var diario = await db.RegistrosDiarioPaciente.AsNoTracking()
-            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
+            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId &&
+                        x.Tipo != EventoDesvioAdesaoService.TipoRegistro)
             .OrderByDescending(x => x.DataHoraUtc)
-            .Take(50)
+            .Take(limite)
             .Select(x => new { x.Id, x.DataHoraUtc, x.Tipo, x.Descricao, x.ValorNumerico, x.Unidade, x.Escala })
+            .ToListAsync(ct);
+
+        var execucoesTreino = await db.ExecucoesTreino.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
+            .OrderByDescending(x => x.DataHoraInicioUtc)
+            .Take(limite)
+            .Select(x => new
+            {
+                x.Id,
+                x.DataHoraInicioUtc,
+                x.DataHoraFimUtc,
+                x.DuracaoMinutos,
+                x.EsforcoPercebido,
+                x.Status,
+                x.Observacoes,
+                Plano = x.PlanoTreino.Nome,
+                Sessao = x.SessaoTreino.Nome,
+                Itens = x.Itens.Count,
+                ItensConcluidos = x.Itens.Count(i => i.Concluido)
+            })
+            .ToListAsync(ct);
+
+        var checkins = await db.CheckInsAcompanhamento.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.OrganizacaoId == currentUser.OrganizationId)
+            .OrderByDescending(x => x.DataUtc)
+            .Take(limite)
+            .Select(x => new
+            {
+                x.Id, x.DataUtc, x.PesoKg, x.AdesaoAlimentacaoPercentual, x.AdesaoTreinoPercentual,
+                x.FomeNivel, x.EnergiaNivel, x.SonoNivel, x.PercepcaoEvolucaoNivel, x.Observacoes, x.Origem
+            })
+            .ToListAsync(ct);
+
+        var mensagens = await db.InteracoesAcompanhamento.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Canal.StartsWith("Chat:"))
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Take(limite)
+            .Select(x => new { x.Id, x.DataHoraUtc, x.Canal, x.Resultado, x.Observacoes, Profissional = x.Profissional.Nome })
+            .ToListAsync(ct);
+
+        var registrosDesvio = await db.RegistrosDiarioPaciente.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId &&
+                        x.Tipo == EventoDesvioAdesaoService.TipoRegistro)
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Take(limite)
+            .ToListAsync(ct);
+        var desvios = registrosDesvio
+            .Select(EventoDesvioAdesaoService.Ler)
+            .Where(x => x is not null)
+            .Cast<EventoDesvioAdesaoLeitura>()
+            .ToArray();
+
+        var planosTreino = await db.PlanosTreino.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Take(limite)
+            .Select(x => new { x.Id, x.CreatedAtUtc, x.Nome, x.Objetivo, x.Status, x.Versao, Profissional = x.Profissional.Nome, Sessoes = x.Sessoes.Count })
             .ToListAsync(ct);
 
         var timeline = new List<TimelineItemResponse>();
@@ -140,7 +200,7 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
                 evolucao = x.Evolucao,
                 conduta = x.Conduta,
                 status = x.Status.ToString()
-            })));
+            }, "Clinico", 0, $"consulta:{x.Id}", "Consulta")));
 
         timeline.AddRange(avaliacoes.Select(x =>
         {
@@ -165,7 +225,7 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
                     pressao = x.PressaoSistolica.HasValue || x.PressaoDiastolica.HasValue
                         ? $"{x.PressaoSistolica}/{x.PressaoDiastolica}"
                         : null
-                });
+                }, "Corpo", 0, $"avaliacao:{x.Id}", "Avaliacao");
         }));
 
         timeline.AddRange(anamneses.Select(x => new TimelineItemResponse(
@@ -182,7 +242,7 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
                 sonoHorasMedia = x.SonoHorasMedia,
                 estresseNivel = x.EstresseNivel,
                 aguaLitrosDia = x.AguaLitrosDia
-            })));
+            }, "Clinico", 0, $"anamnese:{x.Id}", "Anamnese")));
 
         timeline.AddRange(evolucoes.Select(x => new TimelineItemResponse(
             "evolucao_clinica",
@@ -199,7 +259,7 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
                 avaliacao = x.Avaliacao,
                 plano = x.Plano,
                 observacoes = x.Observacoes
-            })));
+            }, "Clinico", 0, $"evolucao:{x.Id}", "Evolucao")));
 
         timeline.AddRange(exames.Select(x => new TimelineItemResponse(
             "exame",
@@ -213,25 +273,66 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
                 laboratorio = x.Laboratorio,
                 observacoes = x.Observacoes,
                 resultados = x.Resultados
-            })));
+            }, "Exames", 0, $"exame:{x.Id}", "Exames")));
 
         timeline.AddRange(relatorios.Select(x => new TimelineItemResponse(
             "relatorio", x.Id, x.DataGeracaoUtc, x.Titulo, "Snapshot clinico gerado",
-            new { profissional = x.ProfissionalNome, periodoInicioUtc = x.DataInicioUtc, periodoFimUtc = x.DataFimUtc, versaoTemplate = x.VersaoTemplate })));
+            new { profissional = x.ProfissionalNome, periodoInicioUtc = x.DataInicioUtc, periodoFimUtc = x.DataFimUtc, versaoTemplate = x.VersaoTemplate },
+            "Clinico", 0, $"relatorio:{x.Id}", "Relatorio")));
 
         timeline.AddRange(planos.Select(x => new TimelineItemResponse(
             "plano_alimentar", x.Id, x.CreatedAtUtc, x.Nome, $"Plano alimentar {x.Status.ToLowerInvariant()}",
-            new { profissional = x.ProfissionalNome, dataInicio = x.DataInicio, dataFim = x.DataFim, status = x.Status, refeicoes = x.Refeicoes })));
+            new { profissional = x.ProfissionalNome, dataInicio = x.DataInicio, dataFim = x.DataFim, status = x.Status, refeicoes = x.Refeicoes },
+            "Nutricao", 0, $"plano-alimentar:{x.Id}", "Plano alimentar")));
 
 
         timeline.AddRange(metas.Select(x => new TimelineItemResponse(
             "meta", x.Id, x.CreatedAtUtc, x.Nome, $"Meta {x.Status.ToLowerInvariant()}",
-            new { profissional = x.ProfissionalNome, tipo = x.Tipo, valorObjetivo = x.ValorObjetivo, unidade = x.Unidade, frequencia = x.Frequencia, status = x.Status })));
+            new { profissional = x.ProfissionalNome, tipo = x.Tipo, valorObjetivo = x.ValorObjetivo, unidade = x.Unidade, frequencia = x.Frequencia, status = x.Status },
+            "Metas", 0, $"meta:{x.Id}", "Metas")));
 
         timeline.AddRange(diario.Select(x => new TimelineItemResponse(
             "registro_diario", x.Id, x.DataHoraUtc, $"Diario - {x.Tipo}", x.Descricao,
-            new { tipo = x.Tipo, descricao = x.Descricao, valor = x.ValorNumerico, unidade = x.Unidade, escala = x.Escala })));
+            new { tipo = x.Tipo, descricao = x.Descricao, valor = x.ValorNumerico, unidade = x.Unidade, escala = x.Escala },
+            "Rotina", 0, $"diario:{x.Id}", "Diario")));
 
-        return Ok(timeline.OrderByDescending(x => x.DataUtc).ToList());
+        timeline.AddRange(planosTreino.Select(x => new TimelineItemResponse(
+            "plano_treino", x.Id, x.CreatedAtUtc, x.Nome, $"Plano de treino {x.Status.ToLowerInvariant()} • versão {x.Versao}",
+            new { profissional = x.Profissional, objetivo = x.Objetivo, status = x.Status, versao = x.Versao, sessoes = x.Sessoes },
+            "Treino", 0, $"plano-treino:{x.Id}", "Plano de treino")));
+
+        timeline.AddRange(execucoesTreino.Select(x => new TimelineItemResponse(
+            "treino_executado", x.Id, x.DataHoraInicioUtc, x.Sessao,
+            $"{x.Status} • {x.ItensConcluidos}/{x.Itens} exercício(s)" + (x.DuracaoMinutos.HasValue ? $" • {x.DuracaoMinutos} min" : string.Empty),
+            new { plano = x.Plano, sessao = x.Sessao, x.DataHoraFimUtc, x.DuracaoMinutos, x.EsforcoPercebido, x.Status, x.Observacoes, x.Itens, x.ItensConcluidos },
+            "Treino", string.Equals(x.Status, "Concluido", StringComparison.OrdinalIgnoreCase) ? 0 : 1, $"treino:{x.Id}", "Execucao de treino")));
+
+        timeline.AddRange(checkins.Select(x => new TimelineItemResponse(
+            "checkin", x.Id, x.DataUtc, "Check-in de acompanhamento",
+            $"Energia {x.EnergiaNivel?.ToString() ?? "—"}/10 • Sono {x.SonoNivel?.ToString() ?? "—"}/10" +
+            (x.AdesaoTreinoPercentual.HasValue ? $" • treino {x.AdesaoTreinoPercentual}%" : string.Empty),
+            new { x.PesoKg, x.AdesaoAlimentacaoPercentual, x.AdesaoTreinoPercentual, x.FomeNivel, x.EnergiaNivel, x.SonoNivel, x.PercepcaoEvolucaoNivel, x.Observacoes, x.Origem },
+            "CheckIn", 0, $"checkin:{x.Id}", "Check-in")));
+
+        timeline.AddRange(mensagens.Select(x =>
+        {
+            var contexto = x.Canal.StartsWith("Chat:", StringComparison.OrdinalIgnoreCase) ? x.Canal[5..] : "Geral";
+            var resumo = string.IsNullOrWhiteSpace(x.Observacoes) ? "Mensagem registrada" :
+                (x.Observacoes!.Length <= 140 ? x.Observacoes : x.Observacoes[..140] + "…");
+            return new TimelineItemResponse(
+                "chat", x.Id, x.DataHoraUtc, $"Mensagem • {contexto}", resumo,
+                new { autor = x.Resultado, contexto, mensagem = x.Observacoes, profissional = x.Profissional },
+                "Comunicacao", 0, $"chat:{x.Id}", "Chat");
+        }));
+
+        timeline.AddRange(desvios.Select(x => new TimelineItemResponse(
+            "desvio_adesao", x.Id, x.DataHoraUtc, x.Titulo, x.Detalhe,
+            new { x.Categoria, x.Tipo, x.Detalhe, x.OrigemChave, x.Contexto },
+            x.Categoria, x.Prioridade, x.OrigemChave, "Adesao")));
+
+        return Ok(timeline
+            .OrderByDescending(x => x.DataUtc)
+            .Take(limite)
+            .ToList());
     }
 }
