@@ -1,3 +1,10 @@
+# v0.19.11 — Dark UI Consistency
+
+- Padroniza a Carteira de Pacientes no tema escuro premium do AESYN.
+- Remove superfícies brancas residuais em cards, métricas e badges de prioridade.
+- Reforça contraste de tipografia, bordas e ações em grafite/preto com verde apenas como acento.
+- Mantém o tema claro intacto e não altera schema.
+
 ## 0.19.10 - Food Portions & Measure Converter
 - Nutrition Builder passa a aceitar gramas, ml, unidade, fatia, colher, xícara, concha e porção.
 - Conversão bidirecional entre quantidade e gramas usando equivalência editável por medida.

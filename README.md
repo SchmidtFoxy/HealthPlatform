@@ -1,4 +1,4 @@
-## v0.19.10 — Macro Targets by Body Weight
+## v0.19.11 — Dark UI Consistency
 
 - Adiciona planejamento profissional de proteína, lipídios e carboidratos em g/kg de peso corporal.
 - Usa como referências configuráveis as faixas 2–3 g/kg de proteína, 0,8–1,2 g/kg de lipídios e 3–7 g/kg de carboidratos, sem tratá-las como prescrição universal.

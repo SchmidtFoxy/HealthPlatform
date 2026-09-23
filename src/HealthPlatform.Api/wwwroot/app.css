@@ -4979,3 +4979,45 @@ html[data-theme="dark"] .evolution-photo-card,html[data-theme="dark"] .evolution
 .substitution-row.food-measure-row{display:grid;grid-template-columns:minmax(180px,2fr) .65fr 1fr .85fr .85fr auto;gap:8px;align-items:center}
 .substitution-row.food-measure-row .food-measure-hint{grid-column:1/-1;margin:0}
 @media(max-width:760px){.meal-item-main.food-measure-row,.substitution-row.food-measure-row{grid-template-columns:1fr 1fr}.meal-item-main.food-measure-row select[name=foodId],.substitution-row.food-measure-row select[name=subFood],.food-measure-hint{grid-column:1/-1}}
+
+
+/* v0.19.11 - Dark UI Consistency: Portfolio */
+html[data-theme="dark"] .portfolio-patient-card{
+  background:#0f1314!important;
+  border-color:#252c2d!important;
+  border-top-color:var(--portfolio-accent)!important;
+  color:#edf3f1!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.18)!important;
+}
+html[data-theme="dark"] .portfolio-patient-card:hover{
+  background:#121718!important;
+  border-color:#30393a!important;
+  border-top-color:var(--portfolio-accent)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.28)!important;
+}
+html[data-theme="dark"] .portfolio-identity strong{color:#edf3f1!important}
+html[data-theme="dark"] .portfolio-identity small,
+html[data-theme="dark"] .portfolio-reason,
+html[data-theme="dark"] .portfolio-dates span{color:#9aa5a2!important}
+html[data-theme="dark"] .portfolio-priority{
+  background:#171c1d!important;
+  border:1px solid #2b3334!important;
+  color:var(--portfolio-accent)!important;
+}
+html[data-theme="dark"] .portfolio-metrics>div{
+  background:#14191a!important;
+  border-color:#2a3132!important;
+}
+html[data-theme="dark"] .portfolio-metrics strong{color:#e8eeec!important}
+html[data-theme="dark"] .portfolio-metrics span,
+html[data-theme="dark"] .portfolio-dates b{color:#7f8b88!important}
+html[data-theme="dark"] .portfolio-dates{border-color:#2a3132!important}
+html[data-theme="dark"] .portfolio-toolbar-card{background:#0f1314!important;border-color:#252c2d!important}
+html[data-theme="dark"] .portfolio-toolbar label{color:#98a3a0!important}
+html[data-theme="dark"] .portfolio-stats .stat-card{background:#0f1314!important;border-color:#252c2d!important}
+html[data-theme="dark"] .portfolio-card-actions .secondary{background:#171d1e!important;color:#dfe7e4!important;border-color:#2d3637!important}
+html[data-theme="dark"] .portfolio-card-actions .ghost{color:#aeb8b5!important}
+html[data-theme="dark"] .dashboard-portfolio-row .portfolio-priority.portfolio-high{color:#ef8d83!important;background:#241716!important}
+html[data-theme="dark"] .dashboard-portfolio-row .portfolio-priority.portfolio-medium{color:#e7bd61!important;background:#211c12!important}
+html[data-theme="dark"] .dashboard-portfolio-row .portfolio-priority.portfolio-low{color:#8fb8ed!important;background:#131c27!important}
+html[data-theme="dark"] .dashboard-portfolio-row .portfolio-priority.portfolio-stable{color:#82d4a4!important;background:#122119!important}
