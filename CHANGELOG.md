@@ -1,3 +1,10 @@
+## 0.19.10 - Food Portions & Measure Converter
+- Nutrition Builder passa a aceitar gramas, ml, unidade, fatia, colher, xícara, concha e porção.
+- Conversão bidirecional entre quantidade e gramas usando equivalência editável por medida.
+- Cálculo nutricional continua baseado em gramas, preservando precisão e permitindo prescrição em medidas mais naturais para cada alimento.
+- Substituições alimentares recebem o mesmo conversor de medidas.
+- Sem alteração de schema/migration.
+
 ## v0.19.9 — Macro Targets by Body Weight
 
 - Adiciona planejamento profissional de proteína, lipídios e carboidratos em g/kg de peso corporal.

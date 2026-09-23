@@ -4968,3 +4968,14 @@ html[data-theme="dark"] .evolution-photo-card,html[data-theme="dark"] .evolution
 @media(max-width:900px){.macro-target-grid,.macro-target-results{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.macro-target-head,.macro-target-actions{align-items:stretch;flex-direction:column}.macro-target-actions small{max-width:none}.macro-target-badge{align-self:flex-start}}
 @media(max-width:480px){.macro-target-grid,.macro-target-results{grid-template-columns:1fr}}
+
+
+/* v0.19.10 - Food Portions & Measure Converter */
+.food-measure-row{align-items:center}
+.food-measure-row select[name=unit],.food-measure-row select[name=subUnit]{min-width:150px}
+.food-measure-row input[name=gramsPerUnit],.food-measure-row input[name=subGramsPerUnit]{min-width:108px}
+.food-measure-hint{display:block;margin-top:8px;color:var(--muted);font-size:.78rem;line-height:1.4}
+.food-measure-hint b{color:var(--text)}
+.substitution-row.food-measure-row{display:grid;grid-template-columns:minmax(180px,2fr) .65fr 1fr .85fr .85fr auto;gap:8px;align-items:center}
+.substitution-row.food-measure-row .food-measure-hint{grid-column:1/-1;margin:0}
+@media(max-width:760px){.meal-item-main.food-measure-row,.substitution-row.food-measure-row{grid-template-columns:1fr 1fr}.meal-item-main.food-measure-row select[name=foodId],.substitution-row.food-measure-row select[name=subFood],.food-measure-hint{grid-column:1/-1}}
