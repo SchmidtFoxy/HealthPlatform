@@ -68,6 +68,7 @@ function hpApplyTheme(theme){
   const normalized=theme==='dark'?'dark':'light';
   document.documentElement.dataset.theme=normalized;
   document.documentElement.style.colorScheme=normalized;
+  const themeMeta=document.querySelector('#themeColorMeta');if(themeMeta)themeMeta.setAttribute('content',normalized==='dark'?'#07100F':'#0B3B36');
   localStorage.setItem(HP_THEME_KEY,normalized);
   document.querySelectorAll('[data-theme-toggle]').forEach(b=>{
     b.setAttribute('aria-label',normalized==='dark'?'Usar tema claro':'Usar tema escuro');
@@ -98,6 +99,7 @@ function hpInstallThemeUi(){
   document.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>{
     hpApplyTheme(b.dataset.themeChoice);
     localStorage.setItem(HP_THEME_CHOICE_KEY,'true');
+    hpPersistFirstThemeChoice(b.dataset.themeChoice).catch(()=>{});
     hpCloseThemeChoice();
     toast(`Tema ${b.dataset.themeChoice==='dark'?'escuro':'claro'} aplicado.`);
   }));
@@ -118,6 +120,31 @@ async function hpSyncProfileSettings(){
       if(account?.fotoPerfilDataUrl){avatar.style.backgroundImage=`url("${account.fotoPerfilDataUrl}")`;avatar.style.backgroundSize='cover';avatar.style.backgroundPosition='center';avatar.textContent='';avatar.classList.add('has-photo');}
       else{avatar.style.backgroundImage='';avatar.textContent=initials(account?.nome||state.user?.nome||'U');avatar.classList.remove('has-photo');}
     });
+    return account;
+  }catch{return null}
+}
+
+async function hpPrepareThemeAfterLogin(){
+  const account=await hpSyncProfileSettings();
+  if(account?.temaPreferido){
+    localStorage.setItem(HP_THEME_CHOICE_KEY,'true');
+    hpCloseThemeChoice();
+    return;
+  }
+  hpMaybeOpenThemeChoice();
+}
+
+async function hpPersistFirstThemeChoice(theme){
+  if(!state.token)return;
+  try{
+    const account=await api('/api/configuracoes/minha-conta');
+    await api('/api/configuracoes/minha-conta/preferencias',{method:'PUT',body:JSON.stringify({
+      temaPreferido:theme,
+      notificarMensagens:!!account?.notificarMensagens,
+      notificarAtualizacoesPlano:!!account?.notificarAtualizacoesPlano,
+      notificarLembretes:!!account?.notificarLembretes,
+      notificarCheckIns:!!account?.notificarCheckIns
+    })});
   }catch{}
 }
 
@@ -195,7 +222,7 @@ $('#loginForm').addEventListener('submit',async e=>{
     const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:$('#email').value.trim(),senha:$('#senha').value})});
     hpStoreSession(d);
     showApp();
-    hpMaybeOpenThemeChoice();
+    hpPrepareThemeAfterLogin().catch(()=>hpMaybeOpenThemeChoice());
   }catch(x){
     const text=String(x?.message||'Não foi possível entrar.');
     if(msg){
@@ -2465,7 +2492,7 @@ function openEditPatientForm(p){
 
 function clinical(label,value){return `<div class="clinical-field"><small>${label}</small><p>${esc(value||'—')}</p></div>`}function diaryIcon(t){return ({sono:'☾',hidratacao:'💧',alimentacao:'◉',treino:'↗',sintoma:'!',humor:'☺'}[String(t||'').toLowerCase()]||'•')}
 async function loadAgenda(){const iso=todayISO(state.selectedDate),d=await api(`/api/agenda?data=${iso}&offsetMinutos=${state.offset}`),label=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(state.selectedDate);content.innerHTML=`<div class="agenda-header"><div><h3>Agenda</h3><p>${d.total} atendimento(s) neste dia.</p></div><div class="date-nav"><button class="secondary" id="prevDay">←</button><div class="date-title">${label}</div><button class="secondary" id="nextDay">→</button></div></div><div class="stats-grid agenda-stats">${stat('Total',d.total,'consultas')}${stat('Agendadas',d.agendadas,'aguardando')}${stat('Confirmadas',d.confirmadas,'confirmadas')}${stat('Realizadas',d.realizadas,'concluídas')}${stat('Faltas',d.faltas,'não compareceu')}</div><div class="agenda-list">${d.consultas.length?d.consultas.map(c=>`<div class="agenda-item"><div class="agenda-time">${fmtTime(c.dataHoraLocal)}</div><div class="agenda-bar"></div><div class="agenda-person clickable" data-patient="${c.pacienteId}"><strong>${esc(c.pacienteNome)}</strong><small>${esc(c.motivo||'Consulta')} • ${esc(c.telefone||c.email||'sem contato')}</small></div><div class="agenda-actions"><span class="pill ${esc(c.status)}">${esc(c.status)}</span>${c.status==='Agendada'?`<button class="secondary confirm" data-id="${c.id}">Confirmar</button>`:''}</div></div>`).join(''):'<div class="card empty">Nenhuma consulta neste dia.</div>'}</div>`;$('#prevDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()-1);loadAgenda()};$('#nextDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()+1);loadAgenda()};$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));$$('.confirm').forEach(x=>x.onclick=async()=>{try{await api(`/api/agenda/consultas/${x.dataset.id}/status?offsetMinutos=${state.offset}`,{method:'PATCH',body:JSON.stringify({status:'Confirmada'})});toast('Consulta confirmada.');loadAgenda()}catch(e){toast(e.message,true)}})}
-if(state.token){hpScheduleSessionRenewal();showApp();hpMaybeOpenThemeChoice();}
+if(state.token){hpScheduleSessionRenewal();showApp();hpPrepareThemeAfterLogin().catch(()=>hpMaybeOpenThemeChoice());}
 
 /* v0.3.27 - edição clínica + agenda operacional */
 const __renderPatientTab_v024 = renderPatientTab;
@@ -8844,7 +8871,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.28';
+const HP_MVP_VERSION='0.19.29';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -10271,4 +10298,17 @@ loadPatientHealth=async function(){
   const obs=new MutationObserver(()=>{if(document.querySelector('#hp-account-panel'))hpEnhanceAccountSettings();});obs.observe(document.body,{childList:true,subtree:true});
   document.addEventListener('click',e=>{if(e.target.closest('[data-route="configuracoes"]'))setTimeout(hpEnhanceAccountSettings,120);});
   window.HealthPlatform=window.HealthPlatform||{};window.HealthPlatform.enhanceAccountSettings=hpEnhanceAccountSettings;
+})();
+
+
+// ===== v0.19.29 — AESYN App Identity & Theme Completion =====
+const HP_APP_IDENTITY_THEME_COMPLETION='v0.19.29';
+(function(){
+  const standalone=window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  document.documentElement.dataset.displayMode=standalone?'standalone':'browser';
+  window.addEventListener('load',()=>{
+    const splash=document.querySelector('#aesynLaunchScreen');
+    if(!splash)return;
+    window.setTimeout(()=>splash.classList.add('is-hidden'),standalone?420:0);
+  },{once:true});
 })();

@@ -1,3 +1,14 @@
+## v0.19.29 — AESYN App Identity & Theme Completion
+
+- Identidade instalável do AESYN Performance com `manifest.webmanifest`, favicon, Apple Touch Icon e ícones 192/512 + maskable.
+- Launch experience quando executado em modo standalone/PWA.
+- `theme-color` acompanha o tema claro/escuro.
+- Primeiro acesso respeita preferência já salva e persiste a escolha inicial do tema na conta.
+- Dark mode consolidado para login, portal do paciente, modais, formulários e componentes legados.
+- Sem migration nesta versão.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. Testes funcionais permanecem exclusivamente locais.
+
 ## v0.19.28 — Settings & User Profile
 
 Esta versão consolida a conta do usuário dentro das Configurações: dados básicos, alteração de senha, foto de perfil reduzida no navegador, preferência de tema, preferências de notificações e resumo da sessão atual. As preferências passam a ser persistidas no servidor por usuário e as alterações sensíveis permanecem auditadas sem armazenar senha ou conteúdo da foto.

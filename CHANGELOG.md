@@ -2344,3 +2344,20 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Atualiza todas as comparações da versão pública corrente no `TESTAR.ps1` para `0.19.27`.
 - Preserva as validações funcionais históricas e a versão funcional `0.19.27`.
 - Nenhuma alteração de schema, migration ou comportamento de produção.
+
+
+## v0.19.29 — AESYN App Identity & Theme Completion
+- Adiciona `manifest.webmanifest` com identidade AESYN Performance e modo standalone.
+- Gera ícones 32/180/192/512 e variantes maskable a partir do símbolo oficial já versionado no projeto.
+- Adiciona favicon, Apple Touch Icon, meta tags mobile/PWA e theme-color dinâmico.
+- Adiciona launch experience para execução instalada quando suportada pelo navegador.
+- Consolida variáveis e overrides do dark mode para login, portal do paciente, modais, formulários e componentes legados.
+- Corrige o primeiro acesso para respeitar preferência já persistida e salva a escolha inicial na conta quando autenticado.
+- Sem alteração de schema ou migration.
+
+
+## v0.19.29-r1 — Version Foundation Gate Sync Hotfix
+- Corrige falso negativo no gate `[1719/1728]` (`AESYN Identity & Patient Navigation Foundation`).
+- O gate legado ainda exigia `HP_MVP_VERSION='0.19.28'`; agora valida a versão pública corrente `0.19.29`.
+- Mantém intactas as validações históricas de tema, navegação e Patient Health Hub.
+- Nenhuma alteração funcional, de schema ou migration; versão funcional permanece `0.19.29`.

@@ -1,11 +1,13 @@
 # AESYN Performance — Roadmap Mestre
 
+> **Hotfix v0.19.29-r1:** sincroniza o gate histórico `AESYN Identity & Patient Navigation Foundation` com a versão pública corrente `0.19.29`. O gate ainda procurava `HP_MVP_VERSION='0.19.28'`, embora a aplicação já anunciasse corretamente `0.19.29`. Nenhuma alteração funcional ou de schema.
+
 > **Hotfix v0.19.25-r2:** corrige o gate `[1908/1914]` para validar `EmailPrincipal`, `Confirmado` e `PodeSolicitarConfirmacao` no contrato `EmailAccountStatusResponse`, onde esses campos realmente são declarados, em vez de exigir seus nomes literais dentro do controller. Nenhuma alteração funcional ou de schema.
 
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.25 (revisão de pacote atual: v0.19.25-r2) — Account & Email Foundation  
+> **Versão-base deste roadmap:** v0.19.29 (revisão de pacote atual: v0.19.29-r1) — AESYN App Identity & Theme Completion  
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -196,6 +198,11 @@ Conta consegue atualizar nome, senha, foto, tema e notificações; a imagem é r
 - tema claro/escuro consistente em todas as telas;
 - corrigir telas do paciente que ainda não aderiram ao dark mode;
 - escolha de tema no primeiro acesso.
+
+### Gate
+Manifest e ícones válidos; identidade instalada como **AESYN Performance**; modo standalone com launch experience; theme-color acompanha claro/escuro; primeiro acesso permite escolher tema e persiste a preferência; superfícies principais do paciente, login, modais e componentes legados permanecem legíveis em dark mode.
+
+**Status:** implementado na v0.19.29; validar localmente com PREPARAR → RODAR → TESTAR antes de qualquer deploy.
 
 ## v0.19.30 — Patient Home Cleanup
 
