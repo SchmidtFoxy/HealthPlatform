@@ -8942,7 +8942,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.36';
+const HP_MVP_VERSION='0.19.37';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10720,6 +10720,50 @@ loadProfessionalPatientChat=async function(patient,host=$('#patientTabContent'))
 };
 
 
-// ===== v0.19.36 — Administrator Professional Impersonation =====
-const HP_ADMIN_IMPERSONATION_VERSION='v0.19.36';
+// ===== v0.19.37 — Administrator Professional Impersonation =====
+const HP_ADMIN_IMPERSONATION_VERSION='v0.19.37';
 const HP_IMPERSONATION_SECURITY_MODE='READ_ONLY';
+
+
+// ===== v0.19.37 — Patient First Access & Tutorials =====
+const HP_PATIENT_FIRST_ACCESS='v0.19.37';
+let hpPatientTutorialShownV01937=false;
+const hpPatientTutorialStepsV01937=[
+  {key:'welcome',icon:'✦',eyebrow:'BEM-VINDO AO AESYN',title:'Seu acompanhamento começa pelo hoje',text:'A Home foi simplificada para mostrar o que importa agora: check-in, treino, alimentação, hidratação, mensagens e pendências. Você não precisa entender todas as métricas para começar.'},
+  {key:'checkin',icon:'◉',eyebrow:'PASSO 1 • CHECK-IN',title:'Conte como você está',text:'O check-in diário registra sono, energia, dor e recuperação. Leva poucos segundos e dá contexto para o profissional acompanhar sua resposta ao plano.',action:'Fazer meu check-in',run:()=>openDailyReadiness(null)},
+  {key:'workout',icon:'🏋',eyebrow:'PASSO 2 • PRIMEIRO TREINO',title:'Escolha uma sessão publicada e comece',text:'Você pode ter Treino A, B, C, cardio, recuperação ou outros planos ao mesmo tempo. Abra Treino, escolha uma sessão liberada e registre série por série. Nada é substituído só porque você iniciou outra ficha.',action:'Ver meus treinos',view:'treino'},
+  {key:'nutrition',icon:'🥗',eyebrow:'PASSO 3 • ALIMENTAÇÃO',title:'Seu plano alimentar fica no bolso',text:'Em Plano você encontra refeições, horários, alimentos e alternativas publicadas. Registre o que aconteceu de verdade quando o fluxo permitir; divergências ajudam o profissional a ajustar a prescrição.',action:'Abrir meu plano',view:'plano'},
+  {key:'chat',icon:'✉',eyebrow:'PASSO 4 • CHAT',title:'Dúvida não precisa esperar a próxima consulta',text:'Use o chat para dúvidas sobre treino, alimentação, exames e recuperação. Arquivos podem ser enviados pela biblioteca e referenciados na conversa para manter o contexto.',action:'Abrir chat',view:'chat'},
+  {key:'done',icon:'✓',eyebrow:'PRONTO PARA COMEÇAR',title:'Você já sabe o essencial',text:'Comece pela Home e faça o que está previsto para hoje. Quando quiser rever este guia, toque no botão ? ou abra “Tutorial do AESYN” em Meu perfil.'}
+];
+function hpClosePatientTutorialV01937(){document.querySelector('.patient-tutorial-overlay-v01937')?.remove()}
+async function hpFinishPatientTutorialV01937(){
+  try{await api('/api/configuracoes/minha-conta/onboarding-paciente/concluir',{method:'POST'})}catch(err){console.warn('Onboarding não pôde ser persistido:',err)}
+  hpClosePatientTutorialV01937();toast('Tutorial concluído. Você pode refazê-lo quando quiser.');
+}
+function hpOpenPatientTutorialV01937({start=0,replay=false}={}){
+  hpClosePatientTutorialV01937();let step=Math.max(0,Math.min(hpPatientTutorialStepsV01937.length-1,start));
+  const overlay=document.createElement('div');overlay.className='patient-tutorial-overlay-v01937';overlay.dataset.patientTutorial='v0.19.37';
+  const draw=()=>{const x=hpPatientTutorialStepsV01937[step],last=step===hpPatientTutorialStepsV01937.length-1;
+    overlay.innerHTML=`<div class="patient-tutorial-card-v01937" role="dialog" aria-modal="true" aria-labelledby="patientTutorialTitle"><button class="patient-tutorial-close-v01937" type="button" aria-label="Fechar tutorial">×</button><div class="patient-tutorial-progress-v01937"><i style="width:${((step+1)/hpPatientTutorialStepsV01937.length)*100}%"></i></div><div class="patient-tutorial-icon-v01937">${x.icon}</div><span class="eyebrow">${x.eyebrow}</span><h2 id="patientTutorialTitle">${x.title}</h2><p>${x.text}</p>${x.action?`<button class="secondary patient-tutorial-action-v01937" type="button">${x.action}</button>`:''}<div class="patient-tutorial-footer-v01937"><button class="ghost" type="button" data-tutorial-back ${step===0?'disabled':''}>Voltar</button><small>${step+1} de ${hpPatientTutorialStepsV01937.length}</small><button class="primary" type="button" data-tutorial-next>${last?'Concluir':'Próximo'}</button></div>${!replay&&!last?'<button class="patient-tutorial-later-v01937" type="button">Agora não</button>':''}</div>`;
+    overlay.querySelector('.patient-tutorial-close-v01937').onclick=hpClosePatientTutorialV01937;
+    overlay.querySelector('[data-tutorial-back]').onclick=()=>{step--;draw()};
+    overlay.querySelector('[data-tutorial-next]').onclick=()=>{if(last){hpFinishPatientTutorialV01937();return}step++;draw()};
+    overlay.querySelector('.patient-tutorial-later-v01937')?.addEventListener('click',hpClosePatientTutorialV01937);
+    overlay.querySelector('.patient-tutorial-action-v01937')?.addEventListener('click',()=>{hpClosePatientTutorialV01937();if(x.view)loadPatientSection(x.view).catch(e=>toast(e.message,true));else if(x.run)x.run()});
+  };
+  document.body.appendChild(overlay);draw();overlay.querySelector('.patient-tutorial-close-v01937')?.focus();
+}
+async function hpMaybeStartPatientOnboardingV01937(){
+  if(hpPatientTutorialShownV01937)return;hpPatientTutorialShownV01937=true;
+  try{const d=await api('/api/configuracoes/minha-conta/onboarding-paciente');if(!d?.concluido)setTimeout(()=>hpOpenPatientTutorialV01937(),180)}catch(err){console.warn('Status de onboarding indisponível:',err)}
+}
+const __loadMyPatientPortal_v01937=loadMyPatientPortal;
+loadMyPatientPortal=async function(){await __loadMyPatientPortal_v01937();await hpMaybeStartPatientOnboardingV01937()};
+const __loadPatientProfile_v01937=loadPatientProfile;
+loadPatientProfile=async function(){
+  await __loadPatientProfile_v01937();const host=$('#patientPortalContent');if(!host||host.querySelector('[data-tutorial-replay]'))return;
+  const section=document.createElement('section');section.className='card athlete-profile-tutorial-v01937';section.dataset.tutorialReplay='1';section.innerHTML='<div><span class="eyebrow">AJUDA • PRIMEIROS PASSOS</span><h3>Tutorial do AESYN</h3><p>Reveja check-in, primeiro treino, plano alimentar e chat sempre que precisar.</p></div><button class="secondary" type="button">Refazer tutorial</button>';
+  section.querySelector('button').onclick=()=>hpOpenPatientTutorialV01937({replay:true});host.appendChild(section);
+};
+$('#patientTutorialTrigger')?.addEventListener('click',()=>hpOpenPatientTutorialV01937({replay:true}));

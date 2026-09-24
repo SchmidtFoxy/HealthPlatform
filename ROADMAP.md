@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.36 — Administrator Professional Impersonation
+> **Versão-base deste roadmap:** v0.19.37 — Patient First Access & Tutorials
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -321,6 +321,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - introdução ao chat;
 - tutoriais podem ser refeitos depois;
 - ajuda contextual por `?` ou equivalente.
+
+**Status:** implementado na v0.19.37. O primeiro acesso do paciente consulta estado persistente na conta e abre uma trilha guiada com Home, check-in, primeiro treino, plano alimentar e chat. A conclusão é persistida em `Usuarios.OnboardingPacienteConcluidoEmUtc` e auditada. O guia pode ser fechado sem marcar conclusão, pode ser refeito pelo botão `?` ou pelo Meu perfil e inclui atalhos práticos para experimentar as áreas apresentadas.
 
 ## v0.19.38 — PWA Install & Mobile Ergonomics
 

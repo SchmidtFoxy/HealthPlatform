@@ -1,6 +1,7 @@
-## v0.19.36 — Administrator Professional Impersonation
+## v0.19.37 — Patient First Access & Tutorials
 
-O administrador pode simular a visão de Médico, Nutricionista ou Personal ativo diretamente pela gestão da equipe. A simulação é explicitamente sinalizada, somente leitura e auditada no início/fim; sair da simulação devolve uma nova sessão administrativa. A origem administrativa também é validada no JWT para impedir que a simulação continue caso o administrador perca autorização.
+Onboarding persistente do paciente com primeiros passos guiados, tutorial refazível e ajuda contextual para check-in, treino, alimentação e chat.
+O primeiro acesso do paciente agora apresenta uma trilha curta para Home, check-in, primeiro treino, plano alimentar e chat. A conclusão acompanha a conta entre dispositivos, sem impedir que o tutorial seja refeito depois.
 
 ### v0.19.35 — Chat Reliability & Context Foundation
 

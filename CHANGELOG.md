@@ -1,3 +1,13 @@
+# v0.19.37 — Patient First Access & Tutorials
+
+- onboarding persistente no primeiro acesso do paciente;
+- tutorial guiado de Home, check-in, primeiro treino, plano alimentar e chat;
+- possibilidade de fechar e continuar depois sem marcar conclusão;
+- tutorial pode ser refeito pelo botão de ajuda `?` e pelo Meu perfil;
+- conclusão auditada e sincronizada entre dispositivos;
+- migration `V01937OnboardingPaciente`;
+- sem testes de desenvolvimento contra produção.
+
 # v0.19.36 — Administrator Professional Impersonation
 
 - Adiciona simulação explícita de Médico, Nutricionista e Personal a partir da gestão de Equipe.

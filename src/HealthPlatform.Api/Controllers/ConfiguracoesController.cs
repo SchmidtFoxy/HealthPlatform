@@ -130,6 +130,7 @@ public class ConfiguracoesController(
                 x.NotificarAtualizacoesPlano,
                 x.NotificarLembretes,
                 x.NotificarCheckIns,
+                x.OnboardingPacienteConcluidoEmUtc,
                 x.CreatedAtUtc
             })
             .FirstOrDefaultAsync(ct);
@@ -370,6 +371,57 @@ public class ConfiguracoesController(
             RevogacaoLogout = "global",
             Observacao = "O logout atual revoga todas as sessoes emitidas anteriormente para esta conta."
         });
+    }
+
+    [HttpGet("minha-conta/onboarding-paciente")]
+    public async Task<IActionResult> ObterOnboardingPaciente(CancellationToken ct)
+    {
+        var usuario = await db.Users.AsNoTracking().FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+        if (usuario.TipoUsuario != HealthPlatform.Domain.Enums.TipoUsuario.Paciente)
+            return BadRequest(new { message = "Onboarding disponivel apenas para pacientes." });
+
+        return Ok(new
+        {
+            concluido = usuario.OnboardingPacienteConcluidoEmUtc.HasValue,
+            concluidoEmUtc = usuario.OnboardingPacienteConcluidoEmUtc,
+            podeRefazer = true,
+            versao = "v0.19.37"
+        });
+    }
+
+    [HttpPost("minha-conta/onboarding-paciente/concluir")]
+    public async Task<IActionResult> ConcluirOnboardingPaciente(CancellationToken ct)
+    {
+        var usuario = await db.Users.FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+        if (usuario.TipoUsuario != HealthPlatform.Domain.Enums.TipoUsuario.Paciente)
+            return BadRequest(new { message = "Onboarding disponivel apenas para pacientes." });
+
+        if (!usuario.OnboardingPacienteConcluidoEmUtc.HasValue)
+            usuario.OnboardingPacienteConcluidoEmUtc = DateTime.UtcNow;
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "PATIENT_ONBOARDING_COMPLETE",
+            Entidade = "MinhaConta",
+            EntidadeId = usuario.Id.ToString(),
+            DadosNovosJson = JsonSerializer.Serialize(new { usuario.OnboardingPacienteConcluidoEmUtc, Versao = "v0.19.37" }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new { concluido = true, concluidoEmUtc = usuario.OnboardingPacienteConcluidoEmUtc });
     }
 
 }

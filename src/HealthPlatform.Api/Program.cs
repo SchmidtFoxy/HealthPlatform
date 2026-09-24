@@ -19,7 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.36" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.37" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -209,7 +209,7 @@ app.UseStaticFiles();
 
 app.UseAuthentication();
 
-// v0.19.36 — a impersonacao administrativa e deliberadamente somente leitura.
+// v0.19.37 — a impersonacao administrativa e deliberadamente somente leitura.
 // Isso evita que uma acao real seja atribuida ao profissional simulado no AuditLog.
 app.Use(async (context, next) =>
 {

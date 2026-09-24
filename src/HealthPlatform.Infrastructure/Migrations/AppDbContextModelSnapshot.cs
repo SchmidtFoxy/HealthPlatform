@@ -2977,6 +2977,9 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<bool>("NotificarMensagens")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("OnboardingPacienteConcluidoEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
