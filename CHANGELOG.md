@@ -1,3 +1,15 @@
+# v0.19.27 — Session & Authorization Hardening
+
+- Corrige a causa estrutural do `403` no chat do paciente: o controller agora usa `AuthenticatedOnly`, com `PatientOnly` nas rotas `/me` e policy profissional nas rotas por paciente.
+- Adiciona isolamento de conversa: profissional só acessa o chat quando é o profissional resolvido para aquele paciente.
+- JWT passa a carregar `security_stamp`; a autenticação valida usuário ativo, organização e stamp em toda requisição autenticada.
+- `POST /api/auth/logout` rotaciona o `SecurityStamp`, revogando imediatamente os tokens emitidos anteriormente.
+- `POST /api/auth/renovar` renova a sessão enquanto o token atual permanece válido; o frontend agenda renovação cinco minutos antes da expiração.
+- 401 e 403 passam a retornar JSON padronizado; o frontend desloga apenas em 401 e preserva a sessão em 403.
+- Lockout de 5 falhas / 15 minutos é ativado também para contas antigas no login, e novas contas passam a nascer com `LockoutEnabled=true`.
+- Mantém desenvolvimento/testes isolados de produção/VPS.
+- Versão pública: `0.19.27`.
+
 # v0.19.26 — Public Access & Password Recovery
 
 - Adiciona fluxo público de recuperação de senha em `/recuperar-senha` e redefinição em `/redefinir-senha`.
@@ -2312,3 +2324,10 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - `EmailPrincipal`, `Confirmado` e `PodeSolicitarConfirmacao` pertencem ao contrato `EmailAccountStatusResponse`, não ao texto do `ContaEmailController`.
 - O gate agora valida controller e contrato separadamente, de acordo com a responsabilidade real de cada arquivo.
 - Nenhuma alteração funcional, de schema ou migration; versão funcional permanece `0.19.25`.
+
+
+### v0.19.27-r1 — sincronização de versão no TESTAR
+- Corrige falso negativo já no gate `[1/600]`: a API anunciava corretamente `0.19.27`, mas diversos gates históricos ainda exigiam `0.19.26`.
+- Atualiza todas as comparações da versão pública corrente no `TESTAR.ps1` para `0.19.27`.
+- Preserva as validações funcionais históricas e a versão funcional `0.19.27`.
+- Nenhuma alteração de schema, migration ou comportamento de produção.

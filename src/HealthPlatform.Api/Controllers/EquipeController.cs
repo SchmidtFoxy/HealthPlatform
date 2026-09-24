@@ -152,6 +152,7 @@ public sealed class EquipeController(
             UserName = email,
             Email = email,
             EmailConfirmed = true,
+            LockoutEnabled = true,
             TipoUsuario = tipo,
             Ativo = true
         };

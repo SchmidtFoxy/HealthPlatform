@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Api.Services.Email;
@@ -18,7 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.26" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.27" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -81,6 +82,55 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwtOptions.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
             ClockSkew = TimeSpan.FromSeconds(30)
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<Usuario>>();
+                var userIdValue = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier)
+                    ?? context.Principal?.FindFirstValue("sub");
+                var organizationValue = context.Principal?.FindFirstValue("organization_id");
+                var stamp = context.Principal?.FindFirstValue("security_stamp");
+
+                if (!Guid.TryParse(userIdValue, out var userId))
+                {
+                    context.Fail("Sessao invalida.");
+                    return;
+                }
+
+                var usuario = await userManager.FindByIdAsync(userId.ToString());
+                if (usuario is null || !usuario.Ativo ||
+                    !Guid.TryParse(organizationValue, out var organizationId) ||
+                    usuario.OrganizacaoId != organizationId ||
+                    string.IsNullOrWhiteSpace(stamp) ||
+                    !string.Equals(usuario.SecurityStamp, stamp, StringComparison.Ordinal))
+                {
+                    context.Fail("Sessao expirada ou revogada.");
+                }
+            },
+            OnChallenge = async context =>
+            {
+                if (context.Response.HasStarted) return;
+                context.HandleResponse();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json; charset=utf-8";
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Sua sessao expirou ou nao e valida. Entre novamente."
+                });
+            },
+            OnForbidden = async context =>
+            {
+                if (context.Response.HasStarted) return;
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                context.Response.ContentType = "application/json; charset=utf-8";
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Voce nao tem permissao para executar esta acao."
+                });
+            }
         };
     });
 

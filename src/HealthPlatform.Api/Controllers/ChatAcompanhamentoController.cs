@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HealthPlatform.Api.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize(Policy = "AuthenticatedOnly")]
 [Route("api/chat")]
 public sealed class ChatAcompanhamentoController(
     AppDbContext db,
@@ -20,6 +20,7 @@ public sealed class ChatAcompanhamentoController(
         "Geral", "Nutricao", "Treino", "Exames", "Medicamentos", "Recuperacao"
     };
 
+    [Authorize(Policy = "PatientOnly")]
     [HttpGet("me")]
     public async Task<IActionResult> MinhaConversa(CancellationToken ct)
     {
@@ -41,6 +42,7 @@ public sealed class ChatAcompanhamentoController(
         });
     }
 
+    [Authorize(Policy = "PatientOnly")]
     [HttpPost("me/mensagens")]
     public async Task<IActionResult> EnviarComoPaciente(ChatMensagemRequest request, CancellationToken ct)
     {
@@ -54,6 +56,7 @@ public sealed class ChatAcompanhamentoController(
         return await CriarMensagem(paciente, profissional, "Paciente", request, profissional.UsuarioId, ct);
     }
 
+    [Authorize]
     [HttpGet("pacientes/{pacienteId:guid}")]
     public async Task<IActionResult> ConversaProfissional(Guid pacienteId, CancellationToken ct)
     {
@@ -63,6 +66,7 @@ public sealed class ChatAcompanhamentoController(
         var paciente = await db.Pacientes.AsNoTracking().FirstOrDefaultAsync(x =>
             x.Id == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
         if (paciente is null) return NotFound();
+        if (!await PodeAcompanharPaciente(profissional.Id, paciente.Id, ct)) return Forbid();
 
         var mensagens = await ListarMensagens(paciente.Id, profissional.Id, "Profissional", ct);
         return Ok(new
@@ -75,6 +79,7 @@ public sealed class ChatAcompanhamentoController(
         });
     }
 
+    [Authorize]
     [HttpPost("pacientes/{pacienteId:guid}/mensagens")]
     public async Task<IActionResult> EnviarComoProfissional(Guid pacienteId, ChatMensagemRequest request, CancellationToken ct)
     {
@@ -84,6 +89,7 @@ public sealed class ChatAcompanhamentoController(
         var paciente = await db.Pacientes.FirstOrDefaultAsync(x =>
             x.Id == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
         if (paciente is null) return NotFound();
+        if (!await PodeAcompanharPaciente(profissional.Id, paciente.Id, ct)) return Forbid();
 
         return await CriarMensagem(paciente, profissional, "Profissional", request, paciente.UsuarioId, ct);
     }
@@ -168,6 +174,15 @@ public sealed class ChatAcompanhamentoController(
             contextoRotulo = RotuloContexto(ExtrairContexto(x.Canal)),
             mensagem = x.Observacoes ?? string.Empty
         }).ToArray();
+    }
+
+
+    private async Task<bool> PodeAcompanharPaciente(Guid profissionalId, Guid pacienteId, CancellationToken ct)
+    {
+        // O profissional do chat e o mesmo resolvido para o paciente. Isso impede que
+        // outro profissional da mesma organizacao use apenas o GUID para ler a conversa.
+        var responsavel = await ResolverProfissionalDoPaciente(pacienteId, ct);
+        return responsavel?.Id == profissionalId;
     }
 
     private async Task<Profissional?> MeuProfissional(CancellationToken ct) =>

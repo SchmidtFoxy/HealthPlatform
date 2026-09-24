@@ -1,3 +1,11 @@
+## v0.19.27 — Session & Authorization Hardening
+
+- Corrige o 403 do chat do paciente separando corretamente policies de paciente e profissional.
+- Adiciona renovação de JWT enquanto a sessão está ativa, logout com revogação por SecurityStamp e tratamento consistente de 401/403.
+- Ativa lockout de 5 tentativas / 15 minutos também para contas legadas ao autenticar.
+- Restringe a conversa profissional ao profissional responsável resolvido para o paciente, impedindo leitura por GUID de outro profissional da organização.
+- Mantém testes de desenvolvimento exclusivamente locais, sem atingir a VPS de produção.
+
 ## v0.19.26 — Public Access & Password Recovery
 
 - Fluxo público de recuperação de senha com resposta anti-enumeração.

@@ -38,6 +38,7 @@ public static class DbSeeder
                 UserName = adminEmail,
                 Email = adminEmail,
                 EmailConfirmed = true,
+                LockoutEnabled = true,
                 TipoUsuario = TipoUsuario.Admin
             };
 

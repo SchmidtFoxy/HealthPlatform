@@ -157,11 +157,16 @@ Usuário não autenticado consegue solicitar recuperação e redefinir a senha p
 - revisar 401/403;
 - corrigir chat 403;
 - expiração de sessão;
-- renovação de autenticação;
-- logout consistente;
-- bloqueio temporário após muitas tentativas inválidas;
+- renovação de autenticação enquanto o JWT atual ainda é válido;
+- logout consistente com revogação imediata dos JWTs anteriores via `SecurityStamp`;
+- bloqueio temporário após 5 tentativas inválidas por 15 minutos;
 - revisão de permissões de paciente, profissional e administrador;
-- garantir isolamento de dados entre pacientes.
+- garantir isolamento de dados entre pacientes e entre profissionais no chat.
+
+### Gate
+Paciente acessa o próprio chat sem 403; profissional continua restrito às rotas profissionais; outro profissional da mesma organização não consegue abrir a conversa usando apenas o GUID; 401 encerra a sessão local, 403 informa falta de permissão sem deslogar; logout revoga o token anterior e a sessão ativa pode ser renovada antes da expiração.
+
+**Status:** implementado na v0.19.27; validar localmente com PREPARAR → RODAR → TESTAR antes de qualquer deploy.
 
 ## v0.19.28 — Settings & User Profile
 
@@ -877,3 +882,10 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 
 ### v0.19.24-r5
 - Hotfix do gate de comparação calórica de macros.
+
+### Revisão v0.19.27-r1 — sincronização global de versão no smoke test
+
+- Corrige os gates históricos do `TESTAR.ps1` que ainda comparavam `VERSION.txt`/health com `0.19.26` após a evolução funcional para `0.19.27`.
+- Todos os gates que validam a versão pública corrente agora esperam `0.19.27`; marcadores históricos de funcionalidades antigas continuam preservados.
+- Não altera funcionalidade, schema, migration ou contrato da API; versão funcional permanece `0.19.27`.
+- Mantém `TESTAR.ps1` em UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.

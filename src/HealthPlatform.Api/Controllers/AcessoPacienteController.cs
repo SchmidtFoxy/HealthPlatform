@@ -89,6 +89,7 @@ public sealed class AcessoPacienteController(
                 UserName = email,
                 Email = email,
                 EmailConfirmed = false,
+                LockoutEnabled = true,
                 TipoUsuario = TipoUsuario.Paciente,
                 Ativo = false
             };

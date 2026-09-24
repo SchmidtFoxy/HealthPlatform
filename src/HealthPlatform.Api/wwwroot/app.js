@@ -43,7 +43,7 @@ function hpPatientFeedbackState(kind='empty',title='Nada por aqui',message='',ac
   const icon=kind==='error'?'!':kind==='success'?'✓':'•';
   return `<section class="patient-feedback-state ${esc(kind)}" role="${kind==='error'?'alert':'status'}"><span class="patient-feedback-icon" aria-hidden="true">${icon}</span><div><strong>${esc(title)}</strong>${message?`<p>${esc(message)}</p>`:''}${actionLabel?`<button type="button" class="secondary patient-feedback-action">${esc(actionLabel)}</button>`:''}</div></section>`;
 }
-async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout();throw new Error('Sua sessão expirou.')}if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
+async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout({notifyServer:false});throw new Error(d?.message||'Sua sessão expirou.')}if(r.status===403)throw new Error(d?.message||'Você não tem permissão para executar esta ação.');if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
 async function hpUploadFile(path,file){
   const form=new FormData();form.append('file',file);
   const headers={};if(state.token)headers.Authorization=`Bearer ${state.token}`;
@@ -124,15 +124,49 @@ function showApp(){
   $$('.admin-only').forEach(x=>x.classList.toggle('hidden',u.tipoUsuario!=='Admin'));
   navigate(state.view);
 }
-function logout(){
+let hpSessionRenewTimer=null;
+function hpClearSessionRenewal(){if(hpSessionRenewTimer){clearTimeout(hpSessionRenewTimer);hpSessionRenewTimer=null}}
+function hpStoreSession(d){
+  state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario};state.expiresAtUtc=d.expiresAtUtc;
+  localStorage.setItem('hp_token',state.token);
+  localStorage.setItem('hp_user',JSON.stringify(state.user));
+  localStorage.setItem('hp_expires_at',state.expiresAtUtc||'');
+  hpScheduleSessionRenewal();
+}
+async function hpRenewSession(){
+  if(!state.token)return;
+  try{const d=await api('/api/auth/renovar',{method:'POST'});hpStoreSession(d)}
+  catch(e){console.warn('Sessão não pôde ser renovada:',e?.message||e)}
+}
+function hpScheduleSessionRenewal(){
+  hpClearSessionRenewal();
+  const expires=Date.parse(state.expiresAtUtc||localStorage.getItem('hp_expires_at')||'');
+  if(!Number.isFinite(expires)||!state.token)return;
+  const delay=Math.max(30000,expires-Date.now()-(5*60*1000));
+  hpSessionRenewTimer=setTimeout(()=>hpRenewSession(),delay);
+}
+function logout(options={}){
+  const token=state.token;
+  hpClearSessionRenewal();
+  if(options.notifyServer!==false&&token){
+    fetch('/api/auth/logout',{method:'POST',headers:{Authorization:`Bearer ${token}`}}).catch(()=>{});
+  }
   localStorage.removeItem('hp_token');
   localStorage.removeItem('hp_user');
-  state.token=null;state.user=null;
+  localStorage.removeItem('hp_expires_at');
+  state.token=null;state.user=null;state.expiresAtUtc=null;
   $('#appView').classList.add('hidden');
   $('#patientAppView')?.classList.add('hidden');
   $('#activationView')?.classList.add('hidden');
   $('#loginView').classList.remove('hidden');
 }
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&state.token){
+    state.expiresAtUtc=state.expiresAtUtc||localStorage.getItem('hp_expires_at');
+    const expires=Date.parse(state.expiresAtUtc||'');
+    if(Number.isFinite(expires)&&expires-Date.now()<5*60*1000)hpRenewSession();else hpScheduleSessionRenewal();
+  }
+});
 $('#loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const b=$('#loginButton'),msg=$('#loginMessage');
@@ -141,8 +175,7 @@ $('#loginForm').addEventListener('submit',async e=>{
   b.disabled=true;b.textContent='Entrando...';
   try{
     const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:$('#email').value.trim(),senha:$('#senha').value})});
-    state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario};
-    localStorage.setItem('hp_token',state.token);localStorage.setItem('hp_user',JSON.stringify(state.user));
+    hpStoreSession(d);
     showApp();
     hpMaybeOpenThemeChoice();
   }catch(x){
@@ -158,6 +191,8 @@ $('#loginForm').addEventListener('submit',async e=>{
 });
 // ===== v0.19.26 — Public Access & Password Recovery =====
 const HP_PUBLIC_ACCESS_PASSWORD_RECOVERY='v0.19.26';
+const HP_SESSION_AUTHORIZATION_HARDENING='v0.19.27';
+state.expiresAtUtc=localStorage.getItem('hp_expires_at')||null;
 const hpPublicViews=['loginView','forgotPasswordView','resetPasswordView','activationView'];
 function hpShowPublicView(id){
   hpPublicViews.forEach(viewId=>document.getElementById(viewId)?.classList.toggle('hidden',viewId!==id));
@@ -2412,7 +2447,7 @@ function openEditPatientForm(p){
 
 function clinical(label,value){return `<div class="clinical-field"><small>${label}</small><p>${esc(value||'—')}</p></div>`}function diaryIcon(t){return ({sono:'☾',hidratacao:'💧',alimentacao:'◉',treino:'↗',sintoma:'!',humor:'☺'}[String(t||'').toLowerCase()]||'•')}
 async function loadAgenda(){const iso=todayISO(state.selectedDate),d=await api(`/api/agenda?data=${iso}&offsetMinutos=${state.offset}`),label=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(state.selectedDate);content.innerHTML=`<div class="agenda-header"><div><h3>Agenda</h3><p>${d.total} atendimento(s) neste dia.</p></div><div class="date-nav"><button class="secondary" id="prevDay">←</button><div class="date-title">${label}</div><button class="secondary" id="nextDay">→</button></div></div><div class="stats-grid agenda-stats">${stat('Total',d.total,'consultas')}${stat('Agendadas',d.agendadas,'aguardando')}${stat('Confirmadas',d.confirmadas,'confirmadas')}${stat('Realizadas',d.realizadas,'concluídas')}${stat('Faltas',d.faltas,'não compareceu')}</div><div class="agenda-list">${d.consultas.length?d.consultas.map(c=>`<div class="agenda-item"><div class="agenda-time">${fmtTime(c.dataHoraLocal)}</div><div class="agenda-bar"></div><div class="agenda-person clickable" data-patient="${c.pacienteId}"><strong>${esc(c.pacienteNome)}</strong><small>${esc(c.motivo||'Consulta')} • ${esc(c.telefone||c.email||'sem contato')}</small></div><div class="agenda-actions"><span class="pill ${esc(c.status)}">${esc(c.status)}</span>${c.status==='Agendada'?`<button class="secondary confirm" data-id="${c.id}">Confirmar</button>`:''}</div></div>`).join(''):'<div class="card empty">Nenhuma consulta neste dia.</div>'}</div>`;$('#prevDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()-1);loadAgenda()};$('#nextDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()+1);loadAgenda()};$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));$$('.confirm').forEach(x=>x.onclick=async()=>{try{await api(`/api/agenda/consultas/${x.dataset.id}/status?offsetMinutos=${state.offset}`,{method:'PATCH',body:JSON.stringify({status:'Confirmada'})});toast('Consulta confirmada.');loadAgenda()}catch(e){toast(e.message,true)}})}
-if(state.token){showApp();hpMaybeOpenThemeChoice();}
+if(state.token){hpScheduleSessionRenewal();showApp();hpMaybeOpenThemeChoice();}
 
 /* v0.3.27 - edição clínica + agenda operacional */
 const __renderPatientTab_v024 = renderPatientTab;
@@ -8791,7 +8826,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.26';
+const HP_MVP_VERSION='0.19.27';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

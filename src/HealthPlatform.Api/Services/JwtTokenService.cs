@@ -20,7 +20,8 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenSer
             new(JwtRegisteredClaimNames.Email, usuario.Email ?? string.Empty),
             new(ClaimTypes.Name, usuario.Nome),
             new("organization_id", usuario.OrganizacaoId.ToString()),
-            new("user_type", usuario.TipoUsuario.ToString())
+            new("user_type", usuario.TipoUsuario.ToString()),
+            new("security_stamp", usuario.SecurityStamp ?? string.Empty)
         };
 
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
