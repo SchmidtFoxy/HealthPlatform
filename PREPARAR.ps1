@@ -2,6 +2,37 @@
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+
+# Hotfix v0.19.24-r3: pacotes extraidos por sobreposicao no Windows nao
+# removem arquivos que deixaram de existir no ZIP. Como Render foi aposentado,
+# limpamos explicitamente apenas os artefatos legados conhecidos antes do build.
+function Remove-LegacyRenderArtifacts {
+    $legacy = @(
+        "render.yaml",
+        "DEPLOY-RENDER-MVP.md",
+        "TESTAR-RENDER.ps1",
+        "POPULAR-REMOTO.ps1",
+        "POPULAR-REMOTO-RICO.ps1"
+    )
+
+    $removed = @()
+    foreach ($relative in $legacy) {
+        $path = Join-Path $root $relative
+        if (Test-Path -LiteralPath $path) {
+            Remove-Item -LiteralPath $path -Force
+            $removed += $relative
+        }
+    }
+
+    if ($removed.Count -gt 0) {
+        Write-Host "[Limpeza] Artefatos legados do Render removidos: $($removed -join ', ')" -ForegroundColor Yellow
+    } else {
+        Write-Host "[Limpeza] Nenhum artefato legado do Render encontrado." -ForegroundColor DarkGray
+    }
+}
+
+Remove-LegacyRenderArtifacts
+
 # Hotfix v0.9.7-r1: o PREPARAR precisa conseguir recompilar mesmo quando uma
 # instancia local anterior da API ainda esta aberta. O processo mantem as DLLs
 # de Domain/Infrastructure bloqueadas no Windows e faz o dotnet build falhar

@@ -1,3 +1,47 @@
+## v0.19.24-r5 — Hotfix Macro Calorie Gate
+
+- Corrige falso negativo do `TESTAR.ps1` no gate de comparação energética dos macros.
+- O teste agora valida o texto realmente renderizado pela interface (`Energia dos macros vs. meta ativa:`), além da fórmula de delta e da classe `macro-target-balance`.
+- Nenhuma regra metabólica ou funcionalidade foi alterada; permanece a versão funcional `0.19.24`.
+
+## v0.19.24-r4 — Hotfix seeds demonstrativos opcionais
+
+- Remove a dependencia obrigatoria do `TESTAR.ps1` em `POPULAR-ANA-RIBEIRO.ps1`, arquivo demonstrativo que ja nao faz parte do pacote limpo.
+- Mantem as validacoes do Coach Diario, schema, versao e funcionalidades reais independentes de seeds de demonstracao.
+- Se o seed Ana Ribeiro existir manualmente, suas validacoes legadas ainda podem rodar; se estiver ausente, o gate registra que o seed foi aposentado e segue normalmente.
+- Consolida a regra de arquitetura: `PREPARAR.ps1` e `TESTAR.ps1` nao podem depender de populadores/demo removidos do produto.
+- Mantem `VERSION.txt` em `0.19.24`; `-r4` identifica apenas revisao corretiva do pacote.
+
+## v0.19.24-r3 — Hotfix limpeza de sobreposição / Render legado
+
+- `PREPARAR.ps1` agora remove explicitamente artefatos legados do Render que podem sobreviver quando um ZIP novo é extraído por cima de uma pasta antiga no Windows.
+- A limpeza é restrita aos arquivos conhecidos: `render.yaml`, `DEPLOY-RENDER-MVP.md`, `TESTAR-RENDER.ps1`, `POPULAR-REMOTO.ps1` e `POPULAR-REMOTO-RICO.ps1`.
+- `TESTAR.ps1` valida que nenhum desses artefatos permaneceu e orienta executar `PREPARAR.ps1` caso uma sobreposição antiga seja detectada.
+- Mantida a regra: testes de desenvolvimento somente em `localhost`/`127.0.0.1`; produção na VPS não é ambiente de teste funcional.
+
+﻿
+## v0.19.24-r2 — Hotfix VPS / isolamento de testes
+- Remove dependencia dos gates antigos de Render (`POPULAR-REMOTO*`, `TESTAR-RENDER`, `DEPLOY-RENDER-MVP`, `render.yaml`).
+- `TESTAR.ps1` agora bloqueia explicitamente BaseUrl que nao seja localhost/127.0.0.1.
+- Gates verificam que nenhuma chamada HTTP de desenvolvimento aponta para AESYN em producao/VPS.
+- Deploy atual documentado como Docker + VPS + Nginx/HTTPS.
+
+## v0.19.24 — Metabolic Planning UX & Safety
+
+
+## v0.19.24-r1 — Hotfix TESTAR / pacote limpo
+
+- Remove dependências residuais do `TESTAR.ps1` em `POPULAR.ps1`, arquivo legado já ausente do projeto limpo.
+- Mantém `VERSION.txt` em `0.19.24`; `-r1` identifica somente a revisão corretiva do pacote.
+- Preserva os gates de follow-up verificando os assets funcionais atuais, sem exigir seed demo removido.
+
+- Conecta visualmente TMB, GET, objetivo, meta calórica e distribuição de macros.
+- Exibe a meta calórica ativa e delta dos macros em kcal e percentual.
+- Adiciona conciliação assistida por macro residual (carboidrato, lipídio ou proteína), mantendo edição manual.
+- Metas abaixo da TMB ou com ritmo >1% do peso/semana exigem confirmação profissional explícita; alvo abaixo de 1200 kcal permanece bloqueado para aplicação automática.
+- Adiciona ajuda do fator de atividade e gate com cenários matemáticos conhecidos (84 kg, 171 cm, 27 anos).
+- Versão pública: `0.19.24`.
+
 ## v0.19.23 — Passive Monitoring Foundation
 
 - Adiciona pipeline normalizado de monitoramento passivo usando a trilha já existente de registros do paciente, sem migration nova.

@@ -1,3 +1,12 @@
+﻿## v0.19.24 — Metabolic Planning UX & Safety
+
+- Clarifica o fluxo TMB → GET → objetivo → meta calórica → macros.
+- Mostra a meta calórica ativa do plano e compara macros em kcal e percentual.
+- Adiciona ajuste assistido por macro residual, preservando decisão e edição profissional.
+- Exige confirmação explícita para aplicar metas abaixo da TMB e/ou com ritmo agressivo; valores extremamente baixos continuam bloqueados.
+- Acrescenta ajuda contextual do fator de atividade e testes numéricos conhecidos.
+- ROADMAP.md permanece como fonte de direção funcional e não deve ser reduzido ao concluir versões.
+
 ## v0.19.23 — Passive Monitoring Foundation
 
 Cria a camada normalizada para receber sinais de Apple Health, Health Connect e Garmin sem acoplar o produto a um provedor específico. A fundação aceita passos, sono, frequência cardíaca de repouso, HRV, energia ativa, distância e minutos ativos, com deduplicação por origem, resumo longitudinal e visualização para paciente/profissional. Os conectores OAuth/nativos continuam como adaptadores futuros; nenhum dado passivo gera diagnóstico ou mudança automática de conduta.
@@ -64,7 +73,7 @@ O perfil profissional do paciente passa a oferecer galeria de evolução visual,
 
 ## v0.19.3 — Patient Workout Access Hub
 
-- HTTPS preparado para reverse proxy Nginx/Render com `X-Forwarded-Proto`.
+- HTTPS preparado para reverse proxy Nginx na VPS com `X-Forwarded-Proto`.
 - HSTS habilitado fora de Development.
 - Guia operacional em `PRODUCAO-HTTPS.md`.
 - Sem alteração de schema.
@@ -162,3 +171,8 @@ Programas profissionais deixam de depender do localStorage e passam a ser persis
 
 ## v0.18.11 — Program Assignment & Publish
 O catálogo profissional de programas passa a ter um fluxo de publicação para pacientes. A partir do preview do programa, o profissional escolhe o paciente, revisa início/opções e publica. Cada fase do programa é materializada em um `PlanoTreino` e uma `FaseTreino`, usando os treinos-modelo como fonte, sem alterar o programa mestre. Não há migration nova; a versão reutiliza o schema 39/39.
+
+
+## Roadmap do produto
+
+A direção de evolução, pendências protegidas e gates de produto estão documentados em [`ROADMAP.md`](ROADMAP.md). Antes de iniciar uma nova versão funcional, confira esse arquivo para evitar perda de escopo ou ideias.
