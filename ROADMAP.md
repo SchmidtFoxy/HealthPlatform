@@ -286,6 +286,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - anexar/indexar arquivo no chat com o profissional;
 - permissões e auditoria de download/remoção.
 
+**Status:** implementado na v0.19.34. A biblioteca de arquivos passa a existir tanto no perfil profissional quanto no portal do paciente, com upload mobile de PDF/JPEG/PNG/WebP, câmera/galeria, limite e validação por assinatura do arquivo, categoria, descrição, tags, pesquisa, download autenticado, remoção lógica e auditoria de upload/download/remoção. O arquivo pode ser referenciado no chat por uma mensagem contextual sem tornar o binário público. Nesta fase os binários e o índice ficam em `App_Data/patient-files`, seguindo a mesma estratégia local protegida já usada pelas fotos de evolução; produção deve manter esse diretório em volume persistente. Sem migration nova.
+
 ## v0.19.35 — Chat Reliability & Context Foundation
 
 - corrigir definitivamente autorização do chat;

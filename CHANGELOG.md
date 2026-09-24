@@ -1,3 +1,15 @@
+# v0.19.34 — Patient Files Mobile 2.0
+
+- Cria biblioteca protegida de arquivos do paciente no acesso profissional e no portal do paciente.
+- Upload mobile de PDF, JPEG, PNG e WebP, com suporte a câmera/galeria/arquivos e limite de 15 MB.
+- Valida MIME e assinatura mágica antes de persistir o binário.
+- Adiciona categoria, descrição, tags, data, pesquisa e filtros.
+- Download passa por endpoint autenticado; os arquivos não são publicados por StaticFiles.
+- Remoção é lógica no índice e upload/download/remoção geram AuditLog.
+- Arquivos podem ser indexados no chat por referência contextual.
+- Persistência em `App_Data/patient-files`; sem migration nova. Em produção, o diretório deve estar em volume persistente.
+- Atualiza ROADMAP e smoke gate para 2020 validações.
+
 # v0.19.33-r1 — Multi-Plan Gate Semantic Sync
 - Corrige falso negativo no gate `[1998/2006]`: a UI informa `sem plano, ter um ou vários planos simultâneos`, enquanto o smoke test ainda exigia literalmente `zero, um ou vários`.
 - Sincroniza o gate com a implementação real sem reintroduzir texto artificial na interface.

@@ -1,3 +1,7 @@
+## v0.19.34 — Patient Files Mobile 2.0
+
+A biblioteca de arquivos do paciente agora aceita exames, laudos, fotos e PDFs tanto pelo profissional quanto pelo próprio paciente. O upload foi pensado para celular (câmera, galeria ou seletor de arquivos), com metadados pesquisáveis, download autenticado, remoção auditada e referência direta no chat. Os binários ficam em `App_Data/patient-files`; na VPS, mantenha esse diretório em volume persistente.
+
 ## v0.19.33-r1 — Workout CRUD & Multi-Plan Completion
 
 Fecha o CRUD profissional de treino e o suporte explícito a múltiplos planos por paciente. Planos podem ser criados, editados, duplicados, arquivados, reativados ou retirados da rotina ativa sem apagar histórico. O portal do paciente passa a exibir todos os planos ativos e permite iniciar livremente qualquer sessão publicada.
