@@ -1,3 +1,13 @@
+# v0.19.32 — Professional Nutrition Access Completion
+
+- Completa o acesso profissional aos recursos nutricionais diretamente na área do paciente.
+- Corrige o Nutrition Builder para **editar** planos existentes via `PUT`, em vez de sempre criar um novo plano.
+- Mantém criação de dietas, refeições, metas nutricionais e substituições/equivalências no mesmo fluxo.
+- Adiciona gerenciamento visual do catálogo de alimentos: criar, editar, desativar e reativar.
+- Expõe duplicação/progressão, modelos reutilizáveis, atribuição, arquivamento sem apagar histórico e revisão/publicação.
+- Mantém versionamento/histórico e não cria migration nova.
+- Atualiza `ROADMAP.md` e amplia o smoke gate para **1994** validações.
+
 # v0.19.31 — Athlete Data Hub
 
 - Cria a área dedicada **Dados para Atletas**, separando métricas técnicas da Home diária.

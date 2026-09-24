@@ -1,3 +1,11 @@
+## v0.19.32 — Professional Nutrition Access Completion
+
+A área profissional de Nutrição agora expõe o fluxo completo do que já existia no backend: criar e editar dietas, refeições, alimentos, substituições/equivalências, metas, modelos, atribuição, duplicação/progressão, arquivamento com preservação de histórico e revisão/publicação.
+
+O catálogo de alimentos também pode ser mantido visualmente sem depender de Swagger.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. Desenvolvimento continua sem executar testes funcionais contra a VPS de produção.
+
 ## v0.19.31 — Athlete Data Hub
 
 A área do paciente agora separa a rotina diária das métricas técnicas. Use **Dados para Atletas** para consultar performance, recuperação, corpo, consistência e tendências sem sobrecarregar a Home.

@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.31 — Athlete Data Hub
+> **Versão-base deste roadmap:** v0.19.32 — Professional Nutrition Access Completion
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -252,6 +252,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - metas;
 - atribuição ao paciente;
 - revisão/publicação.
+
+**Status:** implementado na v0.19.32. O acesso profissional de Nutrição agora expõe criação e edição real de dietas, refeições, substituições/equivalências, metas nutricionais, catálogo CRUD de alimentos, modelos reutilizáveis, atribuição, duplicação/progressão, arquivamento sem apagar histórico e fluxo de revisão/publicação. Sem migration nova.
 
 ## v0.19.33 — Workout CRUD & Multi-Plan Completion
 

@@ -8896,7 +8896,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.31';
+const HP_MVP_VERSION='0.19.32';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10338,3 +10338,96 @@ const HP_APP_IDENTITY_THEME_COMPLETION='v0.19.29';
     window.setTimeout(()=>splash.classList.add('is-hidden'),standalone?420:0);
   },{once:true});
 })();
+
+
+// ===== v0.19.32 — Professional Nutrition Access Completion =====
+const HP_PRO_NUTRITION_ACCESS='v0.19.32';
+
+function hpNutritionStatusAction(plan, patient){
+  const active=String(plan.status||'').toLowerCase()==='ativo';
+  const label=active?'Arquivar':'Publicar';
+  const next=active?'Inativo':'Ativo';
+  return `<button class="ghost nutrition-status-v01932" data-plan-id="${plan.id}" data-next-status="${next}">${label}</button>`;
+}
+
+async function hpOpenFoodCatalogV01932(){
+  const box=$('#clinicalActionContent');
+  $('#clinicalActionModal').classList.add('nutrition-modal-open');
+  $('#clinicalActionModal').classList.remove('hidden');
+  const render=async()=>{
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRIÇÃO • CATÁLOGO</span><h2>Alimentos</h2><p>Cadastre e mantenha a base nutricional usada pelo Nutrition Builder.</p></div><div class="empty">Carregando alimentos...</div>`;
+    try{
+      const foods=await api('/api/alimentos?incluirInativos=true');
+      box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRIÇÃO • CATÁLOGO</span><h2>Alimentos</h2><p>${foods.length} alimento(s) cadastrados.</p></div>
+      <div class="diet-library-toolbar"><input id="foodCatalogSearchV01932" class="search-input" placeholder="Buscar alimento ou categoria"><button class="primary" id="foodCatalogNewV01932">+ Alimento</button></div>
+      <div id="foodCatalogListV01932" class="diet-library-grid"></div><div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+      $('[data-close-clinical-form]').onclick=closeClinicalAction;
+      const draw=()=>{const q=String($('#foodCatalogSearchV01932').value||'').trim().toLowerCase();const filtered=foods.filter(x=>!q||`${x.nome||''} ${x.categoria||''}`.toLowerCase().includes(q));$('#foodCatalogListV01932').innerHTML=filtered.length?filtered.map(x=>`<article class="diet-library-card ${x.ativo?'':'is-inactive'}" data-food-v01932="${x.id}"><div class="workout-library-card-head"><div><span class="eyebrow">${esc(x.categoria||'SEM CATEGORIA')}</span><h4>${esc(x.nome)}</h4></div><span class="pill ${x.ativo?'Ativa':'Cancelada'}">${x.ativo?'Ativo':'Inativo'}</span></div><p>${num(x.caloriasPor100g,0)} kcal • P ${num(x.proteinasPor100g)}g • C ${num(x.carboidratosPor100g)}g • G ${num(x.gordurasPor100g)}g • Fibra ${num(x.fibrasPor100g)}g / 100g</p><div class="workout-library-actions"><button class="secondary food-edit-v01932">Editar</button><button class="ghost food-toggle-v01932">${x.ativo?'Desativar':'Reativar'}</button></div></article>`).join(''):'<div class="empty">Nenhum alimento encontrado.</div>';
+        $$('.food-edit-v01932').forEach(b=>b.onclick=()=>hpOpenFoodEditorV01932(foods.find(x=>x.id===b.closest('[data-food-v01932]').dataset.foodV01932),render));
+        $$('.food-toggle-v01932').forEach(b=>b.onclick=async()=>{const food=foods.find(x=>x.id===b.closest('[data-food-v01932]').dataset.foodV01932);await api(`/api/alimentos/${food.id}${food.ativo?'':'/reativar'}`,{method:food.ativo?'DELETE':'POST'});toast(food.ativo?'Alimento desativado.':'Alimento reativado.');await render()});
+      };
+      $('#foodCatalogSearchV01932').oninput=draw;$('#foodCatalogNewV01932').onclick=()=>hpOpenFoodEditorV01932(null,render);draw();
+    }catch(e){box.innerHTML=`<div class="card empty">${esc(e.message)}</div>`}
+  };
+  await render();
+}
+
+function hpOpenFoodEditorV01932(food,back){
+  const box=$('#clinicalActionContent'),editing=!!food;
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="foodBackV01932">← Catálogo</button><span class="eyebrow">ALIMENTO</span><h2>${editing?'Editar alimento':'Novo alimento'}</h2></div>
+  <form id="foodFormV01932" class="clinical-form"><div class="form-grid">${field('Nome','nome','text',`value="${esc(food?.nome||'')}" required`)}${field('Categoria','categoria','text',`value="${esc(food?.categoria||'')}"`)}${field('Calorias / 100g','calorias','number',`step="0.1" min="0" value="${food?.caloriasPor100g??''}" required`)}${field('Proteína / 100g','proteina','number',`step="0.1" min="0" value="${food?.proteinasPor100g??''}" required`)}${field('Carboidrato / 100g','carboidrato','number',`step="0.1" min="0" value="${food?.carboidratosPor100g??''}" required`)}${field('Gordura / 100g','gordura','number',`step="0.1" min="0" value="${food?.gordurasPor100g??''}" required`)}${field('Fibra / 100g','fibra','number',`step="0.1" min="0" value="${food?.fibrasPor100g??''}" required`)}</div><div class="form-actions"><button type="button" class="secondary" id="foodCancelV01932">Cancelar</button><button class="primary" type="submit">Salvar alimento</button></div></form>`;
+  $('#foodBackV01932').onclick=back;$('#foodCancelV01932').onclick=back;
+  $('#foodFormV01932').onsubmit=async e=>{e.preventDefault();const f=e.target,btn=f.querySelector('button[type=submit]');btn.disabled=true;try{const body={nome:val(f,'nome'),categoria:val(f,'categoria')||null,caloriasPor100g:Number(val(f,'calorias')||0),proteinasPor100g:Number(val(f,'proteina')||0),carboidratosPor100g:Number(val(f,'carboidrato')||0),gordurasPor100g:Number(val(f,'gordura')||0),fibrasPor100g:Number(val(f,'fibra')||0)};await api(editing?`/api/alimentos/${food.id}`:'/api/alimentos',{method:editing?'PUT':'POST',body:JSON.stringify(body)});toast(editing?'Alimento atualizado.':'Alimento criado.');await back()}catch(err){toast(err.message,true)}finally{btn.disabled=false}};
+}
+
+function hpFillMealPlanV01932(form,list,alimentos,plan){
+  const set=(name,value)=>{const el=form.elements[name];if(el)el.value=value??''};
+  set('nome',plan.nome);set('dataInicio',String(plan.dataInicio||'').slice(0,10));set('dataFim',plan.dataFim?String(plan.dataFim).slice(0,10):'');set('observacoes',plan.observacoes||'');
+  set('metaCalorias',plan.metaCalorias);set('metaProteinasG',plan.metaProteinasG);set('metaCarboidratosG',plan.metaCarboidratosG);set('metaGordurasG',plan.metaGordurasG);set('metaFibrasG',plan.metaFibrasG);
+  list.innerHTML='';
+  (plan.refeicoes||[]).sort((a,b)=>(a.ordem||0)-(b.ordem||0)).forEach((meal,index)=>{
+    list.insertAdjacentHTML('beforeend',mealBuilder(alimentos,index+1));const m=list.lastElementChild;bindMealBuilder(m,alimentos);
+    m.querySelector('[name=mealName]').value=meal.nome||'';m.querySelector('[name=mealTime]').value=meal.horario?String(meal.horario).slice(0,5):'';
+    [['mealMetaCalorias',meal.metas?.calorias],['mealMetaProteinasG',meal.metas?.proteinasG],['mealMetaCarboidratosG',meal.metas?.carboidratosG],['mealMetaGordurasG',meal.metas?.gordurasG],['mealMetaFibrasG',meal.metas?.fibrasG]].forEach(([n,v])=>{const el=m.querySelector(`[name=${n}]`);if(el)el.value=v??''});
+    const items=meal.itens||[];const rows=()=>[...m.querySelectorAll('.meal-item-builder')];
+    while(rows().length<Math.max(1,items.length))m.querySelector('.add-meal-item').click();
+    items.forEach((item,i)=>{const r=rows()[i];r.querySelector('[name=foodId]').value=item.alimentoId;r.querySelector('[name=qty]').value=item.quantidade;r.querySelector('[name=unit]').value=item.unidade||'g';r.querySelector('[name=grams]').value=item.quantidadeGramas;r.querySelector('[name=gramsPerUnit]').value=item.quantidade&&item.quantidadeGramas?Number(item.quantidadeGramas)/Number(item.quantidade):1;r.querySelector('[name=foodId]').dispatchEvent(new Event('change'));
+      (item.substituicoes||[]).forEach(sub=>{r.querySelector('.add-sub').click();const sr=r.querySelector('.substitution-row:last-child');sr.querySelector('[name=subFood]').value=sub.alimentoId;sr.querySelector('[name=subQty]').value=sub.quantidade;sr.querySelector('[name=subUnit]').value=sub.unidade||'g';sr.querySelector('[name=subGrams]').value=sub.quantidadeGramas;sr.querySelector('[name=subGramsPerUnit]').value=sub.quantidade&&sub.quantidadeGramas?Number(sub.quantidadeGramas)/Number(sub.quantidade):1;});
+    });
+  });
+  if(!(plan.refeicoes||[]).length){list.insertAdjacentHTML('beforeend',mealBuilder(alimentos,1));bindMealBuilder(list.lastElementChild,alimentos)}
+  updatePlanPreview(alimentos);
+}
+
+async function openMealPlanFormV01932(p,plan=null){
+  if(!p?.id&&state.patientId){try{p=await api(`/api/pacientes/${state.patientId}`)}catch{}}
+  if(!p?.id){toast('Paciente não identificado para o plano alimentar.',true);return}
+  const editing=!!plan?.id,box=$('#clinicalActionContent');$('#clinicalActionModal').classList.add('nutrition-modal-open');$('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION BUILDER • v0.19.32</span><h2>${editing?'Editar dieta':'Nova dieta'}</h2><p>${esc(p.nome)} • carregando catálogo...</p></div>`;
+  try{
+    const alimentos=await api('/api/alimentos');if(!alimentos.length){box.innerHTML+=`<div class="empty">Nenhum alimento ativo. Use “Catálogo de alimentos” para cadastrar a base antes de montar a dieta.</div><div class="form-actions"><button class="primary" id="emptyFoodCatalogV01932">Abrir catálogo de alimentos</button></div>`;$('#emptyFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;return}
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION BUILDER • v0.19.32</span><h2>${editing?'Editar dieta':'Nova dieta'}</h2><p>${esc(p.nome)} • ${alimentos.length} alimento(s) ativos</p></div>
+    <form id="mealPlanForm" class="clinical-form"><div class="form-grid builder-meta">${field('Nome do plano','nome','text',`value="${esc(plan?.nome||'Plano alimentar')}" required`)}${field('Data de início','dataInicio','date',`value="${plan?.dataInicio?String(plan.dataInicio).slice(0,10):todayISO()}" required`)}${field('Data final','dataFim','date',plan?.dataFim?`value="${String(plan.dataFim).slice(0,10)}"`:'')}${area('Orientações gerais','observacoes')}</div>
+    <section class="nutrition-target-builder"><div><strong>Metas nutricionais diárias</strong><small>Compare meta × prescrito antes de publicar.</small></div><div class="nutrition-target-inputs">${field('Calorias','metaCalorias','number','step="1" min="1"')}${field('Proteína (g)','metaProteinasG','number','step="0.1" min="0"')}${field('Carboidrato (g)','metaCarboidratosG','number','step="0.1" min="0"')}${field('Gordura (g)','metaGordurasG','number','step="0.1" min="0"')}${field('Fibra (g)','metaFibrasG','number','step="0.1" min="0"')}</div><div id="planTargetPreview" class="nutrition-target-preview"></div></section>
+    <div class="builder-head"><div><h3>Refeições e equivalências</h3><p>Monte refeições, itens e substituições equivalentes.</p></div><div class="nutrition-top-actions"><button type="button" class="ghost" id="builderFoodCatalogV01932">Catálogo de alimentos</button><button type="button" class="secondary" id="addMeal">+ Refeição</button></div></div><div id="mealBuilders" class="builder-list"></div><div class="plan-preview"><small>TOTAL ESTIMADO DO PLANO</small><div id="planMacroPreview" class="macro-summary"><b>0 kcal</b><span>P 0g</span><span>C 0g</span><span>G 0g</span></div></div><div class="form-actions builder-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">${editing?'Salvar alterações':'Criar dieta'}</button></div></form>`;
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;$('#builderFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;const f=$('#mealPlanForm'),list=$('#mealBuilders');let mealIndex=0;
+    const addMeal=()=>{mealIndex++;list.insertAdjacentHTML('beforeend',mealBuilder(alimentos,mealIndex));bindMealBuilder(list.lastElementChild,alimentos)};$('#addMeal').onclick=addMeal;
+    if(editing){hpFillMealPlanV01932(f,list,alimentos,plan);mealIndex=(plan.refeicoes||[]).length}else addMeal();
+    if(editing){f.elements.observacoes.value=plan.observacoes||'';['metaCalorias','metaProteinasG','metaCarboidratosG','metaGordurasG','metaFibrasG'].forEach(n=>{f.elements[n].value=plan[n]??''})}
+    ['metaCalorias','metaProteinasG','metaCarboidratosG','metaGordurasG','metaFibrasG'].forEach(n=>{const e=f.elements[n];if(e)e.oninput=()=>updatePlanPreview(alimentos)});updatePlanPreview(alimentos);
+    f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');b.disabled=true;try{const refeicoes=[...f.querySelectorAll('.meal-builder')].map((m,idx)=>({nome:m.querySelector('[name=mealName]').value.trim(),horario:m.querySelector('[name=mealTime]').value||null,ordem:idx+1,observacoes:null,metaCalorias:m.querySelector('[name=mealMetaCalorias]').value===''?null:Number(m.querySelector('[name=mealMetaCalorias]').value),metaProteinasG:m.querySelector('[name=mealMetaProteinasG]').value===''?null:Number(m.querySelector('[name=mealMetaProteinasG]').value),metaCarboidratosG:m.querySelector('[name=mealMetaCarboidratosG]').value===''?null:Number(m.querySelector('[name=mealMetaCarboidratosG]').value),metaGordurasG:m.querySelector('[name=mealMetaGordurasG]').value===''?null:Number(m.querySelector('[name=mealMetaGordurasG]').value),metaFibrasG:m.querySelector('[name=mealMetaFibrasG]').value===''?null:Number(m.querySelector('[name=mealMetaFibrasG]').value),itens:[...m.querySelectorAll('.meal-item-builder')].map(r=>({alimentoId:r.querySelector('[name=foodId]').value,quantidade:Number(r.querySelector('[name=qty]').value||0),unidade:r.querySelector('[name=unit]').value.trim(),quantidadeGramas:Number(r.querySelector('[name=grams]').value||0),observacao:null,substituicoes:[...r.querySelectorAll('.substitution-row')].filter(x=>x.querySelector('[name=subFood]').value).map(x=>({alimentoId:x.querySelector('[name=subFood]').value,quantidade:Number(x.querySelector('[name=subQty]').value||0),unidade:x.querySelector('[name=subUnit]').value.trim(),quantidadeGramas:Number(x.querySelector('[name=subGrams]').value||0),observacao:null}))})).filter(x=>x.alimentoId)}));if(refeicoes.some(x=>!x.nome))throw new Error('Informe o nome de todas as refeições.');if(!refeicoes.some(x=>x.itens.length))throw new Error('Adicione pelo menos um alimento ao plano.');const body={nome:val(f,'nome'),dataInicio:val(f,'dataInicio'),dataFim:val(f,'dataFim')||null,status:editing?(plan.status||'Ativo'):'Ativo',observacoes:val(f,'observacoes')||null,metaCalorias:dec(f,'metaCalorias'),metaProteinasG:dec(f,'metaProteinasG'),metaCarboidratosG:dec(f,'metaCarboidratosG'),metaGordurasG:dec(f,'metaGordurasG'),metaFibrasG:dec(f,'metaFibrasG'),refeicoes};await api(editing?`/api/planos-alimentares/${plan.id}`:`/api/pacientes/${p.id}/planos-alimentares`,{method:editing?'PUT':'POST',body:JSON.stringify(body)});state.patientTab='alimentacao';closeClinicalAction();toast(editing?'Dieta atualizada.':'Dieta criada.');await loadPatient()}catch(err){toast(err.message,true)}finally{b.disabled=false}};
+  }catch(err){toast(err.message,true)}
+}
+openMealPlanForm=openMealPlanFormV01932;
+
+hpRenderNutritionProfessionalFlow=function(d){
+  const box=$('#patientTabContent'),planos=d.planos||[],patient=d.p||d.portal?.paciente||{id:state.patientId,nome:'Paciente'};
+  box.innerHTML=`<section class="card full-card pro-flow-card nutrition-pro-flow" data-pro-nutrition-flow="v0.19.32"><div class="card-head pro-flow-head"><div><span class="eyebrow">AESYN • PROFESSIONAL NUTRITION • v0.19.32</span><h3>Treino e nutrição • Nutrição</h3><small>Crie, edite, duplique, arquive e publique dietas com refeições, alimentos, equivalências e metas sem sair do paciente.</small></div><div class="nutrition-top-actions pro-flow-actions"><button class="ghost" id="nutritionFoodCatalogV01932">Alimentos</button><button class="ghost" id="nutritionMealModelsV1812">Refeições</button><button class="secondary" id="nutritionDietModelsV1812">Modelos de dieta</button><button class="primary" id="newMealPlanV1812">+ Criar dieta</button></div></div>
+  <div class="nutrition-catalog-ready"><div><strong>Workspace nutricional completo</strong><span>Metas, refeições, substituições/equivalências, modelos e histórico ficam conectados ao paciente.</span></div><button class="secondary" id="nutritionReviewPublishV01932">Revisar & publicar</button></div>
+  ${planos.length?`<div class="nutrition-plan-grid-v1812">${planos.map(p=>`<article class="food-plan nutrition-version-card pro-nutrition-plan-card" data-pro-nutrition-plan="${p.id}"><div class="record-top"><div><span class="eyebrow">${esc(p.status)} • V${p.versao||1} • início ${fmtDate(p.dataInicio)}</span><h4>${esc(p.nome)}</h4><small>${esc(p.profissionalNome||'')}</small></div><div class="macro-summary"><b>${num(p.totaisDiarios?.calorias,0)} kcal</b><span>P ${num(p.totaisDiarios?.proteinasG)}g</span><span>C ${num(p.totaisDiarios?.carboidratosG)}g</span><span>G ${num(p.totaisDiarios?.gordurasG)}g</span></div></div>${nutritionTargetPanel(p)}<div class="nutrition-meal-summary-v1812">${(p.refeicoes||[]).map((r,i)=>`<div><span>${i+1}</span><strong>${esc(r.nome)}</strong><small>${r.horario?String(r.horario).slice(0,5):'--:--'} • ${(r.itens||[]).length} item(ns) • ${num(r.totais?.calorias,0)} kcal</small></div>`).join('')||'<div class="empty compact">Sem refeições cadastradas.</div>'}</div><div class="nutrition-plan-actions pro-plan-actions"><button class="primary nutrition-edit-v1812" data-plan-id="${p.id}">Editar dieta</button><button class="secondary nutrition-progress-v1812" data-plan-id="${p.id}">Duplicar / progressão</button><button class="ghost nutrition-save-template-v1812" data-plan-id="${p.id}">Salvar como modelo</button>${hpNutritionStatusAction(p,patient)}</div></article>`).join('')}</div>`:sectionEmpty('Nenhuma dieta registrada. Use “+ Criar dieta” para começar.')}</section>`;
+  $('#newMealPlanV1812').onclick=()=>openMealPlanForm(patient);$('#nutritionDietModelsV1812').onclick=()=>openDietMealLibrary(patient,'plans');$('#nutritionMealModelsV1812').onclick=()=>openDietMealLibrary(patient,'meals');$('#nutritionFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;$('#nutritionReviewPublishV01932').onclick=()=>openPrescriptionReview(patient);
+  $$('.nutrition-edit-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openMealPlanForm(patient,plan)});
+  $$('.nutrition-progress-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openNutritionProgression(patient,plan)});
+  $$('.nutrition-save-template-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openSaveMealPlanTemplate(plan)});
+  $$('.nutrition-status-v01932').forEach(b=>b.onclick=async()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId)),next=b.dataset.nextStatus;const verb=next==='Ativo'?'publicar':'arquivar';if(!confirm(`Deseja ${verb} “${plan?.nome||'este plano'}”?`))return;try{await api(`/api/planos-alimentares/${b.dataset.planId}/status/${next}`,{method:'POST'});toast(next==='Ativo'?'Dieta publicada.':'Dieta arquivada sem apagar o histórico.');await loadPatient()}catch(err){toast(err.message,true)}});
+};
