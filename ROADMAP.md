@@ -1,5 +1,11 @@
 # AESYN Performance — Roadmap Mestre
 
+> **Hotfix v0.19.30-r3:** remove dependências restantes do antigo Mobile Action Hub (`mobile-now-hub`/`mobileNow*`) nos gates históricos e no frontend. Os testes passam a validar `Hoje em um olhar` e suas ações atuais; CSS/listeners mortos foram removidos. Nenhuma alteração funcional ou de schema.
+
+> **Hotfix v0.19.30-r2:** remove a dependência dos gates históricos de `mobile-home-glance`/`glance-chip`, componentes aposentados pela nova Home `Hoje em um olhar`. Os testes agora validam as seis ações essenciais e o grid responsivo atual; CSS morto do resumo legado também foi removido. Nenhuma alteração funcional ou de schema.
+
+> **Hotfix v0.19.30-r1:** sincroniza o gate histórico `Home Daily Athlete` com a Home simplificada da v0.19.30. O check-in continua funcional pelo card `athleteHome2Body`; foram removidas apenas dependências de teste e listener morto do antigo `dailyReadinessButton`. Nenhuma alteração funcional ou de schema.
+
 > **Hotfix v0.19.29-r1:** sincroniza o gate histórico `AESYN Identity & Patient Navigation Foundation` com a versão pública corrente `0.19.29`. O gate ainda procurava `HP_MVP_VERSION='0.19.28'`, embora a aplicação já anunciasse corretamente `0.19.29`. Nenhuma alteração funcional ou de schema.
 
 > **Hotfix v0.19.25-r2:** corrige o gate `[1908/1914]` para validar `EmailPrincipal`, `Confirmado` e `PodeSolicitarConfirmacao` no contrato `EmailAccountStatusResponse`, onde esses campos realmente são declarados, em vez de exigir seus nomes literais dentro do controller. Nenhuma alteração funcional ou de schema.
@@ -7,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.29 (revisão de pacote atual: v0.19.29-r1) — AESYN App Identity & Theme Completion  
+> **Versão-base deste roadmap:** v0.19.30 (revisão de pacote atual: v0.19.30-r3) — Patient Home Cleanup
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -212,6 +218,8 @@ Manifest e ícones válidos; identidade instalada como **AESYN Performance**; mo
 - priorizar check-in, treino, alimentação, hidratação, mensagens e pendências;
 - remover excesso de indicadores técnicos da Home;
 - estados vazios, loading, erro e retry.
+
+**Status:** implementado na v0.19.30; validar localmente com PREPARAR → RODAR → TESTAR antes de qualquer deploy. A Home principal agora concentra seis ações essenciais e retira blocos duplicados da primeira leitura; análises esportivas permanecem recolhidas até a evolução dedicada da v0.19.31.
 
 ## v0.19.31 — Athlete Data Hub
 
@@ -902,3 +910,8 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 - Todos os gates que validam a versão pública corrente agora esperam `0.19.27`; marcadores históricos de funcionalidades antigas continuam preservados.
 - Não altera funcionalidade, schema, migration ou contrato da API; versão funcional permanece `0.19.27`.
 - Mantém `TESTAR.ps1` em UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1.
+
+### Hotfix v0.19.30-r4 — Patient Home Readiness Gate Cleanup
+- Gate legado de `daily-readiness-card` aposentado.
+- O check-in/prontidão da Home é representado pelo card essencial `athleteHome2Body` em `patient-today-overview`.
+- Testes devem acompanhar a arquitetura atual da Home e não forçar componentes removidos por versões posteriores.

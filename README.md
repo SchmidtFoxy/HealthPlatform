@@ -1,10 +1,10 @@
-## v0.19.29 — AESYN App Identity & Theme Completion
+## v0.19.30 — Patient Home Cleanup
 
-- Identidade instalável do AESYN Performance com `manifest.webmanifest`, favicon, Apple Touch Icon e ícones 192/512 + maskable.
-- Launch experience quando executado em modo standalone/PWA.
-- `theme-color` acompanha o tema claro/escuro.
-- Primeiro acesso respeita preferência já salva e persiste a escolha inicial do tema na conta.
-- Dark mode consolidado para login, portal do paciente, modais, formulários e componentes legados.
+- Home do paciente orientada à pergunta **“o que eu preciso fazer hoje?”**.
+- Novo **Hoje em um olhar** com Check-in, Treino, Alimentação, Hidratação, Mensagens e Pendências.
+- Redução de cards duplicados e indicadores técnicos na primeira leitura.
+- Análises esportivas e gamificação continuam disponíveis de forma recolhida até a área dedicada **Dados para Atletas** da v0.19.31.
+- Layout mobile-first e dark mode preservados.
 - Sem migration nesta versão.
 
 **Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. Testes funcionais permanecem exclusivamente locais.

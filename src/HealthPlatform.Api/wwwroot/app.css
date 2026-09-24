@@ -2812,44 +2812,11 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
 @media(prefers-reduced-motion:reduce){.patient-view-enter,.patient-loading-orb i,.patient-loading-lines i{animation:none!important}}
 
 
-/* ===== v0.13.8 — Mobile Home Hierarchy ===== */
-.mobile-home-glance{display:none}
+/* ===== v0.13.8 — Mobile Home Hierarchy (legacy cleaned in v0.19.30-r2) ===== */
 @media(max-width:720px){
   .patient-today-home{gap:13px!important}
-  .mobile-home-glance{display:block;margin:-2px 0 1px;padding:0 2px}
-  .mobile-home-glance-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 2px 8px}
-  .mobile-home-glance-head .eyebrow{color:#9a7a12;font-size:9px;letter-spacing:.13em}
-  .mobile-home-glance-head small{color:#72869a;font-size:10px}
-  .mobile-home-glance-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .glance-chip{min-width:0;min-height:70px;display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:17px;background:linear-gradient(145deg,#f9fcfd,#edf5f6);border:1px solid rgba(18,60,84,.09);box-shadow:0 7px 18px rgba(8,34,58,.055)}
-  .glance-chip>span{flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#dfecee;color:#155d61;font-size:15px;font-weight:900}
-  .glance-chip.ready>span{background:#d9f0e7;color:#13745f}.glance-chip.pending>span{background:#fff0cc;color:#8a6610}
-  .glance-chip div{min-width:0;display:grid;gap:2px}.glance-chip small{font-size:9px;color:#74889a;text-transform:uppercase;letter-spacing:.07em}.glance-chip b{min-width:0;color:#15344e;font-size:12px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .daily-readiness-card{border-radius:20px!important;padding:15px!important}.daily-readiness-card .readiness-main{gap:10px!important}.daily-readiness-card h3{font-size:17px!important}.daily-readiness-card p{font-size:11px!important;line-height:1.45!important}.daily-readiness-card .readiness-score{flex:0 0 72px!important;width:72px!important;height:72px!important}.daily-readiness-card .readiness-factors{display:flex!important;overflow-x:auto;gap:6px!important;margin:10px -2px 0;padding:0 2px 3px;scrollbar-width:none}.daily-readiness-card .readiness-factors::-webkit-scrollbar{display:none}.daily-readiness-card .readiness-factors span{flex:0 0 auto;white-space:nowrap;font-size:10px!important}.daily-readiness-card .readiness-actions{margin-top:10px!important}.daily-readiness-card .readiness-actions button{min-height:46px!important}
 }
-@media(max-width:390px){
-  .mobile-home-glance-rail{grid-template-columns:1fr 1fr;gap:7px}.glance-chip{min-height:66px;padding:9px 10px;gap:8px}.glance-chip>span{width:31px;height:31px;flex-basis:31px;border-radius:10px}.glance-chip b{font-size:11px}.mobile-home-glance-head small{display:none}
-}
-
-
-/* ===== v0.13.9 — Mobile Action Hub ===== */
-.mobile-now-hub{display:none}
-@media(max-width:720px){
-  .mobile-now-hub{display:grid;gap:12px;padding:16px;border-radius:22px;background:linear-gradient(145deg,#113a50,#0c2d40);color:#fff;box-shadow:0 14px 34px rgba(5,31,49,.18);overflow:hidden;position:relative}
-  .mobile-now-hub:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-75px;top:-80px;background:rgba(78,195,170,.12);pointer-events:none}
-  .mobile-now-copy{position:relative;z-index:1}.mobile-now-copy .eyebrow{color:#83d8c4;font-size:9px;letter-spacing:.15em}.mobile-now-copy h3{margin:3px 0 4px;color:#fff;font-size:18px;line-height:1.18}.mobile-now-copy p{margin:0;color:#c7d8e2;font-size:11px;line-height:1.45;max-width:92%}
-  .mobile-now-actions{display:grid;grid-template-columns:1.55fr .8fr .8fr;gap:8px;position:relative;z-index:1}
-  .mobile-now-actions button{min-width:0;min-height:72px;border:0;border-radius:16px;padding:10px;display:grid;align-content:center;justify-items:start;gap:2px;text-align:left;cursor:pointer}
-  .mobile-now-actions button span{font-size:17px}.mobile-now-actions button b{font-size:11px;line-height:1.15}.mobile-now-actions button small{font-size:8px;line-height:1.2;opacity:.78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  .mobile-now-primary{background:linear-gradient(135deg,#45c4a5,#35a98e)!important;color:#082f35!important;box-shadow:none!important}.mobile-now-primary small{color:#0c4f4d}
-  .mobile-now-secondary{background:rgba(255,255,255,.09);color:#f3f8fa;border:1px solid rgba(255,255,255,.09)!important}.mobile-now-secondary:active,.mobile-now-primary:active{transform:scale(.97)}
-  .today-actions-card.mobile-now-highlight{animation:hpNowHighlight 1.15s ease}
-  @keyframes hpNowHighlight{0%,100%{box-shadow:0 7px 20px rgba(8,34,58,.06)}35%{box-shadow:0 0 0 3px rgba(64,191,158,.3),0 14px 30px rgba(8,34,58,.12)}}
-}
-@media(max-width:390px){
-  .mobile-now-hub{padding:14px;border-radius:20px}.mobile-now-actions{grid-template-columns:1.35fr .85fr .85fr;gap:6px}.mobile-now-actions button{min-height:68px;padding:9px 8px;border-radius:14px}.mobile-now-copy h3{font-size:17px}.mobile-now-copy p{font-size:10px}.mobile-now-actions button b{font-size:10px}.mobile-now-actions button small{font-size:7px}
-}
-@media(prefers-reduced-motion:reduce){.today-actions-card.mobile-now-highlight{animation:none!important}}
 
 
 /* ===== v0.13.10 — Post-Workout Mobile Loop ===== */
@@ -2991,11 +2958,10 @@ body{background:linear-gradient(145deg,#dfe8f1 0%,#edf3f8 42%,#dce7ef 100%);min-
   .home-stage-checkin .daily-readiness-card{order:-1}
 
   /* Pós-treino: recuperação e fechamento ganham prioridade sem apagar o restante do dia. */
-  .home-stage-recovery .mobile-home-glance{display:none}
   .home-stage-recovery .daily-closure-card{box-shadow:0 10px 24px rgba(14,87,67,.09)}
 
   /* Dia encerrado: reduz chamadas de ação e deixa a Home visualmente mais calma. */
-  .home-stage-closed .mobile-now-hub{display:none}
+  .home-stage-closed .patient-today-overview{display:none}
   .home-stage-closed .today-actions-card{display:none}
   .home-stage-closed .daily-readiness-card{opacity:.82}
   .home-stage-closed .daily-closure-card{border-color:rgba(30,142,105,.22);box-shadow:none}
@@ -5296,3 +5262,12 @@ html[data-theme="dark"] .theme-choice-card{background:#0f1314!important;color:va
 html[data-theme="dark"] .theme-choice-grid button{background:#111617!important;color:var(--text)!important;border-color:#2a3334!important}
 html[data-theme="dark"] .login-card p,html[data-theme="dark"] .modal-heading p,html[data-theme="dark"] .patient-page-header p,html[data-theme="dark"] .patient-welcome p{color:var(--muted)!important}
 @media(max-width:760px){.aesyn-launch-screen img{width:78px;height:78px;border-radius:20px}}
+
+/* ===== v0.19.30 — Patient Home Cleanup ===== */
+.patient-today-overview{display:grid;gap:14px;padding:18px;border:1px solid var(--line,#dce7ea);border-radius:22px;background:var(--surface,#fff);box-shadow:0 12px 34px rgba(14,56,68,.07)}
+.patient-today-overview-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.patient-today-overview-head h2{margin:4px 0 5px;font-size:22px;line-height:1.12;letter-spacing:-.03em}.patient-today-overview-head p{margin:0;color:var(--muted,#61727a);font-size:12px;line-height:1.45}.patient-today-overview-progress{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:var(--soft,#edf7f4);color:var(--accent,#17634e);font-size:10px;font-weight:800}
+.patient-today-essential-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.patient-today-essential{appearance:none;border:1px solid var(--line,#dce7ea);border-radius:16px;background:var(--surface-2,#f8fbfc);padding:14px;text-align:left;display:grid;grid-template-columns:auto 1fr;grid-template-areas:'icon label' 'icon value' 'icon detail';column-gap:10px;row-gap:3px;min-width:0;color:inherit;cursor:pointer;transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease}.patient-today-essential:hover{border-color:rgba(23,111,96,.34);box-shadow:0 8px 20px rgba(13,56,66,.07)}.patient-today-essential:active{transform:scale(.985)}.patient-today-essential-icon{grid-area:icon;width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:rgba(23,111,96,.08);font-style:normal;font-size:17px}.patient-today-essential small{grid-area:label;font-size:8.5px;letter-spacing:.08em;font-weight:850;color:var(--muted,#6f8388)}.patient-today-essential strong{grid-area:value;font-size:13px;line-height:1.2;overflow-wrap:anywhere}.patient-today-essential em{grid-area:detail;font-style:normal;font-size:10px;line-height:1.35;color:var(--muted,#61757b)}.patient-today-essential.primary-action{background:linear-gradient(145deg,#143f4b,#1d655f);border-color:transparent;color:#fff}.patient-today-essential.primary-action small,.patient-today-essential.primary-action em{color:#c5ddd9}.patient-today-essential.primary-action .patient-today-essential-icon{background:rgba(255,255,255,.12)}.patient-today-essential.done .patient-today-essential-icon{background:rgba(31,145,104,.12)}.patient-today-essential.attention{border-color:rgba(202,136,31,.35);background:rgba(202,136,31,.06)}
+html[data-theme="dark"] .patient-today-overview{background:#0d1817;border-color:#24403d;box-shadow:none}html[data-theme="dark"] .patient-today-essential{background:#111f1d;border-color:#284541}html[data-theme="dark"] .patient-today-essential:not(.primary-action) .patient-today-essential-icon{background:#17312d}html[data-theme="dark"] .patient-today-overview-progress{background:#17312d;color:#9fd7ca}
+@media(max-width:900px){.patient-today-essential-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.patient-today-overview{padding:14px;border-radius:20px}.patient-today-overview-head{display:grid;gap:9px}.patient-today-overview-head h2{font-size:19px}.patient-today-overview-progress{justify-self:start}.patient-today-essential-grid{grid-template-columns:1fr;gap:7px}.patient-today-essential{padding:12px;min-height:76px}.patient-today-essential.primary-action{order:-1}}
+@media(prefers-reduced-motion:reduce){.patient-today-essential{transition:none}.patient-today-essential:active{transform:none}}

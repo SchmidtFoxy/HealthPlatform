@@ -875,25 +875,31 @@ function hpHydrationPace(h){
 function hpAthleteHome2(d,readiness,adaptiveHome){
   const strategy=d?.estrategiaDoDia||{};
   const hydration=d?.hidratacaoContextual||{};
+  const nutrition=d?.adesaoNutricional||{};
   const execution=d?.execucaoDoDia||{};
-  const game=d?.gamificacao||{};
-  const cycle=d?.cicloEsportivoAtual||{};
+  const pendingRequests=Number(d?.solicitacoesPendentes||0);
   const hydrationPct=hydration.progressoPercentual!=null?Math.max(0,Math.min(100,Number(hydration.progressoPercentual))):null;
-  const readinessValue=readiness?`${readiness.score}/100`:'Pendente';
-  const readinessDetail=readiness?`${readiness.recomendacaoTreino==='Recuperacao'?'Recuperação':readiness.recomendacaoTreino} • dor ${readiness.dorNivel}/10`:'Faça o check-in para contextualizar o dia';
-  const nowTitle=adaptiveHome?.stage==='closed'?'Dia concluído':adaptiveHome?.stage==='recovery'?'Recuperar e observar':readiness?'Seguir o treino do dia':'Fazer check-in matinal';
-  const nowDetail=adaptiveHome?.stage==='closed'?'Registros essenciais fechados por hoje':adaptiveHome?.stage==='recovery'?'Acompanhe resposta, hidratação e recuperação':readiness?`${esc(strategy.intensidadeSugerida||'Plano atual')}${strategy.rpeMin!=null&&strategy.rpeMax!=null?` • RPE ${strategy.rpeMin}-${strategy.rpeMax}`:''}`:'Leva menos de 1 minuto';
+  const mealsPlanned=Number(nutrition.refeicoesPlanejadas||0),mealsDone=Number(nutrition.refeicoesRegistradas||0);
   const todayDone=Number(execution.concluidos||0),todayPending=Number(execution.pendentes||0),todayTotal=todayDone+todayPending;
-  const progressLabel=execution.diaFechado?'100% fechado':todayTotal?`${Math.round(todayDone/todayTotal*100)}% do roteiro`:`${game.xpHoje||0} XP hoje`;
-  const cycleLabel=cycle.nome?`Semana ${cycle.semanaAtual||'—'}/${cycle.totalSemanas||'—'}`:`Nível ${game.nivel||1}`;
-  const cycleDetail=cycle.nome?esc(cycle.objetivo||cycle.perfilEsportivo||'Ciclo em andamento'):`${game.xpTotal||0} XP • streak ${game.streakDias||0} dia${Number(game.streakDias||0)===1?'':'s'}`;
-  return `<section class="athlete-home2" aria-label="Athlete Home 2.0">
-    <div class="athlete-home2-head"><div><span class="eyebrow">ATHLETE HOME 2.0</span><h2>Seu dia, sem precisar procurar</h2><p>Contexto, próxima ação e evolução reunidos em uma única leitura.</p></div><span class="athlete-home2-stage ${esc(adaptiveHome?.tone||'start')}">${adaptiveHome?.stage==='closed'?'Fechado':adaptiveHome?.stage==='recovery'?'Recuperação':readiness?'Em andamento':'Começar'}</span></div>
-    <div class="athlete-home2-grid">
-      <button type="button" class="athlete-home2-card body" id="athleteHome2Body"><small>COMO ESTOU</small><strong>${readinessValue}</strong><span>${esc(readinessDetail)}</span></button>
-      <button type="button" class="athlete-home2-card now" id="athleteHome2Now"><small>O QUE FAZER AGORA</small><strong>${nowTitle}</strong><span>${esc(nowDetail)}</span></button>
-      <button type="button" class="athlete-home2-card today" id="athleteHome2Today"><small>COMO VAI O DIA</small><strong>${progressLabel}</strong><span>${hydrationPct!=null?`Água ${num(hydrationPct,0)}% • `:''}${todayTotal?`${todayDone}/${todayTotal} essenciais`:'Registros e metas em acompanhamento'}</span></button>
-      <button type="button" class="athlete-home2-card progress" id="athleteHome2Progress"><small>COMO ESTOU EVOLUINDO</small><strong>${cycleLabel}</strong><span>${cycleDetail}</span></button>
+  const trainingLabel=adaptiveHome?.stage==='closed'?'Dia concluído':readiness?esc(strategy.intensidadeSugerida||'Abrir treino'):'Após o check-in';
+  const trainingDetail=readiness&&strategy.rpeMin!=null&&strategy.rpeMax!=null?`RPE ${strategy.rpeMin}-${strategy.rpeMax}`:'Veja o plano liberado pelo profissional';
+  const nutritionLabel=mealsPlanned?`${mealsDone}/${mealsPlanned} refeições`:(d?.planoAlimentarAtual?'Plano disponível':'Sem plano publicado');
+  const hydrationLabel=hydrationPct!=null?`${num(hydrationPct,0)}% da meta`:(hydration.metaMl?`${num(hydration.metaMl,0)} ml de meta`:'Registrar água');
+  const readinessLabel=readiness?`${readiness.score}/100`:'Fazer check-in';
+  const readinessDetail=readiness?`${readiness.recomendacaoTreino==='Recuperacao'?'Recuperação':readiness.recomendacaoTreino} • dor ${readiness.dorNivel}/10`:'Sono, energia, dor e recuperação';
+  const progress= todayTotal?`${todayDone}/${todayTotal} essenciais`:'Seu plano do dia';
+  return `<section class="patient-today-overview" aria-label="Hoje em um olhar">
+    <div class="patient-today-overview-head">
+      <div><span class="eyebrow">HOJE EM UM OLHAR</span><h2>O que você precisa fazer hoje</h2><p>As ações importantes primeiro. Dados técnicos e evolução ficam fora do caminho.</p></div>
+      <span class="patient-today-overview-progress">${progress}</span>
+    </div>
+    <div class="patient-today-essential-grid">
+      <button type="button" class="patient-today-essential ${readiness?'done':'priority'}" id="athleteHome2Body"><span class="patient-today-essential-icon">◉</span><small>CHECK-IN</small><strong>${readinessLabel}</strong><em>${esc(readinessDetail)}</em></button>
+      <button type="button" class="patient-today-essential primary-action" id="athleteHome2Now"><span class="patient-today-essential-icon">🏋️</span><small>TREINO</small><strong>${trainingLabel}</strong><em>${esc(trainingDetail)}</em></button>
+      <button type="button" class="patient-today-essential" id="patientTodayNutrition"><span class="patient-today-essential-icon">🥗</span><small>ALIMENTAÇÃO</small><strong>${nutritionLabel}</strong><em>${d?.planoAlimentarAtual?'Abrir plano de hoje':'Aguarde publicação do profissional'}</em></button>
+      <button type="button" class="patient-today-essential" id="athleteHome2Today"><span class="patient-today-essential-icon">💧</span><small>HIDRATAÇÃO</small><strong>${hydrationLabel}</strong><em>${hydration.consumidoMl!=null?`${num(hydration.consumidoMl,0)} ml registrados`:'Toque para registrar'}</em></button>
+      <button type="button" class="patient-today-essential" id="patientTodayChat"><span class="patient-today-essential-icon">💬</span><small>MENSAGENS</small><strong>Falar com o profissional</strong><em>Dúvidas, observações e acompanhamento</em></button>
+      <button type="button" class="patient-today-essential ${pendingRequests?'attention':''}" id="patientTodayRequests"><span class="patient-today-essential-icon">✓</span><small>PENDÊNCIAS</small><strong>${pendingRequests?`${pendingRequests} aguardando você`:'Tudo em dia'}</strong><em>${pendingRequests?'Revisar solicitações':'Nenhuma ação pendente agora'}</em></button>
     </div>
   </section>`;
 }
@@ -3073,6 +3079,7 @@ async function loadMyPatientPortal(){
   const adaptiveHome=hpAdaptiveMobileHomeState(d,readiness);
   const metas=d.metasHoje||[],registros=d.registrosHoje||[];
   const solicitacoesPendentes=(solicitacoes.itens||[]).filter(x=>x.status==='Pendente');
+  d.solicitacoesPendentes=solicitacoesPendentes.length;
   const allQuickTypes=[
     {key:'Peso',label:'Peso',icon:'⚖',unit:'kg',kind:'number',step:'0.1'},
     {key:'Pressao',label:'Pressão',icon:'♥',unit:'mmHg',kind:'pressure'},
@@ -3101,32 +3108,6 @@ async function loadMyPatientPortal(){
 
     ${hpAthleteHome2(d,readiness,adaptiveHome)}
 
-    ${hpMorningCheckin(readiness)}
-
-    ${hpAdaptiveMobileHomeCue(adaptiveHome)}
-
-    ${hpTodayBrief(d,readiness)}
-
-    ${hpDailyGamifiedFocusAthleteCard(d.focoGamificadoDoDia)}
-
-    <section class="mobile-home-glance legacy-home-glance" aria-label="Resumo rápido do dia" aria-hidden="true">
-      <div class="mobile-home-glance-head"><span class="eyebrow">EM 30 SEGUNDOS</span><small>Seu dia esportivo em um olhar</small></div>
-      <div class="mobile-home-glance-rail">
-        <article class="glance-chip ${readiness?'ready':'pending'}"><span>◉</span><div><small>Prontidão</small><b>${readiness?`${readiness.score}/100`:'Fazer check-in'}</b></div></article>
-        <article class="glance-chip"><span>↗</span><div><small>Treino</small><b>${esc((d.estrategiaDoDia||{}).intensidadeSugerida||'Definir hoje')}</b></div></article>
-        <article class="glance-chip"><span>💧</span><div><small>Hidratação</small><b>${d.hidratacaoContextual?.progressoPercentual!=null?`${num(d.hidratacaoContextual.progressoPercentual,0)}% da meta`:d.hidratacaoContextual?.metaMl?`${num(d.hidratacaoContextual.metaMl,0)} ml`:'Seguir plano'}</b></div></article>
-        <article class="glance-chip"><span>🔥</span><div><small>Streak</small><b>${game.streakDias||0} dia${Number(game.streakDias||0)===1?'':'s'}</b></div></article>
-      </div>
-    </section>
-
-    <section class="mobile-now-hub" aria-label="Próxima ação do dia">
-      <div class="mobile-now-copy"><span class="eyebrow">AGORA</span><h3>${readiness?'Continue seu plano do dia':'Comece pelo check-in'}</h3><p>${readiness?'Seu contexto já está atualizado. Escolha a ação mais útil sem procurar pelo app.':'Leva menos de 1 minuto e organiza treino, recuperação e foco de hoje.'}</p></div>
-      <div class="mobile-now-actions">
-        <button class="primary mobile-now-primary" id="mobileNowPrimary"><span>${readiness?'🏋️':'◉'}</span><b>${readiness?'Abrir treino':'Fazer check-in'}</b><small>${readiness?esc((d.estrategiaDoDia||{}).intensidadeSugerida||'Plano de hoje'):'Atualizar prontidão'}</small></button>
-        <button class="mobile-now-secondary" id="mobileNowWater"><span>💧</span><b>Água</b><small>${d.hidratacaoContextual?.consumidoMl!=null?`${num(d.hidratacaoContextual.consumidoMl,0)} ml hoje`:d.hidratacaoContextual?.metaMl?`${num(d.hidratacaoContextual.metaMl,0)} ml meta`:'Registrar'}</small></button>
-        <button class="mobile-now-secondary" id="mobileNowMore"><span>＋</span><b>Registrar</b><small>Energia, dor e mais</small></button>
-      </div>
-    </section>
 
     ${hpDailyAthleteTimeline(d,readiness)}
 
@@ -3143,17 +3124,6 @@ async function loadMyPatientPortal(){
     ${hpAthleteProgressStory(d)}
 
     ${hpMobileInsightRail(d,readiness)}
-
-    <section class="card daily-readiness-card ${readiness?'has-score':'needs-checkin'}">
-      <div class="readiness-main">
-        <div><span class="eyebrow">DAILY ATHLETE • PRONTIDÃO</span><h3>${readiness?`Seu corpo hoje: ${esc(readiness.recomendacaoTreino)}`:'Como seu corpo acordou hoje?'}</h3><p>${readiness?esc(readiness.motivoRecomendacao||'Use a prontidão como guia, sempre respeitando o plano definido.'):'Sono, energia, dor, disposição e recuperação ajustam a recomendação do dia.'}</p></div>
-        ${readiness?`<div class="readiness-score"><strong>${readiness.score}</strong><span>/100</span><small>prontidão</small></div>`:`<div class="readiness-score empty"><strong>—</strong><small>sem check-in</small></div>`}
-      </div>
-      ${readiness?`<div class="readiness-factors">
-        <span>🌙 ${num(readiness.sonoHoras,1)}h sono</span><span>⚡ ${readiness.energiaNivel}/10 energia</span><span>● ${readiness.dorNivel}/10 dor</span><span>↗ ${readiness.disposicaoNivel}/10 disposição</span><span>♻ ${readiness.recuperacaoNivel}/10 recuperação</span>
-      </div>`:''}
-      <div class="readiness-actions"><button class="${readiness?'secondary':'primary'}" id="dailyReadinessButton">${readiness?'Atualizar check-in':'Fazer check-in matinal'}</button>${readiness?`<span class="readiness-badge ${String(readiness.recomendacaoTreino||'').toLowerCase()}">${readiness.recomendacaoTreino==='Recuperacao'?'🧘 Recuperação':readiness.recomendacaoTreino==='Leve'?'🌱 Leve':readiness.recomendacaoTreino==='Pesado'?'🔥 Pesado':'🏋️ Normal'}</span>`:''}</div>
-    </section>
 
     <section class="card today-actions-card">
       <div class="card-head"><div><span class="eyebrow">REGISTRO RÁPIDO</span><h3>Como está seu dia?</h3></div><small>${protocolo.configurado?`${protocolo.itens.length} item(ns) no seu protocolo`:`leva poucos segundos`}</small></div>
@@ -3328,14 +3298,13 @@ async function loadMyPatientPortal(){
   if($('#morningCheckinAction'))$('#morningCheckinAction').onclick=()=>openDailyReadiness(readiness);
   if($('#athleteHome2Now'))$('#athleteHome2Now').onclick=()=>adaptiveHome.stage==='closed'?$('#dailyClosureAction')?.scrollIntoView({behavior:'smooth',block:'center'}):adaptiveHome.stage==='recovery'?(()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;target.scrollIntoView({behavior:'smooth',block:'start'})}})():readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
   if($('#athleteHome2Today'))$('#athleteHome2Today').onclick=()=>{const target=$('.today-actions-card');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});};
-  if($('#athleteHome2Progress'))$('#athleteHome2Progress').onclick=()=>loadPatientSection('evolucao').catch(e=>toast(e.message,true));
-  if($('#mobileNowPrimary'))$('#mobileNowPrimary').onclick=()=>readiness?loadPatientSection('treino').catch(e=>toast(e.message,true)):openDailyReadiness(readiness);
+  if($('#patientTodayNutrition'))$('#patientTodayNutrition').onclick=()=>loadPatientSection('plano').catch(e=>toast(e.message,true));
+  if($('#patientTodayChat'))$('#patientTodayChat').onclick=()=>loadPatientSection('chat').catch(e=>toast(e.message,true));
+  if($('#patientTodayRequests'))$('#patientTodayRequests').onclick=()=>loadPatientSection('solicitacoes').catch(e=>toast(e.message,true));
   if($('#todayBriefReadiness'))$('#todayBriefReadiness').onclick=()=>openDailyReadiness(readiness);
   if($('#todayBriefTraining'))$('#todayBriefTraining').onclick=()=>loadPatientSection('treino').catch(e=>toast(e.message,true));
   if($('#todayBriefHydration'))$('#todayBriefHydration').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
-  if($('#mobileNowWater'))$('#mobileNowWater').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
   if($('#hydrationPaceAction'))$('#hydrationPaceAction').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
-  if($('#mobileNowMore'))$('#mobileNowMore').onclick=()=>{const target=$('.today-actions-card');if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('mobile-now-highlight');setTimeout(()=>target.classList.remove('mobile-now-highlight'),1200)}};
   if($('#athleteTimelineCheckin'))$('#athleteTimelineCheckin').onclick=()=>openDailyReadiness(readiness);
   if($('#athleteTimelineWorkout'))$('#athleteTimelineWorkout').onclick=()=>loadPatientSection('treino').catch(e=>toast(e.message,true));
   if($('#athleteTimelineRecovery'))$('#athleteTimelineRecovery').onclick=()=>{
@@ -3354,7 +3323,6 @@ async function loadMyPatientPortal(){
   if($('#trainingLoadSnapshotDetails'))$('#trainingLoadSnapshotDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.individualized-load-athlete-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseDetails'))$('#recoveryPulseDetails').onclick=()=>{const target=$('.mobile-analysis-disclosure');if(target){target.open=true;requestAnimationFrame(()=>{const card=target.querySelector('.session-response-card');if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else target.scrollIntoView({behavior:'smooth',block:'start'})})}};
   if($('#recoveryPulseCheckin'))$('#recoveryPulseCheckin').onclick=()=>openDailyReadiness(readiness);
-  if($('#dailyReadinessButton'))$('#dailyReadinessButton').onclick=()=>openDailyReadiness(readiness);
   if($('#bodyPainButton'))$('#bodyPainButton').onclick=()=>openBodyPainRecord();
   $$('.meal-adherence').forEach(btn=>btn.onclick=async()=>{
     const host=btn.closest('[data-meal]'); if(!host)return;
@@ -8871,7 +8839,8 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.29';
+const HP_MVP_VERSION='0.19.30';
+const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

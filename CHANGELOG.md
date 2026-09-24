@@ -1,3 +1,29 @@
+# v0.19.30-r3 — Patient Home Legacy Action Hub Cleanup
+
+- Corrige falso negativo do gate histórico `[1161/1168]`, que ainda exigia o antigo `mobile-now-hub`/Action Hub removido pela v0.19.30.
+- Atualiza os gates históricos para validar o bloco atual **Hoje em um olhar**, suas seis ações essenciais, prioridade contextual, responsividade e acessibilidade de movimento.
+- Atualiza também os gates posteriores de hierarquia/adaptação que ainda citavam `mobile-now-hub`, evitando novas falhas em cascata.
+- Remove listeners e CSS mortos de `mobileNowPrimary`, `mobileNowWater`, `mobileNowMore` e `.mobile-now-*`.
+- Nenhuma alteração de schema, API clínica ou versão pública; permanece `0.19.30`.
+
+# v0.19.30-r1 — Daily Athlete Gate Compatibility Hotfix
+
+- Corrige falso negativo do gate histórico `[605/696]` após a simplificação intencional da Home do paciente na v0.19.30.
+- O teste não exige mais o antigo texto `DAILY ATHLETE • PRONTIDÃO` nem o botão removido `dailyReadinessButton`.
+- O gate passa a validar a integração atual do check-in pela Home nova: `hpAthleteHome2` → `athleteHome2Body` → `openDailyReadiness(readiness)`.
+- Remove o listener morto de `dailyReadinessButton` do `app.js`.
+- Nenhuma alteração de schema, API clínica ou versão pública; permanece `0.19.30`.
+
+# v0.19.30 — Patient Home Cleanup
+
+- Reorganiza a Home do paciente em torno da pergunta “o que eu preciso fazer hoje?”.
+- Novo bloco **Hoje em um olhar** com Check-in, Treino, Alimentação, Hidratação, Mensagens e Pendências.
+- Remove da primeira leitura blocos duplicados de prontidão, resumo e ação imediata que competiam pela atenção.
+- Mantém análises esportivas e gamificação recolhidas, preservando funcionalidade sem poluir a Home comum.
+- Melhora CSS mobile e dark mode do resumo diário.
+- Preserva loading, erro/retry globais do portal e navegação para cada ação essencial.
+- Sem alteração de schema/migration.
+
 # v0.19.28 — Settings & User Profile
 
 - Consolida a página de Configurações como central da conta do usuário.
@@ -2361,3 +2387,17 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - O gate legado ainda exigia `HP_MVP_VERSION='0.19.28'`; agora valida a versão pública corrente `0.19.29`.
 - Mantém intactas as validações históricas de tema, navegação e Patient Health Hub.
 - Nenhuma alteração funcional, de schema ou migration; versão funcional permanece `0.19.29`.
+
+
+## v0.19.30-r2 — Daily Summary Legacy Gate Cleanup
+- Corrige os gates históricos `[1153/1160]` que ainda exigiam `mobile-home-glance` e `glance-chip`, removidos intencionalmente na nova Home da v0.19.30.
+- Passa a validar `patient-today-overview`, as seis ações essenciais e o layout responsivo atual.
+- Atualiza o gate adaptativo para não depender do seletor legado de recovery.
+- Remove CSS morto do antigo resumo mobile sem alterar o fluxo atual do paciente.
+- Nenhuma alteração de schema, migration ou versão funcional; permanece `0.19.30`.
+
+## v0.19.30-r4 — Patient Home Readiness Gate Cleanup
+- Corrige gates históricos que ainda exigiam `daily-readiness-card` no `app.js` após a simplificação intencional da Home.
+- A prontidão/check-in passa a ser validada pelo card atual `athleteHome2Body` dentro de `patient-today-overview`.
+- Atualiza também o gate de compactação para a estrutura mobile atual, sem reintroduzir componentes legados.
+- Sem alteração funcional, migration ou schema.
