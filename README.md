@@ -1,3 +1,11 @@
+## v0.19.26 — Public Access & Password Recovery
+
+- Fluxo público de recuperação de senha com resposta anti-enumeração.
+- Link temporário de redefinição com token Identity e expiração de 30 minutos.
+- Páginas `/recuperar-senha`, `/redefinir-senha` e retorno para `/entrar`.
+- SMTP continua desabilitado por padrão em desenvolvimento; testes permanecem locais.
+- Roadmap detalhado: consulte `ROADMAP.md`.
+
 ## v0.19.25 — Account & Email Foundation
 
 Esta versão cria a fundação segura de e-mail da conta AESYN sem disparar testes contra produção.

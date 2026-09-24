@@ -18,7 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.25" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.26" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -53,6 +53,10 @@ builder.Services.AddIdentityCore<Usuario>(options =>
 .AddSignInManager()
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+// v0.19.26 - tokens publicos de conta devem expirar rapidamente.
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+    options.TokenLifespan = TimeSpan.FromMinutes(30));
 
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
 builder.Services.AddScoped<ITransactionalEmailService, SmtpTransactionalEmailService>();

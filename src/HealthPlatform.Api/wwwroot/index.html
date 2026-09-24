@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0B3B36" />
   <meta name="application-name" content="AESYN Performance • HealthPlatform" />
   <title>AESYN Performance</title>
-  <link rel="stylesheet" href="/app.css?v=0.19.25" />
+  <link rel="stylesheet" href="/app.css?v=0.19.26" />
 </head>
 <body>
   <a class="hp-skip-link" href="#patientPortalContent">Pular para o conteúdo</a>
@@ -43,8 +43,44 @@
         <label>E-mail<input id="email" type="email" autocomplete="username" value="admin@healthplatform.local" required /></label>
         <label>Senha<input id="senha" type="password" autocomplete="current-password" value="" placeholder="Digite sua senha" required /></label>
         <button id="loginButton" class="primary full" type="submit">Entrar</button>
+        <a class="login-recovery-link" href="/recuperar-senha" id="forgotPasswordLink">Esqueci minha senha</a>
         <div id="loginMessage" class="login-message hidden" role="alert"></div>
         <div class="dev-note"><strong>Ambiente AESYN.</strong> Seus dados e acessos são protegidos conforme as configurações do ambiente.</div>
+      </form>
+    </div>
+  </section>
+
+  <section id="forgotPasswordView" class="login-shell hidden" aria-labelledby="forgotPasswordTitle">
+    <div class="login-visual public-account-visual">
+      <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
+      <div class="hero-copy"><div class="eyebrow">ACESSO À CONTA</div><h1>Recupere seu acesso com segurança.</h1><p>Informe o e-mail da sua conta. Se ele estiver cadastrado e ativo, enviaremos um link temporário de redefinição.</p></div>
+      <div class="login-quote"><b>LINK TEMPORÁRIO</b><span>Expira em 30 minutos.</span><small>Nunca compartilhamos se um e-mail possui conta.</small></div>
+    </div>
+    <div class="login-panel">
+      <form id="forgotPasswordForm" class="login-card">
+        <div><span class="eyebrow">AESYN • RECUPERAÇÃO</span><h2 id="forgotPasswordTitle">Esqueci minha senha</h2><p>Digite o e-mail usado para entrar.</p></div>
+        <label>E-mail<input id="recoveryEmail" type="email" autocomplete="email" required /></label>
+        <button id="forgotPasswordButton" class="primary full" type="submit">Enviar instruções</button>
+        <div id="forgotPasswordMessage" class="login-message hidden" role="status" aria-live="polite"></div>
+        <a class="login-recovery-link" href="/entrar" data-public-login>Voltar para o login</a>
+      </form>
+    </div>
+  </section>
+
+  <section id="resetPasswordView" class="login-shell hidden" aria-labelledby="resetPasswordTitle">
+    <div class="login-visual public-account-visual">
+      <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
+      <div class="hero-copy"><div class="eyebrow">NOVA SENHA</div><h1>Defina uma nova credencial de acesso.</h1><p>O link recebido por e-mail é temporário e só pode ser usado enquanto o token for válido.</p></div>
+      <div class="login-quote"><b>POLÍTICA DE SENHA</b><span>Mínimo de 10 caracteres.</span><small>Inclua maiúscula, minúscula, número e símbolo.</small></div>
+    </div>
+    <div class="login-panel">
+      <form id="resetPasswordForm" class="login-card">
+        <div><span class="eyebrow">AESYN • REDEFINIÇÃO</span><h2 id="resetPasswordTitle">Criar nova senha</h2><p id="resetPasswordEmailText"></p></div>
+        <label>Nova senha<input id="resetPassword" type="password" autocomplete="new-password" minlength="10" required /></label>
+        <label>Confirmar nova senha<input id="resetPasswordConfirm" type="password" autocomplete="new-password" minlength="10" required /></label>
+        <button id="resetPasswordButton" class="primary full" type="submit">Redefinir senha</button>
+        <div id="resetPasswordMessage" class="login-message hidden" role="alert"></div>
+        <a class="login-recovery-link" href="/entrar" data-public-login>Voltar para o login</a>
       </form>
     </div>
   </section>
@@ -234,6 +270,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.19.25"></script>
+  <script src="/app.js?v=0.19.26"></script>
 </body>
 </html>

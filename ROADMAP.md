@@ -140,10 +140,17 @@ Paciente e profissional conseguem consultar o e-mail principal, solicitar confir
 
 - páginas para usuário não autenticado;
 - esqueci minha senha;
-- token de redefinição com expiração;
+- token de redefinição com expiração de 30 minutos;
 - redefinição de senha;
+- resposta anti-enumeração no pedido de recuperação;
 - mensagens claras de sucesso/erro;
-- redirecionamentos corretos.
+- redirecionamentos corretos entre login, recuperação e redefinição;
+- auditoria de solicitação/conclusão sem persistir token ou senha.
+
+### Gate
+Usuário não autenticado consegue solicitar recuperação e redefinir a senha por link temporário; a API não revela se o e-mail existe, não envia e-mail real quando `Email:Enabled=false` e não persiste token/senha em auditoria.
+
+**Status:** implementado na v0.19.26; validar localmente com PREPARAR → RODAR → TESTAR antes de qualquer deploy.
 
 ## v0.19.27 — Session & Authorization Hardening
 

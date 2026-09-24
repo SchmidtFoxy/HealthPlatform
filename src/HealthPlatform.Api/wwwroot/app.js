@@ -156,6 +156,61 @@ $('#loginForm').addEventListener('submit',async e=>{
     toast(text,true);
   }finally{b.disabled=false;b.textContent='Entrar'}
 });
+// ===== v0.19.26 — Public Access & Password Recovery =====
+const HP_PUBLIC_ACCESS_PASSWORD_RECOVERY='v0.19.26';
+const hpPublicViews=['loginView','forgotPasswordView','resetPasswordView','activationView'];
+function hpShowPublicView(id){
+  hpPublicViews.forEach(viewId=>document.getElementById(viewId)?.classList.toggle('hidden',viewId!==id));
+  $('#appView')?.classList.add('hidden');
+  $('#patientAppView')?.classList.add('hidden');
+}
+function hpNavigatePublic(path){history.pushState({},'',path);hpResolvePublicRoute()}
+function hpResolvePublicRoute(){
+  if(state.token)return;
+  const path=location.pathname.replace(/\/+$/,'')||'/';
+  if(path==='/recuperar-senha')return hpShowPublicView('forgotPasswordView');
+  if(path==='/redefinir-senha'){
+    hpShowPublicView('resetPasswordView');
+    const params=new URLSearchParams(location.search),email=params.get('email')||'';
+    $('#resetPasswordEmailText').textContent=email?`Conta: ${email}`:'O link de redefinição está incompleto.';
+    return;
+  }
+  if(path==='/entrar' || path==='/')return hpShowPublicView('loginView');
+}
+$('#forgotPasswordLink')?.addEventListener('click',e=>{e.preventDefault();hpNavigatePublic('/recuperar-senha')});
+$$('[data-public-login]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();hpNavigatePublic('/entrar')}));
+$('#forgotPasswordForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const button=$('#forgotPasswordButton'),message=$('#forgotPasswordMessage'),email=$('#recoveryEmail').value.trim();
+  button.disabled=true;button.textContent='Enviando...';message.classList.add('hidden');message.classList.remove('success');
+  try{
+    const response=await fetch('/api/auth/password/esqueci',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.message||'Não foi possível processar a solicitação.');
+    message.textContent=data.message||'Se existir uma conta ativa para este e-mail, você receberá as instruções.';
+    message.classList.remove('hidden');message.classList.add('success');
+  }catch(err){message.textContent=err.message;message.classList.remove('hidden');}
+  finally{button.disabled=false;button.textContent='Enviar instruções'}
+});
+$('#resetPasswordForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const params=new URLSearchParams(location.search),email=params.get('email')||'',token=params.get('token')||'';
+  const senha=$('#resetPassword').value,confirmacao=$('#resetPasswordConfirm').value,message=$('#resetPasswordMessage'),button=$('#resetPasswordButton');
+  message.classList.add('hidden');message.classList.remove('success');
+  if(senha!==confirmacao){message.textContent='As senhas não conferem.';message.classList.remove('hidden');return}
+  button.disabled=true;button.textContent='Redefinindo...';
+  try{
+    const response=await fetch('/api/auth/password/redefinir',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,token,novaSenha:senha,confirmacaoNovaSenha:confirmacao})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.message||'Não foi possível redefinir a senha.');
+    message.textContent=data.message;message.classList.remove('hidden');message.classList.add('success');
+    setTimeout(()=>{history.replaceState({},'', '/entrar');hpShowPublicView('loginView');$('#email').value=email;$('#senha').value='';toast('Senha atualizada. Entre com sua nova senha.')},900);
+  }catch(err){message.textContent=err.message;message.classList.remove('hidden')}
+  finally{button.disabled=false;button.textContent='Redefinir senha'}
+});
+window.addEventListener('popstate',hpResolvePublicRoute);
+if(!state.token)hpResolvePublicRoute();
+
 $('#logoutButton').onclick=logout;$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
 function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal','workout-session-review-modal');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
@@ -8736,7 +8791,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.25';
+const HP_MVP_VERSION='0.19.26';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';

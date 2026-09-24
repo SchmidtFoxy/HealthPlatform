@@ -1,3 +1,15 @@
+# v0.19.26 — Public Access & Password Recovery
+
+- Adiciona fluxo público de recuperação de senha em `/recuperar-senha` e redefinição em `/redefinir-senha`.
+- Implementa endpoints anônimos `POST /api/auth/password/esqueci` e `POST /api/auth/password/redefinir`.
+- Usa tokens nativos do ASP.NET Core Identity com expiração configurada em 30 minutos e encoding Base64Url para links.
+- Resposta do pedido de recuperação é deliberadamente genérica para evitar enumeração de contas.
+- Adiciona template transacional de redefinição e mantém SMTP desabilitado por padrão no desenvolvimento.
+- Audita solicitação/entrega e conclusão sem armazenar token ou senha.
+- Adiciona páginas públicas responsivas, estados de sucesso/erro e retorno correto ao login.
+- Mantém testes de desenvolvimento isolados de produção/VPS.
+- Versão pública: `0.19.26`.
+
 # v0.19.25-r1 — Windows PowerShell UTF-8 BOM Hotfix
 
 - Corrige `TESTAR.ps1` salvo em UTF-8 sem BOM, que fazia o Windows PowerShell 5.1 interpretar caracteres como `→`, acentos e símbolos como ANSI/CP1252 e gerar erros de parser.

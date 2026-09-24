@@ -36,4 +36,20 @@ public static class AccountEmailTemplates
             """,
             $"Ola, {name}. Confirme a troca do email principal para {newEmail}: {confirmationUrl}\nSe voce nao solicitou esta alteracao, nao confirme o link.");
     }
+
+    public static (string Subject, string Html, string Text) PasswordReset(string name, string resetUrl)
+    {
+        var safeName = WebUtility.HtmlEncode(name);
+        var safeUrl = WebUtility.HtmlEncode(resetUrl);
+        return (
+            "Redefina sua senha na AESYN",
+            $"""
+            <h2>Redefinição de senha</h2>
+            <p>Olá, {safeName}.</p>
+            <p>Recebemos uma solicitação para redefinir a senha da sua conta AESYN.</p>
+            <p><a href=\"{safeUrl}\">Criar nova senha</a></p>
+            <p>Este link expira em 30 minutos. Se você não solicitou a redefinição, ignore esta mensagem.</p>
+            """,
+            $"Olá, {name}. Redefina sua senha AESYN: {resetUrl}\nO link expira em 30 minutos. Se você não solicitou esta ação, ignore esta mensagem.");
+    }
 }
