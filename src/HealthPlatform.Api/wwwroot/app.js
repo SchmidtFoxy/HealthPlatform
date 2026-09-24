@@ -901,6 +901,7 @@ function hpAthleteHome2(d,readiness,adaptiveHome){
       <button type="button" class="patient-today-essential" id="patientTodayChat"><span class="patient-today-essential-icon">💬</span><small>MENSAGENS</small><strong>Falar com o profissional</strong><em>Dúvidas, observações e acompanhamento</em></button>
       <button type="button" class="patient-today-essential ${pendingRequests?'attention':''}" id="patientTodayRequests"><span class="patient-today-essential-icon">✓</span><small>PENDÊNCIAS</small><strong>${pendingRequests?`${pendingRequests} aguardando você`:'Tudo em dia'}</strong><em>${pendingRequests?'Revisar solicitações':'Nenhuma ação pendente agora'}</em></button>
     </div>
+    <button type="button" class="patient-athlete-data-entry" id="patientAthleteDataEntry"><span>↗</span><div><small>DADOS PARA ATLETAS</small><strong>Performance, recuperação e evolução</strong><em>Abra as métricas técnicas sem poluir sua rotina de hoje.</em></div><b>›</b></button>
   </section>`;
 }
 
@@ -3301,6 +3302,7 @@ async function loadMyPatientPortal(){
   if($('#patientTodayNutrition'))$('#patientTodayNutrition').onclick=()=>loadPatientSection('plano').catch(e=>toast(e.message,true));
   if($('#patientTodayChat'))$('#patientTodayChat').onclick=()=>loadPatientSection('chat').catch(e=>toast(e.message,true));
   if($('#patientTodayRequests'))$('#patientTodayRequests').onclick=()=>loadPatientSection('solicitacoes').catch(e=>toast(e.message,true));
+  if($('#patientAthleteDataEntry'))$('#patientAthleteDataEntry').onclick=()=>loadPatientSection('atleta').catch(e=>toast(e.message,true));
   if($('#todayBriefReadiness'))$('#todayBriefReadiness').onclick=()=>openDailyReadiness(readiness);
   if($('#todayBriefTraining'))$('#todayBriefTraining').onclick=()=>loadPatientSection('treino').catch(e=>toast(e.message,true));
   if($('#todayBriefHydration'))$('#todayBriefHydration').onclick=()=>openQuickPatientRecord({quick:'Agua',kind:'number',unit:'ml',step:'50'});
@@ -3478,7 +3480,7 @@ $('#patientLogoutButton')?.addEventListener('click',logout);
 
 // ===== v0.3.27 — Portal do paciente completo =====
 function patientSectionLoading(view='inicio'){
-  const labels={inicio:'Preparando seu dia',plano:'Carregando seu plano',treino:'Preparando seu treino',metas:'Atualizando suas metas',diario:'Abrindo seu diário',evolucao:'Carregando sua evolução',exames:'Buscando seus exames',solicitacoes:'Buscando solicitações',medicamentos:'Carregando medicamentos',jornada:'Montando sua jornada',perfil:'Abrindo seu perfil esportivo',chat:'Abrindo sua conversa'};
+  const labels={inicio:'Preparando seu dia',plano:'Carregando seu plano',treino:'Preparando seu treino',metas:'Atualizando suas metas',diario:'Abrindo seu diário',evolucao:'Carregando sua evolução',exames:'Buscando seus exames',solicitacoes:'Buscando solicitações',medicamentos:'Carregando medicamentos',jornada:'Montando sua jornada',perfil:'Abrindo seu perfil esportivo',atleta:'Carregando dados para atletas',chat:'Abrindo sua conversa'};
   return `<section class="patient-loading-state" role="status" aria-live="polite" aria-label="${esc(labels[view]||'Carregando')}"><div class="patient-loading-orb" aria-hidden="true"><i></i></div><strong>${esc(labels[view]||'Carregando')}</strong><span>Um instante...</span><div class="patient-loading-lines" aria-hidden="true"><i></i><i></i><i></i></div></section>`;
 }
 async function loadPatientProfile(){
@@ -3526,6 +3528,61 @@ async function loadPatientProfile(){
   $$('[data-profile-jump]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.profileJump).catch(e=>toast(e.message,true)));
 }
 
+const HP_ATHLETE_DATA_HUB='v0.19.31';
+function hpAthleteMetric(value,label,detail='',tone=''){
+  const display=value===null||value===undefined||value===''?'—':value;
+  return `<article class="athlete-data-metric ${tone}"><small>${esc(label)}</small><strong>${esc(String(display))}</strong><span>${esc(detail||'')}</span></article>`;
+}
+function hpAthleteTrendRows(items=[]){
+  const clean=(items||[]).filter(x=>x&&x.dataUtc).slice(-8);
+  if(!clean.length)return sectionEmpty('Ainda não há avaliações suficientes para formar uma tendência.');
+  const weights=clean.map(x=>Number(x.pesoKg)).filter(Number.isFinite);
+  const min=weights.length?Math.min(...weights):0,max=weights.length?Math.max(...weights):0,span=Math.max(.1,max-min);
+  return `<div class="athlete-data-trend" aria-label="Tendência corporal">${clean.slice().reverse().map(x=>{
+    const w=Number(x.pesoKg),pct=Number.isFinite(w)?30+((w-min)/span)*70:30;
+    return `<div class="athlete-data-trend-row"><span>${fmtDate(x.dataUtc)}</span><div><i style="width:${Math.max(8,Math.min(100,pct))}%"></i></div><strong>${Number.isFinite(w)?`${num(w,1)} kg`:'—'}</strong></div>`;
+  }).join('')}</div>`;
+}
+async function loadPatientAthleteData(){
+  const host=$('#patientPortalContent');
+  const [home,evolution]=await Promise.all([
+    api(`/api/portal/me/home?data=${todayISO()}`),
+    api('/api/portal/me/evolucao?limite=24').catch(()=>({itens:[]}))
+  ]);
+  const body=home?.evolucaoCorporal||{}, readiness=home?.prontidaoDiaria||home?.prontidaoHoje||null;
+  const load=home?.cargaTreino||home?.cargaIndividualizada||{}, performance=home?.performance||{}, recovery=home?.tendenciaRecuperacao||home?.planoRecuperacao||{};
+  const game=home?.gamificacao||home?.gamificacao2||{}, cycle=home?.cicloEsportivoAtual||{}, weekly=home?.resumoSemanal||{};
+  const readinessScore=readiness?.score??readiness?.scoreProntidao??null;
+  const trainingLoad=load?.cargaSemanal??load?.cargaAtual??load?.cargaTotal??load?.volumeSemanal??null;
+  const performanceScore=performance?.score??performance?.indicePerformance??performance?.pontuacao??null;
+  const recoveryScore=recovery?.score??recovery?.mediaRecuperacao??readiness?.recuperacaoNivel??null;
+  const weeklyDone=weekly?.treinosRealizados??weekly?.treinosConcluidos??cycle?.treinosNoCiclo??null;
+  const weeklyGoal=weekly?.metaTreinos??cycle?.metaTreinosSemanais??null;
+  const history=evolution?.itens||[];
+  host.innerHTML=`<div class="athlete-data-hub" data-athlete-data-hub="v0.19.31">
+    <section class="athlete-data-hero">
+      <div><span class="eyebrow">DADOS PARA ATLETAS</span><h1>Seu desempenho com contexto</h1><p>Carga, recuperação, corpo e consistência reunidos fora da Home diária. Use para entender tendências — não para perseguir um número isolado.</p></div>
+      <span class="athlete-data-context">${cycle?.nome?esc(cycle.nome):'Visão longitudinal'}</span>
+    </section>
+    <section class="athlete-data-metrics" aria-label="Resumo técnico do atleta">
+      ${hpAthleteMetric(readinessScore!=null?`${num(readinessScore,0)}/100`:'—','Prontidão',readiness?'contexto mais recente':'aguardando check-in','readiness')}
+      ${hpAthleteMetric(trainingLoad!=null?num(trainingLoad,0):'—','Carga','carga/volume informado pelo plano','load')}
+      ${hpAthleteMetric(performanceScore!=null?num(performanceScore,0):'—','Performance','indicador recente','performance')}
+      ${hpAthleteMetric(recoveryScore!=null?`${num(recoveryScore,1)}/10`:'—','Recuperação','sono, dor e resposta ao treino','recovery')}
+      ${hpAthleteMetric(body?.pesoKg!=null?`${num(body.pesoKg,1)} kg`:'—','Peso',body?.dataUtc?`avaliação ${fmtDate(body.dataUtc)}`:'última avaliação','body')}
+      ${hpAthleteMetric(game?.streakDias!=null?`${game.streakDias} dias`:'—','Consistência',game?.xpTotal!=null?`${game.xpTotal} XP acumulados`:'sequência de autocuidado','consistency')}
+    </section>
+    <div class="athlete-data-grid">
+      <section class="card athlete-data-panel span-2"><div class="card-head"><div><span class="eyebrow">CORPO</span><h3>Tendência de peso</h3></div><button class="ghost" type="button" data-athlete-jump="evolucao">Histórico completo</button></div>${hpAthleteTrendRows(history)}</section>
+      <section class="card athlete-data-panel"><div class="card-head"><div><span class="eyebrow">RECUPERAÇÃO</span><h3>Estado recente</h3></div></div><div class="athlete-data-detail-list"><span><small>Sono</small><b>${readiness?.sonoHoras!=null?`${num(readiness.sonoHoras,1)} h`:'—'}</b></span><span><small>Energia</small><b>${readiness?.energiaNivel!=null?`${readiness.energiaNivel}/10`:'—'}</b></span><span><small>Dor</small><b>${readiness?.dorNivel!=null?`${readiness.dorNivel}/10`:'—'}</b></span><span><small>Recuperação</small><b>${readiness?.recuperacaoNivel!=null?`${readiness.recuperacaoNivel}/10`:'—'}</b></span></div><button class="secondary athlete-data-panel-action" type="button" data-athlete-jump="diario">Ver check-ins</button></section>
+      <section class="card athlete-data-panel"><div class="card-head"><div><span class="eyebrow">TREINO</span><h3>Ritmo esportivo</h3></div></div><div class="athlete-data-detail-list"><span><small>Treinos</small><b>${weeklyDone!=null?weeklyDone:'—'}${weeklyGoal!=null?` / ${weeklyGoal}`:''}</b></span><span><small>Semana do ciclo</small><b>${cycle?.semanaAtual!=null?`${cycle.semanaAtual}/${cycle.totalSemanas||'—'}`:'—'}</b></span><span><small>Perfil</small><b>${esc(cycle?.perfilEsportivo||'—')}</b></span><span><small>Objetivo</small><b>${esc(cycle?.objetivo||'—')}</b></span></div><button class="secondary athlete-data-panel-action" type="button" data-athlete-jump="treino">Abrir treinos</button></section>
+      <section class="card athlete-data-panel span-2"><div class="card-head"><div><span class="eyebrow">COMPOSIÇÃO CORPORAL</span><h3>Última avaliação</h3></div></div><div class="athlete-data-body-grid"><span><small>Peso</small><b>${body?.pesoKg!=null?`${num(body.pesoKg,1)} kg`:'—'}</b></span><span><small>IMC</small><b>${body?.imc!=null?num(body.imc,1):'—'}</b></span><span><small>Gordura</small><b>${body?.percentualGordura!=null?`${num(body.percentualGordura,1)}%`:'—'}</b></span><span><small>Cintura</small><b>${body?.cinturaCm!=null?`${num(body.cinturaCm,1)} cm`:'—'}</b></span></div></section>
+      <section class="card athlete-data-panel span-2 athlete-data-guidance"><div><span class="eyebrow">LEITURA RESPONSÁVEL</span><h3>Tendência vale mais que um dia isolado.</h3><p>Esses indicadores ajudam você e seu profissional a enxergar contexto. Decisões de treino, alimentação e saúde continuam sendo feitas junto do acompanhamento profissional.</p></div><button class="ghost" type="button" data-athlete-jump="chat">Conversar com profissional</button></section>
+    </div>
+  </div>`;
+  $$('[data-athlete-jump]').forEach(b=>b.onclick=()=>loadPatientSection(b.dataset.athleteJump).catch(e=>toast(e.message,true)));
+}
+
 async function loadPatientHealth(){
   const host=$('#patientPortalContent');
   const home=await api(`/api/portal/me/home?data=${todayISO()}`).catch(()=>null);
@@ -3549,13 +3606,13 @@ async function loadPatientHealth(){
 }
 
 async function loadPatientSection(view='inicio'){
-  const allowed=['inicio','plano','treino','saude','chat','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada','perfil'];
+  const allowed=['inicio','plano','treino','saude','chat','metas','diario','evolucao','exames','solicitacoes','medicamentos','jornada','perfil','atleta'];
   if(!allowed.includes(view))view='inicio';
   $$('#patientPortalNav [data-patient-view]').forEach(b=>{const active=b.dataset.patientView===view;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   const host=$('#patientPortalContent');
   host?.setAttribute('aria-busy','true');
   if(host)host.innerHTML=patientSectionLoading(view);
-  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,saude:loadPatientHealth,chat:loadPatientChat,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney,perfil:loadPatientProfile};
+  const loaders={inicio:loadMyPatientPortal,plano:loadPatientPlan,treino:loadPatientWorkout,saude:loadPatientHealth,chat:loadPatientChat,metas:loadPatientGoals,diario:loadPatientDiary,evolucao:loadPatientEvolution,exames:loadPatientLabs,solicitacoes:loadPatientRequests,medicamentos:loadPatientMedications,jornada:loadPatientJourney,perfil:loadPatientProfile,atleta:loadPatientAthleteData};
   try{
     await loaders[view]();
     if(host){host.classList.remove('patient-view-enter');void host.offsetWidth;host.classList.add('patient-view-enter')}
@@ -8839,7 +8896,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.30';
+const HP_MVP_VERSION='0.19.31';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

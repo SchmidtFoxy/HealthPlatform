@@ -11,15 +11,15 @@
   <meta name="msapplication-TileColor" content="#0B3B36" />
   <meta name="application-name" content="AESYN Performance" />
   <title>AESYN Performance</title>
-  <link rel="manifest" href="/manifest.webmanifest?v=0.19.30" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.19.30" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.19.30" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.19.30" />
-  <link rel="stylesheet" href="/app.css?v=0.19.30" />
+  <link rel="manifest" href="/manifest.webmanifest?v=0.19.31" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.19.31" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.19.31" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.19.31" />
+  <link rel="stylesheet" href="/app.css?v=0.19.31" />
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
-    <img src="/icons/icon-192.png?v=0.19.30" alt="" />
+    <img src="/icons/icon-192.png?v=0.19.31" alt="" />
     <strong>AESYN</strong><span>PERFORMANCE</span>
   </div>
   <a class="hp-skip-link" href="#patientPortalContent">Pular para o conteúdo</a>
@@ -155,6 +155,7 @@
       <button data-patient-view="plano">Plano</button>
       <button data-patient-view="saude">Saúde</button>
       <button data-patient-view="chat">Chat</button>
+      <button class="patient-secondary-nav" data-patient-view="atleta">Dados</button>
       <button class="patient-secondary-nav" data-patient-view="evolucao">Evolução</button>
       <button class="patient-secondary-nav" data-patient-view="metas">Metas</button>
       <button class="patient-secondary-nav" data-patient-view="diario">Diário</button>
@@ -183,6 +184,7 @@
       <div class="patient-more-handle"></div>
       <div class="patient-more-head"><div><span class="eyebrow">NAVEGAÇÃO</span><h3>Mais do seu acompanhamento</h3></div><button id="patientMoreClose" class="ghost" type="button" aria-label="Fechar">×</button></div>
       <div class="patient-more-grid">
+        <button data-patient-more-view="atleta"><span>↗</span><b>Dados para atletas</b><small>Performance, carga e recuperação</small></button>
         <button data-patient-more-view="metas"><span>◎</span><b>Metas</b><small>Objetivos do dia</small></button>
         <button data-patient-more-view="diario"><span>✎</span><b>Diário</b><small>Registros e sintomas</small></button>
         <button data-patient-more-view="saude"><span>✚</span><b>Saúde</b><small>Exames, monitoramento e recuperação</small></button>
@@ -283,6 +285,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.19.30"></script>
+  <script src="/app.js?v=0.19.31"></script>
 </body>
 </html>

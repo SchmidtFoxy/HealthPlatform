@@ -1,3 +1,7 @@
+## v0.19.31 — Athlete Data Hub
+
+A área do paciente agora separa a rotina diária das métricas técnicas. Use **Dados para Atletas** para consultar performance, recuperação, corpo, consistência e tendências sem sobrecarregar a Home.
+
 ## v0.19.30 — Patient Home Cleanup
 
 - Home do paciente orientada à pergunta **“o que eu preciso fazer hoje?”**.

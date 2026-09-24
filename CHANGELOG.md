@@ -1,3 +1,12 @@
+# v0.19.31 — Athlete Data Hub
+
+- Cria a área dedicada **Dados para Atletas**, separando métricas técnicas da Home diária.
+- Reúne prontidão, carga/volume, performance, recuperação, peso, composição corporal, consistência, XP/streak e contexto do ciclo quando disponíveis.
+- Adiciona tendência corporal baseada no histórico de avaliações e atalhos para check-ins, treino, evolução e chat.
+- Adiciona acesso pela Home, navegação secundária e menu Mais do paciente.
+- Inclui responsividade e dark mode próprios, sem migration nem alteração de schema.
+- Mantém a regra de que métricas são contexto longitudinal e não substituem decisão profissional.
+
 # v0.19.30-r3 — Patient Home Legacy Action Hub Cleanup
 
 - Corrige falso negativo do gate histórico `[1161/1168]`, que ainda exigia o antigo `mobile-now-hub`/Action Hub removido pela v0.19.30.
