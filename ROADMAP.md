@@ -267,6 +267,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - desvinculação;
 - histórico/versionamento preservado.
 
+**Status:** implementado na v0.19.33. O profissional pode criar, editar, duplicar, arquivar, reativar e desvincular um plano da rotina ativa sem apagar o histórico. A relação um-para-muitos já existente passa a ser exposta de forma explícita: o paciente pode ter zero, um ou vários planos simultâneos (por exemplo força, cardio e recuperação), e o portal lista todos os planos ativos com início livre das sessões publicadas. Sem migration nova.
+
 ## v0.19.34 — Patient Files Mobile 2.0
 
 - biblioteca funcional de arquivos;
@@ -919,3 +921,11 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 - Gate legado de `daily-readiness-card` aposentado.
 - O check-in/prontidão da Home é representado pelo card essencial `athleteHome2Body` em `patient-today-overview`.
 - Testes devem acompanhar a arquitetura atual da Home e não forçar componentes removidos por versões posteriores.
+
+### Revisão v0.19.33-r1 — Multi-Plan Gate Semantic Sync
+- Corrige falso negativo no gate `[1998/2006]` da interface profissional de múltiplos planos.
+- A UI atual comunica corretamente que o paciente pode ficar **sem plano, ter um ou vários planos simultâneos**; o teste ainda exigia literalmente `zero, um ou vários`.
+- O gate passa a validar a mensagem efetivamente exibida sem alterar a funcionalidade, o contrato da API, schema ou migrations.
+- Mantém como obrigatórios o card/grid multi-plan e a indicação explícita de suporte a múltiplos planos.
+- Versão funcional pública permanece `0.19.33`.
+

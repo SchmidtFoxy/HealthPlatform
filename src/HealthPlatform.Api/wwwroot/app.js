@@ -8896,7 +8896,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.32';
+const HP_MVP_VERSION='0.19.33';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10431,3 +10431,148 @@ hpRenderNutritionProfessionalFlow=function(d){
   $$('.nutrition-save-template-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openSaveMealPlanTemplate(plan)});
   $$('.nutrition-status-v01932').forEach(b=>b.onclick=async()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId)),next=b.dataset.nextStatus;const verb=next==='Ativo'?'publicar':'arquivar';if(!confirm(`Deseja ${verb} “${plan?.nome||'este plano'}”?`))return;try{await api(`/api/planos-alimentares/${b.dataset.planId}/status/${next}`,{method:'POST'});toast(next==='Ativo'?'Dieta publicada.':'Dieta arquivada sem apagar o histórico.');await loadPatient()}catch(err){toast(err.message,true)}});
 };
+
+
+// ===== v0.19.33 — Workout CRUD & Multi-Plan Completion =====
+const HP_WORKOUT_CRUD_MULTI_PLAN='v0.19.33';
+
+function hpWorkoutPlanStatusActionV01933(plan){
+  const active=String(plan.status||'').toLowerCase()==='ativo';
+  return `<button class="ghost workout-status-v01933" data-workout-id="${plan.id}" data-action="${active?'archive':'reactivate'}">${active?'Arquivar':'Reativar'}</button>`;
+}
+
+async function hpDuplicateWorkoutV01933(patient,plan){
+  const name=window.prompt('Nome da cópia do treino:',`${plan.nome} - cópia`);
+  if(!name||!name.trim())return;
+  try{
+    await api(`/api/treinos/${plan.id}/duplicar`,{method:'POST',body:JSON.stringify({
+      nome:name.trim(),
+      dataInicio:todayISO(),
+      dataFim:null,
+      ajusteCargaPercentual:0,
+      ajusteSeries:0,
+      ajusteRepeticoes:0,
+      ajusteDescansoSegundos:0,
+      concluirPlanoAnterior:false
+    })});
+    toast('Plano duplicado. O histórico do original foi preservado.');
+    state.patientTab='treinos';
+    await loadPatient();
+  }catch(err){toast(err.message,true)}
+}
+
+hpRenderWorkoutProfessionalFlow=function(d){
+  const box=$('#patientTabContent'),treinos=d.treinos||[],patient=d.p||{id:state.patientId,nome:'Paciente'};
+  const ativos=treinos.filter(x=>String(x.status||'').toLowerCase()==='ativo').length;
+  box.innerHTML=`<section class="card full-card pro-flow-card workout-pro-flow-v01933" data-pro-workout-flow="v0.19.33">
+    <div class="card-head pro-flow-head">
+      <div><span class="eyebrow">AESYN • WORKOUT CRUD & MULTI-PLAN • v0.19.33</span><h3>Treino e nutrição • Treino</h3><small>${treinos.length} plano(s) no histórico • ${ativos} ativo(s). O paciente pode ficar sem plano, ter um ou vários planos simultâneos.</small></div>
+      <div class="workout-top-actions pro-flow-actions">
+        <button class="ghost" id="sessionLibraryButtonV1812">Sessões-modelo</button>
+        <button class="secondary" id="workoutLibraryV1812">Treinos-modelo</button>
+        <button class="secondary" id="workoutProgramsV1812">Programas</button>
+        <button class="primary" id="newWorkoutFromTabV1812">+ Novo plano</button>
+      </div>
+    </div>
+    <div class="workout-multiplan-guidance-v01933"><div><strong>Múltiplos planos são permitidos</strong><span>Use planos separados para força, cardio, recuperação ou outros contextos. Arquivar/desvincular retira da rotina ativa sem apagar o histórico.</span></div><span class="profile-context-badge">${ativos} ativo(s)</span></div>
+    ${treinos.length?`<div class="workout-plan-grid pro-workout-plan-grid workout-plan-grid-v01933">${treinos.map(t=>`
+      <article class="workout-plan-card pro-workout-plan-card ${String(t.status||'').toLowerCase()==='ativo'?'':'is-archived'}" data-workout-plan="${t.id}">
+        <div class="record-top"><div><span class="eyebrow">V${t.versao||1} • ${fmtDate(t.dataInicio)}${t.dataFim?' — '+fmtDate(t.dataFim):''}</span><h4>${esc(t.nome)}</h4><small>${esc(t.profissionalNome||'')}</small></div><span class="pill ${t.status==='Ativo'?'Ativa':'Agendada'}">${esc(t.status)}</span></div>
+        ${t.objetivo?`<p>${esc(t.objetivo)}</p>`:''}
+        <div class="pro-workout-sessions">${(t.sessoes||[]).length?(t.sessoes||[]).map((s,i)=>`<div class="pro-workout-session"><span class="session-letter">${String.fromCharCode(65+i)}</span><div><strong>${esc(hpWorkoutPlanSessionLabel(i,s.nome))}</strong><small>${esc(s.diasSemana||'Dias livres')} • ${(s.itens||[]).length} exercício(s)</small></div></div>`).join(''):'<div class="empty compact">Plano ainda sem sessões.</div>'}</div>
+        <div class="workout-plan-actions pro-plan-actions workout-crud-actions-v01933">
+          <button class="primary workout-add-session-v1812" data-workout-id="${t.id}">+ Treino</button>
+          <button class="secondary workout-edit-v1812" data-workout-id="${t.id}">Editar</button>
+          <button class="secondary workout-duplicate-v01933" data-workout-id="${t.id}">Duplicar</button>
+          <button class="ghost workout-save-template-v1812" data-workout-id="${t.id}">Salvar modelo</button>
+          <button class="ghost workout-progress-v1812" data-workout-id="${t.id}">Progressão</button>
+          ${hpWorkoutPlanStatusActionV01933(t)}
+          ${String(t.status||'').toLowerCase()==='ativo'?`<button class="ghost danger workout-unlink-v01933" data-workout-id="${t.id}">Desvincular da rotina</button>`:''}
+        </div>
+      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano de treino cadastrado. O paciente pode permanecer sem treino até uma nova prescrição.')}</section>`;
+
+  $('#newWorkoutFromTabV1812').onclick=()=>openWorkoutForm(patient);
+  $('#workoutLibraryV1812').onclick=()=>openWorkoutLibrary(patient);
+  $('#workoutProgramsV1812').onclick=()=>openWorkoutProgramLibrary();
+  $('#sessionLibraryButtonV1812').onclick=()=>openWorkoutSessionLibrary(treinos);
+
+  $$('.workout-add-session-v1812').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));if(plan)openWorkoutForm(patient,plan,{addSession:true})});
+  $$('.workout-edit-v1812').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));if(plan)openWorkoutForm(patient,plan)});
+  $$('.workout-save-template-v1812').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));if(plan)openSaveWorkoutTemplate(plan)});
+  $$('.workout-progress-v1812').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));if(plan)openWorkoutProgression(patient,plan)});
+  $$('.workout-duplicate-v01933').forEach(b=>b.onclick=()=>{const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));if(plan)hpDuplicateWorkoutV01933(patient,plan)});
+  $$('.workout-status-v01933').forEach(b=>b.onclick=async()=>{
+    const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId)),archive=b.dataset.action==='archive';
+    if(!confirm(archive?`Arquivar “${plan?.nome||'este plano'}” sem apagar o histórico?`:`Reativar “${plan?.nome||'este plano'}”?`))return;
+    try{
+      await api(archive?`/api/treinos/${b.dataset.workoutId}`:`/api/treinos/${b.dataset.workoutId}/reativar`,{method:archive?'DELETE':'POST'});
+      toast(archive?'Treino arquivado sem apagar o histórico.':'Treino reativado.');
+      await loadPatient();
+    }catch(err){toast(err.message,true)}
+  });
+  $$('.workout-unlink-v01933').forEach(b=>b.onclick=async()=>{
+    const plan=treinos.find(x=>String(x.id)===String(b.dataset.workoutId));
+    if(!confirm(`Desvincular “${plan?.nome||'este plano'}” da rotina ativa? O histórico continuará preservado.`))return;
+    try{
+      await api(`/api/treinos/${b.dataset.workoutId}/desvincular`,{method:'POST'});
+      toast('Treino desvinculado da rotina ativa; histórico preservado.');
+      await loadPatient();
+    }catch(err){toast(err.message,true)}
+  });
+
+  loadWorkoutPhases(patient,treinos).catch(x=>console.warn('Fases de treino:',x));
+  hpInjectProfessionalWorkoutProgressionEngine(patient,treinos).catch(x=>console.warn('Workout Progression Engine:',x));
+};
+
+async function loadPatientWorkoutV01933(){
+  const host=$('#patientPortalContent');
+  const [d,h,home]=await Promise.all([
+    api('/api/portal/me/treino/todos'),
+    api('/api/portal/me/treinos/historico?dias=90'),
+    api(`/api/portal/me/home?data=${todayISO()}`)
+  ]);
+  const planos=d.planos||[];
+  if(!planos.length){
+    host.innerHTML=patientPageHeader('TREINO','Meus treinos','Você não possui plano ativo neste momento.')+sectionEmpty('Seu profissional ainda não publicou um treino ativo. Quando houver uma prescrição, ela aparecerá aqui.');
+    return;
+  }
+  const principal=planos[0];
+  const totalSessoes=planos.reduce((n,p)=>n+(p.sessoes||[]).length,0);
+  const totalExercicios=planos.reduce((n,p)=>n+(p.sessoes||[]).reduce((m,s)=>m+(s.itens||[]).length,0),0);
+  host.innerHTML=patientPageHeader('TREINO','Meus treinos',`${planos.length} plano(s) ativo(s) • escolha livremente uma sessão liberada pelo profissional.`)+`
+    ${hpRecoveryDayFlow(home)}
+    ${hpTrainingDayFlow(home,principal,h)}
+    <section class="patient-multiplan-v01933" data-patient-multiplan="v0.19.33">
+      <div class="patient-multiplan-head"><div><span class="eyebrow">TODOS OS PLANOS ATIVOS</span><h3>Escolha o treino que quer iniciar</h3><p>Força, cardio, recuperação e outras fichas publicadas podem coexistir. Iniciar uma sessão não substitui nem apaga os demais planos.</p></div><span class="patient-workout-access-count">${planos.length} plano(s)</span></div>
+      <div class="patient-plan-totals workout-totals">${metric(planos.length,'','Planos ativos')}${metric(totalSessoes,'','Sessões')}${metric(totalExercicios,'','Exercícios')}${metric(h.total||0,'','Concluídos 90d')}</div>
+      <div class="patient-multiplan-grid-v01933">${planos.map((p,pidx)=>`
+        <article class="card patient-multiplan-card-v01933" data-patient-plan="${p.id}">
+          <div class="card-head"><div><span class="eyebrow">PLANO ${pidx+1} • V${p.versao||1}</span><h3>${esc(p.nome)}</h3><small>${esc(p.objetivo||'Plano de exercícios')} • ${esc(p.profissional||'Profissional')}</small></div><span class="pill Ativa">Ativo</span></div>
+          ${p.observacoes?`<p class="muted">${esc(p.observacoes)}</p>`:''}
+          <div class="patient-workout-access-grid">${(p.sessoes||[]).map((s,index)=>`<button type="button" class="patient-workout-access-card workout-start-any-v01933" data-plan="${p.id}" data-session="${s.id}">
+            <span class="patient-workout-access-letter">${hpWorkoutLetter(index)}</span>
+            <span class="patient-workout-access-copy"><small>${esc(p.nome)}</small><strong>${esc(s.nome||`Treino ${hpWorkoutLetter(index)}`)}</strong><em>${(s.itens||[]).length} exercício(s)${s.diasSemana?` • ${esc(s.diasSemana)}`:''}</em></span>
+            <span class="patient-workout-access-action">Iniciar ›</span>
+          </button>`).join('')||'<div class="empty compact">Sem sessões disponíveis.</div>'}</div>
+        </article>`).join('')}</div>
+    </section>
+    <section class="card workout-history-patient"><div class="card-head"><h3>Histórico recente</h3><small>${h.total||0} treino(s)</small></div>${(h.execucoes||[]).length?`<div class="workout-execution-list patient-session-history">${h.execucoes.slice(0,8).map(x=>`<button type="button" class="workout-execution-review" data-execution-id="${x.id}"><div><strong>${esc(x.sessao)}</strong><small>${fmtDateTime(x.dataHoraInicioUtc)} • ${esc(x.plano||'')}</small></div><span>${x.duracaoMinutos||0} min</span><span>${x.esforcoPercebido!=null?`RPE ${x.esforcoPercebido}/10`:'—'}</span><b class="workout-review-chevron">›</b></button>`).join('')}</div>`:sectionEmpty('Nenhum treino registrado ainda.')}</section>`;
+
+  if($('#recoveryDayFlowAction'))$('#recoveryDayFlowAction').onclick=()=>{if(home?.execucaoDoDia?.diaFechado){loadPatientSection('inicio').catch(e=>toast(e.message,true));return}openPatientQuickLog()};
+  if($('#trainingDayFlowAction'))$('#trainingDayFlowAction').onclick=()=>{
+    const readiness=home?.prontidaoDiaria;
+    const today=todayISO();
+    const execution=(h.execucoes||[]).find(x=>String(x.dataHoraInicioUtc||'').slice(0,10)===today);
+    if(execution){openWorkoutSessionReview(execution);return}
+    if(!readiness){openDailyReadiness(readiness);return}
+    const sessao=(principal.sessoes||[])[0];
+    if(sessao)openWorkoutExecutionForm(sessao);
+  };
+  $$('.workout-start-any-v01933').forEach(b=>b.onclick=()=>{
+    const plan=planos.find(x=>String(x.id)===String(b.dataset.plan));
+    const sessao=(plan?.sessoes||[]).find(x=>String(x.id)===String(b.dataset.session));
+    if(sessao)openWorkoutExecutionForm(sessao);
+  });
+  $$('.workout-execution-review').forEach(b=>b.onclick=()=>{const x=(h.execucoes||[]).find(e=>String(e.id)===String(b.dataset.executionId));if(x)openWorkoutSessionReview(x)});
+}
+loadPatientWorkout=loadPatientWorkoutV01933;

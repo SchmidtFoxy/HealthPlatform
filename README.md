@@ -1,3 +1,7 @@
+## v0.19.33-r1 — Workout CRUD & Multi-Plan Completion
+
+Fecha o CRUD profissional de treino e o suporte explícito a múltiplos planos por paciente. Planos podem ser criados, editados, duplicados, arquivados, reativados ou retirados da rotina ativa sem apagar histórico. O portal do paciente passa a exibir todos os planos ativos e permite iniciar livremente qualquer sessão publicada.
+
 ## v0.19.32 — Professional Nutrition Access Completion
 
 A área profissional de Nutrição agora expõe o fluxo completo do que já existia no backend: criar e editar dietas, refeições, alimentos, substituições/equivalências, metas, modelos, atribuição, duplicação/progressão, arquivamento com preservação de histórico e revisão/publicação.

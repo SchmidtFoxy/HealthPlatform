@@ -1,3 +1,17 @@
+# v0.19.33-r1 — Multi-Plan Gate Semantic Sync
+- Corrige falso negativo no gate `[1998/2006]`: a UI informa `sem plano, ter um ou vários planos simultâneos`, enquanto o smoke test ainda exigia literalmente `zero, um ou vários`.
+- Sincroniza o gate com a implementação real sem reintroduzir texto artificial na interface.
+- Nenhuma alteração funcional, de schema, migration ou contrato da API; versão pública permanece `0.19.33`.
+
+# v0.19.33 — Workout CRUD & Multi-Plan Completion
+
+- CRUD profissional de treino fechado com arquivamento e reativação explícitos.
+- Desvinculação segura da rotina ativa preservando histórico e auditoria.
+- Duplicação rápida de plano mantendo a linhagem/versionamento.
+- Zero, um ou vários planos de treino por paciente suportados na UI.
+- Portal do paciente lista todos os planos ativos e permite iniciar qualquer sessão liberada.
+- Sem alteração de schema/migration.
+
 # v0.19.32 — Professional Nutrition Access Completion
 
 - Completa o acesso profissional aos recursos nutricionais diretamente na área do paciente.

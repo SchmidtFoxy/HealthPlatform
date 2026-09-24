@@ -546,6 +546,80 @@ public sealed class TreinosController(
         return NoContent();
     }
 
+    [HttpDelete("api/treinos/{id:guid}")]
+    public async Task<IActionResult> ArquivarTreino(Guid id, CancellationToken ct)
+    {
+        var item = await db.PlanosTreino
+            .Include(x => x.Paciente)
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.Paciente.OrganizacaoId == currentUser.OrganizationId, ct);
+
+        if (item is null)
+            return NotFound(new { message = "Plano de treino nao encontrado." });
+
+        if (item.Status == "Inativo")
+            return NoContent();
+
+        var antes = new { item.Status, item.DataFim };
+        item.Status = "Inativo";
+        item.DataFim ??= DateOnly.FromDateTime(DateTime.UtcNow);
+        Auditar("ARCHIVE", nameof(PlanoTreino), item.Id, antes, new { item.Status, item.DataFim });
+        await db.SaveChangesAsync(ct);
+        return NoContent();
+    }
+
+    [HttpPost("api/treinos/{id:guid}/reativar")]
+    public async Task<IActionResult> ReativarTreino(Guid id, CancellationToken ct)
+    {
+        var item = await db.PlanosTreino
+            .Include(x => x.Paciente)
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.Paciente.OrganizacaoId == currentUser.OrganizationId, ct);
+
+        if (item is null)
+            return NotFound(new { message = "Plano de treino nao encontrado." });
+
+        var antes = new { item.Status, item.DataFim };
+        item.Status = "Ativo";
+        if (item.DataFim.HasValue && item.DataFim.Value < DateOnly.FromDateTime(DateTime.UtcNow))
+            item.DataFim = null;
+        Auditar("REACTIVATE", nameof(PlanoTreino), item.Id, antes, new { item.Status, item.DataFim });
+        await db.SaveChangesAsync(ct);
+        return NoContent();
+    }
+
+    [HttpPost("api/treinos/{id:guid}/desvincular")]
+    public async Task<IActionResult> DesvincularTreino(Guid id, CancellationToken ct)
+    {
+        var item = await db.PlanosTreino
+            .Include(x => x.Paciente)
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.Paciente.OrganizacaoId == currentUser.OrganizationId, ct);
+
+        if (item is null)
+            return NotFound(new { message = "Plano de treino nao encontrado." });
+
+        var antes = new { item.Status, item.DataFim };
+        item.Status = "Inativo";
+        item.DataFim ??= DateOnly.FromDateTime(DateTime.UtcNow);
+        Auditar("UNLINK_ARCHIVE", nameof(PlanoTreino), item.Id, antes, new
+        {
+            item.Status,
+            item.DataFim,
+            HistoricoPreservado = true
+        });
+        await db.SaveChangesAsync(ct);
+        return Ok(new
+        {
+            message = "Plano desvinculado da rotina ativa sem apagar o historico.",
+            item.Id,
+            item.Status
+        });
+    }
+
     private IQueryable<PlanoTreino> QueryCompleta() => db.PlanosTreino.AsNoTracking()
         .Include(x => x.Paciente)
         .Include(x => x.Profissional)
