@@ -1,4 +1,20 @@
-﻿## v0.19.24 — Metabolic Planning UX & Safety
+## v0.19.25 — Account & Email Foundation
+
+Esta versão cria a fundação segura de e-mail da conta AESYN sem disparar testes contra produção.
+
+- e-mail principal e status de confirmação;
+- confirmação usando tokens do ASP.NET Core Identity;
+- troca de e-mail protegida pela senha atual e prevenção de duplicidade;
+- sincronização do e-mail do paciente vinculado;
+- templates transacionais de confirmação e troca;
+- SMTP configurável por ambiente e **desabilitado por padrão**;
+- auditoria de envio, falha, confirmação e troca sem persistir tokens sensíveis;
+- policy `AuthenticatedOnly` para recursos pertencentes à própria conta, inclusive paciente;
+- `TESTAR.ps1` valida a fundação apenas por código/configuração local, sem enviar e-mail real.
+
+> Para produção, configure `Email__Enabled=true` e as demais variáveis `Email__*` somente no ambiente da VPS. Não grave senha SMTP no repositório.
+
+## v0.19.24 — Metabolic Planning UX & Safety
 
 - Clarifica o fluxo TMB → GET → objetivo → meta calórica → macros.
 - Mostra a meta calórica ativa do plano e compara macros em kcal e percentual.

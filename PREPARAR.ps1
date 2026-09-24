@@ -1,4 +1,15 @@
 ﻿$ErrorActionPreference = "Stop"
+
+# Compatibilidade com Windows PowerShell 5.1: scripts com caracteres Unicode precisam de UTF-8 BOM.
+$testarPath = Join-Path $PSScriptRoot "TESTAR.ps1"
+if (Test-Path $testarPath) {
+    $bytes = [System.IO.File]::ReadAllBytes($testarPath)
+    $hasUtf8Bom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+    if (-not $hasUtf8Bom) {
+        throw "TESTAR.ps1 precisa estar salvo como UTF-8 com BOM para compatibilidade com Windows PowerShell 5.1."
+    }
+}
+
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 

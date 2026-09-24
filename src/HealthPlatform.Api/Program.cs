@@ -1,5 +1,6 @@
 using System.Text;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Email;
 using HealthPlatform.Infrastructure.Data;
 using HealthPlatform.Domain.Enums;
 using HealthPlatform.Infrastructure.Identity;
@@ -17,7 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.6" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.25" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -52,6 +53,9 @@ builder.Services.AddIdentityCore<Usuario>(options =>
 .AddSignInManager()
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
+builder.Services.AddScoped<ITransactionalEmailService, SmtpTransactionalEmailService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
@@ -90,13 +94,16 @@ builder.Services.AddAuthorization(options =>
             TipoUsuario.Secretaria.ToString())
         .Build();
 
+    options.AddPolicy("AuthenticatedOnly", policy =>
+        policy.RequireAuthenticatedUser());
+
     options.AddPolicy("PatientOnly", policy =>
         policy.RequireAuthenticatedUser()
               .RequireRole(TipoUsuario.Paciente.ToString()));
 });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    // Nginx/Render terminam TLS na borda; a API precisa reconstruir o esquema HTTPS
+    // Nginx termina TLS na borda da VPS; a API precisa reconstruir o esquema HTTPS
     // antes de HSTS/redirects, evitando loops e URLs incorretas atras do reverse proxy.
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
@@ -113,7 +120,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Deve executar antes de HTTPS/HSTS para respeitar X-Forwarded-Proto do Nginx/Render.
+// Deve executar antes de HTTPS/HSTS para respeitar X-Forwarded-Proto do Nginx.
 app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
@@ -228,7 +235,7 @@ if (app.Environment.IsDevelopment())
 else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
 {
     // Caminho propositalmente simples para o MVP hospedado.
-    // Em um banco Render NOVO e vazio, cria o schema atual diretamente.
+    // Em um banco NOVO e vazio, cria o schema atual diretamente.
     // Nao substitui a estrategia definitiva de migrations da futura producao.
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -238,7 +245,7 @@ else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
     await db.Database.EnsureCreatedAsync();
 
     // Compatibilidade incremental do MVP hospedado: EnsureCreated nao altera um banco ja existente.
-    // A v0.5.1 introduz SolicitacoesClinicas e precisa garantir a tabela tambem em demos Render preservadas.
+    // A v0.5.1 introduz SolicitacoesClinicas e precisa garantir a tabela tambem em bancos de demonstracao preservados.
     await db.Database.ExecuteSqlRawAsync("""
         CREATE TABLE IF NOT EXISTS "SolicitacoesClinicas" (
             "Id" uuid NOT NULL,
@@ -266,7 +273,7 @@ else if (builder.Configuration.GetValue<bool>("DemoBootstrap:Enabled"))
         CREATE INDEX IF NOT EXISTS "IX_SolicitacoesClinicas_ProfissionalId" ON "SolicitacoesClinicas" ("ProfissionalId");
         """);
 
-    // Compatibilidade do Render com bancos demo preservados de versoes anteriores.
+    // Compatibilidade com bancos demo preservados de versoes anteriores.
     // EnsureCreatedAsync cria o schema completo apenas quando o banco e novo/vazio;
     // em bancos existentes, garantimos aqui os upgrades esportivos/gamificacao em ordem.
     await db.Database.ExecuteSqlRawAsync("""

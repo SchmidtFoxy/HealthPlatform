@@ -1,6 +1,11 @@
 # AESYN Performance — Roadmap Mestre
 
-> **Versão-base deste roadmap:** v0.19.24 (revisão de pacote atual: v0.19.24-r4) — Metabolic Planning UX & Safety  
+> **Hotfix v0.19.25-r2:** corrige o gate `[1908/1914]` para validar `EmailPrincipal`, `Confirmado` e `PodeSolicitarConfirmacao` no contrato `EmailAccountStatusResponse`, onde esses campos realmente são declarados, em vez de exigir seus nomes literais dentro do controller. Nenhuma alteração funcional ou de schema.
+
+> **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
+
+
+> **Versão-base deste roadmap:** v0.19.25 (revisão de pacote atual: v0.19.25-r2) — Account & Email Foundation  
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -125,6 +130,11 @@ O profissional deve conseguir explicar, olhando apenas para a tela, de onde surg
 - prevenção de duplicidade;
 - templates básicos de comunicação;
 - rastreio de envio/falha.
+
+### Gate
+Paciente e profissional conseguem consultar o e-mail principal, solicitar confirmação e trocar o endereço de forma segura, sem duplicidade e sem expor tokens. O desenvolvimento não envia mensagens reais quando `Email:Enabled=false`.
+
+**Status:** implementado na v0.19.25; validar localmente com PREPARAR → RODAR → TESTAR antes de qualquer deploy.
 
 ## v0.19.26 — Public Access & Password Recovery
 

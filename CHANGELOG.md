@@ -1,3 +1,23 @@
+# v0.19.25-r1 — Windows PowerShell UTF-8 BOM Hotfix
+
+- Corrige `TESTAR.ps1` salvo em UTF-8 sem BOM, que fazia o Windows PowerShell 5.1 interpretar caracteres como `→`, acentos e símbolos como ANSI/CP1252 e gerar erros de parser.
+- `TESTAR.ps1` volta a ser distribuído em UTF-8 com BOM.
+- `PREPARAR.ps1` passa a bloquear futuras regressões verificando o BOM antes do build/teste.
+- Nenhuma regra funcional de Account & Email Foundation foi alterada.
+
+## v0.19.25 — Account & Email Foundation
+
+- Adiciona API de gestão do e-mail principal da própria conta para pacientes e profissionais autenticados.
+- Implementa confirmação de e-mail e troca segura de endereço com tokens do ASP.NET Core Identity.
+- Exige senha atual antes de solicitar troca e bloqueia e-mails duplicados.
+- Mantém `UserName` e e-mail do cadastro de paciente sincronizados dentro de transação.
+- Adiciona templates básicos de comunicação para confirmação e troca de e-mail.
+- Adiciona SMTP configurável por ambiente, desabilitado por padrão no desenvolvimento.
+- Registra envio, indisponibilidade/falha, confirmação e troca no `AuditLog`, sem persistir tokens.
+- Cria policy `AuthenticatedOnly` para recursos de conta que devem funcionar também para pacientes.
+- Amplia o `TESTAR.ps1` até 1914 gates sem realizar chamadas de produção nem disparos SMTP.
+- Versão pública: `0.19.25`.
+
 ## v0.19.24-r5 — Hotfix Macro Calorie Gate
 
 - Corrige falso negativo do `TESTAR.ps1` no gate de comparação energética dos macros.
@@ -2273,3 +2293,10 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Corrige o gate histórico do Workout Builder 2.0 para validar marcadores estruturais, sem exigir o rótulo visual legado `WORKOUT BUILDER 2.0 • v0.17.4`.
 - Mantém a interface de produção sem referências visíveis de versões históricas.
 - Nenhuma alteração funcional ou de schema.
+
+
+### v0.19.25-r2 — correção do gate de contrato de e-mail
+- Corrige falso negativo no gate `[1908/1914]`.
+- `EmailPrincipal`, `Confirmado` e `PodeSolicitarConfirmacao` pertencem ao contrato `EmailAccountStatusResponse`, não ao texto do `ContaEmailController`.
+- O gate agora valida controller e contrato separadamente, de acordo com a responsabilidade real de cada arquivo.
+- Nenhuma alteração funcional, de schema ou migration; versão funcional permanece `0.19.25`.
