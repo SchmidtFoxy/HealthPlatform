@@ -148,8 +148,51 @@ async function hpPersistFirstThemeChoice(theme){
   }catch{}
 }
 
+function hpSyncImpersonationUi(){
+  const banner=$('#impersonationBanner');
+  const active=!!state.user?.impersonating;
+  if(banner){
+    banner.classList.toggle('hidden',!active);
+    banner.innerHTML=active?`<div><strong>Modo de simulação</strong><span>Você está visualizando como <b>${esc(state.user?.nome||'profissional')}</b>. Por segurança, a simulação é somente leitura.</span></div><button type="button" class="secondary" id="endImpersonationButton">Sair da simulação</button>`:'';
+    const exit=$('#endImpersonationButton');
+    if(exit)exit.onclick=()=>hpEndImpersonation();
+  }
+  const logoutBtn=$('#logoutButton');
+  if(logoutBtn){
+    logoutBtn.innerHTML=active?'<span>↩</span> Sair da simulação':'<span>↪</span> Sair';
+    logoutBtn.onclick=active?()=>hpEndImpersonation():()=>logout();
+  }
+}
+
+async function hpStartImpersonation(m){
+  if(!m?.usuarioId||!m?.ativo)return;
+  if(!confirm(`Entrar em modo de simulação como ${m.nome}?\n\nA sessão será somente leitura e ficará claramente sinalizada.`))return;
+  try{
+    const d=await api(`/api/impersonacao/${m.usuarioId}/iniciar`,{method:'POST'});
+    hpStoreSession(d);
+    state.view='dashboard';
+    showApp();
+    toast(`Simulação iniciada como ${m.nome}.`);
+  }catch(err){toast(err.message,true)}
+}
+
+async function hpEndImpersonation(){
+  if(!state.user?.impersonating){logout();return}
+  const button=$('#endImpersonationButton')||$('#logoutButton');
+  if(button)button.disabled=true;
+  try{
+    const d=await api('/api/impersonacao/finalizar',{method:'POST'});
+    hpStoreSession(d);
+    state.view='dashboard';
+    showApp();
+    toast('Simulação encerrada. Você voltou ao acesso de administrador.');
+  }catch(err){toast(err.message,true)}
+  finally{if(button)button.disabled=false}
+}
+
 function showApp(){
   $('#loginView').classList.add('hidden');
+  hpSyncImpersonationUi();
   $('#activationView')?.classList.add('hidden');
   const u=state.user||{};
   hpSyncProfileSettings().catch(()=>{});
@@ -172,7 +215,7 @@ function showApp(){
 let hpSessionRenewTimer=null;
 function hpClearSessionRenewal(){if(hpSessionRenewTimer){clearTimeout(hpSessionRenewTimer);hpSessionRenewTimer=null}}
 function hpStoreSession(d){
-  state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario};state.expiresAtUtc=d.expiresAtUtc;
+  state.token=d.accessToken;state.user={nome:d.nome,tipoUsuario:d.tipoUsuario,impersonating:!!d.impersonating,impersonatorId:d.impersonatorId||null,impersonatorNome:d.impersonatorNome||null};state.expiresAtUtc=d.expiresAtUtc;
   localStorage.setItem('hp_token',state.token);
   localStorage.setItem('hp_user',JSON.stringify(state.user));
   localStorage.setItem('hp_expires_at',state.expiresAtUtc||'');
@@ -185,6 +228,7 @@ async function hpRenewSession(){
 }
 function hpScheduleSessionRenewal(){
   hpClearSessionRenewal();
+  if(state.user?.impersonating)return;
   const expires=Date.parse(state.expiresAtUtc||localStorage.getItem('hp_expires_at')||'');
   if(!Number.isFinite(expires)||!state.token)return;
   const delay=Math.max(30000,expires-Date.now()-(5*60*1000));
@@ -291,7 +335,7 @@ $('#resetPasswordForm')?.addEventListener('submit',async e=>{
 window.addEventListener('popstate',hpResolvePublicRoute);
 if(!state.token)hpResolvePublicRoute();
 
-$('#logoutButton').onclick=logout;$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
+$('#logoutButton').onclick=()=>state.user?.impersonating?hpEndImpersonation():logout();$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
 function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal','workout-session-review-modal');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
 function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['AESYN • PERFORMANCE CLÍNICA','Performance'],pacientes:['AESYN • ACOMPANHAMENTO','Pacientes'],prescricoes:['AESYN • PLANO INTEGRADO','Treino & Nutrição'],agenda:['AESYN • CONSULTAS','Agenda'],paciente:['AESYN • PERFORMANCE PROFILE','Paciente']};const title=titles[view]||titles.dashboard;$('#pageEyebrow').textContent=title[0];$('#pageTitle').textContent=title[1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,prescricoes:loadPrescriptionWorkspace,agenda:loadAgenda,paciente:loadPatient}[view]||loadDashboard)().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
@@ -6804,7 +6848,7 @@ function hpOpenPatientNotificationLink(link){
 }
 try{
   const logoutBtn=$('#logoutButton');
-  if(logoutBtn)logoutBtn.onclick=()=>logout();
+  if(logoutBtn)logoutBtn.onclick=()=>state.user?.impersonating?hpEndImpersonation():logout();
   const patientLogoutBtn=$('#patientLogoutButton');
   if(patientLogoutBtn)patientLogoutBtn.onclick=()=>logout();
 }catch(err){
@@ -7374,7 +7418,7 @@ document.addEventListener('click',async e=>{
         <div class="team-main"><strong>${esc(m.nome)}${m.ehUsuarioAtual?' <em>Você</em>':''}</strong><small>${esc(m.email)}</small></div>
         <div><span class="pill ${m.ativo?'Ativa':'Cancelada'}">${m.ativo?'Ativo':'Inativo'}</span></div>
         <div class="team-role"><b>${esc(tipoLabel(m.tipoUsuario))}</b><small>${esc(m.registroProfissional||m.especialidade||'Sem registro profissional')}</small></div>
-        <div class="team-row-actions"><button class="secondary team-edit">Editar</button><button class="ghost team-reset-password" ${m.ehUsuarioAtual||!m.ativo?'disabled':''}>Senha</button></div>
+        <div class="team-row-actions"><button class="secondary team-edit">Editar</button><button class="ghost team-reset-password" ${m.ehUsuarioAtual||!m.ativo?'disabled':''}>Senha</button>${tipoProfissional(m.tipoUsuario)&&m.ativo?'<button class="ghost team-impersonate">Simular</button>':''}</div>
       </article>`).join(''):sectionEmpty('Nenhum membro cadastrado.')}</div>
     </section>`;
 
@@ -7406,6 +7450,8 @@ document.addEventListener('click',async e=>{
       row.querySelector('.team-edit').onclick=()=>openEditTeamMember(m);
       const reset=row.querySelector('.team-reset-password');
       if(reset)reset.onclick=()=>openResetTeamPassword(m);
+      const impersonate=row.querySelector('.team-impersonate');
+      if(impersonate)impersonate.onclick=()=>hpStartImpersonation(m);
     });
   }
 
@@ -8896,7 +8942,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.34';
+const HP_MVP_VERSION='0.19.36';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10605,7 +10651,7 @@ async function hpBindPatientFilesV01934({professional=false,patientId=null,host,
   host.querySelector('[data-file-new]')?.addEventListener('click',()=>hpPatientFileUploadModalV01934({professional,patientId,onDone:reload}));
   const refresh=async()=>{const q=host.querySelector('[data-file-search]')?.value||'',cat=host.querySelector('[data-file-category]')?.value||'';const items=await api(`${base}?q=${encodeURIComponent(q)}&categoria=${encodeURIComponent(cat)}`);host.querySelector('.patient-files-list-v01934').innerHTML=hpPatientFilesMarkupV01934(items,professional).match(/<div class="patient-files-list-v01934">([\s\S]*)<\/div><\/section>$/)?.[1]||'';await hpBindPatientFilesV01934({professional,patientId,host,reload})};
   host.querySelector('[data-file-search]')?.addEventListener('change',refresh);host.querySelector('[data-file-category]')?.addEventListener('change',refresh);
-  host.querySelectorAll('[data-file-id]').forEach(card=>{const id=card.dataset.fileId,name=card.querySelector('strong')?.textContent||'arquivo';const download=professional?`/api/pacientes/${patientId}/arquivos/${id}/download`:`/api/arquivos/me/${id}/download`;card.querySelector('[data-file-open]')?.addEventListener('click',()=>hpOpenSecureFileV01934(download,name).catch(e=>toast(e.message,true)));card.querySelector('[data-file-remove]')?.addEventListener('click',async()=>{if(!confirm('Remover este arquivo da biblioteca? O evento ficará auditado.'))return;try{await api(professional?`/api/pacientes/${patientId}/arquivos/${id}`:`/api/arquivos/me/${id}`,{method:'DELETE'});toast('Arquivo removido.');await reload()}catch(e){toast(e.message,true)}});card.querySelector('[data-file-chat]')?.addEventListener('click',async()=>{const msg=`Arquivo AESYN: ${name} • referência ${id}`;try{await api(professional?`/api/chat/pacientes/${patientId}/mensagens`:'/api/chat/me/mensagens',{method:'POST',body:JSON.stringify({mensagem:msg,contexto:'Exames'})});toast('Arquivo indexado no chat.')}catch(e){toast(e.message,true)}})});
+  host.querySelectorAll('[data-file-id]').forEach(card=>{const id=card.dataset.fileId,name=card.querySelector('strong')?.textContent||'arquivo';const download=professional?`/api/pacientes/${patientId}/arquivos/${id}/download`:`/api/arquivos/me/${id}/download`;card.querySelector('[data-file-open]')?.addEventListener('click',()=>hpOpenSecureFileV01934(download,name).catch(e=>toast(e.message,true)));card.querySelector('[data-file-remove]')?.addEventListener('click',async()=>{if(!confirm('Remover este arquivo da biblioteca? O evento ficará auditado.'))return;try{await api(professional?`/api/pacientes/${patientId}/arquivos/${id}`:`/api/arquivos/me/${id}`,{method:'DELETE'});toast('Arquivo removido.');await reload()}catch(e){toast(e.message,true)}});card.querySelector('[data-file-chat]')?.addEventListener('click',async()=>{const msg=`Arquivo compartilhado: ${name}`;try{await api(professional?`/api/chat/pacientes/${patientId}/mensagens`:'/api/chat/me/mensagens',{method:'POST',body:JSON.stringify({mensagem:msg,contexto:'Exames',referenciaTipo:'Arquivo',referenciaId:id,referenciaTitulo:name})});toast('Arquivo indexado no chat.')}catch(e){toast(e.message,true)}})});
 }
 async function loadProfessionalPatientFilesV01934(patient,host){
   const reload=()=>loadProfessionalPatientFilesV01934(patient,host);const items=await api(`/api/pacientes/${patient.id}/arquivos`);host.innerHTML=hpPatientFilesMarkupV01934(items,true);await hpBindPatientFilesV01934({professional:true,patientId:patient.id,host,reload});
@@ -10613,3 +10659,67 @@ async function loadProfessionalPatientFilesV01934(patient,host){
 async function loadPatientFilesV01934(){
   setPatientPortalLoading('arquivos');const items=await api('/api/arquivos/me');content.innerHTML=`<div class="patient-portal-page patient-files-page-v01934">${hpPatientFilesMarkupV01934(items,false)}</div>`;await hpBindPatientFilesV01934({professional:false,host:content,reload:loadPatientFilesV01934});
 }
+
+
+// ===== v0.19.35 — Chat Reliability & Context Foundation =====
+const HP_CHAT_RELIABILITY_CONTEXT='v0.19.35';
+function hpChatStatusV01935(m){
+  if(!m?.me)return '';
+  const label=String(m.status||'Enviada');
+  const icon=label==='Lida'?'✓✓':label==='Entregue'?'✓✓':'✓';
+  return `<span class="care-chat-status-v01935 ${label.toLowerCase()}">${icon} ${esc(label)}</span>`;
+}
+function hpChatReferenceV01935(ref){
+  if(!ref?.tipo)return '';
+  const icons={Arquivo:'📎',Treino:'🏋',Exercicio:'↗',Refeicao:'🥗',Exame:'🧪'};
+  const title=ref.titulo||ref.tipo;
+  return `<div class="care-chat-reference-v01935" data-chat-reference="${esc(ref.tipo)}"><span>${icons[ref.tipo]||'↗'}</span><div><small>Contexto ${esc(ref.tipo)}</small><strong>${esc(title)}</strong></div></div>`;
+}
+hpChatMessages=function(items=[]){
+  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div>${hpChatReferenceV01935(m.referencia)}<p>${esc(m.mensagem||'')}</p>${hpChatStatusV01935(m)}</div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>Use este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
+};
+hpChatShell=function(data,{professional=false,patient=null}={}){
+  const person=professional?(patient?.nome||data?.paciente?.nome||'Paciente'):(data?.profissional?.nome||'Seu profissional');
+  const specialty=!professional&&data?.profissional?.especialidade?` • ${esc(data.profissional.especialidade)}`:'';
+  return `<div class="care-chat-shell care-chat-shell-v01935" data-care-chat="v0.19.35">
+    <section class="care-chat-head"><div><span class="eyebrow">AESYN • CONNECTED CARE</span><h2>${professional?'Conversa com '+esc(person):esc(person)}</h2><p>${professional?'Canal contextual para acompanhar dúvidas e adaptações do paciente.':'Tire dúvidas e registre contexto sem esperar a próxima consulta.'}${specialty}</p></div><span class="care-chat-sla">até 24h úteis</span></section>
+    <div class="care-chat-safety"><b>Acompanhamento, não emergência.</b><span>${esc(data?.emergencia||'Em situações urgentes, procure atendimento pelos canais adequados.')}</span></div>
+    <section class="care-chat-context-help-v01935"><div><strong>Converse com contexto.</strong><span>Arquivos podem ser enviados pela biblioteca. A base também aceita referências de treino, exercício, refeição e exame.</span></div><button class="ghost" type="button" data-chat-open-files>${professional?'Abrir arquivos do paciente':'Abrir meus arquivos'}</button></section>
+    <section class="care-chat-thread" id="careChatThread">${hpChatMessages(data?.mensagens||[])}</section>
+    <form class="care-chat-compose" id="careChatForm"><label>Assunto<select name="contexto">${hpChatContextOptions()}</select></label><label class="care-chat-text">Mensagem<textarea name="mensagem" maxlength="3000" rows="3" required placeholder="Escreva sua dúvida ou observação..."></textarea></label><button class="primary" type="submit">Enviar</button></form>
+  </div>`;
+};
+function hpChatErrorV01935(message,retry){
+  return `<section class="care-chat-error-v01935"><span>↻</span><strong>Não foi possível carregar a conversa.</strong><p>${esc(message||'Verifique sua conexão e tente novamente.')}</p><button class="primary" type="button" data-chat-retry>Tentar novamente</button></section>`;
+}
+hpBindChatForm=function(url,reload){
+  const form=$('#careChatForm'); if(!form)return;
+  form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button[type=submit]');const text=form.querySelector('[name=mensagem]');const original=text.value;b.disabled=true;b.textContent='Enviando...';try{await api(url,{method:'POST',body:JSON.stringify({mensagem:original,contexto:val(form,'contexto')})});text.value='';await reload();setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},30)}catch(err){text.value=original;toast(err.message||'Falha ao enviar. Sua mensagem foi preservada.',true)}finally{b.disabled=false;b.textContent='Enviar'}};
+};
+async function hpChatUnreadV01935(patientId=null){
+  try{return await api(`/api/chat/nao-lidas${patientId?`?pacienteId=${encodeURIComponent(patientId)}`:''}`)}catch{return {total:0,possuiNaoLidas:false}}
+}
+async function hpRefreshChatBadgeV01935(patientId=null){
+  const data=await hpChatUnreadV01935(patientId);const total=Number(data?.total||0);
+  const targets=[];
+  const portal=$('#patientPortalNav [data-patient-view="chat"]');if(portal)targets.push(portal);
+  const professional=$('.patient-tab[data-tab="chat"]');if(professional)targets.push(professional);
+  targets.forEach(target=>{let badge=target.querySelector('.chat-unread-badge-v01935');if(total>0){if(!badge){badge=document.createElement('span');badge.className='chat-unread-badge-v01935';target.appendChild(badge)}badge.textContent=total>99?'99+':String(total);badge.hidden=false}else if(badge)badge.hidden=true});
+  return total;
+}
+loadPatientChat=async function(){
+  const host=$('#patientPortalContent')||content;
+  try{
+    const data=await api('/api/chat/me');host.innerHTML=hpChatShell(data,{professional:false});hpBindChatForm('/api/chat/me/mensagens',loadPatientChat);host.querySelector('[data-chat-open-files]')?.addEventListener('click',()=>loadPatientSection('arquivos').catch(e=>toast(e.message,true)));setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},20);await hpRefreshChatBadgeV01935();
+  }catch(err){host.innerHTML=hpChatErrorV01935(err.message);host.querySelector('[data-chat-retry]')?.addEventListener('click',()=>loadPatientChat())}
+};
+loadProfessionalPatientChat=async function(patient,host=$('#patientTabContent')){
+  try{
+    const data=await api(`/api/chat/pacientes/${patient.id}`);host.innerHTML=hpChatShell(data,{professional:true,patient});hpBindChatForm(`/api/chat/pacientes/${patient.id}/mensagens`,()=>loadProfessionalPatientChat(patient,host));host.querySelector('[data-chat-open-files]')?.addEventListener('click',()=>{state.patientTab='arquivos';loadProfessionalPatientFilesV01934(patient,host).catch(e=>toast(e.message,true))});setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},20);await hpRefreshChatBadgeV01935(patient.id);
+  }catch(err){host.innerHTML=hpChatErrorV01935(err.message);host.querySelector('[data-chat-retry]')?.addEventListener('click',()=>loadProfessionalPatientChat(patient,host))}
+};
+
+
+// ===== v0.19.36 — Administrator Professional Impersonation =====
+const HP_ADMIN_IMPERSONATION_VERSION='v0.19.36';
+const HP_IMPERSONATION_SECURITY_MODE='READ_ONLY';

@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.32 — Professional Nutrition Access Completion
+> **Versão-base deste roadmap:** v0.19.36 — Administrator Professional Impersonation
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -299,6 +299,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - tratamento de erro/retry;
 - base para contexto de treino, exercício, refeição e exame.
 
+**Status:** implementado na v0.19.35. O chat reutiliza as notificações internas como confirmação de entrega/leitura, expõe contador de não lidas e badge, marca a conversa como lida ao abri-la, preserva a mensagem em falhas de envio e oferece retry em falhas de carregamento. Referências contextuais leves passam a suportar Arquivo, Treino, Exercício, Refeição e Exame; a biblioteca de arquivos já envia referência estruturada e o chat renderiza o contexto separadamente do texto. A autorização continua isolada por paciente, profissional e organização. Sem migration nova.
+
 ## v0.19.36 — Administrator Professional Impersonation
 
 - administrador simular acesso do profissional;
@@ -307,6 +309,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - auditoria de quem iniciou/finalizou;
 - nenhuma impersonação silenciosa;
 - impedir ações incompatíveis com a política de segurança.
+
+**Status:** implementado na v0.19.36. O administrador pode iniciar a simulação pela tela Equipe apenas para Médico, Nutricionista ou Personal ativos da mesma organização. O token carrega identidade e `SecurityStamp` do administrador de origem, o banner permanece visível em toda a sessão e a saída devolve uma sessão administrativa nova. A simulação é deliberadamente **somente leitura**: requisições de mutação são bloqueadas para impedir alterações reais e auditorias atribuídas indevidamente ao profissional simulado. Início e fim são registrados no AuditLog com o administrador como ator. Sem migration nova.
 
 ## v0.19.37 — Patient First Access & Tutorials
 
@@ -931,3 +935,16 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 - Mantém como obrigatórios o card/grid multi-plan e a indicação explícita de suporte a múltiplos planos.
 - Versão funcional pública permanece `0.19.33`.
 
+
+
+### Hotfix v0.19.35-r1 — Chat Persistence Gate Semantic Sync
+- Gate histórico sincronizado com a persistência contextual introduzida na v0.19.35.
+- `Observacoes` continua persistindo a mensagem, agora por meio de `MontarObservacoes`, que acrescenta referência estruturada quando houver contexto.
+- Nenhuma regressão funcional ou mudança de schema.
+
+
+### Hotfix v0.19.35-r2 — Patient Files/Chat Gate Semantic Sync
+- Corrige falso negativo do gate histórico `[2015/2020]`, que ainda exigia o texto legado `Arquivo AESYN:`.
+- A integração atual usa `Arquivo compartilhado:` e referência estruturada (`referenciaTipo`, `referenciaId`, `referenciaTitulo`) introduzida na v0.19.35.
+- O teste passa a validar o contrato atual sem reintroduzir texto legado na interface.
+- Nenhuma alteração funcional, schema ou migration; versão funcional pública permanece `0.19.35`.

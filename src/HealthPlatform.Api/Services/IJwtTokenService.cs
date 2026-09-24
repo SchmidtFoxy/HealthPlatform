@@ -4,5 +4,5 @@ namespace HealthPlatform.Api.Services;
 
 public interface IJwtTokenService
 {
-    (string Token, DateTime ExpiresAtUtc) Create(Usuario usuario, IReadOnlyCollection<string> roles);
+    (string Token, DateTime ExpiresAtUtc) Create(Usuario usuario, IReadOnlyCollection<string> roles, IReadOnlyDictionary<string, string>? additionalClaims = null);
 }

@@ -1,3 +1,36 @@
+# v0.19.36 — Administrator Professional Impersonation
+
+- Adiciona simulação explícita de Médico, Nutricionista e Personal a partir da gestão de Equipe.
+- Sessão simulada recebe claims de origem administrativa e valida também o `SecurityStamp` do administrador.
+- Banner persistente informa que a plataforma está em modo de simulação e permite retornar ao acesso administrativo.
+- Simulação é somente leitura: mutações reais são bloqueadas para preservar segurança e autoria de auditoria.
+- Início e encerramento são registrados no AuditLog com o administrador como ator.
+- Sem migration nova e sem dependência de produção nos testes locais.
+- TESTAR ampliado para 2050 gates.
+
+## v0.19.35-r2 — Patient Files/Chat Gate Semantic Sync
+- Corrige o gate legado de indexação de arquivo no chat para a semântica estruturada atual.
+- Substitui a exigência textual `Arquivo AESYN:` por `Arquivo compartilhado:` e valida `referenciaTipo`, `referenciaId` e `referenciaTitulo`.
+- Sem alteração funcional, de schema ou migration.
+
+## v0.19.35-r1 — Chat Persistence Gate Semantic Sync
+
+- Corrige falso negativo do gate legado de persistência do chat.
+- O chat passou a persistir `Observacoes = observacoes`, após `MontarObservacoes(mensagem, referencia)`, para suportar contexto estruturado de arquivo/treino/exercício/refeição/exame.
+- O smoke test agora valida a implementação atual (`MontarObservacoes`/`SepararObservacoes`) em vez de exigir o antigo `Observacoes = mensagem`.
+- Sem alteração funcional, de banco ou migration.
+
+# v0.19.35 — Chat Reliability & Context Foundation
+
+- Consolidada leitura de mensagens via `NotificacaoInterna.LidaEmUtc`.
+- Adicionado endpoint `GET /api/chat/nao-lidas` para badges sem abrir a conversa.
+- Mensagens próprias expõem status Enviada/Entregue/Lida.
+- Falha de carregamento oferece retry; falha de envio preserva o texto digitado.
+- Chat passa a persistir referência contextual leve para Arquivo, Treino, Exercício, Refeição e Exame sem alterar schema.
+- Patient Files envia referência estruturada ao chat.
+- CSS mobile/dark e badges adicionados.
+- TESTAR ampliado para 2035 gates.
+
 # v0.19.34 — Patient Files Mobile 2.0
 
 - Cria biblioteca protegida de arquivos do paciente no acesso profissional e no portal do paciente.

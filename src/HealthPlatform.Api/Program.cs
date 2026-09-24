@@ -19,7 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.34" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.36" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -108,6 +108,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     !string.Equals(usuario.SecurityStamp, stamp, StringComparison.Ordinal))
                 {
                     context.Fail("Sessao expirada ou revogada.");
+                    return;
+                }
+
+                if (context.Principal?.HasClaim("impersonation", "true") == true)
+                {
+                    var impersonatorValue = context.Principal.FindFirstValue("impersonator_id");
+                    var impersonatorStamp = context.Principal.FindFirstValue("impersonator_security_stamp");
+                    if (!Guid.TryParse(impersonatorValue, out var impersonatorId))
+                    {
+                        context.Fail("Sessao de simulacao invalida.");
+                        return;
+                    }
+                    var impersonator = await userManager.FindByIdAsync(impersonatorId.ToString());
+                    if (impersonator is null || !impersonator.Ativo ||
+                        impersonator.OrganizacaoId != organizationId ||
+                        impersonator.TipoUsuario != TipoUsuario.Admin ||
+                        string.IsNullOrWhiteSpace(impersonatorStamp) ||
+                        !string.Equals(impersonator.SecurityStamp, impersonatorStamp, StringComparison.Ordinal))
+                    {
+                        context.Fail("Administrador de origem nao esta mais autorizado.");
+                    }
                 }
             },
             OnChallenge = async context =>
@@ -187,6 +208,30 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthentication();
+
+// v0.19.36 — a impersonacao administrativa e deliberadamente somente leitura.
+// Isso evita que uma acao real seja atribuida ao profissional simulado no AuditLog.
+app.Use(async (context, next) =>
+{
+    var impersonating = context.User.Identity?.IsAuthenticated == true &&
+        context.User.HasClaim("impersonation", "true");
+    var isFinalize = context.Request.Path.StartsWithSegments("/api/impersonacao/finalizar");
+    var isRead = HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method) || HttpMethods.IsOptions(context.Request.Method);
+
+    if (impersonating && !isFinalize && !isRead)
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        context.Response.ContentType = "application/json; charset=utf-8";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            message = "Modo de simulacao e somente leitura. Saia da simulacao para executar alteracoes reais."
+        });
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthorization();
 app.MapControllers();
 

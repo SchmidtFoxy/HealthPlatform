@@ -1,3 +1,18 @@
+## v0.19.36 — Administrator Professional Impersonation
+
+O administrador pode simular a visão de Médico, Nutricionista ou Personal ativo diretamente pela gestão da equipe. A simulação é explicitamente sinalizada, somente leitura e auditada no início/fim; sair da simulação devolve uma nova sessão administrativa. A origem administrativa também é validada no JWT para impedir que a simulação continue caso o administrador perca autorização.
+
+### v0.19.35 — Chat Reliability & Context Foundation
+
+- mensagens não lidas e badge no chat;
+- abertura da conversa marca notificações correspondentes como lidas;
+- status Enviada / Entregue / Lida para mensagens próprias;
+- retry com preservação do texto digitado;
+- referências estruturadas para arquivo, treino, exercício, refeição e exame;
+- integração da biblioteca de arquivos com o contexto do chat;
+- isolamento paciente/profissional/organização preservado;
+- sem migration nova.
+
 ## v0.19.34 — Patient Files Mobile 2.0
 
 A biblioteca de arquivos do paciente agora aceita exames, laudos, fotos e PDFs tanto pelo profissional quanto pelo próprio paciente. O upload foi pensado para celular (câmera, galeria ou seletor de arquivos), com metadados pesquisáveis, download autenticado, remoção auditada e referência direta no chat. Os binários ficam em `App_Data/patient-files`; na VPS, mantenha esse diretório em volume persistente.

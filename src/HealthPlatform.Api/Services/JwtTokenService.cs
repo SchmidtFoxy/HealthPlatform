@@ -11,7 +11,7 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenSer
 {
     private readonly JwtOptions _options = options.Value;
 
-    public (string Token, DateTime ExpiresAtUtc) Create(Usuario usuario, IReadOnlyCollection<string> roles)
+    public (string Token, DateTime ExpiresAtUtc) Create(Usuario usuario, IReadOnlyCollection<string> roles, IReadOnlyDictionary<string, string>? additionalClaims = null)
     {
         var expires = DateTime.UtcNow.AddMinutes(_options.ExpirationMinutes);
         var claims = new List<Claim>
@@ -25,6 +25,15 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenSer
         };
 
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+        if (additionalClaims is not null)
+        {
+            foreach (var pair in additionalClaims)
+            {
+                if (!string.IsNullOrWhiteSpace(pair.Key) && pair.Value is not null)
+                    claims.Add(new Claim(pair.Key, pair.Value));
+            }
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
