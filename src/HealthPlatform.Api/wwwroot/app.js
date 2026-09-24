@@ -104,10 +104,28 @@ function hpInstallThemeUi(){
 }
 document.addEventListener('DOMContentLoaded',hpInstallThemeUi);
 
+async function hpSyncProfileSettings(){
+  if(!state.token)return;
+  try{
+    const account=await api('/api/configuracoes/minha-conta');
+    if(account?.temaPreferido){
+      hpApplyTheme(account.temaPreferido);
+      localStorage.setItem(HP_THEME_CHOICE_KEY,'true');
+      hpCloseThemeChoice();
+    }
+    const avatars=[document.querySelector('#avatar'),document.querySelector('#patientAvatar')].filter(Boolean);
+    avatars.forEach(avatar=>{
+      if(account?.fotoPerfilDataUrl){avatar.style.backgroundImage=`url("${account.fotoPerfilDataUrl}")`;avatar.style.backgroundSize='cover';avatar.style.backgroundPosition='center';avatar.textContent='';avatar.classList.add('has-photo');}
+      else{avatar.style.backgroundImage='';avatar.textContent=initials(account?.nome||state.user?.nome||'U');avatar.classList.remove('has-photo');}
+    });
+  }catch{}
+}
+
 function showApp(){
   $('#loginView').classList.add('hidden');
   $('#activationView')?.classList.add('hidden');
   const u=state.user||{};
+  hpSyncProfileSettings().catch(()=>{});
   if(u.tipoUsuario==='Paciente'){
     $('#appView').classList.add('hidden');
     $('#patientAppView').classList.remove('hidden');
@@ -8826,7 +8844,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.27';
+const HP_MVP_VERSION='0.19.28';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
 const HP_PROFESSIONAL_PRESCRIPTION_WORKSPACE='v0.17.0';
@@ -10197,3 +10215,60 @@ loadPatientHealth=async function(){
     if(anchor)anchor.insertAdjacentHTML('afterend',hpPassiveMonitoringCard(data,{professional:false}));
   }catch(err){console.warn('Passive monitoring patient summary unavailable',err)}
 };
+
+// ===== v0.19.28 — Settings & User Profile =====
+(function(){
+  function hpProfileAvatar(dataUrl,name){
+    const avatar=document.querySelector('#avatar');
+    if(!avatar)return;
+    if(dataUrl){avatar.style.backgroundImage=`url("${dataUrl}")`;avatar.style.backgroundSize='cover';avatar.style.backgroundPosition='center';avatar.textContent='';avatar.classList.add('has-photo');}
+    else{avatar.style.backgroundImage='';avatar.textContent=initials(name||state.user?.nome||'U');avatar.classList.remove('has-photo');}
+  }
+  function hpCompressProfilePhoto(file){
+    return new Promise((resolve,reject)=>{
+      if(!file?.type?.startsWith('image/'))return reject(new Error('Selecione uma imagem válida.'));
+      const reader=new FileReader();
+      reader.onerror=()=>reject(new Error('Não foi possível ler a imagem.'));
+      reader.onload=()=>{
+        const img=new Image();
+        img.onerror=()=>reject(new Error('Imagem inválida.'));
+        img.onload=()=>{
+          const size=256,canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;
+          const ctx=canvas.getContext('2d');
+          const scale=Math.max(size/img.width,size/img.height),w=img.width*scale,h=img.height*scale;
+          ctx.drawImage(img,(size-w)/2,(size-h)/2,w,h);
+          resolve(canvas.toDataURL('image/jpeg',0.82));
+        };
+        img.src=reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  async function hpEnhanceAccountSettings(){
+    const panel=document.querySelector('#hp-account-panel');
+    if(!panel||panel.dataset.v01928)return;
+    panel.dataset.v01928='1';
+    let account,session;
+    try{[account,session]=await Promise.all([api('/api/configuracoes/minha-conta'),api('/api/configuracoes/minha-conta/sessao-atual')]);}catch{return;}
+    hpProfileAvatar(account.fotoPerfilDataUrl,account.nome);
+    const extra=document.createElement('div');extra.className='profile-settings-v01928';
+    extra.innerHTML=`
+      <section class="profile-settings-card"><div class="profile-photo-block"><div class="profile-photo-preview">${account.fotoPerfilDataUrl?`<img src="${account.fotoPerfilDataUrl}" alt="Foto de perfil">`:`<span>${esc(initials(account.nome||'U'))}</span>`}</div><div><strong>Foto de perfil</strong><small>Usada apenas na sua experiência de conta. A imagem é reduzida antes do envio.</small><div class="profile-photo-actions"><label class="secondary profile-file-button">Escolher foto<input id="hpProfilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden></label><button class="ghost" id="hpRemoveProfilePhoto" ${account.fotoPerfilDataUrl?'':'disabled'}>Remover</button></div></div></div></section>
+      <section class="profile-settings-card"><div class="card-head"><div><h4>Aparência</h4><small>Preferência sincronizada com sua conta.</small></div></div><div class="profile-theme-choice"><button type="button" data-profile-theme="light" class="${account.temaPreferido==='light'?'active':''}">☀️ Claro</button><button type="button" data-profile-theme="dark" class="${account.temaPreferido==='dark'?'active':''}">🌙 Escuro</button></div></section>
+      <section class="profile-settings-card"><div class="card-head"><div><h4>Notificações</h4><small>Escolha quais eventos devem chamar sua atenção.</small></div></div><div class="profile-notification-grid">
+        <label><input type="checkbox" data-pref="notificarMensagens" ${account.notificarMensagens?'checked':''}> Mensagens</label>
+        <label><input type="checkbox" data-pref="notificarAtualizacoesPlano" ${account.notificarAtualizacoesPlano?'checked':''}> Atualizações do plano</label>
+        <label><input type="checkbox" data-pref="notificarLembretes" ${account.notificarLembretes?'checked':''}> Lembretes</label>
+        <label><input type="checkbox" data-pref="notificarCheckIns" ${account.notificarCheckIns?'checked':''}> Check-ins</label>
+      </div><button class="primary" id="hpSavePreferences">Salvar preferências</button></section>
+      <section class="profile-settings-card"><div class="card-head"><div><h4>Privacidade e sessão</h4><small>Informações da sessão atualmente aberta.</small></div></div><div class="account-info-grid"><div><small>IP</small><strong>${esc(session.ip||'—')}</strong></div><div><small>Expira</small><strong>${session.expiraEmUtc?fmtDate(session.expiraEmUtc):'—'}</strong></div><div class="span-2"><small>Dispositivo / navegador</small><strong class="profile-session-agent">${esc(session.userAgent||'Não identificado')}</strong></div></div><p class="form-hint">Por segurança, o logout atual revoga os tokens anteriores da conta. Senhas e conteúdo da foto não são gravados no AuditLog.</p></section>`;
+    panel.appendChild(extra);
+    extra.querySelector('#hpProfilePhotoInput')?.addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=await hpCompressProfilePhoto(file);const r=await api('/api/configuracoes/minha-conta/foto',{method:'PUT',body:JSON.stringify({fotoDataUrl:data})});hpProfileAvatar(r.fotoPerfilDataUrl,account.nome);toast('Foto de perfil atualizada.');window.HealthPlatform?.renderConfiguracoes?.();}catch(err){toast(err.message,true);}});
+    extra.querySelector('#hpRemoveProfilePhoto')?.addEventListener('click',async()=>{await api('/api/configuracoes/minha-conta/foto',{method:'PUT',body:JSON.stringify({fotoDataUrl:null})});hpProfileAvatar(null,account.nome);toast('Foto removida.');window.HealthPlatform?.renderConfiguracoes?.();});
+    extra.querySelectorAll('[data-profile-theme]').forEach(b=>b.addEventListener('click',()=>{extra.querySelectorAll('[data-profile-theme]').forEach(x=>x.classList.remove('active'));b.classList.add('active');hpApplyTheme(b.dataset.profileTheme);}));
+    extra.querySelector('#hpSavePreferences')?.addEventListener('click',async()=>{const theme=extra.querySelector('[data-profile-theme].active')?.dataset.profileTheme||'light';const body={temaPreferido:theme};extra.querySelectorAll('[data-pref]').forEach(x=>body[x.dataset.pref]=x.checked);await api('/api/configuracoes/minha-conta/preferencias',{method:'PUT',body:JSON.stringify(body)});hpApplyTheme(theme);localStorage.setItem(HP_THEME_CHOICE_KEY,'true');toast('Preferências salvas.');});
+  }
+  const obs=new MutationObserver(()=>{if(document.querySelector('#hp-account-panel'))hpEnhanceAccountSettings();});obs.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',e=>{if(e.target.closest('[data-route="configuracoes"]'))setTimeout(hpEnhanceAccountSettings,120);});
+  window.HealthPlatform=window.HealthPlatform||{};window.HealthPlatform.enhanceAccountSettings=hpEnhanceAccountSettings;
+})();

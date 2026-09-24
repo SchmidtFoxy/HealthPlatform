@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Security.Claims;
 using System.Text.Json;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Domain.Entities;
@@ -96,6 +98,13 @@ public class ConfiguracoesController(
     }
 
     public sealed record AtualizarMinhaContaRequest(string Nome);
+    public sealed record AtualizarPreferenciasRequest(
+        string TemaPreferido,
+        bool NotificarMensagens,
+        bool NotificarAtualizacoesPlano,
+        bool NotificarLembretes,
+        bool NotificarCheckIns);
+    public sealed record AtualizarFotoPerfilRequest(string? FotoDataUrl);
     public sealed record AlterarMinhaSenhaRequest(
         string SenhaAtual,
         string NovaSenha,
@@ -115,6 +124,12 @@ public class ConfiguracoesController(
                 x.Nome,
                 x.Email,
                 TipoUsuario = x.TipoUsuario.ToString(),
+                x.FotoPerfilDataUrl,
+                x.TemaPreferido,
+                x.NotificarMensagens,
+                x.NotificarAtualizacoesPlano,
+                x.NotificarLembretes,
+                x.NotificarCheckIns,
                 x.CreatedAtUtc
             })
             .FirstOrDefaultAsync(ct);
@@ -233,6 +248,128 @@ public class ConfiguracoesController(
         await db.SaveChangesAsync(ct);
 
         return Ok(new { message = "Senha alterada com sucesso." });
+    }
+
+    [HttpPut("minha-conta/preferencias")]
+    public async Task<IActionResult> AtualizarPreferencias(
+        AtualizarPreferenciasRequest request,
+        CancellationToken ct)
+    {
+        var tema = (request.TemaPreferido ?? string.Empty).Trim().ToLowerInvariant();
+        if (tema is not ("light" or "dark"))
+            return BadRequest(new { message = "Tema invalido. Use light ou dark." });
+
+        var usuario = await db.Users.FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+
+        var antes = new
+        {
+            usuario.TemaPreferido,
+            usuario.NotificarMensagens,
+            usuario.NotificarAtualizacoesPlano,
+            usuario.NotificarLembretes,
+            usuario.NotificarCheckIns
+        };
+
+        usuario.TemaPreferido = tema;
+        usuario.NotificarMensagens = request.NotificarMensagens;
+        usuario.NotificarAtualizacoesPlano = request.NotificarAtualizacoesPlano;
+        usuario.NotificarLembretes = request.NotificarLembretes;
+        usuario.NotificarCheckIns = request.NotificarCheckIns;
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "UPDATE_PREFERENCES",
+            Entidade = "MinhaConta",
+            EntidadeId = usuario.Id.ToString(),
+            DadosAnterioresJson = JsonSerializer.Serialize(antes),
+            DadosNovosJson = JsonSerializer.Serialize(new
+            {
+                usuario.TemaPreferido,
+                usuario.NotificarMensagens,
+                usuario.NotificarAtualizacoesPlano,
+                usuario.NotificarLembretes,
+                usuario.NotificarCheckIns
+            }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new
+        {
+            usuario.TemaPreferido,
+            usuario.NotificarMensagens,
+            usuario.NotificarAtualizacoesPlano,
+            usuario.NotificarLembretes,
+            usuario.NotificarCheckIns
+        });
+    }
+
+    [HttpPut("minha-conta/foto")]
+    public async Task<IActionResult> AtualizarFotoPerfil(
+        AtualizarFotoPerfilRequest request,
+        CancellationToken ct)
+    {
+        var foto = string.IsNullOrWhiteSpace(request.FotoDataUrl) ? null : request.FotoDataUrl.Trim();
+        if (foto is not null)
+        {
+            if (foto.Length > 400_000)
+                return BadRequest(new { message = "A foto de perfil excede o limite permitido." });
+
+            var tipoValido = foto.StartsWith("data:image/jpeg;base64,", StringComparison.OrdinalIgnoreCase) ||
+                             foto.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase) ||
+                             foto.StartsWith("data:image/webp;base64,", StringComparison.OrdinalIgnoreCase);
+            if (!tipoValido)
+                return BadRequest(new { message = "Formato de foto invalido. Use JPEG, PNG ou WebP." });
+        }
+
+        var usuario = await db.Users.FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+
+        usuario.FotoPerfilDataUrl = foto;
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = foto is null ? "PROFILE_PHOTO_REMOVE" : "PROFILE_PHOTO_UPDATE",
+            Entidade = "MinhaConta",
+            EntidadeId = usuario.Id.ToString(),
+            DadosAnterioresJson = null,
+            DadosNovosJson = JsonSerializer.Serialize(new { FotoAtualizada = foto is not null }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new { usuario.FotoPerfilDataUrl });
+    }
+
+    [HttpGet("minha-conta/sessao-atual")]
+    public IActionResult SessaoAtual()
+    {
+        DateTime? expiraEmUtc = null;
+        var exp = User.FindFirstValue("exp");
+        if (long.TryParse(exp, NumberStyles.Integer, CultureInfo.InvariantCulture, out var expUnix))
+            expiraEmUtc = DateTimeOffset.FromUnixTimeSeconds(expUnix).UtcDateTime;
+
+        return Ok(new
+        {
+            Ip = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(),
+            UserAgent = httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString(),
+            ExpiraEmUtc = expiraEmUtc,
+            RevogacaoLogout = "global",
+            Observacao = "O logout atual revoga todas as sessoes emitidas anteriormente para esta conta."
+        });
     }
 
 }

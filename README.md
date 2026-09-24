@@ -1,3 +1,9 @@
+## v0.19.28 — Settings & User Profile
+
+Esta versão consolida a conta do usuário dentro das Configurações: dados básicos, alteração de senha, foto de perfil reduzida no navegador, preferência de tema, preferências de notificações e resumo da sessão atual. As preferências passam a ser persistidas no servidor por usuário e as alterações sensíveis permanecem auditadas sem armazenar senha ou conteúdo da foto.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. O `TESTAR.ps1` continua isolado de produção/VPS.
+
 ## v0.19.27 — Session & Authorization Hardening
 
 - Corrige o 403 do chat do paciente separando corretamente policies de paciente e profissional.

@@ -170,14 +170,20 @@ Paciente acessa o próprio chat sem 403; profissional continua restrito às rota
 
 ## v0.19.28 — Settings & User Profile
 
-- página de configurações;
-- foto;
+- página de configurações consolidada;
+- foto de perfil com redução local e armazenamento por conta;
 - dados básicos;
 - alteração de senha;
-- tema;
-- privacidade;
+- preferência de tema persistida;
+- área de privacidade e segurança com sessão atual;
 - preferências de notificações;
-- sessões/dispositivos ativos quando aplicável.
+- IP, user-agent e expiração da sessão atual;
+- logout permanece global por `SecurityStamp`; inventário multi-dispositivo fica reservado para quando houver sessões persistidas por dispositivo.
+
+### Gate
+Conta consegue atualizar nome, senha, foto, tema e notificações; a imagem é reduzida antes do envio e não vai para auditoria; a tela informa a sessão atual sem criar dependência da VPS/produção.
+
+**Status:** implementado na v0.19.28; validar localmente com PREPARAR → RODAR → TESTAR antes de qualquer deploy.
 
 ## v0.19.29 — AESYN App Identity & Theme Completion
 

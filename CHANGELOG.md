@@ -1,3 +1,16 @@
+# v0.19.28 — Settings & User Profile
+
+- Consolida a página de Configurações como central da conta do usuário.
+- Persiste tema e preferências de notificações por usuário.
+- Adiciona foto de perfil com compressão local para 256x256 antes do envio; JPEG/PNG/WebP aceitos e payload limitado.
+- Adiciona resumo da sessão atual (IP, user-agent e expiração do JWT).
+- Mantém alteração de nome e senha já existentes.
+- Auditoria registra atualização/remoção da foto sem persistir o conteúdo da imagem.
+- Migration `V01928ConfiguracoesPerfilUsuario` adiciona apenas preferências de conta ao Identity user.
+- Interface responsiva para desktop/mobile e integração com o tema já existente.
+- Versão pública: `0.19.28`.
+- Gate final esperado: `1949/1949`.
+
 # v0.19.27 — Session & Authorization Hardening
 
 - Corrige a causa estrutural do `403` no chat do paciente: o controller agora usa `AuthenticatedOnly`, com `PatientOnly` nas rotas `/me` e policy profissional nas rotas por paciente.
