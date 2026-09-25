@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +36,8 @@ public sealed record RegistrarExecucaoTreinoRequest(
 public sealed class ExecucoesTreinoPacienteController(
     AppDbContext db,
     CurrentUser currentUser,
-    IHttpContextAccessor httpContextAccessor) : ControllerBase
+    IHttpContextAccessor httpContextAccessor,
+    IPushNotificationService push) : ControllerBase
 {
     [HttpPost("execucoes")]
     public async Task<IActionResult> Registrar(
@@ -193,6 +195,15 @@ public sealed class ExecucoesTreinoPacienteController(
         });
 
         await db.SaveChangesAsync(ct);
+        var alvo = await db.Consultas.AsNoTracking().Where(x => x.PacienteId == paciente.Id && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
+            .OrderByDescending(x => x.DataHoraUtc).Select(x => x.Profissional.UsuarioId).FirstOrDefaultAsync(ct);
+        if (alvo != Guid.Empty)
+        {
+            var divergencia = request.Itens.Any(x => x.ExercicioAlternativoId.HasValue || !x.Concluido);
+            var titulo = divergencia ? $"Treino com divergência: {paciente.Nome}" : $"Treino concluído: {paciente.Nome}";
+            var corpo = divergencia ? $"{sessao.Nome} foi concluído com substituição ou item não concluído." : $"{sessao.Nome} foi concluído no AESYN.";
+            await push.EnviarAsync(alvo, "lembrete", titulo, corpo, "pacientes", ct);
+        }
         return Ok(new { execucao.Id, execucao.Status, execucao.DuracaoMinutos });
     }
 

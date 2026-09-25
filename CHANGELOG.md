@@ -1,3 +1,23 @@
+# v0.19.39-r1 — Push File Notification Build Hotfix
+
+- Corrige falha de compilação em `ArquivosPacienteController`: o fluxo já chamava `NotificarNovoArquivo`, mas o método não havia sido incluído no pacote v0.19.39.
+- Upload feito por profissional notifica o paciente vinculado quando houver usuário ativo.
+- Upload feito pelo paciente notifica profissionais ativos da mesma organização, coerente com o modelo de acesso atual, até existir vínculo explícito paciente↔profissional.
+- Evita eco de push para o próprio usuário que realizou o upload.
+- Mantém Development com push real desabilitado por configuração.
+- Sem migration e sem alteração da versão funcional pública (`0.19.39`).
+
+# v0.19.39 — Push Notifications End-to-End
+
+- Web Push real com VAPID e Service Worker, inclusive com PWA/navegador fechado.
+- Inscrição por dispositivo persistida nos tokens do ASP.NET Identity (`AESYN.WebPush`), sem nova migration.
+- Ativação/desativação/teste manual em Configurações; a permissão nunca é solicitada automaticamente.
+- Preferências de mensagens, atualizações do plano, lembretes e check-ins continuam sendo respeitadas.
+- Chat dispara push para o destinatário; check-in do paciente e upload de arquivos disparam push para o profissional relacionado.
+- Development mantém `Push:Enabled=false`, evitando qualquer disparo real durante PREPARAR/TESTAR.
+- Chaves VAPID não são armazenadas em código, auditoria ou ZIP.
+- Service Worker trata `push`/`notificationclick` e mantém `/api/` fora do cache.
+
 # v0.19.38 — PWA Install & Mobile Ergonomics
 
 - Instalação PWA via `beforeinstallprompt` em navegadores compatíveis.

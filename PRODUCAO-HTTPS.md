@@ -38,3 +38,13 @@ curl -I https://aesyn.com.br/api/health
 A v0.19.1 processa `X-Forwarded-For` e `X-Forwarded-Proto` antes do pipeline HTTPS, habilita HSTS fora de Development e mantém `UseHttpsRedirection()` como proteção adicional.
 
 Nunca exponha diretamente a porta interna da aplicação como endpoint público de produção.
+
+
+## Web Push / VAPID (v0.19.39)
+Em producao, configure somente como variaveis/segredos da VPS:
+- `Push__Enabled=true`
+- `Push__Subject=mailto:contato@SEU_DOMINIO`
+- `Push__PublicKey=<VAPID public key>`
+- `Push__PrivateKey=<VAPID private key>`
+
+Nunca grave a chave privada VAPID no repositorio ou ZIP. Em Development o push permanece desligado por padrao.

@@ -1,5 +1,6 @@
 using System.Text;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,8 @@ namespace HealthPlatform.Api.Controllers;
 [Route("api/chat")]
 public sealed class ChatAcompanhamentoController(
     AppDbContext db,
-    CurrentUser currentUser) : ControllerBase
+    CurrentUser currentUser,
+    IPushNotificationService push) : ControllerBase
 {
     private const string ContextMarkerPrefix = "[[AESYNCTX|";
     private static readonly HashSet<string> ContextosPermitidos = new(StringComparer.OrdinalIgnoreCase)
@@ -181,6 +183,11 @@ public sealed class ChatAcompanhamentoController(
         }
 
         await db.SaveChangesAsync(ct);
+        if (destinatarioUsuarioId.HasValue)
+        {
+            var pushTitulo = autor == "Paciente" ? $"Nova mensagem de {paciente.Nome}" : $"Nova mensagem de {profissional.Nome}";
+            await push.EnviarAsync(destinatarioUsuarioId.Value, "mensagem", pushTitulo, $"{RotuloContexto(contexto)} • {Resumir(mensagem, 120)}", autor == "Paciente" ? "pacientes" : "chat", ct);
+        }
         return Ok(new
         {
             item.Id,

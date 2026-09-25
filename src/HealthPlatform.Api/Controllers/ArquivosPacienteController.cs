@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,8 @@ namespace HealthPlatform.Api.Controllers;
 public sealed class ArquivosPacienteController(
     AppDbContext db,
     CurrentUser currentUser,
-    IWebHostEnvironment environment) : ControllerBase
+    IWebHostEnvironment environment,
+    IPushNotificationService push) : ControllerBase
 {
     private const long LimiteBytes = 15 * 1024 * 1024;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
@@ -129,6 +131,7 @@ public sealed class ArquivosPacienteController(
         finally { gate.Release(); }
 
         await Auditar("UPLOAD", pacienteId, item, ct);
+        await NotificarNovoArquivo(pacienteId, item, origem, ct);
         return Ok(ToResponse(pacienteId, item));
     }
 
@@ -162,6 +165,51 @@ public sealed class ArquivosPacienteController(
 
         await Auditar("REMOVE", pacienteId, item!, ct);
         return NoContent();
+    }
+
+    private async Task NotificarNovoArquivo(Guid pacienteId, ArquivoPacienteIndexItem item, string origem, CancellationToken ct)
+    {
+        var paciente = await db.Pacientes.AsNoTracking()
+            .Where(x => x.Id == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .Select(x => new { x.Nome, x.UsuarioId })
+            .FirstOrDefaultAsync(ct);
+
+        if (paciente is null) return;
+
+        if (string.Equals(origem, "Profissional", StringComparison.OrdinalIgnoreCase))
+        {
+            if (paciente.UsuarioId is Guid pacienteUsuarioId && pacienteUsuarioId != currentUser.UserId)
+            {
+                await push.EnviarAsync(
+                    pacienteUsuarioId,
+                    "lembrete",
+                    "Novo arquivo no seu acompanhamento",
+                    $"{item.Nome} foi adicionado à sua biblioteca AESYN.",
+                    "arquivos",
+                    ct);
+            }
+            return;
+        }
+
+        // O modelo atual permite que profissionais ativos da organização acompanhem os pacientes
+        // da mesma organização. Enquanto não houver vínculo explícito paciente↔profissional,
+        // notificamos os profissionais ativos e evitamos eco para o próprio usuário que enviou.
+        var profissionais = await db.Profissionais.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo && x.UsuarioId != currentUser.UserId)
+            .Select(x => x.UsuarioId)
+            .Distinct()
+            .ToListAsync(ct);
+
+        foreach (var usuarioId in profissionais)
+        {
+            await push.EnviarAsync(
+                usuarioId,
+                "lembrete",
+                $"Novo arquivo de {paciente.Nome}",
+                $"{item.Nome} foi enviado pelo paciente e está disponível para revisão.",
+                "pacientes",
+                ct);
+        }
     }
 
     private async Task Auditar(string acao, Guid pacienteId, ArquivoPacienteIndexItem item, CancellationToken ct)

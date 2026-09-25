@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,8 @@ namespace HealthPlatform.Api.Controllers;
 public sealed class TreinosController(
     AppDbContext db,
     CurrentUser currentUser,
-    IHttpContextAccessor httpContextAccessor) : ControllerBase
+    IHttpContextAccessor httpContextAccessor,
+    IPushNotificationService push) : ControllerBase
 {
     public sealed record UpsertExercicioRequest(
         string Nome,
@@ -543,6 +545,8 @@ public sealed class TreinosController(
         item.Status = novo;
         Auditar("STATUS", nameof(PlanoTreino), item.Id, antes, new { item.Status });
         await db.SaveChangesAsync(ct);
+        if (novo == "Ativo" && item.Paciente.UsuarioId.HasValue)
+            await push.EnviarAsync(item.Paciente.UsuarioId.Value, "plano", "Seu treino foi atualizado", $"{item.Nome} está disponível no AESYN.", "treinos", ct);
         return NoContent();
     }
 

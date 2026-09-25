@@ -1,6 +1,7 @@
 using System.Text.Json;
 using HealthPlatform.Api.Contracts.PlanosAlimentares;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace HealthPlatform.Api.Controllers;
 
 [ApiController]
 [Authorize]
-public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUser, IHttpContextAccessor httpContextAccessor) : ControllerBase
+public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUser, IHttpContextAccessor httpContextAccessor, IPushNotificationService push) : ControllerBase
 {
     [HttpGet("api/pacientes/{pacienteId:guid}/planos-alimentares")]
     public async Task<ActionResult<IReadOnlyCollection<PlanoAlimentarResponse>>> GetByPaciente(Guid pacienteId, CancellationToken ct)
@@ -468,6 +469,8 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         if (item is null) return NotFound(new { message = "Plano alimentar nao encontrado." });
         var novo = NormalizarStatus(status); if (novo is not ("Ativo" or "Inativo" or "Concluido")) return BadRequest(new { message = "Status permitido: Ativo, Inativo ou Concluido." });
         var antes = new { item.Status }; item.Status = novo; item.UpdatedAtUtc = DateTime.UtcNow; Auditar("STATUS", item, antes, new { item.Status }); await db.SaveChangesAsync(ct);
+        if (novo == "Ativo" && item.Paciente.UsuarioId.HasValue)
+            await push.EnviarAsync(item.Paciente.UsuarioId.Value, "plano", "Seu plano alimentar foi atualizado", $"{item.Nome} está disponível no AESYN.", "alimentacao", ct);
         var atualizado = await QueryCompleta().FirstAsync(x => x.Id == id, ct); return Ok(ToResponse(atualizado));
     }
 

@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.37 — Patient First Access & Tutorials
+> **Versão-base deste roadmap:** v0.19.39-r1 — Push Notifications End-to-End + build hotfix
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -357,6 +357,10 @@ Profissional deve receber:
 - nova mensagem.
 
 Testar push com navegador/app fechado e PWA instalado.
+
+**Status:** implementado na v0.19.39. O AESYN registra inscrições Web Push por dispositivo usando `UsuariosTokens`/provider `AESYN.WebPush`, respeita preferências por categoria, usa VAPID somente quando habilitado e mantém Development sem tráfego push real. O Service Worker recebe push com o PWA/navegador fechado, exibe notificação e trata clique/deep link. Chat, check-in do paciente, treino concluído/divergente, novos arquivos e publicação de treino/dieta disparam push transacional. Chaves VAPID permanecem exclusivamente em segredo de ambiente na VPS.
+
+**Hotfix v0.19.39-r1:** corrige a ausência do método `NotificarNovoArquivo` no pacote inicial da v0.19.39, restaurando compilação e o disparo de push após upload de arquivo sem alterar banco ou versão funcional.
 
 ## v0.19.40 — In-App Notification Center
 

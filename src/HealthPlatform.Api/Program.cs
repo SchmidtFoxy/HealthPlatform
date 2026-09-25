@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Api.Services.Email;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Infrastructure.Data;
 using HealthPlatform.Domain.Enums;
 using HealthPlatform.Infrastructure.Identity;
@@ -19,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.38" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.19.39" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -61,6 +62,10 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
 builder.Services.AddScoped<ITransactionalEmailService, SmtpTransactionalEmailService>();
+
+// v0.19.39 - Web Push usa VAPID; em Development permanece desligado por padrao.
+builder.Services.Configure<PushOptions>(builder.Configuration.GetSection(PushOptions.SectionName));
+builder.Services.AddScoped<IPushNotificationService, WebPushNotificationService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()

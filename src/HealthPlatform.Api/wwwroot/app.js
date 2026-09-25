@@ -8942,7 +8942,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.38';
+const HP_MVP_VERSION='0.19.39';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10769,8 +10769,8 @@ loadPatientProfile=async function(){
 $('#patientTutorialTrigger')?.addEventListener('click',()=>hpOpenPatientTutorialV01937({replay:true}));
 
 
-// ===== v0.19.38 — PWA Install & Mobile Ergonomics =====
-const HP_PWA_MOBILE_ERGONOMICS='v0.19.38';
+// ===== v0.19.39 — PWA Install & Mobile Ergonomics =====
+const HP_PWA_MOBILE_ERGONOMICS='v0.19.39';
 let hpDeferredInstallPromptV01938=null;
 let hpHandlingPatientPopV01938=false;
 let hpPatientViewV01938='inicio';
@@ -10816,3 +10816,34 @@ const __loadPatientSection_v01938=loadPatientSection;
 loadPatientSection=async function(view='inicio'){const next=view||'inicio';if(state.token&&state.user?.tipoUsuario==='Paciente'&&!hpHandlingPatientPopV01938&&next!==hpPatientViewV01938)history.pushState({hpPatientView:next},'',location.href);hpPatientViewV01938=next;return __loadPatientSection_v01938(next);};
 window.addEventListener('popstate',event=>{if(!state.token||state.user?.tipoUsuario!=='Paciente')return;if(document.querySelector('#pwaInstallSheetV01938')?.classList.contains('open')){hpCloseInstallSheetV01938();return;}if(document.querySelector('#patientMoreSheet')?.classList.contains('open')){closePatientMoreSheet();return;}if(document.querySelector('#patientQuickLogSheet')?.classList.contains('open')){closePatientQuickLog();return;}if(!document.querySelector('#clinicalActionModal')?.classList.contains('hidden')){closeClinicalAction();return;}const view=event.state?.hpPatientView||'inicio';hpHandlingPatientPopV01938=true;hpPatientViewV01938=view;__loadPatientSection_v01938(view).catch(err=>toast(err.message,true)).finally(()=>{hpHandlingPatientPopV01938=false;});});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.querySelector('#pwaInstallSheetV01938')?.classList.contains('open'))hpCloseInstallSheetV01938();});
+
+
+// ===== v0.19.39 — Push Notifications End-to-End =====
+const HP_PUSH_NOTIFICATIONS='v0.19.39';
+function hpPushSupportedV01939(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window&&window.isSecureContext}
+function hpBase64UrlToUint8ArrayV01939(value){const pad='='.repeat((4-value.length%4)%4),base64=(value+pad).replace(/-/g,'+').replace(/_/g,'/'),raw=atob(base64);return Uint8Array.from([...raw].map(x=>x.charCodeAt(0)))}
+async function hpPushStatusV01939(){return api('/api/push/status')}
+async function hpEnablePushV01939(){
+  if(!hpPushSupportedV01939())throw new Error('Push requer HTTPS/PWA e um navegador compatível.');
+  const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('Permissão de notificações não concedida.');
+  const status=await hpPushStatusV01939();if(!status.habilitadoNoServidor||!status.publicKey)throw new Error('Push ainda não está habilitado neste ambiente.');
+  const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:hpBase64UrlToUint8ArrayV01939(status.publicKey)});
+  const json=sub.toJSON();await api('/api/push/subscriptions',{method:'POST',body:JSON.stringify({endpoint:sub.endpoint,p256Dh:json.keys?.p256dh,auth:json.keys?.auth,userAgent:navigator.userAgent})});
+  return sub;
+}
+async function hpDisablePushV01939(){const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();if(!sub)return;await api('/api/push/subscriptions',{method:'DELETE',body:JSON.stringify({endpoint:sub.endpoint})});await sub.unsubscribe()}
+async function hpRenderPushSettingsV01939(host){
+  if(!host||host.querySelector('[data-push-v01939]'))return;let status=null,sub=null;
+  try{status=await hpPushStatusV01939();if(hpPushSupportedV01939()){const reg=await navigator.serviceWorker.ready;sub=await reg.pushManager.getSubscription()}}catch{}
+  const card=document.createElement('section');card.className='profile-settings-card push-settings-v01939';card.dataset.pushV01939='1';
+  const supported=hpPushSupportedV01939(),active=!!sub,permission=('Notification'in window?Notification.permission:'unsupported');
+  card.innerHTML=`<div class="card-head"><div><h4>Push no celular</h4><small>Receba mensagens e atualizações mesmo com o AESYN fechado.</small></div></div><div class="push-status-v01939"><span class="status-dot-v01939 ${active?'active':''}"></span><strong>${active?'Ativado neste dispositivo':'Desativado neste dispositivo'}</strong><small>${!supported?'Este navegador não oferece Web Push em contexto seguro.':!status?.habilitadoNoServidor?'Servidor push desativado neste ambiente.':`Permissão: ${esc(permission)}`}</small></div><div class="push-actions-v01939"><button class="primary" data-push-enable ${active||!supported||!status?.habilitadoNoServidor?'disabled':''}>Ativar neste dispositivo</button><button class="ghost" data-push-disable ${active?'':'disabled'}>Desativar</button><button class="secondary" data-push-test ${active&&status?.habilitadoNoServidor?'':'disabled'}>Enviar teste</button></div><p class="form-hint">O AESYN nunca solicita permissão automaticamente: a ativação acontece somente após este comando. As preferências de Mensagens, Plano, Lembretes e Check-ins continuam sendo respeitadas.</p>`;
+  host.appendChild(card);
+  card.querySelector('[data-push-enable]')?.addEventListener('click',async()=>{try{await hpEnablePushV01939();toast('Push ativado neste dispositivo.');card.remove();hpRenderPushSettingsV01939(host)}catch(e){toast(e.message,true)}});
+  card.querySelector('[data-push-disable]')?.addEventListener('click',async()=>{try{await hpDisablePushV01939();toast('Push desativado neste dispositivo.');card.remove();hpRenderPushSettingsV01939(host)}catch(e){toast(e.message,true)}});
+  card.querySelector('[data-push-test]')?.addEventListener('click',async()=>{try{const r=await api('/api/push/test',{method:'POST'});toast(r.enviadas>0?'Notificação de teste enviada.':(r.motivo||'Teste processado.'))}catch(e){toast(e.message,true)}});
+}
+const hpPushSettingsObserverV01939=new MutationObserver(()=>{const extra=document.querySelector('.profile-settings-v01928');if(extra)hpRenderPushSettingsV01939(extra)});hpPushSettingsObserverV01939.observe(document.body,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.closest('[data-route="configuracoes"]'))setTimeout(()=>{const extra=document.querySelector('.profile-settings-v01928');if(extra)hpRenderPushSettingsV01939(extra)},220)});
+navigator.serviceWorker?.addEventListener('message',event=>{if(event.data?.type==='AESYN_PUSH_OPEN'){const link=event.data.link;if(link==='chat'&&typeof openPatientView==='function')openPatientView('chat');else if(link==='arquivos'&&typeof openPatientView==='function')openPatientView('arquivos');else if(link==='pacientes'&&state.user?.tipoUsuario!=='Paciente')window.location.hash='#pacientes';}});

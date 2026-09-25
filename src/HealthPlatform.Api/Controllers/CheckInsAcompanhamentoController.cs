@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,8 @@ namespace HealthPlatform.Api.Controllers;
 public sealed class CheckInsAcompanhamentoController(
     AppDbContext db,
     CurrentUser currentUser,
-    IHttpContextAccessor httpContextAccessor) : ControllerBase
+    IHttpContextAccessor httpContextAccessor,
+    IPushNotificationService push) : ControllerBase
 {
     public sealed record UpsertCheckInRequest(
         DateTime DataUtc,
@@ -319,6 +321,7 @@ public sealed class CheckInsAcompanhamentoController(
         db.CheckInsAcompanhamento.Add(item);
         Auditar("CREATE_SELF", item, null, Snapshot(item));
         await db.SaveChangesAsync(ct);
+        await NotificarProfissionalCheckIn(pacienteId.Value, item, ct);
 
         var salvo = await QueryPaciente(pacienteId.Value).FirstAsync(x => x.Id == item.Id, ct);
         return Ok(ToResponse(salvo));
@@ -622,6 +625,19 @@ public sealed class CheckInsAcompanhamentoController(
 
     private static string? Limpar(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+
+    private async Task NotificarProfissionalCheckIn(Guid pacienteId, CheckInAcompanhamento item, CancellationToken ct)
+    {
+        var alvo = await db.Consultas.AsNoTracking()
+            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Select(x => new { x.Profissional.UsuarioId, PacienteNome = x.Paciente.Nome })
+            .FirstOrDefaultAsync(ct);
+        if (alvo?.UsuarioId is not Guid usuarioId) return;
+        var detalhe = item.PesoKg.HasValue ? $"Peso registrado: {item.PesoKg:0.##} kg." : "Novo check-in de acompanhamento enviado.";
+        await push.EnviarAsync(usuarioId, "checkin", $"Novo check-in de {alvo.PacienteNome}", detalhe, "pacientes", ct);
+    }
 
     private static object Snapshot(CheckInAcompanhamento x) => new
     {
