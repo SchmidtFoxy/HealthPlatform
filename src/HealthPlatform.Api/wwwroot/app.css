@@ -5352,3 +5352,23 @@ html[data-theme="dark"] .pwa-install-nudge-v01938{background:rgba(17,28,31,.97);
 
 /* ===== v0.19.39 — Push Notifications End-to-End ===== */
 .push-settings-v01939{display:grid;gap:14px}.push-status-v01939{display:grid;grid-template-columns:auto 1fr;gap:3px 9px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel-soft,#f8fafc)}.push-status-v01939 small{grid-column:2;color:var(--muted)}.status-dot-v01939{width:10px;height:10px;border-radius:999px;background:#94a3b8}.status-dot-v01939.active{background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.12)}.push-actions-v01939{display:flex;flex-wrap:wrap;gap:8px}.push-actions-v01939 button{min-height:44px}html[data-theme="dark"] .push-status-v01939{background:rgba(15,23,42,.55)}@media(max-width:720px){.push-actions-v01939{display:grid;grid-template-columns:1fr}.push-actions-v01939 button{width:100%}}
+
+/* ===== v0.19.40 — In-App Notification Center ===== */
+.notification-center-toolbar-v01940{display:grid;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line,#e6e9ef);background:var(--surface,#fff)}
+.notification-filter-group-v01940{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px}
+.notification-filter-v01940{border:1px solid var(--line,#e6e9ef);background:transparent;border-radius:999px;padding:7px 11px;font-size:.76rem;font-weight:800;white-space:nowrap;cursor:pointer}
+.notification-filter-v01940.active{background:var(--primary,#193f42);border-color:var(--primary,#193f42);color:#fff}
+.notification-filter-row-v01940{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.notification-filter-row-v01940 select{min-width:0}
+.notification-history-hint-v01940{margin:10px 14px 0;padding:9px 11px;border-radius:10px;background:rgba(53,103,168,.08);font-size:.76rem;color:var(--muted,#77808d)}
+.notification-preferences-v01940{margin:10px 14px 0;padding:12px;border:1px solid var(--line,#e6e9ef);border-radius:13px;display:grid;gap:9px;background:var(--surface,#fff)}
+.notification-preferences-v01940>div:first-child{display:grid;gap:2px}.notification-preferences-v01940 small{color:var(--muted,#77808d)}
+.notification-preferences-v01940 label{display:flex;align-items:center;gap:8px;font-size:.84rem}
+.notification-preferences-actions-v01940{display:flex;justify-content:flex-end;gap:8px;padding-top:3px}
+.notification-item.inactive{opacity:.58;border-style:dashed}
+.notification-mark-unread-v01940{justify-self:start;border:0;background:transparent;padding:2px 0;color:var(--primary,#3567a8);font-size:.72rem;font-weight:800;cursor:pointer}
+html[data-theme="dark"] .notification-panel,html[data-theme="dark"] .notification-center-toolbar-v01940,html[data-theme="dark"] .notification-preferences-v01940{background:var(--surface,#172226);color:var(--text,#edf5f5)}
+html[data-theme="dark"] .notification-item{background:var(--surface-2,#1d2b30)}
+html[data-theme="dark"] .notification-item:hover{background:#23363c}
+html[data-theme="dark"] .notification-filter-v01940{color:var(--text,#edf5f5)}
+@media(max-width:600px){.notification-filter-row-v01940{grid-template-columns:1fr 1fr}.notification-filter-row-v01940 #notificationPreferencesButton{grid-column:1/-1}.notification-panel-head{align-items:flex-start}.notification-panel-actions{flex-direction:column-reverse;align-items:flex-end}.notification-panel-actions .ghost{max-width:145px;white-space:normal}.notification-preferences-actions-v01940{position:sticky;bottom:0;background:inherit;padding-bottom:max(4px,env(safe-area-inset-bottom))}}

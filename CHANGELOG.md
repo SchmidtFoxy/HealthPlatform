@@ -1,3 +1,20 @@
+# v0.19.40-r1 — Notification Patient Link Gate Semantic Sync
+
+- Corrige falso negativo do gate legado `[523/600]`.
+- O gate passa a validar `hpResolvePatientNotificationLink`, a rota `solicitacoes` e o fallback seguro para `inicio`, em vez de exigir a implementação antiga baseada em `includes(link)`.
+- Nenhuma alteração funcional, de banco ou de versão pública.
+
+# v0.19.40 — In-App Notification Center
+
+- Evolui a central interna com filtros por status, prioridade e categoria.
+- Adiciona visão de histórico incluindo notificações encerradas pela origem sem apagar o registro.
+- Exibe resumo de não lidas e prioridades, preservando badge global.
+- Permite marcar uma notificação lida novamente como não lida.
+- Preferências de mensagens, plano, lembretes e check-ins podem ser ajustadas dentro da central.
+- Amplia deep links do paciente para chat, solicitações e arquivos.
+- Mantém isolamento por organização/usuário e não cria migration.
+- Development continua sem qualquer dependência de produção.
+
 # v0.19.39-r1 — Push File Notification Build Hotfix
 
 - Corrige falha de compilação em `ArquivosPacienteController`: o fluxo já chamava `NotificarNovoArquivo`, mas o método não havia sido incluído no pacote v0.19.39.

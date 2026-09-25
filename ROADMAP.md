@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.39-r1 — Push Notifications End-to-End + build hotfix
+> **Versão-base deste roadmap:** v0.19.40 — In-App Notification Center
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -371,6 +371,8 @@ Testar push com navegador/app fechado e PWA instalado.
 - histórico;
 - preferências por categoria;
 - deep link para origem da notificação.
+
+**Status:** implementado na v0.19.40. A central interna agora permite alternar entre notificações ativas, não lidas e histórico (incluindo itens encerrados pela origem), filtrar por prioridade e categoria, consultar resumo por severidade, marcar itens como não lidos e manter badge global coerente. Preferências de mensagens, atualizações do plano, lembretes e check-ins podem ser ajustadas dentro da própria central usando as configurações já persistidas na conta. Deep links do paciente passam a cobrir também chat, solicitações e arquivos, enquanto o profissional continua sendo levado para agenda, pendências, pacientes ou origem específica. Nenhuma migration foi necessária.
 
 ## v0.19.41 — UX State System
 
@@ -956,3 +958,7 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 - A integração atual usa `Arquivo compartilhado:` e referência estruturada (`referenciaTipo`, `referenciaId`, `referenciaTitulo`) introduzida na v0.19.35.
 - O teste passa a validar o contrato atual sem reintroduzir texto legado na interface.
 - Nenhuma alteração funcional, schema ou migration; versão funcional pública permanece `0.19.35`.
+
+
+## Revisões corretivas da base atual
+- **v0.19.40-r1 — Notification Patient Link Gate Semantic Sync:** corrige gate legado de navegação de notificações do paciente para validar o resolvedor atual (`hpResolvePatientNotificationLink`) sem ressuscitar implementação antiga.

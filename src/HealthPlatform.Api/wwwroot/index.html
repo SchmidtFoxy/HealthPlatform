@@ -11,15 +11,15 @@
   <meta name="msapplication-TileColor" content="#0B3B36" />
   <meta name="application-name" content="AESYN Performance" />
   <title>AESYN Performance</title>
-  <link rel="manifest" href="/manifest.webmanifest?v=0.19.39" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.19.39" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.19.39" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.19.39" />
-  <link rel="stylesheet" href="/app.css?v=0.19.39" />
+  <link rel="manifest" href="/manifest.webmanifest?v=0.19.40" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.19.40" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.19.40" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.19.40" />
+  <link rel="stylesheet" href="/app.css?v=0.19.40" />
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
-    <img src="/icons/icon-192.png?v=0.19.39" alt="" />
+    <img src="/icons/icon-192.png?v=0.19.40" alt="" />
     <strong>AESYN</strong><span>PERFORMANCE</span>
   </div>
   <a class="hp-skip-link" href="#patientPortalContent">Pular para o conteúdo</a>
@@ -203,7 +203,7 @@
   </div>
 
   <div id="pwaInstallNudgeV01938" class="pwa-install-nudge-v01938 hidden" role="status" aria-live="polite">
-    <img src="/icons/icon-192.png?v=0.19.39" alt="" />
+    <img src="/icons/icon-192.png?v=0.19.40" alt="" />
     <div><strong>Instale o AESYN</strong><small>Abra mais rápido e use como aplicativo.</small></div>
     <button id="pwaInstallNudgeActionV01938" class="primary" type="button">Instalar</button>
     <button id="pwaInstallNudgeCloseV01938" class="ghost" type="button" aria-label="Agora não">×</button>
@@ -266,8 +266,36 @@
     <div class="notification-drawer-backdrop" data-close-notifications></div>
     <aside class="notification-panel">
       <div class="notification-panel-head">
-        <div><span class="eyebrow">CENTRAL</span><h3>Notificações</h3></div>
-        <div class="notification-panel-actions"><button class="ghost" id="readAllNotifications">Marcar todas como lidas</button><button class="icon-btn" data-close-notifications>×</button></div>
+        <div><span class="eyebrow">CENTRAL</span><h3>Notificações</h3><small id="notificationCenterSummary">Acompanhe o que pede sua atenção.</small></div>
+        <div class="notification-panel-actions"><button class="ghost" id="readAllNotifications">Marcar todas como lidas</button><button class="icon-btn" data-close-notifications aria-label="Fechar notificações">×</button></div>
+      </div>
+      <div class="notification-center-toolbar-v01940" aria-label="Filtros de notificações">
+        <div class="notification-filter-group-v01940" role="group" aria-label="Status">
+          <button class="notification-filter-v01940 active" type="button" data-notification-status="ativas">Ativas</button>
+          <button class="notification-filter-v01940" type="button" data-notification-status="nao-lidas">Não lidas</button>
+          <button class="notification-filter-v01940" type="button" data-notification-status="historico">Histórico</button>
+        </div>
+        <div class="notification-filter-row-v01940">
+          <select id="notificationPriorityFilter" aria-label="Filtrar por prioridade">
+            <option value="">Todas as prioridades</option>
+            <option value="Alta">Alta</option>
+            <option value="Media">Média</option>
+            <option value="Normal">Normal</option>
+          </select>
+          <select id="notificationTypeFilter" aria-label="Filtrar por categoria">
+            <option value="">Todas as categorias</option>
+          </select>
+          <button class="ghost" id="notificationPreferencesButton" type="button">Preferências</button>
+        </div>
+      </div>
+      <div id="notificationHistoryHint" class="notification-history-hint-v01940 hidden">Histórico inclui notificações já encerradas pela origem, preservadas para consulta.</div>
+      <div id="notificationPreferencesPanel" class="notification-preferences-v01940 hidden">
+        <div><strong>Preferências por categoria</strong><small>Valem para avisos e push quando aplicável.</small></div>
+        <label><input type="checkbox" id="notificationPrefMessages" /> Mensagens</label>
+        <label><input type="checkbox" id="notificationPrefPlans" /> Atualizações do plano</label>
+        <label><input type="checkbox" id="notificationPrefReminders" /> Lembretes</label>
+        <label><input type="checkbox" id="notificationPrefCheckins" /> Check-ins</label>
+        <div class="notification-preferences-actions-v01940"><button class="ghost" type="button" id="notificationPreferencesCancel">Cancelar</button><button class="primary" type="button" id="notificationPreferencesSave">Salvar preferências</button></div>
       </div>
       <div id="notificationList" class="notification-list"><div class="empty">Carregando...</div></div>
     </aside>
@@ -304,6 +332,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.19.39"></script>
+  <script src="/app.js?v=0.19.40"></script>
 </body>
 </html>

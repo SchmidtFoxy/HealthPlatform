@@ -18,6 +18,10 @@ public sealed class NotificacoesController(
     [HttpGet]
     public async Task<IActionResult> Listar(
         [FromQuery] bool sincronizar = true,
+        [FromQuery] bool incluirInativas = false,
+        [FromQuery] bool? lida = null,
+        [FromQuery] string? prioridade = null,
+        [FromQuery] string? tipo = null,
         [FromQuery] int limite = 50,
         CancellationToken ct = default)
     {
@@ -26,11 +30,48 @@ public sealed class NotificacoesController(
         if (sincronizar)
             await SincronizarInterno(ct);
 
-        var itens = await db.NotificacoesInternas.AsNoTracking()
+        var baseQuery = db.NotificacoesInternas.AsNoTracking()
             .Where(x =>
                 x.OrganizacaoId == currentUser.OrganizationId &&
-                x.UsuarioId == currentUser.UserId &&
-                x.Ativa)
+                x.UsuarioId == currentUser.UserId);
+
+        if (!incluirInativas)
+            baseQuery = baseQuery.Where(x => x.Ativa);
+
+        var resumoQuery = baseQuery;
+
+        if (lida.HasValue)
+            baseQuery = lida.Value
+                ? baseQuery.Where(x => x.LidaEmUtc.HasValue)
+                : baseQuery.Where(x => !x.LidaEmUtc.HasValue);
+
+        prioridade = NormalizarFiltro(prioridade);
+        if (prioridade is not null)
+            baseQuery = baseQuery.Where(x => x.Prioridade == prioridade);
+
+        tipo = NormalizarFiltro(tipo);
+        if (tipo is not null)
+            baseQuery = baseQuery.Where(x => x.Tipo == tipo);
+
+        var tiposDisponiveis = await resumoQuery
+            .Select(x => x.Tipo)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToListAsync(ct);
+
+        var resumo = await resumoQuery
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                total = g.Count(),
+                naoLidas = g.Count(x => !x.LidaEmUtc.HasValue),
+                altas = g.Count(x => x.Prioridade == "Alta"),
+                medias = g.Count(x => x.Prioridade == "Media"),
+                encerradas = g.Count(x => !x.Ativa)
+            })
+            .FirstOrDefaultAsync(ct);
+
+        var itens = await baseQuery
             .OrderBy(x => x.LidaEmUtc.HasValue)
             .ThenByDescending(x => x.Prioridade == "Alta")
             .ThenByDescending(x => x.Prioridade == "Media")
@@ -50,6 +91,7 @@ public sealed class NotificacoesController(
                 x.Link,
                 x.LidaEmUtc,
                 lida = x.LidaEmUtc.HasValue,
+                x.Ativa,
                 x.CreatedAtUtc
             })
             .ToListAsync(ct);
@@ -57,9 +99,25 @@ public sealed class NotificacoesController(
         return Ok(new
         {
             total = itens.Count,
-            naoLidas = itens.Count(x => !x.lida),
+            naoLidas = resumo?.naoLidas ?? 0,
+            resumo = new
+            {
+                total = resumo?.total ?? 0,
+                naoLidas = resumo?.naoLidas ?? 0,
+                altas = resumo?.altas ?? 0,
+                medias = resumo?.medias ?? 0,
+                encerradas = resumo?.encerradas ?? 0
+            },
+            tiposDisponiveis,
+            filtros = new { incluirInativas, lida, prioridade, tipo, limite },
             itens
         });
+    }
+
+    private static string? NormalizarFiltro(string? valor)
+    {
+        var normalizado = (valor ?? string.Empty).Trim();
+        return normalizado.Length == 0 ? null : normalizado;
     }
 
     [HttpPost("sincronizar")]
@@ -80,6 +138,23 @@ public sealed class NotificacoesController(
         if (item is null) return NotFound();
 
         item.LidaEmUtc ??= DateTime.UtcNow;
+        item.UpdatedAtUtc = DateTime.UtcNow;
+        await db.SaveChangesAsync(ct);
+
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/nao-lida")]
+    public async Task<IActionResult> MarcarNaoLida(Guid id, CancellationToken ct)
+    {
+        var item = await db.NotificacoesInternas.FirstOrDefaultAsync(x =>
+            x.Id == id &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.UsuarioId == currentUser.UserId, ct);
+
+        if (item is null) return NotFound();
+
+        item.LidaEmUtc = null;
         item.UpdatedAtUtc = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
 

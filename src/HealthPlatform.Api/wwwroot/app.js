@@ -6187,11 +6187,12 @@ loadDashboard=async function(){
 
 // ===== v0.3.27 — Notificações internas + lembretes =====
 let hpNotificationTimer=null;
+const hpNotificationCenterV01940={status:'ativas',prioridade:'',tipo:'',preferencesOpen:false};
 function notificationPriorityClass(p){
   return p==='Alta'?'notification-high':p==='Media'?'notification-medium':'notification-normal';
 }
 function notificationIcon(t){
-  return t==='Agenda'||t==='Consulta'?'📅':t==='Pendencia'?'⚠️':t==='Solicitacao'?'📋':'🔔';
+  return t==='Agenda'||t==='Consulta'?'📅':t==='Pendencia'?'⚠️':t==='Solicitacao'?'📋':t==='Chat'?'💬':t==='Treino'?'🏋️':t==='Nutricao'?'🥗':'🔔';
 }
 function notificationBadgeNodes(){
   return [$('#notificationBadge'),$('#patientNotificationBadge')].filter(Boolean);
@@ -6202,10 +6203,18 @@ function setNotificationBadge(n){
     x.classList.toggle('hidden',!n);
   });
 }
+function hpNotificationQueryV01940(){
+  const q=new URLSearchParams({sincronizar:'true',limite:'100'});
+  if(hpNotificationCenterV01940.status==='historico')q.set('incluirInativas','true');
+  if(hpNotificationCenterV01940.status==='nao-lidas')q.set('lida','false');
+  if(hpNotificationCenterV01940.prioridade)q.set('prioridade',hpNotificationCenterV01940.prioridade);
+  if(hpNotificationCenterV01940.tipo)q.set('tipo',hpNotificationCenterV01940.tipo);
+  return q.toString();
+}
 async function refreshNotifications(silent=true){
   if(!state.token)return null;
   try{
-    const d=await api('/api/notificacoes?sincronizar=true&limite=50');
+    const d=await api(`/api/notificacoes?${hpNotificationQueryV01940()}`);
     setNotificationBadge(d.naoLidas||0);
     if(!$('#notificationDrawer').classList.contains('hidden'))renderNotifications(d);
     return d;
@@ -6214,20 +6223,44 @@ async function refreshNotifications(silent=true){
     return null;
   }
 }
+function hpRenderNotificationTypeOptionsV01940(d){
+  const select=$('#notificationTypeFilter');
+  if(!select)return;
+  const current=hpNotificationCenterV01940.tipo;
+  select.innerHTML='<option value="">Todas as categorias</option>'+((d.tiposDisponiveis||[]).map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join(''));
+  select.value=current;
+}
+function hpRenderNotificationSummaryV01940(d){
+  const el=$('#notificationCenterSummary');
+  if(!el)return;
+  const r=d.resumo||{};
+  const parts=[`${r.naoLidas||0} não lida(s)`];
+  if(r.altas)parts.push(`${r.altas} alta prioridade`);
+  if(hpNotificationCenterV01940.status==='historico'&&r.encerradas)parts.push(`${r.encerradas} encerrada(s)`);
+  el.textContent=parts.join(' • ');
+}
 function renderNotifications(d){
   const host=$('#notificationList');
   if(!host)return;
-  host.innerHTML=(d.itens||[]).length?(d.itens||[]).map(n=>`
-    <article class="notification-item ${n.lida?'read':'unread'} ${notificationPriorityClass(n.prioridade)}" data-notification="${n.id}" data-notification-link="${esc(n.link||'')}">
+  hpRenderNotificationTypeOptionsV01940(d);
+  hpRenderNotificationSummaryV01940(d);
+  const itens=d.itens||[];
+  host.innerHTML=itens.length?itens.map(n=>`
+    <article class="notification-item ${n.lida?'read':'unread'} ${notificationPriorityClass(n.prioridade)} ${n.ativa===false?'inactive':''}" data-notification="${n.id}" data-notification-link="${esc(n.link||'')}">
       <div class="notification-icon">${notificationIcon(n.tipo)}</div>
       <div class="notification-main">
-        <div class="notification-meta"><span>${esc(n.tipo)}</span><b>${esc(n.prioridade)}</b>${n.dataEventoUtc?`<span>${fmtDateTime(n.dataEventoUtc)}</span>`:''}</div>
+        <div class="notification-meta"><span>${esc(n.tipo)}</span><b>${esc(n.prioridade)}</b>${n.ativa===false?'<span>encerrada</span>':''}${n.dataEventoUtc?`<span>${fmtDateTime(n.dataEventoUtc)}</span>`:''}</div>
         <strong>${esc(n.titulo)}</strong>
         <p>${esc(n.mensagem)}</p>
+        ${n.lida?`<button class="notification-mark-unread-v01940" type="button" data-notification-unread="${n.id}">Marcar como não lida</button>`:''}
       </div>
       ${n.lida?'':'<span class="notification-unread-dot"></span>'}
-    </article>`).join(''):`<div class="empty">Nenhuma notificação ativa.</div>`;
+    </article>`).join(''):`<div class="empty">Nenhuma notificação encontrada para estes filtros.</div>`;
   $$('.notification-item').forEach(x=>x.onclick=()=>openNotification(x));
+  $$('[data-notification-unread]').forEach(btn=>btn.onclick=async ev=>{
+    ev.stopPropagation();
+    try{await api(`/api/notificacoes/${btn.dataset.notificationUnread}/nao-lida`,{method:'PUT'});await refreshNotifications(false)}catch(err){toast(err.message,true)}
+  });
 }
 async function openNotification(el){
   const id=el.dataset.notification,link=el.dataset.notificationLink;
@@ -6235,21 +6268,52 @@ async function openNotification(el){
   closeNotifications();
   await refreshNotifications();
   if((state.user?.tipoUsuario==='Paciente'||state.user?.tipo==='Paciente'||state.user?.tipoUsuario===6||state.user?.tipo===6)){
-    if(['inicio','plano','treino','metas','diario','evolucao','exames','solicitacoes'].includes(link)){
-      await hpOpenPatientNotificationLink(link);
-    }
+    await hpOpenPatientNotificationLink(link);
     return;
   }
   if(link==='pendencias'){navigate('pendencias');return}
   if(link==='agenda'){navigate('agenda');return}
   if(link==='dashboard'){navigate('dashboard');return}
+  if(link==='pacientes'){navigate('pacientes');return}
   if(link?.startsWith('paciente:')){
     const pacienteId=link.slice('paciente:'.length);
     if(pacienteId)await openPatient(pacienteId);
     return;
   }
 }
-
+async function hpLoadNotificationPreferencesV01940(){
+  const c=await api('/api/configuracoes/minha-conta');
+  $('#notificationPrefMessages').checked=!!c.notificarMensagens;
+  $('#notificationPrefPlans').checked=!!c.notificarAtualizacoesPlano;
+  $('#notificationPrefReminders').checked=!!c.notificarLembretes;
+  $('#notificationPrefCheckins').checked=!!c.notificarCheckIns;
+  return c;
+}
+async function hpOpenNotificationPreferencesV01940(){
+  const panel=$('#notificationPreferencesPanel');
+  if(!panel)return;
+  panel.classList.remove('hidden');
+  hpNotificationCenterV01940.preferencesOpen=true;
+  try{await hpLoadNotificationPreferencesV01940()}catch(err){toast(err.message,true)}
+}
+function hpCloseNotificationPreferencesV01940(){
+  $('#notificationPreferencesPanel')?.classList.add('hidden');
+  hpNotificationCenterV01940.preferencesOpen=false;
+}
+async function hpSaveNotificationPreferencesV01940(){
+  try{
+    const c=await api('/api/configuracoes/minha-conta');
+    await api('/api/configuracoes/minha-conta/preferencias',{method:'PUT',body:JSON.stringify({
+      temaPreferido:c.temaPreferido||document.documentElement.dataset.theme||'light',
+      notificarMensagens:$('#notificationPrefMessages').checked,
+      notificarAtualizacoesPlano:$('#notificationPrefPlans').checked,
+      notificarLembretes:$('#notificationPrefReminders').checked,
+      notificarCheckIns:$('#notificationPrefCheckins').checked
+    })});
+    toast('Preferências de notificação salvas.');
+    hpCloseNotificationPreferencesV01940();
+  }catch(err){toast(err.message,true)}
+}
 async function openNotifications(){
   $('#notificationDrawer').classList.remove('hidden');
   $('#notificationList').innerHTML='<div class="empty">Carregando...</div>';
@@ -6257,6 +6321,7 @@ async function openNotifications(){
   if(d)renderNotifications(d);
 }
 function closeNotifications(){
+  hpCloseNotificationPreferencesV01940();
   $('#notificationDrawer')?.classList.add('hidden');
 }
 $('#notificationButton')?.addEventListener('click',openNotifications);
@@ -6269,6 +6334,17 @@ $('#readAllNotifications')?.addEventListener('click',async()=>{
     await refreshNotifications(false);
   }catch(err){toast(err.message,true)}
 });
+$$('[data-notification-status]').forEach(btn=>btn.addEventListener('click',async()=>{
+  hpNotificationCenterV01940.status=btn.dataset.notificationStatus;
+  $$('[data-notification-status]').forEach(x=>x.classList.toggle('active',x===btn));
+  $('#notificationHistoryHint')?.classList.toggle('hidden',hpNotificationCenterV01940.status!=='historico');
+  await refreshNotifications(false);
+}));
+$('#notificationPriorityFilter')?.addEventListener('change',async e=>{hpNotificationCenterV01940.prioridade=e.target.value;await refreshNotifications(false)});
+$('#notificationTypeFilter')?.addEventListener('change',async e=>{hpNotificationCenterV01940.tipo=e.target.value;await refreshNotifications(false)});
+$('#notificationPreferencesButton')?.addEventListener('click',hpOpenNotificationPreferencesV01940);
+$('#notificationPreferencesCancel')?.addEventListener('click',hpCloseNotificationPreferencesV01940);
+$('#notificationPreferencesSave')?.addEventListener('click',hpSaveNotificationPreferencesV01940);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNotifications()});
 
 function startNotificationPolling(){
@@ -6837,7 +6913,7 @@ async function openManagementPrintable(dias){
 
 // ===== v0.3.27 — Estabilização de notificações =====
 function hpResolvePatientNotificationLink(link){
-  const allowed=new Set(['inicio','plano','metas','diario','evolucao','exames','treino']);
+  const allowed=new Set(['inicio','plano','metas','diario','evolucao','exames','treino','chat','solicitacoes','arquivos']);
   return allowed.has(link)?link:'inicio';
 }
 function hpOpenPatientNotificationLink(link){
@@ -8942,7 +9018,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.39';
+const HP_MVP_VERSION='0.19.40';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10847,3 +10923,7 @@ async function hpRenderPushSettingsV01939(host){
 const hpPushSettingsObserverV01939=new MutationObserver(()=>{const extra=document.querySelector('.profile-settings-v01928');if(extra)hpRenderPushSettingsV01939(extra)});hpPushSettingsObserverV01939.observe(document.body,{childList:true,subtree:true});
 document.addEventListener('click',e=>{if(e.target.closest('[data-route="configuracoes"]'))setTimeout(()=>{const extra=document.querySelector('.profile-settings-v01928');if(extra)hpRenderPushSettingsV01939(extra)},220)});
 navigator.serviceWorker?.addEventListener('message',event=>{if(event.data?.type==='AESYN_PUSH_OPEN'){const link=event.data.link;if(link==='chat'&&typeof openPatientView==='function')openPatientView('chat');else if(link==='arquivos'&&typeof openPatientView==='function')openPatientView('arquivos');else if(link==='pacientes'&&state.user?.tipoUsuario!=='Paciente')window.location.hash='#pacientes';}});
+
+
+// ===== v0.19.40 — In-App Notification Center =====
+const HP_IN_APP_NOTIFICATION_CENTER='v0.19.40';

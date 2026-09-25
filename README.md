@@ -1,7 +1,6 @@
-## v0.19.39 — Patient First Access & Tutorials
+## v0.19.40 — In-App Notification Center
 
-Onboarding persistente do paciente com primeiros passos guiados, tutorial refazível e ajuda contextual para check-in, treino, alimentação e chat.
-O primeiro acesso do paciente agora apresenta uma trilha curta para Home, check-in, primeiro treino, plano alimentar e chat. A conclusão acompanha a conta entre dispositivos, sem impedir que o tutorial seja refeito depois.
+A central de notificações passa a concentrar alertas ativos, não lidos e histórico, com filtros por prioridade/categoria, badge global e deep links para a origem. Preferências de mensagens, atualizações do plano, lembretes e check-ins podem ser ajustadas na própria central, sem depender do push estar habilitado.
 
 ### v0.19.35 — Chat Reliability & Context Foundation
 
