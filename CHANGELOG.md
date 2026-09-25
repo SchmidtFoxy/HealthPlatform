@@ -1,3 +1,26 @@
+## v0.19.44-r3 — Roadmap Closure Gate Semantic Sync
+
+- Corrige falso negativo do `TESTAR.ps1` no gate de fechamento da Lista 03.
+- O gate passa a aceitar a seção `v0.19.44 — Product Flow Gate / Lista 03 Closure — CONCLUÍDA`.
+- Passa a validar explicitamente a próxima fase `v0.20.0 — Professional Dashboard 2.0`.
+- Sem alteração funcional, schema ou migration.
+
+# v0.19.44 — Product Flow Gate / Lista 03 Closure
+## v0.19.44-r1 — Version Gate Sync Hotfix
+
+- Corrige gates legados do `TESTAR.ps1` que ainda esperavam `0.19.43` enquanto a aplicação já estava em `0.19.44`.
+- Mantém a versão funcional pública em `0.19.44`; revisão sem alteração funcional ou migration.
+- Preserva o `TESTAR.ps1` em UTF-8 com BOM para Windows PowerShell 5.1.
+
+
+- Fecha tecnicamente a Lista 03 com um gate transversal dos fluxos essenciais de paciente e profissional.
+- Adiciona `docs/PRODUCT-FLOW-GATE.md` com roteiro de homologação ponta a ponta sem Swagger, SQL manual ou atalhos de desenvolvedor.
+- Adiciona `docs/LISTA-03-CLOSURE.md` com entregas consolidadas e pendências que dependem de homologação/produção.
+- Amplia o `TESTAR.ps1` para validar que onboarding, check-in, treino multi-plan, nutrição, chat, arquivos, notificações, contexto profissional, publicação, alertas e timeline continuam conectados.
+- Mantém o smoke test não destrutivo: operações de escrita reais ficam para homologação controlada, não para a VPS de produção.
+- Próxima fase funcional: `v0.20.0 — Professional Dashboard 2.0`.
+- Sem migration nova.
+
 # v0.19.43 — Audit, Privacy & Consent
 
 - Registra versão + data/hora dos aceites de Termos de Uso e Política de Privacidade.
@@ -2577,3 +2600,7 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - A prontidão/check-in passa a ser validada pelo card atual `athleteHome2Body` dentro de `patient-today-overview`.
 - Atualiza também o gate de compactação para a estrutura mobile atual, sem reintroduzir componentes legados.
 - Sem alteração funcional, migration ou schema.
+
+## v0.19.44-r2 — Version Gate Residual Sync Hotfix
+- Corrige gates legados residuais que ainda esperavam VERSION.txt/cache-busting 0.19.43 após a evolução para 0.19.44.
+- Nenhuma alteração funcional, de schema ou de API.

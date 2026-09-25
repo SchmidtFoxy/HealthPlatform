@@ -13,7 +13,10 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.43 — Audit, Privacy & Consent
+> **Versão-base deste roadmap:** v0.19.44 — Product Flow Gate / Lista 03 Closure
+
+> Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
+> Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -419,7 +422,7 @@ Padronizar transversalmente:
 
 **Status:** implementado na v0.19.43. A conta passa a registrar versão e data/hora de aceite dos Termos de Uso e da Política de Privacidade, com documentos operacionais versionados e histórico em AuditLog. Configurações ganhou painel de privacidade, consulta da própria trilha de auditoria, solicitação de exclusão para análise e desativação de conta protegida por senha + confirmação explícita. A desativação revoga inscrições Web Push e o SecurityStamp, sem apagar silenciosamente histórico clínico. Foi adicionada a migration `V01943AuditPrivacyConsent` e o checklist `docs/LGPD-PRIVACY-CHECKLIST.md`, que explicita pendências jurídicas/operacionais antes da produção comercial. O smoke gate também passa a cobrar auditoria nos fluxos críticos de treino, nutrição, arquivos, pacientes, impersonação e arquivamentos.
 
-## v0.19.44 — Product Flow Gate / Lista 03 Closure
+## ✅ v0.19.44 — Product Flow Gate / Lista 03 Closure — CONCLUÍDA
 
 ### Fluxo paciente obrigatório
 primeiro acesso → tutorial → check-in → visualizar plano → escolher/iniciar treino permitido → executar → registrar alimentação → conversar → enviar arquivo → receber atualização profissional.
@@ -429,6 +432,11 @@ login → localizar paciente → revisar contexto → criar/alterar treino → c
 
 ### Gate
 Nenhum desses fluxos pode depender de atalho de desenvolvedor, banco manual, Swagger ou intervenção técnica.
+
+**Status:** implementado na v0.19.44. O smoke gate passa a verificar transversalmente que os pontos de entrada do paciente e do profissional continuam conectados às funcionalidades construídas entre v0.19.24 e v0.19.43. A homologação manual ponta a ponta está documentada em `docs/PRODUCT-FLOW-GATE.md`, e o encerramento técnico da Lista 03 em `docs/LISTA-03-CLOSURE.md`. O `TESTAR.ps1` permanece não destrutivo; por isso, operações que necessariamente criam dados são verificadas estruturalmente no smoke test e executadas manualmente na homologação controlada antes de produção comercial.
+
+### Próxima fase
+**v0.20.0 — Professional Dashboard 2.0.** A partir daqui, novas funcionalidades entram na fase Professional Workspace 2.0; bugs encontrados no fechamento usam `v0.19.44-rN` até o gate ficar verde.
 
 ---
 
@@ -972,3 +980,7 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 ### Hotfix v0.19.41-r1 — UX State Gate Semantic Sync
 - Gate do UX State System alinhado à implementação real: composição dinâmica no `app.js` e classes concretas no `app.css`.
 - Nenhuma funcionalidade foi removida ou reintroduzida apenas para satisfazer teste textual.
+
+### Hotfix v0.19.44-r2
+- Sincronização residual dos gates legados de versão e identidade PWA para a versão pública 0.19.44.
+- Mantém a Lista 03 em fase de fechamento sem reintroduzir comportamento antigo.

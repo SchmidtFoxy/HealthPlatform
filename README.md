@@ -1,3 +1,11 @@
+## v0.19.44 — Product Flow Gate / Lista 03 Closure
+
+A v0.19.44 fecha a Lista 03 como fase de estabilização do produto. O `TESTAR.ps1` passa a conferir transversalmente se os fluxos essenciais de paciente e profissional continuam conectados, enquanto `docs/PRODUCT-FLOW-GATE.md` define a homologação manual ponta a ponta que deve ser executada com dados de teste antes de produção comercial.
+
+O smoke test continua **não destrutivo** e exclusivamente local; ele não usa a VPS de produção para criar pacientes, treinos, dietas, check-ins ou mensagens. A próxima fase funcional é `v0.20.0 — Professional Dashboard 2.0`.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`.
+
 ## v0.19.43 — Audit, Privacy & Consent
 
 A versão 0.19.43 adiciona governança de privacidade à conta: aceites versionados de Termos e Política de Privacidade, painel de privacidade, auditoria consultável pelo próprio usuário, solicitação de exclusão para análise e desativação segura da conta. A migration `V01943AuditPrivacyConsent` persiste o histórico mínimo necessário sem apagar registros clínicos silenciosamente. A documentação em `docs/` é operacional e deve passar por revisão jurídica antes da operação comercial.
