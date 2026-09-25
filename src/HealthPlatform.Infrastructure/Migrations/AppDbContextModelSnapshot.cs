@@ -2980,6 +2980,26 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<DateTime?>("OnboardingPacienteConcluidoEmUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("ContaDesativadaEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PoliticaPrivacidadeAceitaEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PoliticaPrivacidadeVersaoAceita")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTime?>("SolicitacaoExclusaoDadosEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("TermosAceitosEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TermosVersaoAceita")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 

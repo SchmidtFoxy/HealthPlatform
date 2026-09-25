@@ -131,6 +131,12 @@ public class ConfiguracoesController(
                 x.NotificarLembretes,
                 x.NotificarCheckIns,
                 x.OnboardingPacienteConcluidoEmUtc,
+                x.TermosVersaoAceita,
+                x.TermosAceitosEmUtc,
+                x.PoliticaPrivacidadeVersaoAceita,
+                x.PoliticaPrivacidadeAceitaEmUtc,
+                x.ContaDesativadaEmUtc,
+                x.SolicitacaoExclusaoDadosEmUtc,
                 x.CreatedAtUtc
             })
             .FirstOrDefaultAsync(ct);
@@ -422,6 +428,192 @@ public class ConfiguracoesController(
 
         await db.SaveChangesAsync(ct);
         return Ok(new { concluido = true, concluidoEmUtc = usuario.OnboardingPacienteConcluidoEmUtc });
+    }
+
+
+    public sealed record AceitarDocumentosLegaisRequest(bool AceitarTermos, bool AceitarPoliticaPrivacidade);
+    public sealed record DesativarMinhaContaRequest(string SenhaAtual, string Confirmacao);
+
+    [HttpGet("minha-conta/privacidade")]
+    public async Task<IActionResult> PrivacidadeMinhaConta(CancellationToken ct)
+    {
+        var usuario = await db.Users.AsNoTracking().FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+
+        return Ok(new
+        {
+            termos = new
+            {
+                versaoAtual = LegalDocuments.TermosVersaoAtual,
+                versaoAceita = usuario.TermosVersaoAceita,
+                aceitosEmUtc = usuario.TermosAceitosEmUtc,
+                atualizado = string.Equals(usuario.TermosVersaoAceita, LegalDocuments.TermosVersaoAtual, StringComparison.Ordinal),
+                resumo = LegalDocuments.TermosResumo
+            },
+            politicaPrivacidade = new
+            {
+                versaoAtual = LegalDocuments.PoliticaPrivacidadeVersaoAtual,
+                versaoAceita = usuario.PoliticaPrivacidadeVersaoAceita,
+                aceitaEmUtc = usuario.PoliticaPrivacidadeAceitaEmUtc,
+                atualizada = string.Equals(usuario.PoliticaPrivacidadeVersaoAceita, LegalDocuments.PoliticaPrivacidadeVersaoAtual, StringComparison.Ordinal),
+                resumo = LegalDocuments.PoliticaResumo
+            },
+            exclusaoDadosSolicitadaEmUtc = usuario.SolicitacaoExclusaoDadosEmUtc,
+            revisaoJuridica = LegalDocuments.RevisaoJuridica,
+            direitos = new[]
+            {
+                "Acessar e corrigir dados cadastrais.",
+                "Consultar versoes e datas dos aceites registrados.",
+                "Solicitar revisao ou exclusao de dados, sujeita a obrigacoes legais e assistenciais de conservacao.",
+                "Desativar a conta sem apagar silenciosamente historico clinico ou auditoria."
+            }
+        });
+    }
+
+    [HttpPost("minha-conta/consentimentos/aceitar")]
+    public async Task<IActionResult> AceitarDocumentosLegais(AceitarDocumentosLegaisRequest request, CancellationToken ct)
+    {
+        if (!request.AceitarTermos || !request.AceitarPoliticaPrivacidade)
+            return BadRequest(new { message = "E necessario aceitar os Termos de Uso e a Politica de Privacidade vigentes." });
+
+        var usuario = await db.Users.FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+
+        var agora = DateTime.UtcNow;
+        var antes = new
+        {
+            usuario.TermosVersaoAceita,
+            usuario.TermosAceitosEmUtc,
+            usuario.PoliticaPrivacidadeVersaoAceita,
+            usuario.PoliticaPrivacidadeAceitaEmUtc
+        };
+
+        usuario.TermosVersaoAceita = LegalDocuments.TermosVersaoAtual;
+        usuario.TermosAceitosEmUtc = agora;
+        usuario.PoliticaPrivacidadeVersaoAceita = LegalDocuments.PoliticaPrivacidadeVersaoAtual;
+        usuario.PoliticaPrivacidadeAceitaEmUtc = agora;
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "LEGAL_ACCEPTANCE",
+            Entidade = "MinhaConta",
+            EntidadeId = usuario.Id.ToString(),
+            DadosAnterioresJson = JsonSerializer.Serialize(antes),
+            DadosNovosJson = JsonSerializer.Serialize(new
+            {
+                usuario.TermosVersaoAceita,
+                usuario.TermosAceitosEmUtc,
+                usuario.PoliticaPrivacidadeVersaoAceita,
+                usuario.PoliticaPrivacidadeAceitaEmUtc
+            }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new
+        {
+            termosVersao = usuario.TermosVersaoAceita,
+            politicaPrivacidadeVersao = usuario.PoliticaPrivacidadeVersaoAceita,
+            aceitosEmUtc = agora
+        });
+    }
+
+    [HttpPost("minha-conta/solicitar-exclusao-dados")]
+    public async Task<IActionResult> SolicitarExclusaoDados(CancellationToken ct)
+    {
+        var usuario = await db.Users.FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+
+        usuario.SolicitacaoExclusaoDadosEmUtc ??= DateTime.UtcNow;
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "DATA_DELETION_REQUEST",
+            Entidade = "MinhaConta",
+            EntidadeId = usuario.Id.ToString(),
+            DadosNovosJson = JsonSerializer.Serialize(new { usuario.SolicitacaoExclusaoDadosEmUtc }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+        await db.SaveChangesAsync(ct);
+        return Accepted(new
+        {
+            solicitadaEmUtc = usuario.SolicitacaoExclusaoDadosEmUtc,
+            message = "Solicitacao registrada para revisao. Dados sujeitos a obrigacoes legais ou assistenciais de conservacao nao sao apagados automaticamente."
+        });
+    }
+
+    [HttpPost("minha-conta/desativar")]
+    public async Task<IActionResult> DesativarMinhaConta(DesativarMinhaContaRequest request, CancellationToken ct)
+    {
+        if (!string.Equals(request.Confirmacao?.Trim(), "DESATIVAR", StringComparison.Ordinal))
+            return BadRequest(new { message = "Digite DESATIVAR para confirmar." });
+        if (string.IsNullOrWhiteSpace(request.SenhaAtual))
+            return BadRequest(new { message = "Informe sua senha atual." });
+
+        var usuario = await db.Users.FirstOrDefaultAsync(x =>
+            x.Id == currentUser.UserId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+        if (usuario is null)
+            return NotFound(new { message = "Usuario nao encontrado." });
+
+        if (!await userManager.CheckPasswordAsync(usuario, request.SenhaAtual))
+            return BadRequest(new { message = "Senha atual invalida." });
+
+        var agora = DateTime.UtcNow;
+        usuario.Ativo = false;
+        usuario.ContaDesativadaEmUtc = agora;
+
+        var pushTokens = await db.Set<IdentityUserToken<Guid>>()
+            .Where(x => x.UserId == usuario.Id && x.LoginProvider == "AESYN.WebPush")
+            .ToListAsync(ct);
+        db.RemoveRange(pushTokens);
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "ACCOUNT_DEACTIVATE",
+            Entidade = "MinhaConta",
+            EntidadeId = usuario.Id.ToString(),
+            DadosNovosJson = JsonSerializer.Serialize(new { usuario.ContaDesativadaEmUtc, PushSubscriptionsRevogadas = pushTokens.Count }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(ct);
+        var stampResult = await userManager.UpdateSecurityStampAsync(usuario);
+        if (!stampResult.Succeeded)
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Conta desativada, mas a revogacao imediata da sessao precisa ser revisada." });
+
+        return Ok(new { desativada = true, desativadaEmUtc = agora });
+    }
+
+    [HttpGet("minha-conta/auditoria")]
+    public async Task<IActionResult> MinhaAuditoria([FromQuery] int limite = 40, CancellationToken ct = default)
+    {
+        limite = Math.Clamp(limite, 1, 100);
+        var itens = await db.AuditLogs.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.UsuarioId == currentUser.UserId)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Take(limite)
+            .Select(x => new { x.Id, x.Acao, x.Entidade, x.EntidadeId, x.CreatedAtUtc, x.IpAddress })
+            .ToListAsync(ct);
+        return Ok(itens);
     }
 
 }

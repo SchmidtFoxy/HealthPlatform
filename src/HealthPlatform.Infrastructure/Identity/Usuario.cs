@@ -16,5 +16,11 @@ public class Usuario : IdentityUser<Guid>
     public bool NotificarLembretes { get; set; } = true;
     public bool NotificarCheckIns { get; set; } = true;
     public DateTime? OnboardingPacienteConcluidoEmUtc { get; set; }
+    public string? TermosVersaoAceita { get; set; }
+    public DateTime? TermosAceitosEmUtc { get; set; }
+    public string? PoliticaPrivacidadeVersaoAceita { get; set; }
+    public DateTime? PoliticaPrivacidadeAceitaEmUtc { get; set; }
+    public DateTime? ContaDesativadaEmUtc { get; set; }
+    public DateTime? SolicitacaoExclusaoDadosEmUtc { get; set; }
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 }

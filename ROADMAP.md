@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.42 — Offline & Poor Connection Resilience
+> **Versão-base deste roadmap:** v0.19.43 — Audit, Privacy & Consent
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -416,6 +416,8 @@ Padronizar transversalmente:
 - política de privacidade;
 - fluxo de desativação da conta;
 - revisão de requisitos LGPD.
+
+**Status:** implementado na v0.19.43. A conta passa a registrar versão e data/hora de aceite dos Termos de Uso e da Política de Privacidade, com documentos operacionais versionados e histórico em AuditLog. Configurações ganhou painel de privacidade, consulta da própria trilha de auditoria, solicitação de exclusão para análise e desativação de conta protegida por senha + confirmação explícita. A desativação revoga inscrições Web Push e o SecurityStamp, sem apagar silenciosamente histórico clínico. Foi adicionada a migration `V01943AuditPrivacyConsent` e o checklist `docs/LGPD-PRIVACY-CHECKLIST.md`, que explicita pendências jurídicas/operacionais antes da produção comercial. O smoke gate também passa a cobrar auditoria nos fluxos críticos de treino, nutrição, arquivos, pacientes, impersonação e arquivamentos.
 
 ## v0.19.44 — Product Flow Gate / Lista 03 Closure
 

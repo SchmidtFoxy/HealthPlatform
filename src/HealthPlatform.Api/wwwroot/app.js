@@ -9100,7 +9100,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.42';
+const HP_MVP_VERSION='0.19.43';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11007,3 +11007,49 @@ navigator.serviceWorker?.addEventListener('message',event=>{if(event.data?.type=
 
 // ===== v0.19.40 — In-App Notification Center =====
 const HP_IN_APP_NOTIFICATION_CENTER='v0.19.40';
+
+// ===== v0.19.43 — Audit, Privacy & Consent =====
+const HP_AUDIT_PRIVACY_CONSENT='v0.19.43';
+let hpLegalReminderDismissedV01943=false;
+function hpLegalCurrentV01943(data){return !!(data?.termos?.atualizado&&data?.politicaPrivacidade?.atualizada)}
+function hpLegalDateV01943(value){return value?fmtDate(value):'Ainda não registrado'}
+async function hpLoadPrivacyV01943(){return api('/api/configuracoes/minha-conta/privacidade')}
+async function hpAcceptLegalV01943(host){
+  const terms=host?.querySelector('[data-legal-terms-v01943]'),privacy=host?.querySelector('[data-legal-privacy-v01943]');
+  if(!terms?.checked||!privacy?.checked)throw new Error('Confirme a leitura dos Termos de Uso e da Política de Privacidade.');
+  await api('/api/configuracoes/minha-conta/consentimentos/aceitar',{method:'POST',body:JSON.stringify({aceitarTermos:true,aceitarPoliticaPrivacidade:true})});
+  toast('Aceites registrados com data, hora e versão.');
+}
+function hpPrivacyCardHtmlV01943(data){
+  const current=hpLegalCurrentV01943(data),requested=!!data?.exclusaoDadosSolicitadaEmUtc;
+  return `<section class="profile-settings-card privacy-consent-v01943" data-privacy-v01943>
+    <div class="card-head"><div><span class="eyebrow">PRIVACIDADE • v0.19.43</span><h4>Termos, privacidade e seus dados</h4><small>Consulte o documento vigente e o histórico de aceite associado à sua conta.</small></div><span class="pill ${current?'Ativa':'Pendente'}">${current?'Atualizado':'Aceite pendente'}</span></div>
+    <div class="privacy-status-grid-v01943">
+      <article><small>Termos de Uso</small><strong>${esc(data.termos?.versaoAtual||'—')}</strong><span>${data.termos?.atualizado?'Aceito em '+esc(hpLegalDateV01943(data.termos?.aceitosEmUtc)):'Versão atual ainda não aceita'}</span></article>
+      <article><small>Política de Privacidade</small><strong>${esc(data.politicaPrivacidade?.versaoAtual||'—')}</strong><span>${data.politicaPrivacidade?.atualizada?'Aceita em '+esc(hpLegalDateV01943(data.politicaPrivacidade?.aceitaEmUtc)):'Versão atual ainda não aceita'}</span></article>
+    </div>
+    <details class="privacy-document-v01943"><summary>Termos de Uso — resumo operacional</summary><p>${esc(data.termos?.resumo||'')}</p></details>
+    <details class="privacy-document-v01943"><summary>Política de Privacidade — resumo operacional</summary><p>${esc(data.politicaPrivacidade?.resumo||'')}</p></details>
+    ${!current?`<div class="privacy-accept-v01943"><label><input type="checkbox" data-legal-terms-v01943> Li e aceito os Termos de Uso vigentes.</label><label><input type="checkbox" data-legal-privacy-v01943> Li e aceito a Política de Privacidade vigente.</label><button class="primary" type="button" data-legal-accept-v01943>Registrar aceite</button></div>`:''}
+    <div class="privacy-rights-v01943"><strong>Controles da conta</strong><p>Você pode corrigir seus dados cadastrais, registrar uma solicitação de exclusão para análise e desativar o acesso. Registros sujeitos a obrigações legais, assistenciais ou de auditoria não são apagados silenciosamente.</p><div class="form-actions"><button class="secondary" type="button" data-audit-v01943>Ver minha auditoria</button><button class="secondary" type="button" data-delete-request-v01943 ${requested?'disabled':''}>${requested?'Exclusão solicitada':'Solicitar exclusão de dados'}</button><button class="danger" type="button" data-deactivate-v01943>Desativar minha conta</button></div>${requested?`<small>Solicitação registrada em ${esc(hpLegalDateV01943(data.exclusaoDadosSolicitadaEmUtc))}.</small>`:''}</div>
+    <p class="form-hint privacy-legal-review-v01943">${esc(data.revisaoJuridica||'')}</p>
+    <div class="privacy-inline-v01943 hidden" data-privacy-inline-v01943></div>
+  </section>`;
+}
+async function hpRenderPrivacySettingsV01943(host){
+  if(!host||host.querySelector('[data-privacy-v01943]'))return;
+  let data;try{data=await hpLoadPrivacyV01943()}catch{return}
+  host.insertAdjacentHTML('beforeend',hpPrivacyCardHtmlV01943(data));
+  const card=host.querySelector('[data-privacy-v01943]'),inline=card.querySelector('[data-privacy-inline-v01943]');
+  card.querySelector('[data-legal-accept-v01943]')?.addEventListener('click',async()=>{try{await hpAcceptLegalV01943(card);card.remove();await hpRenderPrivacySettingsV01943(host)}catch(e){toast(e.message,true)}});
+  card.querySelector('[data-audit-v01943]')?.addEventListener('click',async()=>{try{const items=await api('/api/configuracoes/minha-conta/auditoria?limite=40');inline.classList.remove('hidden');inline.innerHTML=`<h5>Atividade auditada da sua conta</h5>${items.length?`<div class="privacy-audit-list-v01943">${items.map(x=>`<div><strong>${esc(x.acao)}</strong><span>${esc(x.entidade)} • ${esc(hpLegalDateV01943(x.createdAtUtc))}</span></div>`).join('')}</div>`:'<p>Nenhum evento de auditoria encontrado para esta conta.</p>'}`;}catch(e){toast(e.message,true)}});
+  card.querySelector('[data-delete-request-v01943]')?.addEventListener('click',async()=>{if(!(await hpConfirm({title:'Solicitar exclusão de dados?',message:'A solicitação será registrada para análise. Dados com obrigação legal ou assistencial de conservação não serão apagados automaticamente.',confirmLabel:'Registrar solicitação',danger:true})))return;try{await api('/api/configuracoes/minha-conta/solicitar-exclusao-dados',{method:'POST'});toast('Solicitação registrada.');card.remove();await hpRenderPrivacySettingsV01943(host)}catch(e){toast(e.message,true)}});
+  card.querySelector('[data-deactivate-v01943]')?.addEventListener('click',()=>{inline.classList.remove('hidden');inline.innerHTML=`<h5>Desativar minha conta</h5><p>Isso encerra seu acesso e revoga inscrições push. O histórico não é apagado.</p><label>Senha atual<input type="password" autocomplete="current-password" data-deactivate-password-v01943></label><label>Digite <b>DESATIVAR</b><input type="text" autocomplete="off" data-deactivate-confirm-v01943></label><div class="form-actions"><button class="danger" type="button" data-deactivate-confirm-button-v01943>Desativar conta</button></div>`;inline.querySelector('[data-deactivate-confirm-button-v01943]')?.addEventListener('click',async()=>{try{await api('/api/configuracoes/minha-conta/desativar',{method:'POST',body:JSON.stringify({senhaAtual:inline.querySelector('[data-deactivate-password-v01943]').value,confirmacao:inline.querySelector('[data-deactivate-confirm-v01943]').value})});toast('Conta desativada.');logout({notifyServer:false})}catch(e){toast(e.message,true)}})});
+}
+async function hpEnsureLegalConsentV01943(){
+  if(!state.token||hpLegalReminderDismissedV01943||state.user?.impersonating)return;
+  try{const data=await hpLoadPrivacyV01943();if(hpLegalCurrentV01943(data))return;const id='hpLegalReminderV01943';if(document.getElementById(id))return;const box=document.createElement('aside');box.id=id;box.className='legal-reminder-v01943';box.setAttribute('role','status');box.innerHTML=`<div><strong>Termos e privacidade precisam de revisão</strong><span>Há documentos vigentes ainda não aceitos nesta conta.</span></div><div><button class="secondary" data-legal-later-v01943>Depois</button><button class="primary" data-legal-open-v01943>Revisar agora</button></div>`;document.body.appendChild(box);box.querySelector('[data-legal-later-v01943]').onclick=()=>{hpLegalReminderDismissedV01943=true;box.remove()};box.querySelector('[data-legal-open-v01943]').onclick=()=>{box.remove();if(state.user?.tipoUsuario==='Paciente'){openPatientView?.('perfil')}else{navigate('configuracoes')}setTimeout(()=>{const host=document.querySelector('.profile-settings-v01928');if(host)hpRenderPrivacySettingsV01943(host)},250)};}catch{}
+}
+const hpPrivacySettingsObserverV01943=new MutationObserver(()=>{const host=document.querySelector('.profile-settings-v01928');if(host)hpRenderPrivacySettingsV01943(host)});hpPrivacySettingsObserverV01943.observe(document.body,{childList:true,subtree:true});
+const __showApp_v01943=showApp;showApp=function(){__showApp_v01943();setTimeout(hpEnsureLegalConsentV01943,420)};
+if(state.token)setTimeout(hpEnsureLegalConsentV01943,500);

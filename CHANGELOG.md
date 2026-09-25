@@ -1,3 +1,13 @@
+# v0.19.43 — Audit, Privacy & Consent
+
+- Registra versão + data/hora dos aceites de Termos de Uso e Política de Privacidade.
+- Adiciona painel de privacidade em Minha Conta, com status dos documentos e trilha de auditoria do próprio usuário.
+- Adiciona solicitação de exclusão para análise, evitando apagamento automático de histórico sujeito a retenção.
+- Adiciona desativação de conta protegida por senha e confirmação `DESATIVAR`, com revogação de Web Push e SecurityStamp.
+- Adiciona documentos operacionais versionados em `docs/` e checklist técnico de privacidade/LGPD sem alegar conformidade jurídica automática.
+- Adiciona migration `V01943AuditPrivacyConsent`.
+- Mantém desenvolvimento/testes isolados de produção.
+
 # v0.19.42 — Offline & Poor Connection Resilience
 
 - Detecta offline/online e conexão muito lenta, com banner persistente e acessível.

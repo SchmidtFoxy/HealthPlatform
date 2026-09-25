@@ -1,3 +1,7 @@
+## v0.19.43 — Audit, Privacy & Consent
+
+A versão 0.19.43 adiciona governança de privacidade à conta: aceites versionados de Termos e Política de Privacidade, painel de privacidade, auditoria consultável pelo próprio usuário, solicitação de exclusão para análise e desativação segura da conta. A migration `V01943AuditPrivacyConsent` persiste o histórico mínimo necessário sem apagar registros clínicos silenciosamente. A documentação em `docs/` é operacional e deve passar por revisão jurídica antes da operação comercial.
+
 ## v0.19.42 — Offline & Poor Connection Resilience
 
 O AESYN agora diferencia **sem internet**, **conexão instável** e falhas reais do aplicativo. A interface exibe um banner persistente, preserva rascunhos explicitamente marcados durante a sessão, oferece retry/reconexão e permite fila offline somente para ações declaradas como seguras e deduplicáveis. A API continua fora do cache do Service Worker.

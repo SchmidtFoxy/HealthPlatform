@@ -81,6 +81,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.Nome).HasMaxLength(160).IsRequired();
             entity.Property(x => x.FotoPerfilDataUrl).HasColumnType("text");
             entity.Property(x => x.TemaPreferido).HasMaxLength(20).IsRequired();
+            entity.Property(x => x.TermosVersaoAceita).HasMaxLength(40);
+            entity.Property(x => x.PoliticaPrivacidadeVersaoAceita).HasMaxLength(40);
             entity.HasIndex(x => new { x.OrganizacaoId, x.Email });
         });
 
