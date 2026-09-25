@@ -1,4 +1,4 @@
-## v0.19.37 — Patient First Access & Tutorials
+## v0.19.38 — Patient First Access & Tutorials
 
 Onboarding persistente do paciente com primeiros passos guiados, tutorial refazível e ajuda contextual para check-in, treino, alimentação e chat.
 O primeiro acesso do paciente agora apresenta uma trilha curta para Home, check-in, primeiro treino, plano alimentar e chat. A conclusão acompanha a conta entre dispositivos, sem impedir que o tutorial seja refeito depois.

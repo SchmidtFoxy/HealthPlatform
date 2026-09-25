@@ -338,6 +338,8 @@ Criar/amadurecer a área **Dados para Atletas** para retirar complexidade da Hom
 - botão voltar físico do Android;
 - teste em telas pequenas e grandes.
 
+**Status:** implementado na v0.19.38. O AESYN captura `beforeinstallprompt` no Chrome/Android, oferece CTA no acesso público e no menu móvel, orienta Safari/iPhone e detecta modo standalone. Service Worker cacheia apenas shell/assets estáticos, excluindo `/api/`. `visualViewport`, safe areas, touch targets de 44px, modais responsivos ao teclado e histórico próprio do portal melhoram a ergonomia mobile e o botão físico Voltar do Android. Desenvolvimento continua isolado de produção.
+
 ## v0.19.39 — Push Notifications End-to-End
 
 Paciente deve receber, conforme preferência:

@@ -1,3 +1,16 @@
+# v0.19.38 — PWA Install & Mobile Ergonomics
+
+- Instalação PWA via `beforeinstallprompt` em navegadores compatíveis.
+- Instruções dedicadas para Safari/iPhone.
+- Service Worker para shell/assets estáticos, sem cache de API/dados clínicos.
+- CTA de instalação no acesso público e menu móvel do paciente.
+- `viewport-fit=cover` + `interactive-widget=resizes-content`.
+- Tratamento do teclado móvel via `visualViewport`.
+- Touch targets mínimos de 44px.
+- Modais/action sheets respeitam a altura visual disponível.
+- Histórico do portal para o botão físico Voltar do Android.
+- Sem migration/schema novo.
+
 # v0.19.37 — Patient First Access & Tutorials
 
 - onboarding persistente no primeiro acesso do paciente;

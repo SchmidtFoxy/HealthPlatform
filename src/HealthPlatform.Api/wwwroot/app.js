@@ -8942,7 +8942,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.37';
+const HP_MVP_VERSION='0.19.38';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -10767,3 +10767,52 @@ loadPatientProfile=async function(){
   section.querySelector('button').onclick=()=>hpOpenPatientTutorialV01937({replay:true});host.appendChild(section);
 };
 $('#patientTutorialTrigger')?.addEventListener('click',()=>hpOpenPatientTutorialV01937({replay:true}));
+
+
+// ===== v0.19.38 — PWA Install & Mobile Ergonomics =====
+const HP_PWA_MOBILE_ERGONOMICS='v0.19.38';
+let hpDeferredInstallPromptV01938=null;
+let hpHandlingPatientPopV01938=false;
+let hpPatientViewV01938='inicio';
+const hpIsStandaloneV01938=()=>window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
+const hpIsIosV01938=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function hpInstallInstructionsV01938(){
+  if(hpIsStandaloneV01938())return `<div class="pwa-install-success-v01938"><span>✓</span><div><strong>AESYN já está instalado</strong><p>Você está usando o aplicativo em modo standalone.</p></div></div>`;
+  if(hpIsIosV01938())return `<ol class="pwa-install-steps-v01938"><li><b>1</b><span>No Safari, toque em <strong>Compartilhar</strong>.</span></li><li><b>2</b><span>Escolha <strong>Adicionar à Tela de Início</strong>.</span></li><li><b>3</b><span>Confirme em <strong>Adicionar</strong>.</span></li></ol><p class="pwa-install-note-v01938">No iPhone, a instalação é comandada pelo Safari.</p>`;
+  if(hpDeferredInstallPromptV01938)return `<div class="pwa-install-ready-v01938"><img src="/icons/icon-192.png" alt=""><div><strong>Pronto para instalar</strong><p>O navegador confirmou que o AESYN pode ser instalado neste dispositivo.</p></div></div>`;
+  return `<ol class="pwa-install-steps-v01938"><li><b>1</b><span>Abra o menu do navegador.</span></li><li><b>2</b><span>Procure <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>.</span></li><li><b>3</b><span>Confirme a instalação do AESYN Performance.</span></li></ol>`;
+}
+function hpSyncInstallUiV01938(){
+  const standalone=hpIsStandaloneV01938();document.documentElement.dataset.pwaInstalled=standalone?'true':'false';
+  document.querySelector('#pwaInstallHeaderButton')?.classList.toggle('hidden',standalone);
+  document.querySelector('#patientPwaInstallButton')?.classList.toggle('hidden',standalone);
+  const primary=document.querySelector('#pwaInstallPrimaryV01938');if(primary)primary.classList.toggle('hidden',standalone||hpIsIosV01938()||!hpDeferredInstallPromptV01938);
+}
+function hpOpenInstallSheetV01938(){
+  if(typeof closePatientMoreSheet==='function')closePatientMoreSheet();
+  const sheet=document.querySelector('#pwaInstallSheetV01938'),backdrop=document.querySelector('#pwaInstallBackdropV01938'),instructions=document.querySelector('#pwaInstallInstructionsV01938');
+  if(instructions)instructions.innerHTML=hpInstallInstructionsV01938();sheet?.classList.add('open');sheet?.setAttribute('aria-hidden','false');backdrop?.classList.remove('hidden');document.body.classList.add('pwa-install-open-v01938');hpSyncInstallUiV01938();setTimeout(()=>document.querySelector('#pwaInstallCloseV01938')?.focus(),30);
+}
+function hpCloseInstallSheetV01938(){const sheet=document.querySelector('#pwaInstallSheetV01938');sheet?.classList.remove('open');sheet?.setAttribute('aria-hidden','true');document.querySelector('#pwaInstallBackdropV01938')?.classList.add('hidden');document.body.classList.remove('pwa-install-open-v01938');}
+async function hpPromptInstallV01938(){
+  if(hpIsStandaloneV01938()){toast('AESYN já está instalado neste dispositivo.');hpCloseInstallSheetV01938();return;}
+  if(!hpDeferredInstallPromptV01938){hpOpenInstallSheetV01938();return;}
+  const prompt=hpDeferredInstallPromptV01938;hpDeferredInstallPromptV01938=null;await prompt.prompt();const choice=await prompt.userChoice.catch(()=>null);
+  if(choice?.outcome==='accepted'){localStorage.setItem('hp_pwa_install_dismissed_v01938','true');toast('Instalação iniciada.');hpCloseInstallSheetV01938();}hpSyncInstallUiV01938();
+}
+function hpMaybeShowInstallNudgeV01938(){if(hpIsStandaloneV01938()||localStorage.getItem('hp_pwa_install_dismissed_v01938')==='true')return;if(!hpDeferredInstallPromptV01938&&!hpIsIosV01938())return;setTimeout(()=>document.querySelector('#pwaInstallNudgeV01938')?.classList.remove('hidden'),900);}
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();hpDeferredInstallPromptV01938=event;hpSyncInstallUiV01938();hpMaybeShowInstallNudgeV01938();});
+window.addEventListener('appinstalled',()=>{hpDeferredInstallPromptV01938=null;localStorage.setItem('hp_pwa_install_dismissed_v01938','true');document.querySelector('#pwaInstallNudgeV01938')?.classList.add('hidden');hpCloseInstallSheetV01938();hpSyncInstallUiV01938();toast('AESYN instalado com sucesso.');});
+['pwaInstallHeaderButton','patientPwaInstallButton','pwaInstallNudgeActionV01938'].forEach(id=>document.getElementById(id)?.addEventListener('click',hpOpenInstallSheetV01938));
+document.querySelector('#pwaInstallPrimaryV01938')?.addEventListener('click',hpPromptInstallV01938);
+['pwaInstallCloseV01938','pwaInstallLaterV01938','pwaInstallBackdropV01938'].forEach(id=>document.getElementById(id)?.addEventListener('click',hpCloseInstallSheetV01938));
+document.querySelector('#pwaInstallNudgeCloseV01938')?.addEventListener('click',()=>{document.querySelector('#pwaInstallNudgeV01938')?.classList.add('hidden');localStorage.setItem('hp_pwa_install_dismissed_v01938','true');});
+if('serviceWorker' in navigator&&(window.isSecureContext||location.hostname==='localhost'||location.hostname==='127.0.0.1'))window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(err=>console.warn('Service Worker indisponível:',err)),{once:true});
+hpSyncInstallUiV01938();if(hpIsIosV01938())hpMaybeShowInstallNudgeV01938();
+function hpSyncVisualViewportV01938(){const viewport=window.visualViewport,height=Math.round(viewport?.height||window.innerHeight),keyboardOpen=viewport?window.innerHeight-height>140:false;document.documentElement.style.setProperty('--hp-visual-viewport-height',`${height}px`);document.body.classList.toggle('hp-keyboard-open-v01938',keyboardOpen);}
+window.visualViewport?.addEventListener('resize',hpSyncVisualViewportV01938,{passive:true});window.visualViewport?.addEventListener('scroll',hpSyncVisualViewportV01938,{passive:true});window.addEventListener('resize',hpSyncVisualViewportV01938,{passive:true});hpSyncVisualViewportV01938();
+document.addEventListener('focusin',event=>{if(!window.matchMedia('(max-width:720px)').matches)return;const target=event.target;if(!target?.matches?.('input,textarea,select,[contenteditable="true"]'))return;setTimeout(()=>target.scrollIntoView({block:'center',behavior:'smooth'}),180);});
+const __loadPatientSection_v01938=loadPatientSection;
+loadPatientSection=async function(view='inicio'){const next=view||'inicio';if(state.token&&state.user?.tipoUsuario==='Paciente'&&!hpHandlingPatientPopV01938&&next!==hpPatientViewV01938)history.pushState({hpPatientView:next},'',location.href);hpPatientViewV01938=next;return __loadPatientSection_v01938(next);};
+window.addEventListener('popstate',event=>{if(!state.token||state.user?.tipoUsuario!=='Paciente')return;if(document.querySelector('#pwaInstallSheetV01938')?.classList.contains('open')){hpCloseInstallSheetV01938();return;}if(document.querySelector('#patientMoreSheet')?.classList.contains('open')){closePatientMoreSheet();return;}if(document.querySelector('#patientQuickLogSheet')?.classList.contains('open')){closePatientQuickLog();return;}if(!document.querySelector('#clinicalActionModal')?.classList.contains('hidden')){closeClinicalAction();return;}const view=event.state?.hpPatientView||'inicio';hpHandlingPatientPopV01938=true;hpPatientViewV01938=view;__loadPatientSection_v01938(view).catch(err=>toast(err.message,true)).finally(()=>{hpHandlingPatientPopV01938=false;});});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.querySelector('#pwaInstallSheetV01938')?.classList.contains('open'))hpCloseInstallSheetV01938();});

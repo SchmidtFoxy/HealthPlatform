@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta id="themeColorMeta" name="theme-color" content="#0B3B36" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -11,15 +11,15 @@
   <meta name="msapplication-TileColor" content="#0B3B36" />
   <meta name="application-name" content="AESYN Performance" />
   <title>AESYN Performance</title>
-  <link rel="manifest" href="/manifest.webmanifest?v=0.19.37" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.19.37" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.19.37" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.19.37" />
-  <link rel="stylesheet" href="/app.css?v=0.19.37" />
+  <link rel="manifest" href="/manifest.webmanifest?v=0.19.38" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.19.38" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.19.38" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.19.38" />
+  <link rel="stylesheet" href="/app.css?v=0.19.38" />
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
-    <img src="/icons/icon-192.png?v=0.19.37" alt="" />
+    <img src="/icons/icon-192.png?v=0.19.38" alt="" />
     <strong>AESYN</strong><span>PERFORMANCE</span>
   </div>
   <a class="hp-skip-link" href="#patientPortalContent">Pular para o conteúdo</a>
@@ -30,7 +30,7 @@
     <header class="aesyn-public-header">
       <div class="brand aesyn-public-brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>SAÚDE • PERFORMANCE • LONGEVIDADE</small></span></div>
       <nav class="aesyn-public-nav" aria-label="Apresentação AESYN"><span>Soluções</span><span>Como funciona</span><span>Para quem é</span><span>Ciência</span><span>Contato</span></nav>
-      <div class="aesyn-public-access"><span>Já tem conta?</span><a href="#loginForm">Entrar</a></div>
+      <div class="aesyn-public-access"><button id="pwaInstallHeaderButton" class="pwa-install-header-v01938 hidden" type="button">Instalar app</button><span>Já tem conta?</span><a href="#loginForm">Entrar</a></div>
     </header>
     <div class="login-visual">
       <div class="brand brand-large"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
@@ -197,9 +197,24 @@
         <button data-patient-more-view="jornada"><span>◌</span><b>Jornada</b><small>Sua evolução completa</small></button>
         <button data-patient-more-view="chat"><span>✉</span><b>Chat</b><small>Fale com seu profissional</small></button>
         <button data-patient-more-view="perfil"><span>♙</span><b>Meu perfil</b><small>Identidade e momento esportivo</small></button>
+        <button id="patientPwaInstallButton" class="pwa-install-entry-v01938" type="button"><span>⇩</span><b>Instalar AESYN</b><small>Adicionar à tela inicial</small></button>
       </div>
     </aside>
   </div>
+
+  <div id="pwaInstallNudgeV01938" class="pwa-install-nudge-v01938 hidden" role="status" aria-live="polite">
+    <img src="/icons/icon-192.png?v=0.19.38" alt="" />
+    <div><strong>Instale o AESYN</strong><small>Abra mais rápido e use como aplicativo.</small></div>
+    <button id="pwaInstallNudgeActionV01938" class="primary" type="button">Instalar</button>
+    <button id="pwaInstallNudgeCloseV01938" class="ghost" type="button" aria-label="Agora não">×</button>
+  </div>
+  <div id="pwaInstallBackdropV01938" class="pwa-install-backdrop-v01938 hidden"></div>
+  <section id="pwaInstallSheetV01938" class="pwa-install-sheet-v01938" role="dialog" aria-modal="true" aria-labelledby="pwaInstallTitleV01938" aria-hidden="true">
+    <div class="pwa-install-handle-v01938"></div>
+    <div class="pwa-install-head-v01938"><div><span class="eyebrow">AESYN NO CELULAR</span><h2 id="pwaInstallTitleV01938">Instalar aplicativo</h2></div><button id="pwaInstallCloseV01938" class="ghost" type="button" aria-label="Fechar">×</button></div>
+    <div id="pwaInstallInstructionsV01938" class="pwa-install-instructions-v01938"></div>
+    <div class="pwa-install-actions-v01938"><button id="pwaInstallPrimaryV01938" class="primary" type="button">Instalar AESYN</button><button id="pwaInstallLaterV01938" class="secondary" type="button">Agora não</button></div>
+  </section>
 
   <div id="appView" class="app-shell hidden">
     <aside class="sidebar">
@@ -289,6 +304,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.19.37"></script>
+  <script src="/app.js?v=0.19.38"></script>
 </body>
 </html>
