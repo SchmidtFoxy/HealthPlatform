@@ -1,8 +1,26 @@
+## v0.20.3 — Patient Status Management
+
+A carteira profissional agora diferencia pacientes ativos, pausados, aguardando avaliação e encerrados. A mudança é administrativa, auditada e não apaga histórico clínico.
+
+## v0.20.2 — Patient Attention Queue 2.0
+
+A Central de Atenção agora possui uma fila profissional configurável, construída sobre os sinais já consolidados do sistema. O profissional pode ajustar o score mínimo, incluir ou ocultar casos de observação e priorizar follow-ups vencidos sem alterar automaticamente qualquer conduta clínica.
+
+## v0.20.1 — Patient Search & Advanced Filters
+
+A carteira profissional agora possui busca e filtros avançados por status, responsável, aderência, interação, próxima revisão e marcadores operacionais, com ordenação e layout responsivo.
+
+## v0.20.0 — Professional Dashboard 2.0
+
+A fase `Professional Workspace 2.0` começa com um dashboard executivo único para o profissional: consultas do dia, pacientes em atenção, pendências abertas, mensagens não lidas, follow-ups e revisões clínicas aparecem em uma leitura, com atalhos para agir sem navegar por vários módulos.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. Testes funcionais de desenvolvimento permanecem locais e não usam a VPS de produção.
+
 ## v0.19.44 — Product Flow Gate / Lista 03 Closure
 
 A v0.19.44 fecha a Lista 03 como fase de estabilização do produto. O `TESTAR.ps1` passa a conferir transversalmente se os fluxos essenciais de paciente e profissional continuam conectados, enquanto `docs/PRODUCT-FLOW-GATE.md` define a homologação manual ponta a ponta que deve ser executada com dados de teste antes de produção comercial.
 
-O smoke test continua **não destrutivo** e exclusivamente local; ele não usa a VPS de produção para criar pacientes, treinos, dietas, check-ins ou mensagens. A próxima fase funcional é `v0.20.0 — Professional Dashboard 2.0`.
+O smoke test continua **não destrutivo** e exclusivamente local; ele não usa a VPS de produção para criar pacientes, treinos, dietas, check-ins ou mensagens. A próxima fase funcional é `v0.20.3 — Patient Status Management`.
 
 **Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`.
 

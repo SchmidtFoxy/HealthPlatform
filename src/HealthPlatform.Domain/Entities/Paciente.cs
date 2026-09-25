@@ -14,6 +14,9 @@ public class Paciente : BaseEntity
     public string? Email { get; set; }
     public string? Profissao { get; set; }
     public bool Ativo { get; set; } = true;
+    public string StatusAcompanhamento { get; set; } = "Ativo";
+    public string? MotivoStatusAcompanhamento { get; set; }
+    public DateTime? StatusAcompanhamentoAlteradoEmUtc { get; set; }
 
     public Organizacao Organizacao { get; set; } = null!;
     public ICollection<Consulta> Consultas { get; set; } = new List<Consulta>();

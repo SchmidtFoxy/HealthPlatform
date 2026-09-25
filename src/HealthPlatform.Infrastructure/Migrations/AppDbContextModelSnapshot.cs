@@ -1837,6 +1837,18 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<string>("Sexo")
                         .HasColumnType("text");
 
+                    b.Property<string>("StatusAcompanhamento")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTime?>("StatusAcompanhamentoAlteradoEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MotivoStatusAcompanhamento")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("Telefone")
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
@@ -1852,6 +1864,8 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.HasIndex("OrganizacaoId", "Cpf")
                         .IsUnique()
                         .HasFilter("\"Cpf\" IS NOT NULL");
+
+                    b.HasIndex("OrganizacaoId", "StatusAcompanhamento");
 
                     b.ToTable("Pacientes", (string)null);
                 });

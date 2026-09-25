@@ -55,6 +55,125 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         return Ok(new PacienteListResponse(itens, total, pagina, tamanhoPagina, totalPaginas));
     }
 
+
+    [HttpGet("pesquisa-avancada")]
+    public async Task<IActionResult> PesquisaAvancada(
+        [FromQuery] string? busca = null,
+        [FromQuery] string? status = "Ativos",
+        [FromQuery] Guid? responsavelId = null,
+        [FromQuery] string? aderencia = null,
+        [FromQuery] string? ultimaInteracao = null,
+        [FromQuery] string? proximaRevisao = null,
+        [FromQuery] string? marcador = null,
+        [FromQuery] string? ordenar = "nome",
+        CancellationToken ct = default)
+    {
+        var agora = DateTime.UtcNow;
+        var pacientesBase = await db.Pacientes.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => new { x.Id, x.Nome, x.Cpf, x.Email, x.Telefone, x.Profissao, x.Ativo, x.StatusAcompanhamento, x.MotivoStatusAcompanhamento, x.StatusAcompanhamentoAlteradoEmUtc })
+            .ToListAsync(ct);
+
+        var ids = pacientesBase.Select(x => x.Id).ToArray();
+        var consultas = await db.Consultas.AsNoTracking()
+            .Where(x => ids.Contains(x.PacienteId))
+            .Select(x => new { x.PacienteId, x.ProfissionalId, ProfissionalNome = x.Profissional.Nome, x.DataHoraUtc })
+            .ToListAsync(ct);
+        var checkIns = await db.CheckInsAcompanhamento.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && ids.Contains(x.PacienteId))
+            .Select(x => new { x.PacienteId, x.DataUtc, x.AdesaoAlimentacaoPercentual, x.AdesaoTreinoPercentual })
+            .ToListAsync(ct);
+        var interacoes = await db.InteracoesAcompanhamento.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && ids.Contains(x.PacienteId))
+            .Select(x => new { x.PacienteId, x.DataHoraUtc, x.ProximoContatoUtc })
+            .ToListAsync(ct);
+
+        var itens = pacientesBase.Select(paciente =>
+        {
+            var ultimaConsulta = consultas.Where(x => x.PacienteId == paciente.Id).OrderByDescending(x => x.DataHoraUtc).FirstOrDefault();
+            var ultimosCheckIns = checkIns.Where(x => x.PacienteId == paciente.Id).OrderByDescending(x => x.DataUtc).Take(4).ToArray();
+            var valoresAdesao = ultimosCheckIns
+                .SelectMany(x => new int?[] { x.AdesaoAlimentacaoPercentual, x.AdesaoTreinoPercentual })
+                .Where(x => x.HasValue).Select(x => x!.Value).ToArray();
+            decimal? adesaoMedia = valoresAdesao.Length == 0 ? null : Math.Round((decimal)valoresAdesao.Average(), 1);
+            var interacoesPaciente = interacoes.Where(x => x.PacienteId == paciente.Id).ToArray();
+            var ultima = interacoesPaciente.OrderByDescending(x => x.DataHoraUtc).Select(x => (DateTime?)x.DataHoraUtc).FirstOrDefault();
+            var proxima = interacoesPaciente.Where(x => x.ProximoContatoUtc.HasValue && x.ProximoContatoUtc >= agora)
+                .OrderBy(x => x.ProximoContatoUtc).Select(x => x.ProximoContatoUtc).FirstOrDefault();
+
+            var marcadores = new List<string>();
+            if (!ultima.HasValue || ultima.Value < agora.AddDays(-30)) marcadores.Add("SemInteracaoRecente");
+            if (!proxima.HasValue) marcadores.Add("SemRevisaoAgendada");
+            if (adesaoMedia.HasValue && adesaoMedia.Value < 60) marcadores.Add("BaixaAdesao");
+            if (!adesaoMedia.HasValue) marcadores.Add("SemDadosAdesao");
+            if (!paciente.Ativo) marcadores.Add("Inativo");
+
+            return new PacientePesquisaAvancadaItem(
+                paciente.Id, paciente.Nome, paciente.Cpf, paciente.Email, paciente.Telefone, paciente.Profissao, paciente.Ativo, paciente.StatusAcompanhamento, paciente.MotivoStatusAcompanhamento, paciente.StatusAcompanhamentoAlteradoEmUtc,
+                ultimaConsulta?.ProfissionalId, ultimaConsulta?.ProfissionalNome, adesaoMedia, ultima, proxima, marcadores);
+        }).ToList();
+
+        IEnumerable<PacientePesquisaAvancadaItem> query = itens;
+        if (!string.IsNullOrWhiteSpace(busca))
+        {
+            var termo = busca.Trim();
+            var digitos = SomenteDigitos(busca);
+            query = query.Where(x => x.Nome.Contains(termo, StringComparison.OrdinalIgnoreCase) ||
+                (x.Email?.Contains(termo, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (x.Telefone?.Contains(termo, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (x.Cpf?.Contains(digitos ?? termo, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        query = (status ?? "Ativos").Trim().ToLowerInvariant() switch
+        {
+            "ativo" => query.Where(x => x.StatusAcompanhamento == "Ativo"),
+            "pausado" => query.Where(x => x.StatusAcompanhamento == "Pausado"),
+            "aguardandoavaliacao" => query.Where(x => x.StatusAcompanhamento == "AguardandoAvaliacao"),
+            "encerrado" => query.Where(x => x.StatusAcompanhamento == "Encerrado"),
+            "inativos" => query.Where(x => !x.Ativo),
+            "todos" => query,
+            _ => query.Where(x => x.Ativo)
+        };
+        if (responsavelId.HasValue) query = query.Where(x => x.ResponsavelId == responsavelId.Value);
+        if (!string.IsNullOrWhiteSpace(aderencia)) query = aderencia.Trim().ToLowerInvariant() switch
+        {
+            "alta" => query.Where(x => x.AdesaoMediaPercentual >= 80),
+            "media" => query.Where(x => x.AdesaoMediaPercentual >= 60 && x.AdesaoMediaPercentual < 80),
+            "baixa" => query.Where(x => x.AdesaoMediaPercentual < 60),
+            "semdados" => query.Where(x => !x.AdesaoMediaPercentual.HasValue),
+            _ => query
+        };
+        if (!string.IsNullOrWhiteSpace(ultimaInteracao)) query = ultimaInteracao.Trim().ToLowerInvariant() switch
+        {
+            "7d" => query.Where(x => x.UltimaInteracaoUtc >= agora.AddDays(-7)),
+            "30d" => query.Where(x => x.UltimaInteracaoUtc >= agora.AddDays(-30)),
+            "antiga" => query.Where(x => !x.UltimaInteracaoUtc.HasValue || x.UltimaInteracaoUtc < agora.AddDays(-30)),
+            _ => query
+        };
+        if (!string.IsNullOrWhiteSpace(proximaRevisao)) query = proximaRevisao.Trim().ToLowerInvariant() switch
+        {
+            "7d" => query.Where(x => x.ProximaRevisaoUtc.HasValue && x.ProximaRevisaoUtc <= agora.AddDays(7)),
+            "30d" => query.Where(x => x.ProximaRevisaoUtc.HasValue && x.ProximaRevisaoUtc <= agora.AddDays(30)),
+            "semdata" => query.Where(x => !x.ProximaRevisaoUtc.HasValue),
+            _ => query
+        };
+        if (!string.IsNullOrWhiteSpace(marcador) && !marcador.Equals("Todos", StringComparison.OrdinalIgnoreCase))
+            query = query.Where(x => x.Marcadores.Contains(marcador, StringComparer.OrdinalIgnoreCase));
+
+        query = (ordenar ?? "nome").Trim().ToLowerInvariant() switch
+        {
+            "aderencia" => query.OrderBy(x => x.AdesaoMediaPercentual ?? -1).ThenBy(x => x.Nome),
+            "interacao" => query.OrderBy(x => x.UltimaInteracaoUtc ?? DateTime.MinValue).ThenBy(x => x.Nome),
+            "revisao" => query.OrderBy(x => x.ProximaRevisaoUtc ?? DateTime.MaxValue).ThenBy(x => x.Nome),
+            _ => query.OrderBy(x => x.Nome)
+        };
+
+        var responsaveis = consultas.GroupBy(x => new { x.ProfissionalId, x.ProfissionalNome })
+            .Select(x => new { id = x.Key.ProfissionalId, nome = x.Key.ProfissionalNome }).OrderBy(x => x.nome).ToArray();
+        var final = query.ToArray();
+        return Ok(new { total = final.Length, itens = final, responsaveis, marcadores = new[] { "SemInteracaoRecente", "SemRevisaoAgendada", "BaixaAdesao", "SemDadosAdesao", "Inativo" } });
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<PacienteResponse>> GetById(Guid id, CancellationToken ct)
     {
@@ -79,7 +198,9 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
             Sexo = NormalizarOpcional(request.Sexo),
             Telefone = NormalizarOpcional(request.Telefone),
             Email = NormalizarEmail(request.Email),
-            Profissao = NormalizarOpcional(request.Profissao)
+            Profissao = NormalizarOpcional(request.Profissao),
+            StatusAcompanhamento = "Ativo",
+            StatusAcompanhamentoAlteradoEmUtc = DateTime.UtcNow
         };
 
         db.Pacientes.Add(paciente);
@@ -114,6 +235,26 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         return Ok(ToResponse(paciente));
     }
 
+    [HttpPatch("{id:guid}/status")]
+    public async Task<ActionResult<PacienteResponse>> AlterarStatus(Guid id, AlterarStatusPacienteRequest request, CancellationToken ct)
+    {
+        var paciente = await db.Pacientes.FirstOrDefaultAsync(x => x.Id == id && x.OrganizacaoId == currentUser.OrganizationId, ct);
+        if (paciente is null) return NotFound(new { message = "Paciente nao encontrado." });
+
+        var statusNormalizado = NormalizarStatusAcompanhamento(request.Status);
+        if (statusNormalizado is null)
+            return BadRequest(new { message = "Status invalido. Use Ativo, Pausado, AguardandoAvaliacao ou Encerrado." });
+
+        var antes = Snapshot(paciente);
+        paciente.StatusAcompanhamento = statusNormalizado;
+        paciente.MotivoStatusAcompanhamento = NormalizarOpcional(request.Motivo);
+        paciente.StatusAcompanhamentoAlteradoEmUtc = DateTime.UtcNow;
+        paciente.Ativo = statusNormalizado != "Encerrado";
+        AdicionarAuditoria("PATIENT_STATUS_CHANGED", paciente, antes, Snapshot(paciente));
+        await db.SaveChangesAsync(ct);
+        return Ok(ToResponse(paciente));
+    }
+
     [HttpPatch("{id:guid}/ativar")]
     public async Task<ActionResult<PacienteResponse>> Activate(Guid id, CancellationToken ct)
     {
@@ -125,6 +266,8 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
 
         var antes = Snapshot(paciente);
         paciente.Ativo = true;
+        paciente.StatusAcompanhamento = "Ativo";
+        paciente.StatusAcompanhamentoAlteradoEmUtc = DateTime.UtcNow;
         AdicionarAuditoria("ACTIVATE", paciente, antes, Snapshot(paciente));
         await db.SaveChangesAsync(ct);
         return Ok(ToResponse(paciente));
@@ -141,6 +284,8 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
 
         var antes = Snapshot(paciente);
         paciente.Ativo = false;
+        paciente.StatusAcompanhamento = "Encerrado";
+        paciente.StatusAcompanhamentoAlteradoEmUtc = DateTime.UtcNow;
         AdicionarAuditoria("DEACTIVATE", paciente, antes, Snapshot(paciente));
         await db.SaveChangesAsync(ct);
         return NoContent();
@@ -203,7 +348,10 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         x.Telefone,
         x.Email,
         x.Profissao,
-        x.Ativo
+        x.Ativo,
+        x.StatusAcompanhamento,
+        x.MotivoStatusAcompanhamento,
+        x.StatusAcompanhamentoAlteradoEmUtc
     };
 
     private static string? SomenteDigitos(string? value)
@@ -216,7 +364,26 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
     private static string? NormalizarCpf(string? cpf) => SomenteDigitos(cpf);
     private static string? NormalizarEmail(string? email) => string.IsNullOrWhiteSpace(email) ? null : email.Trim().ToLowerInvariant();
     private static string? NormalizarOpcional(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    private static string? NormalizarStatusAcompanhamento(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        var normalizado = new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        return normalizado switch
+        {
+            "ativo" => "Ativo",
+            "pausado" => "Pausado",
+            "aguardandoavaliacao" => "AguardandoAvaliacao",
+            "encerrado" => "Encerrado",
+            _ => null
+        };
+    }
 
     private static PacienteResponse ToResponse(Paciente x) => new(
-        x.Id, x.Nome, x.Cpf, x.DataNascimento, x.Sexo, x.Telefone, x.Email, x.Profissao, x.Ativo, x.CreatedAtUtc);
+        x.Id, x.Nome, x.Cpf, x.DataNascimento, x.Sexo, x.Telefone, x.Email, x.Profissao, x.Ativo, x.StatusAcompanhamento, x.MotivoStatusAcompanhamento, x.StatusAcompanhamentoAlteradoEmUtc, x.CreatedAtUtc);
 }
+
+
+public sealed record PacientePesquisaAvancadaItem(
+    Guid Id, string Nome, string? Cpf, string? Email, string? Telefone, string? Profissao, bool Ativo, string StatusAcompanhamento, string? MotivoStatusAcompanhamento, DateTime? StatusAcompanhamentoAlteradoEmUtc,
+    Guid? ResponsavelId, string? ResponsavelNome, decimal? AdesaoMediaPercentual, DateTime? UltimaInteracaoUtc,
+    DateTime? ProximaRevisaoUtc, IReadOnlyCollection<string> Marcadores);

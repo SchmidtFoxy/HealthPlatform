@@ -418,7 +418,7 @@ window.addEventListener('popstate',hpResolvePublicRoute);
 if(!state.token)hpResolvePublicRoute();
 
 $('#logoutButton').onclick=()=>state.user?.impersonating?hpEndImpersonation():logout();$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
-function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal','workout-session-review-modal');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
+function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal','workout-session-review-modal','patient-status-modal-v0203');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
 function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['AESYN • PERFORMANCE CLÍNICA','Performance'],pacientes:['AESYN • ACOMPANHAMENTO','Pacientes'],prescricoes:['AESYN • PLANO INTEGRADO','Treino & Nutrição'],agenda:['AESYN • CONSULTAS','Agenda'],paciente:['AESYN • PERFORMANCE PROFILE','Paciente']};const title=titles[view]||titles.dashboard;$('#pageEyebrow').textContent=title[0];$('#pageTitle').textContent=title[1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,prescricoes:loadPrescriptionWorkspace,agenda:loadAgenda,paciente:loadPatient}[view]||loadDashboard)().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
 function stat(label,value,hint){return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value??0}</div><div class="hint">${hint}</div></div>`}
@@ -552,7 +552,11 @@ async function loadPrescriptionWorkspace(){
   $$('[data-workspace-patient]').forEach(b=>b.onclick=()=>openPatient(b.dataset.workspacePatient));
 }
 
-async function loadPatients(search=''){const d=await api(`/api/pacientes?pagina=1&tamanhoPagina=50${search?`&busca=${encodeURIComponent(search)}`:''}`);content.innerHTML=`<div class="section-head"><div><h3>Pacientes</h3><p>${d.total} paciente(s) encontrado(s).</p></div><div class="toolbar"><div class="search-wrap"><input id="patientSearch" class="search-input" placeholder="Buscar nome, CPF, e-mail ou telefone" value="${esc(search)}"></div><button class="primary" id="newPatient">+ Novo paciente</button></div></div><div class="table-wrap">${d.itens.length?`<table class="data-table"><thead><tr><th>Paciente</th><th>Contato</th><th>CPF</th><th>Nascimento</th><th>Status</th></tr></thead><tbody>${d.itens.map(p=>`<tr data-patient="${p.id}"><td><div class="person-cell"><div class="mini-avatar">${initials(p.nome)}</div><div><strong>${esc(p.nome)}</strong><div class="muted-mini">${esc(p.profissao||'Profissão não informada')}</div></div></div></td><td>${esc(p.telefone||p.email||'—')}</td><td>${esc(p.cpf||'—')}</td><td>${p.dataNascimento?fmtDate(p.dataNascimento):'—'}</td><td><span class="pill ${p.ativo?'Ativa':'Cancelada'}">${p.ativo?'Ativo':'Inativo'}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum paciente encontrado.</div>'}</div>`;let timer;$('#patientSearch').oninput=e=>{clearTimeout(timer);timer=setTimeout(()=>loadPatients(e.target.value),300)};$('#newPatient').onclick=openCreatePatient;$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient))}
+const HP_PATIENT_STATUS_V0203='v0.20.3';
+function hpPatientStatusLabelV0203(v){return ({Ativo:'Ativo',Pausado:'Pausado',AguardandoAvaliacao:'Aguardando avaliação',Encerrado:'Encerrado'})[v]||v||'Ativo'}
+function hpPatientStatusClassV0203(v){return ({Ativo:'active',Pausado:'paused',AguardandoAvaliacao:'waiting',Encerrado:'closed'})[v]||'active'}
+async function hpOpenPatientStatusV0203(p){const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');modal.classList.remove('hidden');modal.classList.add('patient-status-modal-v0203');box.className='clinical-action-shell patient-status-shell-v0203';box.setAttribute('data-patient-status-v0203',HP_PATIENT_STATUS_V0203);box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="closePatientStatusV0203">← Voltar</button><span class="eyebrow">STATUS DO ACOMPANHAMENTO</span><h2>${esc(p.nome)}</h2><p>Organize a carteira sem apagar histórico clínico ou prescrições.</p></div><form id="patientStatusFormV0203" class="form-grid"><label>Status<select name="status"><option value="Ativo">Ativo</option><option value="Pausado">Pausado</option><option value="AguardandoAvaliacao">Aguardando avaliação</option><option value="Encerrado">Encerrado</option></select></label><label class="span-2">Motivo / contexto<textarea name="motivo" rows="4" maxlength="500" placeholder="Opcional. Ex.: pausa temporária, aguardando retorno, acompanhamento encerrado..."></textarea></label><div class="span-2 patient-status-help-v0203">Alterar status é administrativo/operacional. O histórico clínico permanece preservado e a mudança fica auditada.</div><div class="span-2 form-actions"><button type="button" class="secondary" id="cancelPatientStatusV0203">Cancelar</button><button class="primary" type="submit">Salvar status</button></div></form>`;openClinicalAction(box);const f=$('#patientStatusFormV0203');f.status.value=p.statusAcompanhamento||'Ativo';f.motivo.value=p.motivoStatusAcompanhamento||'';const close=()=>closeClinicalAction();$('#closePatientStatusV0203').onclick=close;$('#cancelPatientStatusV0203').onclick=close;f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');b.disabled=true;try{await api(`/api/pacientes/${p.id}/status`,{method:'PATCH',body:JSON.stringify({status:f.status.value,motivo:f.motivo.value||null})});close();toast('Status do paciente atualizado.');if(state.patientId===p.id)await loadPatient();else await loadPatients('',{status:'Todos'})}catch(x){toast(x.message,true)}finally{b.disabled=false}}}
+async function loadPatients(search='',filters={}){const q=new URLSearchParams({busca:search,status:filters.status||'Ativos',aderencia:filters.aderencia||'',ultimaInteracao:filters.ultimaInteracao||'',proximaRevisao:filters.proximaRevisao||'',marcador:filters.marcador||'',ordenar:filters.ordenar||'nome'});if(filters.responsavelId)q.set('responsavelId',filters.responsavelId);const d=await api(`/api/pacientes/pesquisa-avancada?${q}`);const select=(id,label,options,value='')=>`<label class="patient-filter"><span>${label}</span><select id="${id}">${options.map(([v,t])=>`<option value="${v}" ${String(value)===String(v)?'selected':''}>${t}</option>`).join('')}</select></label>`;content.innerHTML=`<div class="section-head"><div><h3>Pacientes</h3><p>${d.total} paciente(s) encontrado(s) com os filtros atuais.</p></div><button class="primary" id="newPatient">+ Novo paciente</button></div><section class="card patient-search-panel" aria-label="Busca e filtros de pacientes"><div class="patient-search-main"><input id="patientSearch" class="search-input" placeholder="Buscar nome, CPF, e-mail ou telefone" value="${esc(search)}"><button type="button" class="secondary" id="clearPatientFilters">Limpar filtros</button></div><div class="patient-filter-grid">${select('patientStatus','Status',[['Ativos','Em acompanhamento'],['Ativo','Ativo'],['Pausado','Pausado'],['AguardandoAvaliacao','Aguardando avaliação'],['Encerrado','Encerrado'],['Todos','Todos']],filters.status||'Ativos')}${select('patientResponsible','Responsável',[['','Todos'],...(d.responsaveis||[]).map(x=>[x.id,x.nome])],filters.responsavelId||'')}${select('patientAdherence','Aderência',[['','Todas'],['Alta','Alta (≥80%)'],['Media','Média (60–79%)'],['Baixa','Baixa (<60%)'],['SemDados','Sem dados']],filters.aderencia||'')}${select('patientInteraction','Última interação',[['','Qualquer'],['7d','Últimos 7 dias'],['30d','Últimos 30 dias'],['Antiga','Há mais de 30 dias/sem interação']],filters.ultimaInteracao||'')}${select('patientReview','Próxima revisão',[['','Qualquer'],['7d','Próximos 7 dias'],['30d','Próximos 30 dias'],['SemData','Sem data']],filters.proximaRevisao||'')}${select('patientMarker','Marcador operacional',[['','Todos'],...(d.marcadores||[]).map(x=>[x,{SemInteracaoRecente:'Sem interação recente',SemRevisaoAgendada:'Sem revisão agendada',BaixaAdesao:'Baixa adesão',SemDadosAdesao:'Sem dados de adesão',Inativo:'Inativo'}[x]||x])],filters.marcador||'')}${select('patientSort','Ordenar por',[['nome','Nome'],['aderencia','Menor aderência'],['interacao','Interação mais antiga'],['revisao','Próxima revisão']],filters.ordenar||'nome')}</div><p class="muted-mini">Status de acompanhamento é administrativo e preserva todo o histórico clínico.</p></section><div class="table-wrap">${d.itens.length?`<table class="data-table"><thead><tr><th>Paciente</th><th>Responsável</th><th>Aderência</th><th>Última interação</th><th>Próxima revisão</th><th>Status</th><th></th></tr></thead><tbody>${d.itens.map(p=>`<tr data-patient="${p.id}"><td><div class="person-cell"><div class="mini-avatar">${initials(p.nome)}</div><div><strong>${esc(p.nome)}</strong><div class="muted-mini">${esc(p.profissao||p.email||'Sem complemento')}</div></div></div></td><td>${esc(p.responsavelNome||'—')}</td><td>${p.adesaoMediaPercentual==null?'—':`${num(p.adesaoMediaPercentual,0)}%`}</td><td>${p.ultimaInteracaoUtc?fmtDateTime(p.ultimaInteracaoUtc):'Sem interação'}</td><td>${p.proximaRevisaoUtc?fmtDateTime(p.proximaRevisaoUtc):'Sem data'}</td><td><span class="patient-status-v0203 ${hpPatientStatusClassV0203(p.statusAcompanhamento)}">${esc(hpPatientStatusLabelV0203(p.statusAcompanhamento))}</span></td><td><button type="button" class="ghost patient-status-edit-v0203" data-status-patient="${p.id}">Alterar status</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum paciente corresponde aos filtros.</div>'}</div>`;const read=()=>({status:$('#patientStatus').value,responsavelId:$('#patientResponsible').value,aderencia:$('#patientAdherence').value,ultimaInteracao:$('#patientInteraction').value,proximaRevisao:$('#patientReview').value,marcador:$('#patientMarker').value,ordenar:$('#patientSort').value});let timer;$('#patientSearch').oninput=e=>{clearTimeout(timer);timer=setTimeout(()=>loadPatients(e.target.value,read()),300)};['patientStatus','patientResponsible','patientAdherence','patientInteraction','patientReview','patientMarker','patientSort'].forEach(id=>$('#'+id).onchange=()=>loadPatients($('#patientSearch').value,read()));$('#clearPatientFilters').onclick=()=>loadPatients('',{});$('#newPatient').onclick=openCreatePatient;$$('[data-patient]').forEach(x=>x.onclick=e=>{if(!e.target.closest('button'))openPatient(x.dataset.patient)});$$('.patient-status-edit-v0203').forEach(b=>b.onclick=e=>{e.stopPropagation();const p=d.itens.find(x=>String(x.id)===String(b.dataset.statusPatient));if(p)hpOpenPatientStatusV0203(p)})}
 function openCreatePatient(){$('#createPatientModal').classList.remove('hidden')}
 $('#createPatientForm').addEventListener('submit',async e=>{e.preventDefault();const obj=Object.fromEntries(new FormData(e.target).entries());Object.keys(obj).forEach(k=>{if(obj[k]==='')obj[k]=null});try{const p=await api('/api/pacientes',{method:'POST',body:JSON.stringify(obj)});$('#createPatientModal').classList.add('hidden');e.target.reset();toast('Paciente cadastrado. Complete a avaliação inicial agora ou depois.');openPatientIntake(p)}catch(x){toast(x.message,true)}});
 async function openPatientIntake(patient){
@@ -876,7 +880,7 @@ function hpPatientPerformanceProfile(p,portal,resumoClinico,monitoramento,protoc
     </div>
   </section>`;
 }
-async function loadPatient(){if(!state.patientId){navigate('pacientes');return}const id=state.patientId;const [p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo]=await Promise.all([api(`/api/pacientes/${id}`),api(`/api/pacientes/${id}/timeline?limite=160`),api(`/api/pacientes/${id}/portal/home?data=${todayISO()}`),api(`/api/pacientes/${id}/resumo-clinico`),api(`/api/pacientes/${id}/consultas`),api(`/api/pacientes/${id}/evolucoes`),api(`/api/pacientes/${id}/anamneses`),api(`/api/pacientes/${id}/avaliacoes`),api(`/api/pacientes/${id}/exames`),api(`/api/pacientes/${id}/planos-alimentares`),api(`/api/pacientes/${id}/metas?incluirEncerradas=true`),api(`/api/pacientes/${id}/diario`),api(`/api/pacientes/${id}/relatorios`),api(`/api/pacientes/${id}/treinos`),api(`/api/pacientes/${id}/treinos/historico?dias=90`),api(`/api/pacientes/${id}/monitoramento?dias=7`),api(`/api/pacientes/${id}/protocolo-acompanhamento?offsetMinutos=${state.offset}`) ]);content.innerHTML=`<div class="patient-page performance-profile-page"><div class="patient-page-head"><button class="back-link" id="backPatients">← Pacientes</button>${hpPatientPerformanceProfile(p,portal,resumoClinico,monitoramento,protocolo)}<div class="patient-profile-actions"><div class="patient-profile-actions-main"><button class="primary" id="registerClinical">+ Registrar</button><button class="secondary" id="patientPrescriptionReview">Revisar & publicar</button><button class="secondary" id="openPrescriptionWorkspace">Treino & Nutrição</button></div><details class="patient-profile-more"><summary>Mais ações</summary><div><button class="ghost" id="patientAccess">Acesso do paciente</button><button class="ghost" id="editPatient">Editar dados</button><button class="ghost" id="patientIntake">Avaliação inicial</button><button class="ghost" id="patientGoalRecommendation">Objetivo & sugestão</button><button class="ghost" id="patientSmartAdaptation">Preferências & adaptação</button></div></details></div><div class="patient-info-grid compact">${info('Telefone',p.telefone)}${info('E-mail',p.email)}${info('CPF',p.cpf)}${info('Sexo',p.sexo)}</div></div><div class="patient-tabs performance-profile-tabs">${tabButton('resumo','Visão geral')}${tabButton('evolution-dashboard','Evolução')}${tabButton('consultas',`Consultas ${consultas.length}`)}${tabButton('avaliacoes',`Corpo ${avaliacoes.length}`)}${tabButton('fotos',`Fotos ${diario.filter(x=>String(x.tipo||'').startsWith('FotoEvolucao')).length}`)}${tabButton('treinos',`Treino ${treinos.length}`)}${tabButton('alimentacao',`Nutrição ${planos.length}`)}${tabButton('exames',`Exames ${exames.length}`)}${tabButton('diario',`Check-ins ${diario.length}`)}${tabButton('evolucoes',`Evoluções ${evolucoes.length}`)}${tabButton('anamnese',`Anamnese ${anamneses.length}`)}${tabButton('metas',`Metas ${metas.length}`)}${tabButton('relatorios',`Relatórios ${relatorios.length}`)}${tabButton('arquivos','Arquivos')}${tabButton('chat','Chat')}${tabButton('timeline','Timeline')}</div><div id="patientTabContent"></div></div>`;$('#backPatients').onclick=()=>navigate('pacientes');$('#registerClinical').onclick=()=>openClinicalActionMenu(p);$('#patientAccess').onclick=()=>openPatientAccess(p);$('#editPatient').onclick=()=>openEditPatientForm(p);$('#patientIntake').onclick=()=>openPatientIntake(p);$('#patientGoalRecommendation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientSmartAdaptation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientPrescriptionReview').onclick=()=>openPrescriptionReview(p);$('#openPrescriptionWorkspace').onclick=()=>navigate('prescricoes');const data={p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo};const setPatientTab=tab=>{state.patientTab=tab;$$('.patient-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.patientTab));renderPatientTab(data);window.scrollTo({top:0,behavior:'smooth'})};$$('.patient-tab').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.tab));$$('[data-profile-tab]').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.profileTab));renderPatientTab(data)}
+async function loadPatient(){if(!state.patientId){navigate('pacientes');return}const id=state.patientId;const [p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo]=await Promise.all([api(`/api/pacientes/${id}`),api(`/api/pacientes/${id}/timeline?limite=160`),api(`/api/pacientes/${id}/portal/home?data=${todayISO()}`),api(`/api/pacientes/${id}/resumo-clinico`),api(`/api/pacientes/${id}/consultas`),api(`/api/pacientes/${id}/evolucoes`),api(`/api/pacientes/${id}/anamneses`),api(`/api/pacientes/${id}/avaliacoes`),api(`/api/pacientes/${id}/exames`),api(`/api/pacientes/${id}/planos-alimentares`),api(`/api/pacientes/${id}/metas?incluirEncerradas=true`),api(`/api/pacientes/${id}/diario`),api(`/api/pacientes/${id}/relatorios`),api(`/api/pacientes/${id}/treinos`),api(`/api/pacientes/${id}/treinos/historico?dias=90`),api(`/api/pacientes/${id}/monitoramento?dias=7`),api(`/api/pacientes/${id}/protocolo-acompanhamento?offsetMinutos=${state.offset}`) ]);content.innerHTML=`<div class="patient-page performance-profile-page"><div class="patient-page-head"><button class="back-link" id="backPatients">← Pacientes</button>${hpPatientPerformanceProfile(p,portal,resumoClinico,monitoramento,protocolo)}<div class="patient-profile-actions"><div class="patient-profile-actions-main"><button class="primary" id="registerClinical">+ Registrar</button><button class="secondary" id="patientPrescriptionReview">Revisar & publicar</button><button class="secondary" id="openPrescriptionWorkspace">Treino & Nutrição</button></div><details class="patient-profile-more"><summary>Mais ações</summary><div><button class="ghost" id="patientAccess">Acesso do paciente</button><button class="ghost" id="editPatient">Editar dados</button><button class="ghost" id="patientStatusV0203">Status do acompanhamento</button><button class="ghost" id="patientIntake">Avaliação inicial</button><button class="ghost" id="patientGoalRecommendation">Objetivo & sugestão</button><button class="ghost" id="patientSmartAdaptation">Preferências & adaptação</button></div></details></div><div class="patient-info-grid compact">${info('Telefone',p.telefone)}${info('E-mail',p.email)}${info('CPF',p.cpf)}${info('Sexo',p.sexo)}</div></div><div class="patient-tabs performance-profile-tabs">${tabButton('resumo','Visão geral')}${tabButton('evolution-dashboard','Evolução')}${tabButton('consultas',`Consultas ${consultas.length}`)}${tabButton('avaliacoes',`Corpo ${avaliacoes.length}`)}${tabButton('fotos',`Fotos ${diario.filter(x=>String(x.tipo||'').startsWith('FotoEvolucao')).length}`)}${tabButton('treinos',`Treino ${treinos.length}`)}${tabButton('alimentacao',`Nutrição ${planos.length}`)}${tabButton('exames',`Exames ${exames.length}`)}${tabButton('diario',`Check-ins ${diario.length}`)}${tabButton('evolucoes',`Evoluções ${evolucoes.length}`)}${tabButton('anamnese',`Anamnese ${anamneses.length}`)}${tabButton('metas',`Metas ${metas.length}`)}${tabButton('relatorios',`Relatórios ${relatorios.length}`)}${tabButton('arquivos','Arquivos')}${tabButton('chat','Chat')}${tabButton('timeline','Timeline')}</div><div id="patientTabContent"></div></div>`;$('#backPatients').onclick=()=>navigate('pacientes');$('#registerClinical').onclick=()=>openClinicalActionMenu(p);$('#patientAccess').onclick=()=>openPatientAccess(p);$('#editPatient').onclick=()=>openEditPatientForm(p);$('#patientStatusV0203').onclick=()=>hpOpenPatientStatusV0203(p);$('#patientIntake').onclick=()=>openPatientIntake(p);$('#patientGoalRecommendation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientSmartAdaptation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientPrescriptionReview').onclick=()=>openPrescriptionReview(p);$('#openPrescriptionWorkspace').onclick=()=>navigate('prescricoes');const data={p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo};const setPatientTab=tab=>{state.patientTab=tab;$$('.patient-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.patientTab));renderPatientTab(data);window.scrollTo({top:0,behavior:'smooth'})};$$('.patient-tab').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.tab));$$('[data-profile-tab]').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.profileTab));renderPatientTab(data)}
 function hpMonitoringCard(d,protocolo,paciente){
   const itens=(protocolo?.itens||[]).filter(x=>x.ativo);
   const hasMetrics=d&&(d.metricas||[]).some(x=>x.total);
@@ -9100,7 +9104,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.44';
+const HP_MVP_VERSION='0.20.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11053,3 +11057,137 @@ async function hpEnsureLegalConsentV01943(){
 const hpPrivacySettingsObserverV01943=new MutationObserver(()=>{const host=document.querySelector('.profile-settings-v01928');if(host)hpRenderPrivacySettingsV01943(host)});hpPrivacySettingsObserverV01943.observe(document.body,{childList:true,subtree:true});
 const __showApp_v01943=showApp;showApp=function(){__showApp_v01943();setTimeout(hpEnsureLegalConsentV01943,420)};
 if(state.token)setTimeout(hpEnsureLegalConsentV01943,500);
+
+// ===== v0.20.0 — Professional Dashboard 2.0 =====
+// Unifica visão executiva, pendências, mensagens, alertas e ações rápidas no topo do dashboard.
+const __loadDashboard_v0200 = loadDashboard;
+loadDashboard = async function(){
+  await __loadDashboard_v0200();
+  try{
+    const [central, pendencias, notificacoes] = await Promise.all([
+      api(`/api/central-dia?offsetMinutos=${hpBrowserOffsetMinutes()}`).catch(()=>null),
+      api('/api/pendencias?status=abertas&limite=12').catch(()=>null),
+      api('/api/notificacoes?sincronizar=false&limite=50&lida=false').catch(()=>null)
+    ]);
+    const host = content;
+    if(!host || host.querySelector('[data-professional-dashboard-v0200]')) return;
+
+    const itensNotif = notificacoes?.itens || [];
+    const mensagens = itensNotif.filter(x => String(x.tipo||'').toLowerCase()==='chat').length;
+    const alertas = Number(central?.pacientesEmAtencao || 0);
+    const pendentes = Number(pendencias?.total || 0);
+    const consultas = Number(central?.consultasHoje || 0);
+    const followups = Number(central?.followUpsVencidos || 0) + Number(central?.followUpsHoje || 0);
+    const revisoes = Number(central?.solicitacoesParaRevisao || 0);
+
+    const section = document.createElement('section');
+    section.className = 'professional-dashboard-v0200';
+    section.dataset.professionalDashboardV0200 = '1';
+    section.innerHTML = `
+      <div class="professional-dashboard-v0200-head">
+        <div>
+          <span class="eyebrow">AESYN • PROFESSIONAL WORKSPACE 2.0</span>
+          <h3>Seu dia profissional, em uma leitura.</h3>
+          <p>Priorize pacientes, mensagens e pendências sem precisar caçar informação entre módulos.</p>
+        </div>
+        <div class="professional-dashboard-v0200-actions">
+          <button class="primary" id="pd20OpenAttention">Central de atenção</button>
+          <button class="secondary" id="pd20OpenPatients">Pacientes</button>
+          <button class="ghost" id="pd20Refresh">Atualizar</button>
+        </div>
+      </div>
+      <div class="professional-dashboard-v0200-kpis" aria-label="Resumo operacional profissional">
+        <button class="pd20-kpi" id="pd20Agenda"><span>Consultas hoje</span><strong>${consultas}</strong><small>Abrir agenda</small></button>
+        <button class="pd20-kpi ${alertas?'attention':''}" id="pd20Attention"><span>Pacientes em atenção</span><strong>${alertas}</strong><small>Revisar sinais</small></button>
+        <button class="pd20-kpi ${pendentes?'attention':''}" id="pd20Pending"><span>Pendências abertas</span><strong>${pendentes}</strong><small>Gerenciar fila</small></button>
+        <button class="pd20-kpi ${mensagens?'attention':''}" id="pd20Messages"><span>Mensagens não lidas</span><strong>${mensagens}</strong><small>Abrir notificações</small></button>
+        <button class="pd20-kpi" id="pd20Followups"><span>Follow-ups</span><strong>${followups}</strong><small>Vencidos + hoje</small></button>
+        <button class="pd20-kpi" id="pd20Reviews"><span>Revisões clínicas</span><strong>${revisoes}</strong><small>Solicitações aguardando</small></button>
+      </div>
+      <div class="professional-dashboard-v0200-shortcuts" aria-label="Ações rápidas">
+        <button class="secondary" id="pd20NewPatient">+ Novo paciente</button>
+        <button class="secondary" id="pd20Prescription">Treino & Nutrição</button>
+        <button class="secondary" id="pd20AgendaQuick">Agenda</button>
+        <button class="secondary" id="pd20PendingQuick">Pendências</button>
+        <button class="secondary" id="pd20CentralQuick">Central do dia</button>
+      </div>`;
+    host.prepend(section);
+
+    $('#pd20OpenAttention').onclick = () => navigate('central-dia');
+    $('#pd20OpenPatients').onclick = () => navigate('pacientes');
+    $('#pd20Refresh').onclick = () => loadDashboard();
+    $('#pd20Agenda').onclick = $('#pd20AgendaQuick').onclick = () => navigate('agenda');
+    $('#pd20Attention').onclick = $('#pd20CentralQuick').onclick = () => navigate('central-dia');
+    $('#pd20Pending').onclick = $('#pd20PendingQuick').onclick = () => navigate('pendencias');
+    $('#pd20Messages').onclick = () => openNotifications();
+    $('#pd20Followups').onclick = () => navigate('followups');
+    $('#pd20Reviews').onclick = () => navigate('solicitacoes-profissional');
+    $('#pd20NewPatient').onclick = openCreatePatient;
+    $('#pd20Prescription').onclick = () => navigate('prescricoes');
+  }catch(err){
+    console.warn('Professional Dashboard 2.0 indisponível:', err);
+  }
+};
+
+
+// ===== v0.20.2 — Patient Attention Queue 2.0 =====
+const HP_ATTENTION_QUEUE_V0202='v0.20.2';
+const hpAttentionQueueDefaultsV0202={minScore:20,showObservation:true,prioritizeOverdue:true};
+function hpAttentionQueueConfigV0202(){
+  try{return {...hpAttentionQueueDefaultsV0202,...JSON.parse(localStorage.getItem('aesyn.attentionQueue.v0202')||'{}')}}catch{return {...hpAttentionQueueDefaultsV0202}}
+}
+function hpSaveAttentionQueueConfigV0202(next){localStorage.setItem('aesyn.attentionQueue.v0202',JSON.stringify(next));}
+function hpAttentionQueueReasonV0202(x){
+  const s=(x.sinais||[]).join(' ').toLowerCase();
+  const reasons=[];
+  if(/check-?in/.test(s))reasons.push('Sem check-in / check-in irregular');
+  if(/dor/.test(s))reasons.push('Dor elevada');
+  if(/sono/.test(s))reasons.push('Sono ruim recorrente');
+  if(/ades[aã]o|evento\(s\) de adesao/.test(s))reasons.push('Baixa adesão');
+  if(/treino|exerc[ií]cio/.test(s))reasons.push('Treino divergente ou não realizado');
+  if(/alimenta|refei[cç][aã]o|nutri/.test(s))reasons.push('Alimentação divergente');
+  if(x.pendenciasAlta>0)reasons.push('Pendência de alta prioridade');
+  if(x.followUpVencido)reasons.push('Follow-up vencido');
+  return reasons.length?reasons:['Sinal longitudinal relevante'];
+}
+function hpAttentionQueueItemV0202(x){
+  const reasons=hpAttentionQueueReasonV0202(x);
+  return `<article class="attention-queue-v0202-item ${hpAttentionLevelClass(x.nivel)}" data-attention-queue-patient="${x.pacienteId}" data-score="${x.score||0}">
+    <div class="attention-queue-v0202-main"><div class="mini-avatar">${initials(x.pacienteNome)}</div><div><div class="professional-attention-title"><strong>${esc(x.pacienteNome)}</strong><span class="attention-level ${hpAttentionLevelClass(x.nivel)}">${esc(x.nivel==='Atencao'?'Atenção':x.nivel)}</span></div><p>${esc(x.resumo||'')}</p><small>Score ${x.score||0} • ${x.eventos7Dias||0} evento(s) em 7 dias</small></div></div>
+    <div class="attention-queue-v0202-reasons">${reasons.slice(0,4).map(r=>`<span>${esc(r)}</span>`).join('')}</div>
+    <div class="attention-queue-v0202-actions"><button class="ghost attention-queue-open-v0202" data-id="${x.pacienteId}">Abrir paciente</button></div>
+  </article>`;
+}
+function hpRenderAttentionQueueV0202(d){
+  const config=hpAttentionQueueConfigV0202();
+  const source=[...(d.atencoes||[])];
+  const filtered=source.filter(x=>Number(x.score||0)>=Number(config.minScore||0) && (config.showObservation || x.nivel!=='Observacao'));
+  filtered.sort((a,b)=>{if(config.prioritizeOverdue){const od=Number(!!b.followUpVencido)-Number(!!a.followUpVencido);if(od)return od}return Number(b.score||0)-Number(a.score||0)});
+  return `<section class="card attention-queue-v0202" data-attention-queue-v0202="${HP_ATTENTION_QUEUE_V0202}">
+    <div class="card-head attention-queue-v0202-head"><div><span class="eyebrow">AESYN • PATIENT ATTENTION QUEUE 2.0</span><h3>Fila de atenção profissional</h3><small>Priorize sinais recorrentes e pendências sem automatizar conduta clínica.</small></div><span class="attention-center-count">${filtered.length}</span></div>
+    <div class="attention-queue-v0202-controls">
+      <label><span>Score mínimo</span><select id="attentionQueueMinScoreV0202"><option value="0">Todos</option><option value="20">20+</option><option value="30">30+</option><option value="60">60+</option></select></label>
+      <label class="attention-queue-check-v0202"><input type="checkbox" id="attentionQueueObservationV0202" ${config.showObservation?'checked':''}><span>Incluir observação</span></label>
+      <label class="attention-queue-check-v0202"><input type="checkbox" id="attentionQueueOverdueV0202" ${config.prioritizeOverdue?'checked':''}><span>Priorizar follow-up vencido</span></label>
+    </div>
+    <div class="attention-queue-v0202-list">${filtered.length?filtered.map(hpAttentionQueueItemV0202).join(''):hpCentralEmpty('Nenhum paciente atende aos critérios atuais da fila.')}</div>
+    <p class="professional-attention-note">Critérios de visualização ficam salvos apenas para o profissional neste navegador. A fila não diagnostica e não altera prescrição automaticamente.</p>
+  </section>`;
+}
+function hpWireAttentionQueueV0202(d){
+  const score=$('#attentionQueueMinScoreV0202'),obs=$('#attentionQueueObservationV0202'),overdue=$('#attentionQueueOverdueV0202');
+  if(score)score.value=String(hpAttentionQueueConfigV0202().minScore);
+  const refresh=()=>{const next={minScore:Number(score?.value||20),showObservation:!!obs?.checked,prioritizeOverdue:!!overdue?.checked};hpSaveAttentionQueueConfigV0202(next);loadCentralDia();};
+  if(score)score.onchange=refresh;if(obs)obs.onchange=refresh;if(overdue)overdue.onchange=refresh;
+  $$('.attention-queue-open-v0202').forEach(b=>b.onclick=e=>{e.stopPropagation();openPatient(b.dataset.id)});
+  $$('[data-attention-queue-patient]').forEach(x=>x.onclick=e=>{if(!e.target.closest('button'))openPatient(x.dataset.attentionQueuePatient)});
+}
+const __loadCentralDia_v0202=loadCentralDia;
+loadCentralDia=async function(){
+  await __loadCentralDia_v0202();
+  try{
+    const d=await api(`/api/central-dia?offsetMinutos=${hpBrowserOffsetMinutes()}`);
+    const old=content.querySelector('[data-professional-attention="v0.19.20"]');
+    if(old){old.insertAdjacentHTML('afterend',hpRenderAttentionQueueV0202(d));hpWireAttentionQueueV0202(d);}
+  }catch(err){console.warn('Patient Attention Queue 2.0 indisponível:',err)}
+};

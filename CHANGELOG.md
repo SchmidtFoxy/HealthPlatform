@@ -1,3 +1,68 @@
+## v0.20.3-r1 — PWA Identity Gate Version Sync
+
+- Corrige gate histórico de identidade/PWA que ainda exigia query string `v=0.20.2` para manifest e ícones.
+- Mantém os assets públicos e a versão funcional em `0.20.3`; nenhuma alteração funcional ou de banco.
+
+# v0.20.3 — Patient Status Management
+
+- Adiciona status persistente de acompanhamento: Ativo, Pausado, Aguardando avaliação e Encerrado.
+- Alterações de status são auditadas e podem registrar motivo/contexto opcional.
+- Preserva histórico clínico e mantém compatibilidade com o campo legado `Ativo`.
+- Evolui busca/filtros da carteira para os novos estados.
+- Adiciona ação de status na lista e no perfil profissional do paciente.
+- Migration `V0203PatientStatusManagement` adiciona campos e índice por organização/status.
+
+
+## v0.20.2-r1 — Notification/Attention Queue UTF-8 Gate Fix
+
+- Corrige falso negativo no gate da Patient Attention Queue 2.0 no Windows PowerShell.
+- Leituras de `app.js`, `app.css`, `ROADMAP.md` e `VERSION.txt` do gate v0.20.2 agora usam `-Encoding UTF8` explicitamente.
+- Nenhuma alteração funcional ou de banco; versão pública permanece `0.20.2`.
+
+# v0.20.2 — Patient Attention Queue 2.0
+
+- Evolui a Central de Atenção com uma fila profissional dedicada.
+- Reaproveita os sinais consolidados existentes, sem criar fonte clínica paralela.
+- Expõe motivos operacionais derivados de check-ins, dor, sono, adesão, treino, alimentação, pendências e follow-ups quando presentes nos sinais.
+- Permite configurar score mínimo, inclusão de observações e prioridade para follow-up vencido.
+- Preferências são locais ao navegador e não alteram dados ou prescrição.
+- Adiciona navegação direta ao paciente e layout responsivo.
+- Sem migration nova.
+
+﻿
+### v0.20.1-r2 — Dashboard Notification Navigation Gate Fix
+- Corrige falso negativo no gate do Dashboard 2.0 causado por interpolacao de `$(` em string PowerShell.
+- Mantem a abertura da central de notificacoes via `openNotifications()`.
+- Remove sincronizacao mutavel do GET do Dashboard 2.0 (`sincronizar=false`).
+
+## v0.20.1-r1 - Notification Smoke Gate Fix
+
+- Corrige falso positivo no gate `[152/600]`: a validação agora inspeciona apenas o trecho histórico do `TESTAR.ps1` anterior ao próprio gate.
+- Preserva a proibição de chamadas mutáveis de sincronização no smoke, sem confundir tokens de compatibilidade/validação posteriores com chamadas executáveis.
+- `VERSION.txt` permanece `0.20.1`; `-r1` identifica somente a revisão do pacote.
+
+# v0.20.1 — Patient Search & Advanced Filters
+
+- Evolui a listagem profissional de pacientes para busca avançada sem criar schema paralelo.
+- Busca por nome, CPF, e-mail e telefone.
+- Filtros por status, profissional responsável, aderência recente, última interação, próxima revisão e marcadores operacionais.
+- Adiciona ordenação por nome, menor aderência, interação mais antiga e próxima revisão.
+- Responsável é derivado da consulta mais recente; aderência usa os check-ins recentes; interação/revisão reutilizam o acompanhamento já existente.
+- Marcadores operacionais calculados não substituem as tags personalizadas previstas para a v0.20.5.
+- Interface responsiva para desktop e mobile.
+- Sem migration nova.
+
+# v0.20.0 — Professional Dashboard 2.0
+
+- Inicia oficialmente a fase `Professional Workspace 2.0`.
+- Adiciona uma visão executiva unificada com consultas, pacientes em atenção, pendências, mensagens não lidas, follow-ups e revisões clínicas.
+- Adiciona ações rápidas para novo paciente, Treino & Nutrição, Agenda, Pendências e Central do Dia.
+- Reutiliza Central do Dia, Pendências e Notificações como fontes operacionais existentes, evitando lógica paralela.
+- Mantém pacientes recentes e os blocos analíticos já existentes.
+- Adiciona layout responsivo para desktop e mobile.
+- Atualiza versão pública para `0.20.0`, roadmap e smoke gate para 2178 validações.
+- Sem migration nova.
+
 ## v0.19.44-r3 — Roadmap Closure Gate Semantic Sync
 
 - Corrige falso negativo do `TESTAR.ps1` no gate de fechamento da Lista 03.

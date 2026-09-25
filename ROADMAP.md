@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.44 — Product Flow Gate / Lista 03 Closure
+> **Versão-base deste roadmap:** v0.20.3 — Patient Status Management
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -444,41 +444,50 @@ Nenhum desses fluxos pode depender de atalho de desenvolvedor, banco manual, Swa
 
 Objetivo: transformar a área profissional em uma central de trabalho para dezenas/centenas de pacientes.
 
-## v0.20.0 — Professional Dashboard 2.0
-- visão executiva;
-- pendências;
-- mensagens;
-- alertas;
-- pacientes recentes;
-- ações rápidas.
+## ✅ v0.20.0 — Professional Dashboard 2.0 — CONCLUÍDA
+- visão executiva unificada no topo do dashboard;
+- consultas do dia, pacientes em atenção, pendências, mensagens não lidas, follow-ups e revisões clínicas;
+- pacientes recentes preservados;
+- ações rápidas para novo paciente, Treino & Nutrição, Agenda, Pendências e Central do Dia;
+- dados consolidados a partir de Central do Dia, Pendências e Notificações, sem criar fonte paralela;
+- responsivo e compatível com dark mode;
+- sem migration nova.
 
-## v0.20.1 — Patient Search & Advanced Filters
-- busca global;
+**Próxima etapa:** `v0.20.2 — Patient Attention Queue 2.0`.
+
+## ✅ v0.20.1 — Patient Search & Advanced Filters — CONCLUÍDA
+- busca global por nome, CPF, e-mail e telefone;
 - filtros por status;
-- tags;
-- responsável;
-- aderência;
+- marcadores operacionais calculados (tags personalizadas seguem na v0.20.5);
+- responsável derivado da consulta mais recente;
+- aderência baseada nos check-ins recentes;
 - última interação;
-- próxima revisão.
+- próxima revisão/contato;
+- ordenação profissional e UX responsiva.
 
-## v0.20.2 — Patient Attention Queue 2.0
-Evoluir a Central de Atenção existente:
-- sem check-in;
-- dor alta;
-- sono ruim recorrente;
-- baixa adesão;
-- treino não realizado;
-- alimentação divergente;
-- mensagens pendentes;
-- novos exames;
-- prioridades configuráveis.
+## ✅ v0.20.2 — Patient Attention Queue 2.0 — CONCLUÍDA
+- fila profissional dedicada sobre a Central de Atenção existente;
+- classificação visual por prioridade, atenção e observação;
+- motivos derivados dos sinais já consolidados: check-in irregular, dor, sono, adesão, treino, alimentação, pendências e follow-up;
+- score mínimo configurável;
+- opção de incluir/excluir observações;
+- opção de priorizar follow-up vencido;
+- preferências locais por navegador, sem alterar conduta ou dados clínicos;
+- navegação direta para o paciente;
+- responsivo e sem migration nova.
 
-## v0.20.3 — Patient Status Management
-- ativo;
-- pausado;
-- aguardando avaliação;
-- encerrado;
-- status administrativo futuro.
+**Próxima etapa:** `v0.20.3 — Patient Status Management`.
+
+## ✅ v0.20.3 — Patient Status Management — CONCLUÍDA
+- status persistente: ativo, pausado, aguardando avaliação e encerrado;
+- motivo/contexto opcional da alteração;
+- auditoria de mudança de status;
+- filtros e identificação visual na carteira;
+- acesso à alteração pela lista e pelo perfil do paciente;
+- preservação de histórico clínico e compatibilidade com o campo legado `Ativo`;
+- migration e índice por organização/status.
+
+**Próxima etapa:** `v0.20.4 — Professional Internal Notes`.
 
 ## v0.20.4 — Professional Internal Notes
 - observações privadas;

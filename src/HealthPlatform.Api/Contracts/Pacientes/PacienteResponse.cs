@@ -10,4 +10,7 @@ public sealed record PacienteResponse(
     string? Email,
     string? Profissao,
     bool Ativo,
+    string StatusAcompanhamento,
+    string? MotivoStatusAcompanhamento,
+    DateTime? StatusAcompanhamentoAlteradoEmUtc,
     DateTime CreatedAtUtc);
