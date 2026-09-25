@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.19.40 — In-App Notification Center
+> **Versão-base deste roadmap:** v0.19.42 — Offline & Poor Connection Resilience
 > **Propósito:** impedir que ideias, pendências e detalhes de produto sejam esquecidos durante a evolução do AESYN.
 
 ## Regra de uso deste arquivo
@@ -388,6 +388,8 @@ Padronizar transversalmente:
 - sucesso;
 - ações destrutivas.
 
+**Status:** implementado na v0.19.41. Foi criado um sistema visual reutilizável para estados de carregamento, vazio, erro, sucesso e retry, com componentes acessíveis e responsivos. O loading global passou a usar o mesmo contrato visual; ações assíncronas ganharam helper com estado pendente; confirmações críticas receberam modal próprio, preparado para substituir `window.confirm` gradualmente sem quebrar fluxos existentes; dark mode, mobile e `prefers-reduced-motion` foram cobertos. A versão não altera schema.
+
 ## v0.19.42 — Offline & Poor Connection Resilience
 
 - detectar ausência de internet;
@@ -397,6 +399,8 @@ Padronizar transversalmente:
 - reconexão;
 - fila apenas para ações em que seja seguro;
 - evitar duplicidade de submissões.
+
+**Status:** implementado na v0.19.42. O frontend passa a distinguir offline de conexão lenta, apresenta banner persistente sem tratar oscilação de rede como falha interna e normaliza erros de rede nas chamadas da API. Rascunhos explicitamente marcados com `data-hp-draft` são preservados apenas em `sessionStorage` — evitando persistência permanente de conteúdo sensível — e o chat já usa esse mecanismo. Ações idempotentes/seguras podem optar explicitamente por fila offline deduplicada; a leitura de notificações usa esse contrato e é sincronizada na reconexão. O sistema também bloqueia duplicidade por chave com `hpRunOnceV01942`, mantém retry explícito e não armazena respostas de `/api/` no Service Worker. Nenhuma migration foi necessária.
 
 ## v0.19.43 — Audit, Privacy & Consent
 
@@ -962,3 +966,7 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 
 ## Revisões corretivas da base atual
 - **v0.19.40-r1 — Notification Patient Link Gate Semantic Sync:** corrige gate legado de navegação de notificações do paciente para validar o resolvedor atual (`hpResolvePatientNotificationLink`) sem ressuscitar implementação antiga.
+
+### Hotfix v0.19.41-r1 — UX State Gate Semantic Sync
+- Gate do UX State System alinhado à implementação real: composição dinâmica no `app.js` e classes concretas no `app.css`.
+- Nenhuma funcionalidade foi removida ou reintroduzida apenas para satisfazer teste textual.

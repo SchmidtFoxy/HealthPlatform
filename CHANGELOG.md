@@ -1,3 +1,31 @@
+# v0.19.42 — Offline & Poor Connection Resilience
+
+- Detecta offline/online e conexão muito lenta, com banner persistente e acessível.
+- Normaliza falhas de rede nas chamadas `api()` sem confundir indisponibilidade de internet com erro da aplicação.
+- Preserva rascunhos explicitamente marcados em `sessionStorage`; o chat já adota o contrato e limpa o rascunho somente após envio bem-sucedido.
+- Adiciona fila offline opt-in, limitada a ações explicitamente seguras, com deduplicação por `queueKey` e sincronização após reconexão.
+- Marcações de notificações como lidas utilizam a fila segura quando necessário.
+- Adiciona `hpRunOnceV01942` para impedir submissões concorrentes/duplicadas por chave.
+- Mantém `/api/` fora do cache do Service Worker e o shell estático disponível para navegação offline.
+- Sem migration e sem dependência de produção nos testes de desenvolvimento.
+
+## v0.19.41-r1 — UX State Gate Semantic Sync
+
+- Corrige falso negativo do `TESTAR.ps1` no gate `[2106/2118]`.
+- O helper `hpUiState()` gera classes por composição dinâmica (`hp-state-${kind}`), enquanto as classes concretas `loading/empty/error/success` pertencem ao `app.css`.
+- O gate passa a validar a função no JavaScript e os estados concretos no CSS, respeitando a responsabilidade real de cada arquivo.
+- Sem alteração funcional, sem migration e sem mudança da versão pública `0.19.41`.
+
+# v0.19.41 — UX State System
+
+- Cria camada reutilizável `hpUiState` para loading, skeleton, empty state, erro, retry e sucesso.
+- `setLoading()` passa a usar o sistema transversal em vez de markup ad hoc.
+- Adiciona `hpRunAction` sobre o estado pendente existente para padronizar ações assíncronas.
+- Adiciona modal acessível `hpConfirm` para confirmações e ações destrutivas, com Escape, clique no backdrop, dark mode e ergonomia mobile.
+- Mantém o toast unificado já existente como feedback de sucesso/erro.
+- Adiciona helpers `hpSetRegionState`, `hpErrorState`, `hpEmptyState` e `hpSuccessState` para reduzir estados improvisados nas próximas telas.
+- Sem migration e sem dependência de produção.
+
 # v0.19.40-r1 — Notification Patient Link Gate Semantic Sync
 
 - Corrige falso negativo do gate legado `[523/600]`.

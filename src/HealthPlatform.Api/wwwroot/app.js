@@ -43,7 +43,89 @@ function hpPatientFeedbackState(kind='empty',title='Nada por aqui',message='',ac
   const icon=kind==='error'?'!':kind==='success'?'✓':'•';
   return `<section class="patient-feedback-state ${esc(kind)}" role="${kind==='error'?'alert':'status'}"><span class="patient-feedback-icon" aria-hidden="true">${icon}</span><div><strong>${esc(title)}</strong>${message?`<p>${esc(message)}</p>`:''}${actionLabel?`<button type="button" class="secondary patient-feedback-action">${esc(actionLabel)}</button>`:''}</div></section>`;
 }
-async function api(path,options={}){const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const r=await fetch(path,{...options,headers});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout({notifyServer:false});throw new Error(d?.message||'Sua sessão expirou.')}if(r.status===403)throw new Error(d?.message||'Você não tem permissão para executar esta ação.');if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}
+function hpUiState(kind='empty',title='Nada por aqui',message='',options={}){
+  const action=options.actionLabel?`<button type="button" class="${esc(options.actionClass||'secondary')} hp-state-action" data-hp-state-action>${esc(options.actionLabel)}</button>`:'';
+  const icon={loading:'',empty:'○',error:'!',success:'✓'}[kind]??'•';
+  if(kind==='loading')return `<section class="hp-state hp-state-loading" aria-busy="true" aria-live="polite"><div class="hp-state-skeleton"><span></span><span></span><span></span></div><span class="sr-only">${esc(title||'Carregando')}</span></section>`;
+  return `<section class="hp-state hp-state-${esc(kind)}" role="${kind==='error'?'alert':'status'}" aria-live="${kind==='error'?'assertive':'polite'}"><span class="hp-state-icon" aria-hidden="true">${icon}</span><div class="hp-state-copy"><strong>${esc(title)}</strong>${message?`<p>${esc(message)}</p>`:''}${action}</div></section>`;
+}
+function hpBindStateAction(host,handler){host?.querySelector('[data-hp-state-action]')?.addEventListener('click',handler)}
+function hpSetRegionState(host,kind,title,message='',options={}){
+  if(!host)return;host.innerHTML=hpUiState(kind,title,message,options);host.setAttribute('data-hp-state',kind);
+  if(options.onAction)hpBindStateAction(host,options.onAction);
+}
+function hpConfirm(options={}){
+  const modal=$('#hpConfirmModalV01941');if(!modal)return Promise.resolve(window.confirm(options.message||options.title||'Confirmar ação?'));
+  const title=modal.querySelector('[data-confirm-title]'),message=modal.querySelector('[data-confirm-message]'),confirmBtn=modal.querySelector('[data-confirm-yes]'),cancelBtn=modal.querySelector('[data-confirm-no]');
+  title.textContent=options.title||'Confirmar ação';message.textContent=options.message||'Esta ação precisa da sua confirmação.';confirmBtn.textContent=options.confirmLabel||'Confirmar';
+  confirmBtn.classList.toggle('danger',options.danger!==false);modal.classList.remove('hidden');modal.setAttribute('aria-hidden','false');document.body.classList.add('hp-confirm-open');
+  return new Promise(resolve=>{let done=false;const finish=value=>{if(done)return;done=true;modal.classList.add('hidden');modal.setAttribute('aria-hidden','true');document.body.classList.remove('hp-confirm-open');confirmBtn.onclick=cancelBtn.onclick=null;document.removeEventListener('keydown',key);resolve(value)};const key=e=>{if(e.key==='Escape')finish(false)};document.addEventListener('keydown',key);confirmBtn.onclick=()=>finish(true);cancelBtn.onclick=()=>finish(false);modal.onclick=e=>{if(e.target===modal)finish(false)};window.setTimeout(()=>cancelBtn.focus(),0)});
+}
+async function hpRunAction(button,action,options={}){
+  hpSetActionPending(button,true,options.pendingLabel||'Processando...');
+  try{const execute=()=>action();const result=options.actionKey?await hpRunOnceV01942(options.actionKey,execute):await execute();if(options.successMessage)toast(options.successMessage);return result}catch(err){toast(err.message||options.errorMessage||'Não foi possível concluir.',true);throw err}finally{hpSetActionPending(button,false)}
+}
+function hpErrorState(title='Não foi possível carregar',message='Tente novamente em alguns instantes.',retryLabel='Tentar novamente'){return hpUiState('error',title,message,{actionLabel:retryLabel,actionClass:'primary'})}
+function hpEmptyState(title='Nada por aqui',message='',actionLabel=''){return hpUiState('empty',title,message,{actionLabel})}
+function hpSuccessState(title='Tudo certo',message=''){return hpUiState('success',title,message)}
+
+// ===== v0.19.42 — Offline & Poor Connection Resilience =====
+const HP_OFFLINE_QUEUE_KEY_V01942='hp_offline_queue_v01942';
+const HP_DRAFT_PREFIX_V01942='hp_draft_v01942:';
+const hpInflightActionsV01942=new Set();
+let hpConnectivityV01942={online:navigator.onLine,slow:false,lastChangedAt:Date.now()};
+function hpIsNetworkErrorV01942(error){return !navigator.onLine||error?.name==='TypeError'||error?.name==='AbortError'||/network|fetch|conex[aã]o/i.test(String(error?.message||''))}
+function hpConnectivityBannerV01942(){return document.querySelector('#hpConnectivityBannerV01942')}
+function hpRenderConnectivityV01942(){
+  const banner=hpConnectivityBannerV01942();if(!banner)return;
+  const offline=!hpConnectivityV01942.online,slow=!offline&&hpConnectivityV01942.slow;
+  banner.classList.toggle('hidden',!offline&&!slow);banner.classList.toggle('is-slow',slow);banner.classList.toggle('is-offline',offline);
+  const title=banner.querySelector('[data-connectivity-title]'),message=banner.querySelector('[data-connectivity-message]');
+  if(title)title.textContent=offline?'Sem conexão': 'Conexão instável';
+  if(message)message.textContent=offline?'Você pode continuar lendo o que já foi carregado. Ações que dependem da internet serão retomadas quando a conexão voltar.':'A internet está lenta. Evite repetir envios: o AESYN mantém a ação em andamento e permite tentar novamente quando necessário.';
+}
+function hpSetConnectivityV01942(online,slow=false){
+  const changed=hpConnectivityV01942.online!==online||hpConnectivityV01942.slow!==slow;
+  hpConnectivityV01942={online,slow:online&&slow,lastChangedAt:changed?Date.now():hpConnectivityV01942.lastChangedAt};
+  document.documentElement.dataset.connectivity=online?(slow?'slow':'online'):'offline';hpRenderConnectivityV01942();
+}
+function hpOfflineQueueReadV01942(){try{return JSON.parse(sessionStorage.getItem(HP_OFFLINE_QUEUE_KEY_V01942)||'[]')}catch{return []}}
+function hpOfflineQueueWriteV01942(items){sessionStorage.setItem(HP_OFFLINE_QUEUE_KEY_V01942,JSON.stringify(items.slice(-30)))}
+function hpQueueSafeRequestV01942(path,options={}){
+  if(!options.queueIfOffline)throw new Error('Sem conexão. Reconecte-se para concluir esta ação.');
+  const method=String(options.method||'GET').toUpperCase();
+  if(!['PUT','POST'].includes(method))throw new Error('Esta ação não pode ser enfileirada offline com segurança.');
+  const key=String(options.queueKey||`${method}:${path}`);const items=hpOfflineQueueReadV01942().filter(x=>x.key!==key);
+  items.push({key,path,method,body:options.body||null,createdAt:new Date().toISOString()});hpOfflineQueueWriteV01942(items);
+  toast('Sem conexão. A ação segura foi guardada e será retomada quando a internet voltar.');return {queued:true,offline:true};
+}
+async function hpFlushOfflineQueueV01942(){
+  if(!navigator.onLine)return;const items=hpOfflineQueueReadV01942();if(!items.length)return;
+  const pending=[];for(let i=0;i<items.length;i++){const item=items[i];try{await api(item.path,{method:item.method,body:item.body,skipOfflineQueue:true})}catch(err){if(hpIsNetworkErrorV01942(err)){pending.push(...items.slice(i));break}}}
+  hpOfflineQueueWriteV01942(pending);if(!pending.length)toast('Conexão restabelecida. Ações pendentes foram sincronizadas.');
+}
+function hpDraftKeyV01942(el){const scope=el.closest('form')?.id||location.pathname||'page';return `${HP_DRAFT_PREFIX_V01942}${scope}:${el.dataset.hpDraft||el.name||el.id||'field'}`}
+function hpBindDraftsV01942(root=document){
+  root.querySelectorAll?.('[data-hp-draft]').forEach(el=>{if(el.dataset.hpDraftBound)return;el.dataset.hpDraftBound='true';const key=hpDraftKeyV01942(el);const saved=sessionStorage.getItem(key);if(saved&&!el.value)el.value=saved;el.addEventListener('input',()=>{if(el.value)sessionStorage.setItem(key,el.value);else sessionStorage.removeItem(key)})});
+}
+function hpClearDraftV01942(el){if(!el)return;sessionStorage.removeItem(hpDraftKeyV01942(el))}
+async function hpRunOnceV01942(key,action){if(hpInflightActionsV01942.has(key))throw new Error('Esta ação já está em andamento. Aguarde a conclusão.');hpInflightActionsV01942.add(key);try{return await action()}finally{hpInflightActionsV01942.delete(key)}}
+function hpInstallConnectivityV01942(){
+  hpSetConnectivityV01942(navigator.onLine,false);hpBindDraftsV01942(document);
+  new MutationObserver(mutations=>mutations.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)hpBindDraftsV01942(n)}))).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('offline',()=>{hpSetConnectivityV01942(false);toast('Sem conexão. O AESYN preservará o que for seguro até a internet voltar.',true)});
+  window.addEventListener('online',()=>{hpSetConnectivityV01942(true,false);hpFlushOfflineQueueV01942().catch(()=>{})});
+  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  const inspect=()=>{if(!navigator.onLine)return hpSetConnectivityV01942(false);const slow=Boolean(connection&&(connection.saveData||['slow-2g','2g'].includes(connection.effectiveType)));hpSetConnectivityV01942(true,slow)};
+  connection?.addEventListener?.('change',inspect);inspect();
+  document.querySelector('[data-connectivity-retry]')?.addEventListener('click',()=>{if(navigator.onLine){hpSetConnectivityV01942(true,false);hpFlushOfflineQueueV01942().catch(()=>{});location.reload()}else toast('Ainda estamos sem conexão.',true)});
+}
+async function api(path,options={}){
+  if(options.dedupeKey&&!options.__dedupeActive)return hpRunOnceV01942(options.dedupeKey,()=>api(path,{...options,__dedupeActive:true}));
+  if(!navigator.onLine&&!options.skipOfflineQueue)return hpQueueSafeRequestV01942(path,options);
+  const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const started=performance.now();
+  try{const r=await fetch(path,{...options,headers});const elapsed=performance.now()-started;if(elapsed>6000)hpSetConnectivityV01942(true,true);else if(navigator.onLine&&hpConnectivityV01942.slow)hpSetConnectivityV01942(true,false);const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout({notifyServer:false});throw new Error(d?.message||'Sua sessão expirou.')}if(r.status===403)throw new Error(d?.message||'Você não tem permissão para executar esta ação.');if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}catch(err){if(hpIsNetworkErrorV01942(err)){hpSetConnectivityV01942(navigator.onLine,navigator.onLine);if(options.queueIfOffline&&!options.skipOfflineQueue)return hpQueueSafeRequestV01942(path,options);throw new Error('Conexão indisponível ou instável. O que você digitou foi preservado; tente novamente quando a internet voltar.')}throw err}
+}
 async function hpUploadFile(path,file){
   const form=new FormData();form.append('file',file);
   const headers={};if(state.token)headers.Authorization=`Bearer ${state.token}`;
@@ -61,7 +143,7 @@ async function hpHydrateSecureImages(scope=document){
   const images=[...scope.querySelectorAll('img[data-secure-image]')];
   await Promise.all(images.map(async img=>{try{img.src=await hpSecureImageUrl(img.dataset.secureImage)}catch{img.alt='Imagem protegida indisponível'}}));
 }
-function setLoading(){content.innerHTML='<div class="card"><div class="skeleton" style="width:35%;margin-bottom:18px"></div><div class="skeleton" style="height:180px"></div></div>'}
+function setLoading(){content.innerHTML=hpUiState('loading','Carregando conteúdo')}
 const HP_THEME_KEY='hp_aesyn_theme';
 const HP_THEME_CHOICE_KEY='hp_aesyn_theme_chosen';
 function hpApplyTheme(theme){
@@ -6264,7 +6346,7 @@ function renderNotifications(d){
 }
 async function openNotification(el){
   const id=el.dataset.notification,link=el.dataset.notificationLink;
-  try{await api(`/api/notificacoes/${id}/lida`,{method:'PUT'})}catch{}
+  try{await api(`/api/notificacoes/${id}/lida`,{method:'PUT',queueIfOffline:true,queueKey:`notification-read:${id}`})}catch{}
   closeNotifications();
   await refreshNotifications();
   if((state.user?.tipoUsuario==='Paciente'||state.user?.tipo==='Paciente'||state.user?.tipoUsuario===6||state.user?.tipo===6)){
@@ -6730,7 +6812,7 @@ openNotification=async function(el){
   const link=el.dataset.notificationLink;
   if(link!=='followups')return __openNotification_v039(el);
   const id=el.dataset.notification;
-  try{await api(`/api/notificacoes/${id}/lida`,{method:'PUT'})}catch{}
+  try{await api(`/api/notificacoes/${id}/lida`,{method:'PUT',queueIfOffline:true,queueKey:`notification-read:${id}`})}catch{}
   closeNotifications();
   await refreshNotifications();
   navigate('followups');
@@ -9018,7 +9100,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.19.40';
+const HP_MVP_VERSION='0.19.42';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -9176,12 +9258,10 @@ function hpInstallMvpPreviewUi(){
     $('.sidebar')?.classList.remove('open');
   });
 
-  // Melhora a mensagem quando o navegador estiver offline.
-  window.addEventListener('offline',()=>toast('Sem conexão. Aguarde a internet voltar para continuar.',true));
-  window.addEventListener('online',()=>toast('Conexão restabelecida.'));
 }
 
 hpInstallMvpPreviewUi();
+hpInstallConnectivityV01942();
 
 
 // ===== v0.5.0 — RS visual identity / mobile + tablet UX =====
@@ -10240,12 +10320,12 @@ function hpChatShell(data,{professional=false,patient=null}={}){
     <section class="care-chat-head"><div><span class="eyebrow">AESYN • CONNECTED CARE</span><h2>${professional?'Conversa com '+esc(person):esc(person)}</h2><p>${professional?'Canal contextual para acompanhar dúvidas e adaptações do paciente.':'Tire dúvidas e registre contexto sem esperar a próxima consulta.'}${specialty}</p></div><span class="care-chat-sla">até 24h úteis</span></section>
     <div class="care-chat-safety"><b>Acompanhamento, não emergência.</b><span>${esc(data?.emergencia||'Em situações urgentes, procure atendimento pelos canais adequados.')}</span></div>
     <section class="care-chat-thread" id="careChatThread">${hpChatMessages(data?.mensagens||[])}</section>
-    <form class="care-chat-compose" id="careChatForm"><label>Assunto<select name="contexto">${hpChatContextOptions()}</select></label><label class="care-chat-text">Mensagem<textarea name="mensagem" maxlength="3000" rows="3" required placeholder="Escreva sua dúvida ou observação..."></textarea></label><button class="primary" type="submit">Enviar</button></form>
+    <form class="care-chat-compose" id="careChatForm"><label>Assunto<select name="contexto">${hpChatContextOptions()}</select></label><label class="care-chat-text">Mensagem<textarea name="mensagem" data-hp-draft="chat-message" maxlength="3000" rows="3" required placeholder="Escreva sua dúvida ou observação..."></textarea></label><button class="primary" type="submit">Enviar</button></form>
   </div>`;
 }
 function hpBindChatForm(url,reload){
   const form=$('#careChatForm'); if(!form)return;
-  form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button[type=submit]');b.disabled=true;b.textContent='Enviando...';try{await api(url,{method:'POST',body:JSON.stringify({mensagem:val(form,'mensagem'),contexto:val(form,'contexto')})});form.querySelector('[name=mensagem]').value='';await reload();setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},30)}catch(err){toast(err.message,true)}finally{b.disabled=false;b.textContent='Enviar'}};
+  form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button[type=submit]');b.disabled=true;b.textContent='Enviando...';try{await api(url,{method:'POST',body:JSON.stringify({mensagem:val(form,'mensagem'),contexto:val(form,'contexto')}),dedupeKey:`chat-send:${url}`});hpClearDraftV01942(form.querySelector('[name=mensagem]'));form.querySelector('[name=mensagem]').value='';await reload();setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},30)}catch(err){toast(err.message,true)}finally{b.disabled=false;b.textContent='Enviar'}};
 }
 async function loadPatientChat(){
   const host=$('#patientPortalContent');
@@ -10762,7 +10842,7 @@ hpChatShell=function(data,{professional=false,patient=null}={}){
     <div class="care-chat-safety"><b>Acompanhamento, não emergência.</b><span>${esc(data?.emergencia||'Em situações urgentes, procure atendimento pelos canais adequados.')}</span></div>
     <section class="care-chat-context-help-v01935"><div><strong>Converse com contexto.</strong><span>Arquivos podem ser enviados pela biblioteca. A base também aceita referências de treino, exercício, refeição e exame.</span></div><button class="ghost" type="button" data-chat-open-files>${professional?'Abrir arquivos do paciente':'Abrir meus arquivos'}</button></section>
     <section class="care-chat-thread" id="careChatThread">${hpChatMessages(data?.mensagens||[])}</section>
-    <form class="care-chat-compose" id="careChatForm"><label>Assunto<select name="contexto">${hpChatContextOptions()}</select></label><label class="care-chat-text">Mensagem<textarea name="mensagem" maxlength="3000" rows="3" required placeholder="Escreva sua dúvida ou observação..."></textarea></label><button class="primary" type="submit">Enviar</button></form>
+    <form class="care-chat-compose" id="careChatForm"><label>Assunto<select name="contexto">${hpChatContextOptions()}</select></label><label class="care-chat-text">Mensagem<textarea name="mensagem" data-hp-draft="chat-message" maxlength="3000" rows="3" required placeholder="Escreva sua dúvida ou observação..."></textarea></label><button class="primary" type="submit">Enviar</button></form>
   </div>`;
 };
 function hpChatErrorV01935(message,retry){
@@ -10770,7 +10850,7 @@ function hpChatErrorV01935(message,retry){
 }
 hpBindChatForm=function(url,reload){
   const form=$('#careChatForm'); if(!form)return;
-  form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button[type=submit]');const text=form.querySelector('[name=mensagem]');const original=text.value;b.disabled=true;b.textContent='Enviando...';try{await api(url,{method:'POST',body:JSON.stringify({mensagem:original,contexto:val(form,'contexto')})});text.value='';await reload();setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},30)}catch(err){text.value=original;toast(err.message||'Falha ao enviar. Sua mensagem foi preservada.',true)}finally{b.disabled=false;b.textContent='Enviar'}};
+  form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button[type=submit]');const text=form.querySelector('[name=mensagem]');const original=text.value;b.disabled=true;b.textContent='Enviando...';try{await api(url,{method:'POST',body:JSON.stringify({mensagem:original,contexto:val(form,'contexto')}),dedupeKey:`chat-send:${url}`});hpClearDraftV01942(text);text.value='';await reload();setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},30)}catch(err){text.value=original;toast(err.message||'Falha ao enviar. Sua mensagem foi preservada.',true)}finally{b.disabled=false;b.textContent='Enviar'}};
 };
 async function hpChatUnreadV01935(patientId=null){
   try{return await api(`/api/chat/nao-lidas${patientId?`?pacienteId=${encodeURIComponent(patientId)}`:''}`)}catch{return {total:0,possuiNaoLidas:false}}

@@ -1,6 +1,18 @@
-## v0.19.40 — In-App Notification Center
+## v0.19.42 — Offline & Poor Connection Resilience
 
-A central de notificações passa a concentrar alertas ativos, não lidos e histórico, com filtros por prioridade/categoria, badge global e deep links para a origem. Preferências de mensagens, atualizações do plano, lembretes e check-ins podem ser ajustadas na própria central, sem depender do push estar habilitado.
+O AESYN agora diferencia **sem internet**, **conexão instável** e falhas reais do aplicativo. A interface exibe um banner persistente, preserva rascunhos explicitamente marcados durante a sessão, oferece retry/reconexão e permite fila offline somente para ações declaradas como seguras e deduplicáveis. A API continua fora do cache do Service Worker.
+
+O chat já preserva o texto digitado via `sessionStorage`; marcações de notificação podem ser retomadas após reconexão; ações duplicadas podem ser protegidas por chave com `hpRunOnceV01942`. Nenhuma migration foi necessária.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. Desenvolvimento continua sem executar testes funcionais contra a VPS de produção.
+
+## v0.19.41 — UX State System
+
+O frontend passa a ter um contrato visual reutilizável para **loading/skeleton, vazio, erro, retry, sucesso, toast e confirmação**. O objetivo é reduzir estados improvisados e fazer telas novas seguirem o mesmo comportamento no desktop, mobile e dark mode.
+
+A confirmação própria `hpConfirm` também prepara a retirada gradual de `window.confirm` dos fluxos críticos, enquanto `hpRunAction` padroniza botões em processamento. Nenhuma migration foi necessária.
+
+**Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`. Desenvolvimento continua sem executar testes funcionais contra a VPS de produção.
 
 ### v0.19.35 — Chat Reliability & Context Foundation
 
