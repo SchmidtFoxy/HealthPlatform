@@ -1,3 +1,62 @@
+# v0.20.9-r5 — Action Center CSS Gate Fix (local)
+
+- Corrige o gate histórico CSS da `v0.20.8 — Professional Action Center 2.0`.
+- Remove a exigência do seletor inexistente `.professional-action-v0208`.
+- Passa a validar seletores reais da implementação:
+  - `.professional-action-center-v0208`
+  - `.professional-action-context-v0208`
+  - `.professional-action-grid-v0208`
+  - `.professional-action-safety-v0208`
+  - `.patient-overview-action-v0208`
+- Esta revisão é local e não deve gerar commit/push individual.
+- O commit será feito somente quando a versão funcional `v0.20.9` passar integralmente no `TESTAR.ps1`.
+- Mantém `VERSION.txt` em `0.20.9`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.20.9-r4 — Action Center Label Gate Fix
+
+- Corrige o gate histórico da `v0.20.8 — Professional Action Center 2.0`.
+- O teste passa a validar o rótulo real `Nota interna` em vez do texto inexistente `Registrar nota`.
+- Mantém as demais validações semânticas da feature intactas.
+- Mantém `VERSION.txt` em `0.20.9`, pois esta é uma revisão da mesma versão funcional.
+- Nenhuma alteração de schema, API, frontend ou comportamento do produto.
+
+# v0.20.9-r3 — Action Center Historical Gate Fix
+
+- Corrige o gate histórico da `v0.20.8 — Professional Action Center 2.0`.
+- Remove a exigência do token inexistente `HP_ACTION_CENTER_V0208='v0.20.8'`.
+- Mantém validações concretas da feature: marcador visual, Action Center, ações contextuais, CSS, solicitação de check-in via chat e documentação histórica.
+- Mantém `VERSION.txt` em `0.20.9`, pois esta é uma revisão da mesma versão funcional.
+- Nenhuma alteração de schema, API, frontend ou comportamento do produto.
+
+# v0.20.9-r2 — Historical Gate Stabilization
+
+- Corrige regressão no gate histórico `v0.20.7 — Attention Reasons 2.0`, que havia sido acoplado indevidamente à versão funcional corrente.
+- Estabiliza também o gate histórico `v0.20.8 — Professional Action Center 2.0`.
+- Gates históricos passam a validar somente a existência, integridade e documentação da feature entregue naquela versão.
+- `VERSION.txt`, Swagger, healthcheck, cache busting e Service Worker passam a ser validados somente pelo gate da versão funcional atual.
+- Evita que atualizações futuras de versão quebrem testes antigos por substituições de número de versão.
+- Mantém `VERSION.txt` em `0.20.9`, pois esta é uma revisão da mesma versão funcional.
+- Nenhuma alteração de schema, API, frontend ou comportamento do produto.
+
+# v0.20.9-r1 — TESTAR Parser Fix
+
+- Corrige erro de parsing em `TESTAR.ps1` causado por sequências `\n` literais no bloco de gates da v0.20.9.
+- Restaura quebras de linha reais no gate `Clinical & Sports Snapshot 2.0`.
+- Mantém `VERSION.txt` em `0.20.9`, pois esta é uma revisão da mesma versão funcional.
+- Nenhuma alteração de schema, API, frontend ou comportamento do produto.
+
+# v0.20.9 — Clinical & Sports Snapshot 2.0
+
+- Adiciona snapshot profissional compacto de corpo, performance, recuperação, nutrição e protocolo.
+- Reaproveita exclusivamente dados já carregados pelo prontuário; não adiciona endpoint ou migration.
+- Exibe tendência corporal quando existe avaliação anterior, carga de treino de 7 dias, recuperação e adesão.
+- Mostra comparação semanal quando há base longitudinal suficiente e últimos eventos da timeline.
+- Cada domínio é navegável para a fonte original, preservando explicabilidade.
+- Mantém decisão clínica e prescrição sob responsabilidade do profissional; nenhuma conduta é automatizada.
+- Atualiza README, ROADMAP, VERSION, healthcheck, Swagger, cache/PWA e gates para v0.20.9.
+- Próxima etapa: v0.20.10 — Period Comparison 2.0.
+
 # v0.20.8-r1 — Identity Gate Decoupling Fix
 
 - Corrige o gate histórico de identidade/PWA que ainda exigia URLs com `?v=0.20.7` após a evolução para v0.20.8.

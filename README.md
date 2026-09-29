@@ -51,6 +51,8 @@ Essa separação permite que o produto ajude alguém a começar uma corrida, exp
 
 ## Modelo de operação do desenvolvimento
 
+- Revisões locais `-r1`, `-r2`, etc. não são commitadas individualmente; commit/push ocorre apenas quando a versão funcional passa integralmente no `TESTAR.ps1`.
+
 O desenvolvimento é incremental e parte **sempre do estado real mais recente do projeto**. Arquivos existentes não devem ser substituídos por versões genéricas quando puderem ser evoluídos preservando histórico, decisões e gates já construídos.
 
 ### Fluxo local oficial
@@ -79,8 +81,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.20.8 — Professional Action Center 2.0`
-- **Revisão corrente:** `v0.20.8-r1 — Identity Gate Decoupling Fix`
+- **Versão funcional:** `v0.20.9 — Clinical & Sports Snapshot 2.0`
+- **Revisão corrente:** `v0.20.9-r5 — Action Center CSS Gate Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.20.9 — Clinical & Sports Snapshot 2.0`
 - **Baseline aprovada:** `v0.20.7 — Attention Reasons 2.0` aprovada pelo AESYN Product Gate; nenhuma falha funcional foi reportada no fechamento.
@@ -96,6 +98,11 @@ O **Patient Overview 2.0** adiciona um cockpit no topo da visão geral com objet
 > Explicar **por que** uma pessoa entrou em atenção e levar o profissional diretamente ao dado que merece revisão.
 
 O **Attention Reasons 2.0** transforma os sinais da Central de Atenção em motivos estruturados e deduplicados. Cada motivo informa classificação (prioridade, observação ou operacional), origem, período e contexto, com navegação direta para treino, alimentação, diário, timeline, pendências ou follow-ups. A classificação organiza trabalho; não cria diagnóstico nem altera conduta automaticamente.
+
+
+### O que a v0.20.9 entrega
+
+O prontuário profissional agora inclui o **Clinical & Sports Snapshot 2.0**, uma síntese compacta e navegável de corpo, performance, recuperação, nutrição e adesão ao protocolo. A visão reaproveita os dados longitudinais já carregados pelo prontuário, mostra tendência corporal quando existe avaliação anterior, carga de treino e recuperação de 7 dias, comparação semanal quando o backend possui base suficiente e os acontecimentos mais recentes da timeline. Cada bloco leva ao domínio de origem, preservando explicabilidade e decisão profissional. Não há diagnóstico, estimativa automática de risco ou alteração de prescrição.
 
 ### O que a v0.20.8 entrega
 

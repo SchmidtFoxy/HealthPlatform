@@ -1,4 +1,4 @@
-const HP_TAG_SEGMENTATION_V0205='v0.20.5';
+﻿const HP_TAG_SEGMENTATION_V0205='v0.20.5';
 const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.20.8';
+const HP_MVP_VERSION='0.20.9';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11457,4 +11457,64 @@ renderPatientTab=function(d){
     hpProfessionalActionCenterV0208({id:d?.p?.id||state.patientId,nome:d?.p?.nome||'Paciente'},{titulo:primary?.querySelector('b')?.textContent||'Acompanhamento do paciente',detalhe:primary?.querySelector('span')?.textContent||'Escolha a próxima ação profissional.'});
   };
   head.appendChild(btn);
+};
+
+
+// ===== v0.20.9 — Clinical & Sports Snapshot 2.0 =====
+const HP_CLINICAL_SPORTS_SNAPSHOT_V0209='v0.20.9';
+
+function hpSnapshotValueV0209(value,suffix='',fallback='—'){
+  return value!=null&&value!==''?`${value}${suffix}`:fallback;
+}
+function hpClinicalSportsSnapshotV0209(d){
+  const portal=d?.portal||{},body=portal?.evolucaoCorporal||{},readiness=portal?.prontidaoDiaria||{},nutrition=portal?.adesaoNutricional||{};
+  const recovery=portal?.tendenciaRecuperacao||{},load=portal?.cargaTreino||{},weekly=portal?.resumoSemanal||{},trend=portal?.tendenciaSemanal||{};
+  const protocol=d?.protocolo||{},summary=d?.resumoClinico||{},timeline=[...(d?.timeline||[])].sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const evaluations=[...(d?.avaliacoes||[])].filter(x=>x?.dataUtc).sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const currentEval=evaluations[0]||null,previousEval=evaluations[1]||null;
+  const adherence=protocol?.aderencia?.percentual;
+  const nutritionPct=nutrition?.adequacaoRegistradaPercentual;
+  const weight=body?.pesoKg??currentEval?.pesoKg;
+  const bodyFat=body?.percentualGordura??currentEval?.percentualGordura;
+  const weightDelta=body?.variacaoPesoKg??(currentEval?.pesoKg!=null&&previousEval?.pesoKg!=null?Number(currentEval.pesoKg)-Number(previousEval.pesoKg):null);
+  const training30=summary?.treinosUltimos30Dias||0;
+  const recoveryScore=recovery?.prontidaoMedia7;
+  const trainingLoad=load?.cargaInterna7;
+  const recent=timeline.slice(0,3);
+  const comparison=(trend?.itens||[]).slice(0,3);
+  const stateLabel=weekly?.estado||recovery?.tendencia||'Contexto em formação';
+  const stateTone=String(weekly?.estado||recovery?.nivelAtencao||'').toLowerCase().includes('revis')||String(recovery?.nivelAtencao||'').toLowerCase()==='alta'?'review':String(weekly?.estado||'').toLowerCase().includes('observ')?'observe':'steady';
+  return `<section class="clinical-sports-snapshot-v0209 ${stateTone}" data-clinical-sports-snapshot-v0209="${HP_CLINICAL_SPORTS_SNAPSHOT_V0209}">
+    <div class="clinical-sports-snapshot-head-v0209">
+      <div><span class="eyebrow">AESYN • CLINICAL & SPORTS SNAPSHOT 2.0</span><h3>Corpo, treino, recuperação e adesão em uma única leitura.</h3><p>Resumo longitudinal com origem rastreável. Use como ponto de partida para revisão profissional, nunca como diagnóstico automático.</p></div>
+      <span class="clinical-sports-state-v0209">${esc(stateLabel)}</span>
+    </div>
+    <div class="clinical-sports-domains-v0209">
+      <button type="button" data-snapshot-tab-v0209="avaliacoes"><small>CORPO</small><strong>${weight!=null?`${num(weight,1)} kg`:'—'}</strong><span>${bodyFat!=null?`${num(bodyFat,1)}% gordura`:currentEval?'avaliação registrada':'sem avaliação'}</span><i>${weightDelta!=null?`${Number(weightDelta)>0?'+':''}${num(weightDelta,1)} kg vs anterior`:'tendência pendente'}</i></button>
+      <button type="button" data-snapshot-tab-v0209="treinos"><small>PERFORMANCE</small><strong>${training30}</strong><span>sessões / 30 dias</span><i>${trainingLoad!=null?`${num(trainingLoad,0)} sRPE / 7 dias`:'carga em formação'}</i></button>
+      <button type="button" data-snapshot-tab-v0209="diario"><small>RECUPERAÇÃO</small><strong>${recoveryScore!=null?`${num(recoveryScore,0)}/100`:readiness?.score!=null?`${num(readiness.score,0)}/100`:'—'}</strong><span>${esc(recovery?.tendencia||readiness?.recomendacaoTreino||'sem tendência')}</span><i>${recovery?.sonoMedio7!=null?`${num(recovery.sonoMedio7,1)}h sono médio / 7d`:'dados em formação'}</i></button>
+      <button type="button" data-snapshot-tab-v0209="alimentacao"><small>NUTRIÇÃO</small><strong>${nutritionPct!=null?`${num(nutritionPct,0)}%`:'—'}</strong><span>adesão registrada</span><i>${nutrition?.refeicoesRegistradas!=null?`${nutrition.refeicoesRegistradas} refeição(ões) registrada(s)`:'abrir contexto nutricional'}</i></button>
+      <button type="button" data-snapshot-tab-v0209="diario"><small>PROTOCOLO</small><strong>${adherence!=null?`${num(adherence,0)}%`:'—'}</strong><span>adesão acompanhada</span><i>${protocol?.itens?.length?`${protocol.itens.filter(x=>x.ativo).length} item(ns) ativo(s)`:'sem protocolo ativo'}</i></button>
+    </div>
+    <div class="clinical-sports-lower-v0209">
+      <section class="clinical-sports-compare-v0209"><div class="clinical-sports-title-v0209"><span>COMPARAÇÃO RECENTE</span><small>quando houver base suficiente</small></div>${comparison.length?`<div>${comparison.map(x=>`<button type="button" data-snapshot-tab-v0209="diario"><b>${esc(x.titulo||'Indicador')}</b><span>${esc(x.valorAtual||'—')} <i>vs</i> ${esc(x.valorAnterior||'—')}</span><small>${esc(x.variacao||x.estado||'')}</small></button>`).join('')}</div>`:`<p class="clinical-sports-empty-v0209">Ainda não há duas janelas comparáveis suficientes. O AESYN exibirá tendências quando a base longitudinal crescer.</p>`}</section>
+      <section class="clinical-sports-recent-v0209"><div class="clinical-sports-title-v0209"><span>CONTEXTO LONGITUDINAL</span><small>últimos acontecimentos</small></div>${recent.length?`<div>${recent.map(x=>`<button type="button" data-snapshot-tab-v0209="timeline"><b>${esc(x.titulo||String(x.tipo||'Evento').replaceAll('_',' '))}</b><span>${fmtDateTime(x.dataUtc)}</span><small>${esc(hpTimelineCategoryLabel(x.categoria))}</small></button>`).join('')}</div>`:`<p class="clinical-sports-empty-v0209">Nenhum evento recente disponível.</p>`}</section>
+    </div>
+    <div class="clinical-sports-safety-v0209"><b>Leitura explicável</b><span>Cada bloco abre o domínio de origem. O snapshot resume registros existentes; não diagnostica, não estima risco e não altera prescrições.</span></div>
+  </section>`;
+}
+function hpBindClinicalSportsSnapshotV0209(){
+  $$('[data-snapshot-tab-v0209]').forEach(btn=>btn.onclick=()=>{
+    const target=document.querySelector(`.patient-tab[data-tab="${btn.dataset.snapshotTabV0209}"]`);
+    if(target)target.click();
+  });
+}
+const __renderPatientTab_v0209=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0209(d);
+  if(state.patientTab!=='resumo')return;
+  const overview=$('[data-patient-overview-v0206]');
+  if(!overview)return;
+  if(!document.querySelector('[data-clinical-sports-snapshot-v0209]'))overview.insertAdjacentHTML('afterend',hpClinicalSportsSnapshotV0209(d));
+  hpBindClinicalSportsSnapshotV0209();
 };

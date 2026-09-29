@@ -1,5 +1,15 @@
 # AESYN Performance — Roadmap Mestre
 
+> **Hotfix local v0.20.9-r5:** alinha o gate CSS histórico do `Professional Action Center 2.0` aos seletores que existem na implementação real. Revisões locais não geram commit/push; somente a versão funcional aprovada integralmente é versionada no Git. Nenhuma alteração funcional, de schema, API ou interface.
+
+> **Hotfix v0.20.9-r4:** alinha o gate histórico do `Professional Action Center 2.0` ao rótulo real da interface (`Nota interna`) em vez de exigir o texto inexistente `Registrar nota`. Nenhuma alteração funcional, de schema, API ou interface.
+
+> **Hotfix v0.20.9-r3:** corrige o gate histórico do `Professional Action Center 2.0`, removendo a exigência de um token de versão inexistente (`HP_ACTION_CENTER_V0208`) e mantendo validações semânticas da UI, ações, CSS, chat e documentação. Nenhuma alteração funcional, de schema, API ou interface.
+
+> **Hotfix v0.20.9-r2:** estabiliza os gates históricos de `v0.20.7` e `v0.20.8`. Gates de versões concluídas passam a validar somente a presença e documentação de suas features, sem exigir `VERSION.txt`, Swagger, healthcheck ou cache da versão funcional corrente. A validação de identidade da versão atual permanece responsabilidade exclusiva do gate atual. Nenhuma alteração funcional, de schema, API ou interface.
+
+> **Hotfix v0.20.9-r1:** corrige o bloco de gates da v0.20.9 em `TESTAR.ps1` que havia sido persistido com sequências `\\n` literais em vez de quebras de linha reais. Nenhuma alteração funcional, de schema, API ou interface.
+
 > **Hotfix v0.20.8-r1:** desacopla o gate histórico de identidade/PWA da versão específica de cache. O teste passa a validar a presença versionada de manifest, favicon e apple-touch-icon sem exigir `?v=0.20.7`, evitando regressão a cada nova versão pública. Nenhuma alteração funcional, de schema ou de versão pública.
 
 > **Hotfix v0.19.30-r3:** remove dependências restantes do antigo Mobile Action Hub (`mobile-now-hub`/`mobileNow*`) nos gates históricos e no frontend. Os testes passam a validar `Hoje em um olhar` e suas ações atuais; CSS/listeners mortos foram removidos. Nenhuma alteração funcional ou de schema.
@@ -15,7 +25,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.20.8-r1 — Professional Action Center 2.0 + Identity Gate Decoupling Fix
+> **Versão-base deste roadmap:** v0.20.9 — Clinical & Sports Snapshot 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -614,19 +624,35 @@ Entregue:
 
 **Próxima etapa:** `v0.20.9 — Clinical & Sports Snapshot 2.0`.
 
-## ⏭ v0.20.9 — Clinical & Sports Snapshot 2.0
+## ✅ v0.20.9 — Clinical & Sports Snapshot 2.0 — CONCLUÍDA
 
 **Objetivo humano:** permitir que o profissional enxergue corpo, performance, recuperação, nutrição e contexto longitudinal em uma leitura compacta antes de aprofundar o prontuário.
 
-Escopo-alvo:
+Entregue:
 - snapshot clínico-esportivo curto e explicável;
-- indicadores corporais recentes e tendência;
-- contexto de treino e recuperação;
-- adesão nutricional relevante;
-- eventos longitudinais recentes;
-- comparação simples com período anterior quando houver dados;
+- corpo com peso, composição disponível e tendência vs avaliação anterior;
+- performance com sessões dos últimos 30 dias e carga interna recente;
+- recuperação com prontidão/tendência e sono médio quando disponível;
+- adesão nutricional e adesão ao protocolo;
+- comparação semanal quando já existe base longitudinal;
+- últimos eventos da timeline;
 - navegação direta para o domínio de origem;
-- sem diagnóstico ou prescrição automatizada.
+- nenhuma migration, diagnóstico ou prescrição automatizada.
+
+**Próxima etapa:** `v0.20.10 — Period Comparison 2.0`.
+
+## ⏭ v0.20.10 — Period Comparison 2.0
+
+**Objetivo humano:** permitir que o profissional compare períodos sem interpretar gráficos isolados ou perder contexto temporal.
+
+Escopo-alvo:
+- semana atual vs anterior;
+- 30 dias atuais vs 30 dias anteriores quando houver base;
+- início vs atual em indicadores corporais disponíveis;
+- treino, recuperação, adesão e corpo em comparações separadas;
+- diferenças absolutas e percentuais apenas quando matematicamente adequadas;
+- origem e janela temporal explícitas;
+- dados insuficientes tratados sem inferências artificiais.
 
 ---
 
