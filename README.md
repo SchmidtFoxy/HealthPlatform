@@ -1,4 +1,4 @@
-# AESYN Performance
+﻿# AESYN Performance
 
 > **Athlete & Human Performance** — acompanhamento humano, saúde e performance centrados em medicina do esporte.
 
@@ -79,10 +79,10 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.20.6 — Patient Overview 2.0`
+- **Versão funcional:** `v0.20.7 — Attention Reasons 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
-- **Próxima versão planejada:** `v0.20.7 — Attention Reasons 2.0`
-- **Baseline aprovada:** gate anterior concluído com `2190/2190`; nenhum P0 reproduzível ficou aberto antes da v0.20.6.
+- **Próxima versão planejada:** `v0.20.8 — Professional Action Center 2.0`
+- **Baseline aprovada:** `v0.20.6 — Patient Overview 2.0` aprovada pelo AESYN Product Gate; nenhuma falha funcional foi reportada no fechamento.
 
 ### O que a v0.20.6 entrega
 
@@ -90,11 +90,17 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 O **Patient Overview 2.0** adiciona um cockpit no topo da visão geral com objetivo atual, status, tags, prontidão, treino recente, adesão, peso/tendência, planos vigentes, último evento longitudinal e uma próxima revisão operacional explicável. Os sinais servem para orientar a navegação; não diagnosticam, prescrevem ou alteram conduta automaticamente.
 
-### Objetivo da v0.20.7
+### O que a v0.20.7 entrega
 
-> Explicar melhor **por que** um paciente merece atenção e levar o profissional diretamente ao contexto que precisa revisar.
+> Explicar **por que** uma pessoa entrou em atenção e levar o profissional diretamente ao dado que merece revisão.
 
-A próxima etapa evolui os motivos de atenção para sinais mais consistentes, deduplicados e navegáveis, reutilizando a base já existente da Central de Atenção.
+O **Attention Reasons 2.0** transforma os sinais da Central de Atenção em motivos estruturados e deduplicados. Cada motivo informa classificação (prioridade, observação ou operacional), origem, período e contexto, com navegação direta para treino, alimentação, diário, timeline, pendências ou follow-ups. A classificação organiza trabalho; não cria diagnóstico nem altera conduta automaticamente.
+
+### Objetivo da v0.20.8
+
+> Diminuir a distância entre perceber um problema e executar a próxima ação profissional adequada.
+
+A próxima etapa será o **Professional Action Center 2.0**, reunindo ações rápidas e contextualizadas sem esconder o prontuário completo.
 
 ## Roadmap resumido rumo ao 1.0
 
@@ -134,6 +140,10 @@ O detalhamento e os replanejamentos pertencem ao [`ROADMAP.md`](ROADMAP.md).
 ---
 
 # Histórico de versões e capacidades
+
+## v0.20.7 — Attention Reasons 2.0
+
+A Central de Atenção passa a explicar cada motivo de forma estruturada, separando prioridade, observação e pendência operacional. Os sinais mostram origem, período, detalhe e destino de navegação, reduzindo a necessidade de procurar contexto em várias telas. Motivos equivalentes são deduplicados e a configuração profissional da fila continua preservada.
 
 ## v0.20.6 — Patient Overview 2.0
 

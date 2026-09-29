@@ -1,4 +1,4 @@
-const HP_TAG_SEGMENTATION_V0205='v0.20.5';
+﻿const HP_TAG_SEGMENTATION_V0205='v0.20.5';
 const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.20.6';
+const HP_MVP_VERSION='0.20.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11271,4 +11271,95 @@ renderPatientTab=function(d){
   if(!host)return;
   if(!host.querySelector('[data-patient-overview-v0206]'))host.insertAdjacentHTML('afterbegin',hpPatientOverviewV0206(d));
   hpBindPatientOverviewV0206();
+};
+
+
+// ===== v0.20.7 — Attention Reasons 2.0 =====
+const HP_ATTENTION_REASONS_V0207='v0.20.7';
+
+function hpAttentionReasonGroupClassV0207(group){
+  const g=String(group||'').toLowerCase();
+  return g==='prioridade'?'priority':g==='operacional'?'operational':'observation';
+}
+function hpAttentionReasonFallbackV0207(x){
+  const legacy=hpAttentionQueueReasonV0202(x)||[];
+  return legacy.map((title,index)=>({
+    grupo:index===0&&x.nivel==='Prioridade'?'Prioridade':'Observacao',
+    titulo:title,
+    detalhe:index===0?(x.resumo||'Sinal longitudinal relevante.'):'Motivo consolidado a partir dos sinais disponíveis.',
+    origem:'Central de Atenção',
+    periodo:'Contexto recente',
+    destino:'timeline'
+  }));
+}
+function hpAttentionReasonsV0207(x){
+  const source=Array.isArray(x?.motivos)&&x.motivos.length?x.motivos:hpAttentionReasonFallbackV0207(x);
+  const seen=new Set();
+  return source.filter(r=>{
+    const key=`${String(r.grupo||'').toLowerCase()}|${String(r.titulo||'').toLowerCase()}|${String(r.destino||'').toLowerCase()}`;
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  }).slice(0,5);
+}
+function hpAttentionReasonCardV0207(r,patientId){
+  const group=String(r.grupo||'Observacao');
+  const dest=String(r.destino||'timeline');
+  return `<article class="attention-reason-v0207 ${hpAttentionReasonGroupClassV0207(group)}">
+    <div class="attention-reason-v0207-head"><span>${esc(group==='Observacao'?'Observação':group)}</span><small>${esc(r.periodo||'Contexto recente')}</small></div>
+    <strong>${esc(r.titulo||'Sinal para revisar')}</strong>
+    <p>${esc(r.detalhe||'')}</p>
+    <footer><small>Origem: ${esc(r.origem||'Central de Atenção')}</small><button type="button" class="ghost attention-reason-open-v0207" data-patient="${patientId}" data-destination="${esc(dest)}">Ver contexto →</button></footer>
+  </article>`;
+}
+function hpAttentionQueueItemV0207(x){
+  const reasons=hpAttentionReasonsV0207(x);
+  const operational=reasons.filter(r=>String(r.grupo)==='Operacional').length;
+  const priority=reasons.filter(r=>String(r.grupo)==='Prioridade').length;
+  return `<article class="attention-queue-v0202-item attention-reasons-item-v0207 ${hpAttentionLevelClass(x.nivel)}" data-attention-queue-patient="${x.pacienteId}" data-score="${x.score||0}" data-attention-reasons-v0207="${HP_ATTENTION_REASONS_V0207}">
+    <div class="attention-queue-v0202-main"><div class="mini-avatar">${initials(x.pacienteNome)}</div><div><div class="professional-attention-title"><strong>${esc(x.pacienteNome)}</strong><span class="attention-level ${hpAttentionLevelClass(x.nivel)}">${esc(x.nivel==='Atencao'?'Atenção':x.nivel)}</span></div><p>${esc(x.resumo||'')}</p><small>Score ${x.score||0} • ${x.eventos7Dias||0} evento(s) em 7 dias • ${reasons.length} motivo(s) explicado(s)</small></div></div>
+    <div class="attention-reasons-summary-v0207">${priority?`<span class="priority">${priority} prioridade</span>`:''}${operational?`<span class="operational">${operational} operacional</span>`:''}${reasons.length-priority-operational>0?`<span>${reasons.length-priority-operational} observação</span>`:''}</div>
+    <div class="attention-reasons-list-v0207">${reasons.map(r=>hpAttentionReasonCardV0207(r,x.pacienteId)).join('')}</div>
+    <div class="attention-queue-v0202-actions"><button class="ghost attention-queue-open-v0202" data-id="${x.pacienteId}">Abrir paciente completo →</button></div>
+  </article>`;
+}
+function hpOpenAttentionReasonV0207(patientId,destination){
+  if(destination==='pendencias'){navigate('pendencias');return}
+  if(destination==='followups'){navigate('followups');return}
+  state.patientId=patientId;
+  state.patientTab=destination||'timeline';
+  navigate('paciente');
+}
+function hpRenderAttentionReasonsQueueV0207(d){
+  const config=hpAttentionQueueConfigV0202();
+  const source=[...(d.atencoes||[])];
+  const filtered=source.filter(x=>Number(x.score||0)>=Number(config.minScore||0) && (config.showObservation || x.nivel!=='Observacao'));
+  filtered.sort((a,b)=>{if(config.prioritizeOverdue){const od=Number(!!b.followUpVencido)-Number(!!a.followUpVencido);if(od)return od}return Number(b.score||0)-Number(a.score||0)});
+  return `<section class="card attention-queue-v0202 attention-reasons-v0207" data-attention-reasons-panel-v0207="${HP_ATTENTION_REASONS_V0207}">
+    <div class="card-head attention-queue-v0202-head"><div><span class="eyebrow">AESYN • ATTENTION REASONS 2.0</span><h3>Por que cada pessoa está em atenção?</h3><small>Motivos deduplicados, com origem, período e acesso direto ao contexto que gerou o sinal.</small></div><span class="attention-center-count">${filtered.length}</span></div>
+    <div class="attention-queue-v0202-controls">
+      <label><span>Score mínimo</span><select id="attentionQueueMinScoreV0202"><option value="0">Todos</option><option value="20">20+</option><option value="30">30+</option><option value="60">60+</option></select></label>
+      <label class="attention-queue-check-v0202"><input type="checkbox" id="attentionQueueObservationV0202" ${config.showObservation?'checked':''}><span>Incluir observação</span></label>
+      <label class="attention-queue-check-v0202"><input type="checkbox" id="attentionQueueOverdueV0202" ${config.prioritizeOverdue?'checked':''}><span>Priorizar follow-up vencido</span></label>
+    </div>
+    <div class="attention-reasons-legend-v0207"><span class="priority">Prioridade</span><span>Observação</span><span class="operational">Operacional</span><small>Classificação serve para organizar revisão; não representa diagnóstico.</small></div>
+    <div class="attention-queue-v0202-list">${filtered.length?filtered.map(hpAttentionQueueItemV0207).join(''):hpCentralEmpty('Nenhum paciente atende aos critérios atuais da fila.')}</div>
+    <p class="professional-attention-note">O AESYN explica a origem do sinal e leva ao dado relacionado. Interpretação e conduta permanecem com o profissional.</p>
+  </section>`;
+}
+function hpWireAttentionReasonsV0207(d){
+  hpWireAttentionQueueV0202(d);
+  $$('.attention-reason-open-v0207').forEach(b=>b.onclick=e=>{e.stopPropagation();hpOpenAttentionReasonV0207(b.dataset.patient,b.dataset.destination)});
+}
+const __loadCentralDia_v0207=loadCentralDia;
+loadCentralDia=async function(){
+  await __loadCentralDia_v0207();
+  try{
+    const d=await api(`/api/central-dia?offsetMinutos=${hpBrowserOffsetMinutes()}`);
+    const old=content.querySelector('[data-attention-queue-v0202]');
+    if(old){
+      old.insertAdjacentHTML('afterend',hpRenderAttentionReasonsQueueV0207(d));
+      old.remove();
+      hpWireAttentionReasonsV0207(d);
+    }
+  }catch(err){console.warn('Attention Reasons 2.0 indisponível:',err)}
 };

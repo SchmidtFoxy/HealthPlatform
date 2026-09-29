@@ -1,4 +1,4 @@
-# AESYN Performance — Roadmap Mestre
+﻿# AESYN Performance — Roadmap Mestre
 
 > **Hotfix v0.19.30-r3:** remove dependências restantes do antigo Mobile Action Hub (`mobile-now-hub`/`mobileNow*`) nos gates históricos e no frontend. Os testes passam a validar `Hoje em um olhar` e suas ações atuais; CSS/listeners mortos foram removidos. Nenhuma alteração funcional ou de schema.
 
@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.20.6 — Patient Overview 2.0
+> **Versão-base deste roadmap:** v0.20.7 — Attention Reasons 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -575,18 +575,37 @@ O gate anterior passou com `2190/2190`, removendo o bloqueio operacional antes d
 
 **Próxima etapa:** `v0.20.7 — Attention Reasons 2.0`.
 
-## ⏭ v0.20.7 — Attention Reasons 2.0
+## ✅ v0.20.7 — Attention Reasons 2.0 — CONCLUÍDA
 
-**Objetivo humano:** o profissional deve entender imediatamente por que uma pessoa entrou em atenção, sem precisar caçar contexto em diversas telas.
+**Objetivo humano:** o profissional entende imediatamente por que uma pessoa entrou em atenção, sem precisar caçar contexto em diversas telas.
+
+Entregue:
+- motivos estruturados retornados pela Central do Dia;
+- deduplicação de sinais equivalentes;
+- separação entre prioridade, observação e pendência operacional;
+- origem, período e detalhe visíveis em cada motivo;
+- navegação direta para treino, alimentação, diário, timeline, pendências ou follow-ups;
+- fallback seguro para sinais legados;
+- preservação dos filtros configuráveis da Patient Attention Queue 2.0;
+- responsividade e dark mode;
+- nenhuma inferência diagnóstica ou alteração automática de conduta.
+
+**Próxima etapa:** `v0.20.8 — Professional Action Center 2.0`.
+
+## ⏭ v0.20.8 — Professional Action Center 2.0
+
+**Objetivo humano:** depois de entender o motivo de atenção, o profissional deve conseguir executar a próxima ação adequada com o mínimo de atrito.
 
 Escopo-alvo:
-- consolidar sinais já existentes;
-- deduplicar motivos equivalentes;
-- separar prioridade, observação e pendência operacional;
-- mostrar origem, período e dado que gerou cada motivo;
-- navegação direta ao contexto;
-- nenhuma inferência diagnóstica automática;
-- preservar configurabilidade da Central de Atenção.
+- ações rápidas a partir do contexto do paciente;
+- enviar mensagem;
+- registrar nota interna;
+- abrir/revisar treino;
+- abrir/revisar plano alimentar;
+- solicitar check-in;
+- criar follow-up ou pendência;
+- manter toda ação explícita e auditável;
+- sem automação de conduta clínica.
 
 ---
 

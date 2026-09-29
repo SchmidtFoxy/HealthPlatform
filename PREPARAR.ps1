@@ -22,7 +22,7 @@ function Assert-AesynLivingDocs {
 
     $readme = Get-Content (Join-Path $root "README.md") -Encoding UTF8 -Raw
     $roadmap = Get-Content (Join-Path $root "ROADMAP.md") -Encoding UTF8 -Raw
-    foreach ($token in @("North Star", "Documentação viva obrigatória", "Patient Overview 2.0")) {
+    foreach ($token in @("North Star", "Documentação viva obrigatória", "Attention Reasons 2.0")) {
         if (-not $readme.Contains($token)) { throw "Governanca AESYN: README desatualizado; token ausente: $token" }
     }
     foreach ($token in @("Direção mestre definida em 2026-09-29", "AESYN Explore", "AESYN 1.0")) {

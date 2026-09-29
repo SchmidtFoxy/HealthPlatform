@@ -1,4 +1,4 @@
-using HealthPlatform.Api.Services;
+﻿using HealthPlatform.Api.Services;
 using HealthPlatform.Domain.Enums;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +50,14 @@ public sealed record CentralDiaSolicitacaoResponse(
     string Status,
     bool Vencida);
 
+public sealed record CentralDiaAtencaoMotivoResponse(
+    string Grupo,
+    string Titulo,
+    string Detalhe,
+    string Origem,
+    string Periodo,
+    string Destino);
+
 public sealed record CentralDiaAtencaoResponse(
     Guid PacienteId,
     string PacienteNome,
@@ -60,7 +68,8 @@ public sealed record CentralDiaAtencaoResponse(
     int PendenciasAlta,
     bool FollowUpVencido,
     string Resumo,
-    IReadOnlyCollection<string> Sinais);
+    IReadOnlyCollection<string> Sinais,
+    IReadOnlyCollection<CentralDiaAtencaoMotivoResponse> Motivos);
 
 public sealed record CentralDiaResponse(
     DateTime GeradoEmUtc,
@@ -322,11 +331,73 @@ public sealed class CentralDiaController(
                 : "Observacao";
 
             var sinais = new List<string>();
+            var motivos = new List<CentralDiaAtencaoMotivoResponse>();
+
+            static string DestinoDoSinal(string categoria, string tipo)
+            {
+                var texto = $"{categoria} {tipo}".ToLowerInvariant();
+                if (texto.Contains("treino") || texto.Contains("exercicio")) return "treinos";
+                if (texto.Contains("aliment") || texto.Contains("refe") || texto.Contains("nutri")) return "alimentacao";
+                if (texto.Contains("check") || texto.Contains("sono") || texto.Contains("dor") || texto.Contains("readiness") || texto.Contains("pront")) return "diario";
+                return "timeline";
+            }
+
             foreach (var grupo in recorrencias.Take(3))
-                sinais.Add($"{grupo.Key.Categoria}: {grupo.Key.Tipo} recorrente ({grupo.Count()}x)");
-            if (eventos7 > 0) sinais.Add($"{eventos7} evento(s) de adesao em 7 dias");
-            if (pendenciasAltaPaciente > 0) sinais.Add($"{pendenciasAltaPaciente} pendencia(s) de alta prioridade");
-            if (followUpVencido) sinais.Add("follow-up vencido");
+            {
+                var ultimaOcorrencia = grupo.Max(x => x.DataHoraUtc);
+                var prioridadeGrupo = grupo.Max(x => x.Prioridade);
+                var titulo = $"{grupo.Key.Categoria}: {grupo.Key.Tipo} recorrente";
+                sinais.Add($"{titulo} ({grupo.Count()}x)");
+                motivos.Add(new CentralDiaAtencaoMotivoResponse(
+                    prioridadeGrupo >= 3 ? "Prioridade" : "Observacao",
+                    titulo,
+                    $"{grupo.Count()} ocorrencia(s); ultima em {ultimaOcorrencia:dd/MM/yyyy HH:mm}.",
+                    "Aderencia longitudinal",
+                    "Ultimos 7 dias",
+                    DestinoDoSinal(grupo.Key.Categoria, grupo.Key.Tipo)));
+            }
+
+            if (eventos7 > 0 && recorrencias.Count == 0)
+            {
+                sinais.Add($"{eventos7} evento(s) de adesao em 7 dias");
+                motivos.Add(new CentralDiaAtencaoMotivoResponse(
+                    maiorPrioridade >= 3 ? "Prioridade" : "Observacao",
+                    "Evento recente de adesao",
+                    $"{eventos7} evento(s) registrado(s), sem recorrencia equivalente suficiente para formar padrao.",
+                    "Aderencia longitudinal",
+                    "Ultimos 7 dias",
+                    "timeline"));
+            }
+
+            if (pendenciasAltaPaciente > 0)
+            {
+                sinais.Add($"{pendenciasAltaPaciente} pendencia(s) de alta prioridade");
+                motivos.Add(new CentralDiaAtencaoMotivoResponse(
+                    "Operacional",
+                    "Pendencia de alta prioridade",
+                    $"{pendenciasAltaPaciente} pendencia(s) aberta(s) exigem revisao profissional.",
+                    "Pendencias",
+                    "Atual",
+                    "pendencias"));
+            }
+
+            if (followUpVencido)
+            {
+                sinais.Add("follow-up vencido");
+                motivos.Add(new CentralDiaAtencaoMotivoResponse(
+                    "Operacional",
+                    "Follow-up vencido",
+                    "Existe contato de acompanhamento com prazo vencido.",
+                    "Follow-up",
+                    "Atual",
+                    "followups"));
+            }
+
+            var motivosDeduplicados = motivos
+                .GroupBy(x => new { x.Grupo, x.Titulo, x.Destino })
+                .Select(g => g.First())
+                .Take(5)
+                .ToList();
 
             var resumo = recorrencias.Count > 0
                 ? "Padrao recorrente detectado; revisar contexto antes de ajustar a conduta."
@@ -346,7 +417,8 @@ public sealed class CentralDiaController(
                 pendenciasAltaPaciente,
                 followUpVencido,
                 resumo,
-                sinais));
+                sinais,
+                motivosDeduplicados));
         }
 
         var atencoesOrdenadas = atencoes

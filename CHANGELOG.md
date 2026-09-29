@@ -1,3 +1,14 @@
+﻿# v0.20.7 — Attention Reasons 2.0
+
+- Estrutura os motivos de atenção retornados pela Central do Dia com grupo, título, detalhe, origem, período e destino.
+- Deduplica motivos equivalentes e separa Prioridade, Observação e Operacional.
+- Evolui a Patient Attention Queue 2.0 para explicar por que cada pessoa está em atenção.
+- Adiciona navegação direta do motivo para treino, alimentação, diário, timeline, pendências ou follow-ups.
+- Mantém filtros locais de score, observações e prioridade de follow-up vencido.
+- Preserva fallback para sinais legados e não introduz diagnóstico ou mudança automática de conduta.
+- Atualiza README, ROADMAP, VERSION, healthcheck, Swagger, PWA/cache e gates para v0.20.7.
+- Nenhuma migration nova.
+
 # v0.20.6 — Patient Overview 2.0
 
 - Adiciona cockpit de leitura rápida no topo da visão geral profissional do paciente.
