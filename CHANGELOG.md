@@ -1,4 +1,22 @@
-﻿# v0.20.7 — Attention Reasons 2.0
+# v0.20.8-r1 — Identity Gate Decoupling Fix
+
+- Corrige o gate histórico de identidade/PWA que ainda exigia URLs com `?v=0.20.7` após a evolução para v0.20.8.
+- O gate passa a validar que manifest, favicon e apple-touch-icon continuam versionados, sem acoplamento a uma versão funcional específica.
+- Evita que a mesma falsa regressão reapareça nas próximas versões por causa de cache busting.
+- Mantém `VERSION.txt` em `0.20.8`: trata-se de revisão/hotfix da mesma versão funcional.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.20.8 — Professional Action Center 2.0
+
+- Adiciona Action Center contextual à Central de Atenção e ao Patient Overview.
+- Reúne chat, solicitação de check-in, nota interna, revisão de treino, revisão nutricional, follow-up, pendência e agendamento de retorno.
+- Solicitação de check-in exige confirmação e usa o chat já auditável do acompanhamento.
+- Preserva acesso ao prontuário completo e não executa conduta clínica automaticamente.
+- Reaproveita APIs e fluxos existentes, sem persistência paralela ou migration nova.
+- Atualiza README, ROADMAP, VERSION, healthcheck, Swagger, PWA/cache e gates para v0.20.8.
+- Próxima etapa: v0.20.9 — Clinical & Sports Snapshot 2.0.
+
+# v0.20.7 — Attention Reasons 2.0
 
 - Estrutura os motivos de atenção retornados pela Central do Dia com grupo, título, detalhe, origem, período e destino.
 - Deduplica motivos equivalentes e separa Prioridade, Observação e Operacional.

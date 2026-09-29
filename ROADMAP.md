@@ -1,4 +1,6 @@
-﻿# AESYN Performance — Roadmap Mestre
+# AESYN Performance — Roadmap Mestre
+
+> **Hotfix v0.20.8-r1:** desacopla o gate histórico de identidade/PWA da versão específica de cache. O teste passa a validar a presença versionada de manifest, favicon e apple-touch-icon sem exigir `?v=0.20.7`, evitando regressão a cada nova versão pública. Nenhuma alteração funcional, de schema ou de versão pública.
 
 > **Hotfix v0.19.30-r3:** remove dependências restantes do antigo Mobile Action Hub (`mobile-now-hub`/`mobileNow*`) nos gates históricos e no frontend. Os testes passam a validar `Hoje em um olhar` e suas ações atuais; CSS/listeners mortos foram removidos. Nenhuma alteração funcional ou de schema.
 
@@ -13,7 +15,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.20.7 — Attention Reasons 2.0
+> **Versão-base deste roadmap:** v0.20.8-r1 — Professional Action Center 2.0 + Identity Gate Decoupling Fix
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -592,20 +594,39 @@ Entregue:
 
 **Próxima etapa:** `v0.20.8 — Professional Action Center 2.0`.
 
-## ⏭ v0.20.8 — Professional Action Center 2.0
+## ✅ v0.20.8 — Professional Action Center 2.0 — CONCLUÍDA
 
-**Objetivo humano:** depois de entender o motivo de atenção, o profissional deve conseguir executar a próxima ação adequada com o mínimo de atrito.
+**Objetivo humano:** depois de entender o motivo de atenção, o profissional consegue executar a próxima ação adequada com o mínimo de atrito.
+
+Entregue:
+- Action Center contextual a partir da Central de Atenção;
+- Action Center disponível também no Patient Overview;
+- abertura direta do chat profissional;
+- solicitação explícita de check-in enviada pelo chat após confirmação;
+- acesso às notas internas profissionais;
+- revisão direta de treino e nutrição;
+- registro de follow-up;
+- criação de pendência;
+- agendamento de retorno;
+- acesso preservado ao prontuário completo;
+- nenhuma automação de conduta clínica;
+- nenhuma migration nova.
+
+**Próxima etapa:** `v0.20.9 — Clinical & Sports Snapshot 2.0`.
+
+## ⏭ v0.20.9 — Clinical & Sports Snapshot 2.0
+
+**Objetivo humano:** permitir que o profissional enxergue corpo, performance, recuperação, nutrição e contexto longitudinal em uma leitura compacta antes de aprofundar o prontuário.
 
 Escopo-alvo:
-- ações rápidas a partir do contexto do paciente;
-- enviar mensagem;
-- registrar nota interna;
-- abrir/revisar treino;
-- abrir/revisar plano alimentar;
-- solicitar check-in;
-- criar follow-up ou pendência;
-- manter toda ação explícita e auditável;
-- sem automação de conduta clínica.
+- snapshot clínico-esportivo curto e explicável;
+- indicadores corporais recentes e tendência;
+- contexto de treino e recuperação;
+- adesão nutricional relevante;
+- eventos longitudinais recentes;
+- comparação simples com período anterior quando houver dados;
+- navegação direta para o domínio de origem;
+- sem diagnóstico ou prescrição automatizada.
 
 ---
 

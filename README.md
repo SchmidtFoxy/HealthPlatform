@@ -1,4 +1,4 @@
-﻿# AESYN Performance
+# AESYN Performance
 
 > **Athlete & Human Performance** — acompanhamento humano, saúde e performance centrados em medicina do esporte.
 
@@ -79,10 +79,11 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.20.7 — Attention Reasons 2.0`
+- **Versão funcional:** `v0.20.8 — Professional Action Center 2.0`
+- **Revisão corrente:** `v0.20.8-r1 — Identity Gate Decoupling Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
-- **Próxima versão planejada:** `v0.20.8 — Professional Action Center 2.0`
-- **Baseline aprovada:** `v0.20.6 — Patient Overview 2.0` aprovada pelo AESYN Product Gate; nenhuma falha funcional foi reportada no fechamento.
+- **Próxima versão planejada:** `v0.20.9 — Clinical & Sports Snapshot 2.0`
+- **Baseline aprovada:** `v0.20.7 — Attention Reasons 2.0` aprovada pelo AESYN Product Gate; nenhuma falha funcional foi reportada no fechamento.
 
 ### O que a v0.20.6 entrega
 
@@ -96,11 +97,17 @@ O **Patient Overview 2.0** adiciona um cockpit no topo da visão geral com objet
 
 O **Attention Reasons 2.0** transforma os sinais da Central de Atenção em motivos estruturados e deduplicados. Cada motivo informa classificação (prioridade, observação ou operacional), origem, período e contexto, com navegação direta para treino, alimentação, diário, timeline, pendências ou follow-ups. A classificação organiza trabalho; não cria diagnóstico nem altera conduta automaticamente.
 
-### Objetivo da v0.20.8
+### O que a v0.20.8 entrega
 
 > Diminuir a distância entre perceber um problema e executar a próxima ação profissional adequada.
 
-A próxima etapa será o **Professional Action Center 2.0**, reunindo ações rápidas e contextualizadas sem esconder o prontuário completo.
+O **Professional Action Center 2.0** reúne, no mesmo contexto, chat, solicitação explícita de check-in, nota interna, revisão de treino, revisão nutricional, follow-up, pendência e agendamento de retorno. O Action Center aparece tanto na Central de Atenção quanto no Patient Overview, sempre preservando o prontuário completo e exigindo ação consciente do profissional.
+
+### Objetivo da v0.20.9
+
+> Transformar dados clínicos e esportivos dispersos em um snapshot longitudinal curto, comparável e útil durante revisão e consulta.
+
+A próxima etapa será o **Clinical & Sports Snapshot 2.0**, aproximando corpo, recuperação, treinamento, nutrição e contexto longitudinal em uma leitura profissional compacta.
 
 ## Roadmap resumido rumo ao 1.0
 
@@ -140,6 +147,10 @@ O detalhamento e os replanejamentos pertencem ao [`ROADMAP.md`](ROADMAP.md).
 ---
 
 # Histórico de versões e capacidades
+
+## v0.20.8 — Professional Action Center 2.0
+
+A Central de Atenção e o Patient Overview passam a oferecer uma camada única de ações rápidas. O profissional pode abrir chat, solicitar check-in, registrar nota interna, revisar treino ou nutrição, registrar follow-up, criar pendência ou agendar retorno sem procurar cada ferramenta em módulos diferentes. Toda ação continua explícita, contextual e dependente de decisão profissional.
 
 ## v0.20.7 — Attention Reasons 2.0
 

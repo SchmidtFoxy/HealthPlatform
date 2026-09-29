@@ -1,4 +1,4 @@
-﻿const HP_TAG_SEGMENTATION_V0205='v0.20.5';
+const HP_TAG_SEGMENTATION_V0205='v0.20.5';
 const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.20.7';
+const HP_MVP_VERSION='0.20.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11362,4 +11362,99 @@ loadCentralDia=async function(){
       hpWireAttentionReasonsV0207(d);
     }
   }catch(err){console.warn('Attention Reasons 2.0 indisponível:',err)}
+};
+
+
+// ===== v0.20.8 — Professional Action Center 2.0 =====
+const HP_PROF_ACTION_CENTER_V0208='v0.20.8';
+
+function hpOpenPatientTabV0208(patientId,tab){
+  closeClinicalAction();
+  state.patientId=patientId;
+  state.patientTab=tab;
+  navigate('paciente');
+}
+
+function hpProfessionalActionCenterV0208(patient,context=null){
+  const p=patient||{};
+  if(!p.id){toast('Paciente não identificado para o Action Center.',true);return}
+  const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.remove('hidden');
+  const contextTitle=context?.titulo||'Acompanhamento do paciente';
+  const contextDetail=context?.detalhe||'Escolha uma ação explícita. Nenhuma conduta clínica é executada automaticamente.';
+  box.innerHTML=`<div class="professional-action-center-v0208" data-professional-action-center-v0208="${HP_PROF_ACTION_CENTER_V0208}">
+    <div class="modal-heading"><span class="eyebrow">AESYN • PROFESSIONAL ACTION CENTER 2.0</span><h2>Agir com contexto</h2><p>${esc(p.nome||'Paciente')} • transforme revisão em próxima ação sem perder o prontuário de vista.</p></div>
+    <section class="professional-action-context-v0208"><span>CONTEXTO ATUAL</span><strong>${esc(contextTitle)}</strong><p>${esc(contextDetail)}</p></section>
+    <div class="professional-action-grid-v0208">
+      <button type="button" data-pac-action-v0208="chat"><span>✉</span><div><b>Abrir chat</b><small>Conversar com contexto registrado.</small></div></button>
+      <button type="button" data-pac-action-v0208="checkin"><span>✓</span><div><b>Solicitar check-in</b><small>Enviar uma solicitação simples pelo chat.</small></div></button>
+      <button type="button" data-pac-action-v0208="note"><span>▣</span><div><b>Nota interna</b><small>Registrar contexto privado da equipe.</small></div></button>
+      <button type="button" data-pac-action-v0208="training"><span>🏋</span><div><b>Revisar treino</b><small>Abrir o plano de treinamento do paciente.</small></div></button>
+      <button type="button" data-pac-action-v0208="nutrition"><span>◒</span><div><b>Revisar nutrição</b><small>Abrir o plano alimentar vigente.</small></div></button>
+      <button type="button" data-pac-action-v0208="followup"><span>↻</span><div><b>Registrar follow-up</b><small>Documentar contato e próximo retorno.</small></div></button>
+      <button type="button" data-pac-action-v0208="pending"><span>!</span><div><b>Criar pendência</b><small>Definir uma tarefa com prioridade e prazo.</small></div></button>
+      <button type="button" data-pac-action-v0208="return"><span>◷</span><div><b>Agendar retorno</b><small>Criar uma consulta de acompanhamento.</small></div></button>
+    </div>
+    <div class="professional-action-safety-v0208"><b>Ação profissional explícita</b><span>O AESYN reduz cliques e preserva contexto. Revisão, mensagem, registro e conduta continuam dependendo de uma ação consciente do profissional.</span></div>
+    <div class="form-actions"><button type="button" class="secondary" data-close-action-center-v0208>Fechar</button><button type="button" class="ghost" data-open-full-patient-v0208>Prontuário completo →</button></div>
+  </div>`;
+  box.querySelector('[data-close-action-center-v0208]').onclick=closeClinicalAction;
+  box.querySelector('[data-open-full-patient-v0208]').onclick=()=>{closeClinicalAction();openPatient(p.id)};
+  box.querySelectorAll('[data-pac-action-v0208]').forEach(btn=>btn.onclick=async()=>{
+    const action=btn.dataset.pacActionV0208;
+    if(action==='chat'){hpOpenPatientTabV0208(p.id,'chat');return}
+    if(action==='note'){closeClinicalAction();hpOpenInternalNotesV0204({id:p.id,nome:p.nome||'Paciente'});return}
+    if(action==='training'){hpOpenPatientTabV0208(p.id,'treinos');return}
+    if(action==='nutrition'){hpOpenPatientTabV0208(p.id,'alimentacao');return}
+    if(action==='followup'){closeClinicalAction();openPortfolioContact(p.id,p.nome||'Paciente');return}
+    if(action==='pending'){closeClinicalAction();openPortfolioPending(p.id,p.nome||'Paciente');return}
+    if(action==='return'){closeClinicalAction();openPortfolioReturn(p.id,p.nome||'Paciente');return}
+    if(action==='checkin'){
+      if(!confirm(`Enviar para ${p.nome||'o paciente'} uma solicitação de check-in pelo chat?`))return;
+      hpSetActionPending(btn,true,'Enviando...');
+      try{
+        await api(`/api/chat/pacientes/${p.id}/mensagens`,{method:'POST',body:JSON.stringify({mensagem:'Quando puder, registre seu check-in no AESYN para atualizarmos seu contexto de acompanhamento.',contexto:'Geral'}),dedupeKey:`action-center-checkin:${p.id}`});
+        toast('Solicitação de check-in enviada pelo chat.');
+        closeClinicalAction();
+      }catch(err){toast(err.message||'Não foi possível enviar a solicitação.',true);hpSetActionPending(btn,false,'Solicitar check-in')}
+    }
+  });
+}
+
+function hpWireActionCenterAttentionV0208(){
+  $$('.attention-reasons-item-v0207').forEach(card=>{
+    const actions=card.querySelector('.attention-queue-v0202-actions');
+    if(!actions||actions.querySelector('[data-action-center-v0208]'))return;
+    const patientId=card.dataset.attentionQueuePatient;
+    const patientName=card.querySelector('.professional-attention-title strong')?.textContent?.trim()||'Paciente';
+    const reason=card.querySelector('.attention-reason-v0207');
+    const title=reason?.querySelector('strong')?.textContent?.trim()||'Paciente em atenção';
+    const detail=reason?.querySelector('p')?.textContent?.trim()||'Revise o contexto antes de decidir a próxima ação.';
+    const btn=document.createElement('button');
+    btn.type='button';btn.className='primary';btn.dataset.actionCenterV0208='1';btn.textContent='Agir agora';
+    btn.onclick=e=>{e.stopPropagation();hpProfessionalActionCenterV0208({id:patientId,nome:patientName},{titulo:title,detalhe:detail})};
+    actions.prepend(btn);
+  });
+}
+
+const __loadCentralDia_v0208=loadCentralDia;
+loadCentralDia=async function(){
+  await __loadCentralDia_v0208();
+  hpWireActionCenterAttentionV0208();
+};
+
+const __renderPatientTab_v0208=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0208(d);
+  if(state.patientTab!=='resumo')return;
+  const overview=$('[data-patient-overview-v0206]');
+  const head=overview?.querySelector('.patient-overview-head-v0206');
+  if(!head||head.querySelector('[data-overview-action-center-v0208]'))return;
+  const btn=document.createElement('button');
+  btn.type='button';btn.className='secondary patient-overview-action-v0208';btn.dataset.overviewActionCenterV0208='1';btn.textContent='Ações rápidas';
+  btn.onclick=()=>{
+    const primary=overview.querySelector('.patient-overview-attention-v0206 button');
+    hpProfessionalActionCenterV0208({id:d?.p?.id||state.patientId,nome:d?.p?.nome||'Paciente'},{titulo:primary?.querySelector('b')?.textContent||'Acompanhamento do paciente',detalhe:primary?.querySelector('span')?.textContent||'Escolha a próxima ação profissional.'});
+  };
+  head.appendChild(btn);
 };
