@@ -412,11 +412,13 @@ if ($initialMigrationExistedBeforeSetup -and -not $v0103Migration) {
 # Limpa qualquer migration experimental deixada por revisoes anteriores.
 $v01810StaleMigrations = @()
 if (Test-Path $migrationsPath) {
-    $v01810StaleMigrations = Get-ChildItem $migrationsPath -File -ErrorAction SilentlyContinue |
-        Where-Object {
-            $_.Name -like "*V01810ProgramasTreinoModelo*.cs" -or
-            ((Get-Content $_.FullName -Raw -ErrorAction SilentlyContinue) -match 'V01810ProgramasTreinoModelo')
-        }
+    $v01810StaleMigrations = @(
+        Get-ChildItem $migrationsPath -File -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.Name -like "*V01810ProgramasTreinoModelo*.cs" -or
+                ((Get-Content $_.FullName -Raw -ErrorAction SilentlyContinue) -match 'V01810ProgramasTreinoModelo')
+            }
+    )
 }
 
 if ($v01810StaleMigrations.Count -gt 0) {

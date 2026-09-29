@@ -1,5 +1,7 @@
 # AESYN Performance — Roadmap Mestre
 
+> **Hotfix local v0.20.10-r1:** normaliza como array o resultado da busca por migrations experimentais v0.18.10 em `scripts/setup.ps1`, evitando falha de `.Count` no Windows PowerShell quando o pipeline retorna exatamente um objeto. Revisão local; sem commit individual. Nenhuma alteração funcional, de schema, API ou interface.
+
 > **Hotfix local v0.20.9-r5:** alinha o gate CSS histórico do `Professional Action Center 2.0` aos seletores que existem na implementação real. Revisões locais não geram commit/push; somente a versão funcional aprovada integralmente é versionada no Git. Nenhuma alteração funcional, de schema, API ou interface.
 
 > **Hotfix v0.20.9-r4:** alinha o gate histórico do `Professional Action Center 2.0` ao rótulo real da interface (`Nota interna`) em vez de exigir o texto inexistente `Registrar nota`. Nenhuma alteração funcional, de schema, API ou interface.
@@ -25,7 +27,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.20.9 — Clinical & Sports Snapshot 2.0
+> **Versão-base deste roadmap:** v0.20.10 — Period Comparison 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -641,7 +643,7 @@ Entregue:
 
 **Próxima etapa:** `v0.20.10 — Period Comparison 2.0`.
 
-## ⏭ v0.20.10 — Period Comparison 2.0
+## ✅ v0.20.10 — Period Comparison 2.0 — CONCLUÍDA
 
 **Objetivo humano:** permitir que o profissional compare períodos sem interpretar gráficos isolados ou perder contexto temporal.
 
@@ -654,9 +656,15 @@ Escopo-alvo:
 - origem e janela temporal explícitas;
 - dados insuficientes tratados sem inferências artificiais.
 
+**Entregue:** comparação semanal existente, janela móvel de 30 dias vs 30 dias anteriores usando execuções/diário, primeira avaliação vs atual para indicadores corporais disponíveis, datas das janelas explícitas, deltas absolutos e percentuais quando matematicamente adequados e estados de base insuficiente sem inferência.
+
+**Próxima etapa:** `v0.21.0 — Human Profile Foundation`.
+
 ---
 
 # 5. v0.21.x — Human Profile
+
+## ⏭ v0.21.0 — Human Profile Foundation
 
 A pessoa passa a ser a unidade central do domínio longitudinal.
 

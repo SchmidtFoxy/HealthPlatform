@@ -8,6 +8,11 @@ O AESYN está evoluindo de um sistema que registra dados de treino, nutrição e
 
 O objetivo não é substituir médicos, nutricionistas, treinadores ou outros profissionais. O AESYN deve **aumentar autonomia com contexto**, reduzir atrito, organizar informação e ajudar o profissional a perceber o que merece atenção.
 
+
+### Period Comparison 2.0
+
+O profissional pode alternar entre **7 dias**, **30 dias** e **início × atual**. A comparação reaproveita dados já carregados de treino, diário, tendência semanal e avaliações corporais; não cria uma fonte paralela nem infere significado clínico a partir da direção numérica.
+
 ### North Star
 
 > **O AESYN precisa conhecer o atleta melhor a cada dia — com consentimento, contexto e utilidade.**
@@ -81,11 +86,17 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.20.9 — Clinical & Sports Snapshot 2.0`
-- **Revisão corrente:** `v0.20.9-r5 — Action Center CSS Gate Fix`
+- **Versão funcional:** `v0.20.10 — Period Comparison 2.0`
+- **Revisão local corrente:** `v0.20.10-r1 — Setup Array Normalization Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
-- **Próxima versão planejada:** `v0.20.9 — Clinical & Sports Snapshot 2.0`
-- **Baseline aprovada:** `v0.20.7 — Attention Reasons 2.0` aprovada pelo AESYN Product Gate; nenhuma falha funcional foi reportada no fechamento.
+- **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
+- **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
+
+### O que a v0.20.10 entrega
+
+> Comparar períodos com janela explícita, sem transformar variação numérica em conclusão clínica.
+
+O **Period Comparison 2.0** permite alternar entre **7 dias**, **30 dias** e **início × atual**. A janela semanal reutiliza a tendência longitudinal já existente; a janela de 30 dias compara execuções de treino, minutos, esforço médio e registros de diário com os 30 dias anteriores; e a comparação de início usa a primeira e a avaliação corporal mais recente. Quando não existe base suficiente, o AESYN informa isso explicitamente.
 
 ### O que a v0.20.6 entrega
 

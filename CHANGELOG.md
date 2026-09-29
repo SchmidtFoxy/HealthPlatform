@@ -1,3 +1,27 @@
+# v0.20.10-r1 — Setup Array Normalization Fix (local)
+
+- Corrige falha do `PREPARAR.ps1`/`scripts/setup.ps1` no Windows PowerShell 5.1:
+  `A propriedade 'Count' não foi encontrada neste objeto`.
+- A busca por migrations experimentais `V01810ProgramasTreinoModelo` agora é explicitamente materializada como array com `@(...)`.
+- Funciona de forma consistente com zero, um ou vários resultados.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continuará sendo somente `v0.20.10` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.20.10`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.20.10 — Period Comparison 2.0
+
+- Adiciona comparação profissional por três janelas: 7 dias, 30 dias e início × atual.
+- Reaproveita `tendenciaSemanal` para semana atual vs anterior.
+- Calcula 30 dias atuais vs 30 dias anteriores a partir das execuções de treino e registros de diário já carregados no prontuário.
+- Compara primeira avaliação vs avaliação atual em peso, gordura corporal, cintura e IMC quando os dados existem.
+- Mostra datas explícitas das janelas e diferenças absolutas; percentuais são exibidos somente quando matematicamente adequados e a base anterior é diferente de zero.
+- Estados insuficientes permanecem explícitos, sem inventar tendências.
+- Nenhuma migration, tabela ou endpoint novo: a feature usa somente contexto já disponível.
+- Estabiliza gates históricos 0.20.2–0.20.9 para não dependerem da versão funcional corrente.
+- Atualiza README, ROADMAP, VERSION, healthcheck, Swagger, cache/PWA e gates para v0.20.10.
+- Próxima etapa: v0.21.0 — Human Profile Foundation.
+
 # v0.20.9-r5 — Action Center CSS Gate Fix (local)
 
 - Corrige o gate histórico CSS da `v0.20.8 — Professional Action Center 2.0`.

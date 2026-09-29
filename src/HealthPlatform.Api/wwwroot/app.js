@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.20.9';
+const HP_MVP_VERSION='0.20.10';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11517,4 +11517,102 @@ renderPatientTab=function(d){
   if(!overview)return;
   if(!document.querySelector('[data-clinical-sports-snapshot-v0209]'))overview.insertAdjacentHTML('afterend',hpClinicalSportsSnapshotV0209(d));
   hpBindClinicalSportsSnapshotV0209();
+};
+
+
+// ===== v0.20.10 — Period Comparison 2.0 =====
+const HP_PERIOD_COMPARISON_V02010='v0.20.10';
+
+function hpPeriodDateV02010(value){
+  if(!value)return null;
+  const d=new Date(value);
+  return Number.isNaN(d.getTime())?null:d;
+}
+function hpPeriodDeltaV02010(current,previous,{suffix='',percent=true,decimals=1}={}){
+  if(current==null||previous==null)return '<span class="period-comparison-no-data-v02010">base insuficiente</span>';
+  const c=Number(current),p=Number(previous);
+  if(!Number.isFinite(c)||!Number.isFinite(p))return '<span class="period-comparison-no-data-v02010">base insuficiente</span>';
+  const delta=c-p,sign=delta>0?'+':'';
+  const pct=percent&&p!==0?` • ${delta/p*100>0?'+':''}${num(delta/p*100,1)}%`:'';
+  const tone=delta===0?'steady':delta>0?'up':'down';
+  return `<span class="period-comparison-delta-v02010 ${tone}">${sign}${num(delta,decimals)}${suffix}${pct}</span>`;
+}
+function hpPeriodMetricV02010(title,current,previous,{unit='',percent=true,decimals=1,detail=''}={}){
+  const hasCurrent=current!=null&&Number.isFinite(Number(current));
+  const hasPrevious=previous!=null&&Number.isFinite(Number(previous));
+  return `<article class="period-comparison-metric-v02010">
+    <small>${esc(title)}</small>
+    <div><strong>${hasCurrent?`${num(Number(current),decimals)}${unit}`:'—'}</strong><span>vs ${hasPrevious?`${num(Number(previous),decimals)}${unit}`:'—'}</span></div>
+    ${hpPeriodDeltaV02010(current,previous,{suffix:unit,percent,decimals})}
+    ${detail?`<p>${esc(detail)}</p>`:''}
+  </article>`;
+}
+function hpPeriodWindowStatsV02010(d,days,offsetDays=0){
+  const now=new Date(),end=new Date(now),start=new Date(now);
+  end.setHours(23,59,59,999); end.setDate(end.getDate()-offsetDays);
+  start.setHours(0,0,0,0); start.setDate(start.getDate()-offsetDays-days+1);
+  const inWindow=value=>{const x=hpPeriodDateV02010(value);return x&&x>=start&&x<=end};
+  const executions=(d?.treinosHistorico?.execucoes||[]).filter(x=>inWindow(x.dataHoraInicioUtc));
+  const diary=(d?.diario||[]).filter(x=>inWindow(x.dataHoraUtc));
+  const rpe=executions.map(x=>Number(x.esforcoPercebido)).filter(Number.isFinite);
+  return {
+    start,end,
+    treinos:executions.length,
+    minutos:executions.reduce((sum,x)=>sum+Number(x.duracaoMinutos||0),0),
+    rpe:rpe.length?rpe.reduce((a,b)=>a+b,0)/rpe.length:null,
+    registros:diary.length
+  };
+}
+function hpPeriodWeeklyV02010(d){
+  const items=d?.portal?.tendenciaSemanal?.itens||[];
+  if(!items.length)return `<div class="period-comparison-empty-v02010"><strong>Semana atual × anterior</strong><p>Ainda não há duas semanas comparáveis suficientes.</p></div>`;
+  return `<div class="period-comparison-list-v02010">${items.slice(0,6).map(x=>`<article><div><small>${esc(x.titulo||'Indicador')}</small><strong>${esc(x.valorAtual||'—')}</strong><span>anterior: ${esc(x.valorAnterior||'—')}</span></div><b>${esc(x.variacao||x.estado||'')}</b></article>`).join('')}</div>`;
+}
+function hpPeriodThirtyV02010(d){
+  const current=hpPeriodWindowStatsV02010(d,30,0),previous=hpPeriodWindowStatsV02010(d,30,30);
+  return `<div class="period-comparison-grid-v02010">
+    ${hpPeriodMetricV02010('Treinos realizados',current.treinos,previous.treinos,{unit:'',decimals:0,detail:'execuções registradas em cada janela'})}
+    ${hpPeriodMetricV02010('Tempo treinado',current.minutos,previous.minutos,{unit:' min',decimals:0,detail:'soma da duração registrada'})}
+    ${hpPeriodMetricV02010('Esforço médio',current.rpe,previous.rpe,{unit:'/10',percent:false,decimals:1,detail:'RPE somente quando informado'})}
+    ${hpPeriodMetricV02010('Registros no diário',current.registros,previous.registros,{unit:'',decimals:0,detail:'registros feitos pelo paciente/profissional'})}
+  </div><div class="period-comparison-window-v02010">Atual: ${fmtDate(current.start)} → ${fmtDate(current.end)} • Anterior: ${fmtDate(previous.start)} → ${fmtDate(previous.end)}</div>`;
+}
+function hpPeriodStartV02010(d){
+  const evals=[...(d?.avaliacoes||[])].filter(x=>x?.dataUtc).sort((a,b)=>new Date(a.dataUtc)-new Date(b.dataUtc));
+  if(evals.length<2)return `<div class="period-comparison-empty-v02010"><strong>Início × atual</strong><p>São necessárias pelo menos duas avaliações corporais para esta comparação.</p></div>`;
+  const first=evals[0],current=evals[evals.length-1];
+  const cards=[];
+  const add=(label,key,unit,percent=true)=>{if(first[key]!=null||current[key]!=null)cards.push(hpPeriodMetricV02010(label,current[key],first[key],{unit,percent,decimals:1}))};
+  add('Peso','pesoKg',' kg',true);add('Gordura corporal','percentualGordura','%',false);add('Cintura','cinturaCm',' cm',true);add('IMC','imc','',true);
+  return `${cards.length?`<div class="period-comparison-grid-v02010">${cards.join('')}</div>`:`<div class="period-comparison-empty-v02010"><strong>Início × atual</strong><p>As avaliações existentes ainda não possuem medidas numéricas comparáveis.</p></div>`}<div class="period-comparison-window-v02010">Primeira avaliação: ${fmtDate(first.dataUtc)} • Atual: ${fmtDate(current.dataUtc)}</div>`;
+}
+function hpPeriodComparisonBodyV02010(d,mode){
+  if(mode==='30d')return hpPeriodThirtyV02010(d);
+  if(mode==='start')return hpPeriodStartV02010(d);
+  return hpPeriodWeeklyV02010(d);
+}
+function hpPeriodComparisonV02010(d){
+  return `<section class="period-comparison-v02010" data-period-comparison-v02010="${HP_PERIOD_COMPARISON_V02010}">
+    <div class="period-comparison-head-v02010"><div><span class="eyebrow">AESYN • PERIOD COMPARISON 2.0</span><h3>Compare períodos sem perder a janela temporal.</h3><p>Diferenças são apresentadas somente a partir de registros existentes. Ausência de base aparece como ausência de base — nunca como tendência inventada.</p></div><span>Leitura longitudinal</span></div>
+    <div class="period-comparison-tabs-v02010" role="tablist"><button class="active" type="button" data-period-window-v02010="7d">7 dias</button><button type="button" data-period-window-v02010="30d">30 dias</button><button type="button" data-period-window-v02010="start">Início × atual</button></div>
+    <div class="period-comparison-body-v02010">${hpPeriodComparisonBodyV02010(d,'7d')}</div>
+    <div class="period-comparison-safety-v02010"><b>Comparação descritiva</b><span>Variações numéricas não significam melhora, piora, risco ou diagnóstico por si só. A interpretação permanece com o profissional.</span></div>
+  </section>`;
+}
+function hpWirePeriodComparisonV02010(host,d){
+  const root=host?.querySelector('[data-period-comparison-v02010]');if(!root)return;
+  const body=root.querySelector('.period-comparison-body-v02010');
+  root.querySelectorAll('[data-period-window-v02010]').forEach(btn=>btn.onclick=()=>{
+    root.querySelectorAll('[data-period-window-v02010]').forEach(x=>x.classList.toggle('active',x===btn));
+    body.innerHTML=hpPeriodComparisonBodyV02010(d,btn.dataset.periodWindowV02010);
+  });
+}
+const __renderPatientTab_v02010=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v02010(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),snapshot=host?.querySelector('[data-clinical-sports-snapshot-v0209]');
+  if(!host||!snapshot||host.querySelector('[data-period-comparison-v02010]'))return;
+  snapshot.insertAdjacentHTML('afterend',hpPeriodComparisonV02010(d));
+  hpWirePeriodComparisonV02010(host,d);
 };
