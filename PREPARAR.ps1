@@ -13,6 +13,37 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# AESYN Product Governance: documentacao viva faz parte da entrega.
+function Assert-AesynLivingDocs {
+    $required = @("README.md", "ROADMAP.md", "CHANGELOG.md", "VERSION.txt", "TESTAR.ps1", "RODAR.ps1")
+    foreach ($relative in $required) {
+        if (-not (Test-Path (Join-Path $root $relative))) { throw "Governanca AESYN: arquivo obrigatorio ausente: $relative" }
+    }
+
+    $readme = Get-Content (Join-Path $root "README.md") -Encoding UTF8 -Raw
+    $roadmap = Get-Content (Join-Path $root "ROADMAP.md") -Encoding UTF8 -Raw
+    foreach ($token in @("North Star", "Documentação viva obrigatória", "Patient Overview 2.0")) {
+        if (-not $readme.Contains($token)) { throw "Governanca AESYN: README desatualizado; token ausente: $token" }
+    }
+    foreach ($token in @("Direção mestre definida em 2026-09-29", "AESYN Explore", "AESYN 1.0")) {
+        if (-not $roadmap.Contains($token)) { throw "Governanca AESYN: ROADMAP desatualizado; token ausente: $token" }
+    }
+
+    Write-Host "[Docs] README + ROADMAP + CHANGELOG + scripts: OK" -ForegroundColor Green
+}
+
+$versionAesyn = (Get-Content (Join-Path $root "VERSION.txt") -Encoding UTF8 -Raw).Trim()
+Write-Host ""
+Write-Host "============================================================" -ForegroundColor DarkGray
+Write-Host "                         AESYN" -ForegroundColor Cyan
+Write-Host "            Athlete & Human Performance" -ForegroundColor DarkCyan
+Write-Host "============================================================" -ForegroundColor DarkGray
+Write-Host (" Versao        : {0}" -f $versionAesyn) -ForegroundColor White
+Write-Host " Etapa         : PREPARAR / Quality Gate" -ForegroundColor White
+Write-Host "============================================================" -ForegroundColor DarkGray
+Write-Host ""
+Assert-AesynLivingDocs
+
 
 # Hotfix v0.19.24-r3: pacotes extraidos por sobreposicao no Windows nao
 # removem arquivos que deixaram de existir no ZIP. Como Render foi aposentado,
@@ -150,6 +181,36 @@ function Repair-V0110PainelMedicinaEsporteIfNeeded {
 }
 
 Repair-V0110PainelMedicinaEsporteIfNeeded
+
+# Hotfix v0.20.4-r1: extracoes por sobreposicao podem deixar o controller
+# de notas internas novo junto de um AppDbContext antigo. Antes do build,
+# garantimos o DbSet e o mapeamento EF canonicos da v0.20.4.
+function Repair-V0204NotasInternasDbContextIfNeeded {
+    $target = Join-Path $root "src\HealthPlatform.Infrastructure\Data\AppDbContext.cs"
+    $clean  = Join-Path $root "scripts\recovery\AppDbContext.v0204.clean"
+
+    if (-not (Test-Path $target)) { throw "Arquivo esperado ausente: $target" }
+    if (-not (Test-Path $clean))  { throw "Copia de recuperacao ausente: $clean" }
+
+    $source = Get-Content -LiteralPath $target -Encoding UTF8 -Raw
+    $required = @(
+        'DbSet<NotaInternaProfissional> NotasInternasProfissionais',
+        'builder.Entity<NotaInternaProfissional>(entity =>'
+    )
+    $missing = @($required | Where-Object { -not $source.Contains($_) })
+
+    if ($missing.Count -gt 0) {
+        Write-Host "[Fonte] AppDbContext anterior a v0.20.4 detectado. Restaurando contexto canonico..." -ForegroundColor Yellow
+        Copy-Item -LiteralPath $clean -Destination $target -Force
+        $source = Get-Content -LiteralPath $target -Encoding UTF8 -Raw
+        $missing = @($required | Where-Object { -not $source.Contains($_) })
+        if ($missing.Count -gt 0) {
+            throw "Falha ao restaurar suporte EF de notas internas: $($missing -join ', ')"
+        }
+    }
+}
+
+Repair-V0204NotasInternasDbContextIfNeeded
 
 # Evita um segundo prompt de seguranca ao chamar scripts internos extraidos do ZIP.
 Get-ChildItem (Join-Path $root "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue

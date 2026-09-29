@@ -65,13 +65,14 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         [FromQuery] string? ultimaInteracao = null,
         [FromQuery] string? proximaRevisao = null,
         [FromQuery] string? marcador = null,
+        [FromQuery] string? tag = null,
         [FromQuery] string? ordenar = "nome",
         CancellationToken ct = default)
     {
         var agora = DateTime.UtcNow;
         var pacientesBase = await db.Pacientes.AsNoTracking()
             .Where(x => x.OrganizacaoId == currentUser.OrganizationId)
-            .Select(x => new { x.Id, x.Nome, x.Cpf, x.Email, x.Telefone, x.Profissao, x.Ativo, x.StatusAcompanhamento, x.MotivoStatusAcompanhamento, x.StatusAcompanhamentoAlteradoEmUtc })
+            .Select(x => new { x.Id, x.Nome, x.Cpf, x.Email, x.Telefone, x.Profissao, x.Ativo, x.StatusAcompanhamento, x.MotivoStatusAcompanhamento, x.StatusAcompanhamentoAlteradoEmUtc, x.TagsSegmentacao })
             .ToListAsync(ct);
 
         var ids = pacientesBase.Select(x => x.Id).ToArray();
@@ -110,7 +111,7 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
 
             return new PacientePesquisaAvancadaItem(
                 paciente.Id, paciente.Nome, paciente.Cpf, paciente.Email, paciente.Telefone, paciente.Profissao, paciente.Ativo, paciente.StatusAcompanhamento, paciente.MotivoStatusAcompanhamento, paciente.StatusAcompanhamentoAlteradoEmUtc,
-                ultimaConsulta?.ProfissionalId, ultimaConsulta?.ProfissionalNome, adesaoMedia, ultima, proxima, marcadores);
+                ultimaConsulta?.ProfissionalId, ultimaConsulta?.ProfissionalNome, adesaoMedia, ultima, proxima, marcadores, LerTagsSegmentacao(paciente.TagsSegmentacao));
         }).ToList();
 
         IEnumerable<PacientePesquisaAvancadaItem> query = itens;
@@ -159,6 +160,8 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         };
         if (!string.IsNullOrWhiteSpace(marcador) && !marcador.Equals("Todos", StringComparison.OrdinalIgnoreCase))
             query = query.Where(x => x.Marcadores.Contains(marcador, StringComparer.OrdinalIgnoreCase));
+        if (!string.IsNullOrWhiteSpace(tag) && !tag.Equals("Todos", StringComparison.OrdinalIgnoreCase))
+            query = query.Where(x => x.Tags.Contains(tag.Trim(), StringComparer.OrdinalIgnoreCase));
 
         query = (ordenar ?? "nome").Trim().ToLowerInvariant() switch
         {
@@ -171,7 +174,37 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         var responsaveis = consultas.GroupBy(x => new { x.ProfissionalId, x.ProfissionalNome })
             .Select(x => new { id = x.Key.ProfissionalId, nome = x.Key.ProfissionalNome }).OrderBy(x => x.nome).ToArray();
         var final = query.ToArray();
-        return Ok(new { total = final.Length, itens = final, responsaveis, marcadores = new[] { "SemInteracaoRecente", "SemRevisaoAgendada", "BaixaAdesao", "SemDadosAdesao", "Inativo" } });
+        var tagsDisponiveis = itens.SelectMany(x => x.Tags).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToArray();
+        return Ok(new { total = final.Length, itens = final, responsaveis, marcadores = new[] { "SemInteracaoRecente", "SemRevisaoAgendada", "BaixaAdesao", "SemDadosAdesao", "Inativo" }, tagsDisponiveis });
+    }
+
+    [Authorize(Roles = "Admin,Medico,Nutricionista,Personal,Secretaria")]
+    [HttpPatch("{id:guid}/tags")]
+    public async Task<IActionResult> AtualizarTags(Guid id, AtualizarTagsPacienteRequest request, CancellationToken ct)
+    {
+        var paciente = await db.Pacientes.FirstOrDefaultAsync(x => x.Id == id && x.OrganizacaoId == currentUser.OrganizationId, ct);
+        if (paciente is null) return NotFound(new { message = "Paciente nao encontrado." });
+
+        var tags = NormalizarTags(request.Tags);
+        var antes = new { paciente.Id, Tags = LerTagsSegmentacao(paciente.TagsSegmentacao) };
+        paciente.TagsSegmentacao = tags.Count == 0 ? null : JsonSerializer.Serialize(tags);
+        paciente.UpdatedAtUtc = DateTime.UtcNow;
+        var depois = new { paciente.Id, Tags = tags };
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "PATIENT_TAGS_CHANGED",
+            Entidade = nameof(Paciente),
+            EntidadeId = paciente.Id.ToString(),
+            DadosAnterioresJson = JsonSerializer.Serialize(antes),
+            DadosNovosJson = JsonSerializer.Serialize(depois),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new { paciente.Id, tags });
     }
 
     [HttpGet("{id:guid}")]
@@ -378,12 +411,31 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
         };
     }
 
+    private static IReadOnlyList<string> LerTagsSegmentacao(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return Array.Empty<string>();
+        try { return JsonSerializer.Deserialize<string[]>(json) ?? Array.Empty<string>(); }
+        catch { return Array.Empty<string>(); }
+    }
+
+    private static IReadOnlyList<string> NormalizarTags(IEnumerable<string>? tags) =>
+        (tags ?? Array.Empty<string>())
+            .Select(x => x?.Trim())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x!.Length <= 40 ? x : x[..40])
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+            .Take(20)
+            .ToArray();
+
     private static PacienteResponse ToResponse(Paciente x) => new(
-        x.Id, x.Nome, x.Cpf, x.DataNascimento, x.Sexo, x.Telefone, x.Email, x.Profissao, x.Ativo, x.StatusAcompanhamento, x.MotivoStatusAcompanhamento, x.StatusAcompanhamentoAlteradoEmUtc, x.CreatedAtUtc);
+        x.Id, x.Nome, x.Cpf, x.DataNascimento, x.Sexo, x.Telefone, x.Email, x.Profissao, x.Ativo, x.StatusAcompanhamento, x.MotivoStatusAcompanhamento, x.StatusAcompanhamentoAlteradoEmUtc, LerTagsSegmentacao(x.TagsSegmentacao), x.CreatedAtUtc);
 }
 
 
 public sealed record PacientePesquisaAvancadaItem(
     Guid Id, string Nome, string? Cpf, string? Email, string? Telefone, string? Profissao, bool Ativo, string StatusAcompanhamento, string? MotivoStatusAcompanhamento, DateTime? StatusAcompanhamentoAlteradoEmUtc,
     Guid? ResponsavelId, string? ResponsavelNome, decimal? AdesaoMediaPercentual, DateTime? UltimaInteracaoUtc,
-    DateTime? ProximaRevisaoUtc, IReadOnlyCollection<string> Marcadores);
+    DateTime? ProximaRevisaoUtc, IReadOnlyCollection<string> Marcadores, IReadOnlyCollection<string> Tags);
+
+public sealed record AtualizarTagsPacienteRequest(IReadOnlyCollection<string>? Tags);

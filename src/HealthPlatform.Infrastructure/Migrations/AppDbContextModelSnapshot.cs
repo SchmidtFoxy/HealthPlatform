@@ -1800,6 +1800,57 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("Organizacoes", (string)null);
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.NotaInternaProfissional", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Arquivada")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("AutorNome")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<Guid>("AutorUsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Conteudo")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Fixada")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("OrganizacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PacienteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PacienteId", "CreatedAtUtc");
+
+                    b.HasIndex("OrganizacaoId", "PacienteId", "Fixada");
+
+                    b.ToTable("NotasInternasProfissionais");
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Paciente", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1848,6 +1899,10 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<string>("MotivoStatusAcompanhamento")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<string>("TagsSegmentacao")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<string>("Telefone")
                         .HasMaxLength(30)
@@ -3791,6 +3846,25 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Organizacao");
+                });
+
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.NotaInternaProfissional", b =>
+                {
+                    b.HasOne("HealthPlatform.Domain.Entities.Organizacao", "Organizacao")
+                        .WithMany()
+                        .HasForeignKey("OrganizacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HealthPlatform.Domain.Entities.Paciente", "Paciente")
+                        .WithMany()
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organizacao");
+
+                    b.Navigation("Paciente");
                 });
 
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Paciente", b =>

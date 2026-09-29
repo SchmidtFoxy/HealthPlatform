@@ -1,3 +1,46 @@
+# v0.20.6 — Patient Overview 2.0
+
+- Adiciona cockpit de leitura rápida no topo da visão geral profissional do paciente.
+- Consolida objetivo, status, tags, prontidão, treino recente, adesão, peso/tendência e planos vigentes reutilizando dados já carregados.
+- Exibe o último evento longitudinal e um motivo operacional de revisão com navegação direta para o domínio relevante.
+- Mantém decisões clínicas com o profissional; o resumo não diagnostica, prescreve ou altera planos automaticamente.
+- Adiciona layout responsivo, dark mode e estados seguros para ausência de dados.
+- Atualiza versão pública, cache busting, README, ROADMAP e gates para v0.20.6.
+- Nenhuma migration nova.
+
+# v0.20.5-r2 — Product Vision & Living Documentation Foundation
+
+- README promovido a documentação viva de produto e operação.
+- Roadmap mestre replanejado da v0.20.6 até 1.0 com foco em acompanhamento humano, medicina do esporte, autonomia guiada, Sports & Movement Library e AESYN Explore.
+- `v0.20.6` replanejada de Shared Care para **Patient Overview 2.0**; Shared Care passa para a fase de colaboração profissional após amadurecimento do Human Profile e permissões.
+- PREPARAR passa a validar a integridade mínima de README/ROADMAP/CHANGELOG/scripts antes do build.
+- TESTAR passa a possuir gate explícito de documentação viva e coerência da próxima etapa.
+- RODAR recebe identificação visual simples da versão/ambiente local.
+- Nenhuma alteração funcional, de schema ou de versão pública nesta fundação.
+
+# v0.20.5 — Tags & Segmentation
+
+## v0.20.5-r1 - Tags Segmentation Migration Discovery Fix
+- Corrige o registro da migration `V0205TagsSegmentation` no assembly do Entity Framework.
+- Adiciona `[DbContext]` e `[Migration]` para que `dotnet ef database update` aplique a coluna `Pacientes.TagsSegmentacao`.
+- Adiciona validacao preventiva no `PREPARAR.ps1`/setup antes do build.
+
+
+- Adiciona tags personalizadas por paciente para segmentação operacional da carteira.
+- Permite editar tags pela lista de pacientes e pelo perfil profissional.
+- Inclui filtro por tag na pesquisa avançada e exibição visual das tags na carteira.
+- Alterações são auditadas com `PATIENT_TAGS_CHANGED`.
+- Migration `20260925054500_V0205TagsSegmentation` adiciona persistência em `Pacientes.TagsSegmentacao`.
+- Mantém buscas salvas fora desta entrega, conforme roadmap.
+
+# v0.20.4 — Professional Internal Notes
+
+- Notas internas profissionais privadas e auditadas por paciente.
+- CRUD operacional: criar, editar, fixar/desafixar e arquivar.
+- API restrita aos papéis da equipe; não exposta no portal do paciente.
+- UI integrada ao perfil profissional do paciente.
+- Migration `20260925050000_V0204ProfessionalInternalNotes`.
+
 ## v0.20.3-r1 — PWA Identity Gate Version Sync
 
 - Corrige gate histórico de identidade/PWA que ainda exigia query string `v=0.20.2` para manifest e ícones.
@@ -2669,3 +2712,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 ## v0.19.44-r2 — Version Gate Residual Sync Hotfix
 - Corrige gates legados residuais que ainda esperavam VERSION.txt/cache-busting 0.19.43 após a evolução para 0.19.44.
 - Nenhuma alteração funcional, de schema ou de API.
+
+
+## v0.20.4-r1 — AppDbContext Internal Notes Recovery Fix
+- Corrige cenarios de extracao por sobreposicao que preservam um `AppDbContext.cs` anterior enquanto o controller de notas internas ja foi atualizado.
+- `PREPARAR.ps1` passa a validar e restaurar automaticamente o `DbSet<NotaInternaProfissional>` e o mapeamento EF canonico antes do build.
+- Nenhuma alteracao funcional ou de schema; a versao funcional permanece `0.20.4`.

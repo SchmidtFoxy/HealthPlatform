@@ -1,3 +1,148 @@
+# AESYN Performance
+
+> **Athlete & Human Performance** — acompanhamento humano, saúde e performance centrados em medicina do esporte.
+
+## Visão do produto
+
+O AESYN está evoluindo de um sistema que registra dados de treino, nutrição e acompanhamento para uma **plataforma longitudinal de acompanhamento humano e performance**. A pessoa é o centro: corpo, movimento, esportes, recuperação, nutrição, comportamento, objetivos, rotina e contexto profissional devem convergir para uma experiência coerente.
+
+O objetivo não é substituir médicos, nutricionistas, treinadores ou outros profissionais. O AESYN deve **aumentar autonomia com contexto**, reduzir atrito, organizar informação e ajudar o profissional a perceber o que merece atenção.
+
+### North Star
+
+> **O AESYN precisa conhecer o atleta melhor a cada dia — com consentimento, contexto e utilidade.**
+
+Para o atleta, o produto deve responder principalmente:
+
+- **Como estou hoje?**
+- **O que preciso fazer agora?**
+- **Estou evoluindo?**
+- **Existe algo que meu profissional quer que eu observe?**
+- **Quero me movimentar: o que consigo fazer hoje?**
+
+Para o profissional:
+
+- **Quem precisa de mim hoje?**
+- **Por quê?**
+- **Como essa pessoa evoluiu desde a última revisão?**
+- **O que mudou em treino, nutrição, recuperação, adesão ou sintomas relatados?**
+
+## Pilares do AESYN
+
+- **Human Profile** — a pessoa como unidade central, e não um conjunto de tabelas.
+- **AESYN Daily** — o que fazer e observar hoje.
+- **AESYN Professional** — acompanhamento profissional e fila de atenção.
+- **AESYN Training** — prescrição, execução, progressão e performance.
+- **AESYN Nutrition** — nutrição esportiva, planejamento e flexibilidade.
+- **AESYN Recovery** — sono, fadiga, desconforto, prontidão e recuperação.
+- **AESYN Explore** — esportes, movimento, treinos em casa e jornadas para começar do zero.
+- **AESYN Progress** — tornar a evolução visível e compreensível.
+- **AESYN Intelligence** — transformar histórico em contexto, tendências e padrões explicáveis, sem inventar diagnóstico.
+
+## Autonomia guiada
+
+O AESYN deve diferenciar três contextos:
+
+1. **Preciso fazer** — o que foi orientado/prescrito pelo profissional.
+2. **Quero fazer** — interesses, esportes e atividades que a pessoa deseja praticar.
+3. **Posso fazer hoje** — tempo disponível, local, equipamento, experiência e condição relatada.
+
+Essa separação permite que o produto ajude alguém a começar uma corrida, experimentar calistenia, aprender fundamentos de um esporte ou treinar em casa sem misturar exploração voluntária com uma prescrição profissional.
+
+## Modelo de operação do desenvolvimento
+
+O desenvolvimento é incremental e parte **sempre do estado real mais recente do projeto**. Arquivos existentes não devem ser substituídos por versões genéricas quando puderem ser evoluídos preservando histórico, decisões e gates já construídos.
+
+### Fluxo local oficial
+
+```text
+PREPARAR.ps1 → RODAR.ps1 → TESTAR.ps1
+```
+
+- `PREPARAR.ps1`: valida ambiente, dependências, banco, migrations, build e pré-condições.
+- `RODAR.ps1`: inicia a aplicação local.
+- `TESTAR.ps1`: executa os gates funcionais e de produto sem usar produção como laboratório.
+
+### Documentação viva obrigatória
+
+Toda nova versão deve revisar e atualizar, quando aplicável:
+
+- `README.md` — visão, operação, estado atual e capacidades relevantes;
+- `ROADMAP.md` — concluído, etapa atual, próxima etapa, replanejamentos e futuro;
+- `CHANGELOG.md` — o que mudou;
+- `VERSION.txt` e versões públicas da aplicação;
+- `PREPARAR.ps1`;
+- `RODAR.ps1`;
+- `TESTAR.ps1`.
+
+Uma versão não está completa apenas porque o código funciona: **produto, testes e documentação precisam concordar sobre o estado do AESYN**.
+
+## Estado atual
+
+- **Versão funcional:** `v0.20.6 — Patient Overview 2.0`
+- **Fase:** Professional Core / transição para acompanhamento humano longitudinal
+- **Próxima versão planejada:** `v0.20.7 — Attention Reasons 2.0`
+- **Baseline aprovada:** gate anterior concluído com `2190/2190`; nenhum P0 reproduzível ficou aberto antes da v0.20.6.
+
+### O que a v0.20.6 entrega
+
+> Ao abrir um paciente, o profissional entende em poucos segundos como aquela pessoa está.
+
+O **Patient Overview 2.0** adiciona um cockpit no topo da visão geral com objetivo atual, status, tags, prontidão, treino recente, adesão, peso/tendência, planos vigentes, último evento longitudinal e uma próxima revisão operacional explicável. Os sinais servem para orientar a navegação; não diagnosticam, prescrevem ou alteram conduta automaticamente.
+
+### Objetivo da v0.20.7
+
+> Explicar melhor **por que** um paciente merece atenção e levar o profissional diretamente ao contexto que precisa revisar.
+
+A próxima etapa evolui os motivos de atenção para sinais mais consistentes, deduplicados e navegáveis, reutilizando a base já existente da Central de Atenção.
+
+## Roadmap resumido rumo ao 1.0
+
+| Faixa | Direção |
+|---|---|
+| `0.20.x` | Professional Core Completion |
+| `0.21.x` | Human Profile |
+| `0.22.x` | AESYN Daily |
+| `0.23.x` | Sports & Movement Library |
+| `0.24.x` | AESYN Explore / Movement Discovery |
+| `0.25–0.26.x` | Expansão de modalidades esportivas |
+| `0.27.x` | Workout Intelligence 3.0 |
+| `0.28.x` | Athlete Performance Passport |
+| `0.29.x` | Progress Intelligence |
+| `0.30.x` | Sports Nutrition 3.0 |
+| `0.31.x` | Recovery Intelligence |
+| `0.32.x` | Human Timeline |
+| `0.33.x` | AESYN Connect |
+| `0.34.x` | Professional Attention Intelligence |
+| `0.35.x` | Consultation Mode |
+| `0.36.x` | Goal Intelligence |
+| `0.37–0.38.x` | Progression, gamificação positiva e desafios |
+| `0.39–0.41.x` | Experiência adaptativa, padrões e insights |
+| `0.42–0.45.x` | Return to Sport, calendário, journal e círculos de apoio |
+| `0.46–0.48.x` | Premium UX, mobile native feel e notificações |
+| `0.49–0.55.x` | Segurança, escala, equipes, colaboração, onboarding e acessibilidade |
+| `0.56–0.59.x` | Product Readiness |
+| `0.60.x` | AESYN Beta / jornadas completas |
+| `0.61–0.64.x` | Validação real + feedback + product analytics |
+| `0.65–0.69.x` | Fundação comercial e portabilidade de dados |
+| `0.70–0.89.x` | Faixa deliberadamente adaptativa, guiada pelo uso real |
+| `0.90–0.99.x` | Feature freeze e hardening para release |
+| `1.0.0` | Produto comercial estável |
+
+O detalhamento e os replanejamentos pertencem ao [`ROADMAP.md`](ROADMAP.md).
+
+---
+
+# Histórico de versões e capacidades
+
+## v0.20.6 — Patient Overview 2.0
+
+A visão profissional do paciente ganha um cockpit de leitura rápida que reutiliza os dados longitudinais já carregados pelo prontuário. Objetivo, status, tags, prontidão, treino, adesão, peso, planos vigentes, último evento e sinais operacionais aparecem antes do detalhamento clínico. A interface é responsiva, compatível com dark mode e mantém julgamento clínico e decisão de conduta com o profissional.
+
+## v0.20.5 — Tags & Segmentation
+
+A carteira profissional agora suporta tags personalizadas por paciente, edição pela lista ou pelo perfil e filtro direto por tag. As alterações são auditadas, normalizadas e deduplicadas, permitindo segmentar grupos operacionais sem modificar dados clínicos ou prescrições.
+
 ## v0.20.3 — Patient Status Management
 
 A carteira profissional agora diferencia pacientes ativos, pausados, aguardando avaliação e encerrados. A mudança é administrativa, auditada e não apaga histórico clínico.
@@ -20,7 +165,7 @@ A fase `Professional Workspace 2.0` começa com um dashboard executivo único pa
 
 A v0.19.44 fecha a Lista 03 como fase de estabilização do produto. O `TESTAR.ps1` passa a conferir transversalmente se os fluxos essenciais de paciente e profissional continuam conectados, enquanto `docs/PRODUCT-FLOW-GATE.md` define a homologação manual ponta a ponta que deve ser executada com dados de teste antes de produção comercial.
 
-O smoke test continua **não destrutivo** e exclusivamente local; ele não usa a VPS de produção para criar pacientes, treinos, dietas, check-ins ou mensagens. A próxima fase funcional é `v0.20.3 — Patient Status Management`.
+O smoke test continua **não destrutivo** e exclusivamente local; ele não usa a VPS de produção para criar pacientes, treinos, dietas, check-ins ou mensagens. A etapa originalmente planejada como `v0.20.6 — Shared Care / Multiple Professionals` foi posteriormente replanejada para uma fase mais madura de colaboração profissional; o histórico desta versão é preservado aqui.
 
 **Fluxo local:** `PREPARAR.ps1` → `RODAR.ps1` → `TESTAR.ps1`.
 

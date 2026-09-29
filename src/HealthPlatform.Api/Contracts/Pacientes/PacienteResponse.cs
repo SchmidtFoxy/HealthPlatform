@@ -13,4 +13,5 @@ public sealed record PacienteResponse(
     string StatusAcompanhamento,
     string? MotivoStatusAcompanhamento,
     DateTime? StatusAcompanhamentoAlteradoEmUtc,
+    IReadOnlyCollection<string> Tags,
     DateTime CreatedAtUtc);

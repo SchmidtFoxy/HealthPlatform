@@ -17,6 +17,7 @@ public class Paciente : BaseEntity
     public string StatusAcompanhamento { get; set; } = "Ativo";
     public string? MotivoStatusAcompanhamento { get; set; }
     public DateTime? StatusAcompanhamentoAlteradoEmUtc { get; set; }
+    public string? TagsSegmentacao { get; set; }
 
     public Organizacao Organizacao { get; set; } = null!;
     public ICollection<Consulta> Consultas { get; set; } = new List<Consulta>();

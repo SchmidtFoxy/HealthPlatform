@@ -114,7 +114,6 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.Telefone).HasMaxLength(30);
             entity.Property(x => x.StatusAcompanhamento).HasMaxLength(40).IsRequired();
             entity.Property(x => x.MotivoStatusAcompanhamento).HasMaxLength(500);
-            entity.Property(x => x.TagsSegmentacao).HasMaxLength(2000);
             entity.HasIndex(x => new { x.OrganizacaoId, x.StatusAcompanhamento });
             entity.HasIndex(x => new { x.OrganizacaoId, x.Cpf }).IsUnique().HasFilter("\"Cpf\" IS NOT NULL");
             entity.HasOne(x => x.Organizacao).WithMany(x => x.Pacientes)

@@ -453,6 +453,18 @@ if (-not (Test-Path ".\src\HealthPlatform.Infrastructure\obj\project.assets.json
     }
 }
 
+
+# v0.20.5-r1: garante que a migration de tags esteja registrada no assembly do EF.
+$tagsMigrationPath = ".\\src\\HealthPlatform.Infrastructure\\Migrations\\20260925054500_V0205TagsSegmentation.cs"
+if (Test-Path $tagsMigrationPath) {
+    $tagsMigrationSource = Get-Content $tagsMigrationPath -Raw -Encoding UTF8
+    if (-not $tagsMigrationSource.Contains('[DbContext(typeof(AppDbContext))]') -or
+        -not $tagsMigrationSource.Contains('[Migration("20260925054500_V0205TagsSegmentation")]')) {
+        throw "Migration v0.20.5 de Tags & Segmentation nao esta registrada corretamente no EF."
+    }
+    Write-Host "    Migration v0.20.5 registrada no EF: OK." -ForegroundColor DarkGray
+}
+
 Invoke-NativeStep "[5/38] Recompilando com as migrations..." { dotnet build .\HealthPlatform.slnx --no-restore }
 
 Invoke-NativeStep "[6/38] Atualizando banco..." {

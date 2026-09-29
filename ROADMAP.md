@@ -13,7 +13,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.20.3 — Patient Status Management
+> **Versão-base deste roadmap:** v0.20.6 — Patient Overview 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -31,6 +31,8 @@ Este arquivo é a referência de direção do produto. Antes de iniciar uma nova
 6. correções da mesma versão usam `-r1`, `-r2`, etc.;
 7. uma revisão não deve virar funcionalidade nova escondida;
 8. funcionalidades clínicas devem apoiar a decisão profissional, não substituir julgamento médico/nutricional.
+9. `README.md`, `ROADMAP.md`, `CHANGELOG.md`, `PREPARAR.ps1`, `RODAR.ps1` e `TESTAR.ps1` fazem parte da entrega e devem acompanhar a evolução.
+10. o roadmap é vivo: quando a realidade ensinar algo melhor, replanejar explicitamente sem apagar o histórico.
 
 ---
 
@@ -59,6 +61,47 @@ A experiência do paciente deve ser simples, mobile-first e orientada ao dia atu
 - Dados técnicos avançados separados da Home comum do paciente.
 - Alertas devem explicar por que foram gerados.
 - Gamificação deve premiar adesão e consistência, não incentivar excesso.
+
+---
+
+
+## Direção mestre definida em 2026-09-29
+
+O AESYN passa a ser tratado como uma **plataforma de acompanhamento humano, saúde e performance centrada em medicina do esporte**. A evolução deixa de ser orientada principalmente por CRUDs e passa a ser orientada por **momentos de produto e necessidades humanas observáveis**.
+
+### North Star
+
+> **O AESYN precisa conhecer o atleta melhor a cada dia — com consentimento, contexto e utilidade.**
+
+### Pilares
+
+- Human Profile;
+- AESYN Daily;
+- AESYN Professional;
+- AESYN Training;
+- AESYN Nutrition;
+- AESYN Recovery;
+- AESYN Explore;
+- AESYN Progress;
+- AESYN Intelligence.
+
+### Momentos de produto que orientam decisões
+
+- **AESYN Morning:** entender o dia em segundos.
+- **AESYN Training:** executar, registrar e compreender a evolução da sessão.
+- **AESYN Progress:** perceber mudanças no corpo e performance.
+- **Professional Morning:** saber quem merece atenção e por quê.
+- **Patient Review:** compreender semanas de evolução rapidamente.
+- **Consultation:** chegar à consulta com contexto longitudinal organizado.
+- **Explore:** conseguir começar uma atividade ou esporte sem depender de já conhecer o caminho.
+
+### Regra de autonomia guiada
+
+O produto deve separar claramente:
+
+- **Preciso fazer:** plano/orientação profissional.
+- **Quero fazer:** interesses pessoais e modalidades desejadas.
+- **Posso fazer hoje:** contexto real de tempo, local, equipamento, experiência e condição relatada.
 
 ---
 
@@ -478,6 +521,16 @@ Objetivo: transformar a área profissional em uma central de trabalho para dezen
 
 **Próxima etapa:** `v0.20.3 — Patient Status Management`.
 
+## ✅ v0.20.4 — Professional Internal Notes — CONCLUÍDA
+
+- Adiciona notas internas privadas da equipe profissional por paciente.
+- Registra autor, categoria, conteúdo, fixação, edição e arquivamento lógico.
+- Mantém as notas fora do portal do paciente e protege a API por papéis da equipe.
+- Todas as mutações geram AuditLog (`INTERNAL_NOTE_CREATED`, `INTERNAL_NOTE_UPDATED`, `INTERNAL_NOTE_PIN_CHANGED`, `INTERNAL_NOTE_ARCHIVED`).
+- Migration `V0204ProfessionalInternalNotes` cria persistência e índices por organização/paciente.
+
+**Próxima etapa:** `v0.20.5 — Tags & Segmentation`.
+
 ## ✅ v0.20.3 — Patient Status Management — CONCLUÍDA
 - status persistente: ativo, pausado, aguardando avaliação e encerrado;
 - motivo/contexto opcional da alteração;
@@ -489,368 +542,287 @@ Objetivo: transformar a área profissional em uma central de trabalho para dezen
 
 **Próxima etapa:** `v0.20.4 — Professional Internal Notes`.
 
-## v0.20.4 — Professional Internal Notes
-- observações privadas;
-- não visíveis ao paciente;
-- histórico;
-- autoria/data.
+## ✅ v0.20.5 — Tags & Segmentation — CONCLUÍDA
+- tags personalizadas por paciente;
+- persistência no prontuário administrativo do paciente;
+- edição direta pela carteira e pelo perfil profissional;
+- filtro por tag na busca avançada;
+- agrupamentos operacionais derivados das tags cadastradas;
+- auditoria de alterações (`PATIENT_TAGS_CHANGED`);
+- limite de 20 tags por paciente, com normalização e deduplicação;
+- UX responsiva e compatível com dark mode;
+- buscas salvas permanecem planejadas para etapa futura.
 
-## v0.20.5 — Tags & Segmentation
-- tags personalizadas;
-- filtros;
-- agrupamentos;
-- buscas salvas futuramente.
+**Próxima etapa:** `v0.20.6 — Patient Overview 2.0`.
 
-## v0.20.6 — Shared Care / Multiple Professionals
-- profissional principal;
-- médico;
-- nutricionista;
-- treinador;
-- permissões por relação;
-- histórico de responsáveis.
+## ✅ v0.20.6 — Patient Overview 2.0 — CONCLUÍDA
 
-## v0.20.7 — Favorites & Quick Access
-- pacientes favoritos;
-- recentes;
-- ações rápidas.
+**Objetivo humano:** ao abrir um paciente, o profissional deve compreender em poucos segundos como aquela pessoa está.
 
-## v0.20.8 — Templates Ownership
-- template pessoal;
-- template da clínica;
-- compartilhado;
-- arquivado;
-- busca e filtros.
+Entregue:
+- cockpit de leitura rápida antes do detalhamento do prontuário;
+- objetivo atual, status e tags do paciente;
+- prontidão diária, treino dos últimos 30 dias, adesão e peso/tendência;
+- identificação de treino e plano nutricional vigentes;
+- último evento longitudinal;
+- motivo operacional de revisão com navegação para o domínio correspondente;
+- estados seguros para dados ausentes;
+- responsividade mobile e dark mode;
+- linguagem explícita de segurança: síntese não diagnostica, não prescreve e não altera planos;
+- reaproveitamento dos dados já carregados, sem criar endpoint ou persistência paralelos.
 
-## v0.20.9 — Professional Workspace Gate
+O gate anterior passou com `2190/2190`, removendo o bloqueio operacional antes desta evolução.
 
----
+**Próxima etapa:** `v0.20.7 — Attention Reasons 2.0`.
 
-# 5. v0.21.x — Workout Intelligence 2.0
+## ⏭ v0.20.7 — Attention Reasons 2.0
 
-Objetivo: permitir prescrição e execução avançadas sem depender de ferramenta externa.
+**Objetivo humano:** o profissional deve entender imediatamente por que uma pessoa entrou em atenção, sem precisar caçar contexto em diversas telas.
 
-- Advanced Exercise Prescription.
-- Biset/superset.
-- Triset.
-- Circuitos.
-- Drop set.
-- Rest-pause.
-- Pirâmides.
-- RPE.
-- RIR.
-- Cadência/tempo sob tensão.
-- Tempo de descanso.
-- Aquecimento específico.
-- Séries preparatórias.
-- Alternativas autorizadas.
-- Exercício unilateral e registro por lado.
-- Vídeo/demonstração.
-- Execução mobile série a série.
-- Cronômetro de descanso.
-- Última carga/repetições/RPE visíveis durante a execução.
-- Progressão de carga.
-- Progressão de repetições.
-- Volume total.
-- PRs/melhores marcas.
-- Histórico por exercício.
-- Versionamento imutável de prescrições publicadas.
-
-Sugestão de subdivisão: v0.21.0 a v0.21.20, uma capacidade relevante por versão.
+Escopo-alvo:
+- consolidar sinais já existentes;
+- deduplicar motivos equivalentes;
+- separar prioridade, observação e pendência operacional;
+- mostrar origem, período e dado que gerou cada motivo;
+- navegação direta ao contexto;
+- nenhuma inferência diagnóstica automática;
+- preservar configurabilidade da Central de Atenção.
 
 ---
 
-# 6. v0.22.x — Nutrition Intelligence 2.0
+# 5. v0.21.x — Human Profile
 
-Objetivo: levar nutrição ao mesmo nível de maturidade do treino.
+A pessoa passa a ser a unidade central do domínio longitudinal.
 
-- Food Library 2.0.
-- Meal Builder 2.0.
-- Diet Builder 3.0.
-- templates.
-- copiar refeição.
-- duplicar dieta.
-- horários.
-- quantidades e unidades.
-- alimento opcional.
-- alternativas autorizadas.
-- equivalências.
-- favoritos.
-- consumo realizado.
-- planejado × consumido.
-- motivo de divergência.
-- adesão nutricional.
-- histórico longitudinal.
-- versionamento de dieta publicada.
-- coerência automática/assistida entre meta calórica e macros.
+- Multi-Goal Engine;
+- Sports Profile;
+- Lifestyle Context;
+- Physical Capabilities;
+- Limitations & Restrictions;
+- visão profissional;
+- visão do atleta.
 
----
+# 6. v0.22.x — AESYN Daily
 
-# 7. v0.23.x — Patient Daily Experience 2.0
+- Today 3.0;
+- Morning Check-in;
+- Daily Readiness contextual;
+- Today's Plan;
+- Action Hub;
+- experiência de 30 segundos;
+- Evening Reflection;
+- histórico diário;
+- sinais úteis ao profissional;
+- premium UX.
 
-Objetivo: paciente comum deve entender a tela inicial em poucos segundos.
+# 7. v0.23.x — Sports & Movement Library
 
-Home orientada a:
-- Check-in.
-- Treino do dia / treinos disponíveis.
-- Alimentação.
-- Hidratação.
-- Mensagens.
-- Pendências.
+Estrutura-alvo: `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`.
 
-Incluir:
-- prioridades do dia;
-- quick actions;
-- progresso diário;
-- fechamento do dia;
-- integração com Dados para Atletas sem poluir a Home.
+Fundação: musculação, caminhada, corrida, calistenia, mobilidade, condicionamento e ciclismo.
 
----
+Inclui taxonomia, instruções, mídia, progressões, regressões, equipamentos, ambientes, biblioteca AESYN, biblioteca profissional e templates.
 
-# 8. v0.24.x — Check-in & Recovery Intelligence 2.0
+# 8. v0.24.x — AESYN Explore
 
-Campos/sinais:
-- sono e qualidade;
-- energia;
-- dor;
-- fadiga;
-- estresse;
-- humor;
-- motivação;
-- recuperação;
-- disposição;
-- peso opcional;
-- observação livre.
+Área de autonomia guiada para quem quer se movimentar e ainda não sabe por onde começar.
 
-Evoluções:
-- alertas de dor;
-- tendências de recuperação;
-- tendências de sono;
-- tendência de adesão;
-- fila profissional de revisão;
-- comparação com baseline individual.
+- Start a Sport;
+- Beginner Journeys;
+- Home Workout;
+- Quick Movement;
+- Travel Mode;
+- Outdoor Mode;
+- Learn Fundamentals;
+- Sports Starter Packs;
+- Interest Engine.
 
-Se houver sinal relevante, o sistema deve registrar e sinalizar, não apenas armazenar.
+# 9. v0.25.x — Sports Expansion I
 
----
+Futebol, futsal, basquete, vôlei, tênis e beach tennis com fundamentos, capacidades, sessões e preparação física específica.
 
-# 9. v0.25.x — Central de Acompanhamento 2.0
+# 10. v0.26.x — Sports Expansion II
 
-Objetivo: profissional deve poder começar o dia por uma única tela.
+Natação, triathlon, artes marciais, remo, trekking, modalidades recreativas e expansão guiada pelo uso real.
 
-Exemplo:
-- pacientes com dor alta;
-- sem treinar há vários dias;
-- sono ruim recorrente;
-- alimentação divergente;
-- mensagens sem resposta;
-- novos exames;
-- queda de aderência;
-- progresso positivo digno de reforço.
+# 11. v0.27.x — Workout Intelligence 3.0
 
-Recursos:
-- severidade;
-- prioridade;
-- filtros;
-- revisar;
-- adiar;
-- resolver;
-- histórico;
-- deep link para contexto.
+- séries, repetições, carga, RPE/RIR, descanso, tempo e cadência;
+- técnicas avançadas;
+- progressão/regressão;
+- microciclo, mesociclo, bloco e deload;
+- templates;
+- prescrito vs realizado.
 
----
+# 12. v0.28.x — Athlete Performance Passport
 
-# 10. v0.26.x — Communication 2.0
+Recordes, cargas, tempos, provas, testes, habilidades, marcos e evolução de performance.
 
-- Chat 2.0.
-- read receipts.
-- badges.
-- resposta a mensagem específica.
-- mensagem importante.
-- anexos.
-- mensagens automáticas do sistema.
-- contexto de treino.
-- contexto de exercício.
-- contexto de refeição.
-- contexto de exame.
-- contexto de arquivo.
+# 13. v0.29.x — Progress Intelligence
 
-Exemplo desejado:
+Peso, medidas, composição corporal, fotos, força, cardio, mobilidade, consistência, recordes e Progress Story.
 
-> Paciente está falando sobre: Agachamento livre • Treino B • Série 3/4 • última carga registrada 90 kg.
+# 14. v0.30.x — Sports Nutrition 3.0
 
----
+Calorias, macros, refeições, porções, equivalências, substituições, alternativas, contexto esportivo e publicação/versionamento profissional.
 
-# 11. v0.27.x — Files, Exams & Body Evolution 2.0
+# 15. v0.31.x — Recovery Intelligence
 
-- biblioteca de documentos 3.0;
-- categorias e tags;
-- upload mobile;
-- revisão de exame;
-- valores/unidades/referências;
-- trends laboratoriais;
-- peso;
-- circunferências;
-- composição corporal;
-- bioimpedância;
-- fotos de progresso;
-- comparação lado a lado;
-- frente/lado/costas;
-- desenho/marcação;
-- comentário profissional;
-- status revisado/não revisado.
+Sono, dor/desconforto, fadiga, readiness, estresse percebido e recuperação pós-treino, com relações explicáveis entre os próprios dados da pessoa.
 
-Evitar diagnóstico automático de exames.
+# 16. v0.32.x — Human Timeline
 
----
+Linha temporal única e coerente dos eventos relevantes do humano.
 
-# 12. v0.28.x — Clinical & Performance Timeline 2.0
+# 17. v0.33.x — AESYN Connect
 
-Evoluir a timeline existente para visão longitudinal unificada:
+Chat, anexos, contexto de treino/refeição, busca, histórico, confiabilidade e auditoria.
 
-avaliação → treino v1 → dieta v1 → exames → check-ins → alterações → fotos → peso → treino v2 → retorno.
+# 18. v0.34.x — Professional Attention Intelligence
 
-Filtros:
-- treino;
-- nutrição;
-- exames;
-- composição corporal;
-- comunicação;
-- avaliações;
-- arquivos;
-- alertas.
+Pergunta central: **quem precisa de mim hoje, e por quê?**
 
-Objetivo: compreender meses de acompanhamento sem abrir dezenas de telas.
+Sinais possíveis: queda de adesão, ausência, prontidão baixa recorrente, desconforto recorrente, divergência de plano, mensagem pendente, estagnação e interrupção de treino.
 
----
+# 19. v0.35.x — Consultation Mode
 
-# 13. v0.29.x — Adaptive Monitoring 2.0
+Resumo longitudinal desde a última consulta: corpo, sono, treino, adesão, alimentação, desconfortos, mensagens, mudanças e recordes.
 
-Evoluir Passive Monitoring para detecção explicável de padrões.
+# 20. v0.36.x — Goal Intelligence
 
-- sono;
-- recuperação;
-- dor;
-- performance;
-- nutrição;
-- adesão;
-- engajamento;
-- múltiplos sinais combinados.
+Múltiplos objetivos, prioridade, prazo, checkpoints, progresso, marcos e histórico.
 
-Exemplo:
+# 21. v0.37.x — AESYN Progression
 
-sono ↓ + recuperação ↓ + performance ↓ + dor ↑ → **sinal para revisão profissional**.
+Gamificação positiva: XP, níveis, streaks, conquistas, milestones e metas semanais, sem punição por imperfeição.
 
-Regras:
-- mostrar quais dados contribuíram;
-- baseline individual;
-- evitar diagnóstico;
-- evitar mudança automática de prescrição sem regra e autorização profissional.
+# 22. v0.38.x — Challenges & Exploration
 
----
+Desafios pessoais, de movimento, consistência, mobilidade e exploração esportiva.
 
-# 14. v0.30.x — Gamification 3.0
+# 23. v0.39.x — Adaptive Athlete Experience
 
-- XP 3.0;
-- níveis;
-- smart streaks;
-- conquistas;
-- metas semanais;
-- desafios;
-- temporadas;
-- recompensas por recuperação adequada;
-- treino;
-- alimentação;
-- hidratação;
-- check-ins;
-- consistência.
+Experiência contextual conforme horário, plano, estado atual, atividades concluídas e histórico recente.
 
-Não premiar volume excessivo ou comportamento potencialmente inadequado.
+# 24. v0.40.x — Human Patterns
 
----
+Detecção de padrões explicáveis dentro do histórico da própria pessoa, sem diagnóstico automatizado.
 
-# 15. v0.31.x — Clinic & Team
+# 25. v0.41.x — AESYN Insights
 
-- organizações/clínicas;
-- membros da equipe;
-- profissionais;
-- recepção;
-- administrador;
-- papéis;
-- permissões granulares;
-- compartilhamento de cuidado;
-- atribuição de pacientes;
-- convites;
-- auditoria da clínica;
-- templates da organização.
+Insights rastreáveis sobre consistência, sono, carga, adesão, progressão e tendências.
 
----
+# 26. v0.42.x — Return to Sport
 
-# 16. v0.32.x — SaaS & Monetization
+Jornada orientada por profissional para pausa, limitação, progressão, checkpoints e retorno.
 
-- planos;
-- assinatura;
-- trial;
-- limites de pacientes/recursos;
-- cobrança;
-- upgrade/downgrade;
-- inadimplência;
-- administração SaaS;
-- métricas de uso;
-- métricas de receita;
-- faturamento.
+# 27. v0.43.x — Sports Calendar
 
----
+Provas, jogos, campeonatos, viagens, avaliações, blocos de treino e deloads.
 
-# 17. v0.33.x+ — Integrations
+# 28. v0.44.x — Athlete Journal
 
-A ordem deve ser reavaliada quando esta fase chegar, porque APIs e mercado mudam.
+Registro subjetivo livre conectado à timeline.
 
-Candidatas:
-- Apple Health;
-- Health Connect;
-- Garmin;
-- Strava;
-- wearables;
-- balanças inteligentes;
-- dispositivos esportivos;
-- laboratórios;
-- APIs externas.
+# 29. v0.45.x — Support Circles
 
----
+Pequenos círculos opcionais de apoio, sem feed infinito.
 
-# 18. Backlog protegido — ideias que NÃO podem sumir
+# 30. v0.46.x — Design System 2.0
 
-Mesmo que mudem de versão, estes itens devem permanecer rastreáveis:
+Tipografia, componentes, hierarquia, animações, skeletons, estados, contraste e acessibilidade.
 
-- fotos comparativas com upload e desenho/marcação;
-- múltiplos treinos A/B/C e início livre quando permitido;
-- biset/conjugado, drop set e progressão de carga;
-- chat direto paciente ↔ profissional;
-- alertas por divergências do planejado;
-- histórico dessas divergências;
-- profissional enxergar padrões de adesão;
-- Central de Acompanhamento proativa;
-- “Dados para Atletas” separado da Home comum;
-- onboarding/refazer tutoriais;
-- upload mobile e anexos no chat;
-- notificações nos dois sentidos;
-- histórico/versionamento de treino e dieta;
-- observações privadas do profissional;
-- múltiplos profissionais por paciente;
-- timelines longitudinais;
-- exames e composição corporal;
-- uso de câmera/galeria;
-- PWA instalável;
-- experiência real em iOS/Android;
-- offline/conexão ruim;
-- auditoria;
-- LGPD/consentimentos;
-- monetização SaaS;
-- clínicas/equipes;
-- integrações de saúde e esporte;
-- gamificação voltada a consistência saudável;
-- monitoramento adaptativo explicável;
-- separar sinalização automática de decisão profissional.
+# 31. v0.47.x — Mobile Native Feel
+
+PWA com navegação, gestos, cache e performance de aplicativo.
+
+# 32. v0.48.x — Smart Notifications
+
+Notificações relevantes, configuráveis e sem spam.
+
+# 33. v0.49.x — Trust & Security
+
+Autenticação, autorização, sessão, auditoria, rate limiting, arquivos, consentimento, isolamento, backup, retenção e LGPD.
+
+# 34. v0.50.x — Performance & Scale
+
+Queries, índices, caching, jobs, paginação, imagens, compressão e observabilidade.
+
+# 35. v0.51.x — Clinics & Teams
+
+Profissional individual, clínica, equipe, papéis e permissões.
+
+# 36. v0.52.x — Professional Collaboration / Shared Care
+
+O antigo `v0.20.6 — Shared Care / Multiple Professionals` é **replanejado para cá**. A colaboração multiprofissional só entra depois de Human Profile, timeline e regras de permissão estarem maduras.
+
+# 37. v0.53.x — Practice Intelligence
+
+Analytics operacional para o profissional e sua equipe.
+
+# 38. v0.54.x — First 5 Minutes
+
+Onboarding excepcional de atleta e profissional.
+
+# 39. v0.55.x — Accessibility & Inclusion
+
+Leitor de tela, teclado, contraste, redução de movimento, linguagem clara e diferentes níveis de familiaridade digital.
+
+# 40. v0.56.x–v0.59.x — Product Readiness
+
+- Error Experience;
+- Data Reliability;
+- Backup & Disaster Recovery;
+- Observability.
+
+# 41. v0.60.x — AESYN Beta
+
+Pausa deliberada de grandes features para jornadas completas: atleta novo, atleta recorrente, profissional, consulta, viagem, descoberta de esporte, desconforto, retorno e recuperação de falhas.
+
+Classificação de pendências: P0 quebra sistema; P1 prejudica jornada; P2 UX; P3 acabamento.
+
+# 42. v0.61.x–v0.64.x — Real World Program
+
+Validação com uso real, feedback profissional, feedback de atletas e analytics de fricção respeitando privacidade.
+
+# 43. v0.65.x–v0.69.x — Commercial Foundation & Data Portability
+
+SaaS, branding profissional, convites, ciclo de conta e exportação dos próprios dados.
+
+# 44. v0.70.x–v0.89.x — Learning Roadmap
+
+Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables, Apple Health, Health Connect, integrações, relatórios, visualizações, performance e acessibilidade.
+
+# 45. v0.90.x–v0.99.x — Release Candidate
+
+- Feature Freeze;
+- Athlete Journey Hardening;
+- Professional Journey Hardening;
+- Security Hardening;
+- Performance Hardening;
+- Mobile Hardening;
+- Data Integrity Hardening;
+- Accessibility Hardening;
+- Production Simulation;
+- Release Candidate.
+
+# 46. AESYN 1.0
+
+## Promessa ao atleta
+
+- sei o que fazer hoje;
+- consigo cuidar melhor de mim;
+- consigo experimentar novas formas de me movimentar;
+- consigo enxergar minha evolução;
+- meu profissional consegue me acompanhar.
+
+## Promessa ao profissional
+
+- sei quem precisa de mim;
+- entendo como meu paciente evolui;
+- consigo prescrever e acompanhar profundamente;
+- tenho contexto para decisões melhores;
+- o sistema reduz trabalho em vez de criar trabalho.
 
 ---
 
