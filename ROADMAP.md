@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.6 — Outdoor Mode 2.0
+> **Versão-base deste roadmap:** v0.24.7 — Learn Fundamentals 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1473,9 +1473,25 @@ Transformar o caminho “Quero ir para fora” em exploração por ambiente exte
 
 **Próxima etapa:** `v0.24.7 — Learn Fundamentals 2.0`.
 
-## ⏭ v0.24.7 — Learn Fundamentals 2.0
+## ✅ v0.24.7 — Learn Fundamentals 2.0 — CONCLUÍDA
 
 Transformar “Aprender fundamentos” em uma experiência educacional por modalidade e capacidade, reutilizando conteúdo existente sem criar prescrição.
+
+
+
+**Entregue na v0.24.7:**
+- endpoint `/api/portal/me/explore/learn-fundamentals`;
+- seleção por modalidade e capacidade;
+- fundamentos com explicação, observação, erro comum e próximo passo;
+- Musculação, Corrida, Calistenia, Mobilidade e Ciclismo;
+- integração ao caminho “Aprender fundamentos”;
+- educação contextual sem prescrição automática.
+
+**Próxima etapa:** `v0.24.8 — Sports Starter Packs 2.0`.
+
+## ⏭ v0.24.8 — Sports Starter Packs 2.0
+
+Levar Starter Packs para a experiência do atleta como referências exploráveis por modalidade e objetivo, sem copiar, atribuir ou publicar treino automaticamente.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

@@ -40,6 +40,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Learn Fundamentals 2.0
+
+A `v0.24.7` transforma **Aprender fundamentos** em uma experiência educacional navegável por modalidade e capacidade. Cada fundamento explica o conceito, o que observar, um erro comum e o próximo passo de aprendizagem.
+
+O conteúdo é educacional e contextual. Não define séries, repetições, carga, pace, volume, intensidade, aptidão clínica ou progressão automática.
+
 ### Outdoor Mode 2.0
 
 A `v0.24.6` transforma **Quero ir para fora** em um explorador contextual por ambiente externo, recurso e interesse. O AESYN consulta o catálogo `Exercicios` e mostra possibilidades reais para Rua, Parque, Praça, Trilha leve e Área externa livre.
@@ -311,7 +318,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.6 — Outdoor Mode 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
+- **Versão funcional:** `v0.24.7 — Learn Fundamentals 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`

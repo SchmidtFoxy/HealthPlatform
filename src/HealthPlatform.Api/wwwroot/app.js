@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.6';
+const HP_MVP_VERSION='0.24.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14253,5 +14253,92 @@ hpWireExploreFoundationV0240=function(host,data){
   outdoorBtn.onclick=()=>{
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenOutdoorModeV0246(detail);
+  };
+};
+
+
+// ===== v0.24.7 — Learn Fundamentals 2.0 =====
+const HP_LEARN_FUNDAMENTALS_V0247='v0.24.7';
+
+function hpLearnFundamentalsQueryV0247(filters){
+  const p=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)p.set(k,v)});
+  const qs=p.toString();
+  return `/api/portal/me/explore/learn-fundamentals${qs?`?${qs}`:''}`;
+}
+
+function hpLearnFundamentalsV0247(data){
+  const items=Array.isArray(data?.fundamentos)?data.fundamentos:[];
+  const option=(value,current)=>`<option ${value===current?'selected':''}>${esc(value)}</option>`;
+
+  return `<section class="learn-fundamentals-v0247" data-learn-fundamentals-v0247="${HP_LEARN_FUNDAMENTALS_V0247}" aria-labelledby="learnFundamentalsTitleV0247">
+    <div class="learn-fundamentals-head-v0247">
+      <div>
+        <span class="eyebrow">LEARN FUNDAMENTALS 2.0</span>
+        <h3 id="learnFundamentalsTitleV0247">Aprender antes de acelerar.</h3>
+        <p>Escolha uma modalidade e uma capacidade para entender conceitos, o que observar e erros comuns.</p>
+      </div>
+      <span>${items.length} fundamento(s)</span>
+    </div>
+
+    <div class="learn-fundamentals-filters-v0247">
+      <label><span>MODALIDADE</span><select id="learnFundamentalsSportV0247">${(data?.modalidadesDisponiveis||[]).map(x=>option(x,data?.modalidade)).join('')}</select></label>
+      <label><span>CAPACIDADE</span><select id="learnFundamentalsCapabilityV0247">${(data?.capacidadesDisponiveis||[]).map(x=>option(x,data?.capacidade)).join('')}</select></label>
+    </div>
+
+    <div class="learn-fundamentals-grid-v0247">
+      ${items.map((x,i)=>`<article>
+        <b>${i+1}</b>
+        <div>
+          <span>FUNDAMENTO</span>
+          <strong>${esc(x.titulo)}</strong>
+          <p>${esc(x.explicacao)}</p>
+          <div><small>O QUE OBSERVAR</small><span>${esc(x.oQueObservar)}</span></div>
+          <div><small>ERRO COMUM</small><span>${esc(x.erroComum)}</span></div>
+          <footer><small>PRÓXIMO PASSO</small><span>${esc(x.proximoPasso)}</span></footer>
+        </div>
+      </article>`).join('')}
+    </div>
+
+    <div class="learn-fundamentals-source-v0247">
+      <b>Educação ≠ prescrição</b>
+      <span>${esc(data?.regraDeUso||'Learn Fundamentals organiza conhecimento sem prescrever treino.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenLearnFundamentalsV0247(host,filters={}){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando fundamentos...</div>';
+  try{
+    const data=await api(hpLearnFundamentalsQueryV0247(filters));
+    host.innerHTML=hpLearnFundamentalsV0247(data);
+
+    const current=()=>({
+      modalidade:host.querySelector('#learnFundamentalsSportV0247')?.value||'',
+      capacidade:host.querySelector('#learnFundamentalsCapabilityV0247')?.value||''
+    });
+
+    const sport=host.querySelector('#learnFundamentalsSportV0247');
+    const capability=host.querySelector('#learnFundamentalsCapabilityV0247');
+    if(sport)sport.onchange=()=>hpOpenLearnFundamentalsV0247(host,{modalidade:sport.value});
+    if(capability)capability.onchange=()=>hpOpenLearnFundamentalsV0247(host,current());
+
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir os fundamentos.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0247=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0247(host,data);
+  if(!host)return;
+  const learnBtn=host.querySelector('[data-explore-path-v0240="learn-fundamentals"]');
+  if(!learnBtn)return;
+  learnBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenLearnFundamentalsV0247(detail);
   };
 };

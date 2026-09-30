@@ -1,3 +1,14 @@
+# v0.24.7 — Learn Fundamentals 2.0
+
+- Adiciona `GET /api/portal/me/explore/learn-fundamentals`.
+- Cria seleção por modalidade e capacidade.
+- Cada fundamento expõe explicação, o que observar, erro comum e próximo passo.
+- Inclui Musculação, Corrida, Calistenia, Mobilidade e Ciclismo.
+- Integra Learn Fundamentals ao caminho “Aprender fundamentos”.
+- Não define séries, repetições, carga, pace, volume, intensidade ou progressão.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.8 — Sports Starter Packs 2.0.
+
 # v0.24.6 — Outdoor Mode 2.0
 
 - Adiciona `GET /api/portal/me/explore/outdoor-mode`.

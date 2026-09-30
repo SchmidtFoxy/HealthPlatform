@@ -891,4 +891,99 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("learn-fundamentals")]
+    public async Task<ActionResult<LearnFundamentalsResponse>> LearnFundamentals(
+        [FromQuery] string? modalidade = null,
+        [FromQuery] string? capacidade = null,
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modalidades = new[] { "Musculação", "Corrida", "Calistenia", "Mobilidade", "Ciclismo" };
+        var capacidadesPorModalidade = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Musculação"] = ["Padrões de movimento", "Controle", "Força"],
+            ["Corrida"] = ["Técnica básica", "Percepção de esforço", "Ritmo"],
+            ["Calistenia"] = ["Apoio", "Alavanca", "Estabilidade"],
+            ["Mobilidade"] = ["Amplitude", "Controle", "Respiração"],
+            ["Ciclismo"] = ["Controle", "Cadência", "Ambiente"]
+        };
+
+        var modalidadeAtual = NormalizarOpcao(modalidade, modalidades, "Musculação");
+        var capacidades = capacidadesPorModalidade[modalidadeAtual];
+        var capacidadeAtual = NormalizarOpcao(capacidade, capacidades, capacidades[0]);
+
+        var fundamentos = MontarFundamentos(modalidadeAtual, capacidadeAtual);
+
+        return Ok(new LearnFundamentalsResponse(
+            modalidadeAtual,
+            capacidadeAtual,
+            modalidades,
+            capacidades,
+            fundamentos,
+            "AESYN Explore / Sports & Movement Library",
+            "Learn Fundamentals organiza conhecimento educacional. Nao define series, repeticoes, carga, pace, volume, intensidade, aptidao clinica ou progressao automatica."));
+    }
+
+    private static LearnFundamentalsItemResponse[] MontarFundamentos(
+        string modalidade,
+        string capacidade)
+    {
+        if (modalidade == "Musculação" && capacidade == "Padrões de movimento")
+            return
+            [
+                new("empurrar", "Empurrar", "Mover uma resistência para longe do corpo em diferentes ângulos.", "Observe estabilidade, trajetória e controle.", "Transformar carga alta em objetivo principal antes de entender o movimento.", "Reconhecer variações de empurrar no catálogo profissional."),
+                new("puxar", "Puxar", "Trazer uma resistência em direção ao corpo ou controlar o retorno.", "Observe posição do tronco e trajetória dos braços.", "Confundir maior peso com melhor execução.", "Identificar puxadas horizontais e verticais."),
+                new("agachar", "Agachar", "Organizar tornozelo, joelho, quadril e tronco em um padrão de sentar e levantar.", "Observe equilíbrio, controle e amplitude confortável.", "Forçar uma amplitude universal para todas as pessoas.", "Comparar variações e recursos disponíveis.")
+            ];
+
+        if (modalidade == "Corrida")
+            return
+            [
+                new("alternancia", "Caminhar e correr", "Alternar pode fazer parte do aprendizado sem representar falha.", "Observe como muda a percepção de esforço.", "Achar que começar exige correr continuamente.", "Entender diferença entre aprender e testar performance."),
+                new("esforco", "Percepção de esforço", "Velocidade e esforço não são equivalentes para todas as pessoas.", "Observe respiração, controle e percepção subjetiva.", "Usar pace isolado como autorização para aumentar intensidade.", "Aprender como contexto muda a resposta."),
+                new("ambiente", "Ambiente e superfície", "Terreno e ambiente alteram exigência e experiência.", "Observe superfície, inclinação, espaço e segurança.", "Tratar todos os percursos como equivalentes.", "Explorar contexto antes de pensar em progressão.")
+            ];
+
+        if (modalidade == "Calistenia")
+            return
+            [
+                new("apoio", "Pontos de apoio", "Mãos, pés, banco, barra ou chão mudam a exigência do movimento.", "Observe estabilidade e conforto do apoio.", "Interpretar apoio maior como 'pior versão'.", "Entender como apoio muda a alavanca."),
+                new("alavanca", "Alavanca", "A posição do corpo pode tornar o mesmo padrão mais ou menos exigente.", "Observe distância entre apoios e centro de massa.", "Avançar para variações difíceis só pela aparência.", "Comparar variações do mesmo padrão."),
+                new("controle", "Controle corporal", "Estabilidade e trajetória importam antes da complexidade.", "Observe capacidade de repetir com controle.", "Buscar dificuldade máxima como marcador de progresso.", "Explorar consistência antes da progressão.")
+            ];
+
+        if (modalidade == "Mobilidade")
+            return
+            [
+                new("amplitude", "Amplitude", "Amplitude é específica do movimento, da pessoa e do contexto.", "Observe onde o movimento permanece controlado.", "Forçar amplitude apenas porque outra pessoa alcança.", "Distinguir amplitude disponível de amplitude útil."),
+                new("controle", "Controle na amplitude", "Chegar mais longe não significa controlar melhor.", "Observe estabilidade ao entrar e sair da posição.", "Usar desconforto como prova de eficácia.", "Explorar movimento com controle."),
+                new("respiracao", "Respiração", "A respiração pode ajudar a perceber tensão e controle.", "Observe se consegue respirar sem prender o ar.", "Usar uma técnica respiratória como regra universal.", "Relacionar respiração ao próprio contexto.")
+            ];
+
+        if (modalidade == "Ciclismo")
+            return
+            [
+                new("controle", "Controle da bicicleta", "Frenagem, direção e estabilidade vêm antes de velocidade.", "Observe segurança para iniciar, frear e mudar direção.", "Aumentar velocidade antes de dominar controle.", "Reconhecer os controles essenciais."),
+                new("cadencia", "Cadência", "Cadência descreve frequência de pedalada, não um alvo universal.", "Observe sensação e controle do giro.", "Perseguir um número fixo sem contexto.", "Entender cadência como variável, não prescrição."),
+                new("ambiente", "Leitura do ambiente", "Rota, superfície e outros usuários mudam a experiência.", "Observe sinalização, terreno e previsibilidade.", "Tratar indoor e rua como contextos equivalentes.", "Explorar segurança contextual antes de performance.")
+            ];
+
+        return
+        [
+            new("conceito", capacidade, $"Entender o que significa {capacidade.ToLowerInvariant()} dentro de {modalidade}.", "Observe como o conceito aparece no movimento.", "Transformar um conceito educacional em regra automática.", "Explorar exemplos no catálogo profissional."),
+            new("contexto", "Contexto", "O mesmo fundamento pode mudar conforme pessoa, ambiente e recurso.", "Observe diferenças entre variações.", "Assumir que existe uma única execução universal.", "Comparar possibilidades com orientação quando necessário."),
+            new("familiaridade", "Familiaridade", "Aprender o conceito antes de buscar intensidade ou performance.", "Observe se consegue explicar o fundamento com suas palavras.", "Confundir conhecer com estar apto ou prescrito.", "Usar o conhecimento para conversar melhor com o profissional.")
+        ];
+    }
+
+
 }

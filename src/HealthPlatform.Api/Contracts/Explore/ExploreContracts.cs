@@ -143,3 +143,21 @@ public sealed record OutdoorModeResponse(
     IReadOnlyCollection<OutdoorModePossibilidadeResponse> Possibilidades,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record LearnFundamentalsItemResponse(
+    string Codigo,
+    string Titulo,
+    string Explicacao,
+    string OQueObservar,
+    string ErroComum,
+    string ProximoPasso);
+
+public sealed record LearnFundamentalsResponse(
+    string Modalidade,
+    string Capacidade,
+    string[] ModalidadesDisponiveis,
+    string[] CapacidadesDisponiveis,
+    IReadOnlyCollection<LearnFundamentalsItemResponse> Fundamentos,
+    string Fonte,
+    string RegraDeUso);
