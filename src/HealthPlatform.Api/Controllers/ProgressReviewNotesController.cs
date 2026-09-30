@@ -80,6 +80,47 @@ public class ProgressReviewNotesController(
             "O destino de navegação aponta somente para a seção observacional relacionada. A referência da nota permanece descritiva e não seleciona automaticamente um dado clínico específico."));
     }
 
+    [HttpGet("follow-up-foundation")]
+    public ActionResult<ProgressReviewFollowUpFoundationResponse> FollowUpFoundation()
+    {
+        var campos = new[]
+        {
+            new ProgressReviewFollowUpFieldResponse(
+                "item-acompanhar",
+                "Item a acompanhar",
+                "Descreve objetivamente o item que deverá ser revisto em acompanhamento posterior.",
+                true),
+            new ProgressReviewFollowUpFieldResponse(
+                "contexto-relacionado",
+                "Contexto relacionado",
+                "Permite referenciar o contexto observacional associado ao item de acompanhamento, sem copiar dados clínicos.",
+                false),
+            new ProgressReviewFollowUpFieldResponse(
+                "horizonte-revisao",
+                "Horizonte de revisão",
+                "Registra uma referência temporal descritiva para nova revisão, sem gerar prazo clínico automaticamente.",
+                false),
+            new ProgressReviewFollowUpFieldResponse(
+                "responsavel",
+                "Responsável",
+                "Identifica o profissional ou papel que deverá revisar o item quando aplicável.",
+                false),
+            new ProgressReviewFollowUpFieldResponse(
+                "observacao-follow-up",
+                "Observação de acompanhamento",
+                "Espaço para orientação documental do próximo acompanhamento, sem transformar o registro em recomendação automática.",
+                false)
+        };
+
+        return Ok(new ProgressReviewFollowUpFoundationResponse(
+            campos,
+            campos.Length,
+            "FundacaoEstruturalDisponivel",
+            false,
+            "EquipeProfissional",
+            "A fundação de follow-up organiza próximos itens a acompanhar. Nesta versão não possui persistência própria e não cria decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
+    }
+
     [HttpGet("context-closure")]
     public ActionResult<ProgressReviewContextClosureResponse> ContextClosure()
     {

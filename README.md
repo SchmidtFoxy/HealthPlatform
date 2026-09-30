@@ -1546,3 +1546,24 @@ O fechamento mede somente presença estrutural das capacidades. Não representa 
 
 **Próxima etapa:** `v0.31.0 — Progress Review Follow-up Foundation`.
 
+---
+
+## v0.31.0 — Progress Review Follow-up Foundation
+
+Abre a linha 0.31.x com a fundação estrutural para acompanhamento posterior às revisões profissionais.
+
+### Campos estruturados
+- `item-acompanhar` — obrigatório;
+- `contexto-relacionado`;
+- `horizonte-revisao`;
+- `responsavel`;
+- `observacao-follow-up`.
+
+### Escopo
+A fundação é exclusiva da equipe profissional e organiza o que deverá ser revisto posteriormente. Nesta versão ela é apenas estrutural e não possui persistência própria.
+
+### Guardrail
+O follow-up não cria alerta clínico automático, não interpreta prioridade, não define prazo clínico, não produz diagnóstico, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.31.1 — Progress Review Follow-up Persistence`.
+

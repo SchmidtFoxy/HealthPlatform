@@ -1,4 +1,18 @@
-﻿# v0.30.12 — Progress Review Context Integrity Closure
+﻿# v0.31.0 — Progress Review Follow-up Foundation
+
+- Abre a linha funcional 0.31.x.
+- Adiciona `ProgressReviewFollowUpFieldResponse`.
+- Adiciona `ProgressReviewFollowUpFoundationResponse`.
+- Adiciona cinco campos estruturados de follow-up.
+- Adiciona `GET .../progress-review-notes/follow-up-foundation`.
+- Adiciona marcador `HP_PROGRESS_REVIEW_FOLLOW_UP_V0310`.
+- Exibe a fundação de acompanhamento na modal profissional.
+- Mantém `PersistenciaDisponivel = false`.
+- Não cria decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.31.1 — Progress Review Follow-up Persistence.
+
+# v0.30.12 — Progress Review Context Integrity Closure
 
 - Adiciona `ProgressReviewContextClosureResponse`.
 - Adiciona endpoint `GET .../progress-review-notes/context-closure`.

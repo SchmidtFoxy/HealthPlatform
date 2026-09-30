@@ -2425,3 +2425,20 @@ Fechar o ciclo 0.30.x de revisão contextual consolidando captura, confirmação
 ### v0.31.0 — Progress Review Follow-up Foundation
 Criar a fundação estrutural para acompanhamento posterior às revisões, permitindo registrar próximos itens a acompanhar sem transformar notas em decisão clínica automatizada.
 
+## ✅ v0.31.0 — Progress Review Follow-up Foundation — CONCLUÍDA
+
+**Entregue:**
+- contrato `ProgressReviewFollowUpFieldResponse`;
+- contrato `ProgressReviewFollowUpFoundationResponse`;
+- cinco campos estruturados de acompanhamento;
+- endpoint profissional `follow-up-foundation`;
+- estado `FundacaoEstruturalDisponivel`;
+- indicação explícita de persistência ainda indisponível;
+- painel de fundação na modal profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.1 — Progress Review Follow-up Persistence
+Adicionar persistência profissional para itens de acompanhamento, preservando autoria, auditoria, contexto opcional e separação entre registro documental e decisão clínica.
+
