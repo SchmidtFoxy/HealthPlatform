@@ -41,7 +41,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.21.4 — Human Profile Synthesis 2.0
+> **Versão-base deste roadmap:** v0.22.0 — AESYN Daily Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -756,6 +756,25 @@ Consolidar objetivos, identidade esportiva, contexto de vida, corpo e acompanham
 
 
 # 6. v0.22.x — AESYN Daily
+
+## ✅ v0.22.0 — AESYN Daily Foundation — CONCLUÍDA
+
+**Entregue na v0.22.0:**
+- visão diária em quatro dimensões;
+- Preciso fazer;
+- Quero fazer;
+- Posso fazer hoje;
+- Como estou;
+- próxima ação contextual;
+- integração com Human Profile Synthesis;
+- sem diagnóstico ou prescrição automática.
+
+**Próxima etapa:** `v0.22.1 — Morning Check-in 2.0`.
+
+## ⏭ v0.22.1 — Morning Check-in 2.0
+
+Evoluir a coleta rápida de sono, energia, dor/desconforto, estresse, humor e disponibilidade para alimentar o Daily com contexto do próprio dia.
+
 
 - Today 3.0;
 - Morning Check-in;

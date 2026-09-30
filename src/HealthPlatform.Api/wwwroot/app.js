@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.21.4';
+const HP_MVP_VERSION='0.22.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12071,4 +12071,95 @@ renderPatientTab=function(d){
   const life=host?.querySelector('[data-life-context-v0213]');
   if(!host||!life||host.querySelector('[data-human-synthesis-v0214]'))return;
   life.insertAdjacentHTML('afterend',hpHumanSynthesisV0214(d));
+};
+
+
+// ===== v0.22.0 — AESYN Daily Foundation =====
+const HP_AESYN_DAILY_V0220='v0.22.0';
+
+function hpDailyTextV0220(value){ return String(value??'').trim(); }
+
+function hpDailyDataV0220(d){
+  const portal=d?.portal||{};
+  const goals=typeof hpCollectGoalsV0211==='function'?hpCollectGoalsV0211(d):[];
+  const sports=typeof hpSportsIdentityDataV0212==='function'?hpSportsIdentityDataV0212(d):{};
+  const life=typeof hpLifeContextDataV0213==='function'?hpLifeContextDataV0213(d):{};
+  const readiness=portal?.prontidaoHoje||portal?.readinessHoje||{};
+  const workout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const nutrition=(d?.planos||[]).find(x=>x.status==='Ativo')||(d?.planos||[])[0]||{};
+
+  const must=[];
+  if(workout?.nome)must.push(`Treino: ${workout.nome}`);
+  if(nutrition?.nome)must.push(`Nutrição: ${nutrition.nome}`);
+  if(goals[0]?.text)must.push(`Objetivo principal: ${goals[0].text}`);
+
+  const want=[];
+  (sports.current||[]).slice(0,2).forEach(x=>want.push(x));
+  if(life.preferences)want.push(life.preferences);
+
+  const can=[];
+  if(life.availability)can.push(`Tempo: ${life.availability}`);
+  if(life.logistics)can.push(`Contexto: ${life.logistics}`);
+  if(life.equipment)can.push(`Recursos: ${life.equipment}`);
+
+  const signals=[];
+  if(readiness?.score!=null)signals.push(`Prontidão ${readiness.score}`);
+  if(readiness?.nivel)signals.push(`Prontidão ${readiness.nivel}`);
+  if(portal?.sonoHorasHoje!=null)signals.push(`Sono ${portal.sonoHorasHoje}h`);
+  if(portal?.hidratacaoHoje!=null)signals.push(`Hidratação ${portal.hidratacaoHoje}`);
+
+  return {must,want,can,signals};
+}
+
+function hpDailyCardV0220(title,subtitle,items,empty){
+  return `<article class="aesyn-daily-card-v0220">
+    <span>${esc(title)}</span>
+    <small>${esc(subtitle)}</small>
+    ${items.length?`<ul>${items.slice(0,3).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p>${esc(empty)}</p>`}
+  </article>`;
+}
+
+function hpAesynDailyV0220(d){
+  const x=hpDailyDataV0220(d);
+  const hasContext=x.must.length||x.want.length||x.can.length||x.signals.length;
+  return `<section class="aesyn-daily-v0220" data-aesyn-daily-v0220="${HP_AESYN_DAILY_V0220}">
+    <div class="aesyn-daily-head-v0220">
+      <div><span class="eyebrow">AESYN DAILY • FOUNDATION</span><h3>Hoje, em um olhar.</h3><p>Uma ponte simples entre plano profissional, vontade da pessoa, contexto disponível e sinais recentes.</p></div>
+      <div class="aesyn-daily-status-v0220"><b>${hasContext?'Contexto disponível':'Contexto parcial'}</b><span>base para o dia</span></div>
+    </div>
+
+    <div class="aesyn-daily-grid-v0220">
+      ${hpDailyCardV0220('PRECISO FAZER','Plano & objetivo',x.must,'Nenhum plano ativo apareceu nesta síntese.')}
+      ${hpDailyCardV0220('QUERO FAZER','Interesse & preferência',x.want,'Preferências ainda não estruturadas.')}
+      ${hpDailyCardV0220('POSSO FAZER HOJE','Tempo, local & recursos',x.can,'Contexto de disponibilidade ainda não informado.')}
+      ${hpDailyCardV0220('COMO ESTOU','Sinais recentes',x.signals,'Sem sinal recente suficiente nesta síntese.')}
+    </div>
+
+    <div class="aesyn-daily-action-v0220">
+      <div><b>Próxima ação</b><span>Use o plano profissional como referência e ajuste a execução ao contexto real registrado.</span></div>
+      <button type="button" class="btn ghost" data-daily-action-v0220="checkin">Atualizar contexto</button>
+    </div>
+
+    <div class="aesyn-daily-safety-v0220"><b>Daily não decide sozinho</b><span>Este bloco organiza contexto do dia. Ele não prescreve, não diagnostica e não substitui orientação profissional.</span></div>
+  </section>`;
+}
+
+function hpWireAesynDailyV0220(host){
+  const btn=host?.querySelector('[data-daily-action-v0220="checkin"]');
+  if(!btn)return;
+  btn.onclick=()=>{
+    const target=host.querySelector('[data-human-profile-v0210]')||host;
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+}
+
+const __renderPatientTab_v0220=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0220(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent');
+  const synthesis=host?.querySelector('[data-human-synthesis-v0214]');
+  if(!host||!synthesis||host.querySelector('[data-aesyn-daily-v0220]'))return;
+  synthesis.insertAdjacentHTML('afterend',hpAesynDailyV0220(d));
+  hpWireAesynDailyV0220(host);
 };

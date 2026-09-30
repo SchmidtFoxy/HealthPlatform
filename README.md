@@ -14,6 +14,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### AESYN Daily Foundation
+
+A `v0.22.0` inaugura o **AESYN Daily**, camada diária que conecta quatro perguntas simples: **Preciso fazer**, **Quero fazer**, **Posso fazer hoje** e **Como estou**.
+
+A fundação reaproveita plano profissional, objetivos, identidade esportiva, contexto de vida e sinais recentes. O Daily organiza o dia; não prescreve sozinho, não diagnostica e não substitui orientação profissional.
+
 ### Human Profile Synthesis 2.0
 
 A `v0.21.4` fecha a fundação do Human Profile com uma **síntese profissional compacta** de seis dimensões: objetivos, identidade esportiva, corpo, plano atual, contexto de vida e sinais recentes.
@@ -123,7 +130,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.21.4 — Human Profile Synthesis 2.0`
+- **Versão funcional:** `v0.22.0 — AESYN Daily Foundation`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

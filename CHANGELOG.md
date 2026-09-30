@@ -1,3 +1,14 @@
+# v0.22.0 — AESYN Daily Foundation
+
+- Inaugura a camada AESYN Daily.
+- Organiza o dia em Preciso fazer / Quero fazer / Posso fazer hoje / Como estou.
+- Reaproveita objetivos, planos ativos, identidade esportiva, contexto de vida e sinais recentes.
+- Adiciona uma próxima ação contextual sem automatizar decisão clínica.
+- Integra o Daily ao resumo profissional após Human Profile Synthesis 2.0.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.0.
+- Próxima etapa: v0.22.1 — Morning Check-in 2.0.
+
 # v0.21.4 — Human Profile Synthesis 2.0
 
 - Consolida o Human Profile em uma síntese profissional de seis dimensões.
