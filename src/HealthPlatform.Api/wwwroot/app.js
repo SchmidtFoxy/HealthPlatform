@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.8';
+const HP_MVP_VERSION='0.24.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13607,3 +13607,93 @@ async function openMovementLibraryV0230(){
     box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY</span><h2>Biblioteca indisponível</h2><p>${esc(err.message||'Não foi possível carregar a estrutura agora.')}</p></div>`;
   }
 }
+
+// ===== v0.24.0 — AESYN Explore Foundation =====
+const HP_AESYN_EXPLORE_FOUNDATION_V0240='v0.24.0';
+
+function hpExploreContextV0240(x){
+  const must=[];
+  if(x?.planoAtual)must.push(x.planoAtual);
+  if(x?.cicloAtual)must.push(x.cicloAtual);
+  if(x?.objetivoAtual)must.push(x.objetivoAtual);
+
+  const want=[];
+  if(x?.atividadeRelatada)want.push(x.atividadeRelatada);
+
+  const can=[];
+  if(x?.frequenciaSemanalRelatada!=null)can.push(`${x.frequenciaSemanalRelatada} dia(s)/semana relatados`);
+  return {must,want,can};
+}
+
+function hpExploreFoundationV0240(x){
+  const ctx=hpExploreContextV0240(x);
+  const paths=Array.isArray(x?.caminhos)?x.caminhos:[];
+  return `<section class="aesyn-explore-v0240" data-aesyn-explore-v0240="${HP_AESYN_EXPLORE_FOUNDATION_V0240}" aria-labelledby="aesynExploreTitleV0240">
+    <div class="aesyn-explore-head-v0240">
+      <div>
+        <span class="eyebrow">AESYN EXPLORE • FOUNDATION</span>
+        <h2 id="aesynExploreTitleV0240">Quero me movimentar. O que faz sentido explorar?</h2>
+        <p>Explore separa o que já faz parte do seu plano, o que desperta interesse e o que cabe no contexto real.</p>
+      </div>
+      <span class="aesyn-explore-badge-v0240">AUTONOMIA GUIADA</span>
+    </div>
+
+    <div class="aesyn-explore-compass-v0240">
+      <article><span>PRECISO FAZER</span>${ctx.must.length?ctx.must.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Seu plano profissional continua sendo a referência quando existir.</p>'}</article>
+      <article><span>QUERO FAZER</span>${ctx.want.length?ctx.want.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Use Explore para descobrir modalidades e interesses.</p>'}</article>
+      <article><span>POSSO FAZER HOJE</span>${ctx.can.length?ctx.can.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Tempo, local e recursos serão refinados nas próximas etapas.</p>'}</article>
+    </div>
+
+    <div class="aesyn-explore-paths-v0240">
+      ${paths.map(p=>`<button type="button" class="aesyn-explore-path-v0240" data-explore-path-v0240="${esc(p.codigo)}">
+        <span>${esc(p.tipo||'Explorar')}</span>
+        <strong>${esc(p.titulo)}</strong>
+        <p>${esc(p.descricao)}</p>
+        <div>${(p.modalidades||[]).slice(0,4).map(m=>`<i>${esc(m)}</i>`).join('')}</div>
+      </button>`).join('')}
+    </div>
+
+    <div id="aesynExploreDetailV0240" class="aesyn-explore-detail-v0240" hidden aria-live="polite"></div>
+
+    <div class="aesyn-explore-safety-v0240">
+      <b>Explore não prescreve</b>
+      <span>${esc(x?.regraDeAutonomia||'Explore organiza possibilidades sem substituir plano ou orientação profissional.')}</span>
+    </div>
+  </section>`;
+}
+
+function hpWireExploreFoundationV0240(host,data){
+  if(!host)return;
+  host.querySelectorAll('[data-explore-path-v0240]').forEach(btn=>{
+    btn.onclick=()=>{
+      const path=(data?.caminhos||[]).find(x=>x.codigo===btn.dataset.explorePathV0240);
+      const detail=host.querySelector('#aesynExploreDetailV0240');
+      if(!path||!detail)return;
+      detail.hidden=false;
+      detail.innerHTML=`<div><span class="eyebrow">CAMINHO DE EXPLORAÇÃO</span><h3>${esc(path.titulo)}</h3><p>${esc(path.descricao)}</p></div>
+        <div class="aesyn-explore-context-tags-v0240">${(path.contextos||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+        <div class="aesyn-explore-modalities-v0240">${(path.modalidades||[]).map(x=>`<b>${esc(x)}</b>`).join('')}</div>
+        <small>Fundação de descoberta: nenhum treino é iniciado, alterado ou publicado automaticamente.</small>`;
+      detail.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+    };
+  });
+}
+
+async function hpInjectExploreFoundationV0240(){
+  const portal=$('#patientPortalContent');
+  if(!portal||portal.querySelector('[data-aesyn-explore-v0240]'))return;
+  try{
+    const data=await api('/api/portal/me/explore');
+    const home=portal.querySelector('.patient-mobile-home')||portal;
+    home.insertAdjacentHTML('beforeend',hpExploreFoundationV0240(data));
+    hpWireExploreFoundationV0240(home.querySelector('[data-aesyn-explore-v0240]'),data);
+  }catch(e){
+    console.warn('AESYN Explore foundation indisponível:',e?.message||e);
+  }
+}
+
+const __loadMyPatientPortal_v0240=loadMyPatientPortal;
+loadMyPatientPortal=async function(){
+  await __loadMyPatientPortal_v0240();
+  await hpInjectExploreFoundationV0240();
+};

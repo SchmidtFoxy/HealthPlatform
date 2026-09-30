@@ -1,3 +1,24 @@
+# v0.24.0-r1 — Explore UI Gate Alignment (revisão local)
+
+- Corrige o gate estático da UI da `v0.24.0`.
+- Os títulos dos caminhos do Explore são definidos pelo endpoint `/api/portal/me/explore` e renderizados dinamicamente pelo frontend.
+- O gate passa a validar os títulos no controller e a estrutura/renderização no `app.js`.
+- Mantém `VERSION.txt` em `0.24.0`.
+- Sem mudança funcional, endpoint, contrato, migration ou schema.
+- Revisão local: não gerar commit próprio.
+
+# v0.24.0 — AESYN Explore Foundation
+
+- Inicia a fase `v0.24.x — AESYN Explore`.
+- Adiciona `GET /api/portal/me/explore` para pacientes autenticados.
+- Reúne plano ativo, ciclo esportivo, objetivo e atividade física relatada.
+- Implementa a bússola `Preciso fazer / Quero fazer / Posso fazer hoje`.
+- Adiciona cinco caminhos iniciais de exploração.
+- Integra Explore à home mobile do atleta.
+- Não cria treino, não publica prescrição e não define intensidade automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.1 — Start a Sport 2.0.
+
 # v0.23.8 — Movement Library Mobile & Accessibility 2.0
 
 - Fecha a ergonomia profissional da fase `v0.23.x`.

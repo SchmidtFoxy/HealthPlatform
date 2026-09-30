@@ -33,6 +33,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### AESYN Explore Foundation
+
+A `v0.24.0` inicia a fase de autonomia guiada do atleta. Explore conecta o plano ativo, o ciclo esportivo, a atividade relatada e caminhos de descoberta como **Começar um esporte**, **Mover em casa**, **Tenho pouco tempo**, **Quero ir para fora** e **Aprender fundamentos**.
+
+A experiência é construída sobre três perguntas: **Preciso fazer**, **Quero fazer** e **Posso fazer hoje**. Explore não altera prescrição, não libera atividade clinicamente contraindicada e não define intensidade automaticamente.
+
 ### Movement Library Mobile & Accessibility 2.0
 
 A `v0.23.8` fecha a ergonomia da biblioteca profissional para telas pequenas e navegação assistiva. A bancada ganha foco visível, `aria-label`, região `aria-live`, navegação por setas/Home/End, suporte a `Escape`, alvos de toque maiores e foco contextual após navegação interna.
@@ -262,7 +269,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.8 — Movement Library Mobile & Accessibility 2.0`
+- **Versão funcional:** `v0.24.0 — AESYN Explore Foundation`
+- **Revisão local corrente:** `v0.24.0-r1 — Explore UI Gate Alignment`
 - **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal

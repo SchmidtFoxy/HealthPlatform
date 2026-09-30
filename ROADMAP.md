@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.8 — Movement Library Mobile & Accessibility 2.0
+> **Versão-base deste roadmap:** v0.24.0 — AESYN Explore Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1036,7 +1036,9 @@ Organizar sessões-modelo existentes em conjuntos reutilizáveis por modalidade/
 # 8. v0.24.x — AESYN Explore
 
 
-## ⏭ v0.24.0 — AESYN Explore Foundation
+## ✅ v0.24.0 — AESYN Explore Foundation — CONCLUÍDA
+
+> **Revisão local v0.24.0-r1:** alinha o gate da UI ao desenho real da fundação Explore: os nomes dos caminhos vêm do payload de `/api/portal/me/explore`, enquanto o frontend renderiza os caminhos dinamicamente. Sem alteração funcional, API, schema ou migration. Não commitar separadamente.
 
 Criar a fundação da experiência de autonomia guiada que transforma interesses, contexto real e biblioteca de movimento em caminhos exploráveis — sem substituir o plano profissional e sem prescrição automática.
 
@@ -1349,6 +1351,23 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 
 **Próxima etapa:** `v0.23.7 — Professional Movement Library 2.0`.
 
+
+
+
+**Entregue na v0.24.0:**
+- endpoint paciente `/api/portal/me/explore`;
+- leitura de plano ativo, ciclo esportivo e atividade relatada;
+- bússola Preciso fazer / Quero fazer / Posso fazer hoje;
+- caminhos iniciais de descoberta;
+- Começar um esporte, Mover em casa, Pouco tempo, Outdoor e Fundamentos;
+- integração à home do atleta;
+- autonomia guiada sem prescrição automática.
+
+**Próxima etapa:** `v0.24.1 — Start a Sport 2.0`.
+
+## ⏭ v0.24.1 — Start a Sport 2.0
+
+Transformar o caminho “Começar um esporte” em uma jornada inicial navegável, com contexto, fundamentos e próximos passos sem prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA
