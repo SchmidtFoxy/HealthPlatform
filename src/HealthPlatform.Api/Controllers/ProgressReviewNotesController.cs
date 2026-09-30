@@ -199,6 +199,28 @@ public class ProgressReviewNotesController(
             "A fundação do Care Plan organiza próximos cuidados de forma documental. A partir da v0.32.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("care-plan/closure")]
+    public ActionResult<ProgressReviewCarePlanClosureResponse> FechamentoCarePlan()
+    {
+        var componentes = new[]
+        {
+            "CarePlanFoundation",
+            "CarePlanPersistence",
+            "CarePlanStatus",
+            "CarePlanHistory",
+            "CarePlanFilters",
+            "CarePlanSummary"
+        };
+
+        return Ok(new ProgressReviewCarePlanClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaCarePlanCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural do Care Plan. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica."));
+    }
+
     [HttpGet("care-plan/summary")]
     public async Task<ActionResult<ProgressReviewCarePlanSummaryResponse>> ResumoCarePlan(
         Guid pacienteId,

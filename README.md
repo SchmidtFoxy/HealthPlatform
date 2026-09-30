@@ -1910,3 +1910,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.32.6 — Progress Review Care Plan Closure`.
 
+---
+
+## v0.32.6 — Progress Review Care Plan Closure
+
+Fecha a linha 0.32.x consolidando todas as capacidades estruturais do Care Plan profissional.
+
+### Componentes consolidados
+- Care Plan Foundation;
+- Care Plan Persistence;
+- Care Plan Status;
+- Care Plan History;
+- Care Plan Filters;
+- Care Plan Summary.
+
+### Estado
+O endpoint `care-plan/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaCarePlanCompleta`;
+- regra de uso.
+
+### UI
+O workspace profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica.
+
+**Próxima etapa:** `v0.33.0 — Professional Review Action Plan Foundation`.
+

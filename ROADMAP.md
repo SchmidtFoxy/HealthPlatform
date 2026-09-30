@@ -2672,3 +2672,20 @@ Adicionar resumo estrutural do Care Plan com contagem por status e distribuiçã
 ### v0.32.6 — Progress Review Care Plan Closure
 Fechar o ciclo 0.32.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do Care Plan.
 
+## ✅ v0.32.6 — Progress Review Care Plan Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewCarePlanClosureResponse`;
+- endpoint `care-plan/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaCarePlanCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no workspace profissional;
+- encerramento da linha 0.32.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.0 — Professional Review Action Plan Foundation
+Criar a fundação estrutural para transformar o Care Plan em um plano operacional profissional de ações acompanháveis, mantendo separação entre documentação, decisão clínica e execução.
+

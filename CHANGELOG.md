@@ -1,4 +1,17 @@
-﻿# v0.32.5 — Progress Review Care Plan Summary
+﻿# v0.32.6 — Progress Review Care Plan Closure
+
+- Adiciona `ProgressReviewCarePlanClosureResponse`.
+- Adiciona endpoint `GET .../care-plan/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaCarePlanCompleta`.
+- Adiciona marcador `HP_PROGRESS_REVIEW_CARE_PLAN_CLOSURE_V0326`.
+- Adiciona painel de fechamento no workspace profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.32.x.
+- Próxima etapa: v0.33.0 — Professional Review Action Plan Foundation.
+
+# v0.32.5 — Progress Review Care Plan Summary
 
 - Adiciona `ProgressReviewCarePlanResponsavelResumoResponse`.
 - Adiciona `ProgressReviewCarePlanSummaryResponse`.
