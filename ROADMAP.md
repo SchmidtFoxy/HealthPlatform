@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.9 — Interest Engine Foundation
+> **Versão-base deste roadmap:** v0.25.0 — Sports Expansion I Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1526,9 +1526,28 @@ Criar a base explícita de interesses do atleta para o Explore, separando “ati
 
 **Próxima etapa:** `v0.25.0 — Sports Expansion I Foundation`.
 
-## ⏭ v0.25.0 — Sports Expansion I Foundation
+## ✅ v0.25.0 — Sports Expansion I Foundation — CONCLUÍDA
 
 Abrir a próxima fase de expansão esportiva sobre a base do Explore, ampliando modalidades e estruturas específicas sem perder taxonomia, autonomia e segurança.
+
+
+
+**Entregue na v0.25.0:**
+- seis novas modalidades estruturadas: Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis;
+- objetivos de Fundamentos e Preparação física;
+- capacidades específicas por modalidade;
+- ambientes, recursos e termos editoriais na biblioteca profissional;
+- endpoint paciente `/api/portal/me/explore/sports-expansion-i`;
+- novo caminho “Esportes de quadra e campo” no Explore;
+- novas modalidades disponíveis no Interest Engine;
+- preservação da cadeia Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão;
+- nenhuma prescrição, aptidão ou intensidade automática.
+
+**Próxima etapa:** `v0.25.1 — Football & Futsal 2.0`.
+
+## ⏭ v0.25.1 — Football & Futsal 2.0
+
+Aprofundar Futebol e Futsal com fundamentos, capacidades, preparação física e referências de sessão específicas, mantendo diferenças de campo e quadra sem prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

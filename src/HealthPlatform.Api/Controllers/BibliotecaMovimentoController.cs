@@ -633,6 +633,120 @@ public sealed class BibliotecaMovimentoController(
                 new("performance", "Performance", [
                     new("potencia", "Potência", ["bike", "bicicleta", "sprint"])
                 ])
+            ]),
+        new(
+            "futebol",
+            "Futebol",
+            "Modalidade coletiva de campo com fundamentos técnicos, deslocamentos multidirecionais e preparação física específica.",
+            ["Campo", "Society", "Gramado"],
+            ["Bola", "Cones", "Mini-barreiras", "Gol"],
+            ["futebol", "bola", "campo", "society", "chute", "passe", "conducao", "condução"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("passe-controle", "Passe e controle", ["passe", "dominio", "domínio", "controle", "bola"]),
+                    new("conducao", "Condução", ["conducao", "condução", "drible", "bola"]),
+                    new("finalizacao", "Finalização", ["finalizacao", "finalização", "chute", "gol"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("aceleracao", "Aceleração", ["aceleracao", "aceleração", "sprint", "arranque"]),
+                    new("mudanca-direcao", "Mudança de direção", ["mudanca", "mudança", "agilidade", "direcao", "direção"]),
+                    new("resistencia-especifica", "Resistência específica", ["intervalado", "campo", "corrida", "resistencia", "resistência"])
+                ])
+            ]),
+        new(
+            "futsal",
+            "Futsal",
+            "Modalidade coletiva de quadra com alta frequência de ações técnicas, acelerações e mudanças de direção.",
+            ["Quadra", "Ginásio"],
+            ["Bola de futsal", "Cones", "Gol"],
+            ["futsal", "quadra", "bola", "passe", "chute", "drible"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("passe-controle", "Passe e controle", ["passe", "controle", "dominio", "domínio", "bola"]),
+                    new("conducao", "Condução e drible", ["drible", "conducao", "condução", "bola"]),
+                    new("finalizacao", "Finalização", ["finalizacao", "finalização", "chute", "gol"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("aceleracao", "Aceleração curta", ["aceleracao", "aceleração", "sprint", "arranque"]),
+                    new("agilidade", "Agilidade", ["agilidade", "mudanca", "mudança", "direcao", "direção"]),
+                    new("repeticao-esforcos", "Repetição de esforços", ["intervalado", "repetido", "condicionamento", "quadra"])
+                ])
+            ]),
+        new(
+            "basquete",
+            "Basquete",
+            "Modalidade coletiva de quadra com fundamentos de bola, saltos, acelerações e deslocamentos laterais.",
+            ["Quadra", "Ginásio"],
+            ["Bola", "Cesta", "Cones"],
+            ["basquete", "basket", "bola", "cesta", "arremesso", "drible"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("drible", "Drible", ["drible", "bola", "controle"]),
+                    new("passe", "Passe", ["passe", "bola"]),
+                    new("arremesso", "Arremesso", ["arremesso", "cesta", "finalizacao", "finalização"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("salto", "Salto", ["salto", "potencia", "potência", "vertical"]),
+                    new("deslocamento-lateral", "Deslocamento lateral", ["lateral", "agilidade", "defesa"]),
+                    new("aceleracao", "Aceleração", ["aceleracao", "aceleração", "sprint", "arranque"])
+                ])
+            ]),
+        new(
+            "volei",
+            "Vôlei",
+            "Modalidade coletiva de quadra com recepção, levantamento, ataque, bloqueio e demanda de salto.",
+            ["Quadra", "Ginásio", "Areia"],
+            ["Bola", "Rede", "Cones"],
+            ["volei", "vôlei", "volley", "bola", "rede", "saque", "manchete", "toque"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("recepcao", "Recepção", ["recepcao", "recepção", "manchete", "bola"]),
+                    new("levantamento", "Levantamento", ["levantamento", "toque", "bola"]),
+                    new("ataque", "Ataque e saque", ["ataque", "cortada", "saque", "bola"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("salto", "Salto e aterrissagem", ["salto", "aterriss", "potencia", "potência"]),
+                    new("deslocamento", "Deslocamento de quadra", ["deslocamento", "agilidade", "lateral"]),
+                    new("ombro", "Capacidade de ombro", ["ombro", "escap", "manguito"])
+                ])
+            ]),
+        new(
+            "tenis",
+            "Tênis",
+            "Modalidade de raquete com golpes, leitura de bola, deslocamento e preparação física multidirecional.",
+            ["Quadra rápida", "Saibro", "Grama"],
+            ["Raquete", "Bola", "Rede", "Cones"],
+            ["tenis", "tênis", "raquete", "forehand", "backhand", "saque"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("golpes-base", "Golpes de base", ["forehand", "backhand", "golpe", "raquete"]),
+                    new("saque", "Saque", ["saque", "servico", "serviço", "raquete"]),
+                    new("posicionamento", "Posicionamento", ["posicionamento", "split", "footwork", "deslocamento"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("agilidade", "Agilidade multidirecional", ["agilidade", "mudanca", "mudança", "direcao", "direção"]),
+                    new("aceleracao", "Aceleração curta", ["aceleracao", "aceleração", "sprint"]),
+                    new("ombro-tronco", "Ombro e tronco", ["ombro", "core", "rotacao", "rotação"])
+                ])
+            ]),
+        new(
+            "beach-tennis",
+            "Beach Tennis",
+            "Modalidade de raquete na areia com voleios, saques, deslocamentos e exigência de estabilidade.",
+            ["Areia", "Quadra de beach tennis"],
+            ["Raquete", "Bola", "Rede", "Cones"],
+            ["beach tennis", "beach-tennis", "raquete", "areia", "volei", "vôlei", "saque"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("voleio", "Voleio", ["voleio", "raquete", "bola"]),
+                    new("saque", "Saque", ["saque", "servico", "serviço"]),
+                    new("posicionamento", "Posicionamento em dupla", ["posicionamento", "dupla", "deslocamento"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("deslocamento-areia", "Deslocamento na areia", ["areia", "deslocamento", "agilidade"]),
+                    new("potencia", "Potência", ["potencia", "potência", "salto", "sprint"]),
+                    new("ombro-tronco", "Ombro e tronco", ["ombro", "core", "rotacao", "rotação"])
+                ])
             ])
     ];
 }

@@ -113,7 +113,14 @@ public sealed class ExplorePacienteController(
                 "Veja agrupamentos de referência por modalidade e objetivo usando sessões-modelo já existentes.",
                 ["Explorar", "Referências"],
                 ["Musculação", "Corrida", "Calistenia", "Mobilidade", "Ciclismo"],
-                "Referencia")
+                "Referencia"),
+            new ExploreCaminhoResponse(
+                "sports-expansion-i",
+                "Esportes de quadra e campo",
+                "Explore fundamentos e capacidades de Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis.",
+                ["Campo", "Quadra", "Areia", "Raquete", "Coletivos"],
+                ["Futebol", "Futsal", "Basquete", "Vôlei", "Tênis", "Beach Tennis"],
+                "Esportes")
         };
 
         return Ok(new ExploreFoundationResponse(
@@ -1309,7 +1316,13 @@ public sealed class ExplorePacienteController(
         new("calistenia", "Calistenia"),
         new("mobilidade", "Mobilidade"),
         new("condicionamento", "Condicionamento"),
-        new("ciclismo", "Ciclismo")
+        new("ciclismo", "Ciclismo"),
+        new("futebol", "Futebol"),
+        new("futsal", "Futsal"),
+        new("basquete", "Basquete"),
+        new("volei", "Vôlei"),
+        new("tenis", "Tênis"),
+        new("beach-tennis", "Beach Tennis")
     ];
 
     private static string[] IntencoesExplore() =>
@@ -1318,6 +1331,139 @@ public sealed class ExplorePacienteController(
         "QueroRetomar",
         "TenhoCuriosidade"
     ];
+
+
+    [HttpGet("sports-expansion-i")]
+    public async Task<ActionResult<SportsExpansionIResponse>> SportsExpansionI(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modalidades = new SportsExpansionIModalidadeResponse[]
+        {
+            new(
+                "futebol",
+                "Futebol",
+                "Fundamentos técnicos, deslocamentos multidirecionais e preparação física específica de campo.",
+                ["Campo", "Society", "Gramado"],
+                ["Bola", "Cones", "Mini-barreiras", "Gol"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("passe-controle", "Passe e controle"),
+                        new("conducao", "Condução"),
+                        new("finalizacao", "Finalização")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("aceleracao", "Aceleração"),
+                        new("mudanca-direcao", "Mudança de direção"),
+                        new("resistencia-especifica", "Resistência específica")
+                    ])
+                ]),
+            new(
+                "futsal",
+                "Futsal",
+                "Fundamentos de bola em espaço reduzido, acelerações curtas e repetição de esforços.",
+                ["Quadra", "Ginásio"],
+                ["Bola de futsal", "Cones", "Gol"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("passe-controle", "Passe e controle"),
+                        new("conducao", "Condução e drible"),
+                        new("finalizacao", "Finalização")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("aceleracao", "Aceleração curta"),
+                        new("agilidade", "Agilidade"),
+                        new("repeticao-esforcos", "Repetição de esforços")
+                    ])
+                ]),
+            new(
+                "basquete",
+                "Basquete",
+                "Fundamentos de bola, arremesso, saltos e deslocamentos de quadra.",
+                ["Quadra", "Ginásio"],
+                ["Bola", "Cesta", "Cones"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("drible", "Drible"),
+                        new("passe", "Passe"),
+                        new("arremesso", "Arremesso")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("salto", "Salto"),
+                        new("deslocamento-lateral", "Deslocamento lateral"),
+                        new("aceleracao", "Aceleração")
+                    ])
+                ]),
+            new(
+                "volei",
+                "Vôlei",
+                "Recepção, levantamento, ataque, saque, bloqueio e preparação para saltos.",
+                ["Quadra", "Ginásio", "Areia"],
+                ["Bola", "Rede", "Cones"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("recepcao", "Recepção"),
+                        new("levantamento", "Levantamento"),
+                        new("ataque", "Ataque e saque")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("salto", "Salto e aterrissagem"),
+                        new("deslocamento", "Deslocamento de quadra"),
+                        new("ombro", "Capacidade de ombro")
+                    ])
+                ]),
+            new(
+                "tenis",
+                "Tênis",
+                "Golpes de base, saque, posicionamento e preparação multidirecional.",
+                ["Quadra rápida", "Saibro", "Grama"],
+                ["Raquete", "Bola", "Rede", "Cones"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("golpes-base", "Golpes de base"),
+                        new("saque", "Saque"),
+                        new("posicionamento", "Posicionamento")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("agilidade", "Agilidade multidirecional"),
+                        new("aceleracao", "Aceleração curta"),
+                        new("ombro-tronco", "Ombro e tronco")
+                    ])
+                ]),
+            new(
+                "beach-tennis",
+                "Beach Tennis",
+                "Voleios, saque, posicionamento em dupla e deslocamento na areia.",
+                ["Areia", "Quadra de beach tennis"],
+                ["Raquete", "Bola", "Rede", "Cones"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("voleio", "Voleio"),
+                        new("saque", "Saque"),
+                        new("posicionamento", "Posicionamento em dupla")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("deslocamento-areia", "Deslocamento na areia"),
+                        new("potencia", "Potência"),
+                        new("ombro-tronco", "Ombro e tronco")
+                    ])
+                ])
+        };
+
+        return Ok(new SportsExpansionIResponse(
+            modalidades,
+            "Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão",
+            "Sports Expansion I amplia a taxonomia e a descoberta. A estrutura nao declara aptidao, nao inicia treino e nao prescreve intensidade automaticamente."));
+    }
 
 
 }

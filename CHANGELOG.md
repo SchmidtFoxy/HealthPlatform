@@ -1,3 +1,15 @@
+# v0.25.0 — Sports Expansion I Foundation
+
+- Expande a biblioteca profissional com Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis.
+- Adiciona objetivos de Fundamentos e Preparação física com capacidades específicas.
+- Adiciona `GET /api/portal/me/explore/sports-expansion-i`.
+- Adiciona o caminho `Esportes de quadra e campo` ao AESYN Explore.
+- Amplia o Interest Engine para as seis novas modalidades.
+- Mantém a cadeia Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão.
+- Não declara aptidão, não inicia treino e não prescreve intensidade automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.25.1 — Football & Futsal 2.0.
+
 # v0.24.9-r1 — Interest Engine Contracts Fix (revisão local)
 
 - Adiciona os records `InteresseExploreResponse`, `InteresseExploreOpcaoResponse`, `InteresseExploreCatalogoResponse`, `AtualizarInteressesExploreRequest` e `AtualizarInteresseExploreItemRequest`.

@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.9';
+const HP_MVP_VERSION='0.25.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14578,4 +14578,74 @@ const __loadMyPatientPortal_v0249=loadMyPatientPortal;
 loadMyPatientPortal=async function(){
   await __loadMyPatientPortal_v0249();
   await hpInjectInterestEngineV0249();
+};
+
+
+// ===== v0.25.0 — Sports Expansion I Foundation =====
+const HP_SPORTS_EXPANSION_I_V0250='v0.25.0';
+
+function hpSportsExpansionIV0250(data){
+  const sports=Array.isArray(data?.modalidades)?data.modalidades:[];
+  return `<section class="sports-expansion-i-v0250" data-sports-expansion-i-v0250="${HP_SPORTS_EXPANSION_I_V0250}" aria-labelledby="sportsExpansionITitleV0250">
+    <div class="sports-expansion-i-head-v0250">
+      <div>
+        <span class="eyebrow">SPORTS EXPANSION I • FOUNDATION</span>
+        <h3 id="sportsExpansionITitleV0250">Esportes não são só nomes. Cada um tem estrutura própria.</h3>
+        <p>Fundamentos e preparação física entram na mesma cadeia do AESYN: modalidade, objetivo, capacidade, sessão, exercício e progressão.</p>
+      </div>
+      <span>${sports.length} modalidade(s)</span>
+    </div>
+
+    <div class="sports-expansion-i-grid-v0250">
+      ${sports.map(s=>`<article>
+        <div class="sports-expansion-i-card-head-v0250">
+          <div><span>MODALIDADE</span><strong>${esc(s.nome)}</strong></div>
+          <small>${(s.ambientes||[]).slice(0,3).map(esc).join(' • ')}</small>
+        </div>
+        <p>${esc(s.descricao)}</p>
+        <div class="sports-expansion-i-resources-v0250">${(s.recursos||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+        <div class="sports-expansion-i-objectives-v0250">
+          ${(s.objetivos||[]).map(o=>`<section>
+            <b>${esc(o.nome)}</b>
+            <div>${(o.capacidades||[]).map(c=>`<span>${esc(c.nome)}</span>`).join('')}</div>
+          </section>`).join('')}
+        </div>
+      </article>`).join('')}
+    </div>
+
+    <div class="sports-expansion-i-chain-v0250">
+      <b>CADEIA ESTRUTURAL</b>
+      <span>${esc(data?.cadeiaEstrutural||'Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão')}</span>
+    </div>
+
+    <div class="sports-expansion-i-rule-v0250">
+      <b>TAXONOMIA ≠ PRESCRIÇÃO</b>
+      <span>${esc(data?.regraDeUso||'A expansão organiza modalidades sem iniciar treino automaticamente.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenSportsExpansionIV0250(host){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Sports Expansion I...</div>';
+  try{
+    const data=await api('/api/portal/me/explore/sports-expansion-i');
+    host.innerHTML=hpSportsExpansionIV0250(data);
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Sports Expansion I.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0250=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0250(host,data);
+  if(!host)return;
+  const sportsBtn=host.querySelector('[data-explore-path-v0240="sports-expansion-i"]');
+  if(!sportsBtn)return;
+  sportsBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenSportsExpansionIV0250(detail);
+  };
 };

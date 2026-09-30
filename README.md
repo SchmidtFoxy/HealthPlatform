@@ -43,6 +43,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Sports Expansion I Foundation
+
+A `v0.25.0` abre a expansão esportiva de **Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis**. Essas modalidades entram na mesma taxonomia da biblioteca profissional, com ambientes, equipamentos, objetivos e capacidades específicas.
+
+No Explore, o atleta pode conhecer a estrutura dessas modalidades e também declará-las como interesse. A fundação organiza conhecimento e cobertura editorial; não declara aptidão, não inicia sessão e não converte uma modalidade escolhida em prescrição.
+
 ### Interest Engine Foundation
 
 A `v0.24.9` cria uma fonte explícita de **interesses declarados pelo atleta**. O sistema passa a separar três contextos que antes podiam se confundir: atividade já relatada, plano profissional e aquilo que a pessoa quer experimentar/retomar/conhecer.
@@ -332,8 +339,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.9 — Interest Engine Foundation`
-- **Revisão local corrente:** `v0.24.9-r1 — Interest Engine Contracts Fix`
+- **Versão funcional:** `v0.25.0 — Sports Expansion I Foundation`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

@@ -215,3 +215,26 @@ public sealed record AtualizarInteressesExploreRequest(
 public sealed record AtualizarInteresseExploreItemRequest(
     string Codigo,
     string Intencao);
+
+
+public sealed record SportsExpansionICapacidadeResponse(
+    string Codigo,
+    string Nome);
+
+public sealed record SportsExpansionIObjetivoResponse(
+    string Codigo,
+    string Nome,
+    IReadOnlyCollection<SportsExpansionICapacidadeResponse> Capacidades);
+
+public sealed record SportsExpansionIModalidadeResponse(
+    string Codigo,
+    string Nome,
+    string Descricao,
+    string[] Ambientes,
+    string[] Recursos,
+    IReadOnlyCollection<SportsExpansionIObjetivoResponse> Objetivos);
+
+public sealed record SportsExpansionIResponse(
+    IReadOnlyCollection<SportsExpansionIModalidadeResponse> Modalidades,
+    string CadeiaEstrutural,
+    string RegraDeUso);
