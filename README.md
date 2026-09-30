@@ -1010,3 +1010,22 @@ Competition & Test Results 2.0 **não inventa colocação, tempo, distância, no
 
 **Próxima etapa:** `v0.28.4 — Skills & Milestones 2.0`.
 
+---
+
+## v0.28.4 — Skills & Milestones 2.0
+
+O Athlete Performance Passport passa a reconhecer **habilidades** e **marcos** somente quando eles já existem como registros supervisionados explicitamente documentados.
+
+### Entregue
+- `HabilidadeRegistrada` para eventos que citam explicitamente habilidade, técnica, competência, skill ou fundamento;
+- `MarcoRegistrado` para eventos que citam explicitamente marco, milestone, conquista, meta/objetivo atingido ou recorde pessoal;
+- data, status, eixo, descrição, observações e ciclo esportivo;
+- endpoint profissional e endpoint do paciente;
+- coleção `HabilidadesMarcos` no passaporte;
+- atualização dos domínios `habilidades` e `marcos`.
+
+### Guardrail
+Skills & Milestones 2.0 **não certifica domínio técnico, não cria conquista automática e não converte recordes, cargas, tempos, volume ou frequência em habilidade ou marco**. O sistema apenas organiza o que foi explicitamente registrado em contexto supervisionado.
+
+**Próxima etapa:** `v0.28.5 — Performance Evolution 2.0`.
+

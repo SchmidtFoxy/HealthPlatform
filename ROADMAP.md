@@ -2050,5 +2050,20 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - nenhum resultado numérico ausente é inferido;
 - sem migration nova.
 
-**Próxima etapa:** `v0.28.4 — Skills & Milestones 2.0`.
+**Próxima etapa concluída em `v0.28.4 — Skills & Milestones 2.0`.
+
+## ✅ v0.28.4 — Skills & Milestones 2.0 — CONCLUÍDA
+
+**Entregue na v0.28.4:**
+- habilidades supervisionadas explicitamente registradas;
+- marcos supervisionados explicitamente registrados;
+- classificação `HabilidadeRegistrada` e `MarcoRegistrado`;
+- fonte em `EventosProgressaoSupervisionada`;
+- data, status, eixo, descrição, observações e ciclo esportivo;
+- endpoints profissional e paciente;
+- coleção `HabilidadesMarcos`;
+- nenhuma certificação ou conquista automática;
+- sem migration nova.
+
+**Próxima etapa:** `v0.28.5 — Performance Evolution 2.0`.
 

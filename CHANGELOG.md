@@ -1,4 +1,18 @@
-﻿# v0.28.3 — Competition & Test Results 2.0
+﻿# v0.28.4 — Skills & Milestones 2.0
+
+- Adiciona `AthleteSkillMilestoneResponse`.
+- Expande o passaporte com `HabilidadesMarcos`.
+- Reaproveita somente registros explícitos de `EventosProgressaoSupervisionada`.
+- Classifica `HabilidadeRegistrada` e `MarcoRegistrado`.
+- Atualiza os domínios `habilidades` e `marcos`.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte/habilidades-marcos`.
+- Adiciona `GET /api/portal/me/performance/passaporte/habilidades-marcos`.
+- Adiciona painel Skills & Milestones 2.0.
+- Guardrail: não certifica domínio técnico, não cria conquista automática e não converte recordes, cargas, tempos, volume ou frequência em habilidade ou marco.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.28.5 — Performance Evolution 2.0.
+
+# v0.28.3 — Competition & Test Results 2.0
 
 - Adiciona `AthleteCompetitionTestResultResponse`.
 - Expande o passaporte com a coleção `Resultados`.

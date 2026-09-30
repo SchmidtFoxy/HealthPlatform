@@ -50,6 +50,20 @@ public sealed record AthleteCompetitionTestResultResponse(
     string Fonte,
     string RegraDeLeitura);
 
+
+public sealed record AthleteSkillMilestoneResponse(
+    Guid EventoId,
+    string Categoria,
+    string Eixo,
+    string Descricao,
+    DateTime DataAplicacaoUtc,
+    string Status,
+    string? Observacoes,
+    Guid? CicloEsportivoPacienteId,
+    string Natureza,
+    string Fonte,
+    string RegraDeLeitura);
+
 public sealed record AthletePerformancePassportResponse(
     string Versao, int DiasObservados, int TreinosObservados, int RecordesRecentes, string Estado,
     IReadOnlyCollection<AthletePerformancePassportDomainResponse> Dominios,
@@ -64,4 +78,7 @@ public sealed record AthletePerformancePassportResponse(
 
     public IReadOnlyCollection<AthleteCompetitionTestResultResponse> Resultados { get; init; } =
         Array.Empty<AthleteCompetitionTestResultResponse>();
+
+    public IReadOnlyCollection<AthleteSkillMilestoneResponse> HabilidadesMarcos { get; init; } =
+        Array.Empty<AthleteSkillMilestoneResponse>();
 }

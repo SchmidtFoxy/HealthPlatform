@@ -17,6 +17,7 @@ public static class AthletePerformancePassportService
         var recordes = await MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
+        var habilidadesMarcos = await MontarHabilidadesMarcosAsync(db, pacienteId, hoje, ct);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -78,34 +79,35 @@ public static class AthletePerformancePassportService
             new(
                 "habilidades",
                 "Habilidades",
-                "SemFonteEstruturada",
-                "Foundation",
-                0,
-                "Habilidades não são inferidas a partir de carga, volume ou frequência de treino."),
+                habilidadesMarcos.Any(x => x.Categoria == "HabilidadeRegistrada") ? "ComDados" : "SemDados",
+                "Skills & Milestones 2.0",
+                habilidadesMarcos.Count(x => x.Categoria == "HabilidadeRegistrada"),
+                "Somente registros supervisionados explicitamente identificados como habilidade, técnica, competência ou fundamento entram neste domínio."),
             new(
                 "marcos",
                 "Marcos",
-                recordes.Count > 0 ? "BaseDisponivel" : "SemDados",
-                "Performance Records 2.0",
-                recordes.Count,
-                "Os records formam base para marcos futuros, sem criar conquistas retroativas.")
+                habilidadesMarcos.Any(x => x.Categoria == "MarcoRegistrado") ? "ComDados" : "SemDados",
+                "Skills & Milestones 2.0",
+                habilidadesMarcos.Count(x => x.Categoria == "MarcoRegistrado"),
+                "Marcos exigem registro supervisionado explícito; recordes, tempos e volume não viram conquista automaticamente.")
         };
 
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.28.3",
+            "v0.28.4",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Competition & Test Results 2.0 incorpora somente eventos supervisionados explicitamente identificados como prova/competição ou teste/avaliação. Não inventa colocação, tempo, distância, nota, resultado ou recorde.")
+            "Skills & Milestones 2.0 incorpora somente habilidades e marcos explicitamente registrados em contexto supervisionado. Não certifica domínio técnico, não cria conquista automática e não converte recordes, cargas ou tempos em habilidade.")
         {
             Recordes = recordes,
             Tempos = tempos,
-            Resultados = resultados
+            Resultados = resultados,
+            HabilidadesMarcos = habilidadesMarcos
         };
     }
 
@@ -234,6 +236,87 @@ public static class AthletePerformancePassportService
     }
 
 
+
+
+    public static async Task<IReadOnlyCollection<AthleteSkillMilestoneResponse>> MontarHabilidadesMarcosAsync(
+        AppDbContext db,
+        Guid pacienteId,
+        DateOnly dia,
+        CancellationToken ct)
+    {
+        const int diasObservados = 365;
+        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+
+        var eventos = await db.EventosProgressaoSupervisionada.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId &&
+                x.DataAplicacaoUtc >= inicioUtc &&
+                x.DataAplicacaoUtc < fimUtc)
+            .OrderByDescending(x => x.DataAplicacaoUtc)
+            .Select(x => new
+            {
+                x.Id,
+                x.Eixo,
+                x.Descricao,
+                x.DataAplicacaoUtc,
+                x.Status,
+                x.Observacoes,
+                x.CicloEsportivoPacienteId
+            })
+            .ToListAsync(ct);
+
+        return eventos
+            .Select(x => new
+            {
+                Evento = x,
+                Categoria = ClassificarHabilidadeMarco(x.Eixo, x.Descricao)
+            })
+            .Where(x => x.Categoria is not null)
+            .Select(x => new AthleteSkillMilestoneResponse(
+                x.Evento.Id,
+                x.Categoria!,
+                x.Evento.Eixo,
+                x.Evento.Descricao,
+                x.Evento.DataAplicacaoUtc,
+                x.Evento.Status,
+                x.Evento.Observacoes,
+                x.Evento.CicloEsportivoPacienteId,
+                "RegistroSupervisionado",
+                "EventosProgressaoSupervisionada",
+                x.Categoria == "HabilidadeRegistrada"
+                    ? "O registro descreve uma habilidade supervisionada explicitamente documentada; não equivale a certificação automática de domínio técnico."
+                    : "O registro descreve um marco supervisionado explicitamente documentado; não é conquista automática derivada de carga, tempo, volume ou frequência."))
+            .ToArray();
+    }
+
+    private static string? ClassificarHabilidadeMarco(string? eixo, string? descricao)
+    {
+        var texto = $"{eixo} {descricao}".ToLowerInvariant();
+
+        if (ContemTermoExplicito(
+                texto,
+                "habilidade",
+                "skill",
+                "técnica",
+                "tecnica",
+                "competência",
+                "competencia",
+                "fundamento"))
+            return "HabilidadeRegistrada";
+
+        if (ContemTermoExplicito(
+                texto,
+                "marco",
+                "milestone",
+                "conquista",
+                "meta atingida",
+                "objetivo atingido",
+                "recorde pessoal"))
+            return "MarcoRegistrado";
+
+        return null;
+    }
 
     public static async Task<IReadOnlyCollection<AthleteCompetitionTestResultResponse>> MontarResultadosCompeticaoTesteAsync(
         AppDbContext db,
