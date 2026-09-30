@@ -47,6 +47,7 @@ public static class WorkoutIntelligenceService
             .SelectMany(e => e.Itens.Where(i => i.Concluido).Select(i => new { Execucao = e, Item = i }))
             .ToList();
         var comparacoes = new List<WorkoutIntelligenceComparisonResponse>();
+        var sinaisProgressaoRegressao = new List<WorkoutProgressionRegressionSignalResponse>();
         if (plano is not null)
         {
             foreach (var sessao in plano.Sessoes.OrderBy(x => x.Ordem))
@@ -67,6 +68,37 @@ public static class WorkoutIntelligenceService
                         item.RirAlvo, ultimo?.Item.RirRealizado, item.Cadencia, ultimo?.Item.CadenciaRealizada,
                         item.TecnicaAvancada, ultimo?.Item.TecnicaExecutada, item.TecnicaAvancadaCodigo, ultimo?.Item.TecnicaExecutadaCodigo,
                         item.TecnicaAvancadaParametros, ultimo?.Item.TecnicaExecutadaParametros, diferencas));
+                    var recentes = historico.Take(3).ToList();
+                    var evidenciasProgressao = new List<string>();
+                    var evidenciasRegressao = new List<string>();
+                    if (recentes.Count >= 2)
+                    {
+                        var ultimasDuas = recentes.Take(2).Select(x => x.Item).ToList();
+                        if (item.RirAlvo.HasValue && ultimasDuas.All(x => x.RirRealizado.HasValue && x.RirRealizado.Value >= item.RirAlvo.Value + 2 && (!x.SeriesRealizadas.HasValue || x.SeriesRealizadas.Value >= item.Series)))
+                            evidenciasProgressao.Add($"RIR ficou pelo menos 2 repetições acima do alvo nas últimas {ultimasDuas.Count} execuções comparáveis.");
+                        if (item.RirAlvo.HasValue && ultimasDuas.All(x => x.RirRealizado.HasValue && x.RirRealizado.Value <= item.RirAlvo.Value - 2))
+                            evidenciasRegressao.Add($"RIR ficou pelo menos 2 repetições abaixo do alvo nas últimas {ultimasDuas.Count} execuções comparáveis.");
+                        if (item.Carga.HasValue && ultimasDuas.All(x => x.CargaRealizada.HasValue && x.CargaRealizada.Value > item.Carga.Value))
+                            evidenciasProgressao.Add("Carga realizada ficou acima da prescrita em duas execuções consecutivas.");
+                        if (item.Carga.HasValue && ultimasDuas.All(x => x.CargaRealizada.HasValue && x.CargaRealizada.Value < item.Carga.Value))
+                            evidenciasRegressao.Add("Carga realizada ficou abaixo da prescrita em duas execuções consecutivas.");
+                        if (item.Series > 0 && ultimasDuas.All(x => x.SeriesRealizadas.HasValue && x.SeriesRealizadas.Value > item.Series))
+                            evidenciasProgressao.Add("Séries realizadas ficaram acima da prescrição em duas execuções consecutivas.");
+                        if (item.Series > 0 && ultimasDuas.All(x => x.SeriesRealizadas.HasValue && x.SeriesRealizadas.Value < item.Series))
+                            evidenciasRegressao.Add("Séries realizadas ficaram abaixo da prescrição em duas execuções consecutivas.");
+                    }
+                    var estadoSinal = recentes.Count < 2 ? "HistoricoInsuficiente" : evidenciasProgressao.Count > 0 && evidenciasRegressao.Count > 0 ? "SinaisMistos" : evidenciasProgressao.Count > 0 ? "RevisarProgressao" : evidenciasRegressao.Count > 0 ? "RevisarRegressao" : "SemSinalConsistente";
+                    var direcaoSinal = estadoSinal == "RevisarProgressao" ? "Progressao" : estadoSinal == "RevisarRegressao" ? "Regressao" : "Neutro";
+                    var evidenciasSinal = evidenciasProgressao.Concat(evidenciasRegressao).ToArray();
+                    var sugestaoSinal = estadoSinal switch
+                    {
+                        "RevisarProgressao" => "Revisar se a prescrição já comporta progressão; nenhum ajuste foi aplicado.",
+                        "RevisarRegressao" => "Revisar se a exigência prescrita deve ser mantida ou regredida; nenhum ajuste foi aplicado.",
+                        "SinaisMistos" => "Revisar os sinais mistos antes de qualquer alteração na prescrição.",
+                        "HistoricoInsuficiente" => "Aguardar mais execuções comparáveis antes de revisar progressão ou regressão.",
+                        _ => "Manter observação; não há sinal repetido suficiente para sugerir revisão de progressão/regressão."
+                    };
+                    sinaisProgressaoRegressao.Add(new(item.Id, sessao.Nome, item.Exercicio?.Nome ?? "Exercício", estadoSinal, direcaoSinal, recentes.Count, evidenciasSinal, sugestaoSinal, "Sinal explicável para revisão profissional; nunca altera a prescrição automaticamente."));
                 }
             }
         }
@@ -81,10 +113,10 @@ public static class WorkoutIntelligenceService
             comparacoes.Count(x => x.ExecucoesNoPeriodo > 0), comparacoes.Count(x => x.Estado == "DiferencasRegistradas"));
 
         return new WorkoutIntelligenceResponse(
-            "v0.27.3", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
-            resumo, dimensoes, comparacoes,
-            new[] { "Progressão/regressão explicável, sempre revisada pelo profissional.", "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
-            "Advanced Techniques 3.0 estrutura catálogo, código e parâmetros para técnicas prescritas/realizadas. O AESYN não escolhe técnica, não combina exercícios e não altera automaticamente carga, volume, RIR, cadência, técnica ou prescrição.");
+            "v0.27.4", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
+            resumo, dimensoes, comparacoes, sinaisProgressaoRegressao,
+            new[] { "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
+            "Progression & Regression 3.0 gera sinais explicáveis para revisão profissional. Nenhuma sugestão altera automaticamente carga, volume, exercício, RIR, cadência, técnica ou prescrição.");
     }
 
     private static List<string> Comparar(ItemTreino prescrito, ExecucaoItemTreino realizado)

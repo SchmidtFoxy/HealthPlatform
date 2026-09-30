@@ -1077,7 +1077,7 @@ Natação, triathlon, artes marciais, remo, trekking, modalidades recreativas e 
 - ✅ `v0.27.1 — Prescription Variables 3.0` — estruturar RIR, cadência e demais variáveis de prescrição sem perder compatibilidade.
 - ✅ `v0.27.2 — Prescribed vs Performed 3.0` — comparação auditável entre variáveis prescritas e executadas por exercício.
 - ✅ `v0.27.3 — Advanced Techniques 3.0` — técnicas avançadas como contrato estruturado e reutilizável.
-- `v0.27.4 — Progression & Regression 3.0` — sugestões explicáveis, sempre revisadas pelo profissional.
+- ✅ `v0.27.4 — Progression & Regression 3.0` — sugestões explicáveis, sempre revisadas pelo profissional.
 - `v0.27.5 — Periodization 3.0` — microciclo, mesociclo, bloco e deload.
 
 # 12. v0.28.x — Athlete Performance Passport
@@ -1967,4 +1967,15 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - migration `V0273AdvancedTechniques`;
 - nenhuma seleção ou aplicação automática de técnica.
 
-**Próxima etapa:** `v0.27.4 — Progression & Regression 3.0`.
+**Próxima etapa concluída em `v0.27.4 — Progression & Regression 3.0`.**
+
+## ✅ v0.27.4 — Progression & Regression 3.0 — CONCLUÍDA
+
+**Entregue na v0.27.4:**
+- sinais explicáveis de progressão e regressão por item;
+- evidências repetidas de RIR, carga e séries;
+- estados para progressão, regressão, sinais mistos, histórico insuficiente e ausência de sinal consistente;
+- nenhuma alteração automática da prescrição;
+- sem migration nova.
+
+**Próxima etapa:** `v0.27.5 — Periodization 3.0`.

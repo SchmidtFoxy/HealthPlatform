@@ -1,3 +1,12 @@
+## v0.27.4 — Progression & Regression 3.0
+- Adiciona sinais explicáveis de progressão/regressão derivados do histórico já persistido.
+- Usa duas ou mais execuções comparáveis para evitar direção baseada em evento isolado.
+- Expõe evidências de RIR, carga e séries sem score automático.
+- Adiciona estados RevisarProgressao, RevisarRegressao, SinaisMistos, HistoricoInsuficiente e SemSinalConsistente.
+- Nenhuma sugestão altera automaticamente carga, volume, exercício, RIR, cadência, técnica ou prescrição.
+- Não cria migration ou tabela nova.
+- Próxima etapa: `v0.27.5 — Periodization 3.0`.
+
 ## v0.27.0 — Workout Intelligence 3.0 Foundation
 - Inicia a fase Workout Intelligence 3.0 com endpoint profissional e endpoint do paciente.
 - Mapeia cobertura de séries, repetições, carga, descanso, tempo e RPE usando dados já existentes.

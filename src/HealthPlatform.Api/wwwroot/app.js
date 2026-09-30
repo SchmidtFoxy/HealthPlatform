@@ -4343,6 +4343,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
 // ===== v0.27.0 — Workout Intelligence 3.0 Foundation =====
 
 const HP_PRESCRIBED_PERFORMED_V0272='v0.27.2';
+const HP_PROGRESSION_REGRESSION_V0274='v0.27.4';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4363,6 +4364,13 @@ function hpWorkoutComparisonV0272(x){
   return `<article class="workout-comparison-v0272 ${performed?'performed':'missing'}" data-prescribed-performed-v0272="${HP_PRESCRIBED_PERFORMED_V0272}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.sessao||'Sessão')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${diffs.length?'Atencao':'Info'}">${performed?(diffs.length?`${diffs.length} diferença(s)`:'sem diferença registrada'):'sem execução no período'}</span></div>${performed?`<div class="workout-comparison-grid-v0272">${cell('Séries',x.seriesPrescritas,x.seriesRealizadas)}${cell('Repetições',x.repeticoesPrescritas,x.repeticoesRealizadas)}${cell('Carga',cargaP,cargaR)}${cell('RIR',x.rirAlvo,x.rirRealizado)}${cell('Cadência',x.cadenciaPrescrita,x.cadenciaRealizada)}${cell('Técnica',x.tecnicaCodigoPrescrita||x.tecnicaPrescrita,x.tecnicaCodigoExecutada||x.tecnicaExecutada)}</div><small class="workout-comparison-note-v0272">${diffs.length?`Diferenças registradas: ${esc(diffs.join(', '))}.`:'Os campos comparáveis da última execução coincidem com o registrado na prescrição.'} ${x.execucoesNoPeriodo||0} execução(ões) no período.</small>`:'<small class="workout-comparison-note-v0272">Ainda não há execução concluída desse item na janela selecionada.</small>'}</article>`;
 }
 
+
+function hpProgressionRegressionSignalV0274(x){
+  const tone=x.estado==='RevisarProgressao'?'Ativa':x.estado==='RevisarRegressao'?'Agendada':x.estado==='SinaisMistos'?'Alta':'Info';
+  const evidence=(x.evidencias||[]);
+  return `<article class="workout-progression-signal-v0274" data-progression-regression-v0274="${HP_PROGRESSION_REGRESSION_V0274}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.sessao||'Sessão')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${tone}">${esc(x.estado||'')}</span></div>${evidence.length?`<div class="signal-list">${evidence.map(e=>`<div><small>${esc(e)}</small></div>`).join('')}</div>`:''}<p>${esc(x.sugestao||'')}</p><small class="muted-line">${esc(x.regraDeRevisao||'')}</small></article>`;
+}
+
 async function loadWorkoutIntelligenceV0270(patient){
   const host=$('#patientTabContent');
   if(!host||!patient?.id||host.querySelector('[data-workout-intelligence-v0270]'))return;
@@ -4377,6 +4385,7 @@ async function loadWorkoutIntelligenceV0270(patient){
     <div class="workout-intelligence-compare-v0270"><div><small>SÉRIES PRESCRITAS NO PLANO</small><b>${r.seriesPrescritasNoPlano??0}</b></div><span>≠</span><div><small>SÉRIES REALIZADAS NO PERÍODO</small><b>${r.seriesRealizadasNoPeriodo??0}</b></div><p>Os totais têm janelas diferentes e são contexto, não score de adesão.</p></div>
     <div class="workout-intelligence-dimensions-v0270">${(data.dimensoes||[]).map(hpWorkoutIntelligenceDimensionV0270).join('')}</div>
     <div class="workout-prescribed-performed-v0272"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PRESCRIBED VS PERFORMED 3.0</span><h4>Prescrito × última execução comparável</h4><p>Diferenças são contexto clínico/esportivo para revisão profissional, não score de adesão.</p></div><span class="pill Info">${r.itensComExecucaoComparavel??0}/${data.itensPlanejados??0} comparáveis</span></div><div class="workout-comparisons-v0272">${(data.comparacoes||[]).map(hpWorkoutComparisonV0272).join('')||'<div class="empty">Nenhum item prescrito disponível para comparação.</div>'}</div></div>
+    <div class="workout-prescribed-performed-v0272" data-progression-regression-v0274="${HP_PROGRESSION_REGRESSION_V0274}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESSION & REGRESSION 3.0</span><h4>Sinais explicáveis para revisão profissional</h4><p>O AESYN usa repetição de evidências registradas; sugestão não altera a prescrição.</p></div><span class="pill Info">v0.27.4</span></div><div class="workout-comparisons-v0272">${(data.sinaisProgressaoRegressao||[]).map(hpProgressionRegressionSignalV0274).join('')||'<div class="empty">Sem itens disponíveis para análise.</div>'}</div></div>
     <div class="workout-intelligence-next-v0270"><div><b>Próximas camadas</b>${(data.proximasCamadas||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div><p>${esc(data.regraDeUso||'')}</p></div>`;
   host.appendChild(section);
 }
@@ -9423,7 +9432,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.27.3';
+const HP_MVP_VERSION='0.27.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

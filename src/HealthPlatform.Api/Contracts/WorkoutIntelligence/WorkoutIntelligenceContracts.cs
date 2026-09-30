@@ -9,4 +9,7 @@ public sealed record WorkoutIntelligenceComparisonResponse(
     int? RirAlvo, int? RirRealizado, string? CadenciaPrescrita, string? CadenciaRealizada,
     string? TecnicaPrescrita, string? TecnicaExecutada, string? TecnicaCodigoPrescrita, string? TecnicaCodigoExecutada,
     string? TecnicaParametrosPrescritos, string? TecnicaParametrosExecutados, IReadOnlyCollection<string> Diferencas);
-public sealed record WorkoutIntelligenceResponse(string Versao,int PeriodoDias,Guid? PlanoId,string? Plano,string? StatusPlano,int SessoesPlanejadas,int ItensPlanejados,int SessoesExecutadas,int ItensExecutados,WorkoutIntelligenceSummaryResponse Resumo,IReadOnlyCollection<WorkoutIntelligenceDimensionResponse> Dimensoes,IReadOnlyCollection<WorkoutIntelligenceComparisonResponse> Comparacoes,IReadOnlyCollection<string> ProximasCamadas,string RegraDeUso);
+public sealed record WorkoutProgressionRegressionSignalResponse(
+    Guid ItemTreinoId, string Sessao, string Exercicio, string Estado, string Direcao, int ExecucoesAnalisadas,
+    IReadOnlyCollection<string> Evidencias, string Sugestao, string RegraDeRevisao);
+public sealed record WorkoutIntelligenceResponse(string Versao,int PeriodoDias,Guid? PlanoId,string? Plano,string? StatusPlano,int SessoesPlanejadas,int ItensPlanejados,int SessoesExecutadas,int ItensExecutados,WorkoutIntelligenceSummaryResponse Resumo,IReadOnlyCollection<WorkoutIntelligenceDimensionResponse> Dimensoes,IReadOnlyCollection<WorkoutIntelligenceComparisonResponse> Comparacoes,IReadOnlyCollection<WorkoutProgressionRegressionSignalResponse> SinaisProgressaoRegressao,IReadOnlyCollection<string> ProximasCamadas,string RegraDeUso);

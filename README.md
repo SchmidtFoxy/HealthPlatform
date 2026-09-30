@@ -1,3 +1,21 @@
+## v0.27.4 — Progression & Regression 3.0
+
+Transforma o histórico de prescrição × execução em **sinais explicáveis de revisão**, sem aplicar mudanças automaticamente.
+
+### O que entra nesta versão
+- **RevisarProgressao:** evidências repetidas como RIR acima do alvo, carga ou séries acima do prescrito.
+- **RevisarRegressao:** evidências repetidas como RIR abaixo do alvo, carga ou séries abaixo do prescrito.
+- **SinaisMistos:** progressão e regressão aparecem juntas e exigem leitura profissional.
+- **HistoricoInsuficiente:** menos de duas execuções comparáveis não gera sugestão de direção.
+- Cada sinal mostra as **evidências usadas**, a sugestão textual e a regra de revisão.
+
+### Guardrail
+Progression & Regression 3.0 **não altera automaticamente carga, volume, exercício, RIR, cadência, técnica ou prescrição**. Toda sugestão é explicável e depende de revisão profissional.
+
+**Próxima etapa:** `v0.27.5 — Periodization 3.0`.
+
+---
+
 ## v0.27.0 — Workout Intelligence 3.0 Foundation
 
 Inicia a fase **Workout Intelligence 3.0** sobre os dados de treino que o AESYN já possui, sem criar schema prematuramente e sem automatizar decisões profissionais.
