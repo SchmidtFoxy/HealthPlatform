@@ -4201,7 +4201,7 @@ renderPatientTab = function(d){
   $$('.workout-save-template').forEach(b=>b.onclick=()=>openSaveWorkoutTemplate(treinos.find(x=>x.id===b.dataset.workoutId)));
   $$('.workout-progress').forEach(b=>b.onclick=()=>openWorkoutProgression(patientForWorkout,treinos.find(x=>x.id===b.dataset.workoutId)));
   $$('.workout-edit').forEach(b=>b.onclick=()=>openWorkoutForm(patientForWorkout,treinos.find(x=>x.id===b.dataset.workoutId)));
-  loadWorkoutPhases(patientForWorkout,treinos).catch(x=>console.warn('Fases de treino:',x));
+  loadWorkoutIntelligenceV0270(patientForWorkout).then(()=>loadWorkoutPhases(patientForWorkout,treinos)).catch(x=>console.warn('Workout Intelligence:',x));
 };
 
 const __openClinicalForm_v030 = openClinicalForm;
@@ -4330,6 +4330,33 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
       finally{b.disabled=false;b.textContent=editing?'Salvar alterações':'Salvar plano de treino'}
     };
   }catch(err){box.innerHTML=`<div class="card empty">${esc(err.message)}</div>`}
+}
+
+// ===== v0.27.0 — Workout Intelligence 3.0 Foundation =====
+const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
+
+function hpWorkoutIntelligenceDimensionV0270(x){
+  const status=String(x.estado||'');
+  const ready=!status.includes('AindaNao')&&!status.includes('SemRegistro')&&!status.includes('SemDados');
+  const coverage=x.totalItens>0?`${x.itensComDado}/${x.totalItens}`:'roadmap';
+  return `<article class="workout-intelligence-dimension-v0270 ${ready?'ready':'roadmap'}"><div><b>${esc(x.nome)}</b><span>${esc(x.origem||'')}</span></div><strong>${esc(coverage)}</strong><small>${esc(x.observacao||'')}</small></article>`;
+}
+
+async function loadWorkoutIntelligenceV0270(patient){
+  const host=$('#patientTabContent');
+  if(!host||!patient?.id||host.querySelector('[data-workout-intelligence-v0270]'))return;
+  const data=await api(`/api/pacientes/${patient.id}/treinos/inteligencia?dias=28`);
+  if(!host.isConnected)return;
+  const r=data.resumo||{};
+  const section=document.createElement('section');
+  section.className='card full-card workout-intelligence-v0270';
+  section.dataset.workoutIntelligenceV0270=HP_WORKOUT_INTELLIGENCE_V0270;
+  section.innerHTML=`<div class="card-head workout-intelligence-head-v0270"><div><span class="eyebrow">WORKOUT INTELLIGENCE 3.0 • FOUNDATION</span><h3>Prescrição e execução, sem caixa-preta</h3><p>O AESYN mostra o que já está estruturado e o que ainda precisa evoluir antes de automatizar qualquer decisão.</p></div><span class="pill Info">${esc(data.versao||HP_WORKOUT_INTELLIGENCE_V0270)}</span></div>
+    <div class="workout-intelligence-kpis-v0270"><span><b>${data.sessoesPlanejadas??0}</b>sessões no plano</span><span><b>${data.itensPlanejados??0}</b>itens prescritos</span><span><b>${data.sessoesExecutadas??0}</b>execuções / ${data.periodoDias||28}d</span><span><b>${r.rpeMedioSessao!=null?num(r.rpeMedioSessao,1):'—'}</b>RPE médio</span></div>
+    <div class="workout-intelligence-compare-v0270"><div><small>SÉRIES PRESCRITAS NO PLANO</small><b>${r.seriesPrescritasNoPlano??0}</b></div><span>≠</span><div><small>SÉRIES REALIZADAS NO PERÍODO</small><b>${r.seriesRealizadasNoPeriodo??0}</b></div><p>Os totais têm janelas diferentes e são contexto, não score de adesão.</p></div>
+    <div class="workout-intelligence-dimensions-v0270">${(data.dimensoes||[]).map(hpWorkoutIntelligenceDimensionV0270).join('')}</div>
+    <div class="workout-intelligence-next-v0270"><div><b>Próximas camadas</b>${(data.proximasCamadas||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div><p>${esc(data.regraDeUso||'')}</p></div>`;
+  host.appendChild(section);
 }
 
 async function loadWorkoutPhases(patient,plans){
@@ -9369,7 +9396,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.26.6';
+const HP_MVP_VERSION='0.27.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

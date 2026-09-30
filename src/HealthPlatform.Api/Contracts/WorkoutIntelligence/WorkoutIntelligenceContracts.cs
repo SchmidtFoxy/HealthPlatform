@@ -1,0 +1,5 @@
+namespace HealthPlatform.Api.Contracts.WorkoutIntelligence;
+
+public sealed record WorkoutIntelligenceDimensionResponse(string Codigo,string Nome,string Estado,string Origem,int ItensComDado,int TotalItens,string Observacao);
+public sealed record WorkoutIntelligenceSummaryResponse(int SeriesPrescritasNoPlano,int SeriesRealizadasNoPeriodo,decimal? RpeMedioSessao,int ItensComCargaPrescrita,int ItensComCargaRealizada,int ItensComRepeticoesPrescritas,int ItensComRepeticoesRealizadas);
+public sealed record WorkoutIntelligenceResponse(string Versao,int PeriodoDias,Guid? PlanoId,string? Plano,string? StatusPlano,int SessoesPlanejadas,int ItensPlanejados,int SessoesExecutadas,int ItensExecutados,WorkoutIntelligenceSummaryResponse Resumo,IReadOnlyCollection<WorkoutIntelligenceDimensionResponse> Dimensoes,IReadOnlyCollection<string> ProximasCamadas,string RegraDeUso);

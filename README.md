@@ -1,4 +1,22 @@
-﻿## v0.26.6 — Recreational Sports 2.0
+﻿## v0.27.0 — Workout Intelligence 3.0 Foundation
+
+Inicia a fase **Workout Intelligence 3.0** sobre os dados de treino que o AESYN já possui, sem criar schema prematuramente e sem automatizar decisões profissionais.
+
+### O que entra nesta versão
+- **Mapa de cobertura estruturada:** séries, repetições, carga, descanso, tempo e RPE.
+- **Lacunas explícitas:** RIR, Cadência, técnicas avançadas e periodização 3.0 aparecem como próximas camadas, sem serem inferidas de texto livre.
+- **Prescrito vs realizado — fundação:** resumo descritivo de plano atual e execuções recentes, preservando janelas e contexto.
+- **API profissional e do paciente:** leitura da mesma base com isolamento por organização e vínculo do paciente.
+- **Painel profissional:** card mobile-first na aba Treino mostrando cobertura, séries prescritas/realizadas e próximos passos.
+
+### Guardrail
+Workout Intelligence 3.0 Foundation **não prescreve progressão, regressão, carga, volume, RPE/RIR, descanso, cadência, técnica ou periodização automaticamente**. A leitura é descritiva e serve para apoiar revisão profissional.
+
+**Próxima etapa:** `v0.27.1 — Prescription Variables 3.0`.
+
+---
+
+## v0.26.6 — Recreational Sports 2.0
 
 Aprofunda os esportes recreativos da Sports Expansion II sem assumir uma modalidade única. O Explore passa a organizar **Jogos de quadra, Parque e área livre, Praia e areia e Lazer social**, conectando esses contextos a coordenação, reação/adaptação, capacidade geral de movimento, equilíbrio/estabilidade, agilidade e resistência conforme o contexto.
 

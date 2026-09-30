@@ -1,4 +1,13 @@
-﻿## v0.26.6 — Recreational Sports 2.0
+﻿## v0.27.0 — Workout Intelligence 3.0 Foundation
+- Inicia a fase Workout Intelligence 3.0 com endpoint profissional e endpoint do paciente.
+- Mapeia cobertura de séries, repetições, carga, descanso, tempo e RPE usando dados já existentes.
+- Expõe RIR, cadência, técnicas avançadas e periodização como lacunas estruturais explícitas, sem inferência automática.
+- Adiciona painel profissional de prescrito vs realizado na aba Treino.
+- Mantém comparação descritiva, sem score automático de adesão e sem decisão automática de progressão/regressão.
+- Não cria migration ou tabela nova.
+- Próxima etapa: `v0.27.1 — Prescription Variables 3.0`.
+
+## v0.26.6 — Recreational Sports 2.0
 
 - Adiciona endpoint `/api/portal/me/explore/recreational-sports`.
 - Organiza contextos Jogos de quadra, Parque e área livre, Praia e areia e Lazer social.

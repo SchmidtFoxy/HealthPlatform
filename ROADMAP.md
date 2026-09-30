@@ -1072,6 +1072,14 @@ Natação, triathlon, artes marciais, remo, trekking, modalidades recreativas e 
 - templates;
 - prescrito vs realizado.
 
+### Sequência funcional
+- ✅ `v0.27.0 — Workout Intelligence 3.0 Foundation` — mapa de cobertura, API de leitura e fundação de prescrito vs realizado.
+- `v0.27.1 — Prescription Variables 3.0` — estruturar RIR, cadência e demais variáveis de prescrição sem perder compatibilidade.
+- `v0.27.2 — Advanced Techniques 3.0` — técnicas avançadas como contrato estruturado e reutilizável.
+- `v0.27.3 — Prescribed vs Performed 3.0` — comparação longitudinal por sessão e exercício.
+- `v0.27.4 — Progression & Regression 3.0` — sugestões explicáveis, sempre revisadas pelo profissional.
+- `v0.27.5 — Periodization 3.0` — microciclo, mesociclo, bloco e deload.
+
 # 12. v0.28.x — Athlete Performance Passport
 
 Recordes, cargas, tempos, provas, testes, habilidades, marcos e evolução de performance.
@@ -1902,3 +1910,19 @@ O objetivo final não é ter o maior número de telas. O AESYN deve ser forte po
 ### Hotfix v0.19.44-r2
 - Sincronização residual dos gates legados de versão e identidade PWA para a versão pública 0.19.44.
 - Mantém a Lista 03 em fase de fechamento sem reintroduzir comportamento antigo.
+
+## ✅ v0.27.0 — Workout Intelligence 3.0 Foundation — CONCLUÍDA
+
+A fase 0.27.x começa consolidando o que já existe antes de ampliar o schema. A fundação introduz uma leitura única de cobertura dos dados de treino e uma primeira visão de **prescrito vs realizado**.
+
+**Entregue na v0.27.0:**
+- endpoint profissional `GET /api/pacientes/{pacienteId}/treinos/inteligencia`;
+- endpoint do paciente `GET /api/portal/me/treinos/inteligencia`;
+- cobertura estruturada de séries, repetições, carga, descanso, tempo e RPE;
+- lacunas explícitas para RIR, cadência, técnicas avançadas e periodização;
+- painel profissional na aba Treino;
+- guardrail contra progressão, regressão ou prescrição automática;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.27.1 — Prescription Variables 3.0`.
+

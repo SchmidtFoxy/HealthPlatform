@@ -1,0 +1,32 @@
+using HealthPlatform.Api.Services;
+using HealthPlatform.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace HealthPlatform.Api.Controllers;
+
+[ApiController]
+[Authorize]
+public sealed class WorkoutIntelligenceController(AppDbContext db, CurrentUser currentUser) : ControllerBase
+{
+    [HttpGet("api/pacientes/{pacienteId:guid}/treinos/inteligencia")]
+    public async Task<IActionResult> Profissional(Guid pacienteId, [FromQuery] int dias = 28, CancellationToken ct = default)
+    {
+        var existe = await db.Pacientes.AsNoTracking().AnyAsync(x => x.Id == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+        if (!existe) return NotFound(new { message = "Paciente nao encontrado." });
+        return Ok(await WorkoutIntelligenceService.MontarAsync(db, currentUser.OrganizationId, pacienteId, dias, ct));
+    }
+
+    [Authorize(Policy = "PatientOnly")]
+    [HttpGet("api/portal/me/treinos/inteligencia")]
+    public async Task<IActionResult> Paciente([FromQuery] int dias = 28, CancellationToken ct = default)
+    {
+        var pacienteId = await db.Pacientes.AsNoTracking()
+            .Where(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .Select(x => (Guid?)x.Id)
+            .FirstOrDefaultAsync(ct);
+        if (!pacienteId.HasValue) return NotFound(new { message = "Paciente vinculado nao encontrado." });
+        return Ok(await WorkoutIntelligenceService.MontarAsync(db, currentUser.OrganizationId, pacienteId.Value, dias, ct));
+    }
+}
