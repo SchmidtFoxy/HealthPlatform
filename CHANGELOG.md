@@ -1,4 +1,21 @@
-﻿# v0.29.0 — Progress Intelligence Foundation
+﻿# v0.29.1 — Progress Signal Context 2.0
+
+- Adiciona `ProgressSignalContextResponse`.
+- Adiciona `ProgressSignalContextSummaryResponse`.
+- Expande o passaporte com `ContextoSinaisProgresso`.
+- Classifica recência em `Recente`, `Intermediaria` e `Antiga`.
+- Expõe dias desde o último registro e dias cobertos.
+- Expõe densidade observacional `BaseMinima`, `BaseCurta` e `BaseMaisDensa`.
+- Expõe origem da evidência.
+- Adiciona contexto de leitura textual por sinal.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence/context`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence/context`.
+- Adiciona painel Progress Signal Context 2.0.
+- Guardrail: contexto não representa confiança clínica, score, ranking, diagnóstico, prognóstico ou recomendação automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.29.2 — Multi-Signal Timeline 2.0.
+
+# v0.29.0 — Progress Intelligence Foundation
 
 - Adiciona `ProgressIntelligenceSignalResponse`.
 - Adiciona `ProgressIntelligenceFoundationResponse`.

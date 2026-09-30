@@ -4352,6 +4352,7 @@ const HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3';
 const HP_SKILLS_MILESTONES_V0284='v0.28.4';
 const HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5';
 const HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0';
+const HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4397,6 +4398,13 @@ function hpAthletePassportDomainV0280(x){
 
 
 
+
+
+function hpProgressSignalContextV0291(x){
+  const recency=x.recencia||'—';
+  const density=x.densidadeObservacional||'—';
+  return `<article class="workout-progression-signal-v0274 progress-signal-context-v0291"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'CONTEXTO')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(recency)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.diasDesdeUltimoRegistro??0}</b>dias desde último</span><span><b>${x.diasCobertos??0}</b>dias cobertos</span><span><b>${x.registrosComparaveis??0}</b>registros</span></div><p>${esc(density)} • ${esc(x.origemEvidencia||'')}</p><small class="muted-line">${esc(x.contextoDeLeitura||'')}</small></article>`;
+}
 
 function hpProgressIntelligenceSignalV0290(x){
   const pct=x.variacaoPercentual!=null?`${x.variacaoPercentual>0?'+':''}${num(x.variacaoPercentual,1)}%`:'—';
@@ -4455,6 +4463,7 @@ async function loadAthletePerformancePassportV0280(patient){
     <div class="workout-prescribed-performed-v0272" data-skills-milestones-v0284="${HP_SKILLS_MILESTONES_V0284}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">SKILLS & MILESTONES 2.0</span><h4>Habilidades e marcos supervisionados</h4><p>Somente registros explicitamente documentados; sem transformar performance bruta em certificação ou conquista.</p></div><span class="pill Info">${(data.habilidadesMarcos||[]).length} registro(s)</span></div><div class="workout-comparisons-v0272">${(data.habilidadesMarcos||[]).map(hpSkillMilestoneV0284).join('')||'<div class="empty">Ainda não há habilidade ou marco supervisionado explicitamente registrado.</div>'}</div></div>
     <div class="workout-prescribed-performed-v0272" data-performance-evolution-v0285="${HP_PERFORMANCE_EVOLUTION_V0285}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PERFORMANCE EVOLUTION 2.0</span><h4>Início × atual em bases comparáveis</h4><p>Variação descritiva de carga e duração, sem score, ranking ou conclusão automática.</p></div><span class="pill Info">${(data.evolucao?.pontos||[]).length} comparação(ões)</span></div><div class="workout-comparisons-v0272">${(data.evolucao?.pontos||[]).map(hpPerformanceEvolutionPointV0285).join('')||'<div class="empty">Ainda não há dois registros comparáveis para formar evolução longitudinal.</div>'}</div><small class="muted-line">${esc(data.evolucao?.regraDeLeitura||'')}</small></div>
     <div class="workout-prescribed-performed-v0272" data-progress-intelligence-v0290="${HP_PROGRESS_INTELLIGENCE_V0290}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS INTELLIGENCE • FOUNDATION</span><h4>Sinais descritivos de progresso</h4><p>Organiza comparações já existentes sem score, ranking, diagnóstico ou recomendação automática.</p></div><span class="pill Info">${(data.inteligenciaProgresso?.sinais||[]).length} sinal(is)</span></div><div class="workout-comparisons-v0272">${(data.inteligenciaProgresso?.sinais||[]).map(hpProgressIntelligenceSignalV0290).join('')||'<div class="empty">Ainda não há base comparável suficiente para gerar sinais descritivos.</div>'}</div><small class="muted-line">${esc(data.inteligenciaProgresso?.regraDeUso||'')}</small></div>
+    <div class="workout-prescribed-performed-v0272" data-progress-signal-context-v0291="${HP_PROGRESS_SIGNAL_CONTEXT_V0291}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS SIGNAL CONTEXT 2.0</span><h4>Contexto dos sinais observados</h4><p>Recência, cobertura temporal, densidade observacional e origem da evidência — sem nota de confiança.</p></div><span class="pill Info">${(data.contextoSinaisProgresso?.contextos||[]).length} contexto(s)</span></div><div class="workout-comparisons-v0272">${(data.contextoSinaisProgresso?.contextos||[]).map(hpProgressSignalContextV0291).join('')||'<div class="empty">Ainda não há sinais comparáveis suficientes para contextualização.</div>'}</div><small class="muted-line">${esc(data.contextoSinaisProgresso?.regraDeUso||'')}</small></div>
     <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
   host.appendChild(section);
 }
@@ -9521,7 +9530,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.29.0';
+const HP_MVP_VERSION='0.29.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

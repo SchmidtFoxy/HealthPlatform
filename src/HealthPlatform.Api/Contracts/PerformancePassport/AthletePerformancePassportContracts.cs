@@ -101,6 +101,26 @@ public sealed record ProgressIntelligenceSignalResponse(
     string Evidencia,
     string LimiteInterpretativo);
 
+
+public sealed record ProgressSignalContextResponse(
+    string Dominio,
+    string Referencia,
+    string Recencia,
+    int DiasDesdeUltimoRegistro,
+    int RegistrosComparaveis,
+    int DiasCobertos,
+    string DensidadeObservacional,
+    string OrigemEvidencia,
+    string ContextoDeLeitura);
+
+public sealed record ProgressSignalContextSummaryResponse(
+    int DiasObservados,
+    IReadOnlyCollection<ProgressSignalContextResponse> Contextos,
+    int SinaisRecentes,
+    int SinaisIntermediarios,
+    int SinaisAntigos,
+    string RegraDeUso);
+
 public sealed record ProgressIntelligenceFoundationResponse(
     int DiasObservados,
     IReadOnlyCollection<ProgressIntelligenceSignalResponse> Sinais,
@@ -134,4 +154,8 @@ public sealed record AthletePerformancePassportResponse(
     public ProgressIntelligenceFoundationResponse InteligenciaProgresso { get; init; } =
         new(180, Array.Empty<ProgressIntelligenceSignalResponse>(), 0, 0, 0,
             "Foundation descritiva sem score, ranking, diagnóstico ou recomendação automática.");
+
+    public ProgressSignalContextSummaryResponse ContextoSinaisProgresso { get; init; } =
+        new(180, Array.Empty<ProgressSignalContextResponse>(), 0, 0, 0,
+            "Contextualização observacional sem score, ranking ou conclusão automática.");
 }

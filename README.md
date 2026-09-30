@@ -1071,3 +1071,25 @@ Progress Intelligence Foundation **não gera score, ranking, diagnóstico, progn
 
 **Próxima etapa:** `v0.29.1 — Progress Signal Context 2.0`.
 
+---
+
+## v0.29.1 — Progress Signal Context 2.0
+
+Expande a Progress Intelligence Foundation com contexto observacional para cada sinal.
+
+### Entregue
+- recência: `Recente`, `Intermediaria` ou `Antiga`;
+- dias desde o último registro;
+- dias cobertos pela comparação;
+- quantidade de registros comparáveis;
+- densidade observacional: `BaseMinima`, `BaseCurta` ou `BaseMaisDensa`;
+- origem da evidência;
+- contexto de leitura textual por sinal;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport e ao workspace profissional.
+
+### Guardrail
+Recência, cobertura e densidade descrevem **disponibilidade de dados**. Não representam qualidade do atleta, confiança clínica, força da evidência científica, certeza, score, ranking, diagnóstico, prognóstico ou recomendação automática.
+
+**Próxima etapa:** `v0.29.2 — Multi-Signal Timeline 2.0`.
+

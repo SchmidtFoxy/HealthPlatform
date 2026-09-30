@@ -305,4 +305,57 @@ public sealed class AthletePerformancePassportController(
             evolucao, resultados, habilidadesMarcos));
     }
 
+
+    [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/context")]
+    public async Task<IActionResult> ProgressSignalContextProfissional(Guid pacienteId, CancellationToken ct = default)
+    {
+        var existe = await db.Pacientes.AsNoTracking().AnyAsync(x =>
+            x.Id == pacienteId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+
+        if (!existe)
+            return NotFound(new { message = "Paciente nao encontrado." });
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
+        var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
+        var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
+        var habilidadesMarcos = await AthletePerformancePassportService.MontarHabilidadesMarcosAsync(db, pacienteId, hoje, ct);
+        var evolucao = await AthletePerformancePassportService.MontarEvolucaoAsync(
+            db, pacienteId, hoje, recordes, tempos, resultados, habilidadesMarcos, ct);
+        var foundation = AthletePerformancePassportService.MontarInteligenciaProgresso(
+            evolucao, resultados, habilidadesMarcos);
+
+        return Ok(AthletePerformancePassportService.MontarContextoSinaisProgresso(foundation, hoje));
+    }
+
+    [Authorize(Policy = "PatientOnly")]
+    [HttpGet("api/portal/me/performance/progress-intelligence/context")]
+    public async Task<IActionResult> ProgressSignalContextPaciente(CancellationToken ct = default)
+    {
+        var pacienteId = await db.Pacientes.AsNoTracking()
+            .Where(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .Select(x => (Guid?)x.Id)
+            .FirstOrDefaultAsync(ct);
+
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
+        var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
+        var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
+        var habilidadesMarcos = await AthletePerformancePassportService.MontarHabilidadesMarcosAsync(db, pacienteId.Value, hoje, ct);
+        var evolucao = await AthletePerformancePassportService.MontarEvolucaoAsync(
+            db, pacienteId.Value, hoje, recordes, tempos, resultados, habilidadesMarcos, ct);
+        var foundation = AthletePerformancePassportService.MontarInteligenciaProgresso(
+            evolucao, resultados, habilidadesMarcos);
+
+        return Ok(AthletePerformancePassportService.MontarContextoSinaisProgresso(foundation, hoje));
+    }
+
 }

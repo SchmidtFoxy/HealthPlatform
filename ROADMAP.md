@@ -2097,3 +2097,19 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 
 **Próxima etapa:** `v0.29.1 — Progress Signal Context 2.0`.
 
+## ✅ v0.29.1 — Progress Signal Context 2.0 — CONCLUÍDA
+
+**Entregue na v0.29.1:**
+- contexto observacional para cada sinal;
+- recência e dias desde o último registro;
+- cobertura temporal da comparação;
+- densidade observacional;
+- origem da evidência;
+- contexto textual de leitura;
+- endpoints profissional e paciente;
+- integração ao passaporte;
+- sem score de confiança, ranking, diagnóstico, prognóstico ou recomendação automática;
+- sem migration nova.
+
+**Próxima etapa:** `v0.29.2 — Multi-Signal Timeline 2.0`.
+

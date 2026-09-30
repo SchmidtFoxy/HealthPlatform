@@ -20,6 +20,7 @@ public static class AthletePerformancePassportService
         var habilidadesMarcos = await MontarHabilidadesMarcosAsync(db, pacienteId, hoje, ct);
         var evolucao = await MontarEvolucaoAsync(db, pacienteId, hoje, recordes, tempos, resultados, habilidadesMarcos, ct);
         var inteligenciaProgresso = MontarInteligenciaProgresso(evolucao, resultados, habilidadesMarcos);
+        var contextoSinaisProgresso = MontarContextoSinaisProgresso(inteligenciaProgresso, hoje);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -97,21 +98,22 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.0",
+            "v0.29.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Intelligence Foundation organiza sinais descritivos de progresso a partir de dados comparáveis existentes. Não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.")
+            "Progress Signal Context 2.0 adiciona recência, cobertura temporal, densidade observacional e origem da evidência aos sinais existentes. Não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
             Resultados = resultados,
             HabilidadesMarcos = habilidadesMarcos,
             Evolucao = evolucao,
-            InteligenciaProgresso = inteligenciaProgresso
+            InteligenciaProgresso = inteligenciaProgresso,
+            ContextoSinaisProgresso = contextoSinaisProgresso
         };
     }
 
@@ -243,6 +245,76 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressSignalContextSummaryResponse MontarContextoSinaisProgresso(
+        ProgressIntelligenceFoundationResponse foundation,
+        DateOnly hoje)
+    {
+        var hojeUtc = hoje.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+
+        var contextos = foundation.Sinais
+            .Select(sinal =>
+            {
+                var dataInicial = sinal.DataInicialUtc ?? sinal.DataAtualUtc;
+                var dataAtual = sinal.DataAtualUtc ?? sinal.DataInicialUtc;
+
+                var diasDesdeUltimo = dataAtual.HasValue
+                    ? Math.Max(0, (int)(hojeUtc - dataAtual.Value.Date).TotalDays)
+                    : foundation.DiasObservados;
+
+                var diasCobertos = dataInicial.HasValue && dataAtual.HasValue
+                    ? Math.Max(0, (int)(dataAtual.Value.Date - dataInicial.Value.Date).TotalDays)
+                    : 0;
+
+                var recencia = diasDesdeUltimo switch
+                {
+                    <= 14 => "Recente",
+                    <= 45 => "Intermediaria",
+                    _ => "Antiga"
+                };
+
+                var densidade = sinal.RegistrosComparaveis switch
+                {
+                    <= 2 => "BaseMinima",
+                    <= 4 => "BaseCurta",
+                    _ => "BaseMaisDensa"
+                };
+
+                var origem = sinal.Dominio switch
+                {
+                    "Carga" => "ExecucoesItensTreino",
+                    "Tempo" => "ExecucoesTreino",
+                    _ => "AthletePerformancePassport"
+                };
+
+                var contextoLeitura =
+                    $"Sinal {recencia.ToLowerInvariant()} com {sinal.RegistrosComparaveis} registro(s) comparável(is) em {diasCobertos} dia(s) de cobertura. " +
+                    "Recência e densidade descrevem disponibilidade de dados; não medem qualidade, capacidade, evolução clínica ou certeza.";
+
+                return new ProgressSignalContextResponse(
+                    sinal.Dominio,
+                    sinal.Referencia,
+                    recencia,
+                    diasDesdeUltimo,
+                    sinal.RegistrosComparaveis,
+                    diasCobertos,
+                    densidade,
+                    origem,
+                    contextoLeitura);
+            })
+            .OrderBy(x => x.Dominio)
+            .ThenBy(x => x.Referencia)
+            .ToArray();
+
+        return new ProgressSignalContextSummaryResponse(
+            foundation.DiasObservados,
+            contextos,
+            contextos.Count(x => x.Recencia == "Recente"),
+            contextos.Count(x => x.Recencia == "Intermediaria"),
+            contextos.Count(x => x.Recencia == "Antiga"),
+            "Progress Signal Context 2.0 contextualiza recência, cobertura temporal, quantidade de registros e origem da evidência. Não produz score de confiança, ranking, diagnóstico, prognóstico ou recomendação automática.");
+    }
 
     public static ProgressIntelligenceFoundationResponse MontarInteligenciaProgresso(
         AthletePerformanceEvolutionResponse evolucao,
