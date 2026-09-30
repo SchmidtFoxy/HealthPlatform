@@ -214,4 +214,100 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("beginner-journeys")]
+    public async Task<ActionResult<BeginnerJourneysResponse>> BeginnerJourneys(
+        [FromQuery] string? modalidade = null,
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var jornadas = new[]
+        {
+            new BeginnerJourneyResponse(
+                "caminhada",
+                "Caminhada",
+                "Da curiosidade à familiaridade com caminhar",
+                "Uma sequência educacional para entender ambiente, ritmo confortável e regularidade antes de pensar em distância.",
+                [
+                    new(1, "Conhecer o ambiente", "Perceber rota, superfície, segurança e recursos do local.", "Consigo identificar onde caminhar com conforto e segurança.", "Quando o ambiente deixou de ser uma dúvida."),
+                    new(2, "Perceber o próprio ritmo", "Distinguir caminhar confortável de caminhar apressado.", "Consigo reconhecer um ritmo confortável sem perseguir velocidade.", "Quando consigo repetir a experiência com controle."),
+                    new(3, "Criar familiaridade", "Entender preparação, saída, caminhada e retorno como uma rotina.", "Consigo organizar uma experiência simples sem depender de improviso.", "Quando a rotina já é compreensível e previsível.")
+                ],
+                "As etapas são marcos de familiaridade, não metas obrigatórias de distância, duração ou velocidade.",
+                "Avançar de etapa não autoriza aumento automático de intensidade e não substitui orientação profissional."),
+            new BeginnerJourneyResponse(
+                "corrida",
+                "Corrida",
+                "Aprender a lógica da corrida antes de buscar pace",
+                "Uma jornada para entender alternância, percepção de esforço e ambiente sem transformar o início em teste.",
+                [
+                    new(1, "Caminhar e correr", "Entender que alternar caminhada e corrida pode fazer parte do aprendizado.", "Sei diferenciar a sensação de caminhar da sensação de correr sem obrigação de continuidade.", "Quando a alternância deixou de parecer falha ou improviso."),
+                    new(2, "Perceber esforço", "Reconhecer que velocidade e esforço não são a mesma coisa em todas as pessoas.", "Consigo descrever como me senti sem depender apenas de pace.", "Quando consigo observar a resposta do corpo com clareza."),
+                    new(3, "Entender progressão", "Aprender que frequência, duração e velocidade são variáveis diferentes.", "Sei que aumentar uma variável não significa que todas devem aumentar.", "Quando consigo conversar sobre progressão sem usar apenas distância ou tempo.")
+                ],
+                "A jornada ensina conceitos; não define pace, zona, volume semanal ou frequência de treino.",
+                "Nenhuma etapa declara aptidão clínica ou libera progressão de corrida."),
+            new BeginnerJourneyResponse(
+                "ciclismo",
+                "Ciclismo",
+                "Do controle da bicicleta à leitura do ambiente",
+                "Uma jornada educacional sobre equipamento, controle, terreno e convivência no espaço.",
+                [
+                    new(1, "Conhecer a bicicleta", "Entender ajuste básico, freios, direção e pontos de contato.", "Sei identificar os controles essenciais antes de pedalar.", "Quando operar a bicicleta deixou de exigir tentativa e erro."),
+                    new(2, "Controlar o movimento", "Aprender frenagem, curvas e mudanças de direção em ambiente previsível.", "Consigo explicar como reduzir velocidade e mudar direção com controle.", "Quando tenho familiaridade com controle básico."),
+                    new(3, "Ler o ambiente", "Observar rota, sinalização, superfície e outros usuários.", "Consigo identificar riscos ambientais básicos antes de sair.", "Quando consigo planejar uma experiência simples com segurança contextual.")
+                ],
+                "A jornada não prescreve potência, cadência, distância ou terreno.",
+                "Familiaridade com a bicicleta não equivale a liberação clínica ou domínio técnico completo."),
+            new BeginnerJourneyResponse(
+                "calistenia",
+                "Calistenia",
+                "Conhecer padrões básicos usando o próprio corpo",
+                "Uma jornada para entender apoio, controle e padrões de movimento antes de buscar complexidade.",
+                [
+                    new(1, "Reconhecer padrões", "Diferenciar empurrar, puxar, agachar e estabilizar.", "Consigo identificar qual padrão um movimento representa.", "Quando os padrões deixam de parecer exercícios isolados."),
+                    new(2, "Entender apoio e alavanca", "Perceber como apoio e posição mudam a exigência de um movimento.", "Consigo entender por que duas variações do mesmo padrão podem ser diferentes.", "Quando regressão deixa de significar 'falhar'."),
+                    new(3, "Priorizar controle", "Entender execução consistente antes de complexidade.", "Consigo reconhecer que qualidade e controle vêm antes de variações mais difíceis.", "Quando consigo discutir progressão sem depender de desafio máximo.")
+                ],
+                "A jornada não escolhe automaticamente exercício, repetição, série ou progressão.",
+                "Variações de apoio são informação educacional, não prescrição individual."),
+            new BeginnerJourneyResponse(
+                "musculacao",
+                "Musculação",
+                "Entender o treino resistido antes de perseguir carga",
+                "Uma jornada para conhecer padrões, equipamentos e linguagem básica de uma sessão.",
+                [
+                    new(1, "Conhecer a linguagem", "Entender exercício, série, repetição, descanso e carga como conceitos distintos.", "Consigo ler uma ficha simples e saber o que cada campo significa.", "Quando a estrutura de uma sessão deixou de ser confusa."),
+                    new(2, "Conhecer equipamentos", "Identificar máquinas, pesos livres e pontos básicos de ajuste.", "Consigo reconhecer equipamentos sem assumir que sei executá-los sozinho.", "Quando consigo pedir orientação de forma mais específica."),
+                    new(3, "Execução antes da carga", "Entender que carga é uma variável e não o objetivo isolado do exercício.", "Consigo diferenciar aprender um movimento de testar força.", "Quando consigo priorizar técnica e contexto antes de aumentar peso.")
+                ],
+                "A jornada não define carga, séries, repetições, descanso ou técnica avançada.",
+                "Conhecimento da linguagem da musculação não substitui supervisão quando ela for necessária.")
+        };
+
+        if (!string.IsNullOrWhiteSpace(modalidade))
+        {
+            var filtro = modalidade.Trim();
+            jornadas = jornadas
+                .Where(x =>
+                    x.ModalidadeCodigo.Equals(filtro, StringComparison.OrdinalIgnoreCase) ||
+                    x.ModalidadeNome.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+        }
+
+        return Ok(new BeginnerJourneysResponse(
+            jornadas,
+            "AESYN Explore / Start a Sport",
+            "Beginner Journeys organiza aprendizagem por familiaridade. Não registra conclusão clínica, não progride treino e não publica prescrição automaticamente."));
+    }
+
+
 }

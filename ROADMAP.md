@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.1 — Start a Sport 2.0
+> **Versão-base deste roadmap:** v0.24.2 — Beginner Journeys 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1384,9 +1384,27 @@ Transformar o caminho “Começar um esporte” em uma jornada inicial navegáve
 
 **Próxima etapa:** `v0.24.2 — Beginner Journeys 2.0`.
 
-## ⏭ v0.24.2 — Beginner Journeys 2.0
+## ✅ v0.24.2 — Beginner Journeys 2.0 — CONCLUÍDA
 
 Criar jornadas progressivas de aprendizagem para iniciantes, estruturadas em etapas educacionais e marcos de familiaridade sem transformar a jornada em prescrição automática.
+
+
+
+**Entregue na v0.24.2:**
+- endpoint `/api/portal/me/explore/beginner-journeys`;
+- jornadas para Caminhada, Corrida, Ciclismo, Calistenia e Musculação;
+- três etapas educacionais por modalidade;
+- objetivo educacional por etapa;
+- evidência de familiaridade;
+- critério explicável para continuar aprendendo;
+- integração à jornada Start a Sport;
+- nenhum avanço automático de treino ou liberação clínica.
+
+**Próxima etapa:** `v0.24.3 — Home Workout 2.0`.
+
+## ⏭ v0.24.3 — Home Workout 2.0
+
+Criar uma experiência de exploração de movimento em casa baseada em espaço, recursos e preferências, reutilizando a biblioteca existente sem montar prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

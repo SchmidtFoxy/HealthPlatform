@@ -40,3 +40,25 @@ public sealed record StartSportResponse(
     IReadOnlyCollection<StartSportModalidadeResponse> Modalidades,
     string MensagemDeContexto,
     string RegraDeAutonomia);
+
+
+public sealed record BeginnerJourneyEtapaResponse(
+    int Ordem,
+    string Titulo,
+    string ObjetivoEducacional,
+    string EvidenciaDeFamiliaridade,
+    string ProximoQuando);
+
+public sealed record BeginnerJourneyResponse(
+    string ModalidadeCodigo,
+    string ModalidadeNome,
+    string Titulo,
+    string Descricao,
+    IReadOnlyCollection<BeginnerJourneyEtapaResponse> Etapas,
+    string RegraDeProgressao,
+    string RegraDeAutonomia);
+
+public sealed record BeginnerJourneysResponse(
+    IReadOnlyCollection<BeginnerJourneyResponse> Jornadas,
+    string Fonte,
+    string RegraGeral);

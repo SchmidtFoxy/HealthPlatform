@@ -35,6 +35,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Beginner Journeys 2.0
+
+A `v0.24.2` transforma as modalidades do Start a Sport em **jornadas educacionais de familiaridade**. Cada jornada possui etapas com objetivo educacional, evidência de familiaridade e uma explicação de quando faz sentido seguir aprendendo.
+
+As jornadas não registram “aprovação”, não alteram treino, não avançam carga/volume e não funcionam como liberação clínica. São uma estrutura para a pessoa entender melhor uma modalidade antes de decisões de treinamento.
+
 ### Start a Sport 2.0
 
 A `v0.24.1` transforma **Começar um esporte** em uma jornada navegável. O paciente pode explorar Caminhada, Corrida, Ciclismo, Calistenia e Musculação, entendendo ambientes, recursos, fundamentos, primeiro marco e próximo passo de aprendizado.
@@ -276,8 +283,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.1 — Start a Sport 2.0`
-- **Revisão local corrente:** `v0.24.1-r1 — Start a Sport Backend Gate Accent Fix`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
+- **Versão funcional:** `v0.24.2 — Beginner Journeys 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`

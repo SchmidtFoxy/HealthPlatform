@@ -1,3 +1,14 @@
+# v0.24.2 — Beginner Journeys 2.0
+
+- Adiciona `GET /api/portal/me/explore/beginner-journeys`.
+- Cria jornadas educacionais para Caminhada, Corrida, Ciclismo, Calistenia e Musculação.
+- Cada jornada possui três etapas de familiaridade.
+- Cada etapa informa objetivo educacional, evidência de familiaridade e critério para continuar aprendendo.
+- Integra Beginner Journeys ao detalhe do Start a Sport.
+- Não registra conclusão clínica, não progride treino e não publica prescrição.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.3 — Home Workout 2.0.
+
 # v0.24.1-r1 — Start a Sport Backend Gate Accent Fix (revisão local)
 
 - Corrige somente o gate estático de backend da `v0.24.1`.

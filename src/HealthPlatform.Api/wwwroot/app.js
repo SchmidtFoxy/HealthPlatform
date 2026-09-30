@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.1';
+const HP_MVP_VERSION='0.24.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13796,4 +13796,93 @@ hpWireExploreFoundationV0240=function(host,data){
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenStartSportV0241(detail);
   };
+};
+
+
+// ===== v0.24.2 — Beginner Journeys 2.0 =====
+const HP_BEGINNER_JOURNEYS_V0242='v0.24.2';
+
+function hpBeginnerJourneyV0242(journey){
+  const steps=Array.isArray(journey?.etapas)?journey.etapas:[];
+  return `<section class="beginner-journey-v0242" data-beginner-journey-v0242="${esc(journey?.modalidadeCodigo||'')}">
+    <div class="beginner-journey-head-v0242">
+      <div>
+        <span class="eyebrow">BEGINNER JOURNEY • ${esc(journey?.modalidadeNome||'MODALIDADE')}</span>
+        <h3>${esc(journey?.titulo||'Jornada iniciante')}</h3>
+        <p>${esc(journey?.descricao||'')}</p>
+      </div>
+      <span>${steps.length} etapa(s)</span>
+    </div>
+
+    <ol class="beginner-journey-steps-v0242">
+      ${steps.map(step=>`<li>
+        <b>${step.ordem}</b>
+        <div>
+          <span>ETAPA ${step.ordem}</span>
+          <strong>${esc(step.titulo)}</strong>
+          <p>${esc(step.objetivoEducacional)}</p>
+          <div class="beginner-journey-evidence-v0242"><small>FAMILIARIDADE</small><span>${esc(step.evidenciaDeFamiliaridade)}</span></div>
+          <div class="beginner-journey-next-v0242"><small>QUANDO FAZ SENTIDO IR ADIANTE</small><span>${esc(step.proximoQuando)}</span></div>
+        </div>
+      </li>`).join('')}
+    </ol>
+
+    <div class="beginner-journey-rules-v0242">
+      <div><b>Progressão educacional</b><span>${esc(journey?.regraDeProgressao||'Etapas representam familiaridade, não prescrição.')}</span></div>
+      <div><b>Autonomia com limite</b><span>${esc(journey?.regraDeAutonomia||'A jornada não substitui orientação profissional.')}</span></div>
+    </div>
+  </section>`;
+}
+
+async function hpOpenBeginnerJourneyV0242(modality,host){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando jornada iniciante...</div>';
+  try{
+    const q=modality?`?modalidade=${encodeURIComponent(modality)}`:'';
+    const data=await api(`/api/portal/me/explore/beginner-journeys${q}`);
+    const journey=(data?.jornadas||[])[0];
+    host.innerHTML=journey
+      ?hpBeginnerJourneyV0242(journey)
+      :'<div class="aesyn-explore-detail-v0240"><b>Jornada ainda não disponível.</b><span>Explore outra modalidade ou volte mais tarde.</span></div>';
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir a jornada iniciante.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpStartSportDetailV0242=hpStartSportDetailV0241;
+hpStartSportDetailV0241=function(sport){
+  const base=__hpStartSportDetailV0242(sport);
+  return base.replace(
+    '<div class="start-sport-rule-v0241">',
+    `<div class="beginner-journey-cta-v0242">
+      <button type="button" class="primary" data-open-beginner-journey-v0242="${esc(sport?.codigo||'')}">Ver jornada iniciante</button>
+      <small>Etapas educacionais de familiaridade, sem treino automático.</small>
+    </div>
+    <div id="beginnerJourneyHostV0242" class="beginner-journey-host-v0242" hidden></div>
+    <div class="start-sport-rule-v0241">`
+  );
+};
+
+const __hpWireStartSportV0242=hpWireStartSportV0241;
+hpWireStartSportV0241=function(host,data){
+  __hpWireStartSportV0242(host,data);
+  if(!host)return;
+  host.querySelectorAll('[data-start-sport-code-v0241]').forEach(btn=>{
+    const previous=btn.onclick;
+    btn.onclick=()=>{
+      previous?.();
+      requestAnimationFrame(()=>{
+        const detail=host.querySelector('#startSportDetailV0241');
+        const open=detail?.querySelector('[data-open-beginner-journey-v0242]');
+        if(open){
+          open.onclick=()=>hpOpenBeginnerJourneyV0242(
+            open.dataset.openBeginnerJourneyV0242,
+            detail.querySelector('#beginnerJourneyHostV0242')
+          );
+        }
+      });
+    };
+  });
 };
