@@ -29,8 +29,44 @@ public class ProgressReviewNotesController(
             ["proximo-item-revisar"] = "Próximo item a revisar"
         };
 
-    public sealed record CriarProgressReviewNoteRequest(string Campo, string Conteudo);
-    public sealed record AtualizarProgressReviewNoteRequest(string Campo, string Conteudo);
+    private static readonly IReadOnlyDictionary<string, (string Rotulo, string Descricao)> Contextos =
+        new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["foundation"] = ("Foundation", "Sinal descritivo da Progress Intelligence Foundation."),
+            ["context"] = ("Context", "Contexto temporal e densidade observacional."),
+            ["timeline"] = ("Timeline", "Evento observado da Multi-Signal Timeline."),
+            ["window"] = ("Evidence Window", "Janela temporal de evidência."),
+            ["observation-map"] = ("Observation Map", "Coobservação documental por data."),
+            ["summary"] = ("Summary", "Resumo observacional do progresso.")
+        };
+
+    public sealed record CriarProgressReviewNoteRequest(
+        string Campo,
+        string Conteudo,
+        string? ContextoTipo = null,
+        string? ContextoReferencia = null);
+
+    public sealed record AtualizarProgressReviewNoteRequest(
+        string Campo,
+        string Conteudo,
+        string? ContextoTipo = null,
+        string? ContextoReferencia = null);
+
+    [HttpGet("context-options")]
+    public ActionResult<ProgressReviewContextLinksResponse> ContextOptions()
+    {
+        var opcoes = Contextos
+            .Select(x => new ProgressReviewContextOptionResponse(
+                x.Key,
+                x.Value.Rotulo,
+                x.Value.Descricao))
+            .OrderBy(x => x.Tipo)
+            .ToArray();
+
+        return Ok(new ProgressReviewContextLinksResponse(
+            opcoes,
+            "O vínculo contextual apenas aponta para a camada observacional relacionada à nota. Não copia o conteúdo da camada, não cria causalidade e não transforma contexto em conclusão clínica."));
+    }
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyCollection<ProgressReviewPersistedNoteResponse>>> Listar(
@@ -93,7 +129,8 @@ public class ProgressReviewNotesController(
         if (campoNormalizado is not null)
         {
             var categoria = PrefixoCategoria + campoNormalizado;
-            query = query.Where(x => x.Categoria == categoria);
+            var categoriaContextual = categoria + "|";
+            query = query.Where(x => x.Categoria == categoria || x.Categoria.StartsWith(categoriaContextual));
         }
 
         if (autorUsuarioId.HasValue)
@@ -147,13 +184,16 @@ public class ProgressReviewNotesController(
             .Select(x => x.Nome)
             .FirstOrDefaultAsync(ct) ?? "Profissional";
 
+        if (!TryNormalizarContexto(request.ContextoTipo, request.ContextoReferencia, out var contextoTipo, out var contextoReferencia, out var contextoErro))
+            return BadRequest(new { message = contextoErro });
+
         var nota = new NotaInternaProfissional
         {
             OrganizacaoId = currentUser.OrganizationId,
             PacienteId = pacienteId,
             AutorUsuarioId = currentUser.UserId,
             AutorNome = autor,
-            Categoria = PrefixoCategoria + campo,
+            Categoria = MontarCategoria(campo, contextoTipo, contextoReferencia),
             Conteudo = conteudo,
             Fixada = false,
             Arquivada = false
@@ -186,8 +226,11 @@ public class ProgressReviewNotesController(
         if (conteudo is null)
             return BadRequest(new { message = "Informe o conteudo da nota de revisao." });
 
+        if (!TryNormalizarContexto(request.ContextoTipo, request.ContextoReferencia, out var contextoTipo, out var contextoReferencia, out var contextoErro))
+            return BadRequest(new { message = contextoErro });
+
         var antes = Snapshot(nota);
-        nota.Categoria = PrefixoCategoria + campo;
+        nota.Categoria = MontarCategoria(campo, contextoTipo, contextoReferencia);
         nota.Conteudo = conteudo;
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
@@ -250,9 +293,7 @@ public class ProgressReviewNotesController(
 
     private static ProgressReviewPersistedNoteResponse Mapear(NotaInternaProfissional nota)
     {
-        var campo = nota.Categoria.StartsWith(PrefixoCategoria, StringComparison.OrdinalIgnoreCase)
-            ? nota.Categoria[PrefixoCategoria.Length..]
-            : nota.Categoria;
+        var (campo, contextoTipo, contextoReferencia) = LerCategoria(nota.Categoria);
 
         var rotulo = Campos.TryGetValue(campo, out var nome)
             ? nome
@@ -263,10 +304,84 @@ public class ProgressReviewNotesController(
             campo,
             rotulo,
             nota.Conteudo,
+            contextoTipo,
+            contextoReferencia,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc);
+    }
+
+    private static string MontarCategoria(string campo, string? contextoTipo, string? contextoReferencia)
+    {
+        var categoria = PrefixoCategoria + campo;
+        if (string.IsNullOrWhiteSpace(contextoTipo))
+            return categoria;
+
+        return $"{categoria}|{contextoTipo}|{contextoReferencia}";
+    }
+
+    private static (string Campo, string? ContextoTipo, string? ContextoReferencia) LerCategoria(string categoria)
+    {
+        var valor = categoria.StartsWith(PrefixoCategoria, StringComparison.OrdinalIgnoreCase)
+            ? categoria[PrefixoCategoria.Length..]
+            : categoria;
+
+        var partes = valor.Split('|', 3);
+        return (
+            partes.ElementAtOrDefault(0) ?? valor,
+            partes.ElementAtOrDefault(1),
+            partes.ElementAtOrDefault(2));
+    }
+
+    private static bool TryNormalizarContexto(
+        string? tipo,
+        string? referencia,
+        out string? tipoNormalizado,
+        out string? referenciaNormalizada,
+        out string? erro)
+    {
+        tipoNormalizado = string.IsNullOrWhiteSpace(tipo)
+            ? null
+            : tipo.Trim().ToLowerInvariant();
+
+        referenciaNormalizada = string.IsNullOrWhiteSpace(referencia)
+            ? null
+            : referencia.Trim();
+
+        erro = null;
+
+        if (tipoNormalizado is null)
+        {
+            if (referenciaNormalizada is not null)
+            {
+                erro = "Informe o tipo do contexto antes da referencia.";
+                return false;
+            }
+
+            return true;
+        }
+
+        if (!Contextos.ContainsKey(tipoNormalizado))
+        {
+            erro = "Tipo de contexto de revisao invalido.";
+            return false;
+        }
+
+        if (referenciaNormalizada is null)
+        {
+            erro = "Informe a referencia do contexto selecionado.";
+            return false;
+        }
+
+        referenciaNormalizada = referenciaNormalizada
+            .Replace("|", "/")
+            .Trim();
+
+        if (referenciaNormalizada.Length > 120)
+            referenciaNormalizada = referenciaNormalizada[..120];
+
+        return true;
     }
 
     private static object Snapshot(NotaInternaProfissional nota) => new

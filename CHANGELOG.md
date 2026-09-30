@@ -1,4 +1,19 @@
-﻿# v0.30.3 — Progress Review History & Filters
+﻿# v0.30.4 — Progress Review Context Links
+
+- Adiciona `ContextoTipo` e `ContextoReferencia` às notas persistidas.
+- Adiciona `ProgressReviewContextOptionResponse`.
+- Adiciona `ProgressReviewContextLinksResponse`.
+- Adiciona endpoint `GET .../progress-review-notes/context-options`.
+- Suporta contextos `foundation`, `context`, `timeline`, `window`, `observation-map` e `summary`.
+- Persiste contexto no namespace da categoria `ProgressReview:` sem nova tabela.
+- Mantém compatibilidade com notas antigas sem contexto.
+- Ajusta filtro por campo para incluir categorias contextualizadas.
+- Adiciona seleção de contexto e referência na UI profissional.
+- Preserva histórico, CRUD, privacidade e auditoria.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.5 — Progress Review Context Navigation.
+
+# v0.30.3 — Progress Review History & Filters
 
 - Adiciona `ProgressReviewHistoryResponse`.
 - Adiciona endpoint `GET /api/pacientes/{pacienteId}/performance/progress-review-notes/history`.

@@ -1316,3 +1316,33 @@ Histórico e filtros continuam restritos à equipe profissional. O portal do pac
 
 **Próxima etapa:** `v0.30.4 — Progress Review Context Links`.
 
+---
+
+## v0.30.4 — Progress Review Context Links
+
+Permite vincular cada nota profissional de revisão ao contexto observacional que motivou o registro.
+
+### Contextos suportados
+- `foundation`;
+- `context`;
+- `timeline`;
+- `window`;
+- `observation-map`;
+- `summary`.
+
+### Persistência
+O vínculo é opcional e reutiliza a própria `Categoria` de `NotaInternaProfissional`, com namespace controlado `ProgressReview:`. Nenhuma tabela ou migration adicional foi necessária.
+
+### Regras
+- nota pode permanecer sem contexto;
+- contexto exige tipo e referência;
+- referência é limitada a 120 caracteres;
+- filtros por campo continuam funcionando com notas antigas e contextualizadas;
+- a UI permite selecionar tipo e informar referência;
+- o histórico mostra o contexto salvo.
+
+### Guardrail
+O vínculo contextual é apenas uma referência documental. Não duplica o conteúdo clínico, não cria causalidade, não confirma hipótese e não transforma o contexto em conclusão profissional automática.
+
+**Próxima etapa:** `v0.30.5 — Progress Review Context Navigation`.
+

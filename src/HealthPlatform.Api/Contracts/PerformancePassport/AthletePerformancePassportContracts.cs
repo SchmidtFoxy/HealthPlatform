@@ -111,6 +111,16 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewContextOptionResponse(
+    string Tipo,
+    string Rotulo,
+    string Descricao);
+
+public sealed record ProgressReviewContextLinksResponse(
+    IReadOnlyCollection<ProgressReviewContextOptionResponse> Opcoes,
+    string RegraDeUso);
+
 public sealed record ProgressReviewHistoryResponse(
     IReadOnlyCollection<ProgressReviewPersistedNoteResponse> Itens,
     int Total,
@@ -126,6 +136,8 @@ public sealed record ProgressReviewPersistedNoteResponse(
     string Campo,
     string Rotulo,
     string Conteudo,
+    string? ContextoTipo,
+    string? ContextoReferencia,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,

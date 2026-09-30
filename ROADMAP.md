@@ -2268,3 +2268,20 @@ Histórico de revisão com filtros por campo, autor e período, preservando o ca
 ### v0.30.4 — Progress Review Context Links
 Vincular notas de revisão às camadas observacionais existentes (sinal, timeline, janela, mapa ou resumo) por referência contextual, sem duplicar dados clínicos.
 
+## ✅ v0.30.4 — Progress Review Context Links — CONCLUÍDA
+
+**Entregue:**
+- contexto opcional por nota de revisão;
+- seis tipos de contexto observacional;
+- referência contextual;
+- persistência sem nova tabela;
+- compatibilidade com notas antigas;
+- histórico/filtros preservados;
+- UI profissional com tipo + referência;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.5 — Progress Review Context Navigation
+Transformar vínculos contextuais em navegação direta para a seção observacional correspondente dentro do workspace profissional.
+

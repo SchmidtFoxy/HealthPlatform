@@ -971,6 +971,8 @@ async function hpOpenProgressReviewNotesV0302(p){
     ['hipotese-acompanhamento','Hipótese de acompanhamento'],
     ['proximo-item-revisar','Próximo item a revisar']
   ];
+  const contextInfo=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/context-options`);
+  const contextOptions=contextInfo.opcoes||[];
 
   const render=async()=>{
     const filterForm=$('#progressReviewFiltersV0303');
@@ -1003,6 +1005,8 @@ async function hpOpenProgressReviewNotesV0302(p){
       <input type="hidden" name="id">
       <div class="form-grid">
         <label>Campo estruturado<select name="campo" required>${campos.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('')}</select></label>
+        <label>Contexto<select name="contextoTipo"><option value="">Sem vínculo contextual</option>${contextOptions.map(x=>`<option value="${esc(x.tipo)}">${esc(x.rotulo)}</option>`).join('')}</select></label>
+        <label>Referência contextual<input name="contextoReferencia" maxlength="120" placeholder="Ex.: carga::Agachamento ou Recente30d"></label>
         <label class="span-2">Observação profissional<textarea name="conteudo" rows="5" maxlength="4000" required placeholder="Registre a observação mantendo separado o fato observado da interpretação profissional."></textarea></label>
       </div>
       <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, data e alterações ficam auditadas.</div>
@@ -1010,6 +1014,7 @@ async function hpOpenProgressReviewNotesV0302(p){
     </form>
     <div class="internal-note-list-v0204">${notes.length?notes.map(n=>`<article class="internal-note-v0204" data-progress-review-note="${n.id}">
       <div class="internal-note-v0204-head"><div><span class="pill">${esc(n.rotulo||n.campo)}</span></div><small>${esc(n.autorNome||'Profissional')} • ${fmtDateTime(n.atualizadoEmUtc||n.criadoEmUtc)}</small></div>
+      ${n.contextoTipo?`<small class="muted-line">Contexto: ${esc(n.contextoTipo)} • ${esc(n.contextoReferencia||'—')}</small>`:''}
       <p>${esc(n.conteudo||'').replace(/\n/g,'<br>')}</p>
       <div class="internal-note-actions-v0204"><button type="button" class="ghost" data-progress-note-edit="${n.id}">Editar</button><button type="button" class="ghost danger" data-progress-note-archive="${n.id}">Arquivar</button></div>
     </article>`).join(''):'<div class="empty">Nenhuma nota de revisão registrada.</div>'}</div>`;
@@ -1027,7 +1032,7 @@ async function hpOpenProgressReviewNotesV0302(p){
     form.onsubmit=async e=>{
       e.preventDefault();
       const id=form.elements.id.value;
-      const body={campo:form.elements.campo.value,conteudo:form.elements.conteudo.value};
+      const body={campo:form.elements.campo.value,conteudo:form.elements.conteudo.value,contextoTipo:form.elements.contextoTipo.value||null,contextoReferencia:form.elements.contextoReferencia.value||null};
       const btn=form.querySelector('button[type=submit]');
       hpSetActionPending(btn,true,id?'Atualizando...':'Salvando...');
       try{
@@ -1049,6 +1054,8 @@ async function hpOpenProgressReviewNotesV0302(p){
       if(!note)return;
       form.elements.id.value=note.id;
       form.elements.campo.value=note.campo;
+      form.elements.contextoTipo.value=note.contextoTipo||'';
+      form.elements.contextoReferencia.value=note.contextoReferencia||'';
       form.elements.conteudo.value=note.conteudo;
       form.elements.conteudo.focus();
     });
@@ -4470,6 +4477,7 @@ const HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0';
 const HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1';
 const HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2';
 const HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3';
+const HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -9702,7 +9710,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.3';
+const HP_MVP_VERSION='0.30.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
