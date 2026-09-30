@@ -1,3 +1,15 @@
+# v0.25.1 — Football & Futsal 2.0
+
+- Adiciona `GET /api/portal/me/explore/football-futsal`.
+- Compara Futebol e Futsal sem tratá-los como a mesma modalidade.
+- Expõe dinâmica de Campo × Quadra.
+- Detalha passe/controle, condução/drible e finalização.
+- Contextualiza aceleração, mudança de direção/agilidade e repetição de esforços.
+- Relaciona sessões-modelo existentes de `ModelosSessoesTreino`.
+- Não escolhe posição, não monta treino e não define carga, volume, intensidade ou retorno ao esporte.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.25.2 — Basketball & Volleyball 2.0.
+
 # v0.25.0 — Sports Expansion I Foundation
 
 - Expande a biblioteca profissional com Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis.

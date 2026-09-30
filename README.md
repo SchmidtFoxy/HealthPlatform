@@ -44,6 +44,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Football & Futsal 2.0
+
+A `v0.25.1` aprofunda **Futebol** e **Futsal** como contextos esportivos diferentes. Campo e quadra passam a ter explicações próprias de dinâmica, fundamentos técnicos, capacidades físicas e recursos.
+
+O endpoint do atleta também relaciona `ModelosSessoesTreino` existentes por sinais editoriais, sem copiar ou atribuir essas sessões. A comparação deixa explícito que maior espaço no futebol e maior densidade de ações no futsal mudam o contexto, mas não geram intensidade, volume ou retorno ao esporte automaticamente.
+
 ### Sports Expansion I Foundation
 
 A `v0.25.0` abre a expansão esportiva de **Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis**. Essas modalidades entram na mesma taxonomia da biblioteca profissional, com ambientes, equipamentos, objetivos e capacidades específicas.
@@ -339,7 +346,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.25.0 — Sports Expansion I Foundation`
+- **Versão funcional:** `v0.25.1 — Football & Futsal 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

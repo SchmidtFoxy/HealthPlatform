@@ -1466,4 +1466,111 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("football-futsal")]
+    public async Task<ActionResult<FootballFutsalResponse>> FootballFutsal(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .OrderBy(x => x.Categoria)
+            .ThenBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+        var futebolRefs = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "futebol", "society", "campo", "bola", "passe", "chute", "sprint" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(6)
+            .Select(x => new FootballFutsalSessaoReferenciaResponse(
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao,
+                "Sessão-modelo existente com termos relacionados a futebol/campo."))
+            .ToArray();
+
+        var futsalRefs = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "futsal", "quadra", "bola", "passe", "chute", "agilidade" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(6)
+            .Select(x => new FootballFutsalSessaoReferenciaResponse(
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao,
+                "Sessão-modelo existente com termos relacionados a futsal/quadra."))
+            .ToArray();
+
+        var modalidades = new[]
+        {
+            new FootballFutsalModalidadeResponse(
+                "futebol",
+                "Futebol",
+                "Campo / society",
+                "Mais espaço por jogador, deslocamentos mais longos e maior presença de acelerações em campo aberto.",
+                ["Bola", "Cones", "Mini-barreiras", "Gol", "Campo ou society"],
+                [
+                    new("passe-controle", "Passe e controle", "Receber, orientar e dar continuidade à jogada em diferentes distâncias.", "Observe direção do primeiro toque, apoio e leitura antes do passe."),
+                    new("conducao", "Condução", "Transportar a bola mantendo controle enquanto o espaço e a pressão mudam.", "Observe proximidade da bola, visão do ambiente e mudança de direção."),
+                    new("finalizacao", "Finalização", "Entender contato com a bola, direção e contexto antes de buscar força máxima.", "Observe equilíbrio, pé de apoio e escolha do momento.")
+                ],
+                [
+                    new("aceleracao", "Aceleração", "Saídas e retomadas de velocidade em distâncias variáveis.", "No futebol, o espaço tende a permitir acelerações mais longas do que no futsal."),
+                    new("mudanca-direcao", "Mudança de direção", "Frear, reorganizar apoio e mudar direção em resposta à jogada.", "No campo, a mudança pode acontecer após deslocamentos mais longos."),
+                    new("resistencia-especifica", "Resistência específica", "Alternância de corrida, aceleração, recuperação e ações técnicas durante a partida.", "O campo amplia distâncias totais e duração das ações locomotoras.")
+                ],
+                futebolRefs,
+                "Campo amplia espaço e distância; isso muda leitura, deslocamento e preparação física."),
+            new FootballFutsalModalidadeResponse(
+                "futsal",
+                "Futsal",
+                "Quadra / ginásio",
+                "Espaço reduzido, mais ações por minuto, acelerações curtas e decisões técnicas sob pressão mais frequente.",
+                ["Bola de futsal", "Cones", "Gol", "Quadra"],
+                [
+                    new("passe-controle", "Passe e controle", "Receber e soltar a bola com pouco espaço e tempo de decisão.", "Observe orientação corporal, primeiro toque e velocidade da circulação."),
+                    new("conducao-drible", "Condução e drible", "Controlar a bola em espaço curto e usar mudanças rápidas de direção.", "Observe proximidade da bola e capacidade de proteger a posse."),
+                    new("finalizacao", "Finalização", "Finalizar com pouco tempo e ângulo reduzido, sem transformar potência em único objetivo.", "Observe preparação curta, equilíbrio e leitura do goleiro.")
+                ],
+                [
+                    new("aceleracao-curta", "Aceleração curta", "Saídas rápidas em poucos metros após mudança de posse ou espaço.", "No futsal, acelerações são tipicamente mais curtas e frequentes."),
+                    new("agilidade", "Agilidade", "Mudanças frequentes de direção e resposta a estímulos em espaço reduzido.", "A quadra aumenta a densidade de mudanças e decisões."),
+                    new("repeticao-esforcos", "Repetição de esforços", "Sequência de ações intensas curtas intercaladas por pausas e participação técnica.", "O futsal concentra mais ações por unidade de espaço e tempo.")
+                ],
+                futsalRefs,
+                "Quadra reduz espaço e tempo; isso aumenta frequência de decisão, mudança de direção e repetição de ações.")
+        };
+
+        return Ok(new FootballFutsalResponse(
+            modalidades,
+            "Sports Expansion I + ModelosSessoesTreino",
+            "Football & Futsal 2.0 explica diferenças e referencia conteúdo existente. Não escolhe posição, não monta treino, não define carga, volume, intensidade ou retorno ao esporte."));
+    }
+
+
 }

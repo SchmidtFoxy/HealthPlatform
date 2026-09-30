@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.25.0 — Sports Expansion I Foundation
+> **Versão-base deste roadmap:** v0.25.1 — Football & Futsal 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1545,9 +1545,27 @@ Abrir a próxima fase de expansão esportiva sobre a base do Explore, ampliando 
 
 **Próxima etapa:** `v0.25.1 — Football & Futsal 2.0`.
 
-## ⏭ v0.25.1 — Football & Futsal 2.0
+## ✅ v0.25.1 — Football & Futsal 2.0 — CONCLUÍDA
 
 Aprofundar Futebol e Futsal com fundamentos, capacidades, preparação física e referências de sessão específicas, mantendo diferenças de campo e quadra sem prescrição automática.
+
+
+
+**Entregue na v0.25.1:**
+- endpoint `/api/portal/me/explore/football-futsal`;
+- comparação explícita Campo × Quadra;
+- fundamentos técnicos específicos de Futebol e Futsal;
+- capacidades físicas contextualizadas;
+- diferenças de aceleração, mudança de direção e repetição de esforços;
+- referências a `ModelosSessoesTreino` existentes;
+- estado editorial vazio quando não há referência real;
+- nenhuma posição, carga, volume, intensidade ou retorno ao esporte automático.
+
+**Próxima etapa:** `v0.25.2 — Basketball & Volleyball 2.0`.
+
+## ⏭ v0.25.2 — Basketball & Volleyball 2.0
+
+Aprofundar Basquete e Vôlei com fundamentos de quadra, saltos, deslocamentos, capacidades específicas e referências editoriais de sessão sem prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

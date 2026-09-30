@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.25.0';
+const HP_MVP_VERSION='0.25.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14597,7 +14597,7 @@ function hpSportsExpansionIV0250(data){
     </div>
 
     <div class="sports-expansion-i-grid-v0250">
-      ${sports.map(s=>`<article>
+      ${sports.map(s=>`<article data-sports-expansion-code-v0250="${esc(s.codigo)}">
         <div class="sports-expansion-i-card-head-v0250">
           <div><span>MODALIDADE</span><strong>${esc(s.nome)}</strong></div>
           <small>${(s.ambientes||[]).slice(0,3).map(esc).join(' • ')}</small>
@@ -14648,4 +14648,120 @@ hpWireExploreFoundationV0240=function(host,data){
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenSportsExpansionIV0250(detail);
   };
+};
+
+
+// ===== v0.25.1 — Football & Futsal 2.0 =====
+const HP_FOOTBALL_FUTSAL_V0251='v0.25.1';
+
+function hpFootballFutsalModalityV0251(sport){
+  const refs=Array.isArray(sport?.sessoesReferencia)?sport.sessoesReferencia:[];
+  return `<article class="football-futsal-modality-v0251" data-football-futsal-code-v0251="${esc(sport?.codigo||'')}">
+    <div class="football-futsal-title-v0251">
+      <div>
+        <span>${esc(sport?.ambientePrincipal||'Ambiente')}</span>
+        <h4>${esc(sport?.nome||'Modalidade')}</h4>
+        <p>${esc(sport?.dinamica||'')}</p>
+      </div>
+      <b>${refs.length} referência(s)</b>
+    </div>
+
+    <div class="football-futsal-difference-v0251">
+      <span>DIFERENÇA-CHAVE</span>
+      <b>${esc(sport?.diferencaChave||'Contexto específico da modalidade.')}</b>
+    </div>
+
+    <div class="football-futsal-resources-v0251">${(sport?.recursos||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+
+    <section class="football-futsal-section-v0251">
+      <h5>Fundamentos técnicos</h5>
+      <div class="football-futsal-foundations-v0251">
+        ${(sport?.fundamentos||[]).map(x=>`<div>
+          <b>${esc(x.nome)}</b>
+          <p>${esc(x.descricao)}</p>
+          <small>OBSERVAR • ${esc(x.oQueObservar)}</small>
+        </div>`).join('')}
+      </div>
+    </section>
+
+    <section class="football-futsal-section-v0251">
+      <h5>Capacidades físicas no contexto</h5>
+      <div class="football-futsal-capabilities-v0251">
+        ${(sport?.capacidades||[]).map(x=>`<div>
+          <b>${esc(x.nome)}</b>
+          <p>${esc(x.contexto)}</p>
+          <small>${esc(x.diferencaDaOutraModalidade)}</small>
+        </div>`).join('')}
+      </div>
+    </section>
+
+    <section class="football-futsal-section-v0251">
+      <h5>Sessões-modelo relacionadas</h5>
+      ${refs.length?`<div class="football-futsal-references-v0251">${refs.map(x=>`<div>
+        <b>${esc(x.nome)}</b>
+        <span>${esc(x.categoria||'Sessão-modelo')}</span>
+        <p>${esc(x.descricao||'Sem descrição cadastrada.')}</p>
+        <small>${esc(x.motivoDaReferencia)}</small>
+      </div>`).join('')}</div>`:`<div class="football-futsal-empty-v0251"><b>Sem referência editorial ainda.</b><span>O AESYN não cria uma sessão artificial para preencher a modalidade.</span></div>`}
+    </section>
+  </article>`;
+}
+
+function hpFootballFutsalV0251(data){
+  const sports=Array.isArray(data?.modalidades)?data.modalidades:[];
+  return `<section class="football-futsal-v0251" data-football-futsal-v0251="${HP_FOOTBALL_FUTSAL_V0251}" aria-labelledby="footballFutsalTitleV0251">
+    <div class="football-futsal-head-v0251">
+      <div>
+        <span class="eyebrow">FOOTBALL & FUTSAL 2.0</span>
+        <h3 id="footballFutsalTitleV0251">Campo e quadra não são a mesma coisa.</h3>
+        <p>Compare fundamentos, capacidades e referências existentes sem transformar diferenças da modalidade em prescrição.</p>
+      </div>
+      <span>2 modalidades</span>
+    </div>
+
+    <div class="football-futsal-compare-v0251">
+      ${sports.map(hpFootballFutsalModalityV0251).join('')}
+    </div>
+
+    <div class="football-futsal-rule-v0251">
+      <b>CONTEXTO ≠ TREINO PRONTO</b>
+      <span>${esc(data?.regraDeUso||'Futebol e Futsal são organizados como contextos esportivos, não prescrições automáticas.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenFootballFutsalV0251(host){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Futebol & Futsal...</div>';
+  try{
+    const data=await api('/api/portal/me/explore/football-futsal');
+    host.innerHTML=hpFootballFutsalV0251(data);
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Futebol & Futsal.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpSportsExpansionIV0251=hpSportsExpansionIV0250;
+hpSportsExpansionIV0250=function(data){
+  const html=__hpSportsExpansionIV0251(data);
+  return html.replace(
+    '<div class="sports-expansion-i-chain-v0250">',
+    `<div class="football-futsal-entry-v0251">
+      <button type="button" class="primary" id="openFootballFutsalV0251">Comparar Futebol & Futsal</button>
+      <small>Campo e quadra com fundamentos, capacidades e referências de sessão próprias.</small>
+    </div>
+    <div id="footballFutsalHostV0251" class="football-futsal-host-v0251" hidden></div>
+    <div class="sports-expansion-i-chain-v0250">`
+  );
+};
+
+const __hpOpenSportsExpansionIV0251=hpOpenSportsExpansionIV0250;
+hpOpenSportsExpansionIV0250=async function(host){
+  await __hpOpenSportsExpansionIV0251(host);
+  const root=host?.querySelector('[data-sports-expansion-i-v0250]');
+  const button=root?.querySelector('#openFootballFutsalV0251');
+  const detail=root?.querySelector('#footballFutsalHostV0251');
+  if(button&&detail)button.onclick=()=>hpOpenFootballFutsalV0251(detail);
 };

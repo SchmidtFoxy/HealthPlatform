@@ -238,3 +238,39 @@ public sealed record SportsExpansionIResponse(
     IReadOnlyCollection<SportsExpansionIModalidadeResponse> Modalidades,
     string CadeiaEstrutural,
     string RegraDeUso);
+
+
+public sealed record FootballFutsalFundamentoResponse(
+    string Codigo,
+    string Nome,
+    string Descricao,
+    string OQueObservar);
+
+public sealed record FootballFutsalCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string DiferencaDaOutraModalidade);
+
+public sealed record FootballFutsalSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record FootballFutsalModalidadeResponse(
+    string Codigo,
+    string Nome,
+    string AmbientePrincipal,
+    string Dinamica,
+    string[] Recursos,
+    IReadOnlyCollection<FootballFutsalFundamentoResponse> Fundamentos,
+    IReadOnlyCollection<FootballFutsalCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<FootballFutsalSessaoReferenciaResponse> SessoesReferencia,
+    string DiferencaChave);
+
+public sealed record FootballFutsalResponse(
+    IReadOnlyCollection<FootballFutsalModalidadeResponse> Modalidades,
+    string Fonte,
+    string RegraDeUso);
