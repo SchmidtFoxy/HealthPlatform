@@ -1,4 +1,4 @@
-# AESYN Performance — Roadmap Mestre
+﻿# AESYN Performance — Roadmap Mestre
 
 > **Hotfix local v0.22.1-r2:** alinha o gate histórico do guia do Morning Check-in à UX atual. O teste deixa de exigir a cópia antiga `Leva menos de 1 minuto.` e passa a aceitar a mensagem atual de aproximadamente 30 segundos. Revisão local; sem commit individual.
 
@@ -1685,6 +1685,21 @@ Aprofundar Trekking dentro da Sports Expansion II organizando terreno, estabilid
 - nenhuma migration ou tabela nova.
 
 **Próxima etapa:** `v0.26.6 — Recreational Sports 2.0`.
+
+## ✅ v0.26.6 — Recreational Sports 2.0 — CONCLUÍDA
+
+Aprofundar práticas recreativas dentro da Sports Expansion II sem presumir modalidade única nem converter lazer em prescrição automática.
+
+**Entregue na v0.26.6:**
+- endpoint `/api/portal/me/explore/recreational-sports`;
+- contextos Jogos de quadra, Parque e área livre, Praia e areia e Lazer social;
+- capacidades Coordenação geral, Reação e adaptação, Capacidade geral de movimento, Equilíbrio e estabilidade, Agilidade e Resistência conforme o contexto;
+- referências a `ModelosSessoesTreino` existentes;
+- integração mobile ao card Sports Expansion II;
+- sem escolha automática de prática, duração, carga, volume, intensidade, aptidão ou retorno ao esporte;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.27.0 — Workout Intelligence 3.0 Foundation`.
 
 
 

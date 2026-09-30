@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.26.5';
+const HP_MVP_VERSION='0.26.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -15232,3 +15232,39 @@ hpOpenSportsExpansionIV0260=async function(host){
   if(button&&detail)button.onclick=()=>hpOpenTrekkingV0265(detail);
 };
 
+
+
+// ===== v0.26.6 — Recreational Sports 2.0 =====
+const HP_RECREATIONAL_SPORTS_V0266='v0.26.6';
+
+function hpRecreationalSportsV0266(data){
+  const refs=Array.isArray(data?.sessoesReferencia)?data.sessoesReferencia:[];
+  return `<section class="recreational-v0266" data-recreational-v0266="${HP_RECREATIONAL_SPORTS_V0266}" aria-labelledby="recreationalTitleV0266">
+    <div class="recreational-head-v0266"><div><span class="eyebrow">RECREATIONAL SPORTS 2.0</span><h3 id="recreationalTitleV0266">Mover por prazer também merece contexto.</h3><p>Jogos, praia, parque e lazer social conectados a capacidades gerais e referências reais, sem transformar recreação em prescrição automática.</p></div><span>PLAY · MOVE · ADAPT</span></div>
+    <section class="recreational-section-v0266"><h5>Contextos recreativos</h5><div class="recreational-contexts-v0266">${(data?.contextos||[]).map(x=>`<article><b>${esc(x.nome)}</b><p>${esc(x.contexto)}</p><small>${esc(x.exemplo)}</small></article>`).join('')}</div></section>
+    <section class="recreational-section-v0266"><h5>Capacidades gerais</h5><div class="recreational-capabilities-v0266">${(data?.capacidades||[]).map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.contexto)}</span></article>`).join('')}</div></section>
+    <section class="recreational-section-v0266"><h5>Sessões-modelo relacionadas</h5>${refs.length?`<div class="recreational-references-v0266">${refs.map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.categoria||'Sessão-modelo')}</span><p>${esc(x.descricao||'Sem descrição cadastrada.')}</p><small>${esc(x.motivoDaReferencia)}</small></article>`).join('')}</div>`:`<div class="recreational-empty-v0266"><b>Sem referência editorial ainda.</b><span>O AESYN preserva a lacuna em vez de inventar uma sessão recreativa.</span></div>`}</section>
+    <div class="recreational-rule-v0266"><b>LAZER ≠ PRESCRIÇÃO</b><span>${esc(data?.regraDeUso||'A exploração recreativa não define automaticamente atividade, regras, duração, carga, volume, intensidade ou aptidão.')}</span></div>
+  </section>`;
+}
+
+async function hpOpenRecreationalSportsV0266(host){
+  if(!host)return;host.hidden=false;host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Recreational Sports 2.0...</div>';
+  try{const data=await api('/api/portal/me/explore/recreational-sports');host.innerHTML=hpRecreationalSportsV0266(data);host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}
+  catch(err){host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Recreational Sports 2.0.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;}
+}
+
+const __hpSportsExpansionIIV0266=hpSportsExpansionIIV0260;
+hpSportsExpansionIIV0260=function(data){
+  const html=__hpSportsExpansionIIV0266(data);
+  return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="recreational-entry-v0266"><button type="button" class="primary" id="openRecreationalV0266">Abrir Recreational Sports 2.0</button><small>Jogos, parque, praia, coordenação, reação, mobilidade e resistência com curadoria.</small></div><div id="recreationalHostV0266" class="recreational-host-v0266" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
+};
+
+const __hpOpenSportsExpansionIIV0266=hpOpenSportsExpansionIV0260;
+hpOpenSportsExpansionIV0260=async function(host){
+  await __hpOpenSportsExpansionIIV0266(host);
+  const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
+  const button=root?.querySelector('#openRecreationalV0266');
+  const detail=root?.querySelector('#recreationalHostV0266');
+  if(button&&detail)button.onclick=()=>hpOpenRecreationalSportsV0266(detail);
+};

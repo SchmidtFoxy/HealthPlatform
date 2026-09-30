@@ -1,4 +1,16 @@
-﻿## v0.26.5 — Trekking 2.0
+﻿## v0.26.6 — Recreational Sports 2.0
+
+Aprofunda os esportes recreativos da Sports Expansion II sem assumir uma modalidade única. O Explore passa a organizar **Jogos de quadra, Parque e área livre, Praia e areia e Lazer social**, conectando esses contextos a coordenação, reação/adaptação, capacidade geral de movimento, equilíbrio/estabilidade, agilidade e resistência conforme o contexto.
+
+As referências continuam vindo de `ModelosSessoesTreino` existentes. Quando não há conteúdo adequado, o AESYN preserva a lacuna em vez de inventar uma sessão.
+
+Recreational Sports 2.0 é descoberta e contexto. O sistema **não escolhe automaticamente uma prática e não prescreve duração, carga, volume, intensidade, aptidão ou retorno ao esporte**.
+
+**Próxima etapa:** `v0.27.0 — Workout Intelligence 3.0 Foundation`.
+
+---
+
+## v0.26.5 — Trekking 2.0
 
 O AESYN Explore agora aprofunda **Trekking** organizando contextos de terreno e capacidades físicas de suporte sem montar rota nem transformar descoberta em prescrição.
 

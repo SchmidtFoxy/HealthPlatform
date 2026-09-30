@@ -2084,6 +2084,60 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("recreational-sports")]
+    public async Task<ActionResult<RecreationalSportsResponse>> RecreationalSports(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria).ThenBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.Categoria, x.Descricao })
+            .ToListAsync(ct);
+
+        var referencias = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "recreativo", "recreacao", "recreação", "lazer", "jogo", "coordenacao", "coordenação", "reacao", "reação", "agilidade", "equilibrio", "equilíbrio", "mobilidade", "condicionamento" }
+                    .Any(token => texto.Contains(token, StringComparison.Ordinal));
+            })
+            .Take(10)
+            .Select(x => new RecreationalSportSessaoReferenciaResponse(
+                x.Id, x.Nome, x.Categoria, x.Descricao,
+                "Sessão-modelo existente com termos relacionados a lazer, jogos ou capacidades gerais de movimento."))
+            .ToArray();
+
+        var contextos = new RecreationalSportContextoResponse[]
+        {
+            new("quadra-jogos", "Jogos de quadra", "Práticas informais em quadra com regras adaptáveis, interação social e mudanças frequentes de direção.", "Ex.: jogos recreativos com bola, raquete ou atividades em pequenos grupos."),
+            new("parque-area-livre", "Parque e área livre", "Movimento espontâneo em ambientes abertos, com espaço variável e diferentes possibilidades de deslocamento.", "Ex.: circuitos lúdicos, brincadeiras ativas e desafios de movimento."),
+            new("praia-areia", "Praia e areia", "Atividades recreativas em superfície instável com maior demanda de adaptação, equilíbrio e controle corporal.", "Ex.: jogos leves, deslocamentos e práticas informais na areia."),
+            new("lazer-social", "Lazer social", "Atividades cujo objetivo principal é participação, convivência e prazer pelo movimento.", "Ex.: encontros ativos, jogos familiares e práticas não competitivas.")
+        };
+
+        var capacidades = new RecreationalSportCapacidadeResponse[]
+        {
+            new("coordenacao", "Coordenação geral", "Organizar movimentos variados sem presumir técnica esportiva específica."),
+            new("reacao-adaptacao", "Reação e adaptação", "Responder a mudanças simples de ambiente, objeto ou parceiro sem prescrever estímulos competitivos."),
+            new("movimento-geral", "Capacidade geral de movimento", "Explorar padrões básicos de locomoção, alcance, agachar, empurrar, puxar e girar conforme o contexto."),
+            new("equilibrio-estabilidade", "Equilíbrio e estabilidade", "Dar suporte a mudanças de base, direção e superfície durante práticas recreativas."),
+            new("agilidade", "Agilidade", "Mudar direção e reorganizar o corpo em situações lúdicas sem transformar desempenho em meta automática."),
+            new("resistencia-contextual", "Resistência conforme o contexto", "Sustentar participação recreativa sem definir duração, volume ou intensidade-alvo.")
+        };
+
+        return Ok(new RecreationalSportsResponse(
+            contextos, capacidades, referencias,
+            "Sports Expansion II + ModelosSessoesTreino",
+            "Recreational Sports 2.0 organiza contextos, capacidades gerais e referências existentes. Não escolhe automaticamente uma prática, não substitui regras ou supervisão do ambiente e não prescreve duração, carga, volume, intensidade, aptidão ou retorno ao esporte."));
+    }
+
+
     [HttpGet("sports-expansion-ii")]
     public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
         CancellationToken ct = default)

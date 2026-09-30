@@ -1,3 +1,14 @@
+﻿## v0.26.6 — Recreational Sports 2.0
+
+- Adiciona endpoint `/api/portal/me/explore/recreational-sports`.
+- Organiza contextos Jogos de quadra, Parque e área livre, Praia e areia e Lazer social.
+- Expõe Coordenação geral, Reação e adaptação, Capacidade geral de movimento, Equilíbrio e estabilidade, Agilidade e Resistência conforme o contexto.
+- Reaproveita `ModelosSessoesTreino` existentes como referências editoriais.
+- Integra Recreational Sports 2.0 ao card Sports Expansion II do Explore.
+- Mantém guardrails explícitos contra escolha automática de prática, duração, carga, volume, intensidade, aptidão ou retorno ao esporte.
+- Não cria migration ou tabela nova.
+- Próxima etapa: `v0.27.0 — Workout Intelligence 3.0 Foundation`.
+
 ## v0.26.5 — Trekking 2.0
 
 - Adiciona `GET /api/portal/me/explore/trekking`.

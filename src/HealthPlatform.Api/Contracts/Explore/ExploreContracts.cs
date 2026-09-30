@@ -507,3 +507,29 @@ public sealed record TrekkingResponse(
     IReadOnlyCollection<TrekkingSessaoReferenciaResponse> SessoesReferencia,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record RecreationalSportContextoResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string Exemplo);
+
+public sealed record RecreationalSportCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record RecreationalSportSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record RecreationalSportsResponse(
+    IReadOnlyCollection<RecreationalSportContextoResponse> Contextos,
+    IReadOnlyCollection<RecreationalSportCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<RecreationalSportSessaoReferenciaResponse> SessoesReferencia,
+    string Fonte,
+    string RegraDeUso);
