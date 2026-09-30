@@ -102,3 +102,24 @@ public sealed record QuickMovementResponse(
     IReadOnlyCollection<QuickMovementPossibilidadeResponse> Possibilidades,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record TravelModePossibilidadeResponse(
+    Guid Id,
+    string Nome,
+    string? GrupoMuscular,
+    string? Equipamento,
+    string? Descricao,
+    string MotivoDaCompatibilidade);
+
+public sealed record TravelModeResponse(
+    string? PlanoAtual,
+    string Hospedagem,
+    string Recurso,
+    string Rotina,
+    string[] HospedagensDisponiveis,
+    string[] RecursosDisponiveis,
+    string[] RotinasDisponiveis,
+    IReadOnlyCollection<TravelModePossibilidadeResponse> Possibilidades,
+    string Fonte,
+    string RegraDeUso);

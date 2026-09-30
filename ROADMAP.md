@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.4 — Quick Movement 2.0
+> **Versão-base deste roadmap:** v0.24.5 — Travel Mode 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1437,9 +1437,27 @@ Criar exploração para momentos de pouco tempo, organizando possibilidades curt
 
 **Próxima etapa:** `v0.24.5 — Travel Mode 2.0`.
 
-## ⏭ v0.24.5 — Travel Mode 2.0
+## ✅ v0.24.5 — Travel Mode 2.0 — CONCLUÍDA
 
 Criar exploração contextual para viagens, considerando espaço, recursos e rotina temporária sem substituir plano profissional ou fabricar treino automático.
+
+
+
+**Entregue na v0.24.5:**
+- novo caminho “Estou viajando” no AESYN Explore;
+- endpoint `/api/portal/me/explore/travel-mode`;
+- contexto por hospedagem/espaço, recurso e rotina temporária;
+- plano ativo preservado como referência;
+- reutilização do catálogo `Exercicios`;
+- justificativa contextual por possibilidade;
+- estado vazio sem ficha artificial;
+- nenhuma troca de plano, deload, carga, volume ou intensidade automática.
+
+**Próxima etapa:** `v0.24.6 — Outdoor Mode 2.0`.
+
+## ⏭ v0.24.6 — Outdoor Mode 2.0
+
+Transformar o caminho “Quero ir para fora” em exploração por ambiente externo, recurso e interesse, sem converter contexto outdoor em prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

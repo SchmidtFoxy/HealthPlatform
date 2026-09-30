@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.4';
+const HP_MVP_VERSION='0.24.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14067,5 +14067,99 @@ hpWireExploreFoundationV0240=function(host,data){
   quickBtn.onclick=()=>{
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenQuickMovementV0244(detail);
+  };
+};
+
+
+// ===== v0.24.5 — Travel Mode 2.0 =====
+const HP_TRAVEL_MODE_V0245='v0.24.5';
+
+function hpTravelModeQueryV0245(filters){
+  const p=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)p.set(k,v)});
+  const qs=p.toString();
+  return `/api/portal/me/explore/travel-mode${qs?`?${qs}`:''}`;
+}
+
+function hpTravelModeV0245(data){
+  const items=Array.isArray(data?.possibilidades)?data.possibilidades:[];
+  const option=(value,current)=>`<option ${value===current?'selected':''}>${esc(value)}</option>`;
+
+  return `<section class="travel-mode-v0245" data-travel-mode-v0245="${HP_TRAVEL_MODE_V0245}" aria-labelledby="travelModeTitleV0245">
+    <div class="travel-mode-head-v0245">
+      <div>
+        <span class="eyebrow">TRAVEL MODE 2.0</span>
+        <h3 id="travelModeTitleV0245">A rotina mudou. O plano não precisa desaparecer.</h3>
+        <p>Use o contexto temporário da viagem para explorar possibilidades sem substituir automaticamente o que foi planejado pelo profissional.</p>
+      </div>
+      <span>${items.length} possibilidade(s)</span>
+    </div>
+
+    ${data?.planoAtual?`<div class="travel-mode-plan-v0245"><b>PLANO ATIVO</b><span>${esc(data.planoAtual)}</span><small>Travel Mode é complementar; não troca este plano.</small></div>`:''}
+
+    <div class="travel-mode-filters-v0245">
+      <label><span>HOSPEDAGEM / ESPAÇO</span><select id="travelModeStayV0245">${(data?.hospedagensDisponiveis||[]).map(x=>option(x,data?.hospedagem)).join('')}</select></label>
+      <label><span>RECURSO</span><select id="travelModeResourceV0245">${(data?.recursosDisponiveis||[]).map(x=>option(x,data?.recurso)).join('')}</select></label>
+      <label><span>ROTINA TEMPORÁRIA</span><select id="travelModeRoutineV0245">${(data?.rotinasDisponiveis||[]).map(x=>option(x,data?.rotina)).join('')}</select></label>
+    </div>
+
+    <div class="travel-mode-context-v0245">
+      <b>CONTEXTO TEMPORÁRIO</b>
+      <span>${esc(data?.hospedagem||'Sem local definido')}</span>
+      <span>${esc(data?.recurso||'Sem equipamento')}</span>
+      <span>${esc(data?.rotina||'Dia imprevisível')}</span>
+    </div>
+
+    <div class="travel-mode-grid-v0245">
+      ${items.length?items.map(x=>`<article>
+        <div><span>${esc(x.grupoMuscular||'Movimento')}</span><b>${esc(x.nome)}</b></div>
+        <p>${esc(x.descricao||'Sem descrição cadastrada no catálogo profissional.')}</p>
+        <small>${esc(x.equipamento||'Sem equipamento informado')}</small>
+        <footer>${esc(x.motivoDaCompatibilidade||'Compatível com o contexto temporário informado.')}</footer>
+      </article>`).join(''):`<div class="travel-mode-empty-v0245"><b>Nenhuma possibilidade real apareceu neste contexto.</b><span>Ajuste espaço ou recurso. O AESYN não inventa uma ficha de viagem.</span></div>`}
+    </div>
+
+    <div class="travel-mode-source-v0245">
+      <b>Viagem não redefine o plano</b>
+      <span>${esc(data?.regraDeUso||'Travel Mode organiza contexto temporário sem prescrição automática.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenTravelModeV0245(host,filters={}){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Travel Mode...</div>';
+
+  try{
+    const data=await api(hpTravelModeQueryV0245(filters));
+    host.innerHTML=hpTravelModeV0245(data);
+
+    const current=()=>({
+      hospedagem:host.querySelector('#travelModeStayV0245')?.value||'',
+      recurso:host.querySelector('#travelModeResourceV0245')?.value||'',
+      rotina:host.querySelector('#travelModeRoutineV0245')?.value||''
+    });
+
+    ['#travelModeStayV0245','#travelModeResourceV0245','#travelModeRoutineV0245'].forEach(selector=>{
+      const el=host.querySelector(selector);
+      if(el)el.onchange=()=>hpOpenTravelModeV0245(host,current());
+    });
+
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Travel Mode.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0245=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0245(host,data);
+  if(!host)return;
+  const travelBtn=host.querySelector('[data-explore-path-v0240="travel-mode"]');
+  if(!travelBtn)return;
+  travelBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenTravelModeV0245(detail);
   };
 };

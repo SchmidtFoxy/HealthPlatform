@@ -1,3 +1,14 @@
+# v0.24.5 — Travel Mode 2.0
+
+- Adiciona o caminho `Estou viajando` ao AESYN Explore.
+- Adiciona `GET /api/portal/me/explore/travel-mode`.
+- Permite explorar por hospedagem/espaço, recurso e rotina temporária.
+- Mantém o plano ativo visível como referência quando existir.
+- Reutiliza exclusivamente o catálogo ativo `Exercicios`.
+- Não transforma viagem em deload automático e não troca o plano profissional.
+- Não cria ficha, carga, volume, intensidade, migration ou tabela nova.
+- Próxima etapa: v0.24.6 — Outdoor Mode 2.0.
+
 # v0.24.4 — Quick Movement 2.0
 
 - Adiciona `GET /api/portal/me/explore/quick-movement`.

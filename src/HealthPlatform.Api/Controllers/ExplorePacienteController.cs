@@ -73,6 +73,13 @@ public sealed class ExplorePacienteController(
                 ["Caminhada", "Mobilidade", "Condicionamento"],
                 "Contexto"),
             new ExploreCaminhoResponse(
+                "travel-mode",
+                "Estou viajando",
+                "Adapte a exploração ao espaço, aos recursos e à rotina temporária da viagem.",
+                ["Viagem", "Rotina temporária"],
+                ["Mobilidade", "Calistenia", "Caminhada", "Condicionamento"],
+                "Contexto"),
+            new ExploreCaminhoResponse(
                 "outdoor",
                 "Quero ir para fora",
                 "Explore modalidades e movimento em ambientes externos.",
@@ -589,6 +596,153 @@ public sealed class ExplorePacienteController(
             partes.Add("catalogado como peso corporal");
         else if (texto.Contains("core") || texto.Contains("estabil"))
             partes.Add("catalogado com indicio de estabilizacao");
+
+        return string.Join(" • ", partes);
+    }
+
+
+    [HttpGet("travel-mode")]
+    public async Task<ActionResult<TravelModeResponse>> TravelMode(
+        [FromQuery] string? hospedagem = null,
+        [FromQuery] string? recurso = null,
+        [FromQuery] string? rotina = null,
+        CancellationToken ct = default)
+    {
+        var paciente = await db.Pacientes.AsNoTracking()
+            .Where(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .Select(x => new { x.Id })
+            .FirstOrDefaultAsync(ct);
+
+        if (paciente is null)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var plano = await db.PlanosTreino.AsNoTracking()
+            .Where(x => x.PacienteId == paciente.Id && x.Status == "Ativo")
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(ct);
+
+        var hospedagens = new[] { "Quarto pequeno", "Hotel com academia", "Casa ou apartamento", "Sem local definido" };
+        var recursos = new[] { "Sem equipamento", "Peso corporal", "Faixa ou elástico", "Halter", "Academia disponível" };
+        var rotinas = new[] { "Agenda apertada", "Horário flexível", "Muitos deslocamentos", "Dia imprevisível" };
+
+        var hospedagemAtual = NormalizarOpcao(hospedagem, hospedagens, "Sem local definido");
+        var recursoAtual = NormalizarOpcao(recurso, recursos, "Sem equipamento");
+        var rotinaAtual = NormalizarOpcao(rotina, rotinas, "Dia imprevisível");
+
+        var exercicios = await db.Exercicios.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.GrupoMuscular,
+                x.Equipamento,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var possibilidades = exercicios
+            .Select(x => new
+            {
+                Exercicio = x,
+                Texto = $"{x.Nome} {x.GrupoMuscular} {x.Equipamento} {x.Descricao}".ToLowerInvariant()
+            })
+            .Where(x => CompativelComViagem(x.Texto, hospedagemAtual, recursoAtual))
+            .Take(14)
+            .Select(x => new TravelModePossibilidadeResponse(
+                x.Exercicio.Id,
+                x.Exercicio.Nome,
+                x.Exercicio.GrupoMuscular,
+                x.Exercicio.Equipamento,
+                x.Exercicio.Descricao,
+                MotivoViagem(x.Texto, hospedagemAtual, recursoAtual, rotinaAtual)))
+            .ToArray();
+
+        return Ok(new TravelModeResponse(
+            plano,
+            hospedagemAtual,
+            recursoAtual,
+            rotinaAtual,
+            hospedagens,
+            recursos,
+            rotinas,
+            possibilidades,
+            "Exercicios",
+            "Travel Mode organiza possibilidades para um contexto temporario. Ele nao substitui o plano profissional, nao transforma viagem em deload automatico e nao cria treino, carga, volume ou intensidade automaticamente."));
+    }
+
+    private static bool CompativelComViagem(
+        string texto,
+        string hospedagem,
+        string recurso)
+    {
+        var hospedagemOk = hospedagem switch
+        {
+            "Quarto pequeno" => !texto.Contains("barra") &&
+                               !texto.Contains("máquina") &&
+                               !texto.Contains("maquina") &&
+                               !texto.Contains("polia") &&
+                               !texto.Contains("corrida"),
+            "Hotel com academia" => true,
+            "Casa ou apartamento" => !texto.Contains("máquina") &&
+                                     !texto.Contains("maquina") &&
+                                     !texto.Contains("polia"),
+            "Sem local definido" => !texto.Contains("máquina") &&
+                                    !texto.Contains("maquina") &&
+                                    !texto.Contains("polia"),
+            _ => true
+        };
+
+        var recursoOk = recurso switch
+        {
+            "Sem equipamento" => !texto.Contains("halter") &&
+                                !texto.Contains("barra") &&
+                                !texto.Contains("máquina") &&
+                                !texto.Contains("maquina") &&
+                                !texto.Contains("polia") &&
+                                !texto.Contains("elástico") &&
+                                !texto.Contains("elastico"),
+            "Peso corporal" => texto.Contains("peso corporal") ||
+                               texto.Contains("agach") ||
+                               texto.Contains("flex") ||
+                               texto.Contains("prancha") ||
+                               texto.Contains("mobil"),
+            "Faixa ou elástico" => texto.Contains("elástico") ||
+                                  texto.Contains("elastico") ||
+                                  texto.Contains("faixa") ||
+                                  texto.Contains("peso corporal"),
+            "Halter" => texto.Contains("halter") || texto.Contains("dumbbell"),
+            "Academia disponível" => true,
+            _ => true
+        };
+
+        return hospedagemOk && recursoOk;
+    }
+
+    private static string MotivoViagem(
+        string texto,
+        string hospedagem,
+        string recurso,
+        string rotina)
+    {
+        var partes = new List<string>
+        {
+            $"Hospedagem: {hospedagem}",
+            $"Recurso: {recurso}",
+            $"Rotina temporaria: {rotina}"
+        };
+
+        if (texto.Contains("peso corporal"))
+            partes.Add("catalogado como peso corporal");
+        else if (texto.Contains("mobil"))
+            partes.Add("catalogado com indicio de mobilidade");
+        else if (texto.Contains("halter"))
+            partes.Add("catalogado com halter");
 
         return string.Join(" • ", partes);
     }
