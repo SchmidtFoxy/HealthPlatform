@@ -1054,7 +1054,7 @@ function hpMorningCheckin(readiness){
   const done=!!readiness;
   const score=done?`${readiness.score}/100`:'Ainda não feito';
   const recommendation=done?(readiness.recomendacaoTreino==='Recuperacao'?'Recuperação':readiness.recomendacaoTreino):'Comece pelo corpo';
-  const detail=done?`Sono ${num(readiness.sonoHoras,1)}h • energia ${readiness.energiaNivel}/10 • dor ${readiness.dorNivel}/10`:'Sono, energia, dor, disposição e recuperação em menos de 1 minuto.';
+  const detail=done?`Sono ${num(readiness.sonoHoras,1)}h • energia ${readiness.energiaNivel}/10 • dor ${readiness.dorNivel}/10`:'Sono, energia, dor, disposição e recuperação em cerca de 30 segundos.';
   const factors=done?[
     ['🌙','Sono',`${num(readiness.sonoHoras,1)}h`],
     ['⚡','Energia',`${readiness.energiaNivel}/10`],
@@ -1063,7 +1063,7 @@ function hpMorningCheckin(readiness){
     ['♻','Recuperação',`${readiness.recuperacaoNivel}/10`]
   ]:[];
   return `<section class="morning-checkin ${done?'done':'pending'}" aria-label="Morning Check-in">
-    <div class="morning-checkin-copy"><span class="eyebrow">MORNING CHECK-IN</span><h3>${done?'Seu contexto da manhã está atualizado':'Antes do treino, escute seu corpo'}</h3><p>${detail}</p></div>
+    <div class="morning-checkin-copy"><span class="eyebrow">MORNING CHECK-IN 2.0</span><h3>${done?'Seu contexto da manhã está atualizado':'Antes do treino, escute seu corpo'}</h3><p>${detail}</p></div>
     <div class="morning-checkin-status"><small>PRONTIDÃO</small><strong>${score}</strong><span>${esc(recommendation)}</span></div>
     ${done?`<div class="morning-checkin-factors">${factors.map(x=>`<span><i>${x[0]}</i><small>${x[1]}</small><b>${x[2]}</b></span>`).join('')}</div>`:''}
     <button type="button" class="${done?'secondary':'primary'} morning-checkin-action" id="morningCheckinAction">${done?'Atualizar check-in':'Fazer check-in da manhã'}</button>
@@ -3512,23 +3512,102 @@ function patientScaleField(label,name,value=5){
   return `<label class="patient-scale-field span-2"><span class="patient-scale-label"><b>${esc(label)}</b><output data-scale-output="${name}">${safe}</output></span><input class="patient-scale-range" type="range" min="0" max="10" step="1" name="${name}" value="${safe}"><span class="patient-scale-legend"><small>0</small><small>10</small></span></label>`;
 }
 
+const HP_MORNING_CHECKIN_V0221='v0.22.1';
+
+function hpMorningScaleCopyV0221(key){
+  return ({
+    sonoQualidade:['Muito ruim','Excelente'],
+    energiaNivel:['Sem energia','Energia máxima'],
+    dorNivel:['Sem dor','Dor muito intensa'],
+    disposicaoNivel:['Sem disposição','Muito disposto'],
+    recuperacaoNivel:['Nada recuperado','Totalmente recuperado']
+  })[key]||['0','10'];
+}
+
+function hpMorningScaleFieldV0221(label,key,value,icon){
+  const [low,high]=hpMorningScaleCopyV0221(key);
+  const safe=value==null?5:Number(value);
+  return `<label class="morning-checkin-field-v0221">
+    <div class="morning-checkin-field-head-v0221">
+      <span><i>${icon}</i><b>${esc(label)}</b></span>
+      <output data-morning-output-v0221="${key}">${safe}/10</output>
+    </div>
+    <input type="range" name="${key}" min="0" max="10" step="1" value="${safe}" data-morning-range-v0221="${key}" required>
+    <div class="morning-checkin-scale-v0221"><small>${esc(low)}</small><small>${esc(high)}</small></div>
+  </label>`;
+}
+
+function hpWireMorningCheckinV0221(){
+  document.querySelectorAll('[data-morning-range-v0221]').forEach(input=>{
+    const key=input.dataset.morningRangeV0221;
+    const output=document.querySelector(`[data-morning-output-v0221="${key}"]`);
+    const sync=()=>{ if(output)output.textContent=`${input.value}/10`; };
+    input.addEventListener('input',sync);
+    sync();
+  });
+
+  const sleep=document.querySelector('[name="sonoHoras"]');
+  const sleepOut=document.querySelector('[data-morning-sleep-v0221]');
+  if(sleep&&sleepOut){
+    const syncSleep=()=>{ sleepOut.textContent=`${Number(sleep.value||0).toFixed(1)} h`; };
+    sleep.addEventListener('input',syncSleep);
+    syncSleep();
+  }
+}
+
 function openDailyReadiness(current){
   const value=(key,fallback='')=>current&&current[key]!=null?current[key]:fallback;
-  patientPortalModal('Check-in de prontidão',`
-    <div class="span-2 readiness-form-intro morning-checkin-intro"><span class="eyebrow">MORNING CHECK-IN</span><strong>Leva menos de 1 minuto.</strong><p>Responda pelo que seu corpo está mostrando hoje — não pelo treino que você gostaria de fazer.</p><div class="morning-checkin-guide"><span>🌙 Sono</span><span>⚡ Energia</span><span>● Dor</span><span>↗ Disposição</span><span>♻ Recuperação</span></div></div>
-    ${field('Horas de sono','sonoHoras','number',`min="0" max="16" step="0.1" value="${value('sonoHoras',7.5)}" required`)}
-    ${patientScaleField('Qualidade do sono','sonoQualidade',value('sonoQualidade',7))}
-    ${patientScaleField('Energia','energiaNivel',value('energiaNivel',7))}
-    ${patientScaleField('Dor corporal','dorNivel',value('dorNivel',0))}
-    ${patientScaleField('Disposição','disposicaoNivel',value('disposicaoNivel',7))}
-    ${patientScaleField('Recuperação percebida','recuperacaoNivel',value('recuperacaoNivel',7))}
+  const done=!!current;
+
+  patientPortalModal(done?'Atualizar check-in da manhã':'Check-in da manhã',`
+    <div class="span-2 morning-checkin-v0221" data-morning-checkin-v0221="${HP_MORNING_CHECKIN_V0221}">
+      <div class="morning-checkin-intro-v0221">
+        <div>
+          <span class="eyebrow">MORNING CHECK-IN 2.0</span>
+          <h3>${done?'Como você está agora?':'Comece o dia ouvindo o corpo.'}</h3>
+          <p>Leva cerca de 30 segundos. Responda pelo que está acontecendo hoje — não pelo treino que você gostaria de conseguir fazer.</p>
+        </div>
+        <div class="morning-checkin-time-v0221"><strong>≈30s</strong><span>5 sinais + sono</span></div>
+      </div>
+
+      <div class="morning-checkin-sleep-v0221">
+        <div><span>🌙</span><div><b>Horas de sono</b><small>Quanto você dormiu desde ontem?</small></div></div>
+        <output data-morning-sleep-v0221>${Number(value('sonoHoras',7.5)).toFixed(1)} h</output>
+        <input name="sonoHoras" type="range" min="0" max="16" step="0.1" value="${value('sonoHoras',7.5)}" required>
+        <div class="morning-checkin-sleep-scale-v0221"><small>0 h</small><small>8 h</small><small>16 h</small></div>
+      </div>
+
+      <div class="morning-checkin-grid-v0221">
+        ${hpMorningScaleFieldV0221('Qualidade do sono','sonoQualidade',value('sonoQualidade',7),'☾')}
+        ${hpMorningScaleFieldV0221('Energia','energiaNivel',value('energiaNivel',7),'⚡')}
+        ${hpMorningScaleFieldV0221('Dor corporal','dorNivel',value('dorNivel',0),'●')}
+        ${hpMorningScaleFieldV0221('Disposição','disposicaoNivel',value('disposicaoNivel',7),'↗')}
+        ${hpMorningScaleFieldV0221('Recuperação percebida','recuperacaoNivel',value('recuperacaoNivel',7),'♻')}
+      </div>
+
+      <div class="morning-checkin-explain-v0221">
+        <b>O que acontece com essas respostas?</b>
+        <span>Elas contextualizam sua prontidão do dia e ajudam o profissional a entender sono, energia, dor, disposição e recuperação ao longo do tempo.</span>
+      </div>
+
+      <div class="morning-checkin-safety-v0221">
+        <b>Sem julgamento</b>
+        <span>Não existe resposta “boa” para agradar o sistema. Registrar um dia ruim também é informação útil. O AESYN não usa este check-in como diagnóstico.</span>
+      </div>
+    </div>
   `,async f=>{
     await api('/api/portal/me/prontidao',{method:'POST',body:JSON.stringify({
-      data:todayISO(),sonoHoras:dec(f,'sonoHoras'),sonoQualidade:integer(f,'sonoQualidade'),
-      energiaNivel:integer(f,'energiaNivel'),dorNivel:integer(f,'dorNivel'),
-      disposicaoNivel:integer(f,'disposicaoNivel'),recuperacaoNivel:integer(f,'recuperacaoNivel')
+      data:todayISO(),
+      sonoHoras:dec(f,'sonoHoras'),
+      sonoQualidade:integer(f,'sonoQualidade'),
+      energiaNivel:integer(f,'energiaNivel'),
+      dorNivel:integer(f,'dorNivel'),
+      disposicaoNivel:integer(f,'disposicaoNivel'),
+      recuperacaoNivel:integer(f,'recuperacaoNivel')
     })});
   });
+
+  setTimeout(hpWireMorningCheckinV0221,0);
 }
 
 function openBodyPainRecord(){
@@ -9119,7 +9198,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.0';
+const HP_MVP_VERSION='0.22.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,3 +1,41 @@
+# v0.22.1-r2 — Morning Check-in Guide Copy Gate Alignment (local)
+
+- Corrige o gate histórico `[1373/1376]` do guia do Morning Check-in.
+- O teste ainda exigia a cópia antiga `Leva menos de 1 minuto.`.
+- A v0.22.1 adotou uma UX explícita de aproximadamente 30 segundos.
+- O gate passa a validar a mensagem atual sem reintroduzir texto obsoleto no frontend.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.22.1` quando todos os gates passarem.
+- `VERSION.txt` permanece em `0.22.1`.
+
+# v0.22.1-r1 — Mobile Readiness Historical Gate Alignment (local)
+
+- Corrige o gate histórico `[1141/1144]` de prontidão mobile.
+- O teste ainda exigia chamadas ao renderer antigo `patientScaleField(...)`.
+- O Morning Check-in 2.0 usa agora `hpMorningScaleFieldV0221(...)`.
+- O gate passa a validar as cinco escalas reais da implementação atual:
+  - Qualidade do sono;
+  - Energia;
+  - Dor corporal;
+  - Disposição;
+  - Recuperação percebida.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.22.1` quando todos os gates passarem.
+- `VERSION.txt` permanece em `0.22.1`.
+
+# v0.22.1 — Morning Check-in 2.0
+
+- Evolui o check-in de prontidão existente para uma experiência mobile-first de aproximadamente 30 segundos.
+- Reorganiza sono, qualidade do sono, energia, dor, disposição e recuperação percebida.
+- Adiciona escalas visuais com extremos explicativos e feedback imediato do valor selecionado.
+- Mantém atualização do mesmo check-in diário pelo endpoint já existente.
+- Não cria migration, tabela, entidade ou endpoint paralelo.
+- Reforça linguagem sem julgamento: dias ruins são contexto útil, não falha.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.1.
+- Próxima etapa: v0.22.2 — Daily Readiness Context 2.0.
+
 # v0.22.0 — AESYN Daily Foundation
 
 - Inaugura a camada AESYN Daily.

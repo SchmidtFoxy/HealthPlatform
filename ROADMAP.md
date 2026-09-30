@@ -1,5 +1,9 @@
 # AESYN Performance — Roadmap Mestre
 
+> **Hotfix local v0.22.1-r2:** alinha o gate histórico do guia do Morning Check-in à UX atual. O teste deixa de exigir a cópia antiga `Leva menos de 1 minuto.` e passa a aceitar a mensagem atual de aproximadamente 30 segundos. Revisão local; sem commit individual.
+
+> **Hotfix local v0.22.1-r1:** alinha o gate histórico de prontidão mobile ao renderer `hpMorningScaleFieldV0221` introduzido no Morning Check-in 2.0. O gate deixa de exigir `patientScaleField(...)`, implementação interna substituída, e continua validando as cinco escalas de sono, energia, dor, disposição e recuperação. Revisão local; sem commit individual.
+
 > **Hotfix local v0.21.0-r7:** alinha o gate histórico da `v0.20.10 — Period Comparison 2.0` aos helpers realmente existentes no frontend. Remove a exigência do símbolo inexistente `hpPeriodWindowV02010` e valida as implementações reais de janela semanal, 30 dias, início × atual e estatísticas de período. Revisão local; sem commit individual.
 
 > **Hotfix local v0.21.0-r6:** substitui contagens frágeis baseadas em `Select-String(...).Matches.Count` por `[regex]::Matches(...).Count` no `TESTAR.ps1`, evitando `PropertyNotFoundStrict` quando não há `MatchInfo` compatível. Revisão local; sem commit individual.
@@ -41,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.0 — AESYN Daily Foundation
+> **Versão-base deste roadmap:** v0.22.1 — Morning Check-in 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -771,7 +775,7 @@ Consolidar objetivos, identidade esportiva, contexto de vida, corpo e acompanham
 
 **Próxima etapa:** `v0.22.1 — Morning Check-in 2.0`.
 
-## ⏭ v0.22.1 — Morning Check-in 2.0
+## ✅ v0.22.1 — Morning Check-in 2.0 — CONCLUÍDA
 
 Evoluir a coleta rápida de sono, energia, dor/desconforto, estresse, humor e disponibilidade para alimentar o Daily com contexto do próprio dia.
 
@@ -1007,6 +1011,23 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - identidade esportiva tratada como longitudinal e mutável.
 
 **Próxima etapa:** `v0.21.3 — Life Context Foundation`.
+
+
+
+**Entregue na v0.22.1:**
+- fluxo mobile-first de aproximadamente 30 segundos;
+- sono em horas;
+- qualidade do sono;
+- energia;
+- dor corporal;
+- disposição;
+- recuperação percebida;
+- escalas com contexto visual;
+- atualização do check-in do mesmo dia;
+- reaproveitamento do contrato de prontidão existente;
+- linguagem sem julgamento e sem diagnóstico.
+
+**Próxima etapa:** `v0.22.2 — Daily Readiness Context 2.0`.
 
 
 ## Promessa ao atleta

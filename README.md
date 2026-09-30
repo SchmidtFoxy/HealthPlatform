@@ -15,6 +15,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Morning Check-in 2.0
+
+A `v0.22.1` evolui o check-in diário do paciente para uma experiência mobile-first de aproximadamente **30 segundos**. O fluxo organiza sono, qualidade do sono, energia, dor, disposição e recuperação percebida com escalas claras e feedback visual imediato.
+
+O check-in reaproveita o contrato de prontidão já existente, sem criar uma segunda fonte de verdade. As respostas alimentam a prontidão diária e o contexto longitudinal disponível ao profissional. Dias ruins continuam sendo informação útil; não existe incentivo para “agradar” o sistema.
+
 ### AESYN Daily Foundation
 
 A `v0.22.0` inaugura o **AESYN Daily**, camada diária que conecta quatro perguntas simples: **Preciso fazer**, **Quero fazer**, **Posso fazer hoje** e **Como estou**.
@@ -130,7 +137,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.0 — AESYN Daily Foundation`
+- **Versão funcional:** `v0.22.1 — Morning Check-in 2.0`
+- **Revisão local corrente:** `v0.22.1-r2 — Morning Check-in Guide Copy Gate Alignment`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
