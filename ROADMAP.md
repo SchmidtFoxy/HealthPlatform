@@ -2158,3 +2158,18 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 
 **Próxima etapa:** `v0.29.5 — Progress Observation Summary 2.0`.
 
+## ✅ v0.29.5 — Progress Observation Summary 2.0 — CONCLUÍDA
+
+**Entregue na v0.29.5:**
+- resumo agregado das camadas observacionais;
+- sinais, contextos, eventos, janelas e dias mapeados;
+- dias com múltiplos domínios e referências;
+- referências distintas;
+- classificação de cobertura documental;
+- endpoints profissional e paciente;
+- integração ao passaporte;
+- sem score, ranking, diagnóstico, prognóstico ou recomendação automática;
+- sem migration nova.
+
+**Próxima etapa:** `v0.29.6 — Progress Intelligence Closure 2.0`.
+

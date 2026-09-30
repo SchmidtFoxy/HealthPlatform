@@ -105,6 +105,20 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressObservationSummaryResponse(
+    int DiasObservados,
+    int SinaisDescritivos,
+    int ContextosDisponiveis,
+    int EventosTimeline,
+    int JanelasTemporais,
+    int DiasObservadosNoMapa,
+    int DiasComMultiplosDominios,
+    int DiasComMultiplasReferencias,
+    int ReferenciasDistintasTimeline,
+    string CoberturaGeral,
+    string LeituraPermitida);
+
 public sealed record CrossSignalObservationDayResponse(
     DateOnly Data,
     int EventosObservados,
@@ -226,4 +240,9 @@ public sealed record AthletePerformancePassportResponse(
     public CrossSignalObservationMapResponse MapaObservacaoCruzada { get; init; } =
         new(180, Array.Empty<CrossSignalObservationDayResponse>(), 0, 0,
             "Mapa de coobservação sem correlação, causalidade ou inferência automática.");
+
+    public ProgressObservationSummaryResponse ResumoObservacionalProgresso { get; init; } =
+        new(180, 0, 0, 0, 0, 0, 0, 0, 0,
+            "SemCoberturaObservacional",
+            "Resumo descritivo sem score, ranking, diagnóstico, prognóstico ou recomendação automática.");
 }

@@ -1160,3 +1160,27 @@ Coobservação no mesmo dia significa apenas **coincidência documental temporal
 
 **Próxima etapa:** `v0.29.5 — Progress Observation Summary 2.0`.
 
+---
+
+## v0.29.5 — Progress Observation Summary 2.0
+
+Consolida as camadas observacionais anteriores em um resumo único.
+
+### Entregue
+- total de sinais descritivos;
+- total de contextos disponíveis;
+- total de eventos da timeline;
+- total de janelas temporais;
+- total de dias observados no mapa;
+- dias com múltiplos domínios;
+- dias com múltiplas referências;
+- referências distintas na timeline;
+- cobertura geral: `SemCoberturaObservacional`, `CoberturaMinima`, `CoberturaParcial` ou `CoberturaMaisAmpla`;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport.
+
+### Guardrail
+Cobertura mais ampla significa apenas **mais dados observados disponíveis**. Não significa melhor desempenho, maior confiança clínica, maior certeza, prognóstico favorável ou necessidade de intervenção.
+
+**Próxima etapa:** `v0.29.6 — Progress Intelligence Closure 2.0`.
+

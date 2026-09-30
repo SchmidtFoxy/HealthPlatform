@@ -1,4 +1,19 @@
-﻿# v0.29.4 — Cross-Signal Observation Map 2.0
+﻿# v0.29.5 — Progress Observation Summary 2.0
+
+- Adiciona `ProgressObservationSummaryResponse`.
+- Expande o passaporte com `ResumoObservacionalProgresso`.
+- Consolida sinais, contextos, eventos, janelas e mapa de coobservação.
+- Conta dias com múltiplos domínios e referências.
+- Conta referências distintas na timeline.
+- Classifica cobertura como `SemCoberturaObservacional`, `CoberturaMinima`, `CoberturaParcial` ou `CoberturaMaisAmpla`.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence/summary`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence/summary`.
+- Adiciona painel Progress Observation Summary 2.0.
+- Guardrail: maior cobertura documental não representa confiança clínica, prognóstico ou necessidade de intervenção.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.29.6 — Progress Intelligence Closure 2.0.
+
+# v0.29.4 — Cross-Signal Observation Map 2.0
 
 - Adiciona `CrossSignalObservationDayResponse`.
 - Adiciona `CrossSignalObservationMapResponse`.

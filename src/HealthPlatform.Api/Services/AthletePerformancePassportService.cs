@@ -24,6 +24,7 @@ public static class AthletePerformancePassportService
         var timelineMultissinal = MontarTimelineMultissinal(evolucao, contextoSinaisProgresso);
         var janelasEvidenciaProgresso = MontarJanelasEvidenciaProgresso(timelineMultissinal, hoje);
         var mapaObservacaoCruzada = MontarMapaObservacaoCruzada(timelineMultissinal);
+        var resumoObservacionalProgresso = MontarResumoObservacionalProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -101,14 +102,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.4",
+            "v0.29.5",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Cross-Signal Observation Map 2.0 organiza eventos observados por dia para mostrar coocorrência documental entre domínios e referências. Não calcula correlação, causalidade, influência, tendência ou recomendação automática.")
+            "Progress Observation Summary 2.0 consolida contagens e cobertura das camadas observacionais existentes. Resume disponibilidade documental; não produz score, ranking, diagnóstico, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -119,7 +120,8 @@ public static class AthletePerformancePassportService
             ContextoSinaisProgresso = contextoSinaisProgresso,
             TimelineMultissinal = timelineMultissinal,
             JanelasEvidenciaProgresso = janelasEvidenciaProgresso,
-            MapaObservacaoCruzada = mapaObservacaoCruzada
+            MapaObservacaoCruzada = mapaObservacaoCruzada,
+            ResumoObservacionalProgresso = resumoObservacionalProgresso
         };
     }
 
@@ -255,6 +257,41 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressObservationSummaryResponse MontarResumoObservacionalProgresso(
+        ProgressIntelligenceFoundationResponse foundation,
+        ProgressSignalContextSummaryResponse contexto,
+        MultiSignalTimelineResponse timeline,
+        ProgressEvidenceWindowsResponse janelas,
+        CrossSignalObservationMapResponse mapa)
+    {
+        var referenciasDistintasTimeline = timeline.Eventos
+            .Select(x => $"{x.Dominio}::{x.Referencia}")
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
+
+        var cobertura = timeline.Eventos.Count switch
+        {
+            0 => "SemCoberturaObservacional",
+            <= 2 => "CoberturaMinima",
+            <= 6 => "CoberturaParcial",
+            _ => "CoberturaMaisAmpla"
+        };
+
+        return new ProgressObservationSummaryResponse(
+            timeline.DiasObservados,
+            foundation.Sinais.Count,
+            contexto.Contextos.Count,
+            timeline.Eventos.Count,
+            janelas.Janelas.Count,
+            mapa.Dias.Count,
+            mapa.DiasComMultiplosDominios,
+            mapa.DiasComMultiplasReferencias,
+            referenciasDistintasTimeline,
+            cobertura,
+            "Progress Observation Summary 2.0 resume somente quantidade e cobertura dos dados observados. Cobertura mais ampla não significa melhor desempenho, maior confiança clínica, maior certeza, prognóstico favorável ou necessidade de intervenção.");
+    }
 
     public static CrossSignalObservationMapResponse MontarMapaObservacaoCruzada(
         MultiSignalTimelineResponse timeline)
