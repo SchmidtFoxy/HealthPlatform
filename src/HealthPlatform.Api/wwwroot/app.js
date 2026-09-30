@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.2';
+const HP_MVP_VERSION='0.23.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13029,6 +13029,31 @@ loadMyPatientPortal=async function(){
 // ===== v0.23.0 — Sports & Movement Library Foundation =====
 const HP_SPORTS_MOVEMENT_LIBRARY_V0230='v0.23.0';
 
+function hpMovementProgressionV0233(items){
+  const rows=Array.isArray(items)?items:[];
+  if(!rows.length)return '';
+  return `<div class="movement-progression-layer-v0233" data-movement-progression-v0233="${HP_MOVEMENT_PROGRESSION_REGRESSION_V0233}">
+    <div class="movement-progression-head-v0233">
+      <div><span>PROGRESSÃO & REGRESSÃO</span><b>Como tornar o estímulo mais ou menos exigente</b></div>
+      <small>${rows.length} eixo(s)</small>
+    </div>
+    <div class="movement-progression-grid-v0233">
+      ${rows.map(x=>`<article>
+        <div class="movement-progression-axis-v0233">${esc(x.eixo||'Eixo')}</div>
+        <div class="movement-progression-pair-v0233">
+          <section><span>PROGREDIR</span><p>${esc(x.progressao||'')}</p></section>
+          <section><span>REGREDIR</span><p>${esc(x.regressao||'')}</p></section>
+        </div>
+        <small>${esc(x.criterioDeUso||'')}</small>
+      </article>`).join('')}
+    </div>
+    <div class="movement-progression-evidence-v0233">
+      <b>Evidência antes de avançar</b>
+      <span>Quando houver paciente vinculado, use histórico real de execução e progressão por exercício. A biblioteca não altera carga, volume, variante ou sessão automaticamente.</span>
+    </div>
+  </div>`;
+}
+
 function hpMovementCapabilityV0230(cap){
   const sessions=cap?.sessoes||[];
   const exercises=cap?.exercicios||[];
@@ -13049,6 +13074,8 @@ function hpMovementCapabilityV0230(cap){
         ?`<div class="movement-exercise-links-v0230">${exercises.slice(0,8).map(x=>`<button type="button" data-movement-exercise-v0230="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`
         :'<p>Nenhum exercício existente foi relacionado automaticamente. A taxonomia continua disponível sem criar item duplicado.</p>'}
     </div>
+
+    ${hpMovementProgressionV0233(cap?.progressaoRegressao||[])}
   </article>`;
 }
 
@@ -13074,6 +13101,7 @@ function hpMovementModalityV0230(mod){
 
 const HP_MOVEMENT_TAXONOMY_FILTERS_V0231='v0.23.1';
 const HP_MOVEMENT_SESSION_MODEL_V0232='v0.23.2';
+const HP_MOVEMENT_PROGRESSION_REGRESSION_V0233='v0.23.3';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13145,9 +13173,10 @@ async function openMovementLibraryV0230(){
         ${(current.modalidades||[]).map(hpMovementModalityV0230).join('')||'<div class="movement-library-no-results-v0231"><b>Nenhuma combinação encontrada.</b><span>Ajuste os filtros; nenhum exercício novo será criado automaticamente.</span></div>'}
       </div>
 
-      <div class="movement-library-safety-v0230">
+      <div class="movement-library-safety-v0230 movement-library-safety-v0233">
         <b>Biblioteca não é prescrição</b>
         <span>${esc(current.regraDeSeguranca||'Seleção e progressão dependem do contexto individual e do julgamento profissional.')}</span>
+        <small>Progressões/regressões são possibilidades estruturais. Aplicação real deve considerar execução, histórico, objetivo, contexto diário e julgamento profissional.</small>
       </div>`;
 
       $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};

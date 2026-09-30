@@ -1,3 +1,17 @@
+# v0.23.3 — Movement Progression & Regression Foundation
+
+- Adiciona progressão e regressão como camada explícita da taxonomia esportiva.
+- Cria eixos de controle, volume e carga externa para todas as capacidades.
+- Adiciona duração/densidade para capacidades aeróbicas e de resistência.
+- Adiciona velocidade para capacidades de velocidade e potência.
+- Adiciona amplitude para capacidades de mobilidade.
+- Cada eixo informa progressão, regressão e critério de uso.
+- Não altera automaticamente exercício, carga, volume, sessão ou prescrição publicada.
+- Mantém o histórico real de progressão por exercício como evidência separada e rastreável.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.3.
+- Próxima etapa: v0.23.4 — Movement Instructions & Media Foundation.
+
 # v0.23.2-r1 — Historical Movement Library Gate Alignment (revisão local)
 
 - Corrige o gate histórico da `v0.23.0` no `TESTAR.ps1`.

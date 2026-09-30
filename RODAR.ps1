@@ -1,5 +1,5 @@
 ﻿$ErrorActionPreference = "Stop"
-# AESYN v0.23.2: runtime permanece versionado dinamicamente por VERSION.txt.
+# AESYN v0.23.3: runtime permanece versionado dinamicamente por VERSION.txt.
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 

@@ -14,11 +14,18 @@ public sealed record BibliotecaMovimentoSessaoResponse(
     string? Categoria,
     string? Descricao);
 
+public sealed record BibliotecaMovimentoProgressaoResponse(
+    string Eixo,
+    string Progressao,
+    string Regressao,
+    string CriterioDeUso);
+
 public sealed record BibliotecaMovimentoCapacidadeResponse(
     string Codigo,
     string Nome,
     IReadOnlyCollection<BibliotecaMovimentoSessaoResponse> Sessoes,
-    IReadOnlyCollection<BibliotecaMovimentoExercicioResponse> Exercicios);
+    IReadOnlyCollection<BibliotecaMovimentoExercicioResponse> Exercicios,
+    IReadOnlyCollection<BibliotecaMovimentoProgressaoResponse> ProgressaoRegressao);
 
 public sealed record BibliotecaMovimentoObjetivoResponse(
     string Codigo,

@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.2 — Movement Session Model 2.0
+> **Versão-base deste roadmap:** v0.23.3 — Movement Progression & Regression Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -990,6 +990,26 @@ Inclui taxonomia, instruções, mídia, progressões, regressões, equipamentos,
 > **Revisão local v0.23.2-r1:** alinha o gate histórico da v0.23.0 ao contrato atual da biblioteca. O teste deixa de exigir o texto visual legado `Uma fonte de verdade` e passa a validar `fonteDosExercicios`, preservando a semântica histórica sem impedir a evolução da camada de Sessões. Sem alteração funcional ou de schema. Não commitar separadamente.
 
 Introduzir a camada `Sessão` da taxonomia esportiva, conectando objetivos e capacidades a blocos reutilizáveis sem duplicar os modelos de sessão já existentes no Workout Builder.
+
+
+
+## ✅ v0.23.3 — Movement Progression & Regression Foundation — CONCLUÍDA
+
+**Entregue na v0.23.3:**
+- progressão/regressão por capacidade;
+- eixos de controle, volume e carga externa;
+- duração/densidade em capacidades aeróbicas e de resistência;
+- velocidade em capacidades de velocidade/potência;
+- amplitude em capacidades de mobilidade;
+- critérios de uso explícitos;
+- vínculo conceitual com histórico real de progressão por exercício;
+- nenhuma alteração automática de prescrição.
+
+**Próxima etapa:** `v0.23.4 — Movement Instructions & Media Foundation`.
+
+## ⏭ v0.23.4 — Movement Instructions & Media Foundation
+
+Organizar instruções, descrição e mídia já existentes para tornar cada movimento mais ensinável dentro da biblioteca, preservando o catálogo profissional como fonte única.
 
 
 # 8. v0.24.x — AESYN Explore

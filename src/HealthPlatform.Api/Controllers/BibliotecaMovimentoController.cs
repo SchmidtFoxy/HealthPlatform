@@ -154,11 +154,14 @@ public sealed class BibliotecaMovimentoController(
                             modelo.Descricao))
                         .ToArray();
 
+                    var progressaoRegressao = CatalogoProgressao(cap.Codigo, cap.Nome);
+
                     return new BibliotecaMovimentoCapacidadeResponse(
                         cap.Codigo,
                         cap.Nome,
                         sessoes,
-                        vinculados);
+                        vinculados,
+                        progressaoRegressao);
                 }).ToArray();
 
                 return new BibliotecaMovimentoObjetivoResponse(
@@ -189,6 +192,66 @@ public sealed class BibliotecaMovimentoController(
             "Os exercícios vêm exclusivamente do catálogo profissional existente (`Exercicios`). A taxonomia organiza referências e não duplica movimentos.",
             "As sessões vêm exclusivamente de `ModelosSessoesTreino`, a mesma biblioteca reutilizável do Workout Builder. A taxonomia apenas organiza referências.",
             "A biblioteca descreve possibilidades de movimento. Seleção, progressão, regressão e prescrição continuam dependentes de contexto individual e julgamento profissional."));
+    }
+
+    private static IReadOnlyCollection<BibliotecaMovimentoProgressaoResponse> CatalogoProgressao(
+        string capacidadeCodigo,
+        string capacidadeNome)
+    {
+        var itens = new List<BibliotecaMovimentoProgressaoResponse>
+        {
+            new(
+                "Controle",
+                "Aumentar gradualmente amplitude, estabilidade ou exigencia tecnica quando a execucao estiver consistente.",
+                "Reduzir amplitude, apoio, velocidade ou complexidade para recuperar controle do movimento.",
+                "Usar como orientacao profissional; a biblioteca nao promove automaticamente o exercicio."),
+            new(
+                "Volume",
+                "Aumentar series, repeticoes, tempo ou distancia de forma planejada.",
+                "Reduzir series, repeticoes, tempo ou distancia preservando o objetivo da sessao.",
+                "Alteracoes de volume devem acontecer na prescricao ou no planejamento profissional."),
+            new(
+                "Carga externa",
+                "Aumentar carga somente quando houver tecnica consistente e contexto para progressao.",
+                "Reduzir carga ou usar variante com menor resistencia quando o contexto pedir menor exigencia.",
+                "Comparar carga somente dentro do mesmo exercicio e unidade; sem estimativa automatica de 1RM.")
+        };
+
+        var codigo = capacidadeCodigo.ToLowerInvariant();
+        var nome = capacidadeNome.ToLowerInvariant();
+
+        if (codigo.Contains("aerob") || nome.Contains("aerob") ||
+            codigo.Contains("cardio") || nome.Contains("cardio") ||
+            codigo.Contains("resistencia") || nome.Contains("resist"))
+        {
+            itens.Add(new(
+                "Duracao e densidade",
+                "Aumentar gradualmente duracao, distancia ou densidade de trabalho conforme planejamento.",
+                "Reduzir duracao, distancia ou densidade mantendo uma dose executavel.",
+                "A biblioteca nao define zonas, ritmos ou cargas internas automaticamente."));
+        }
+
+        if (codigo.Contains("veloc") || nome.Contains("veloc") ||
+            codigo.Contains("potenc") || nome.Contains("potenc"))
+        {
+            itens.Add(new(
+                "Velocidade",
+                "Aumentar velocidade ou exigencia explosiva somente com tecnica e recuperacao adequadas.",
+                "Reduzir velocidade, impacto ou complexidade para manter qualidade de movimento.",
+                "Nao inferir prontidao esportiva, risco ou retorno ao esporte somente por esta taxonomia."));
+        }
+
+        if (codigo.Contains("mobil") || nome.Contains("mobil") ||
+            codigo.Contains("quadril") || codigo.Contains("tornozelo") || codigo.Contains("ombro"))
+        {
+            itens.Add(new(
+                "Amplitude",
+                "Ampliar gradualmente a amplitude ativa quando houver controle e tolerancia.",
+                "Trabalhar em amplitude menor e confortavel, com mais apoio ou controle.",
+                "Dor, limitacao clinica ou retorno de lesao exigem avaliacao profissional; a biblioteca nao diagnostica."));
+        }
+
+        return itens;
     }
 
     private static bool CorrespondeSessao(
