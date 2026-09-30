@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.26.4';
+const HP_MVP_VERSION='0.26.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -15195,5 +15195,40 @@ hpOpenSportsExpansionIV0260=async function(host){
   const button=root?.querySelector('#openRowingV0264');
   const detail=root?.querySelector('#rowingHostV0264');
   if(button&&detail)button.onclick=()=>hpOpenRowingV0264(detail);
+};
+
+// ===== v0.26.5 — Trekking 2.0 =====
+const HP_TREKKING_V0265='v0.26.5';
+
+function hpTrekkingV0265(data){
+  const refs=Array.isArray(data?.sessoesReferencia)?data.sessoesReferencia:[];
+  return `<section class="trekking-v0265" data-trekking-v0265="${HP_TREKKING_V0265}" aria-labelledby="trekkingTitleV0265">
+    <div class="trekking-head-v0265"><div><span class="eyebrow">TREKKING 2.0</span><h3 id="trekkingTitleV0265">Terreno muda. A preparação acompanha.</h3><p>Subida, descida, terreno irregular e deslocamento prolongado conectados a capacidades de suporte, sem transformar exploração em rota ou prescrição.</p></div><span>TRAIL · CLIMB · CONTROL</span></div>
+    <section class="trekking-section-v0265"><h5>Contextos de terreno</h5><div class="trekking-contexts-v0265">${(data?.contextos||[]).map(x=>`<article><b>${esc(x.nome)}</b><p>${esc(x.contexto)}</p><small>${esc(x.focoTecnico)}</small></article>`).join('')}</div></section>
+    <section class="trekking-section-v0265"><h5>Capacidades de suporte</h5><div class="trekking-capabilities-v0265">${(data?.capacidades||[]).map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.contexto)}</span></article>`).join('')}</div></section>
+    <section class="trekking-section-v0265"><h5>Sessões-modelo relacionadas</h5>${refs.length?`<div class="trekking-references-v0265">${refs.map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.categoria||'Sessão-modelo')}</span><p>${esc(x.descricao||'Sem descrição cadastrada.')}</p><small>${esc(x.motivoDaReferencia)}</small></article>`).join('')}</div>`:`<div class="trekking-empty-v0265"><b>Sem referência editorial ainda.</b><span>O AESYN preserva a lacuna em vez de inventar uma sessão de trekking.</span></div>`}</section>
+    <div class="trekking-rule-v0265"><b>TERRENO ≠ PRESCRIÇÃO</b><span>${esc(data?.regraDeUso||'A exploração do trekking não define automaticamente rota, distância, elevação, pace, carga, volume ou intensidade.')}</span></div>
+  </section>`;
+}
+
+async function hpOpenTrekkingV0265(host){
+  if(!host)return;host.hidden=false;host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Trekking 2.0...</div>';
+  try{const data=await api('/api/portal/me/explore/trekking');host.innerHTML=hpTrekkingV0265(data);host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}
+  catch(err){host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Trekking 2.0.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;}
+}
+
+const __hpSportsExpansionIIV0265=hpSportsExpansionIIV0260;
+hpSportsExpansionIIV0260=function(data){
+  const html=__hpSportsExpansionIIV0265(data);
+  return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="trekking-entry-v0265"><button type="button" class="primary" id="openTrekkingV0265">Abrir Trekking 2.0</button><small>Subida, descida, terreno irregular, estabilidade, resistência e referências reais.</small></div><div id="trekkingHostV0265" class="trekking-host-v0265" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
+};
+
+const __hpOpenSportsExpansionIIV0265=hpOpenSportsExpansionIV0260;
+hpOpenSportsExpansionIV0260=async function(host){
+  await __hpOpenSportsExpansionIIV0265(host);
+  const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
+  const button=root?.querySelector('#openTrekkingV0265');
+  const detail=root?.querySelector('#trekkingHostV0265');
+  if(button&&detail)button.onclick=()=>hpOpenTrekkingV0265(detail);
 };
 

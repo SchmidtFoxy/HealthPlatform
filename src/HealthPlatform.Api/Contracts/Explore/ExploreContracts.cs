@@ -482,3 +482,28 @@ public sealed record RowingResponse(
     IReadOnlyCollection<RowingSessaoReferenciaResponse> SessoesReferencia,
     string Fonte,
     string RegraDeUso);
+
+public sealed record TrekkingContextoResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string FocoTecnico);
+
+public sealed record TrekkingCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record TrekkingSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record TrekkingResponse(
+    IReadOnlyCollection<TrekkingContextoResponse> Contextos,
+    IReadOnlyCollection<TrekkingCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<TrekkingSessaoReferenciaResponse> SessoesReferencia,
+    string Fonte,
+    string RegraDeUso);

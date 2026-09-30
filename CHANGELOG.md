@@ -1,3 +1,14 @@
+## v0.26.5 — Trekking 2.0
+
+- Adiciona `GET /api/portal/me/explore/trekking`.
+- Organiza Subida, Descida, Terreno irregular e Deslocamento prolongado como contextos didáticos.
+- Expõe resistência prolongada, estabilidade de membros inferiores, core/postura, cadeia posterior/panturrilha, transporte de carga e gestão de esforço.
+- Reaproveita `ModelosSessoesTreino` como referências editoriais quando houver conteúdo compatível.
+- Integra Trekking 2.0 ao caminho Sports Expansion II do Explore.
+- Mantém guardrail explícito contra rota, distância, ganho de elevação, pace, duração, peso de mochila, carga, volume, intensidade, aptidão ou retorno automáticos.
+- Não cria migration ou tabela nova.
+- Próxima etapa: `v0.26.6 — Recreational Sports 2.0`.
+
 ## v0.26.4 — Rowing 2.0
 
 - Adiciona `GET /api/portal/me/explore/rowing`.

@@ -1,4 +1,21 @@
-﻿## v0.26.4 — Rowing 2.0
+﻿## v0.26.5 — Trekking 2.0
+
+O AESYN Explore agora aprofunda **Trekking** organizando contextos de terreno e capacidades físicas de suporte sem montar rota nem transformar descoberta em prescrição.
+
+### O que entra nesta versão
+- **Contextos de terreno:** Subida, Descida, Terreno irregular e Deslocamento prolongado.
+- **Resistência prolongada:** suporte a esforços maiores sem definir distância, duração ou pace.
+- **Estabilidade de membros inferiores:** tornozelo, joelho e quadril diante de terreno variável.
+- **Base física:** core/postura, cadeia posterior/panturrilha e transporte de carga.
+- **Gestão de esforço:** contexto para consistência sem zonas ou intensidade automática.
+- **Referências reais:** reaproveitamento editorial de `ModelosSessoesTreino` quando houver conteúdo relacionado.
+
+### Guardrail
+Trekking 2.0 é contexto e descoberta. O sistema **não monta rota e não prescreve automaticamente distância, ganho de elevação, pace, duração, peso de mochila, carga, volume, intensidade, aptidão ou retorno ao esporte**.
+
+**Próxima etapa:** `v0.26.6 — Recreational Sports 2.0`.
+
+## v0.26.4 — Rowing 2.0
 
 O AESYN Explore agora aprofunda **Remo** com uma leitura didática da sequência **Catch → Drive → Finish → Recovery**, conectando técnica geral a capacidades de suporte e a sessões-modelo já existentes.
 

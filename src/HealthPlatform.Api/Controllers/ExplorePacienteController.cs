@@ -2030,6 +2030,60 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("trekking")]
+    public async Task<ActionResult<TrekkingResponse>> Trekking(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria).ThenBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.Categoria, x.Descricao })
+            .ToListAsync(ct);
+
+        var referencias = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "trekking", "trilha", "caminhada", "hike", "hiking", "subida", "descida", "escada", "step", "tornozelo", "panturrilha", "quadril", "core", "estabilidade", "resistencia", "resistência", "mochila" }
+                    .Any(token => texto.Contains(token, StringComparison.Ordinal));
+            })
+            .Take(10)
+            .Select(x => new TrekkingSessaoReferenciaResponse(
+                x.Id, x.Nome, x.Categoria, x.Descricao,
+                "Sessão-modelo existente com termos relacionados a trekking, trilha ou capacidades físicas de suporte."))
+            .ToArray();
+
+        var contextos = new TrekkingContextoResponse[]
+        {
+            new("subida", "Subida", "Deslocamento contra a inclinação com demanda progressiva de membros inferiores e controle do tronco.", "Organização de passada e postura sem definir ganho de elevação, distância ou ritmo-alvo."),
+            new("descida", "Descida", "Controle excêntrico e estabilidade ao reduzir altitude em terreno variável.", "Frenagem e alinhamento sem transformar declive em intensidade automática."),
+            new("terreno-irregular", "Terreno irregular", "Adaptação de passada a pedras, raízes, desníveis e superfícies não uniformes.", "Estabilidade e leitura do terreno sem montar rota ou declarar segurança do percurso."),
+            new("deslocamento-prolongado", "Deslocamento prolongado", "Manutenção de qualidade de movimento ao longo de períodos maiores de caminhada em trilha.", "Durabilidade sem definir quilometragem, duração ou velocidade prescrita.")
+        };
+
+        var capacidades = new TrekkingCapacidadeResponse[]
+        {
+            new("resistencia-prolongada", "Resistência prolongada", "Sustentar deslocamento por mais tempo sem gerar volume, distância ou duração-alvo."),
+            new("estabilidade-membros-inferiores", "Estabilidade de membros inferiores", "Dar suporte a tornozelo, joelho e quadril diante de variação de terreno."),
+            new("core-postura", "Core e postura", "Manter organização do tronco e transferência de força durante subida, descida e caminhada."),
+            new("cadeia-posterior-panturrilha", "Cadeia posterior e panturrilha", "Apoiar propulsão, controle de passada e tolerância ao terreno sem prescrever carga."),
+            new("transporte-carga", "Transporte de carga", "Contextualizar mochila e equipamentos sem definir peso de mochila ou distribuição clínica de carga."),
+            new("gestao-esforco", "Gestão de esforço", "Reconhecer consistência de esforço ao longo do percurso sem calcular pace, zonas ou intensidade automaticamente.")
+        };
+
+        return Ok(new TrekkingResponse(
+            contextos, capacidades, referencias,
+            "Sports Expansion II + ModelosSessoesTreino",
+            "Trekking 2.0 organiza contextos de terreno, capacidades de suporte e referências existentes. Não monta rota e não prescreve automaticamente distância, ganho de elevação, pace, duração, peso de mochila, carga, volume, intensidade, aptidão ou retorno ao esporte."));
+    }
+
+
     [HttpGet("sports-expansion-ii")]
     public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
         CancellationToken ct = default)

@@ -1671,6 +1671,21 @@ Aprofundar Remo dentro da Sports Expansion II organizando a sequência técnica 
 
 **Próxima etapa:** `v0.26.5 — Trekking 2.0`.
 
+## ✅ v0.26.5 — Trekking 2.0 — CONCLUÍDA
+
+Aprofundar Trekking dentro da Sports Expansion II organizando terreno, estabilidade e resistência sem montar rota nem gerar prescrição automática.
+
+**Entregue na v0.26.5:**
+- endpoint `/api/portal/me/explore/trekking`;
+- contextos Subida, Descida, Terreno irregular e Deslocamento prolongado;
+- capacidades de resistência prolongada, estabilidade de membros inferiores, core/postura, cadeia posterior/panturrilha, transporte de carga e gestão de esforço;
+- referências a `ModelosSessoesTreino` existentes;
+- integração mobile ao card Sports Expansion II;
+- sem rota, distância, ganho de elevação, pace, duração, peso de mochila, carga, volume, intensidade, aptidão ou retorno automáticos;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.26.6 — Recreational Sports 2.0`.
+
 
 
 
