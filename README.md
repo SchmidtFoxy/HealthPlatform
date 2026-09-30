@@ -1138,3 +1138,25 @@ Mais registros representam **maior cobertura documental**, não maior confiança
 
 **Próxima etapa:** `v0.29.4 — Cross-Signal Observation Map 2.0`.
 
+---
+
+## v0.29.4 — Cross-Signal Observation Map 2.0
+
+Adiciona um mapa diário de coobservação entre os sinais já existentes.
+
+### Entregue
+- agrupamento por data observada;
+- quantidade total de eventos no dia;
+- eventos de carga e tempo separados;
+- quantidade de referências distintas;
+- lista de domínios observados;
+- lista de referências observadas;
+- classificação `CoobservacaoNoMesmoDia` ou `ObservacaoIsoladaNoDia`;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport.
+
+### Guardrail
+Coobservação no mesmo dia significa apenas **coincidência documental temporal**. Não representa correlação, causalidade, influência, resposta fisiológica, tendência ou efeito de uma variável sobre outra.
+
+**Próxima etapa:** `v0.29.5 — Progress Observation Summary 2.0`.
+

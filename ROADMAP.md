@@ -2143,3 +2143,18 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 
 **Próxima etapa:** `v0.29.4 — Cross-Signal Observation Map 2.0`.
 
+## ✅ v0.29.4 — Cross-Signal Observation Map 2.0 — CONCLUÍDA
+
+**Entregue na v0.29.4:**
+- mapa diário de coobservação;
+- agrupamento por data;
+- carga e tempo preservados como domínios distintos;
+- referências observadas no mesmo dia;
+- classificação de observação isolada ou coobservada;
+- endpoints profissional e paciente;
+- integração ao passaporte;
+- sem correlação, causalidade, tendência ou recomendação automática;
+- sem migration nova.
+
+**Próxima etapa:** `v0.29.5 — Progress Observation Summary 2.0`.
+

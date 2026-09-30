@@ -1,4 +1,20 @@
-﻿# v0.29.3 — Progress Evidence Windows 2.0
+﻿# v0.29.4 — Cross-Signal Observation Map 2.0
+
+- Adiciona `CrossSignalObservationDayResponse`.
+- Adiciona `CrossSignalObservationMapResponse`.
+- Expande o passaporte com `MapaObservacaoCruzada`.
+- Agrupa eventos observados por dia.
+- Separa eventos de carga e tempo.
+- Expõe domínios e referências observados na mesma data.
+- Classifica como `CoobservacaoNoMesmoDia` ou `ObservacaoIsoladaNoDia`.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence/observation-map`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence/observation-map`.
+- Adiciona painel Cross-Signal Observation Map 2.0.
+- Guardrail: coocorrência temporal não representa correlação, causalidade ou influência.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.29.5 — Progress Observation Summary 2.0.
+
+# v0.29.3 — Progress Evidence Windows 2.0
 
 - Adiciona `ProgressEvidenceWindowItemResponse`.
 - Adiciona `ProgressEvidenceWindowsResponse`.

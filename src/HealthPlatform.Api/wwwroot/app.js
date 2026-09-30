@@ -4355,6 +4355,7 @@ const HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0';
 const HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1';
 const HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2';
 const HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3';
+const HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4403,6 +4404,13 @@ function hpAthletePassportDomainV0280(x){
 
 
 
+
+
+function hpCrossSignalObservationDayV0294(x){
+  const domains=(x.dominiosObservados||[]).join(' + ')||'—';
+  const refs=(x.referenciasObservadas||[]).join(' • ')||'—';
+  return `<article class="workout-progression-signal-v0274 cross-signal-observation-v0294"><div class="workout-comparison-head-v0272"><div><small>COOBSERVAÇÃO</small><b>${x.data?fmtDate(x.data):'Data'}</b></div><span class="pill Info">${esc(x.leituraPermitida||'')}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.eventosObservados??0}</b>eventos</span><span><b>${x.eventosCarga??0}</b>carga</span><span><b>${x.eventosTempo??0}</b>tempo</span><span><b>${x.referenciasDistintas??0}</b>referências</span></div><p>${esc(domains)}</p><small class="muted-line">${esc(refs)}</small></article>`;
+}
 
 function hpProgressEvidenceWindowV0293(x){
   return `<article class="workout-progression-signal-v0274 progress-evidence-window-v0293"><div class="workout-comparison-head-v0272"><div><small>JANELA DE EVIDÊNCIA</small><b>${esc(x.janela||'Janela')}</b></div><span class="pill Info">${x.dias??0} dias</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.eventosObservados??0}</b>eventos</span><span><b>${x.eventosCarga??0}</b>carga</span><span><b>${x.eventosTempo??0}</b>tempo</span><span><b>${x.referenciasDistintas??0}</b>referências</span></div><p>${esc(x.coberturaDescritiva||'')}</p><small class="muted-line">${x.inicioUtc?fmtDateTime(x.inicioUtc):'—'} → ${x.fimUtc?fmtDateTime(x.fimUtc):'—'}</small></article>`;
@@ -4481,6 +4489,7 @@ async function loadAthletePerformancePassportV0280(patient){
     <div class="workout-prescribed-performed-v0272" data-progress-signal-context-v0291="${HP_PROGRESS_SIGNAL_CONTEXT_V0291}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS SIGNAL CONTEXT 2.0</span><h4>Contexto dos sinais observados</h4><p>Recência, cobertura temporal, densidade observacional e origem da evidência — sem nota de confiança.</p></div><span class="pill Info">${(data.contextoSinaisProgresso?.contextos||[]).length} contexto(s)</span></div><div class="workout-comparisons-v0272">${(data.contextoSinaisProgresso?.contextos||[]).map(hpProgressSignalContextV0291).join('')||'<div class="empty">Ainda não há sinais comparáveis suficientes para contextualização.</div>'}</div><small class="muted-line">${esc(data.contextoSinaisProgresso?.regraDeUso||'')}</small></div>
     <div class="workout-prescribed-performed-v0272" data-multi-signal-timeline-v0292="${HP_MULTI_SIGNAL_TIMELINE_V0292}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">MULTI-SIGNAL TIMELINE 2.0</span><h4>Linha do tempo multissinal</h4><p>Somente pontos observados de início e atual, ordenados cronologicamente.</p></div><span class="pill Info">${(data.timelineMultissinal?.eventos||[]).length} evento(s)</span></div><div class="workout-comparisons-v0272">${(data.timelineMultissinal?.eventos||[]).map(hpMultiSignalTimelineEventV0292).join('')||'<div class="empty">Ainda não há pontos observados suficientes para compor a linha do tempo.</div>'}</div><small class="muted-line">${esc(data.timelineMultissinal?.regraDeUso||'')}</small></div>
     <div class="workout-prescribed-performed-v0272" data-progress-evidence-windows-v0293="${HP_PROGRESS_EVIDENCE_WINDOWS_V0293}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS EVIDENCE WINDOWS 2.0</span><h4>Janelas temporais de evidência</h4><p>Contagem de eventos observados em 30, 90 e 180 dias, sem score de confiança.</p></div><span class="pill Info">${(data.janelasEvidenciaProgresso?.janelas||[]).length} janela(s)</span></div><div class="workout-comparisons-v0272">${(data.janelasEvidenciaProgresso?.janelas||[]).map(hpProgressEvidenceWindowV0293).join('')||'<div class="empty">Ainda não há eventos observados para compor janelas temporais.</div>'}</div><small class="muted-line">${esc(data.janelasEvidenciaProgresso?.regraDeUso||'')}</small></div>
+    <div class="workout-prescribed-performed-v0272" data-cross-signal-observation-map-v0294="${HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">CROSS-SIGNAL OBSERVATION MAP 2.0</span><h4>Mapa de coobservação por dia</h4><p>Mostra quais domínios e referências foram observados na mesma data, sem inferir correlação ou causalidade.</p></div><span class="pill Info">${(data.mapaObservacaoCruzada?.dias||[]).length} dia(s)</span></div><div class="workout-comparisons-v0272">${(data.mapaObservacaoCruzada?.dias||[]).map(hpCrossSignalObservationDayV0294).join('')||'<div class="empty">Ainda não há eventos suficientes para compor o mapa de coobservação.</div>'}</div><small class="muted-line">${esc(data.mapaObservacaoCruzada?.regraDeUso||'')}</small></div>
     <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
   host.appendChild(section);
 }
@@ -9547,7 +9556,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.29.3';
+const HP_MVP_VERSION='0.29.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

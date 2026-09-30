@@ -23,6 +23,7 @@ public static class AthletePerformancePassportService
         var contextoSinaisProgresso = MontarContextoSinaisProgresso(inteligenciaProgresso, hoje);
         var timelineMultissinal = MontarTimelineMultissinal(evolucao, contextoSinaisProgresso);
         var janelasEvidenciaProgresso = MontarJanelasEvidenciaProgresso(timelineMultissinal, hoje);
+        var mapaObservacaoCruzada = MontarMapaObservacaoCruzada(timelineMultissinal);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -100,14 +101,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.3",
+            "v0.29.4",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Evidence Windows 2.0 distribui eventos observados em janelas temporais explícitas de 30, 90 e 180 dias. Quantidade de registros descreve cobertura de dados; não representa confiança clínica, prognóstico ou recomendação automática.")
+            "Cross-Signal Observation Map 2.0 organiza eventos observados por dia para mostrar coocorrência documental entre domínios e referências. Não calcula correlação, causalidade, influência, tendência ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -117,7 +118,8 @@ public static class AthletePerformancePassportService
             InteligenciaProgresso = inteligenciaProgresso,
             ContextoSinaisProgresso = contextoSinaisProgresso,
             TimelineMultissinal = timelineMultissinal,
-            JanelasEvidenciaProgresso = janelasEvidenciaProgresso
+            JanelasEvidenciaProgresso = janelasEvidenciaProgresso,
+            MapaObservacaoCruzada = mapaObservacaoCruzada
         };
     }
 
@@ -252,6 +254,55 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static CrossSignalObservationMapResponse MontarMapaObservacaoCruzada(
+        MultiSignalTimelineResponse timeline)
+    {
+        var dias = timeline.Eventos
+            .GroupBy(x => DateOnly.FromDateTime(x.DataUtc))
+            .Select(grupo =>
+            {
+                var eventos = grupo.ToArray();
+
+                var dominios = eventos
+                    .Select(x => x.Dominio)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(x => x)
+                    .ToArray();
+
+                var referencias = eventos
+                    .Select(x => x.Referencia)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(x => x)
+                    .ToArray();
+
+                var leitura = dominios.Length > 1 || referencias.Length > 1
+                    ? "CoobservacaoNoMesmoDia"
+                    : "ObservacaoIsoladaNoDia";
+
+                return new CrossSignalObservationDayResponse(
+                    grupo.Key,
+                    eventos.Length,
+                    eventos.Count(x => x.Dominio == "Carga"),
+                    eventos.Count(x => x.Dominio == "Tempo"),
+                    referencias.Length,
+                    dominios,
+                    referencias,
+                    leitura);
+            })
+            .OrderBy(x => x.Data)
+            .ToArray();
+
+        return new CrossSignalObservationMapResponse(
+            timeline.DiasObservados,
+            dias,
+            dias.Count(x => x.DominiosObservados.Count > 1),
+            dias.Count(x => x.ReferenciasDistintas > 1),
+            "Cross-Signal Observation Map 2.0 mostra apenas coobservação documental no mesmo dia. Coocorrência temporal não significa correlação, causalidade, influência, resposta fisiológica ou efeito de uma variável sobre outra.");
+    }
 
     public static ProgressEvidenceWindowsResponse MontarJanelasEvidenciaProgresso(
         MultiSignalTimelineResponse timeline,

@@ -104,6 +104,24 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record CrossSignalObservationDayResponse(
+    DateOnly Data,
+    int EventosObservados,
+    int EventosCarga,
+    int EventosTempo,
+    int ReferenciasDistintas,
+    IReadOnlyCollection<string> DominiosObservados,
+    IReadOnlyCollection<string> ReferenciasObservadas,
+    string LeituraPermitida);
+
+public sealed record CrossSignalObservationMapResponse(
+    int DiasObservados,
+    IReadOnlyCollection<CrossSignalObservationDayResponse> Dias,
+    int DiasComMultiplosDominios,
+    int DiasComMultiplasReferencias,
+    string RegraDeUso);
+
 public sealed record ProgressEvidenceWindowItemResponse(
     string Janela,
     int Dias,
@@ -204,4 +222,8 @@ public sealed record AthletePerformancePassportResponse(
     public ProgressEvidenceWindowsResponse JanelasEvidenciaProgresso { get; init; } =
         new(180, Array.Empty<ProgressEvidenceWindowItemResponse>(),
             "Janelas temporais descritivas sem score de confiança, prognóstico ou recomendação automática.");
+
+    public CrossSignalObservationMapResponse MapaObservacaoCruzada { get; init; } =
+        new(180, Array.Empty<CrossSignalObservationDayResponse>(), 0, 0,
+            "Mapa de coobservação sem correlação, causalidade ou inferência automática.");
 }
