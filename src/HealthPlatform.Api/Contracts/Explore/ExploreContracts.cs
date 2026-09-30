@@ -457,3 +457,28 @@ public sealed record MartialArtsResponse(
     IReadOnlyCollection<MartialArtsSessaoReferenciaResponse> SessoesReferencia,
     string Fonte,
     string RegraDeUso);
+
+public sealed record RowingFaseResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string FocoTecnico);
+
+public sealed record RowingCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record RowingSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record RowingResponse(
+    IReadOnlyCollection<RowingFaseResponse> Fases,
+    IReadOnlyCollection<RowingCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<RowingSessaoReferenciaResponse> SessoesReferencia,
+    string Fonte,
+    string RegraDeUso);

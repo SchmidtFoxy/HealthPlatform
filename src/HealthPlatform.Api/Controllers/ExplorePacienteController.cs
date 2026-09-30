@@ -1976,6 +1976,60 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("rowing")]
+    public async Task<ActionResult<RowingResponse>> Rowing(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria).ThenBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.Categoria, x.Descricao })
+            .ToListAsync(ct);
+
+        var referencias = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "remo", "rowing", "ergometro", "ergômetro", "erg", "puxada", "remada", "pernas", "core", "posterior", "resistencia", "resistência", "potencia", "potência" }
+                    .Any(token => texto.Contains(token, StringComparison.Ordinal));
+            })
+            .Take(10)
+            .Select(x => new RowingSessaoReferenciaResponse(
+                x.Id, x.Nome, x.Categoria, x.Descricao,
+                "Sessão-modelo existente com termos relacionados a remo ou capacidades físicas de suporte."))
+            .ToArray();
+
+        var fases = new RowingFaseResponse[]
+        {
+            new("catch", "Catch", "Entrada organizada da remada, com pernas comprimidas, tronco estável e braços preparados.", "Posição eficiente antes de iniciar a produção de força."),
+            new("drive", "Drive", "Produção coordenada de força começando pelas pernas e seguindo por tronco e braços.", "Sequência pernas → tronco → braços sem definir carga ou potência-alvo."),
+            new("finish", "Finish", "Finalização da remada com controle do tronco e chegada das mãos ao corpo.", "Concluir a puxada sem perder postura ou transformar amplitude em meta automática."),
+            new("recovery", "Recovery", "Retorno organizado para a próxima entrada, invertendo a sequência do drive.", "Braços → tronco → pernas com fluidez e economia de movimento.")
+        };
+
+        var capacidades = new RowingCapacidadeResponse[]
+        {
+            new("potencia-coordenada", "Potência coordenada", "Integrar pernas, tronco e braços na produção de força sem gerar wattagem-alvo."),
+            new("cadeia-posterior", "Cadeia posterior", "Dar suporte à extensão de quadril, joelho e controle do tronco ao longo da remada."),
+            new("core-postura", "Core e postura", "Sustentar organização do tronco e transferência de força durante ciclos repetidos."),
+            new("ombro-escapula", "Ombro e escápula", "Apoiar a fase de puxada com controle escapular sem prescrever carga clínica."),
+            new("resistencia-especifica", "Resistência específica", "Tolerar ciclos repetidos mantendo qualidade de movimento sem definir distância, split ou cadência."),
+            new("ritmo-coordenacao", "Ritmo e coordenação", "Compreender regularidade do ciclo sem transformar stroke rate em prescrição automática.")
+        };
+
+        return Ok(new RowingResponse(
+            fases, capacidades, referencias,
+            "Sports Expansion II + ModelosSessoesTreino",
+            "Rowing 2.0 organiza fases da remada, capacidades de suporte e referências existentes. Não prescreve automaticamente cadência, stroke rate, distância, split/500 m, potência, carga, volume, intensidade, aptidão ou retorno ao esporte."));
+    }
+
+
     [HttpGet("sports-expansion-ii")]
     public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
         CancellationToken ct = default)

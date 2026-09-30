@@ -1655,6 +1655,23 @@ Aprofundar Triathlon dentro da Sports Expansion II sem transformar descoberta es
 
 **Próxima etapa:** `v0.26.4 — Rowing 2.0`.
 
+## ✅ v0.26.4 — Rowing 2.0 — CONCLUÍDA
+
+Aprofundar Remo dentro da Sports Expansion II organizando a sequência técnica da remada e capacidades físicas de suporte sem gerar prescrição automática.
+
+**Entregue na v0.26.4:**
+- endpoint `/api/portal/me/explore/rowing`;
+- fases Catch, Drive, Finish e Recovery;
+- sequência coordenada pernas → tronco → braços e retorno braços → tronco → pernas;
+- capacidades de potência coordenada, cadeia posterior, core/postura, ombro/escápula, resistência específica e ritmo/coordenação;
+- referências a `ModelosSessoesTreino` existentes;
+- integração mobile ao card Sports Expansion II;
+- sem cadência, stroke rate, distância, split/500 m, potência, carga, volume, intensidade, aptidão ou retorno automáticos;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.26.5 — Trekking 2.0`.
+
+
 
 
 

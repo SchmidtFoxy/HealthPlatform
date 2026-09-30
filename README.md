@@ -1,3 +1,18 @@
+﻿## v0.26.4 — Rowing 2.0
+
+O AESYN Explore agora aprofunda **Remo** com uma leitura didática da sequência **Catch → Drive → Finish → Recovery**, conectando técnica geral a capacidades de suporte e a sessões-modelo já existentes.
+
+### O que entra nesta versão
+- **Fases da remada:** Catch, Drive, Finish e Recovery.
+- **Potência coordenada:** pernas, tronco e braços trabalhando em sequência.
+- **Base física:** cadeia posterior, core/postura, ombro/escápula, Resistência específica e ritmo/coordenação.
+- **Referências reais:** reaproveitamento editorial de `ModelosSessoesTreino` quando houver conteúdo relacionado.
+
+### Guardrail
+Rowing 2.0 é contexto e descoberta. O sistema **não prescreve automaticamente cadência, stroke rate, distância, split/500 m, potência, carga, volume, intensidade, aptidão ou retorno ao esporte**.
+
+**Próxima etapa:** `v0.26.5 — Trekking 2.0`.
+
 ## v0.26.3 — Martial Arts 2.0
 
 - Aprofunda Artes Marciais sem eleger uma luta específica como padrão.
@@ -789,4 +804,3 @@ A direção de evolução, pendências protegidas e gates de produto estão docu
 ## v0.26.2 — Triathlon 2.0
 
 O Explore esportivo aprofunda Triathlon em três disciplinas (natação, ciclismo e corrida), duas transições (T1/T2), capacidades de suporte e referências a sessões-modelo já cadastradas. A camada é educacional/editorial: não gera distância, pace, potência, zonas, volume, intensidade, estratégia nutricional, aptidão ou retorno ao esporte automaticamente.
-

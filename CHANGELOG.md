@@ -1,3 +1,14 @@
+## v0.26.4 — Rowing 2.0
+
+- Adiciona `GET /api/portal/me/explore/rowing`.
+- Organiza Catch, Drive, Finish e Recovery como fases didáticas da remada.
+- Expõe potência coordenada, cadeia posterior, core/postura, ombro/escápula, resistência específica e ritmo/coordenação.
+- Reaproveita `ModelosSessoesTreino` como referências editoriais quando houver conteúdo compatível.
+- Integra Rowing 2.0 ao caminho Sports Expansion II do Explore.
+- Mantém guardrail explícito contra cadência, distância, split, potência, carga, volume, intensidade, aptidão ou retorno automáticos.
+- Não cria migration ou tabela nova.
+- Próxima etapa: `v0.26.5 — Trekking 2.0`.
+
 # v0.26.1 — Swimming 2.0
 
 - Adiciona endpoint `GET /api/portal/me/explore/swimming`.
@@ -3477,4 +3488,3 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Integra o detalhamento ao Explore mobile-first.
 - Não ensina combate e não gera golpes, rounds, contato, carga, volume, intensidade, aptidão, retorno ao contato ou liberação clínica automaticamente.
 - Não cria migration ou tabela nova.
-

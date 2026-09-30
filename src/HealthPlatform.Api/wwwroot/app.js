@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.26.3';
+const HP_MVP_VERSION='0.26.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -15160,5 +15160,40 @@ hpOpenSportsExpansionIV0260=async function(host){
   const button=root?.querySelector('#openMartialArtsV0263');
   const detail=root?.querySelector('#martialArtsHostV0263');
   if(button&&detail)button.onclick=()=>hpOpenMartialArtsV0263(detail);
+};
+
+// ===== v0.26.4 — Rowing 2.0 =====
+const HP_ROWING_V0264='v0.26.4';
+
+function hpRowingV0264(data){
+  const refs=Array.isArray(data?.sessoesReferencia)?data.sessoesReferencia:[];
+  return `<section class="rowing-v0264" data-rowing-v0264="${HP_ROWING_V0264}" aria-labelledby="rowingTitleV0264">
+    <div class="rowing-head-v0264"><div><span class="eyebrow">ROWING 2.0</span><h3 id="rowingTitleV0264">A remada como sequência coordenada.</h3><p>Catch, drive, finish e recovery conectados a capacidades de suporte, sem transformar descoberta em prescrição de ritmo ou distância.</p></div><span>LEGS · BODY · ARMS</span></div>
+    <section class="rowing-section-v0264"><h5>Fases da remada</h5><div class="rowing-phases-v0264">${(data?.fases||[]).map(x=>`<article><b>${esc(x.nome)}</b><p>${esc(x.contexto)}</p><small>${esc(x.focoTecnico)}</small></article>`).join('')}</div></section>
+    <section class="rowing-section-v0264"><h5>Capacidades de suporte</h5><div class="rowing-capabilities-v0264">${(data?.capacidades||[]).map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.contexto)}</span></article>`).join('')}</div></section>
+    <section class="rowing-section-v0264"><h5>Sessões-modelo relacionadas</h5>${refs.length?`<div class="rowing-references-v0264">${refs.map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.categoria||'Sessão-modelo')}</span><p>${esc(x.descricao||'Sem descrição cadastrada.')}</p><small>${esc(x.motivoDaReferencia)}</small></article>`).join('')}</div>`:`<div class="rowing-empty-v0264"><b>Sem referência editorial ainda.</b><span>O AESYN preserva a lacuna em vez de inventar uma sessão de remo.</span></div>`}</section>
+    <div class="rowing-rule-v0264"><b>SEQUÊNCIA ≠ PRESCRIÇÃO</b><span>${esc(data?.regraDeUso||'A exploração do remo não define automaticamente cadência, distância, split, potência, volume ou intensidade.')}</span></div>
+  </section>`;
+}
+
+async function hpOpenRowingV0264(host){
+  if(!host)return;host.hidden=false;host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Rowing 2.0...</div>';
+  try{const data=await api('/api/portal/me/explore/rowing');host.innerHTML=hpRowingV0264(data);host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}
+  catch(err){host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Rowing 2.0.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;}
+}
+
+const __hpSportsExpansionIIV0264=hpSportsExpansionIIV0260;
+hpSportsExpansionIIV0260=function(data){
+  const html=__hpSportsExpansionIIV0264(data);
+  return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="rowing-entry-v0264"><button type="button" class="primary" id="openRowingV0264">Abrir Rowing 2.0</button><small>Sequência da remada, potência coordenada, postura, resistência e referências reais.</small></div><div id="rowingHostV0264" class="rowing-host-v0264" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
+};
+
+const __hpOpenSportsExpansionIIV0264=hpOpenSportsExpansionIV0260;
+hpOpenSportsExpansionIV0260=async function(host){
+  await __hpOpenSportsExpansionIIV0264(host);
+  const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
+  const button=root?.querySelector('#openRowingV0264');
+  const detail=root?.querySelector('#rowingHostV0264');
+  if(button&&detail)button.onclick=()=>hpOpenRowingV0264(detail);
 };
 
