@@ -4870,6 +4870,7 @@ const HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321='v0.32.1';
 const HP_PROGRESS_REVIEW_CARE_PLAN_STATUS_V0322='v0.32.2';
 const HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3';
 const HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4';
+const HP_PROGRESS_REVIEW_CARE_PLAN_SUMMARY_V0325='v0.32.5';
 
 
 
@@ -4926,6 +4927,34 @@ function hpRenderProgressReviewCarePlanFoundationV0320(host,foundation){
 }
 
 
+
+
+async function hpLoadProgressReviewCarePlanSummaryV0325(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/care-plan/summary`);
+}
+
+function hpRenderProgressReviewCarePlanSummaryV0325(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porResponsavel)?summary.porResponsavel:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-progress-review-care-plan-summary-v0325="${HP_PROGRESS_REVIEW_CARE_PLAN_SUMMARY_V0325}">
+    <div><b>Resumo do plano de cuidados</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejados</span><b>${esc(String(summary.planejados??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídos</span><b>${esc(String(summary.concluidos??0))}</b></div>
+      <div class="row-between"><span>Cancelados</span><b>${esc(String(summary.cancelados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.responsavel||'Sem responsável')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência ou prioridade.</small>
+  </section>`;
+}
 
 async function hpOpenProgressReviewCarePlanHistoryV0323(p,carePlan){
   if(!p?.id || !carePlan?.id) return;
@@ -4987,6 +5016,7 @@ async function hpOpenProgressReviewCarePlanV0321(p){
       <button type="button" class="ghost" id="closeProgressReviewCarePlanV0321">Fechar</button>
     </div>
 
+    <div id="progressReviewCarePlanSummaryV0325"></div>
     <form id="progressReviewCarePlanFiltersV0324" class="form-grid" data-progress-review-care-plan-filters-v0324="${HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5027,6 +5057,11 @@ async function hpOpenProgressReviewCarePlanV0321(p){
     <div id="progressReviewCarePlanListV0321" class="stack"></div>
   </div>`;
   modal.classList.add('open');
+
+  const carePlanSummaryHostV0325=$('#progressReviewCarePlanSummaryV0325');
+  hpLoadProgressReviewCarePlanSummaryV0325(p.id)
+    .then(x=>hpRenderProgressReviewCarePlanSummaryV0325(carePlanSummaryHostV0325,x))
+    .catch(()=>{ if(carePlanSummaryHostV0325) carePlanSummaryHostV0325.innerHTML=''; });
 
   const form=$('#progressReviewCarePlanFormV0321');
   const listHost=$('#progressReviewCarePlanListV0321');
@@ -5092,12 +5127,18 @@ async function hpOpenProgressReviewCarePlanV0321(p){
       });
       toast(`Plano de cuidados atualizado para ${status}.`);
       await render();
+      hpLoadProgressReviewCarePlanSummaryV0325(p.id)
+        .then(x=>hpRenderProgressReviewCarePlanSummaryV0325(carePlanSummaryHostV0325,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-care-plan-archive-v0321]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/care-plan/${btn.dataset.carePlanArchiveV0321}`,{method:'DELETE'});
       toast('Plano de cuidados arquivado.');
       await render();
+      hpLoadProgressReviewCarePlanSummaryV0325(p.id)
+        .then(x=>hpRenderProgressReviewCarePlanSummaryV0325(carePlanSummaryHostV0325,x))
+        .catch(()=>{});
     });
   };
 
@@ -5145,6 +5186,9 @@ async function hpOpenProgressReviewCarePlanV0321(p){
     form.reset();
     form.elements.id.value='';
     await render();
+    hpLoadProgressReviewCarePlanSummaryV0325(p.id)
+      .then(x=>hpRenderProgressReviewCarePlanSummaryV0325(carePlanSummaryHostV0325,x))
+      .catch(()=>{});
   };
 
   await render();
@@ -10696,7 +10740,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.32.4';
+const HP_MVP_VERSION='0.32.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

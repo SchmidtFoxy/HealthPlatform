@@ -1,4 +1,17 @@
-﻿# v0.32.4 — Progress Review Care Plan Filters
+﻿# v0.32.5 — Progress Review Care Plan Summary
+
+- Adiciona `ProgressReviewCarePlanResponsavelResumoResponse`.
+- Adiciona `ProgressReviewCarePlanSummaryResponse`.
+- Adiciona `GET .../care-plan/summary`.
+- Consolida total, ativos, planejados, em andamento, concluídos, cancelados e arquivados.
+- Adiciona distribuição por responsável.
+- Adiciona painel `Resumo do plano de cuidados`.
+- Atualiza o resumo após alterações no Care Plan.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.32.6 — Progress Review Care Plan Closure.
+
+# v0.32.4 — Progress Review Care Plan Filters
 
 - Adiciona `ProgressReviewCarePlanFiltersResponse`.
 - Adiciona endpoint `GET .../care-plan/search`.

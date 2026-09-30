@@ -125,6 +125,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewCarePlanResponsavelResumoResponse(
+    string Responsavel,
+    int Total);
+
+public sealed record ProgressReviewCarePlanSummaryResponse(
+    int Total,
+    int Ativos,
+    int Planejados,
+    int EmAndamento,
+    int Concluidos,
+    int Cancelados,
+    int Arquivados,
+    IReadOnlyCollection<ProgressReviewCarePlanResponsavelResumoResponse> PorResponsavel,
+    string RegraDeUso);
+
 public sealed record ProgressReviewCarePlanFiltersResponse(
     string? Status,
     string? Responsavel,

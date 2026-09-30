@@ -1883,3 +1883,30 @@ Os filtros apenas localizam registros. Não classificam urgência, risco, priori
 
 **Próxima etapa:** `v0.32.5 — Progress Review Care Plan Summary`.
 
+---
+
+## v0.32.5 — Progress Review Care Plan Summary
+
+Adiciona resumo estrutural dos planos de próximos cuidados.
+
+### Indicadores
+- total;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- distribuição por responsável.
+
+### Endpoint
+`GET .../care-plan/summary`
+
+### UI
+O workspace profissional passa a exibir **Resumo do plano de cuidados** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.32.6 — Progress Review Care Plan Closure`.
+

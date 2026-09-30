@@ -199,6 +199,54 @@ public class ProgressReviewNotesController(
             "A fundação do Care Plan organiza próximos cuidados de forma documental. A partir da v0.32.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("care-plan/summary")]
+    public async Task<ActionResult<ProgressReviewCarePlanSummaryResponse>> ResumoCarePlan(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCarePlan))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearCarePlan).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var planejados = itens.Count(x => !x.Arquivada && x.Status == "Planejado");
+        var emAndamento = itens.Count(x => !x.Arquivada && x.Status == "EmAndamento");
+        var concluidos = itens.Count(x => !x.Arquivada && x.Status == "Concluido");
+        var cancelados = itens.Count(x => !x.Arquivada && x.Status == "Cancelado");
+
+        var porResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.Responsavel))
+            .GroupBy(x => x.Responsavel!.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProgressReviewCarePlanResponsavelResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Responsavel)
+            .ToArray();
+
+        return Ok(new ProgressReviewCarePlanSummaryResponse(
+            total,
+            ativos,
+            planejados,
+            emAndamento,
+            concluidos,
+            cancelados,
+            arquivados,
+            porResponsavel,
+            "O resumo apresenta somente agregações documentais do Care Plan. Não representa score clínico, risco, urgência, prioridade, prognóstico ou recomendação."));
+    }
+
     [HttpGet("care-plan/search")]
     public async Task<ActionResult<ProgressReviewCarePlanFiltersResponse>> FiltrarCarePlan(
         Guid pacienteId,

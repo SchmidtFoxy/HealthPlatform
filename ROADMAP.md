@@ -2650,3 +2650,25 @@ Adicionar filtros profissionais por status, responsável, horizonte e texto, pre
 ### v0.32.5 — Progress Review Care Plan Summary
 Adicionar resumo estrutural do Care Plan com contagem por status e distribuição por responsável, sem gerar score clínico ou prioridade automática.
 
+## ✅ v0.32.5 — Progress Review Care Plan Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewCarePlanSummaryResponse`;
+- `ProgressReviewCarePlanResponsavelResumoResponse`;
+- total de planos;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- agrupamento por responsável;
+- painel de resumo no workspace profissional;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.6 — Progress Review Care Plan Closure
+Fechar o ciclo 0.32.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do Care Plan.
+
