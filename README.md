@@ -1428,3 +1428,27 @@ A captura copia somente os identificadores técnicos de contexto. Não copia tex
 
 **Próxima etapa:** `v0.30.8 — Progress Review Context Capture Confirmation`.
 
+---
+
+## v0.30.8 — Progress Review Context Capture Confirmation
+
+Adiciona uma etapa visual explícita de confirmação do vínculo contextual antes do salvamento da nota.
+
+### Confirmação
+Após capturar ou selecionar um contexto, a modal exibe:
+- origem do vínculo: capturado ou selecionado manualmente;
+- tipo de contexto;
+- referência contextual;
+- aviso de que a persistência ocorrerá apenas no salvamento.
+
+### Ações
+- **Trocar contexto**: move o foco para o seletor e passa o vínculo para edição manual;
+- **Remover vínculo**: limpa tipo e referência;
+- alterações manuais atualizam a confirmação em tempo real;
+- ao limpar o formulário, o estado de confirmação também é reiniciado.
+
+### Guardrail
+Capturar um contexto não significa confirmar seu conteúdo clínico. O sistema não salva automaticamente, não escolhe o campo estruturado e não redige a observação profissional.
+
+**Próxima etapa:** `v0.30.9 — Progress Review Context Integrity`.
+

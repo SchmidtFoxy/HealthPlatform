@@ -961,6 +961,69 @@ async function hpOpenInternalNotesV0204(patient){
 
 
 
+
+function hpRenderProgressReviewContextConfirmationV0308(form){
+  const host=$('#progressReviewContextConfirmationV0308');
+  if(!host || !form) return;
+
+  const tipo=String(form.elements.contextoTipo?.value||'').trim();
+  const referencia=String(form.elements.contextoReferencia?.value||'').trim();
+  const captured=form.dataset.contextCapturedV0308==='true';
+
+  if(!tipo && !referencia){
+    host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-confirmation-v0308="${HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308}">
+      <b>Sem vínculo contextual.</b> A nota será salva sem referência a uma camada observacional.
+    </div>`;
+    return;
+  }
+
+  const tipoLabel=form.elements.contextoTipo?.selectedOptions?.[0]?.textContent?.trim()||tipo||'Contexto';
+  const origem=captured?'Contexto capturado do item observado':'Contexto selecionado manualmente';
+
+  host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-confirmation-v0308="${HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308}">
+    <div><b>${esc(origem)}</b></div>
+    <div><span class="pill Info">${esc(tipoLabel)}</span> <code>${esc(referencia||'referência não informada')}</code></div>
+    <small class="muted-line">Este vínculo será persistido somente ao salvar a nota.</small>
+    <div class="form-actions">
+      <button type="button" class="secondary" id="changeProgressReviewContextV0308">Trocar contexto</button>
+      <button type="button" class="ghost danger" id="removeProgressReviewContextV0308">Remover vínculo</button>
+    </div>
+  </div>`;
+
+  const change=$('#changeProgressReviewContextV0308');
+  if(change) change.onclick=()=>{
+    form.dataset.contextCapturedV0308='false';
+    form.elements.contextoTipo?.focus();
+  };
+
+  const remove=$('#removeProgressReviewContextV0308');
+  if(remove) remove.onclick=()=>{
+    if(form.elements.contextoTipo) form.elements.contextoTipo.value='';
+    if(form.elements.contextoReferencia) form.elements.contextoReferencia.value='';
+    form.dataset.contextCapturedV0308='false';
+    hpRenderProgressReviewContextConfirmationV0308(form);
+    toast('Vínculo contextual removido da nota.');
+  };
+}
+
+function hpBindProgressReviewContextConfirmationV0308(form){
+  if(!form || form.dataset.contextConfirmationBoundV0308==='true') return;
+  form.dataset.contextConfirmationBoundV0308='true';
+
+  const tipo=form.elements.contextoTipo;
+  const referencia=form.elements.contextoReferencia;
+
+  const changed=()=>{
+    form.dataset.contextCapturedV0308='false';
+    hpRenderProgressReviewContextConfirmationV0308(form);
+  };
+
+  if(tipo) tipo.addEventListener('change',changed);
+  if(referencia) referencia.addEventListener('input',changed);
+
+  hpRenderProgressReviewContextConfirmationV0308(form);
+}
+
 function hpGetCurrentPatientForProgressReviewV0307(){
   const statePatient=(typeof state!=='undefined' && state?.patient)?state.patient:null;
   if(statePatient?.id) return statePatient;
@@ -1008,6 +1071,8 @@ async function hpCaptureProgressReviewContextV0307(element){
 
   form.elements.contextoTipo.value=contextoTipo;
   form.elements.contextoReferencia.value=contextoReferencia;
+  form.dataset.contextCapturedV0308='true';
+  hpRenderProgressReviewContextConfirmationV0308(form);
   form.elements.conteudo.focus();
 
   toast(`Contexto capturado: ${contextoTipo}`);
@@ -1159,6 +1224,7 @@ async function hpOpenProgressReviewNotesV0302(p){
         <label>Referência contextual<input name="contextoReferencia" maxlength="120" placeholder="Ex.: carga::Agachamento ou Recente30d"></label>
         <label class="span-2">Observação profissional<textarea name="conteudo" rows="5" maxlength="4000" required placeholder="Registre a observação mantendo separado o fato observado da interpretação profissional."></textarea></label>
       </div>
+      <div id="progressReviewContextConfirmationV0308"></div>
       <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, data e alterações ficam auditadas.</div>
       <div class="form-actions"><button type="button" class="secondary" id="cancelProgressReviewNoteV0302">Limpar</button><button class="primary" type="submit">Salvar nota</button></div>
     </form>
@@ -1177,7 +1243,13 @@ async function hpOpenProgressReviewNotesV0302(p){
     }
 
     const form=$('#progressReviewNoteFormV0302');
-    $('#cancelProgressReviewNoteV0302').onclick=()=>{form.reset();form.elements.id.value='';};
+    hpBindProgressReviewContextConfirmationV0308(form);
+    $('#cancelProgressReviewNoteV0302').onclick=()=>{
+      form.reset();
+      form.elements.id.value='';
+      form.dataset.contextCapturedV0308='false';
+      hpRenderProgressReviewContextConfirmationV0308(form);
+    };
 
     form.onsubmit=async e=>{
       e.preventDefault();
@@ -1211,6 +1283,8 @@ async function hpOpenProgressReviewNotesV0302(p){
       form.elements.campo.value=note.campo;
       form.elements.contextoTipo.value=note.contextoTipo||'';
       form.elements.contextoReferencia.value=note.contextoReferencia||'';
+      form.dataset.contextCapturedV0308='false';
+      hpRenderProgressReviewContextConfirmationV0308(form);
       form.elements.conteudo.value=note.conteudo;
       form.elements.conteudo.focus();
     });
@@ -4636,6 +4710,7 @@ const HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4';
 const HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5';
 const HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6';
 const HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7';
+const HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -9868,7 +9943,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.7';
+const HP_MVP_VERSION='0.30.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

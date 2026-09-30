@@ -2335,3 +2335,21 @@ Permitir iniciar uma nova nota diretamente a partir de um item observacional, pr
 ### v0.30.8 — Progress Review Context Capture Confirmation
 Adicionar confirmação visual do contexto capturado antes do salvamento, com opção explícita de remover ou trocar o vínculo contextual.
 
+## ✅ v0.30.8 — Progress Review Context Capture Confirmation — CONCLUÍDA
+
+**Entregue:**
+- confirmação visual do vínculo contextual;
+- indicação de origem capturada/manual;
+- tipo e referência exibidos antes do save;
+- ação Trocar contexto;
+- ação Remover vínculo;
+- sincronização em tempo real com alterações manuais;
+- reset do estado ao limpar formulário;
+- sem autosave;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.9 — Progress Review Context Integrity
+Validar a coerência estrutural entre tipo e referência antes do envio, impedindo vínculos incompletos e apresentando feedback local sem inferir conteúdo clínico.
+

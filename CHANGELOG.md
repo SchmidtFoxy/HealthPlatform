@@ -1,4 +1,19 @@
-﻿# v0.30.7 — Progress Review Context Capture
+﻿# v0.30.8 — Progress Review Context Capture Confirmation
+
+- Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308`.
+- Adiciona `hpRenderProgressReviewContextConfirmationV0308`.
+- Adiciona `hpBindProgressReviewContextConfirmationV0308`.
+- Exibe confirmação visual de contexto antes do salvamento.
+- Diferencia contexto capturado de contexto selecionado manualmente.
+- Adiciona ações `Trocar contexto` e `Remover vínculo`.
+- Sincroniza confirmação com alterações manuais de tipo/referência.
+- Reinicia confirmação ao limpar o formulário.
+- Mantém salvamento exclusivamente no submit explícito.
+- Preserva Capture, Focus, Navigation, histórico, filtros, privacidade e auditoria.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.9 — Progress Review Context Integrity.
+
+# v0.30.7 — Progress Review Context Capture
 
 - Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307`.
 - Adiciona `data-progress-context-type` às seis camadas observacionais.
