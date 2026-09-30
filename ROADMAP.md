@@ -2442,3 +2442,24 @@ Criar a fundação estrutural para acompanhamento posterior às revisões, permi
 ### v0.31.1 — Progress Review Follow-up Persistence
 Adicionar persistência profissional para itens de acompanhamento, preservando autoria, auditoria, contexto opcional e separação entre registro documental e decisão clínica.
 
+## ✅ v0.31.1 — Progress Review Follow-up Persistence — CONCLUÍDA
+
+**Entregue:**
+- persistência em `NotaInternaProfissional`;
+- namespace `ProgressReviewFollowUp:`;
+- payload JSON estruturado;
+- listagem;
+- criação;
+- edição;
+- arquivamento lógico;
+- autoria;
+- auditoria;
+- UI profissional para gerenciar acompanhamento;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.2 — Progress Review Follow-up Status
+Adicionar estado documental dos itens de acompanhamento (aberto, revisado ou encerrado), com transições explícitas realizadas pelo profissional e histórico auditável.
+

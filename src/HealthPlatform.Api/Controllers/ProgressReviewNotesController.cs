@@ -18,6 +18,7 @@ public class ProgressReviewNotesController(
     IHttpContextAccessor httpContextAccessor) : ControllerBase
 {
     private const string PrefixoCategoria = "ProgressReview:";
+    private const string PrefixoFollowUp = "ProgressReviewFollowUp:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -80,6 +81,20 @@ public class ProgressReviewNotesController(
             "O destino de navegação aponta somente para a seção observacional relacionada. A referência da nota permanece descritiva e não seleciona automaticamente um dado clínico específico."));
     }
 
+    public sealed record CriarProgressReviewFollowUpRequest(
+        string ItemAcompanhar,
+        string? ContextoRelacionado = null,
+        string? HorizonteRevisao = null,
+        string? Responsavel = null,
+        string? ObservacaoFollowUp = null);
+
+    public sealed record AtualizarProgressReviewFollowUpRequest(
+        string ItemAcompanhar,
+        string? ContextoRelacionado = null,
+        string? HorizonteRevisao = null,
+        string? Responsavel = null,
+        string? ObservacaoFollowUp = null);
+
     [HttpGet("follow-up-foundation")]
     public ActionResult<ProgressReviewFollowUpFoundationResponse> FollowUpFoundation()
     {
@@ -116,9 +131,151 @@ public class ProgressReviewNotesController(
             campos,
             campos.Length,
             "FundacaoEstruturalDisponivel",
-            false,
+            true,
             "EquipeProfissional",
-            "A fundação de follow-up organiza próximos itens a acompanhar. Nesta versão não possui persistência própria e não cria decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
+            "A fundação de follow-up organiza próximos itens a acompanhar. A partir da v0.31.1 possui persistência profissional auditada, sem criar decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
+    }
+
+    [HttpGet("follow-up")]
+    public async Task<ActionResult<IReadOnlyCollection<ProgressReviewFollowUpPersistedResponse>>> ListarFollowUp(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivadas = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp));
+
+        if (!incluirArquivadas)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearFollowUp).ToArray());
+    }
+
+    [HttpPost("follow-up")]
+    public async Task<ActionResult<ProgressReviewFollowUpPersistedResponse>> CriarFollowUp(
+        Guid pacienteId,
+        CriarProgressReviewFollowUpRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var item = NormalizarObrigatorio(request.ItemAcompanhar, 500);
+        if (item is null)
+            return BadRequest(new { message = "Informe o item a acompanhar." });
+
+        var payload = MontarPayloadFollowUp(
+            item,
+            request.ContextoRelacionado,
+            request.HorizonteRevisao,
+            request.Responsavel,
+            request.ObservacaoFollowUp);
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoFollowUp + "item",
+            Conteudo = payload,
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROGRESS_REVIEW_FOLLOW_UP_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearFollowUp(nota));
+    }
+
+    [HttpPut("follow-up/{id:guid}")]
+    public async Task<ActionResult<ProgressReviewFollowUpPersistedResponse>> AtualizarFollowUp(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProgressReviewFollowUpRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var item = NormalizarObrigatorio(request.ItemAcompanhar, 500);
+        if (item is null)
+            return BadRequest(new { message = "Informe o item a acompanhar." });
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadFollowUp(
+            item,
+            request.ContextoRelacionado,
+            request.HorizonteRevisao,
+            request.Responsavel,
+            request.ObservacaoFollowUp);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROGRESS_REVIEW_FOLLOW_UP_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearFollowUp(nota));
+    }
+
+    [HttpDelete("follow-up/{id:guid}")]
+    public async Task<IActionResult> ArquivarFollowUp(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROGRESS_REVIEW_FOLLOW_UP_ARCHIVED", nota, antes: null, depois: Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("context-closure")]
@@ -391,6 +548,79 @@ public class ProgressReviewNotesController(
         return normalizado.Length <= 4000
             ? normalizado
             : normalizado[..4000];
+    }
+
+    private sealed record FollowUpPayload(
+        string ItemAcompanhar,
+        string? ContextoRelacionado,
+        string? HorizonteRevisao,
+        string? Responsavel,
+        string? ObservacaoFollowUp);
+
+    private static string MontarPayloadFollowUp(
+        string itemAcompanhar,
+        string? contextoRelacionado,
+        string? horizonteRevisao,
+        string? responsavel,
+        string? observacaoFollowUp)
+    {
+        var payload = new FollowUpPayload(
+            itemAcompanhar,
+            NormalizarOpcional(contextoRelacionado, 240),
+            NormalizarOpcional(horizonteRevisao, 120),
+            NormalizarOpcional(responsavel, 160),
+            NormalizarOpcional(observacaoFollowUp, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProgressReviewFollowUpPersistedResponse MapearFollowUp(NotaInternaProfissional nota)
+    {
+        FollowUpPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<FollowUpPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado nunca deve quebrar a listagem.
+        }
+
+        return new ProgressReviewFollowUpPersistedResponse(
+            nota.Id,
+            payload?.ItemAcompanhar ?? nota.Conteudo,
+            payload?.ContextoRelacionado,
+            payload?.HorizonteRevisao,
+            payload?.Responsavel,
+            payload?.ObservacaoFollowUp,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
+    private static string? NormalizarObrigatorio(string? valor, int limite)
+    {
+        var normalizado = string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
+        if (normalizado is null)
+            return null;
+
+        return normalizado.Length <= limite
+            ? normalizado
+            : normalizado[..limite];
+    }
+
+    private static string? NormalizarOpcional(string? valor, int limite)
+    {
+        var normalizado = string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
+        if (normalizado is null)
+            return null;
+
+        return normalizado.Length <= limite
+            ? normalizado
+            : normalizado[..limite];
     }
 
     private static ProgressReviewPersistedNoteResponse Mapear(NotaInternaProfissional nota)

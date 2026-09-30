@@ -1,4 +1,19 @@
-﻿# v0.31.0 — Progress Review Follow-up Foundation
+﻿# v0.31.1 — Progress Review Follow-up Persistence
+
+- Adiciona `ProgressReviewFollowUpPersistedResponse`.
+- Reutiliza `NotaInternaProfissional` com namespace `ProgressReviewFollowUp:`.
+- Adiciona CRUD profissional de follow-up.
+- Adiciona arquivamento lógico.
+- Adiciona auditoria `PROGRESS_REVIEW_FOLLOW_UP_CREATED`.
+- Adiciona auditoria `PROGRESS_REVIEW_FOLLOW_UP_UPDATED`.
+- Adiciona auditoria `PROGRESS_REVIEW_FOLLOW_UP_ARCHIVED`.
+- Fundação v0.31.0 passa a anunciar `PersistenciaDisponivel = true`.
+- Adiciona workspace profissional de acompanhamento.
+- Não cria endpoint de paciente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.31.2 — Progress Review Follow-up Status.
+
+# v0.31.0 — Progress Review Follow-up Foundation
 
 - Abre a linha funcional 0.31.x.
 - Adiciona `ProgressReviewFollowUpFieldResponse`.

@@ -116,6 +116,20 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewFollowUpPersistedResponse(
+    Guid Id,
+    string ItemAcompanhar,
+    string? ContextoRelacionado,
+    string? HorizonteRevisao,
+    string? Responsavel,
+    string? ObservacaoFollowUp,
+    Guid AutorUsuarioId,
+    string AutorNome,
+    DateTime CriadoEmUtc,
+    DateTime? AtualizadoEmUtc,
+    bool Arquivada);
+
 public sealed record ProgressReviewFollowUpFieldResponse(
     string Chave,
     string Rotulo,

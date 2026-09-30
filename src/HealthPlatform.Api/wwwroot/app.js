@@ -1372,7 +1372,11 @@ async function hpOpenProgressReviewNotesV0302(p){
 
     const followUpHostV0310=$('#progressReviewFollowUpFoundationV0310');
     hpLoadProgressReviewFollowUpFoundationV0310(p.id)
-      .then(x=>hpRenderProgressReviewFollowUpFoundationV0310(followUpHostV0310,x))
+      .then(x=>{
+        hpRenderProgressReviewFollowUpFoundationV0310(followUpHostV0310,x);
+        const openFollowUp=$('[data-progress-follow-up-open-v0311]');
+        if(openFollowUp) openFollowUp.onclick=()=>hpOpenProgressReviewFollowUpV0311(p);
+      })
       .catch(()=>{ if(followUpHostV0310) followUpHostV0310.innerHTML=''; });
     $('#cancelProgressReviewNoteV0302').onclick=()=>{
       form.reset();
@@ -4855,6 +4859,7 @@ const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010='v0.30.10';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011='v0.30.11';
 const HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012='v0.30.12';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_V0310='v0.31.0';
+const HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311='v0.31.1';
 
 
 
@@ -4877,9 +4882,117 @@ function hpRenderProgressReviewFollowUpFoundationV0310(host,foundation){
       </div>
       <small class="muted-line">${esc(x.descricao||'')}</small>`).join('')}
     </div>
-    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência disponível.':'Nesta versão, o follow-up ainda não possui persistência própria.'}</small>
+    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência profissional disponível.':'Nesta versão, o follow-up ainda não possui persistência própria.'}</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-progress-follow-up-open-v0311="${HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311}">Gerenciar acompanhamento</button>`:''}
   </section>`;
 }
+
+async function hpOpenProgressReviewFollowUpV0311(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/follow-up`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large">
+    <div class="row-between">
+      <div><h3>Acompanhamento pós-revisão</h3><p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p></div>
+      <button type="button" class="ghost" id="closeProgressReviewFollowUpV0311">Fechar</button>
+    </div>
+
+    <form id="progressReviewFollowUpFormV0311" class="form-grid">
+      <input type="hidden" name="id">
+      <label class="span-2">Item a acompanhar<textarea name="itemAcompanhar" maxlength="500" rows="3" required placeholder="O que deverá ser revisto no próximo acompanhamento?"></textarea></label>
+      <label>Contexto relacionado<input name="contextoRelacionado" maxlength="240" placeholder="Referência contextual opcional"></label>
+      <label>Horizonte de revisão<input name="horizonteRevisao" maxlength="120" placeholder="Ex.: próxima consulta, 30 dias"></label>
+      <label>Responsável<input name="responsavel" maxlength="160" placeholder="Profissional ou papel"></label>
+      <label class="span-2">Observação de acompanhamento<textarea name="observacaoFollowUp" maxlength="2000" rows="3" placeholder="Observação documental opcional"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="button" class="secondary" id="cancelProgressReviewFollowUpV0311">Limpar</button>
+        <button type="submit">Salvar acompanhamento</button>
+      </div>
+    </form>
+
+    <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, alterações e arquivamento ficam auditados.</div>
+    <div id="progressReviewFollowUpListV0311" class="stack"></div>
+  </div>`;
+  modal.classList.add('open');
+
+  const form=$('#progressReviewFollowUpFormV0311');
+  const listHost=$('#progressReviewFollowUpListV0311');
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.itemAcompanhar||'Item de acompanhamento')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.contextoRelacionado?`<small class="muted-line">Contexto: ${esc(x.contextoRelacionado)}</small>`:''}
+      ${x.horizonteRevisao?`<small class="muted-line">Horizonte: ${esc(x.horizonteRevisao)}</small>`:''}
+      ${x.responsavel?`<small class="muted-line">Responsável: ${esc(x.responsavel)}</small>`:''}
+      ${x.observacaoFollowUp?`<p>${esc(x.observacaoFollowUp).replace(/\n/g,'<br>')}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-follow-up-edit-v0311="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-follow-up-archive-v0311="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum item de acompanhamento registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-follow-up-edit-v0311]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.followUpEditV0311);
+      if(!item) return;
+      form.elements.id.value=item.id;
+      form.elements.itemAcompanhar.value=item.itemAcompanhar||'';
+      form.elements.contextoRelacionado.value=item.contextoRelacionado||'';
+      form.elements.horizonteRevisao.value=item.horizonteRevisao||'';
+      form.elements.responsavel.value=item.responsavel||'';
+      form.elements.observacaoFollowUp.value=item.observacaoFollowUp||'';
+      form.elements.itemAcompanhar.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-follow-up-archive-v0311]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/follow-up/${btn.dataset.followUpArchiveV0311}`,{method:'DELETE'});
+      toast('Item de acompanhamento arquivado.');
+      await render();
+    });
+  };
+
+  $('#closeProgressReviewFollowUpV0311').onclick=()=>modal.classList.remove('open');
+  $('#cancelProgressReviewFollowUpV0311').onclick=()=>{
+    form.reset();
+    form.elements.id.value='';
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+
+    const body={
+      itemAcompanhar:form.elements.itemAcompanhar.value,
+      contextoRelacionado:form.elements.contextoRelacionado.value||null,
+      horizonteRevisao:form.elements.horizonteRevisao.value||null,
+      responsavel:form.elements.responsavel.value||null,
+      observacaoFollowUp:form.elements.observacaoFollowUp.value||null
+    };
+
+    const id=form.elements.id.value;
+    const url=id
+      ? `/api/pacientes/${p.id}/performance/progress-review-notes/follow-up/${id}`
+      : `/api/pacientes/${p.id}/performance/progress-review-notes/follow-up`;
+
+    await api(url,{method:id?'PUT':'POST',body:JSON.stringify(body)});
+    toast(id?'Acompanhamento atualizado.':'Acompanhamento registrado.');
+    form.reset();
+    form.elements.id.value='';
+    await render();
+  };
+
+  await render();
+}
+
 
 async function hpLoadProgressReviewContextClosureV03012(patientId){
   if(!patientId) return null;
@@ -10139,7 +10252,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.31.0';
+const HP_MVP_VERSION='0.31.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

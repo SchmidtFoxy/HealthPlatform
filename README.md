@@ -1567,3 +1567,35 @@ O follow-up não cria alerta clínico automático, não interpreta prioridade, n
 
 **Próxima etapa:** `v0.31.1 — Progress Review Follow-up Persistence`.
 
+---
+
+## v0.31.1 — Progress Review Follow-up Persistence
+
+Adiciona persistência profissional auditada para os itens de acompanhamento definidos na fundação v0.31.0.
+
+### Persistência
+A implementação reutiliza `NotaInternaProfissional` com namespace `ProgressReviewFollowUp:` e payload JSON estruturado, evitando nova tabela e migration nesta etapa.
+
+### Operações
+- listar itens ativos;
+- criar;
+- editar;
+- arquivar logicamente;
+- autoria e datas;
+- auditoria de criação, alteração e arquivamento.
+
+### Campos persistidos
+- item a acompanhar;
+- contexto relacionado;
+- horizonte de revisão;
+- responsável;
+- observação de acompanhamento.
+
+### Privacidade
+Os endpoints permanecem no controller profissional já restrito por função. Não foi criado endpoint equivalente no portal do paciente.
+
+### Guardrail
+Persistir um follow-up significa registrar documentalmente o que deverá ser acompanhado. Não cria prioridade automática, alerta clínico, decisão terapêutica, diagnóstico, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.31.2 — Progress Review Follow-up Status`.
+
