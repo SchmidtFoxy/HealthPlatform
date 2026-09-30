@@ -9198,7 +9198,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.4';
+const HP_MVP_VERSION='0.22.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12517,4 +12517,132 @@ renderPatientTab=function(d){
   if(!host||!plan||host.querySelector('[data-action-hub-v0224]'))return;
   plan.insertAdjacentHTML('afterend',hpActionHubV0224(d));
   hpWireActionHubV0224(d);
+};
+
+
+// ===== v0.22.5 — Daily 30 Seconds Experience 2.0 =====
+const HP_DAILY_30S_V0225='v0.22.5';
+
+function hpDaily30DataV0225(d){
+  const portal=d?.portal||{};
+  const readiness=portal?.prontidaoHoje||portal?.readinessHoje||null;
+  const plan=typeof hpTodayPlanDataV0223==='function'?hpTodayPlanDataV0223(d):{blocks:[],context:[],guidance:''};
+  const actions=typeof hpActionHubDataV0224==='function'?hpActionHubDataV0224(d):[];
+  const readinessContext=typeof hpReadinessContextDataV0222==='function'
+    ?hpReadinessContextDataV0222(d)
+    :{known:[],attention:[],summary:'Contexto parcial'};
+
+  const steps=[
+    {
+      key:'checkin',
+      label:'1',
+      title:readiness?'Check-in feito':'Check-in da manhã',
+      subtitle:readiness?'Contexto de hoje registrado':'Sono, energia, dor e recuperação',
+      state:readiness?'done':'current'
+    },
+    {
+      key:'context',
+      label:'2',
+      title:'Entenda o contexto',
+      subtitle:readinessContext.summary||'Veja o que está influenciando o dia',
+      state:readiness?'ready':'locked'
+    },
+    {
+      key:'plan',
+      label:'3',
+      title:'Veja o plano',
+      subtitle:plan.blocks?.length?`${plan.blocks.length} bloco(s) planejado(s)`:'Nenhum bloco planejado',
+      state:plan.blocks?.length?'ready':'empty'
+    },
+    {
+      key:'action',
+      label:'4',
+      title:'Faça a próxima ação',
+      subtitle:`${actions.filter(x=>x.enabled).length} ação(ões) disponível(is)`,
+      state:'ready'
+    }
+  ];
+
+  let focus='checkin';
+  if(readiness && plan.blocks?.length) focus='action';
+  else if(readiness) focus='plan';
+
+  const attention=(readinessContext.attention||[]).map(x=>x.label);
+  return {steps,focus,attention,guidance:plan.guidance||''};
+}
+
+function hpDaily30V0225(d){
+  const x=hpDaily30DataV0225(d);
+  return `<section class="daily-30s-v0225" data-daily-30s-v0225="${HP_DAILY_30S_V0225}">
+    <div class="daily-30s-head-v0225">
+      <div>
+        <span class="eyebrow">DAILY • 30 SECOND EXPERIENCE 2.0</span>
+        <h3>Entenda o dia. Escolha a próxima ação.</h3>
+        <p>Uma sequência curta para passar de “como estou” para “o que faço agora” sem navegar por várias áreas.</p>
+      </div>
+      <div class="daily-30s-time-v0225"><b>≈30s</b><span>para se orientar</span></div>
+    </div>
+
+    <div class="daily-30s-flow-v0225">
+      ${x.steps.map(s=>`<button type="button" class="daily-30s-step-v0225 is-${esc(s.state)} ${x.focus===s.key?'is-focus':''}" data-daily-30s-step-v0225="${esc(s.key)}">
+        <span class="daily-30s-number-v0225">${esc(s.label)}</span>
+        <span class="daily-30s-copy-v0225"><b>${esc(s.title)}</b><small>${esc(s.subtitle)}</small></span>
+        <span class="daily-30s-state-v0225">${s.state==='done'?'✓':'›'}</span>
+      </button>`).join('')}
+    </div>
+
+    ${x.attention.length?`<div class="daily-30s-attention-v0225"><b>Atenção hoje</b><span>${esc(x.attention.join(' · '))}</span></div>`:''}
+
+    <div class="daily-30s-next-v0225">
+      <div>
+        <span>PRÓXIMO PASSO</span>
+        <b>${x.focus==='checkin'?'Fazer o check-in':x.focus==='plan'?'Rever o plano':'Abrir o Action Hub'}</b>
+        <small>${esc(x.guidance||'Use o contexto do dia como apoio, sem deixar um único sinal decidir tudo.')}</small>
+      </div>
+      <button type="button" class="btn primary" data-daily-30s-primary-v0225="${esc(x.focus)}">Continuar</button>
+    </div>
+
+    <div class="daily-30s-principle-v0225">
+      <b>30 segundos para orientar, não para julgar</b>
+      <span>O objetivo é reduzir fricção. O AESYN não penaliza um dia ruim e não transforma o check-in em obrigação ou diagnóstico.</span>
+    </div>
+  </section>`;
+}
+
+function hpDaily30NavigateV0225(step,d){
+  const host=$('#patientTabContent');
+
+  if(step==='checkin'){
+    const readiness=d?.portal?.prontidaoHoje||d?.portal?.readinessHoje||null;
+    openDailyReadiness(readiness);
+    return;
+  }
+
+  const selectors={
+    context:'[data-readiness-context-v0222]',
+    plan:'[data-today-plan-v0223]',
+    action:'[data-action-hub-v0224]'
+  };
+
+  const el=host?.querySelector(selectors[step]||'');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function hpWireDaily30V0225(d){
+  document.querySelectorAll('[data-daily-30s-step-v0225]').forEach(btn=>{
+    btn.onclick=()=>hpDaily30NavigateV0225(btn.dataset.daily30sStepV0225,d);
+  });
+  const primary=document.querySelector('[data-daily-30s-primary-v0225]');
+  if(primary)primary.onclick=()=>hpDaily30NavigateV0225(primary.dataset.daily30sPrimaryV0225,d);
+}
+
+const __renderPatientTab_v0225=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0225(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent');
+  const hub=host?.querySelector('[data-action-hub-v0224]');
+  if(!host||!hub||host.querySelector('[data-daily-30s-v0225]'))return;
+  hub.insertAdjacentHTML('afterend',hpDaily30V0225(d));
+  hpWireDaily30V0225(d);
 };

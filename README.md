@@ -19,6 +19,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Daily 30 Seconds Experience 2.0
+
+A `v0.22.5` consolida o fluxo diário essencial em uma experiência curta: **check-in → contexto → plano → próxima ação**. O objetivo é permitir que a pessoa entenda o dia e escolha o próximo passo em aproximadamente 30 segundos, principalmente no mobile.
+
+A experiência reutiliza Morning Check-in, Daily Readiness Context, Today's Plan e Action Hub. O AESYN orienta sem julgar, sem penalizar dias ruins e sem transformar o fluxo em diagnóstico ou obrigação.
+
 ### Action Hub 2.0
 
 A `v0.22.4` centraliza as **ações mais úteis do dia** em um único ponto. O paciente consegue acessar rapidamente treino, alimentação, check-in, hidratação, peso e contexto diário sem precisar procurar cada função em telas diferentes.
@@ -158,7 +165,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.4 — Action Hub 2.0`
+- **Versão funcional:** `v0.22.5 — Daily 30 Seconds Experience 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

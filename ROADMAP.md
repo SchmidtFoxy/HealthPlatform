@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.4 — Action Hub 2.0
+> **Versão-base deste roadmap:** v0.22.5 — Daily 30 Seconds Experience 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -857,7 +857,7 @@ Transformar plano profissional, readiness e contexto do dia em uma visão práti
 
 **Próxima etapa:** `v0.22.5 — Daily 30 Seconds Experience 2.0`.
 
-## ⏭ v0.22.5 — Daily 30 Seconds Experience 2.0
+## ✅ v0.22.5 — Daily 30 Seconds Experience 2.0 — CONCLUÍDA
 
 Consolidar o fluxo diário essencial em uma experiência curta, clara e progressiva, priorizando check-in, contexto, plano e próxima ação em aproximadamente 30 segundos.
 
@@ -1113,6 +1113,20 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - nenhum ajuste automático de prescrição.
 
 **Próxima etapa:** `v0.22.4 — Action Hub 2.0`.
+
+
+
+**Entregue na v0.22.5:**
+- fluxo check-in → contexto → plano → próxima ação;
+- sequência visual de quatro etapas;
+- estado concluído/atual/disponível;
+- próximo passo destacado;
+- integração com readiness e Action Hub;
+- ergonomia mobile-first;
+- experiência orientada a aproximadamente 30 segundos;
+- sem penalidade, julgamento ou diagnóstico.
+
+**Próxima etapa:** `v0.22.6 — Evening Reflection 2.0`.
 
 
 ## Promessa ao atleta

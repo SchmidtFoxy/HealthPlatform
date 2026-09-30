@@ -1,3 +1,15 @@
+# v0.22.5 — Daily 30 Seconds Experience 2.0
+
+- Consolida o fluxo diário em check-in → contexto → plano → próxima ação.
+- Adiciona sequência visual de quatro etapas com estado do dia.
+- Destaca o próximo passo de forma contextual.
+- Reaproveita Morning Check-in, Daily Readiness Context, Today's Plan e Action Hub.
+- Prioriza ergonomia mobile e orientação em aproximadamente 30 segundos.
+- Não penaliza dias ruins e não cria diagnóstico ou prescrição automática.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.5.
+- Próxima etapa: v0.22.6 — Evening Reflection 2.0.
+
 # v0.22.4 — Action Hub 2.0
 
 - Centraliza as principais ações do dia em um único hub.
