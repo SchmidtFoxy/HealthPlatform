@@ -1074,9 +1074,9 @@ Natação, triathlon, artes marciais, remo, trekking, modalidades recreativas e 
 
 ### Sequência funcional
 - ✅ `v0.27.0 — Workout Intelligence 3.0 Foundation` — mapa de cobertura, API de leitura e fundação de prescrito vs realizado.
-- `v0.27.1 — Prescription Variables 3.0` — estruturar RIR, cadência e demais variáveis de prescrição sem perder compatibilidade.
-- `v0.27.2 — Prescribed vs Performed 3.0` — comparação auditável entre variáveis prescritas e executadas por exercício.
-- `v0.27.3 — Advanced Techniques 3.0` — técnicas avançadas como contrato estruturado e reutilizável.
+- ✅ `v0.27.1 — Prescription Variables 3.0` — estruturar RIR, cadência e demais variáveis de prescrição sem perder compatibilidade.
+- ✅ `v0.27.2 — Prescribed vs Performed 3.0` — comparação auditável entre variáveis prescritas e executadas por exercício.
+- ✅ `v0.27.3 — Advanced Techniques 3.0` — técnicas avançadas como contrato estruturado e reutilizável.
 - `v0.27.4 — Progression & Regression 3.0` — sugestões explicáveis, sempre revisadas pelo profissional.
 - `v0.27.5 — Periodization 3.0` — microciclo, mesociclo, bloco e deload.
 
@@ -1954,3 +1954,17 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - sem migration nova.
 
 **Próxima etapa:** `v0.27.3 — Advanced Techniques 3.0`.
+
+
+## ✅ v0.27.3 — Advanced Techniques 3.0 — CONCLUÍDA
+
+**Entregue na v0.27.3:**
+- catálogo estruturado e reutilizável de técnicas avançadas;
+- Drop set, Bi-set, Rest-pause, Cluster, Myo-reps, Isometria, Pré-exaustão e Tempo controlado;
+- código e parâmetros persistidos na prescrição e na execução;
+- compatibilidade com texto legado preservada;
+- Workout Builder e Workout Intelligence integrados ao novo contrato;
+- migration `V0273AdvancedTechniques`;
+- nenhuma seleção ou aplicação automática de técnica.
+
+**Próxima etapa:** `v0.27.4 — Progression & Regression 3.0`.

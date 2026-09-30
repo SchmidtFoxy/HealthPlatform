@@ -4217,9 +4217,12 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
   const box=$('#clinicalActionContent'),editing=!!existingPlan;
   box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • carregando exercícios...</p></div>`;
   try{
-    let exercicios=await api('/api/exercicios');
+    const [exerciciosPayload,tecnicasPayload]=await Promise.all([api('/api/exercicios'),api('/api/treinos/tecnicas-avancadas')]);
+    let exercicios=exerciciosPayload;
+    const tecnicasAvancadas=tecnicasPayload?.itens||[];
     const exerciseLabel=x=>`${x.nome}${x.grupoMuscular?' • '+x.grupoMuscular:''}${x.equipamento?' • '+x.equipamento:''}`;
     const options=(selected='')=>`<option value="">Selecione...</option>${exercicios.map(x=>`<option value="${x.id}" ${String(selected)===String(x.id)?'selected':''}>${esc(exerciseLabel(x))}</option>`).join('')}`;
+    const techniqueOptions=(selected='')=>`<option value="">Sem técnica estruturada</option>${tecnicasAvancadas.map(x=>`<option value="${esc(x.codigo)}" ${String(selected)===String(x.codigo)?'selected':''}>${esc(x.nome)}</option>`).join('')}`;
     const plan=existingPlan||{};
     const tuning=state.recommendationTuningDraft?.patientId===p.id?state.recommendationTuningDraft:null;
     box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • ${exercicios.length} exercício(s) no catálogo</p></div>
@@ -4268,7 +4271,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
       const items=source?.itens?.length?source.itens:[null];
       items.forEach(item=>addItem(el,item));
     }
-    function readItem(r){return {exercicioId:r.querySelector('[name=exerciseId]').value,series:Number(r.querySelector('[name=series]').value||0),repeticoes:r.querySelector('[name=reps]').value.trim(),carga:r.querySelector('[name=load]').value?Number(r.querySelector('[name=load]').value):null,unidadeCarga:r.querySelector('[name=loadUnit]').value.trim()||null,descansoSegundos:r.querySelector('[name=rest]').value?Number(r.querySelector('[name=rest]').value):null,tempoSegundos:r.querySelector('[name=time]').value?Number(r.querySelector('[name=time]').value):null,observacoes:r.querySelector('[name=itemObs]').value.trim()||null,rirAlvo:r.querySelector('[name=rirAlvo]').value===''?null:Number(r.querySelector('[name=rirAlvo]').value),cadencia:r.querySelector('[name=cadencia]').value.trim()||null,tecnicaAvancada:r.querySelector('[name=tecnicaAvancada]').value.trim()||null}}
+    function readItem(r){return {exercicioId:r.querySelector('[name=exerciseId]').value,series:Number(r.querySelector('[name=series]').value||0),repeticoes:r.querySelector('[name=reps]').value.trim(),carga:r.querySelector('[name=load]').value?Number(r.querySelector('[name=load]').value):null,unidadeCarga:r.querySelector('[name=loadUnit]').value.trim()||null,descansoSegundos:r.querySelector('[name=rest]').value?Number(r.querySelector('[name=rest]').value):null,tempoSegundos:r.querySelector('[name=time]').value?Number(r.querySelector('[name=time]').value):null,observacoes:r.querySelector('[name=itemObs]').value.trim()||null,rirAlvo:r.querySelector('[name=rirAlvo]').value===''?null:Number(r.querySelector('[name=rirAlvo]').value),cadencia:r.querySelector('[name=cadencia]').value.trim()||null,tecnicaAvancada:r.querySelector('[name=tecnicaAvancada]').value.trim()||null,tecnicaAvancadaCodigo:r.querySelector('[name=tecnicaAvancadaCodigo]').value||null,tecnicaAvancadaParametros:r.querySelector('[name=tecnicaAvancadaParametros]').value.trim()||null}}
     function addItem(session,item=null){
       const list=$('.workout-items',session),row=document.createElement('div');row.className='workout-item-builder workout-item-builder2';
       row.innerHTML=`<label class="workout-exercise-search">Buscar exercício<input name="exerciseSearch" type="search" placeholder="Nome, grupo muscular ou equipamento"></label>
@@ -4281,7 +4284,9 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
         <label>Tempo (s)<input name="time" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
         <label>RIR alvo<input name="rirAlvo" type="number" min="0" max="10" value="${item?.rirAlvo??''}"></label>
         <label>Cadência<input name="cadencia" value="${esc(item?.cadencia||'')}" placeholder="Ex.: 3-1-1-0"></label>
-        <label>Técnica avançada<input name="tecnicaAvancada" value="${esc(item?.tecnicaAvancada||'')}" placeholder="Ex.: Drop set"></label>
+        <label>Técnica (legado)<input name="tecnicaAvancada" value="${esc(item?.tecnicaAvancada||'')}" placeholder="Compatibilidade com prescrições anteriores"></label>
+        <label>Técnica estruturada<select name="tecnicaAvancadaCodigo" data-advanced-technique-v0273="${HP_ADVANCED_TECHNIQUES_V0273}">${techniqueOptions(item?.tecnicaAvancadaCodigo||'')}</select></label>
+        <label>Parâmetros da técnica<input name="tecnicaAvancadaParametros" maxlength="500" value="${esc(item?.tecnicaAvancadaParametros||'')}" placeholder="Ex.: 2 reduções; pausa 15s"></label>
         <label>Observação<input name="itemObs" value="${esc(item?.observacoes||'')}"></label>
         <div class="workout-item-tools"><button type="button" class="ghost duplicate-workout-item">Duplicar</button><button type="button" class="danger remove-workout-item" aria-label="Remover exercício" title="Remover exercício">Remover exercício</button></div>`;
       list.appendChild(row);wireExerciseFilter(row);
@@ -4338,6 +4343,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
 // ===== v0.27.0 — Workout Intelligence 3.0 Foundation =====
 
 const HP_PRESCRIBED_PERFORMED_V0272='v0.27.2';
+const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
 
@@ -4354,7 +4360,7 @@ function hpWorkoutComparisonV0272(x){
   const cell=(label,prescrito,realizado)=>`<div class="workout-compare-cell-v0272"><small>${label}</small><span><b>${esc(prescrito??'—')}</b><i>→</i><b>${esc(realizado??'—')}</b></span></div>`;
   const cargaP=x.cargaPrescrita!=null?`${num(x.cargaPrescrita,1)} ${esc(x.unidadeCargaPrescrita||'')}`.trim():'—';
   const cargaR=x.cargaRealizada!=null?`${num(x.cargaRealizada,1)} ${esc(x.unidadeCargaRealizada||x.unidadeCargaPrescrita||'')}`.trim():'—';
-  return `<article class="workout-comparison-v0272 ${performed?'performed':'missing'}" data-prescribed-performed-v0272="${HP_PRESCRIBED_PERFORMED_V0272}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.sessao||'Sessão')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${diffs.length?'Atencao':'Info'}">${performed?(diffs.length?`${diffs.length} diferença(s)`:'sem diferença registrada'):'sem execução no período'}</span></div>${performed?`<div class="workout-comparison-grid-v0272">${cell('Séries',x.seriesPrescritas,x.seriesRealizadas)}${cell('Repetições',x.repeticoesPrescritas,x.repeticoesRealizadas)}${cell('Carga',cargaP,cargaR)}${cell('RIR',x.rirAlvo,x.rirRealizado)}${cell('Cadência',x.cadenciaPrescrita,x.cadenciaRealizada)}${cell('Técnica',x.tecnicaPrescrita,x.tecnicaExecutada)}</div><small class="workout-comparison-note-v0272">${diffs.length?`Diferenças registradas: ${esc(diffs.join(', '))}.`:'Os campos comparáveis da última execução coincidem com o registrado na prescrição.'} ${x.execucoesNoPeriodo||0} execução(ões) no período.</small>`:'<small class="workout-comparison-note-v0272">Ainda não há execução concluída desse item na janela selecionada.</small>'}</article>`;
+  return `<article class="workout-comparison-v0272 ${performed?'performed':'missing'}" data-prescribed-performed-v0272="${HP_PRESCRIBED_PERFORMED_V0272}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.sessao||'Sessão')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${diffs.length?'Atencao':'Info'}">${performed?(diffs.length?`${diffs.length} diferença(s)`:'sem diferença registrada'):'sem execução no período'}</span></div>${performed?`<div class="workout-comparison-grid-v0272">${cell('Séries',x.seriesPrescritas,x.seriesRealizadas)}${cell('Repetições',x.repeticoesPrescritas,x.repeticoesRealizadas)}${cell('Carga',cargaP,cargaR)}${cell('RIR',x.rirAlvo,x.rirRealizado)}${cell('Cadência',x.cadenciaPrescrita,x.cadenciaRealizada)}${cell('Técnica',x.tecnicaCodigoPrescrita||x.tecnicaPrescrita,x.tecnicaCodigoExecutada||x.tecnicaExecutada)}</div><small class="workout-comparison-note-v0272">${diffs.length?`Diferenças registradas: ${esc(diffs.join(', '))}.`:'Os campos comparáveis da última execução coincidem com o registrado na prescrição.'} ${x.execucoesNoPeriodo||0} execução(ões) no período.</small>`:'<small class="workout-comparison-note-v0272">Ainda não há execução concluída desse item na janela selecionada.</small>'}</article>`;
 }
 
 async function loadWorkoutIntelligenceV0270(patient){
@@ -5645,7 +5651,7 @@ async function loadPatientWorkout(){
           <div class="patient-exercise-card">
             <div class="exercise-order">${idx+1}</div>
             <div class="exercise-main"><div class="exercise-title"><strong>${esc(i.exercicio)}</strong>${i.grupoMuscular?`<small>${esc(i.grupoMuscular)}${i.equipamento?' • '+esc(i.equipamento):''}</small>`:''}</div>
-              <div class="exercise-prescription"><b>${i.series} × ${esc(i.repeticoes)}</b>${i.carga!=null?`<span>${num(i.carga)} ${esc(i.unidadeCarga||'kg')}</span>`:''}${i.descansoSegundos!=null?`<span>${i.descansoSegundos}s descanso</span>`:''}${i.tempoSegundos!=null?`<span>${i.tempoSegundos}s execução</span>`:''}${i.rirAlvo!=null?`<span>RIR ${i.rirAlvo}</span>`:''}${i.cadencia?`<span>Cadência ${esc(i.cadencia)}</span>`:''}${i.tecnicaAvancada?`<span>${esc(i.tecnicaAvancada)}</span>`:''}</div>
+              <div class="exercise-prescription"><b>${i.series} × ${esc(i.repeticoes)}</b>${i.carga!=null?`<span>${num(i.carga)} ${esc(i.unidadeCarga||'kg')}</span>`:''}${i.descansoSegundos!=null?`<span>${i.descansoSegundos}s descanso</span>`:''}${i.tempoSegundos!=null?`<span>${i.tempoSegundos}s execução</span>`:''}${i.rirAlvo!=null?`<span>RIR ${i.rirAlvo}</span>`:''}${i.cadencia?`<span>Cadência ${esc(i.cadencia)}</span>`:''}${(i.tecnicaAvancadaCodigo||i.tecnicaAvancada)?`<span>Técnica ${esc(i.tecnicaAvancadaCodigo||i.tecnicaAvancada)}</span>`:''}${i.tecnicaAvancadaParametros?`<span>${esc(i.tecnicaAvancadaParametros)}</span>`:''}</div>
               ${i.observacoes?`<p>${esc(i.observacoes)}</p>`:''}
             </div>
             ${i.videoUrl?`<a class="exercise-video" href="${esc(i.videoUrl)}" target="_blank" rel="noopener noreferrer">▶ Ver vídeo</a>`:''}
@@ -9417,7 +9423,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.27.2';
+const HP_MVP_VERSION='0.27.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

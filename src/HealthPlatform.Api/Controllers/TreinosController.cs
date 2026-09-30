@@ -36,7 +36,9 @@ public sealed class TreinosController(
         string? Observacoes,
         int? RirAlvo = null,
         string? Cadencia = null,
-        string? TecnicaAvancada = null);
+        string? TecnicaAvancada = null,
+        string? TecnicaAvancadaCodigo = null,
+        string? TecnicaAvancadaParametros = null);
 
     public sealed record SessaoTreinoRequest(
         string Nome,
@@ -76,6 +78,14 @@ public sealed class TreinosController(
         int PrescricoesRepeticoesPreservadas,
         decimal SomaCargasAtual,
         decimal SomaCargasProjetada);
+
+    [HttpGet("api/treinos/tecnicas-avancadas")]
+    public IActionResult ListarTecnicasAvancadas() => Ok(new
+    {
+        versao = "v0.27.3",
+        itens = AdvancedTechniqueCatalog.Listar(),
+        regraDeUso = "Catálogo editorial para prescrição profissional. O AESYN não seleciona nem aplica técnicas automaticamente."
+    });
 
     [HttpGet("api/exercicios")]
     public async Task<IActionResult> ListarExercicios(
@@ -499,7 +509,9 @@ public sealed class TreinosController(
                     Observacoes = itemOrigem.Observacoes,
                     RirAlvo = itemOrigem.RirAlvo,
                     Cadencia = itemOrigem.Cadencia,
-                    TecnicaAvancada = itemOrigem.TecnicaAvancada
+                    TecnicaAvancada = itemOrigem.TecnicaAvancada,
+                    TecnicaAvancadaCodigo = itemOrigem.TecnicaAvancadaCodigo,
+                    TecnicaAvancadaParametros = itemOrigem.TecnicaAvancadaParametros
                 });
             }
 
@@ -667,6 +679,11 @@ public sealed class TreinosController(
             (x.RirAlvo.HasValue && (x.RirAlvo < 0 || x.RirAlvo > 10))))
             return "Series, repeticoes, descanso e tempo possuem valores invalidos.";
 
+        if (itens.Any(x => !string.IsNullOrWhiteSpace(x.TecnicaAvancadaCodigo) && AdvancedTechniqueCatalog.NormalizarCodigo(x.TecnicaAvancadaCodigo) is null))
+            return "Tecnica avancada estruturada invalida. Use um codigo disponivel no catalogo.";
+        if (itens.Any(x => (x.TecnicaAvancadaParametros?.Length ?? 0) > 500))
+            return "Parametros da tecnica avancada devem ter no maximo 500 caracteres.";
+
         var ids = itens.Select(x => x.ExercicioId).Distinct().ToArray();
         var validos = await db.Exercicios.CountAsync(x =>
             ids.Contains(x.Id) &&
@@ -710,7 +727,9 @@ public sealed class TreinosController(
                     Observacoes = Limpar(i.Observacoes),
                     RirAlvo = i.RirAlvo,
                     Cadencia = Limpar(i.Cadencia),
-                    TecnicaAvancada = Limpar(i.TecnicaAvancada)
+                    TecnicaAvancada = Limpar(i.TecnicaAvancada),
+                    TecnicaAvancadaCodigo = AdvancedTechniqueCatalog.NormalizarCodigo(i.TecnicaAvancadaCodigo),
+                    TecnicaAvancadaParametros = Limpar(i.TecnicaAvancadaParametros)
                 });
             }
 
@@ -759,6 +778,11 @@ public sealed class TreinosController(
                 i.UnidadeCarga,
                 i.DescansoSegundos,
                 i.TempoSegundos,
+                i.RirAlvo,
+                i.Cadencia,
+                i.TecnicaAvancada,
+                i.TecnicaAvancadaCodigo,
+                i.TecnicaAvancadaParametros,
                 i.Observacoes
             })
         }),
@@ -822,7 +846,7 @@ public sealed class TreinosController(
             {
                 i.ExercicioId, i.Ordem, i.Series, i.Repeticoes,
                 i.Carga, i.UnidadeCarga, i.DescansoSegundos,
-                i.TempoSegundos, i.RirAlvo, i.Cadencia, i.TecnicaAvancada, i.Observacoes
+                i.TempoSegundos, i.RirAlvo, i.Cadencia, i.TecnicaAvancada, i.TecnicaAvancadaCodigo, i.TecnicaAvancadaParametros, i.Observacoes
             })
         })
     };

@@ -16,6 +16,8 @@ public class ItemTreino : BaseEntity
     public int? RirAlvo { get; set; }
     public string? Cadencia { get; set; }
     public string? TecnicaAvancada { get; set; }
+    public string? TecnicaAvancadaCodigo { get; set; }
+    public string? TecnicaAvancadaParametros { get; set; }
     public string? Observacoes { get; set; }
 
     public SessaoTreino SessaoTreino { get; set; } = null!;

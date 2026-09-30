@@ -880,3 +880,21 @@ A camada de Workout Intelligence passa a comparar, por exercício, a prescriçã
 - nenhuma mudança automática de carga, volume, RIR, cadência, técnica ou prescrição.
 
 Próxima etapa: **v0.27.3 — Advanced Techniques 3.0**.
+
+
+## v0.27.3 — Advanced Techniques 3.0
+
+Técnicas avançadas deixam de depender apenas de texto livre e passam a possuir **código estruturado + parâmetros opcionais**, preservando o campo legado para compatibilidade.
+
+**Catálogo inicial:** Drop set, Bi-set, Rest-pause, Cluster, Myo-reps, Isometria, Pré-exaustão e Tempo controlado.
+
+**Entregue na v0.27.3:**
+- endpoint `GET /api/treinos/tecnicas-avancadas`;
+- `TecnicaAvancadaCodigo` e `TecnicaAvancadaParametros` na prescrição;
+- `TecnicaExecutadaCodigo` e `TecnicaExecutadaParametros` na execução;
+- Workout Builder com seleção estruturada e parâmetros;
+- compatibilidade com `TecnicaAvancada`/`TecnicaExecutada` legados;
+- Workout Intelligence compara código estruturado antes do texto legado;
+- o AESYN não escolhe, combina ou aplica técnica automaticamente.
+
+Próxima etapa: **v0.27.4 — Progression & Regression 3.0**.

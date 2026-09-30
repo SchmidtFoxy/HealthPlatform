@@ -14,6 +14,8 @@ public class ExecucaoItemTreino : BaseEntity
     public int? RirRealizado { get; set; }
     public string? CadenciaRealizada { get; set; }
     public string? TecnicaExecutada { get; set; }
+    public string? TecnicaExecutadaCodigo { get; set; }
+    public string? TecnicaExecutadaParametros { get; set; }
     public bool Concluido { get; set; } = true;
     public string? Observacoes { get; set; }
 

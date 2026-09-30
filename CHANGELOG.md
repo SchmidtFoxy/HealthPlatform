@@ -3539,3 +3539,14 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Guardrail: diferenças são contexto; não geram score de adesão nem alteração automática da prescrição.
 - Sem migration nova.
 - Próxima etapa: v0.27.3 — Advanced Techniques 3.0.
+
+
+## v0.27.3 — Advanced Techniques 3.0
+- Adiciona catálogo estruturado de técnicas avançadas no backend.
+- Persiste código e parâmetros de técnica na prescrição e execução.
+- Mantém `TecnicaAvancada` e `TecnicaExecutada` para compatibilidade retroativa.
+- Workout Builder passa a oferecer seleção estruturada.
+- Workout Intelligence compara o código estruturado quando disponível.
+- Migration `20260930083000_V0273AdvancedTechniques`.
+- Guardrail: o AESYN não escolhe, combina ou aplica técnicas automaticamente.
+- Próxima etapa: v0.27.4 — Progression & Regression 3.0.

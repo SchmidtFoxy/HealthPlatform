@@ -7,5 +7,6 @@ public sealed record WorkoutIntelligenceComparisonResponse(
     int SeriesPrescritas, int? SeriesRealizadas, string RepeticoesPrescritas, string? RepeticoesRealizadas,
     decimal? CargaPrescrita, string? UnidadeCargaPrescrita, decimal? CargaRealizada, string? UnidadeCargaRealizada,
     int? RirAlvo, int? RirRealizado, string? CadenciaPrescrita, string? CadenciaRealizada,
-    string? TecnicaPrescrita, string? TecnicaExecutada, IReadOnlyCollection<string> Diferencas);
+    string? TecnicaPrescrita, string? TecnicaExecutada, string? TecnicaCodigoPrescrita, string? TecnicaCodigoExecutada,
+    string? TecnicaParametrosPrescritos, string? TecnicaParametrosExecutados, IReadOnlyCollection<string> Diferencas);
 public sealed record WorkoutIntelligenceResponse(string Versao,int PeriodoDias,Guid? PlanoId,string? Plano,string? StatusPlano,int SessoesPlanejadas,int ItensPlanejados,int SessoesExecutadas,int ItensExecutados,WorkoutIntelligenceSummaryResponse Resumo,IReadOnlyCollection<WorkoutIntelligenceDimensionResponse> Dimensoes,IReadOnlyCollection<WorkoutIntelligenceComparisonResponse> Comparacoes,IReadOnlyCollection<string> ProximasCamadas,string RegraDeUso);

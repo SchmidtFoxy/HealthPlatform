@@ -39,7 +39,7 @@ public static class WorkoutIntelligenceService
             DimensaoExecucao("rpe", "RPE", execucoes.Count(x => x.EsforcoPercebido.HasValue), execucoes.Count, "RPE de sessão e esforço percebido por item contextualizam a execução."),
             Dimensao("rir", "RIR", "Prescrição + execução", itensPlano.Count(x => x.RirAlvo.HasValue), itensPlano.Count, itensExecucao.Count(x => x.RirRealizado.HasValue), itensExecucao.Count, "RIR-alvo e RIR realizado possuem campos estruturados próprios."),
             Dimensao("cadencia", "Cadência", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.Cadencia)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.CadenciaRealizada)), itensExecucao.Count, "Cadência prescrita e realizada são preservadas como texto estruturado, sem inferência automática."),
-            Dimensao("tecnicas", "Técnicas avançadas", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaAvancada)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaExecutada)), itensExecucao.Count, "Técnica avançada prescrita e técnica executada ficam explícitas para comparação descritiva."),
+            Dimensao("tecnicas", "Técnicas avançadas", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaAvancadaCodigo) || !string.IsNullOrWhiteSpace(x.TecnicaAvancada)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaExecutadaCodigo) || !string.IsNullOrWhiteSpace(x.TecnicaExecutada)), itensExecucao.Count, "Advanced Techniques 3.0 preserva código estruturado, parâmetros e texto legado para compatibilidade."),
             NaoEstruturada("periodizacao", "Microciclo / mesociclo / bloco", "Fases e programas existem, mas a periodização 3.0 ainda será consolidada como camada própria.")
         };
 
@@ -65,7 +65,8 @@ public static class WorkoutIntelligenceService
                         item.Series, ultimo?.Item.SeriesRealizadas, item.Repeticoes, ultimo?.Item.RepeticoesRealizadas,
                         item.Carga, item.UnidadeCarga, ultimo?.Item.CargaRealizada, ultimo?.Item.UnidadeCarga,
                         item.RirAlvo, ultimo?.Item.RirRealizado, item.Cadencia, ultimo?.Item.CadenciaRealizada,
-                        item.TecnicaAvancada, ultimo?.Item.TecnicaExecutada, diferencas));
+                        item.TecnicaAvancada, ultimo?.Item.TecnicaExecutada, item.TecnicaAvancadaCodigo, ultimo?.Item.TecnicaExecutadaCodigo,
+                        item.TecnicaAvancadaParametros, ultimo?.Item.TecnicaExecutadaParametros, diferencas));
                 }
             }
         }
@@ -80,10 +81,10 @@ public static class WorkoutIntelligenceService
             comparacoes.Count(x => x.ExecucoesNoPeriodo > 0), comparacoes.Count(x => x.Estado == "DiferencasRegistradas"));
 
         return new WorkoutIntelligenceResponse(
-            "v0.27.2", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
+            "v0.27.3", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
             resumo, dimensoes, comparacoes,
-            new[] { "Técnicas avançadas 3.0 como contrato reutilizável.", "Progressão/regressão explicável, sempre revisada pelo profissional.", "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
-            "Prescribed vs Performed 3.0 compara somente dados registrados. Diferença não significa erro, baixa adesão ou necessidade de ajuste; o AESYN não altera automaticamente carga, volume, RIR, cadência, técnica ou prescrição.");
+            new[] { "Progressão/regressão explicável, sempre revisada pelo profissional.", "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
+            "Advanced Techniques 3.0 estrutura catálogo, código e parâmetros para técnicas prescritas/realizadas. O AESYN não escolhe técnica, não combina exercícios e não altera automaticamente carga, volume, RIR, cadência, técnica ou prescrição.");
     }
 
     private static List<string> Comparar(ItemTreino prescrito, ExecucaoItemTreino realizado)
@@ -94,7 +95,9 @@ public static class WorkoutIntelligenceService
         if (prescrito.Carga.HasValue && realizado.CargaRealizada.HasValue && prescrito.Carga.Value != realizado.CargaRealizada.Value) diferencas.Add("Carga");
         if (prescrito.RirAlvo.HasValue && realizado.RirRealizado.HasValue && prescrito.RirAlvo.Value != realizado.RirRealizado.Value) diferencas.Add("RIR");
         if (!string.IsNullOrWhiteSpace(prescrito.Cadencia) && !string.IsNullOrWhiteSpace(realizado.CadenciaRealizada) && !TextoIgual(prescrito.Cadencia, realizado.CadenciaRealizada)) diferencas.Add("Cadência");
-        if (!string.IsNullOrWhiteSpace(prescrito.TecnicaAvancada) && !string.IsNullOrWhiteSpace(realizado.TecnicaExecutada) && !TextoIgual(prescrito.TecnicaAvancada, realizado.TecnicaExecutada)) diferencas.Add("Técnica");
+        if (!string.IsNullOrWhiteSpace(prescrito.TecnicaAvancadaCodigo) && !string.IsNullOrWhiteSpace(realizado.TecnicaExecutadaCodigo) && !TextoIgual(prescrito.TecnicaAvancadaCodigo, realizado.TecnicaExecutadaCodigo)) diferencas.Add("Técnica");
+        else if (string.IsNullOrWhiteSpace(prescrito.TecnicaAvancadaCodigo) && string.IsNullOrWhiteSpace(realizado.TecnicaExecutadaCodigo) && !string.IsNullOrWhiteSpace(prescrito.TecnicaAvancada) && !string.IsNullOrWhiteSpace(realizado.TecnicaExecutada) && !TextoIgual(prescrito.TecnicaAvancada, realizado.TecnicaExecutada)) diferencas.Add("Técnica");
+        if (!string.IsNullOrWhiteSpace(prescrito.TecnicaAvancadaParametros) && !string.IsNullOrWhiteSpace(realizado.TecnicaExecutadaParametros) && !TextoIgual(prescrito.TecnicaAvancadaParametros, realizado.TecnicaExecutadaParametros)) diferencas.Add("Parâmetros da técnica");
         return diferencas;
     }
 

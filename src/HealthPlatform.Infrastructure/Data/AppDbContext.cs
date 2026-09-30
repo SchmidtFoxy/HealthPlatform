@@ -1,4 +1,4 @@
-﻿using HealthPlatform.Domain.Common;
+using HealthPlatform.Domain.Common;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -668,6 +668,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.UnidadeCarga).HasMaxLength(20);
             entity.Property(x => x.Cadencia).HasMaxLength(40);
             entity.Property(x => x.TecnicaAvancada).HasMaxLength(80);
+            entity.Property(x => x.TecnicaAvancadaCodigo).HasMaxLength(40);
+            entity.Property(x => x.TecnicaAvancadaParametros).HasMaxLength(500);
             entity.HasIndex(x => new { x.SessaoTreinoId, x.Ordem });
             entity.HasOne(x => x.SessaoTreino).WithMany(x => x.Itens)
                 .HasForeignKey(x => x.SessaoTreinoId).OnDelete(DeleteBehavior.Cascade);
@@ -698,6 +700,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.UnidadeCarga).HasMaxLength(20);
             entity.Property(x => x.CadenciaRealizada).HasMaxLength(40);
             entity.Property(x => x.TecnicaExecutada).HasMaxLength(80);
+            entity.Property(x => x.TecnicaExecutadaCodigo).HasMaxLength(40);
+            entity.Property(x => x.TecnicaExecutadaParametros).HasMaxLength(500);
             entity.Property(x => x.Observacoes).HasMaxLength(1000);
             entity.HasIndex(x => x.ExecucaoTreinoId);
             entity.HasIndex(x => x.ItemTreinoId);

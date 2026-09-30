@@ -22,7 +22,9 @@ public sealed record ExecucaoItemTreinoRequest(
     string? MotivoAlternativa,
     int? RirRealizado = null,
     string? CadenciaRealizada = null,
-    string? TecnicaExecutada = null);
+    string? TecnicaExecutada = null,
+    string? TecnicaExecutadaCodigo = null,
+    string? TecnicaExecutadaParametros = null);
 
 public sealed record RegistrarExecucaoTreinoRequest(
     Guid SessaoTreinoId,
@@ -105,6 +107,11 @@ public sealed class ExecucoesTreinoPacienteController(
         if (!duracao.HasValue && fim.HasValue && fim.Value >= inicio)
             duracao = (int)Math.Round((fim.Value - inicio).TotalMinutes);
 
+        if (request.Itens.Any(x => !string.IsNullOrWhiteSpace(x.TecnicaExecutadaCodigo) && AdvancedTechniqueCatalog.NormalizarCodigo(x.TecnicaExecutadaCodigo) is null))
+            return BadRequest(new { message = "Tecnica executada estruturada invalida. Use um codigo disponivel no catalogo." });
+        if (request.Itens.Any(x => (x.TecnicaExecutadaParametros?.Length ?? 0) > 500))
+            return BadRequest(new { message = "Parametros da tecnica executada devem ter no maximo 500 caracteres." });
+
         var execucao = new ExecucaoTreino
         {
             PacienteId = paciente.Id,
@@ -131,6 +138,8 @@ public sealed class ExecucoesTreinoPacienteController(
                 RirRealizado = i.RirRealizado,
                 CadenciaRealizada = Limpar(i.CadenciaRealizada),
                 TecnicaExecutada = Limpar(i.TecnicaExecutada),
+                TecnicaExecutadaCodigo = AdvancedTechniqueCatalog.NormalizarCodigo(i.TecnicaExecutadaCodigo),
+                TecnicaExecutadaParametros = Limpar(i.TecnicaExecutadaParametros),
                 Concluido = i.Concluido,
                 Observacoes = MontarObservacaoItem(i.Observacoes, i.ExercicioAlternativoId,
                     i.ExercicioAlternativoId.HasValue && alternativas.TryGetValue(i.ExercicioAlternativoId.Value, out var alternativa) ? alternativa.Nome : null,
@@ -271,6 +280,8 @@ public sealed class ExecucoesTreinoPacienteController(
             i.RirRealizado,
             i.CadenciaRealizada,
             i.TecnicaExecutada,
+            i.TecnicaExecutadaCodigo,
+            i.TecnicaExecutadaParametros,
             i.Concluido,
             i.Observacoes
         })
