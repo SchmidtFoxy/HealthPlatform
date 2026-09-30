@@ -2007,5 +2007,19 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - nenhuma estimativa de 1RM, certificação de habilidade ou recorde fabricado;
 - sem migration nova.
 
-**Próxima etapa:** `v0.28.1 — Performance Records 2.0`.
+**Próxima etapa concluída em `v0.28.1 — Performance Records 2.0`.
+
+## ✅ v0.28.1 — Performance Records 2.0 — CONCLUÍDA
+
+**Entregue na v0.28.1:**
+- records estruturados dentro do Athlete Performance Passport;
+- melhor carga observada;
+- melhor volume estimado identificado como dado derivado;
+- separação por exercício e unidade;
+- data, recência e quantidade de registros comparáveis;
+- evolução percentual de carga quando existe base comparável;
+- endpoints profissional e paciente para records;
+- sem migration nova.
+
+**Próxima etapa:** `v0.28.2 — Timed Performance 2.0`.
 

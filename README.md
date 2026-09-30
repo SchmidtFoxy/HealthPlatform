@@ -950,3 +950,23 @@ O Athlete Performance Passport **não estima 1RM, não fabrica recordes, não ce
 
 **Próxima etapa:** `v0.28.1 — Performance Records 2.0`.
 
+---
+
+## v0.28.1 — Performance Records 2.0
+
+O Athlete Performance Passport passa a separar formalmente **recordes observados** de **marcas derivadas**.
+
+### Entregue
+- `MelhorCarga` como recorde `Observado`;
+- `MelhorVolumeEstimado` como marca `Derivado`;
+- comparação sempre limitada ao mesmo exercício e à mesma unidade;
+- data da marca, recência e quantidade de registros comparáveis;
+- evolução percentual da melhor carga em relação ao primeiro registro comparável;
+- endpoints dedicados de records para profissional e paciente;
+- compatibilidade com o contrato Foundation preservada.
+
+### Guardrail
+Performance Records 2.0 **não mistura unidades, não estima 1RM, não transforma volume derivado em carga observada e não fabrica recordes**.
+
+**Próxima etapa:** `v0.28.2 — Timed Performance 2.0`.
+

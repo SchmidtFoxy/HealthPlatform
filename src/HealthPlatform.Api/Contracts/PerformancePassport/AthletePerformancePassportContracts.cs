@@ -7,8 +7,28 @@ public sealed record AthletePerformancePassportRecordResponse(
     Guid ExercicioId, string Exercicio, string? GrupoMuscular, string Tipo, decimal? Valor, string? Unidade,
     DateTime? DataUtc, bool Recente, int Registros, string Fonte);
 
+
+public sealed record AthletePerformanceRecordResponse(
+    Guid ExercicioId,
+    string Exercicio,
+    string? GrupoMuscular,
+    string Tipo,
+    string Natureza,
+    decimal Valor,
+    string Unidade,
+    DateTime DataUtc,
+    bool Recente,
+    int RegistrosComparaveis,
+    decimal? EvolucaoDesdePrimeiroPercentual,
+    string Criterio,
+    string Fonte);
+
 public sealed record AthletePerformancePassportResponse(
     string Versao, int DiasObservados, int TreinosObservados, int RecordesRecentes, string Estado,
     IReadOnlyCollection<AthletePerformancePassportDomainResponse> Dominios,
     IReadOnlyCollection<AthletePerformancePassportRecordResponse> MelhoresMarcas,
-    string RegraDeUso);
+    string RegraDeUso)
+{
+    public IReadOnlyCollection<AthletePerformanceRecordResponse> Recordes { get; init; } =
+        Array.Empty<AthletePerformanceRecordResponse>();
+}

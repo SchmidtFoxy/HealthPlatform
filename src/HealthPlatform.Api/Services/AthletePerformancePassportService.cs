@@ -1,15 +1,20 @@
+using System.Text.RegularExpressions;
 using HealthPlatform.Api.Contracts.PerformancePassport;
 using HealthPlatform.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPlatform.Api.Services;
 
 public static class AthletePerformancePassportService
 {
     public static async Task<AthletePerformancePassportResponse> MontarAsync(
-        AppDbContext db, Guid pacienteId, CancellationToken ct)
+        AppDbContext db,
+        Guid pacienteId,
+        CancellationToken ct)
     {
         var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, hoje, ct);
+        var recordes = await MontarRecordesAsync(db, pacienteId, hoje, ct);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -29,22 +34,24 @@ public static class AthletePerformancePassportService
             .ThenBy(x => x.Exercicio)
             .ToArray();
 
+        var recordesObservados = recordes.Count(x => x.Natureza == "Observado");
+
         var dominios = new AthletePerformancePassportDomainResponse[]
         {
             new(
                 "cargas",
                 "Cargas",
-                melhoresMarcas.Length > 0 ? "ComDados" : "SemDados",
+                recordesObservados > 0 ? "ComDados" : "SemDados",
                 "Execuções de treino concluídas",
-                melhoresMarcas.Length,
-                "Melhores cargas são comparadas apenas dentro do mesmo exercício e da mesma unidade."),
+                recordesObservados,
+                "Melhores cargas são comparadas apenas no mesmo exercício e na mesma unidade."),
             new(
                 "recordes",
                 "Recordes",
-                melhoresMarcas.Length > 0 ? "ComDados" : "SemDados",
-                "Melhores cargas registradas",
-                performance.PrsRecentes,
-                "PR significa melhor carga efetivamente registrada; o AESYN não estima 1RM."),
+                recordes.Count > 0 ? "ComDados" : "SemDados",
+                "Performance Records 2.0",
+                recordes.Count,
+                "Recordes observados e marcas derivadas são identificados separadamente."),
             new(
                 "tempos",
                 "Tempos",
@@ -76,22 +83,179 @@ public static class AthletePerformancePassportService
             new(
                 "marcos",
                 "Marcos",
-                melhoresMarcas.Length > 0 ? "BaseDisponivel" : "SemDados",
-                "Melhores marcas registradas",
-                melhoresMarcas.Length,
-                "A Foundation usa melhores marcas como base de marcos, sem criar conquistas retroativas.")
+                recordes.Count > 0 ? "BaseDisponivel" : "SemDados",
+                "Performance Records 2.0",
+                recordes.Count,
+                "Os records formam base para marcos futuros, sem criar conquistas retroativas.")
         };
 
-        var estado = melhoresMarcas.Length > 0 ? "BaseDePerformance" : "BaseEmConstrucao";
+        var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.28.0",
+            "v0.28.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Athlete Performance Passport consolida somente registros existentes. Não estima 1RM, não fabrica recordes, não certifica habilidade e não substitui avaliação profissional.");
+            "Performance Records 2.0 consolida registros comparáveis existentes. Não mistura unidades, não estima 1RM, não transforma volume derivado em carga observada e não fabrica recordes.")
+        {
+            Recordes = recordes
+        };
+    }
+
+    public static async Task<IReadOnlyCollection<AthletePerformanceRecordResponse>> MontarRecordesAsync(
+        AppDbContext db,
+        Guid pacienteId,
+        DateOnly dia,
+        CancellationToken ct)
+    {
+        const int diasObservados = 180;
+        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var recenteDesdeUtc = dia.AddDays(-6).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+
+        var itens = await db.ExecucoesItensTreino.AsNoTracking()
+            .Where(x =>
+                x.ExecucaoTreino.PacienteId == pacienteId &&
+                x.ExecucaoTreino.Status == "Concluido" &&
+                x.ExecucaoTreino.DataHoraInicioUtc >= inicioUtc &&
+                x.ExecucaoTreino.DataHoraInicioUtc < fimUtc &&
+                x.Concluido)
+            .Select(x => new
+            {
+                x.ItemTreino.ExercicioId,
+                Exercicio = x.ItemTreino.Exercicio.Nome,
+                GrupoMuscular = x.ItemTreino.Exercicio.GrupoMuscular,
+                x.CargaRealizada,
+                UnidadeCarga = x.UnidadeCarga ?? x.ItemTreino.UnidadeCarga,
+                x.SeriesRealizadas,
+                x.RepeticoesRealizadas,
+                x.ExecucaoTreino.DataHoraInicioUtc
+            })
+            .ToListAsync(ct);
+
+        var records = new List<AthletePerformanceRecordResponse>();
+
+        foreach (var grupo in itens
+            .Where(x => x.CargaRealizada.HasValue && x.CargaRealizada.Value > 0m)
+            .GroupBy(x => new
+            {
+                x.ExercicioId,
+                x.Exercicio,
+                x.GrupoMuscular,
+                Unidade = NormalizarUnidade(x.UnidadeCarga)
+            }))
+        {
+            var comparaveis = grupo
+                .OrderBy(x => x.DataHoraInicioUtc)
+                .ToList();
+
+            if (comparaveis.Count == 0)
+                continue;
+
+            var melhorCarga = comparaveis
+                .OrderByDescending(x => x.CargaRealizada)
+                .ThenByDescending(x => x.DataHoraInicioUtc)
+                .First();
+
+            var primeiraCarga = comparaveis.First().CargaRealizada;
+            decimal? evolucaoCarga = null;
+            if (primeiraCarga.HasValue && primeiraCarga.Value > 0m && melhorCarga.CargaRealizada.HasValue)
+            {
+                evolucaoCarga = Math.Round(
+                    (melhorCarga.CargaRealizada.Value - primeiraCarga.Value) / primeiraCarga.Value * 100m,
+                    1);
+            }
+
+            records.Add(new AthletePerformanceRecordResponse(
+                grupo.Key.ExercicioId,
+                grupo.Key.Exercicio,
+                grupo.Key.GrupoMuscular,
+                "MelhorCarga",
+                "Observado",
+                melhorCarga.CargaRealizada!.Value,
+                grupo.Key.Unidade,
+                melhorCarga.DataHoraInicioUtc,
+                melhorCarga.DataHoraInicioUtc >= recenteDesdeUtc,
+                comparaveis.Count,
+                evolucaoCarga,
+                "Maior carga efetivamente registrada no mesmo exercício e na mesma unidade dentro de 180 dias.",
+                "ExecucoesTreino"));
+
+            var volumes = comparaveis
+                .Select(x => new
+                {
+                    Item = x,
+                    Volume = CalcularVolumeEstimado(
+                        x.CargaRealizada,
+                        x.SeriesRealizadas,
+                        x.RepeticoesRealizadas)
+                })
+                .Where(x => x.Volume.HasValue)
+                .ToList();
+
+            if (volumes.Count > 0)
+            {
+                var melhorVolume = volumes
+                    .OrderByDescending(x => x.Volume)
+                    .ThenByDescending(x => x.Item.DataHoraInicioUtc)
+                    .First();
+
+                records.Add(new AthletePerformanceRecordResponse(
+                    grupo.Key.ExercicioId,
+                    grupo.Key.Exercicio,
+                    grupo.Key.GrupoMuscular,
+                    "MelhorVolumeEstimado",
+                    "Derivado",
+                    melhorVolume.Volume!.Value,
+                    $"{grupo.Key.Unidade}·rep",
+                    melhorVolume.Item.DataHoraInicioUtc,
+                    melhorVolume.Item.DataHoraInicioUtc >= recenteDesdeUtc,
+                    volumes.Count,
+                    null,
+                    "Maior carga × repetições estimadas no mesmo exercício e unidade; é uma marca derivada, não uma carga observada.",
+                    "ExecucoesTreino"));
+            }
+        }
+
+        return records
+            .OrderByDescending(x => x.Recente)
+            .ThenBy(x => x.Natureza == "Observado" ? 0 : 1)
+            .ThenByDescending(x => x.DataUtc)
+            .ThenBy(x => x.Exercicio)
+            .ThenBy(x => x.Tipo)
+            .ToArray();
+    }
+
+    private static string NormalizarUnidade(string? unidade) =>
+        string.IsNullOrWhiteSpace(unidade) ? "unidade-nao-informada" : unidade.Trim().ToLowerInvariant();
+
+    private static decimal? CalcularVolumeEstimado(decimal? carga, int? series, string? repeticoes)
+    {
+        if (!carga.HasValue || carga.Value <= 0m || string.IsNullOrWhiteSpace(repeticoes))
+            return null;
+
+        var numeros = Regex.Matches(repeticoes, @"\d+")
+            .Select(x => int.Parse(x.Value))
+            .ToArray();
+
+        if (numeros.Length == 0)
+            return null;
+
+        int totalRepeticoes;
+        if (repeticoes.Contains(',') || repeticoes.Contains(';') || repeticoes.Contains('/'))
+        {
+            totalRepeticoes = numeros.Sum();
+        }
+        else
+        {
+            totalRepeticoes = numeros[0] * Math.Max(1, series ?? 1);
+        }
+
+        return totalRepeticoes <= 0
+            ? null
+            : Math.Round(carga.Value * totalRepeticoes, 1);
     }
 }

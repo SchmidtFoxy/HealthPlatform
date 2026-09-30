@@ -1,4 +1,19 @@
-﻿# v0.28.0 — Athlete Performance Passport Foundation
+﻿# v0.28.1 — Performance Records 2.0
+
+- Adiciona `AthletePerformanceRecordResponse`.
+- Expande o passaporte com a coleção `Recordes`.
+- Registra `MelhorCarga` como `Observado`.
+- Registra `MelhorVolumeEstimado` como `Derivado`.
+- Mantém comparação isolada por exercício e unidade.
+- Adiciona data, recência, registros comparáveis e evolução percentual quando aplicável.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte/recordes`.
+- Adiciona `GET /api/portal/me/performance/passaporte/recordes`.
+- Atualiza o painel profissional para Performance Records 2.0.
+- Guardrail: não mistura unidades, não estima 1RM, não transforma volume derivado em carga observada e não fabrica recordes.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.28.2 — Timed Performance 2.0.
+
+# v0.28.0 — Athlete Performance Passport Foundation
 
 - Adiciona contrato dedicado do Athlete Performance Passport.
 - Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte`.

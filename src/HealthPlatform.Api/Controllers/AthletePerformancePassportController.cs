@@ -43,4 +43,45 @@ public sealed class AthletePerformancePassportController(
 
         return Ok(await AthletePerformancePassportService.MontarAsync(db, pacienteId.Value, ct));
     }
+
+    [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte/recordes")]
+    public async Task<IActionResult> RecordesProfissional(Guid pacienteId, CancellationToken ct = default)
+    {
+        var existe = await db.Pacientes.AsNoTracking().AnyAsync(x =>
+            x.Id == pacienteId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+
+        if (!existe)
+            return NotFound(new { message = "Paciente nao encontrado." });
+
+        return Ok(await AthletePerformancePassportService.MontarRecordesAsync(
+            db,
+            pacienteId,
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            ct));
+    }
+
+    [Authorize(Policy = "PatientOnly")]
+    [HttpGet("api/portal/me/performance/passaporte/recordes")]
+    public async Task<IActionResult> RecordesPaciente(CancellationToken ct = default)
+    {
+        var pacienteId = await db.Pacientes.AsNoTracking()
+            .Where(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .Select(x => (Guid?)x.Id)
+            .FirstOrDefaultAsync(ct);
+
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        return Ok(await AthletePerformancePassportService.MontarRecordesAsync(
+            db,
+            pacienteId.Value,
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            ct));
+    }
+
 }

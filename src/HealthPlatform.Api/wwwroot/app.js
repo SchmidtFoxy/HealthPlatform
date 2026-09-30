@@ -4346,6 +4346,7 @@ const HP_PRESCRIBED_PERFORMED_V0272='v0.27.2';
 const HP_PROGRESSION_REGRESSION_V0274='v0.27.4';
 const HP_PERIODIZATION_V0275='v0.27.5';
 const HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0';
+const HP_PERFORMANCE_RECORDS_V0281='v0.28.1';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4386,6 +4387,13 @@ function hpAthletePassportDomainV0280(x){
   return `<article class="workout-intelligence-dimension-v0270"><div><b>${esc(x.nome||x.codigo||'Domínio')}</b><span class="pill ${tone}">${esc(x.estado||'')}</span></div><small>${esc(x.origem||'')}</small><p>${esc(x.observacao||'')}</p><em>${x.registros??0} registro(s)</em></article>`;
 }
 
+
+function hpPerformanceRecordV0281(x){
+  const when=x.dataUtc?new Date(x.dataUtc).toLocaleDateString('pt-BR'):'—';
+  const observed=x.natureza==='Observado';
+  return `<article class="workout-progression-signal-v0274 performance-record-v0281"><div class="workout-comparison-head-v0272"><div><small>${esc(x.grupoMuscular||'Performance')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${observed?'Ativa':'Info'}">${esc(x.natureza||'')}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${num(x.valor||0,1)} ${esc(x.unidade||'')}</b>${esc(x.tipo||'marca')}</span><span><b>${when}</b>data</span><span><b>${x.registrosComparaveis??0}</b>comparáveis</span><span><b>${x.evolucaoDesdePrimeiroPercentual!=null?num(x.evolucaoDesdePrimeiroPercentual,1)+'%':'—'}</b>desde a primeira</span></div><p>${esc(x.criterio||'')}</p><small class="muted-line">${esc(x.fonte||'')}</small></article>`;
+}
+
 function hpAthletePassportRecordV0280(x){
   const when=x.dataUtc?new Date(x.dataUtc).toLocaleDateString('pt-BR'):'—';
   return `<article class="workout-progression-signal-v0274"><div class="workout-comparison-head-v0272"><div><small>${esc(x.grupoMuscular||'Performance')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${x.recente?'Ativa':'Info'}">${x.recente?'PR recente':'melhor marca'}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.valor!=null?num(x.valor,2):'—'} ${esc(x.unidade||'')}</b>melhor carga</span><span><b>${when}</b>data</span><span><b>${x.registros??0}</b>registros</span></div><small class="muted-line">${esc(x.fonte||'Registro existente')}</small></article>`;
@@ -4402,7 +4410,7 @@ async function loadAthletePerformancePassportV0280(patient){
   section.innerHTML=`<div class="card-head workout-intelligence-head-v0270"><div><span class="eyebrow">ATHLETE PERFORMANCE PASSPORT • FOUNDATION</span><h3>Histórico de performance que acompanha o atleta</h3><p>Melhores marcas já registradas e cobertura das próximas dimensões, sem fabricar recordes.</p></div><span class="pill Info">${esc(data.versao||HP_ATHLETE_PERFORMANCE_PASSPORT_V0280)}</span></div>
     <div class="workout-intelligence-kpis-v0270"><span><b>${data.treinosObservados??0}</b>treinos observados</span><span><b>${data.recordesRecentes??0}</b>PRs recentes</span><span><b>${data.melhoresMarcas?.length??0}</b>melhores marcas</span><span><b>${data.diasObservados??0}d</b>janela</span></div>
     <div class="workout-intelligence-dimensions-v0270">${(data.dominios||[]).map(hpAthletePassportDomainV0280).join('')}</div>
-    <div class="workout-prescribed-performed-v0272"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PERSONAL RECORDS</span><h4>Melhores cargas registradas</h4><p>Comparação somente dentro do mesmo exercício e unidade; sem estimativa de 1RM.</p></div><span class="pill Info">${esc(data.estado||'')}</span></div><div class="workout-comparisons-v0272">${(data.melhoresMarcas||[]).map(hpAthletePassportRecordV0280).join('')||'<div class="empty">Ainda não há carga registrada suficiente para formar o passaporte.</div>'}</div></div>
+    <div class="workout-prescribed-performed-v0272" data-performance-records-v0281="${HP_PERFORMANCE_RECORDS_V0281}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PERFORMANCE RECORDS 2.0</span><h4>Recordes observados e marcas derivadas</h4><p>Unidades permanecem separadas. Volume estimado é exibido como derivado e nunca como carga observada.</p></div><span class="pill Info">${esc(data.estado||'')}</span></div><div class="workout-comparisons-v0272">${(data.recordes||[]).map(hpPerformanceRecordV0281).join('')||'<div class="empty">Ainda não há registros comparáveis suficientes.</div>'}</div></div>
     <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
   host.appendChild(section);
 }
@@ -9469,7 +9477,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.28.0';
+const HP_MVP_VERSION='0.28.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
