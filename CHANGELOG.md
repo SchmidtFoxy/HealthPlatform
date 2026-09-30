@@ -1,3 +1,16 @@
+# v0.23.6 — Movement Templates & Starter Packs Foundation
+
+- Adiciona Starter Packs profissionais derivados da taxonomia esportiva.
+- Cria `GET /api/biblioteca-movimento/starter-packs`.
+- Agrupa por modalidade e objetivo, mantendo capacidades visíveis.
+- Reutiliza exclusivamente `ModelosSessoesTreino`.
+- Distingue packs com sessões disponíveis de lacunas editoriais.
+- Não clona sessão, não cria plano e não publica conteúdo para paciente.
+- Integra Starter Packs à Sports & Movement Library.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.6.
+- Próxima etapa: v0.23.7 — Professional Movement Library 2.0.
+
 # v0.23.5 — Movement Library Coverage & Quality 2.0
 
 - Adiciona cobertura editorial ao `GET /api/biblioteca-movimento`.

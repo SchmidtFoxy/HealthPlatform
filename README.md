@@ -30,6 +30,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Movement Templates & Starter Packs Foundation
+
+A `v0.23.6` organiza `ModelosSessoesTreino` existentes em **Starter Packs profissionais** derivados da taxonomia de modalidade, objetivo e capacidade. Cada pack é apenas um agrupamento de referências: nenhuma sessão é clonada, nenhum plano é criado e nada é publicado automaticamente para pacientes.
+
+O endpoint `/api/biblioteca-movimento/starter-packs` mostra packs com sessões existentes e também packs ainda sem sessão, tornando a lacuna editorial visível antes da fase AESYN Explore.
+
 ### Movement Library Coverage & Quality 2.0
 
 A `v0.23.5` torna a biblioteca **auditável editorialmente**. O próprio `GET /api/biblioteca-movimento` passa a informar cobertura por modalidade e no recorte filtrado: capacidades com sessão, capacidades com exercício, movimentos relacionados, movimentos com descrição e movimentos com mídia.
@@ -241,7 +248,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.5 — Movement Library Coverage & Quality 2.0`
+- **Versão funcional:** `v0.23.6 — Movement Templates & Starter Packs Foundation`
 - **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal

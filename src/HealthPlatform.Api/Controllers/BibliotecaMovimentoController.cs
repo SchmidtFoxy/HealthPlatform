@@ -274,6 +274,104 @@ public sealed class BibliotecaMovimentoController(
     }
 
 
+
+    [HttpGet("starter-packs")]
+    public async Task<ActionResult<BibliotecaMovimentoStarterPacksResponse>> StarterPacks(
+        [FromQuery] string? modalidade = null,
+        [FromQuery] string? objetivo = null,
+        CancellationToken ct = default)
+    {
+        var modelosSessao = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria)
+            .ThenBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var defs = CatalogoFundacao().AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(modalidade))
+        {
+            var filtroModalidade = modalidade.Trim();
+            defs = defs.Where(x =>
+                x.Codigo.Equals(filtroModalidade, StringComparison.OrdinalIgnoreCase) ||
+                x.Nome.Contains(filtroModalidade, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var packs = new List<BibliotecaMovimentoStarterPackResponse>();
+
+        foreach (var mod in defs)
+        {
+            var objetivos = mod.Objetivos.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(objetivo))
+            {
+                var filtroObjetivo = objetivo.Trim();
+                objetivos = objetivos.Where(x =>
+                    x.Codigo.Equals(filtroObjetivo, StringComparison.OrdinalIgnoreCase) ||
+                    x.Nome.Contains(filtroObjetivo, StringComparison.OrdinalIgnoreCase));
+            }
+
+            foreach (var obj in objetivos)
+            {
+                var capacidades = obj.Capacidades
+                    .Select(x => x.Nome)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                var sessoes = obj.Capacidades
+                    .SelectMany(cap => modelosSessao
+                        .Where(modelo => CorrespondeSessao(
+                            modelo.Nome,
+                            modelo.Categoria,
+                            modelo.Descricao,
+                            mod.Termos,
+                            obj.Nome,
+                            cap.Termos)))
+                    .GroupBy(x => x.Id)
+                    .Select(x => x.First())
+                    .Take(12)
+                    .Select(x => new BibliotecaMovimentoSessaoResponse(
+                        x.Id,
+                        x.Nome,
+                        x.Categoria,
+                        x.Descricao))
+                    .ToArray();
+
+                var pronto = sessoes.Length > 0;
+                var codigoPack = $"{mod.Codigo}:{obj.Codigo}";
+
+                packs.Add(new BibliotecaMovimentoStarterPackResponse(
+                    codigoPack,
+                    $"{mod.Nome} • {obj.Nome}",
+                    mod.Codigo,
+                    mod.Nome,
+                    obj.Codigo,
+                    obj.Nome,
+                    capacidades,
+                    sessoes,
+                    pronto,
+                    pronto
+                        ? $"{sessoes.Length} sessao(oes)-modelo existente(s) relacionada(s)."
+                        : "Sem sessoes-modelo relacionadas ainda; o pack permanece como lacuna editorial."));
+            }
+        }
+
+        return Ok(new BibliotecaMovimentoStarterPacksResponse(
+            packs.Count,
+            packs.Count(x => x.ProntoParaUso),
+            packs.Count(x => !x.ProntoParaUso),
+            packs,
+            "ModelosSessoesTreino",
+            "Starter Packs sao agrupamentos de referencia sobre sessoes-modelo existentes. Nao copiam sessoes, nao criam prescricao e nao publicam conteudo para pacientes automaticamente."));
+    }
+
     [HttpGet("exercicios/{id:guid}")]
     public async Task<ActionResult<BibliotecaMovimentoDetalheExercicioResponse>> DetalharExercicio(
         Guid id,

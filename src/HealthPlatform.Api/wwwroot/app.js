@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.5';
+const HP_MVP_VERSION='0.23.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13063,6 +13063,74 @@ function hpMovementSafeMediaUrlV0234(value){
   }catch{return null}
 }
 
+function hpMovementStarterPackV0236(pack){
+  const sessions=Array.isArray(pack?.sessoes)?pack.sessoes:[];
+  const capacities=Array.isArray(pack?.capacidades)?pack.capacidades:[];
+  return `<article class="movement-starter-pack-v0236 ${pack?.prontoParaUso?'is-ready':'is-gap'}">
+    <div class="movement-starter-pack-head-v0236">
+      <div>
+        <span>${esc(pack?.modalidadeNome||'Modalidade')} • ${esc(pack?.objetivoNome||'Objetivo')}</span>
+        <h4>${esc(pack?.nome||'Starter Pack')}</h4>
+      </div>
+      <b>${pack?.prontoParaUso?'PRONTO PARA ORGANIZAR':'LACUNA EDITORIAL'}</b>
+    </div>
+    <div class="movement-starter-pack-capabilities-v0236">
+      ${capacities.map(x=>`<span>${esc(x)}</span>`).join('')}
+    </div>
+    <div class="movement-starter-pack-sessions-v0236">
+      ${sessions.length
+        ?sessions.map(x=>`<div><b>${esc(x.nome)}</b><small>${esc(x.categoria||'Sessão-modelo')}</small></div>`).join('')
+        :'<p>Nenhuma sessão-modelo existente foi associada a este pack.</p>'}
+    </div>
+    <small>${esc(pack?.estadoEditorial||'')}</small>
+  </article>`;
+}
+
+function hpMovementStarterPacksPanelV0236(data){
+  const packs=Array.isArray(data?.packs)?data.packs:[];
+  return `<section class="movement-starter-packs-v0236" data-movement-starter-packs-v0236="${HP_MOVEMENT_STARTER_PACKS_V0236}">
+    <div class="movement-starter-packs-head-v0236">
+      <div>
+        <span class="eyebrow">MOVEMENT TEMPLATES & STARTER PACKS</span>
+        <h3>Conjuntos reutilizáveis sem copiar sessão nenhuma.</h3>
+        <p>Os packs agrupam sessões-modelo existentes por modalidade, objetivo e capacidade para acelerar curadoria profissional.</p>
+      </div>
+      <div class="movement-starter-packs-kpis-v0236">
+        <span><b>${data?.total||0}</b>packs</span>
+        <span><b>${data?.prontosParaUso||0}</b>com sessões</span>
+        <span><b>${data?.semSessoes||0}</b>lacunas</span>
+      </div>
+    </div>
+
+    <div class="movement-starter-packs-list-v0236">
+      ${packs.length?packs.map(hpMovementStarterPackV0236).join(''):'<div class="movement-library-no-results-v0231"><b>Nenhum Starter Pack disponível.</b><span>Os packs são derivados da taxonomia e das sessões-modelo existentes.</span></div>'}
+    </div>
+
+    <div class="movement-starter-packs-rule-v0236">
+      <b>Referência, não publicação</b>
+      <span>${esc(data?.regraDeUso||'Starter Packs não criam prescrição nem publicam conteúdo automaticamente.')}</span>
+    </div>
+
+    <div class="movement-starter-packs-actions-v0236">
+      <button type="button" class="secondary" id="movementStarterPacksOpenWorkspaceV0236">Abrir Workout Studio</button>
+    </div>
+  </section>`;
+}
+
+async function hpOpenMovementStarterPacksV0236(host){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="movement-instruction-loading-v0234">Carregando Starter Packs...</div>';
+  try{
+    const data=await api('/api/biblioteca-movimento/starter-packs');
+    host.innerHTML=hpMovementStarterPacksPanelV0236(data);
+    const open=$('#movementStarterPacksOpenWorkspaceV0236');
+    if(open)open.onclick=()=>{closeClinicalAction();navigate('prescricoes')};
+  }catch(err){
+    host.innerHTML=`<div class="movement-library-no-results-v0231"><b>Starter Packs indisponíveis.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
 function hpMovementCoveragePctV0235(done,total){
   const t=Number(total||0),d=Number(done||0);
   return t>0?Math.round((d*100)/t):0;
@@ -13222,6 +13290,7 @@ const HP_MOVEMENT_SESSION_MODEL_V0232='v0.23.2';
 const HP_MOVEMENT_PROGRESSION_REGRESSION_V0233='v0.23.3';
 const HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234='v0.23.4';
 const HP_MOVEMENT_COVERAGE_QUALITY_V0235='v0.23.5';
+const HP_MOVEMENT_STARTER_PACKS_V0236='v0.23.6';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13261,6 +13330,7 @@ async function openMovementLibraryV0230(){
           <span class="eyebrow">AESYN • MOVEMENT TAXONOMY & FILTERS 2.0</span>
           <h2>Biblioteca de Movimento & Esportes</h2>
           <p>${esc(current.estrutura||'Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão')}</p>
+          <button type="button" class="secondary movement-starter-pack-open-v0236" id="movementStarterPacksOpenV0236">Starter Packs</button>
         </div>
         <div class="movement-library-summary-v0230">
           <span><b>${current.totalModalidades||0}</b> modalidades</span>
@@ -13273,6 +13343,8 @@ async function openMovementLibraryV0230(){
         <div><b>Exercícios</b><span>${esc(current.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span></div>
         <div><b>Sessões</b><span>${esc(current.fonteDasSessoes||'As sessões reutilizam os modelos existentes do Workout Builder.')}</span></div>
       </div>
+
+      <div id="movementStarterPacksHostV0236" class="movement-starter-packs-host-v0236" hidden></div>
 
       ${hpMovementCoverageV0235(current.cobertura)}
 
@@ -13304,6 +13376,7 @@ async function openMovementLibraryV0230(){
       </div>`;
 
       $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
+      $('#movementStarterPacksOpenV0236').onclick=()=>hpOpenMovementStarterPacksV0236($('#movementStarterPacksHostV0236'));
 
       $$('[data-movement-quality-open-catalog-v0235]').forEach(btn=>{
         btn.onclick=()=>{closeClinicalAction();openExerciseLibrary2()};

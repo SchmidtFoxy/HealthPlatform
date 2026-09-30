@@ -52,6 +52,26 @@ public sealed record BibliotecaMovimentoModalidadeResponse(
     IReadOnlyCollection<string> EquipamentosComuns,
     IReadOnlyCollection<BibliotecaMovimentoObjetivoResponse> Objetivos);
 
+public sealed record BibliotecaMovimentoStarterPackResponse(
+    string Codigo,
+    string Nome,
+    string ModalidadeCodigo,
+    string ModalidadeNome,
+    string ObjetivoCodigo,
+    string ObjetivoNome,
+    IReadOnlyCollection<string> Capacidades,
+    IReadOnlyCollection<BibliotecaMovimentoSessaoResponse> Sessoes,
+    bool ProntoParaUso,
+    string EstadoEditorial);
+
+public sealed record BibliotecaMovimentoStarterPacksResponse(
+    int Total,
+    int ProntosParaUso,
+    int SemSessoes,
+    IReadOnlyCollection<BibliotecaMovimentoStarterPackResponse> Packs,
+    string Fonte,
+    string RegraDeUso);
+
 public sealed record BibliotecaMovimentoCoberturaModalidadeResponse(
     string Codigo,
     string Nome,

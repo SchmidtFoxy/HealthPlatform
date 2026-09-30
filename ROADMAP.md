@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.5 — Movement Library Coverage & Quality 2.0
+> **Versão-base deste roadmap:** v0.23.6 — Movement Templates & Starter Packs Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1028,7 +1028,7 @@ Organizar instruções, descrição e mídia já existentes para tornar cada mov
 
 **Próxima etapa:** `v0.23.6 — Movement Templates & Starter Packs Foundation`.
 
-## ⏭ v0.23.6 — Movement Templates & Starter Packs Foundation
+## ✅ v0.23.6 — Movement Templates & Starter Packs Foundation — CONCLUÍDA
 
 Organizar sessões-modelo existentes em conjuntos reutilizáveis por modalidade/objetivo/capacidade para preparar Starter Packs profissionais sem duplicar `ModelosSessoesTreino` e sem publicar automaticamente para pacientes.
 
@@ -1329,6 +1329,19 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - nenhuma duplicação de ficha, instrução ou mídia.
 
 **Próxima etapa:** `v0.23.5 — Movement Library Coverage & Quality 2.0`.
+
+
+
+**Entregue na v0.23.6:**
+- Starter Packs derivados da taxonomia;
+- agrupamento por modalidade e objetivo;
+- capacidades visíveis em cada pack;
+- reutilização exclusiva de `ModelosSessoesTreino`;
+- packs prontos e lacunas editoriais diferenciados;
+- endpoint `/api/biblioteca-movimento/starter-packs`;
+- nenhum clone de sessão, plano ou publicação automática.
+
+**Próxima etapa:** `v0.23.7 — Professional Movement Library 2.0`.
 
 
 ## Promessa ao atleta
