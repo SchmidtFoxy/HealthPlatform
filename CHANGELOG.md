@@ -1,4 +1,19 @@
-﻿# v0.32.3 — Progress Review Care Plan History
+﻿# v0.32.4 — Progress Review Care Plan Filters
+
+- Adiciona `ProgressReviewCarePlanFiltersResponse`.
+- Adiciona endpoint `GET .../care-plan/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros ao workspace profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.32.5 — Progress Review Care Plan Summary.
+
+# v0.32.3 — Progress Review Care Plan History
 
 - Adiciona `ProgressReviewCarePlanHistoryItemResponse`.
 - Adiciona `ProgressReviewCarePlanHistoryResponse`.

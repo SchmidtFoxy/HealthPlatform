@@ -1855,3 +1855,31 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.32.4 — Progress Review Care Plan Filters`.
 
+---
+
+## v0.32.4 — Progress Review Care Plan Filters
+
+Adiciona filtros profissionais para localizar planos de cuidados persistidos.
+
+### Filtros
+- status;
+- responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- objetivo do cuidado;
+- ação planejada;
+- observação profissional.
+
+### UI
+O workspace profissional passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção.
+
+**Próxima etapa:** `v0.32.5 — Progress Review Care Plan Summary`.
+

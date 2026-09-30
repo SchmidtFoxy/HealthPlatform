@@ -124,6 +124,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewCarePlanFiltersResponse(
+    string? Status,
+    string? Responsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProgressReviewCarePlanPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProgressReviewCarePlanHistoryItemResponse(
     Guid Id,
     Guid CarePlanId,

@@ -2631,3 +2631,22 @@ Adicionar histórico consultável de criação, edição, mudanças de status e 
 ### v0.32.4 — Progress Review Care Plan Filters
 Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental do plano de cuidados.
 
+## ✅ v0.32.4 — Progress Review Care Plan Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewCarePlanFiltersResponse`;
+- endpoint `care-plan/search`;
+- filtro por status;
+- filtro por responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros no workspace;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.5 — Progress Review Care Plan Summary
+Adicionar resumo estrutural do Care Plan com contagem por status e distribuição por responsável, sem gerar score clínico ou prioridade automática.
+

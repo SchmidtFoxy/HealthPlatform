@@ -199,6 +199,68 @@ public class ProgressReviewNotesController(
             "A fundação do Care Plan organiza próximos cuidados de forma documental. A partir da v0.32.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("care-plan/search")]
+    public async Task<ActionResult<ProgressReviewCarePlanFiltersResponse>> FiltrarCarePlan(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? responsavel = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusCarePlanValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Planejado, EmAndamento, Concluido ou Cancelado." });
+
+        var responsavelNormalizado = NormalizarOpcional(responsavel, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCarePlan) &&
+                (incluirArquivadas || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearCarePlan)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (responsavelNormalizado is null ||
+                    (x.Responsavel?.Contains(responsavelNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ObjetivoCuidado.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    x.AcaoPlanejada.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProgressReviewCarePlanFiltersResponse(
+            statusNormalizado,
+            responsavelNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivadas,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar registros do Care Plan. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção."));
+    }
+
     [HttpGet("care-plan")]
     public async Task<ActionResult<IReadOnlyCollection<ProgressReviewCarePlanPersistedResponse>>> ListarCarePlan(
         Guid pacienteId,

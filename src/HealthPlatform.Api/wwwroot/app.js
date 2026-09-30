@@ -4869,6 +4869,7 @@ const HP_PROGRESS_REVIEW_CARE_PLAN_V0320='v0.32.0';
 const HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321='v0.32.1';
 const HP_PROGRESS_REVIEW_CARE_PLAN_STATUS_V0322='v0.32.2';
 const HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3';
+const HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4';
 
 
 
@@ -4964,9 +4965,17 @@ async function hpOpenProgressReviewCarePlanV0321(p){
   const modal=$('#clinicalActionModal');
   if(!modal) return;
 
-  const load=async()=>{
-    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/care-plan`);
-    return Array.isArray(items)?items:[];
+  const load=async(filters={})=>{
+    const params=new URLSearchParams();
+    if(filters.status) params.set('status',filters.status);
+    if(filters.responsavel) params.set('responsavel',filters.responsavel);
+    if(filters.horizonte) params.set('horizonte',filters.horizonte);
+    if(filters.texto) params.set('texto',filters.texto);
+    if(filters.incluirArquivadas) params.set('incluirArquivadas','true');
+    params.set('ordenacao',filters.ordenacao||'desc');
+
+    const result=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/care-plan/search?${params.toString()}`);
+    return Array.isArray(result?.itens)?result.itens:[];
   };
 
   modal.innerHTML=`<div class="modal-card large" data-progress-review-care-plan-persistence-v0321="${HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321}">
@@ -4977,6 +4986,28 @@ async function hpOpenProgressReviewCarePlanV0321(p){
       </div>
       <button type="button" class="ghost" id="closeProgressReviewCarePlanV0321">Fechar</button>
     </div>
+
+    <form id="progressReviewCarePlanFiltersV0324" class="form-grid" data-progress-review-care-plan-filters-v0324="${HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324}">
+      <label>Status<select name="status">
+        <option value="">Todos</option>
+        <option value="Planejado">Planejado</option>
+        <option value="EmAndamento">Em andamento</option>
+        <option value="Concluido">Concluído</option>
+        <option value="Cancelado">Cancelado</option>
+      </select></label>
+      <label>Responsável<input name="responsavel" maxlength="160" placeholder="Filtrar por responsável"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120" placeholder="Ex.: próxima consulta"></label>
+      <label>Texto<input name="texto" maxlength="240" placeholder="Buscar objetivo, ação ou observação"></label>
+      <label><input type="checkbox" name="incluirArquivadas"> Incluir arquivados</label>
+      <label>Ordenação<select name="ordenacao">
+        <option value="desc">Mais recentes</option>
+        <option value="asc">Mais antigos</option>
+      </select></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="secondary">Aplicar filtros</button>
+        <button type="button" class="ghost" id="clearProgressReviewCarePlanFiltersV0324">Limpar filtros</button>
+      </div>
+    </form>
 
     <form id="progressReviewCarePlanFormV0321" class="form-grid">
       <input type="hidden" name="id">
@@ -5000,8 +5031,19 @@ async function hpOpenProgressReviewCarePlanV0321(p){
   const form=$('#progressReviewCarePlanFormV0321');
   const listHost=$('#progressReviewCarePlanListV0321');
 
+  const filtersForm=$('#progressReviewCarePlanFiltersV0324');
+
+  const readFilters=()=>({
+    status:filtersForm?.elements.status?.value||'',
+    responsavel:filtersForm?.elements.responsavel?.value||'',
+    horizonte:filtersForm?.elements.horizonte?.value||'',
+    texto:filtersForm?.elements.texto?.value||'',
+    incluirArquivadas:!!filtersForm?.elements.incluirArquivadas?.checked,
+    ordenacao:filtersForm?.elements.ordenacao?.value||'desc'
+  });
+
   const render=async()=>{
-    const items=await load();
+    const items=await load(readFilters());
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204" data-progress-care-plan-status-v0322="${HP_PROGRESS_REVIEW_CARE_PLAN_STATUS_V0322}">
       <div class="row-between">
         <b>${esc(x.objetivoCuidado||'Objetivo do cuidado')}</b>
@@ -5058,6 +5100,21 @@ async function hpOpenProgressReviewCarePlanV0321(p){
       await render();
     });
   };
+
+  if(filtersForm){
+    filtersForm.onsubmit=async e=>{
+      e.preventDefault();
+      await render();
+    };
+  }
+
+  const clearFiltersV0324=$('#clearProgressReviewCarePlanFiltersV0324');
+  if(clearFiltersV0324){
+    clearFiltersV0324.onclick=async()=>{
+      filtersForm?.reset();
+      await render();
+    };
+  }
 
   $('#closeProgressReviewCarePlanV0321').onclick=()=>modal.classList.remove('open');
   $('#cancelProgressReviewCarePlanV0321').onclick=()=>{
@@ -10639,7 +10696,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.32.3';
+const HP_MVP_VERSION='0.32.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
