@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.21.2';
+const HP_MVP_VERSION='0.21.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11919,4 +11919,73 @@ renderPatientTab=function(d){
   const goals=host?.querySelector('[data-multi-goal-v0211]');
   if(!host||!goals||host.querySelector('[data-sports-identity-v0212]'))return;
   goals.insertAdjacentHTML('afterend',hpSportsIdentityV0212(d));
+};
+
+
+// ===== v0.21.3 — Life Context Foundation =====
+const HP_LIFE_CONTEXT_V0213='v0.21.3';
+
+function hpLifeTextV0213(value){
+  return String(value??'').trim();
+}
+function hpLifeFirstV0213(values){
+  for(const v of values){
+    const text=hpLifeTextV0213(v);
+    if(text)return text;
+  }
+  return '';
+}
+function hpLifeContextDataV0213(d){
+  const p=d?.p||{},portal=d?.portal||{};
+  const cycle=portal?.cicloEsportivoAtual||{};
+  const anamneses=[...(d?.anamneses||[])].sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const anam=anamneses[0]||{};
+
+  const routine=hpLifeFirstV0213([anam.rotinaDiaria,anam.rotinaTrabalho,p.profissao]);
+  const availability=hpLifeFirstV0213([anam.disponibilidadeTreino,anam.horariosDisponiveis,cycle.disponibilidadeSemanal]);
+  const logistics=hpLifeFirstV0213([anam.deslocamento,anam.restricoesLogisticas,anam.localPreferidoTreino]);
+  const equipment=hpLifeFirstV0213([anam.equipamentosDisponiveis,anam.recursosTreino]);
+  const preferences=hpLifeFirstV0213([anam.preferenciasTreino,anam.contextoTreino,cycle.contextoPreferido]);
+  const constraints=[anam.limitacoesRotina,anam.dorAtual,anam.restricoesMedicas,anam.observacoes].map(hpLifeTextV0213).filter(Boolean);
+
+  return {routine,availability,logistics,equipment,preferences,constraints};
+}
+function hpLifeContextV0213(d){
+  const c=hpLifeContextDataV0213(d);
+  const known=[!!c.routine,!!c.availability,!!c.logistics,!!c.equipment,!!c.preferences].filter(Boolean).length;
+  const rows=[
+    ['ROTINA',c.routine,'Como a rotina registrada pode influenciar o acompanhamento.'],
+    ['DISPONIBILIDADE',c.availability,'Janelas de tempo disponíveis ou registradas.'],
+    ['LOGÍSTICA',c.logistics,'Deslocamento, local ou restrições práticas registradas.'],
+    ['EQUIPAMENTOS',c.equipment,'Recursos disponíveis para prática e treino.'],
+    ['PREFERÊNCIAS',c.preferences,'Contextos ou formatos de prática já informados.']
+  ];
+
+  return `<section class="life-context-v0213" data-life-context-v0213="${HP_LIFE_CONTEXT_V0213}">
+    <div class="life-context-head-v0213">
+      <div><span class="eyebrow">AESYN • LIFE CONTEXT FOUNDATION</span><h3>O que cabe na vida real desta pessoa.</h3><p>O contexto de vida ajuda a conectar o que precisa ser feito, o que a pessoa quer fazer e o que realmente consegue fazer hoje.</p></div>
+      <div class="life-context-known-v0213"><strong>${known}/5</strong><span>dimensões de contexto registradas</span></div>
+    </div>
+    <div class="life-context-grid-v0213">
+      ${rows.map(([label,value,hint])=>`<article><span>${label}</span><strong>${esc(value||'Não informado')}</strong><small>${esc(hint)}</small></article>`).join('')}
+    </div>
+    <div class="life-context-constraints-v0213">
+      <span>RESTRIÇÕES & LIMITAÇÕES REGISTRADAS</span>
+      ${c.constraints.length?`<ul>${c.constraints.slice(0,4).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p>Nenhuma restrição adicional estruturada nesta síntese.</p>'}
+    </div>
+    <div class="life-context-triad-v0213">
+      <div><b>Preciso fazer</b><span>Plano profissional e objetivos ativos.</span></div>
+      <div><b>Quero fazer</b><span>Preferências, modalidades e interesses registrados.</span></div>
+      <div><b>Posso fazer hoje</b><span>Tempo, local, equipamentos e limitações disponíveis no contexto.</span></div>
+    </div>
+    <div class="life-context-safety-v0213"><b>Contexto orienta, não prescreve sozinho</b><span>Ausência de informação não deve ser interpretada como ausência de restrição. Decisões clínicas e esportivas continuam dependendo da avaliação profissional e da pessoa.</span></div>
+  </section>`;
+}
+const __renderPatientTab_v0213=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0213(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),sports=host?.querySelector('[data-sports-identity-v0212]');
+  if(!host||!sports||host.querySelector('[data-life-context-v0213]'))return;
+  sports.insertAdjacentHTML('afterend',hpLifeContextV0213(d));
 };

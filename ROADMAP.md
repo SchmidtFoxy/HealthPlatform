@@ -41,7 +41,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.21.2 — Sports Identity Foundation
+> **Versão-base deste roadmap:** v0.21.3 — Life Context Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -706,6 +706,39 @@ A pessoa passa a ser a unidade central do domínio longitudinal.
 ## ✅ v0.21.2 — Sports Identity Foundation — CONCLUÍDA
 
 Estruturar identidade esportiva da pessoa: modalidades atuais e históricas, nível de experiência, frequência, contexto preferido e relação com objetivos ativos.
+
+
+**Entregue na v0.21.2:**
+- modalidades atuais consolidadas;
+- nível de experiência registrado;
+- frequência semanal;
+- contexto preferido de prática;
+- histórico esportivo já existente;
+- relação explícita com objetivos ativos;
+- completude contextual sem score de aptidão;
+- identidade esportiva tratada como longitudinal e mutável.
+
+**Próxima etapa:** `v0.21.3 — Life Context Foundation`.
+
+
+## ✅ v0.21.3 — Life Context Foundation — CONCLUÍDA
+
+**Entregue na v0.21.3:**
+- rotina e contexto profissional já registrados;
+- disponibilidade para treino/prática;
+- logística e local;
+- equipamentos/recursos;
+- preferências de contexto;
+- restrições e limitações registradas;
+- leitura Preciso fazer / Quero fazer / Posso fazer hoje;
+- sem prescrição automática e sem inferência clínica.
+
+**Próxima etapa:** `v0.21.4 — Human Profile Synthesis 2.0`.
+
+## ⏭ v0.21.4 — Human Profile Synthesis 2.0
+
+Consolidar objetivos, identidade esportiva, contexto de vida, corpo e acompanhamento em uma síntese profissional compacta e acionável.
+
 
 # 6. v0.22.x — AESYN Daily
 

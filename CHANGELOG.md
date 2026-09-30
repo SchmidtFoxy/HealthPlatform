@@ -1,3 +1,13 @@
+# v0.21.3 — Life Context Foundation
+
+- Adiciona contexto de vida ao Human Profile.
+- Consolida rotina, disponibilidade, logística, equipamentos, preferências e limitações já registradas.
+- Introduz leitura explícita Preciso fazer / Quero fazer / Posso fazer hoje.
+- Mantém a camada descritiva, sem prescrição automática ou inferência clínica.
+- Reaproveita dados existentes, sem migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.21.3.
+- Próxima etapa: v0.21.4 — Human Profile Synthesis 2.0.
+
 # v0.21.2 — Sports Identity Foundation
 
 - Adiciona identidade esportiva ao Human Profile.

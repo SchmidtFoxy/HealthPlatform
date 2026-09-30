@@ -12,6 +12,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Life Context Foundation
+
+A `v0.21.3` adiciona ao Human Profile uma camada de **contexto de vida**. O AESYN passa a reunir rotina, disponibilidade, logística, equipamentos, preferências e limitações registradas para responder melhor à tríade **Preciso fazer / Quero fazer / Posso fazer hoje**.
+
+Essa camada é descritiva e contextual. Ela não prescreve automaticamente e não interpreta ausência de informação como ausência de restrição.
+
 ### Sports Identity Foundation
 
 A `v0.21.2` acrescenta ao Human Profile uma leitura de **identidade esportiva**. O AESYN passa a reunir modalidades atuais, nível de experiência, frequência, contexto preferido, histórico esportivo e relação com objetivos ativos.
@@ -109,7 +116,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.21.2 — Sports Identity Foundation`
+- **Versão funcional:** `v0.21.3 — Life Context Foundation`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
