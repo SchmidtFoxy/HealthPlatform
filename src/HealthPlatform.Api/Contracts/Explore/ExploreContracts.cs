@@ -123,3 +123,23 @@ public sealed record TravelModeResponse(
     IReadOnlyCollection<TravelModePossibilidadeResponse> Possibilidades,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record OutdoorModePossibilidadeResponse(
+    Guid Id,
+    string Nome,
+    string? GrupoMuscular,
+    string? Equipamento,
+    string? Descricao,
+    string MotivoDaCompatibilidade);
+
+public sealed record OutdoorModeResponse(
+    string Ambiente,
+    string Recurso,
+    string Interesse,
+    string[] AmbientesDisponiveis,
+    string[] RecursosDisponiveis,
+    string[] InteressesDisponiveis,
+    IReadOnlyCollection<OutdoorModePossibilidadeResponse> Possibilidades,
+    string Fonte,
+    string RegraDeUso);

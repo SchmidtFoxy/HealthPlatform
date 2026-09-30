@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.5 — Travel Mode 2.0
+> **Versão-base deste roadmap:** v0.24.6 — Outdoor Mode 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1455,9 +1455,27 @@ Criar exploração contextual para viagens, considerando espaço, recursos e rot
 
 **Próxima etapa:** `v0.24.6 — Outdoor Mode 2.0`.
 
-## ⏭ v0.24.6 — Outdoor Mode 2.0
+## ✅ v0.24.6 — Outdoor Mode 2.0 — CONCLUÍDA
 
 Transformar o caminho “Quero ir para fora” em exploração por ambiente externo, recurso e interesse, sem converter contexto outdoor em prescrição automática.
+
+
+
+**Entregue na v0.24.6:**
+- endpoint `/api/portal/me/explore/outdoor-mode`;
+- exploração por ambiente, recurso e interesse;
+- Rua, Parque, Praça, Trilha leve e Área externa livre;
+- reutilização do catálogo `Exercicios`;
+- justificativa contextual por possibilidade;
+- estado vazio sem treino artificial;
+- integração ao caminho “Quero ir para fora”;
+- nenhuma rota, distância, pace, carga, volume, duração ou intensidade automática.
+
+**Próxima etapa:** `v0.24.7 — Learn Fundamentals 2.0`.
+
+## ⏭ v0.24.7 — Learn Fundamentals 2.0
+
+Transformar “Aprender fundamentos” em uma experiência educacional por modalidade e capacidade, reutilizando conteúdo existente sem criar prescrição.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

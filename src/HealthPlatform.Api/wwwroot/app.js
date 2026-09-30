@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.5';
+const HP_MVP_VERSION='0.24.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14161,5 +14161,97 @@ hpWireExploreFoundationV0240=function(host,data){
   travelBtn.onclick=()=>{
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenTravelModeV0245(detail);
+  };
+};
+
+
+// ===== v0.24.6 — Outdoor Mode 2.0 =====
+const HP_OUTDOOR_MODE_V0246='v0.24.6';
+
+function hpOutdoorModeQueryV0246(filters){
+  const p=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)p.set(k,v)});
+  const qs=p.toString();
+  return `/api/portal/me/explore/outdoor-mode${qs?`?${qs}`:''}`;
+}
+
+function hpOutdoorModeV0246(data){
+  const items=Array.isArray(data?.possibilidades)?data.possibilidades:[];
+  const option=(value,current)=>`<option ${value===current?'selected':''}>${esc(value)}</option>`;
+
+  return `<section class="outdoor-mode-v0246" data-outdoor-mode-v0246="${HP_OUTDOOR_MODE_V0246}" aria-labelledby="outdoorModeTitleV0246">
+    <div class="outdoor-mode-head-v0246">
+      <div>
+        <span class="eyebrow">OUTDOOR MODE 2.0</span>
+        <h3 id="outdoorModeTitleV0246">Quero ir para fora. O ambiente muda a exploração.</h3>
+        <p>Escolha ambiente, recurso e interesse para explorar possibilidades reais sem transformar o outdoor em treino automático.</p>
+      </div>
+      <span>${items.length} possibilidade(s)</span>
+    </div>
+
+    <div class="outdoor-mode-filters-v0246">
+      <label><span>AMBIENTE</span><select id="outdoorModeEnvironmentV0246">${(data?.ambientesDisponiveis||[]).map(x=>option(x,data?.ambiente)).join('')}</select></label>
+      <label><span>RECURSO</span><select id="outdoorModeResourceV0246">${(data?.recursosDisponiveis||[]).map(x=>option(x,data?.recurso)).join('')}</select></label>
+      <label><span>INTERESSE</span><select id="outdoorModeInterestV0246">${(data?.interessesDisponiveis||[]).map(x=>option(x,data?.interesse)).join('')}</select></label>
+    </div>
+
+    <div class="outdoor-mode-context-v0246">
+      <b>OUTDOOR É CONTEXTO</b>
+      <span>${esc(data?.ambiente||'Parque')}</span>
+      <span>${esc(data?.recurso||'Sem equipamento')}</span>
+      <span>${esc(data?.interesse||'Condicionamento geral')}</span>
+    </div>
+
+    <div class="outdoor-mode-grid-v0246">
+      ${items.length?items.map(x=>`<article>
+        <div><span>${esc(x.grupoMuscular||'Movimento')}</span><b>${esc(x.nome)}</b></div>
+        <p>${esc(x.descricao||'Sem descrição cadastrada no catálogo profissional.')}</p>
+        <small>${esc(x.equipamento||'Sem equipamento informado')}</small>
+        <footer>${esc(x.motivoDaCompatibilidade||'Compatível com o ambiente e interesse selecionados.')}</footer>
+      </article>`).join(''):`<div class="outdoor-mode-empty-v0246"><b>Nenhuma possibilidade real apareceu neste recorte.</b><span>Troque ambiente, recurso ou interesse. O AESYN não inventa treino outdoor.</span></div>`}
+    </div>
+
+    <div class="outdoor-mode-source-v0246">
+      <b>Ambiente ≠ prescrição</b>
+      <span>${esc(data?.regraDeUso||'Outdoor Mode organiza possibilidades sem definir treino.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenOutdoorModeV0246(host,filters={}){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Outdoor Mode...</div>';
+
+  try{
+    const data=await api(hpOutdoorModeQueryV0246(filters));
+    host.innerHTML=hpOutdoorModeV0246(data);
+
+    const current=()=>({
+      ambiente:host.querySelector('#outdoorModeEnvironmentV0246')?.value||'',
+      recurso:host.querySelector('#outdoorModeResourceV0246')?.value||'',
+      interesse:host.querySelector('#outdoorModeInterestV0246')?.value||''
+    });
+
+    ['#outdoorModeEnvironmentV0246','#outdoorModeResourceV0246','#outdoorModeInterestV0246'].forEach(selector=>{
+      const el=host.querySelector(selector);
+      if(el)el.onchange=()=>hpOpenOutdoorModeV0246(host,current());
+    });
+
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Outdoor Mode.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0246=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0246(host,data);
+  if(!host)return;
+  const outdoorBtn=host.querySelector('[data-explore-path-v0240="outdoor"]');
+  if(!outdoorBtn)return;
+  outdoorBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenOutdoorModeV0246(detail);
   };
 };

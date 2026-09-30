@@ -1,3 +1,15 @@
+# v0.24.6 — Outdoor Mode 2.0
+
+- Adiciona `GET /api/portal/me/explore/outdoor-mode`.
+- Permite explorar por ambiente externo, recurso e interesse.
+- Inclui Rua, Parque, Praça, Trilha leve e Área externa livre.
+- Reutiliza exclusivamente o catálogo ativo `Exercicios`.
+- Expõe justificativa de compatibilidade contextual.
+- Integra Outdoor Mode ao caminho “Quero ir para fora”.
+- Não define rota, distância, pace, carga, volume, duração ou intensidade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.7 — Learn Fundamentals 2.0.
+
 # v0.24.5 — Travel Mode 2.0
 
 - Adiciona o caminho `Estou viajando` ao AESYN Explore.

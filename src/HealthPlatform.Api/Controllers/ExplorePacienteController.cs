@@ -748,4 +748,147 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("outdoor-mode")]
+    public async Task<ActionResult<OutdoorModeResponse>> OutdoorMode(
+        [FromQuery] string? ambiente = null,
+        [FromQuery] string? recurso = null,
+        [FromQuery] string? interesse = null,
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var ambientes = new[] { "Rua", "Parque", "Praça", "Trilha leve", "Área externa livre" };
+        var recursos = new[] { "Sem equipamento", "Banco", "Barra fixa", "Bicicleta", "Escada ou inclinação" };
+        var interesses = new[] { "Caminhar", "Correr", "Mobilidade", "Força com peso corporal", "Condicionamento geral" };
+
+        var ambienteAtual = NormalizarOpcao(ambiente, ambientes, "Parque");
+        var recursoAtual = NormalizarOpcao(recurso, recursos, "Sem equipamento");
+        var interesseAtual = NormalizarOpcao(interesse, interesses, "Condicionamento geral");
+
+        var exercicios = await db.Exercicios.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.GrupoMuscular,
+                x.Equipamento,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var possibilidades = exercicios
+            .Select(x => new
+            {
+                Exercicio = x,
+                Texto = $"{x.Nome} {x.GrupoMuscular} {x.Equipamento} {x.Descricao}".ToLowerInvariant()
+            })
+            .Where(x => CompativelComOutdoor(x.Texto, recursoAtual, interesseAtual))
+            .Take(14)
+            .Select(x => new OutdoorModePossibilidadeResponse(
+                x.Exercicio.Id,
+                x.Exercicio.Nome,
+                x.Exercicio.GrupoMuscular,
+                x.Exercicio.Equipamento,
+                x.Exercicio.Descricao,
+                MotivoOutdoor(x.Texto, ambienteAtual, recursoAtual, interesseAtual)))
+            .ToArray();
+
+        return Ok(new OutdoorModeResponse(
+            ambienteAtual,
+            recursoAtual,
+            interesseAtual,
+            ambientes,
+            recursos,
+            interesses,
+            possibilidades,
+            "Exercicios",
+            "Outdoor Mode organiza possibilidades pelo ambiente externo informado. Nao define rota, distancia, pace, carga, volume, duracao ou intensidade automaticamente."));
+    }
+
+    private static bool CompativelComOutdoor(
+        string texto,
+        string recurso,
+        string interesse)
+    {
+        var recursoOk = recurso switch
+        {
+            "Sem equipamento" => !texto.Contains("máquina") &&
+                                !texto.Contains("maquina") &&
+                                !texto.Contains("polia") &&
+                                !texto.Contains("halter"),
+            "Banco" => texto.Contains("banco") ||
+                       texto.Contains("peso corporal") ||
+                       texto.Contains("agach") ||
+                       texto.Contains("flex"),
+            "Barra fixa" => texto.Contains("barra") ||
+                            texto.Contains("pux") ||
+                            texto.Contains("remada"),
+            "Bicicleta" => texto.Contains("cicl") ||
+                           texto.Contains("bike") ||
+                           texto.Contains("bicic"),
+            "Escada ou inclinação" => texto.Contains("subida") ||
+                                      texto.Contains("escada") ||
+                                      texto.Contains("corrida") ||
+                                      texto.Contains("caminhada") ||
+                                      texto.Contains("agach"),
+            _ => true
+        };
+
+        var interesseOk = interesse switch
+        {
+            "Caminhar" => texto.Contains("caminh"),
+            "Correr" => texto.Contains("corrida") || texto.Contains("correr"),
+            "Mobilidade" => texto.Contains("mobil") ||
+                            texto.Contains("along") ||
+                            texto.Contains("quadril") ||
+                            texto.Contains("tornozelo") ||
+                            texto.Contains("ombro"),
+            "Força com peso corporal" => texto.Contains("peso corporal") ||
+                                         texto.Contains("agach") ||
+                                         texto.Contains("flex") ||
+                                         texto.Contains("prancha") ||
+                                         texto.Contains("pux"),
+            "Condicionamento geral" => true,
+            _ => true
+        };
+
+        return recursoOk && interesseOk;
+    }
+
+    private static string MotivoOutdoor(
+        string texto,
+        string ambiente,
+        string recurso,
+        string interesse)
+    {
+        var partes = new List<string>
+        {
+            $"Ambiente: {ambiente}",
+            $"Recurso: {recurso}",
+            $"Interesse: {interesse}"
+        };
+
+        if (texto.Contains("caminh"))
+            partes.Add("catalogado com indicio de caminhada");
+        else if (texto.Contains("corrida"))
+            partes.Add("catalogado com indicio de corrida");
+        else if (texto.Contains("peso corporal"))
+            partes.Add("catalogado como peso corporal");
+        else if (texto.Contains("mobil"))
+            partes.Add("catalogado com indicio de mobilidade");
+
+        return string.Join(" • ", partes);
+    }
+
+
 }

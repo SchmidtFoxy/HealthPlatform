@@ -39,6 +39,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Outdoor Mode 2.0
+
+A `v0.24.6` transforma **Quero ir para fora** em um explorador contextual por ambiente externo, recurso e interesse. O AESYN consulta o catálogo `Exercicios` e mostra possibilidades reais para Rua, Parque, Praça, Trilha leve e Área externa livre.
+
+Outdoor Mode não define rota, distância, pace, carga, volume, duração ou intensidade. O ambiente ajuda a organizar possibilidades; não vira prescrição automática.
+
 ### Travel Mode 2.0
 
 A `v0.24.5` adiciona **Estou viajando** ao AESYN Explore. A pessoa informa o tipo de hospedagem/espaço, os recursos disponíveis e a rotina temporária; o sistema reaproveita o catálogo `Exercicios` para mostrar possibilidades compatíveis.
@@ -304,7 +311,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.5 — Travel Mode 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
+- **Versão funcional:** `v0.24.6 — Outdoor Mode 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
