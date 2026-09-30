@@ -12,4 +12,11 @@ public sealed record WorkoutIntelligenceComparisonResponse(
 public sealed record WorkoutProgressionRegressionSignalResponse(
     Guid ItemTreinoId, string Sessao, string Exercicio, string Estado, string Direcao, int ExecucoesAnalisadas,
     IReadOnlyCollection<string> Evidencias, string Sugestao, string RegraDeRevisao);
-public sealed record WorkoutIntelligenceResponse(string Versao,int PeriodoDias,Guid? PlanoId,string? Plano,string? StatusPlano,int SessoesPlanejadas,int ItensPlanejados,int SessoesExecutadas,int ItensExecutados,WorkoutIntelligenceSummaryResponse Resumo,IReadOnlyCollection<WorkoutIntelligenceDimensionResponse> Dimensoes,IReadOnlyCollection<WorkoutIntelligenceComparisonResponse> Comparacoes,IReadOnlyCollection<WorkoutProgressionRegressionSignalResponse> SinaisProgressaoRegressao,IReadOnlyCollection<string> ProximasCamadas,string RegraDeUso);
+public sealed record WorkoutPeriodizationPhaseResponse(
+    Guid Id, string Nome, string Tipo, int Ordem, string Status, DateOnly DataInicio, DateOnly? DataFim,
+    int DuracaoSemanas, int? SemanaAtual, bool EhDeload, string? Objetivo, string? CriterioTransicao);
+public sealed record WorkoutPeriodizationResponse(
+    string Estado, string Microciclo, string Mesociclo, string Bloco, int? SemanaPlano, int? TotalSemanasPlano,
+    string? FaseAtual, string? TipoFaseAtual, int? SemanaFaseAtual, int? TotalSemanasFaseAtual, bool DeloadPlanejado,
+    IReadOnlyCollection<WorkoutPeriodizationPhaseResponse> Fases, string RegraDeUso);
+public sealed record WorkoutIntelligenceResponse(string Versao,int PeriodoDias,Guid? PlanoId,string? Plano,string? StatusPlano,int SessoesPlanejadas,int ItensPlanejados,int SessoesExecutadas,int ItensExecutados,WorkoutIntelligenceSummaryResponse Resumo,IReadOnlyCollection<WorkoutIntelligenceDimensionResponse> Dimensoes,IReadOnlyCollection<WorkoutIntelligenceComparisonResponse> Comparacoes,IReadOnlyCollection<WorkoutProgressionRegressionSignalResponse> SinaisProgressaoRegressao,WorkoutPeriodizationResponse Periodizacao,IReadOnlyCollection<string> ProximasCamadas,string RegraDeUso);

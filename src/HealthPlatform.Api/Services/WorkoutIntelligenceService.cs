@@ -13,6 +13,7 @@ public static class WorkoutIntelligenceService
         var plano = await db.PlanosTreino.AsNoTracking()
             .Include(x => x.Paciente)
             .Include(x => x.Sessoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Exercicio)
+            .Include(x => x.FasesTreino)
             .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == organizacaoId)
             .OrderByDescending(x => x.Status == "Ativo")
             .ThenByDescending(x => x.DataInicio)
@@ -40,7 +41,7 @@ public static class WorkoutIntelligenceService
             Dimensao("rir", "RIR", "Prescrição + execução", itensPlano.Count(x => x.RirAlvo.HasValue), itensPlano.Count, itensExecucao.Count(x => x.RirRealizado.HasValue), itensExecucao.Count, "RIR-alvo e RIR realizado possuem campos estruturados próprios."),
             Dimensao("cadencia", "Cadência", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.Cadencia)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.CadenciaRealizada)), itensExecucao.Count, "Cadência prescrita e realizada são preservadas como texto estruturado, sem inferência automática."),
             Dimensao("tecnicas", "Técnicas avançadas", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaAvancadaCodigo) || !string.IsNullOrWhiteSpace(x.TecnicaAvancada)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaExecutadaCodigo) || !string.IsNullOrWhiteSpace(x.TecnicaExecutada)), itensExecucao.Count, "Advanced Techniques 3.0 preserva código estruturado, parâmetros e texto legado para compatibilidade."),
-            NaoEstruturada("periodizacao", "Microciclo / mesociclo / bloco", "Fases e programas existem, mas a periodização 3.0 ainda será consolidada como camada própria.")
+            DimensaoPeriodizacao(plano)
         };
 
         var execucaoItens = execucoes
@@ -103,6 +104,8 @@ public static class WorkoutIntelligenceService
             }
         }
 
+        var periodizacao = MontarPeriodizacao(plano);
+
         var rpes = execucoes.Where(x => x.EsforcoPercebido.HasValue).Select(x => (decimal)x.EsforcoPercebido!.Value).ToArray();
         var resumo = new WorkoutIntelligenceSummaryResponse(
             itensPlano.Sum(x => Math.Max(0, x.Series)),
@@ -113,11 +116,59 @@ public static class WorkoutIntelligenceService
             comparacoes.Count(x => x.ExecucoesNoPeriodo > 0), comparacoes.Count(x => x.Estado == "DiferencasRegistradas"));
 
         return new WorkoutIntelligenceResponse(
-            "v0.27.4", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
-            resumo, dimensoes, comparacoes, sinaisProgressaoRegressao,
-            new[] { "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
-            "Progression & Regression 3.0 gera sinais explicáveis para revisão profissional. Nenhuma sugestão altera automaticamente carga, volume, exercício, RIR, cadência, técnica ou prescrição.");
+            "v0.27.5", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
+            resumo, dimensoes, comparacoes, sinaisProgressaoRegressao, periodizacao,
+            new[] { "Athlete Performance Passport: recordes, cargas, tempos, provas, testes e marcos." },
+            "Periodization 3.0 organiza microciclo, mesociclo, bloco e deload a partir do planejamento já registrado. Não cria periodização, deload ou alteração de prescrição automaticamente.");
     }
+
+
+    private static WorkoutPeriodizationResponse MontarPeriodizacao(PlanoTreino? plano)
+    {
+        if (plano is null)
+            return new("SemPlano", "Sem plano ativo", "Sem fase ativa", "Sem bloco ativo", null, null, null, null, null, null, false, Array.Empty<WorkoutPeriodizationPhaseResponse>(), "Periodização depende do planejamento registrado pelo profissional; o AESYN não cria ciclos automaticamente.");
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var fases = plano.FasesTreino.OrderBy(x => x.Ordem).ThenBy(x => x.DataInicio).ToList();
+        var faseAtual = fases.FirstOrDefault(x => x.Status.Equals("EmCurso", StringComparison.OrdinalIgnoreCase) || x.Status.Equals("Ativa", StringComparison.OrdinalIgnoreCase))
+            ?? fases.FirstOrDefault(x => x.DataInicio <= hoje && (!x.DataFim.HasValue || x.DataFim.Value >= hoje));
+        var semanaPlano = SemanaDesde(plano.DataInicio, hoje);
+        int? totalSemanasPlano = plano.DataFim.HasValue ? SemanasEntre(plano.DataInicio, plano.DataFim.Value) : null;
+        var deloadPlanejado = fases.Any(EhDeload);
+        var fasesResponse = fases.Select(x => new WorkoutPeriodizationPhaseResponse(
+            x.Id, x.Nome, x.Tipo, x.Ordem, x.Status, x.DataInicio, x.DataFim,
+            x.DataFim.HasValue ? SemanasEntre(x.DataInicio, x.DataFim.Value) : Math.Max(1, x.DuracaoMinimaDias.HasValue ? (int)Math.Ceiling(x.DuracaoMinimaDias.Value / 7m) : 1),
+            x == faseAtual ? SemanaDesde(x.DataInicio, hoje) : null, EhDeload(x), x.Objetivo, x.CriterioTransicao)).ToArray();
+        var faseAtualResponse = fasesResponse.FirstOrDefault(x => faseAtual is not null && x.Id == faseAtual.Id);
+        var estado = fases.Count == 0 ? "SemFasesConfiguradas" : faseAtual is not null ? "EmCurso" : "PlanejadoSemFaseAtual";
+        return new(
+            estado,
+            semanaPlano.HasValue ? $"Semana {semanaPlano.Value} do plano" : "Microciclo sem referência temporal",
+            faseAtual?.Nome ?? "Sem fase ativa",
+            plano.Nome,
+            semanaPlano, totalSemanasPlano, faseAtual?.Nome, faseAtual?.Tipo, faseAtualResponse?.SemanaAtual, faseAtualResponse?.DuracaoSemanas,
+            deloadPlanejado, fasesResponse,
+            "Microciclo, mesociclo, bloco e deload refletem apenas planejamento profissional já registrado; nenhuma transição ou deload é aplicado automaticamente.");
+    }
+
+    private static WorkoutIntelligenceDimensionResponse DimensaoPeriodizacao(PlanoTreino? plano)
+    {
+        var fases = plano?.FasesTreino?.Count ?? 0;
+        var estado = plano is null ? "SemDados" : fases == 0 ? "SemFaseConfigurada" : "Estruturado";
+        return new("periodizacao", "Microciclo / mesociclo / bloco", estado, "Plano + fases de treino", fases, Math.Max(1, fases),
+            fases > 0 ? "Periodization 3.0 usa datas, ordem, tipo, status e critérios de transição das fases já registradas." : "Plano existente, mas ainda sem fases de periodização configuradas.");
+    }
+
+    private static bool EhDeload(FaseTreino fase) =>
+        fase.Tipo.Contains("deload", StringComparison.OrdinalIgnoreCase) || fase.Nome.Contains("deload", StringComparison.OrdinalIgnoreCase);
+
+    private static int? SemanaDesde(DateOnly inicio, DateOnly referencia)
+    {
+        if (referencia < inicio) return null;
+        return Math.Max(1, ((referencia.DayNumber - inicio.DayNumber) / 7) + 1);
+    }
+
+    private static int SemanasEntre(DateOnly inicio, DateOnly fim) => Math.Max(1, (int)Math.Ceiling((fim.DayNumber - inicio.DayNumber + 1) / 7m));
 
     private static List<string> Comparar(ItemTreino prescrito, ExecucaoItemTreino realizado)
     {

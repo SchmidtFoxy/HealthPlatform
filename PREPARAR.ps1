@@ -13,6 +13,31 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# v0.27.5-r6: limpa residuos criados pelos hotfixes r1-r5 empacotados sem a raiz HealthPlatform/.
+# O AESYN AUTO v10 trata uma unica pasta de topo como raiz do pacote; por isso "src/" e
+# "scripts/" isolados foram copiados um nivel acima do destino correto.
+$accidentalSetup = Join-Path $root "setup.ps1"
+if (Test-Path -LiteralPath $accidentalSetup) {
+    $accidentalSetupText = Get-Content -LiteralPath $accidentalSetup -Raw -ErrorAction SilentlyContinue
+    if ($accidentalSetupText -match 'AESYN_SETUP_DIAGNOSTIC|AESYN setup diagnostic v0\.27\.5-r[45]') {
+        Remove-Item -LiteralPath $accidentalSetup -Force
+        Write-Host "[Limpeza] setup.ps1 residual de hotfix removido da raiz." -ForegroundColor Yellow
+    }
+}
+
+$accidentalApiRoot = Join-Path $root "HealthPlatform.Api"
+$expectedApiRoot = Join-Path $root "src\HealthPlatform.Api"
+if ((Test-Path -LiteralPath $accidentalApiRoot) -and (Test-Path -LiteralPath $expectedApiRoot)) {
+    $accidentalProject = Join-Path $accidentalApiRoot "HealthPlatform.Api.csproj"
+    $knownMisplacedService = Join-Path $accidentalApiRoot "Services\WorkoutIntelligenceService.cs"
+    $knownMisplacedContract = Join-Path $accidentalApiRoot "Contracts\WorkoutIntelligence\WorkoutIntelligenceContracts.cs"
+    if (-not (Test-Path -LiteralPath $accidentalProject) -and
+        ((Test-Path -LiteralPath $knownMisplacedService) -or (Test-Path -LiteralPath $knownMisplacedContract))) {
+        Remove-Item -LiteralPath $accidentalApiRoot -Recurse -Force
+        Write-Host "[Limpeza] HealthPlatform.Api residual fora de src removido." -ForegroundColor Yellow
+    }
+}
+
 # AESYN Product Governance: documentacao viva faz parte da entrega.
 function Assert-AesynLivingDocs {
     $required = @("README.md", "ROADMAP.md", "CHANGELOG.md", "VERSION.txt", "TESTAR.ps1", "RODAR.ps1")

@@ -1,3 +1,23 @@
+## v0.27.5 — Periodization 3.0
+
+A camada de Workout Intelligence passa a organizar o planejamento temporal já registrado, sem criar periodização automática.
+
+### Entregas
+- **Microciclo:** semana corrente calculada a partir da data de início do plano.
+- **Mesociclo:** fase de treino ativa ou correspondente à data atual.
+- **Bloco:** plano de treino vigente como contexto macro.
+- **Deload:** identifica fases explicitamente registradas como deload, sem sugerir ou aplicar uma semana de descarga.
+- fases ordenadas com tipo, status, duração, objetivo e critério profissional de transição;
+- integração ao endpoint e painel de Workout Intelligence 3.0;
+- reutiliza `PlanoTreino` + `FaseTreino`; **não cria migration ou tabela nova**.
+
+### Guardrail
+Periodization 3.0 **não cria microciclo, mesociclo, bloco, deload ou transição automaticamente**. A camada apenas organiza planejamento já registrado pelo profissional.
+
+**Próxima fase:** `v0.28.0 — Athlete Performance Passport Foundation`.
+
+---
+
 ## v0.27.4 — Progression & Regression 3.0
 
 Transforma o histórico de prescrição × execução em **sinais explicáveis de revisão**, sem aplicar mudanças automaticamente.

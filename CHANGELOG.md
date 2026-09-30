@@ -1,3 +1,13 @@
+## v0.27.5 — Periodization 3.0
+
+- Estrutura leitura de microciclo, mesociclo, bloco e deload sobre `PlanoTreino` e `FaseTreino` existentes.
+- Workout Intelligence retorna `Periodizacao` com semana do plano, fase atual, duração, fases ordenadas e deload explicitamente planejado.
+- Painel profissional exibe contexto temporal e critérios de transição registrados.
+- Guardrail: nenhuma fase, transição ou deload é criado/aplicado automaticamente.
+- Não cria migration ou tabela nova.
+- Fecha a fase Workout Intelligence 3.0.
+- Próxima fase: v0.28.0 — Athlete Performance Passport Foundation.
+
 ## v0.27.4 — Progression & Regression 3.0
 - Adiciona sinais explicáveis de progressão/regressão derivados do histórico já persistido.
 - Usa duas ou mais execuções comparáveis para evitar direção baseada em evento isolado.

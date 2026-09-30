@@ -52,7 +52,34 @@ if (-not $dotnetEfOk) {
     if ($LASTEXITCODE -ne 0) { throw "Nao foi possivel instalar dotnet-ef." }
 }
 
-Invoke-NativeStep "[3/38] Compilando..." { dotnet build .\HealthPlatform.slnx --no-restore }
+Write-Host "[AESYN setup diagnostic v0.27.5-r6]" -ForegroundColor DarkCyan
+Write-Host "[3/38] Compilando..." -ForegroundColor Cyan
+$buildLog = Join-Path $root "AESYN-BUILD-LAST.log"
+$buildOutput = @(& dotnet build .\HealthPlatform.slnx --no-restore 2>&1)
+$buildExitCode = $LASTEXITCODE
+
+$buildOutput | ForEach-Object { Write-Host $_ }
+$buildOutput | Set-Content -Path $buildLog -Encoding UTF8
+
+if ($buildExitCode -ne 0) {
+    $compilerLines = @(
+        $buildOutput |
+            ForEach-Object { "$_" } |
+            Where-Object {
+                $_ -match '\berror\s+CS\d+' -or
+                $_ -match '\berror\s+[A-Z]{2,}\d+' -or
+                $_ -match ': error ' -or
+                $_ -match 'Build FAILED'
+            }
+    )
+
+    if ($compilerLines.Count -eq 0) {
+        $compilerLines = @($buildOutput | Select-Object -Last 30 | ForEach-Object { "$_" })
+    }
+
+    $detail = ($compilerLines | Select-Object -Last 40) -join [Environment]::NewLine
+    throw "Falha na etapa: [3/38] Compilando... (codigo $buildExitCode)`nERROS DO COMPILADOR:`n$detail`nLog completo: $buildLog"
+}
 
 $migrationsPath = Join-Path $root "src\HealthPlatform.Infrastructure\Migrations"
 $initialMigration = $null

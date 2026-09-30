@@ -1078,7 +1078,7 @@ Natação, triathlon, artes marciais, remo, trekking, modalidades recreativas e 
 - ✅ `v0.27.2 — Prescribed vs Performed 3.0` — comparação auditável entre variáveis prescritas e executadas por exercício.
 - ✅ `v0.27.3 — Advanced Techniques 3.0` — técnicas avançadas como contrato estruturado e reutilizável.
 - ✅ `v0.27.4 — Progression & Regression 3.0` — sugestões explicáveis, sempre revisadas pelo profissional.
-- `v0.27.5 — Periodization 3.0` — microciclo, mesociclo, bloco e deload.
+- ✅ `v0.27.5 — Periodization 3.0` — microciclo, mesociclo, bloco e deload.
 
 # 12. v0.28.x — Athlete Performance Passport
 
@@ -1978,4 +1978,18 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - nenhuma alteração automática da prescrição;
 - sem migration nova.
 
-**Próxima etapa:** `v0.27.5 — Periodization 3.0`.
+**Próxima etapa concluída em `v0.27.5 — Periodization 3.0`.**
+
+
+## ✅ v0.27.5 — Periodization 3.0 — CONCLUÍDA
+
+**Entregue na v0.27.5:**
+- microciclo derivado da semana do plano;
+- mesociclo representado pela fase de treino vigente;
+- bloco representado pelo plano vigente;
+- deload reconhecido apenas quando explicitamente planejado;
+- fases ordenadas com duração, status, objetivo e critério de transição;
+- nenhuma periodização ou transição automática;
+- sem migration nova.
+
+**Próxima fase:** `v0.28.0 — Athlete Performance Passport Foundation`.
