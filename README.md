@@ -776,3 +776,8 @@ O catálogo profissional de programas passa a ter um fluxo de publicação para 
 ## Roadmap do produto
 
 A direção de evolução, pendências protegidas e gates de produto estão documentados em [`ROADMAP.md`](ROADMAP.md). Antes de iniciar uma nova versão funcional, confira esse arquivo para evitar perda de escopo ou ideias.
+
+## v0.26.2 — Triathlon 2.0
+
+O Explore esportivo aprofunda Triathlon em três disciplinas (natação, ciclismo e corrida), duas transições (T1/T2), capacidades de suporte e referências a sessões-modelo já cadastradas. A camada é educacional/editorial: não gera distância, pace, potência, zonas, volume, intensidade, estratégia nutricional, aptidão ou retorno ao esporte automaticamente.
+

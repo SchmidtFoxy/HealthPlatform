@@ -400,3 +400,36 @@ public sealed record SwimmingResponse(
     IReadOnlyCollection<SwimmingSessaoReferenciaResponse> SessoesReferencia,
     string Fonte,
     string RegraDeUso);
+
+public sealed record TriathlonDisciplinaResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string FocoTecnico);
+
+public sealed record TriathlonTransicaoResponse(
+    string Codigo,
+    string Nome,
+    string De,
+    string Para,
+    string OQueOrganizar);
+
+public sealed record TriathlonCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record TriathlonSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record TriathlonResponse(
+    IReadOnlyCollection<TriathlonDisciplinaResponse> Disciplinas,
+    IReadOnlyCollection<TriathlonTransicaoResponse> Transicoes,
+    IReadOnlyCollection<TriathlonCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<TriathlonSessaoReferenciaResponse> SessoesReferencia,
+    string Fonte,
+    string RegraDeUso);

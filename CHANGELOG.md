@@ -3459,3 +3459,13 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Corrige cenarios de extracao por sobreposicao que preservam um `AppDbContext.cs` anterior enquanto o controller de notas internas ja foi atualizado.
 - `PREPARAR.ps1` passa a validar e restaurar automaticamente o `DbSet<NotaInternaProfissional>` e o mapeamento EF canonico antes do build.
 - Nenhuma alteracao funcional ou de schema; a versao funcional permanece `0.20.4`.
+
+## v0.26.2 — Triathlon 2.0
+- Aprofunda Triathlon dentro da Sports Expansion II com natação, ciclismo e corrida.
+- Adiciona T1 e T2 como transições explícitas, com foco em organização e segurança operacional.
+- Organiza resistência multimodal, coordenação de transições, durabilidade, força/estabilidade e gestão de esforço.
+- Reutiliza sessões-modelo existentes como referências editoriais sem inventar prescrição clínica ou esportiva.
+- Integra o detalhamento ao Explore mobile-first.
+- Não gera distância, pace, potência, zonas, frequência cardíaca-alvo, volume, intensidade, estratégia nutricional, aptidão ou retorno ao esporte automaticamente.
+- Não cria migration ou tabela nova.
+

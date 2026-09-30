@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.26.1 — Swimming 2.0
+> **Versão-base deste roadmap:** v0.26.2 — Triathlon 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1627,6 +1627,24 @@ Aprofundar Natação dentro da Sports Expansion II sem converter descoberta em p
 - nenhuma migration ou tabela nova.
 
 **Próxima etapa:** `v0.26.2 — Triathlon 2.0`.
+
+## ✅ v0.26.2 — Triathlon 2.0 — CONCLUÍDA
+
+Aprofundar Triathlon dentro da Sports Expansion II sem transformar descoberta esportiva em planilha automática.
+
+**Entregue na v0.26.2:**
+- endpoint `/api/portal/me/explore/triathlon`;
+- natação, ciclismo e corrida como disciplinas explícitas;
+- T1 (natação → ciclismo) e T2 (ciclismo → corrida);
+- capacidades de resistência multimodal, coordenação de transições, durabilidade, força/estabilidade e gestão de esforço;
+- referências a sessões-modelo existentes;
+- integração mobile ao card Sports Expansion II;
+- sem distância, pace, potência, zonas, frequência cardíaca-alvo, volume, intensidade, estratégia nutricional, aptidão ou retorno automáticos;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.26.3 — Martial Arts 2.0`.
+
+
 
 
 

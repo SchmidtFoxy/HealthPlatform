@@ -1863,6 +1863,64 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("triathlon")]
+    public async Task<ActionResult<TriathlonResponse>> Triathlon(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria).ThenBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.Categoria, x.Descricao })
+            .ToListAsync(ct);
+
+        var referencias = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "triathlon", "triatlo", "natação", "natacao", "ciclismo", "bike", "bicicleta", "corrida", "running", "transição", "transicao", "cardio", "endurance", "core" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(10)
+            .Select(x => new TriathlonSessaoReferenciaResponse(
+                x.Id, x.Nome, x.Categoria, x.Descricao,
+                "Sessão-modelo existente com termos relacionados a uma disciplina do triathlon ou a capacidades de suporte."))
+            .ToArray();
+
+        var disciplinas = new TriathlonDisciplinaResponse[]
+        {
+            new("natacao", "Natação", "Primeira disciplina, com demanda técnica aquática antes da transição para a bicicleta.", "Eficiência de movimento, orientação, respiração e saída da água sem definir metragem ou ritmo."),
+            new("ciclismo", "Ciclismo", "Disciplina central do triathlon, com longa exposição a posição, cadência e controle da bicicleta.", "Controle, posição sustentável, eficiência do movimento e preparação para correr sem prescrever potência ou zonas."),
+            new("corrida", "Corrida", "Disciplina final realizada após carga acumulada das etapas anteriores.", "Economia de movimento, postura, cadência natural e manutenção técnica sob fadiga sem prescrever pace.")
+        };
+
+        var transicoes = new TriathlonTransicaoResponse[]
+        {
+            new("t1", "T1", "Natação", "Ciclismo", "Organizar saída da água, orientação, troca de equipamentos e início seguro do ciclismo."),
+            new("t2", "T2", "Ciclismo", "Corrida", "Organizar desmontagem, troca de equipamentos e adaptação inicial do padrão de corrida.")
+        };
+
+        var capacidades = new TriathlonCapacidadeResponse[]
+        {
+            new("resistencia-multimodal", "Resistência multimodal", "Sustentar qualidade de movimento ao alternar ambientes e disciplinas."),
+            new("coordenacao-transicoes", "Coordenação de transições", "Reduzir desorganização entre tarefas diferentes sem transformar velocidade de transição em meta automática."),
+            new("durabilidade", "Durabilidade de movimento", "Preservar técnica útil quando o esforço acumulado cresce ao longo da sessão ou prova."),
+            new("forca-estabilidade", "Força e estabilidade de suporte", "Dar suporte a posição na bicicleta, corrida e controle corporal entre disciplinas."),
+            new("gestao-esforco", "Gestão de esforço", "Compreender distribuição de demanda entre disciplinas sem gerar zonas, potência, frequência cardíaca-alvo ou estratégia de prova automaticamente.")
+        };
+
+        return Ok(new TriathlonResponse(
+            disciplinas, transicoes, capacidades, referencias,
+            "Sports Expansion II + Swimming 2.0 + ModelosSessoesTreino",
+            "Triathlon 2.0 organiza disciplinas, transições e capacidades e referencia conteúdo existente. Não prescreve distância, pace, potência, zonas, frequência cardíaca-alvo, volume, intensidade, estratégia nutricional, aptidão ou retorno ao esporte automaticamente."));
+    }
+
+
     [HttpGet("sports-expansion-ii")]
     public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
         CancellationToken ct = default)

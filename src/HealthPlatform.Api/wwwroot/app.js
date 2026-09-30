@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.26.1';
+const HP_MVP_VERSION='0.26.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -15090,3 +15090,40 @@ hpOpenSportsExpansionIIV0260=async function(host){
   const detail=root?.querySelector('#swimmingHostV0261');
   if(button&&detail)button.onclick=()=>hpOpenSwimmingV0261(detail);
 };
+
+// ===== v0.26.2 — Triathlon 2.0 =====
+const HP_TRIATHLON_V0262='v0.26.2';
+
+function hpTriathlonV0262(data){
+  const refs=Array.isArray(data?.sessoesReferencia)?data.sessoesReferencia:[];
+  return `<section class="triathlon-v0262" data-triathlon-v0262="${HP_TRIATHLON_V0262}" aria-labelledby="triathlonTitleV0262">
+    <div class="triathlon-head-v0262"><div><span class="eyebrow">TRIATHLON 2.0</span><h3 id="triathlonTitleV0262">Três disciplinas. Uma cadeia de movimento.</h3><p>Natação, ciclismo, corrida e transições organizados como contexto esportivo — não como prescrição automática de treino ou prova.</p></div><span>SWIM · BIKE · RUN</span></div>
+    <section class="triathlon-section-v0262"><h5>Disciplinas</h5><div class="triathlon-disciplines-v0262">${(data?.disciplinas||[]).map(x=>`<article><b>${esc(x.nome)}</b><p>${esc(x.contexto)}</p><small>${esc(x.focoTecnico)}</small></article>`).join('')}</div></section>
+    <section class="triathlon-section-v0262"><h5>Transições</h5><div class="triathlon-transitions-v0262">${(data?.transicoes||[]).map(x=>`<article><div><b>${esc(x.nome)}</b><span>${esc(x.de)} → ${esc(x.para)}</span></div><p>${esc(x.oQueOrganizar)}</p></article>`).join('')}</div></section>
+    <section class="triathlon-section-v0262"><h5>Capacidades de suporte</h5><div class="triathlon-capabilities-v0262">${(data?.capacidades||[]).map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.contexto)}</span></article>`).join('')}</div></section>
+    <section class="triathlon-section-v0262"><h5>Sessões-modelo relacionadas</h5>${refs.length?`<div class="triathlon-references-v0262">${refs.map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.categoria||'Sessão-modelo')}</span><p>${esc(x.descricao||'Sem descrição cadastrada.')}</p><small>${esc(x.motivoDaReferencia)}</small></article>`).join('')}</div>`:`<div class="triathlon-empty-v0262"><b>Sem referência editorial ainda.</b><span>O AESYN preserva a lacuna em vez de inventar uma sessão de triathlon.</span></div>`}</section>
+    <div class="triathlon-rule-v0262"><b>CONTEXTO ≠ PRESCRIÇÃO</b><span>${esc(data?.regraDeUso||'A exploração da modalidade não define automaticamente distância, pace, potência, zonas, volume ou intensidade.')}</span></div>
+  </section>`;
+}
+
+async function hpOpenTriathlonV0262(host){
+  if(!host)return;host.hidden=false;host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Triathlon 2.0...</div>';
+  try{const data=await api('/api/portal/me/explore/triathlon');host.innerHTML=hpTriathlonV0262(data);host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}
+  catch(err){host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Triathlon 2.0.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;}
+}
+
+const __hpSportsExpansionIIV0262=hpSportsExpansionIIV0260;
+hpSportsExpansionIIV0260=function(data){
+  const html=__hpSportsExpansionIIV0262(data);
+  return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="triathlon-entry-v0262"><button type="button" class="primary" id="openTriathlonV0262">Abrir Triathlon 2.0</button><small>Natação, ciclismo, corrida, T1/T2 e capacidades de suporte.</small></div><div id="triathlonHostV0262" class="triathlon-host-v0262" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
+};
+
+const __hpOpenSportsExpansionIIV0262=hpOpenSportsExpansionIV0260;
+hpOpenSportsExpansionIV0260=async function(host){
+  await __hpOpenSportsExpansionIIV0262(host);
+  const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
+  const button=root?.querySelector('#openTriathlonV0262');
+  const detail=root?.querySelector('#triathlonHostV0262');
+  if(button&&detail)button.onclick=()=>hpOpenTriathlonV0262(detail);
+};
+
