@@ -1,4 +1,19 @@
-﻿# v0.32.6 — Progress Review Care Plan Closure
+﻿# v0.33.0 — Professional Review Action Plan Foundation
+
+- Abre a linha funcional 0.33.x.
+- Adiciona `ProfessionalReviewActionPlanFieldResponse`.
+- Adiciona `ProfessionalReviewActionPlanFoundationResponse`.
+- Adiciona seis campos estruturados do Action Plan.
+- Adiciona `GET .../action-plan-foundation`.
+- Adiciona estado `FundacaoActionPlanDisponivel`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330`.
+- Exibe a fundação no workspace profissional.
+- Mantém `PersistenciaDisponivel = false`.
+- Não executa ação ou prescrição automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.33.1 — Professional Review Action Plan Persistence.
+
+# v0.32.6 — Progress Review Care Plan Closure
 
 - Adiciona `ProgressReviewCarePlanClosureResponse`.
 - Adiciona endpoint `GET .../care-plan/closure`.

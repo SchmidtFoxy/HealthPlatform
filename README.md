@@ -1941,3 +1941,25 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.33.0 — Professional Review Action Plan Foundation`.
 
+---
+
+## v0.33.0 — Professional Review Action Plan Foundation
+
+Abre a linha 0.33.x com a fundação estrutural para organizar ações profissionais acompanháveis derivadas do Care Plan.
+
+### Campos estruturados
+- `acao-operacional` — obrigatório;
+- `objetivo-relacionado`;
+- `responsavel`;
+- `horizonte`;
+- `care-plan-relacionado`;
+- `observacao-profissional`.
+
+### Escopo
+O Action Plan pertence à equipe profissional e organiza documentalmente ações acompanháveis. Nesta versão a fundação ainda não possui persistência própria.
+
+### Guardrail
+A fundação não executa ações, não prescreve automaticamente e não cria prioridade, risco, diagnóstico, prognóstico ou recomendação automática.
+
+**Próxima etapa:** `v0.33.1 — Professional Review Action Plan Persistence`.
+

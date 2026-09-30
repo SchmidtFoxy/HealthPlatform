@@ -2689,3 +2689,20 @@ Fechar o ciclo 0.32.x consolidando fundação, persistência, status, histórico
 ### v0.33.0 — Professional Review Action Plan Foundation
 Criar a fundação estrutural para transformar o Care Plan em um plano operacional profissional de ações acompanháveis, mantendo separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.33.0 — Professional Review Action Plan Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewActionPlanFieldResponse`;
+- `ProfessionalReviewActionPlanFoundationResponse`;
+- seis campos estruturados do Action Plan;
+- endpoint profissional `action-plan-foundation`;
+- estado `FundacaoActionPlanDisponivel`;
+- persistência ainda desabilitada;
+- painel da fundação no workspace profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.1 — Professional Review Action Plan Persistence
+Adicionar persistência profissional auditada ao Action Plan, mantendo vínculo opcional com Care Plan e separação entre documentação, decisão clínica e execução.
+

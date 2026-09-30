@@ -4872,6 +4872,7 @@ const HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3';
 const HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4';
 const HP_PROGRESS_REVIEW_CARE_PLAN_SUMMARY_V0325='v0.32.5';
 const HP_PROGRESS_REVIEW_CARE_PLAN_CLOSURE_V0326='v0.32.6';
+const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330='v0.33.0';
 
 
 
@@ -4930,6 +4931,30 @@ function hpRenderProgressReviewCarePlanFoundationV0320(host,foundation){
 
 
 
+
+
+async function hpLoadProfessionalReviewActionPlanFoundationV0330(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/action-plan-foundation`);
+}
+
+function hpRenderProfessionalReviewActionPlanFoundationV0330(host,foundation){
+  if(!host || !foundation) return;
+
+  const fields=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-action-plan-v0330="${HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330}">
+    <div><b>Plano operacional profissional</b></div>
+    <small class="muted-line">Fundação estrutural para ações acompanháveis.</small>
+    <div class="stack">
+      ${fields.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>
+      <small class="muted-line">${esc(x.descricao||'')}</small>`).join('')}
+    </div>
+    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência disponível.':'Nesta versão, o Action Plan ainda não possui persistência própria.'}</small>
+  </section>`;
+}
 
 async function hpLoadProgressReviewCarePlanClosureV0326(patientId){
   if(!patientId) return null;
@@ -5035,6 +5060,7 @@ async function hpOpenProgressReviewCarePlanV0321(p){
       <button type="button" class="ghost" id="closeProgressReviewCarePlanV0321">Fechar</button>
     </div>
 
+    <div id="professionalReviewActionPlanFoundationV0330"></div>
     <div id="progressReviewCarePlanClosureV0326"></div>
     <div id="progressReviewCarePlanSummaryV0325"></div>
     <form id="progressReviewCarePlanFiltersV0324" class="form-grid" data-progress-review-care-plan-filters-v0324="${HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324}">
@@ -5077,6 +5103,11 @@ async function hpOpenProgressReviewCarePlanV0321(p){
     <div id="progressReviewCarePlanListV0321" class="stack"></div>
   </div>`;
   modal.classList.add('open');
+
+  const actionPlanHostV0330=$('#professionalReviewActionPlanFoundationV0330');
+  hpLoadProfessionalReviewActionPlanFoundationV0330(p.id)
+    .then(x=>hpRenderProfessionalReviewActionPlanFoundationV0330(actionPlanHostV0330,x))
+    .catch(()=>{ if(actionPlanHostV0330) actionPlanHostV0330.innerHTML=''; });
 
   const carePlanClosureHostV0326=$('#progressReviewCarePlanClosureV0326');
   hpLoadProgressReviewCarePlanClosureV0326(p.id)
@@ -10765,7 +10796,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.32.6';
+const HP_MVP_VERSION='0.33.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -199,6 +199,52 @@ public class ProgressReviewNotesController(
             "A fundação do Care Plan organiza próximos cuidados de forma documental. A partir da v0.32.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("action-plan-foundation")]
+    public ActionResult<ProfessionalReviewActionPlanFoundationResponse> ActionPlanFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewActionPlanFieldResponse(
+                "acao-operacional",
+                "Ação operacional",
+                "Descreve a próxima ação profissional acompanhável.",
+                true),
+            new ProfessionalReviewActionPlanFieldResponse(
+                "objetivo-relacionado",
+                "Objetivo relacionado",
+                "Relaciona a ação a um objetivo documental do plano profissional.",
+                false),
+            new ProfessionalReviewActionPlanFieldResponse(
+                "responsavel",
+                "Responsável",
+                "Identifica o profissional ou papel responsável pela ação.",
+                false),
+            new ProfessionalReviewActionPlanFieldResponse(
+                "horizonte",
+                "Prazo ou horizonte",
+                "Registra uma referência temporal documental para acompanhamento.",
+                false),
+            new ProfessionalReviewActionPlanFieldResponse(
+                "care-plan-relacionado",
+                "Care Plan relacionado",
+                "Permite referenciar opcionalmente um Care Plan já existente.",
+                false),
+            new ProfessionalReviewActionPlanFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                "Permite registrar contexto adicional da ação.",
+                false)
+        };
+
+        return Ok(new ProfessionalReviewActionPlanFoundationResponse(
+            campos,
+            campos.Length,
+            "FundacaoActionPlanDisponivel",
+            false,
+            "EquipeProfissional",
+            "A fundação do Action Plan organiza ações profissionais de forma documental. Nesta versão não possui persistência própria, não executa ações e não cria prescrição, prioridade, risco, diagnóstico, prognóstico ou recomendação automática."));
+    }
+
     [HttpGet("care-plan/closure")]
     public ActionResult<ProgressReviewCarePlanClosureResponse> FechamentoCarePlan()
     {
