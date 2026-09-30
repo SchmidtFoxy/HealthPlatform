@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.4 — Movement Instructions & Media Foundation
+> **Versão-base deste roadmap:** v0.23.5 — Movement Library Coverage & Quality 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1010,6 +1010,27 @@ Introduzir a camada `Sessão` da taxonomia esportiva, conectando objetivos e cap
 ## ✅ v0.23.4 — Movement Instructions & Media Foundation — CONCLUÍDA
 
 Organizar instruções, descrição e mídia já existentes para tornar cada movimento mais ensinável dentro da biblioteca, preservando o catálogo profissional como fonte única.
+
+
+
+## ✅ v0.23.5 — Movement Library Coverage & Quality 2.0 — CONCLUÍDA
+
+**Entregue na v0.23.5:**
+- cobertura global e por modalidade;
+- capacidades com sessão;
+- capacidades com exercício;
+- movimentos relacionados;
+- movimentos com descrição;
+- movimentos com mídia;
+- lacunas editoriais explícitas;
+- prioridades editoriais acionáveis;
+- nenhum score clínico ou preenchimento artificial de conteúdo.
+
+**Próxima etapa:** `v0.23.6 — Movement Templates & Starter Packs Foundation`.
+
+## ⏭ v0.23.6 — Movement Templates & Starter Packs Foundation
+
+Organizar sessões-modelo existentes em conjuntos reutilizáveis por modalidade/objetivo/capacidade para preparar Starter Packs profissionais sem duplicar `ModelosSessoesTreino` e sem publicar automaticamente para pacientes.
 
 
 # 8. v0.24.x — AESYN Explore

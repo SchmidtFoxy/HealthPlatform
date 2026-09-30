@@ -1,3 +1,17 @@
+# v0.23.5 — Movement Library Coverage & Quality 2.0
+
+- Adiciona cobertura editorial ao `GET /api/biblioteca-movimento`.
+- Calcula capacidades com sessão e com exercício.
+- Calcula movimentos relacionados, com descrição e com mídia.
+- Resume cobertura individualmente por modalidade.
+- Expõe lacunas editoriais sem criar score clínico.
+- Gera prioridades editoriais a partir de conteúdo realmente ausente.
+- A lista de prioridades oferece atalho para o catálogo profissional.
+- Não inventa descrição, mídia, sessão ou exercício.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.5.
+- Próxima etapa: v0.23.6 — Movement Templates & Starter Packs Foundation.
+
 # v0.23.4 — Movement Instructions & Media Foundation
 
 - Adiciona detalhe de movimento diretamente na Sports & Movement Library.

@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.4';
+const HP_MVP_VERSION='0.23.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13063,6 +13063,64 @@ function hpMovementSafeMediaUrlV0234(value){
   }catch{return null}
 }
 
+function hpMovementCoveragePctV0235(done,total){
+  const t=Number(total||0),d=Number(done||0);
+  return t>0?Math.round((d*100)/t):0;
+}
+
+function hpMovementCoverageV0235(c){
+  if(!c)return '';
+  const descPct=hpMovementCoveragePctV0235(c.exerciciosComDescricao,c.exerciciosRelacionados);
+  const mediaPct=hpMovementCoveragePctV0235(c.exerciciosComMidia,c.exerciciosRelacionados);
+  const sessionPct=hpMovementCoveragePctV0235(c.capacidadesComSessao,c.capacidades);
+  const exercisePct=hpMovementCoveragePctV0235(c.capacidadesComExercicio,c.capacidades);
+
+  return `<section class="movement-coverage-v0235" data-movement-coverage-v0235="${HP_MOVEMENT_COVERAGE_QUALITY_V0235}">
+    <div class="movement-coverage-head-v0235">
+      <div>
+        <span class="eyebrow">LIBRARY COVERAGE & QUALITY 2.0</span>
+        <h3>O que já está coberto — e o que ainda precisa de conteúdo.</h3>
+        <p>Indicadores editoriais calculados sobre sessões, exercícios, descrição e mídia que realmente existem nas fontes atuais.</p>
+      </div>
+      <span class="movement-coverage-count-v0235">${c.capacidades||0}<small>capacidades</small></span>
+    </div>
+
+    <div class="movement-coverage-kpis-v0235">
+      <article><span>Capacidades com sessão</span><b>${c.capacidadesComSessao||0}/${c.capacidades||0}</b><i><em style="width:${sessionPct}%"></em></i><small>${sessionPct}%</small></article>
+      <article><span>Capacidades com exercício</span><b>${c.capacidadesComExercicio||0}/${c.capacidades||0}</b><i><em style="width:${exercisePct}%"></em></i><small>${exercisePct}%</small></article>
+      <article><span>Movimentos com descrição</span><b>${c.exerciciosComDescricao||0}/${c.exerciciosRelacionados||0}</b><i><em style="width:${descPct}%"></em></i><small>${descPct}%</small></article>
+      <article><span>Movimentos com mídia</span><b>${c.exerciciosComMidia||0}/${c.exerciciosRelacionados||0}</b><i><em style="width:${mediaPct}%"></em></i><small>${mediaPct}%</small></article>
+    </div>
+
+    <div class="movement-coverage-columns-v0235">
+      <div class="movement-coverage-modalities-v0235">
+        ${(c.modalidades||[]).map(x=>`<article>
+          <div><b>${esc(x.nome)}</b><span>${x.capacidades||0} capacidade(s)</span></div>
+          <div class="movement-coverage-mini-v0235">
+            <span>${x.capacidadesComSessao||0} com sessão</span>
+            <span>${x.exerciciosRelacionados||0} movimentos</span>
+            <span>${x.exerciciosComDescricao||0} descritos</span>
+            <span>${x.exerciciosComMidia||0} com mídia</span>
+          </div>
+          ${(x.lacunas||[]).length?`<small>${(x.lacunas||[]).map(esc).join(' • ')}</small>`:'<small class="is-covered">Sem lacuna estrutural detectada neste recorte.</small>'}
+        </article>`).join('')}
+      </div>
+
+      <aside class="movement-editorial-priorities-v0235">
+        <span>PRIORIDADES EDITORIAIS</span>
+        ${(c.prioridadesEditoriais||[]).length
+          ?`<div>${c.prioridadesEditoriais.map((x,i)=>`<button type="button" data-movement-quality-open-catalog-v0235><b>${i+1}</b><span>${esc(x)}</span></button>`).join('')}</div>`
+          :'<p>Nenhuma lacuna editorial detectada neste recorte.</p>'}
+      </aside>
+    </div>
+
+    <div class="movement-coverage-rule-v0235">
+      <b>Qualidade editorial ≠ qualidade clínica</b>
+      <span>${esc(c.regraDeLeitura||'Cobertura mostra presença de conteúdo real; não avalia qualidade clínica ou prescrição.')}</span>
+    </div>
+  </section>`;
+}
+
 function hpMovementInstructionDetailV0234(x){
   const media=hpMovementSafeMediaUrlV0234(x?.videoUrl);
   return `<section class="movement-instruction-detail-v0234" data-movement-instruction-detail-v0234="${HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234}">
@@ -13163,6 +13221,7 @@ const HP_MOVEMENT_TAXONOMY_FILTERS_V0231='v0.23.1';
 const HP_MOVEMENT_SESSION_MODEL_V0232='v0.23.2';
 const HP_MOVEMENT_PROGRESSION_REGRESSION_V0233='v0.23.3';
 const HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234='v0.23.4';
+const HP_MOVEMENT_COVERAGE_QUALITY_V0235='v0.23.5';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13215,6 +13274,8 @@ async function openMovementLibraryV0230(){
         <div><b>Sessões</b><span>${esc(current.fonteDasSessoes||'As sessões reutilizam os modelos existentes do Workout Builder.')}</span></div>
       </div>
 
+      ${hpMovementCoverageV0235(current.cobertura)}
+
       <div class="movement-taxonomy-toolbar-v0231" data-movement-taxonomy-filters-v0231="${HP_MOVEMENT_TAXONOMY_FILTERS_V0231}">
         <input id="movementSearchV0230" class="search-input" placeholder="Buscar em tudo que está visível">
         <select id="movementFilterModalityV0231"><option value="">Todas as modalidades</option>${options.modalidades.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
@@ -13243,6 +13304,10 @@ async function openMovementLibraryV0230(){
       </div>`;
 
       $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
+
+      $$('[data-movement-quality-open-catalog-v0235]').forEach(btn=>{
+        btn.onclick=()=>{closeClinicalAction();openExerciseLibrary2()};
+      });
 
       const search=$('#movementSearchV0230');
       search.oninput=()=>{

@@ -183,12 +183,91 @@ public sealed class BibliotecaMovimentoController(
         .Where(x => string.IsNullOrWhiteSpace(objetivo) || x.Objetivos.Count > 0)
         .ToArray();
 
+        var coberturaModalidades = modalidades.Select(mod =>
+        {
+            var capacidades = mod.Objetivos
+                .SelectMany(x => x.Capacidades)
+                .ToArray();
+
+            var sessoes = capacidades
+                .SelectMany(x => x.Sessoes)
+                .GroupBy(x => x.Id)
+                .Select(x => x.First())
+                .ToArray();
+
+            var movimentos = capacidades
+                .SelectMany(x => x.Exercicios)
+                .GroupBy(x => x.Id)
+                .Select(x => x.First())
+                .ToArray();
+
+            var lacunas = new List<string>();
+
+            if (capacidades.Length == 0)
+                lacunas.Add("Sem capacidades visiveis para os filtros atuais.");
+            if (capacidades.Length > 0 && capacidades.All(x => x.Sessoes.Count == 0))
+                lacunas.Add("Nenhuma capacidade possui sessao-modelo relacionada.");
+            if (capacidades.Length > 0 && capacidades.All(x => x.Exercicios.Count == 0))
+                lacunas.Add("Nenhuma capacidade possui exercicio relacionado.");
+            if (movimentos.Length > 0 && movimentos.All(x => string.IsNullOrWhiteSpace(x.Descricao)))
+                lacunas.Add("Movimentos relacionados ainda sem descricao editorial.");
+            if (movimentos.Length > 0 && movimentos.All(x => string.IsNullOrWhiteSpace(x.VideoUrl)))
+                lacunas.Add("Movimentos relacionados ainda sem referencia de midia.");
+
+            return new BibliotecaMovimentoCoberturaModalidadeResponse(
+                mod.Codigo,
+                mod.Nome,
+                mod.Objetivos.Count,
+                capacidades.Length,
+                capacidades.Count(x => x.Sessoes.Count > 0),
+                capacidades.Count(x => x.Exercicios.Count > 0),
+                sessoes.Length,
+                movimentos.Length,
+                movimentos.Count(x => !string.IsNullOrWhiteSpace(x.Descricao)),
+                movimentos.Count(x => !string.IsNullOrWhiteSpace(x.VideoUrl)),
+                lacunas);
+        }).ToArray();
+
+        var todasCapacidades = modalidades
+            .SelectMany(x => x.Objetivos)
+            .SelectMany(x => x.Capacidades)
+            .ToArray();
+
+        var todosMovimentosRelacionados = todasCapacidades
+            .SelectMany(x => x.Exercicios)
+            .GroupBy(x => x.Id)
+            .Select(x => x.First())
+            .ToArray();
+
+        var prioridadesEditoriais = coberturaModalidades
+            .SelectMany(x => x.Lacunas.Select(lacuna => $"{x.Nome}: {lacuna}"))
+            .Take(12)
+            .ToList();
+
+        if (todosMovimentosRelacionados.Any(x => string.IsNullOrWhiteSpace(x.Descricao)))
+            prioridadesEditoriais.Add($"{todosMovimentosRelacionados.Count(x => string.IsNullOrWhiteSpace(x.Descricao))} movimento(s) relacionado(s) ainda sem descricao.");
+        if (todosMovimentosRelacionados.Any(x => string.IsNullOrWhiteSpace(x.VideoUrl)))
+            prioridadesEditoriais.Add($"{todosMovimentosRelacionados.Count(x => string.IsNullOrWhiteSpace(x.VideoUrl))} movimento(s) relacionado(s) ainda sem midia.");
+
+        var cobertura = new BibliotecaMovimentoCoberturaResponse(
+            modalidades.Sum(x => x.Objetivos.Count),
+            todasCapacidades.Length,
+            todasCapacidades.Count(x => x.Sessoes.Count > 0),
+            todasCapacidades.Count(x => x.Exercicios.Count > 0),
+            todosMovimentosRelacionados.Length,
+            todosMovimentosRelacionados.Count(x => !string.IsNullOrWhiteSpace(x.Descricao)),
+            todosMovimentosRelacionados.Count(x => !string.IsNullOrWhiteSpace(x.VideoUrl)),
+            coberturaModalidades,
+            prioridadesEditoriais.Distinct().Take(12).ToArray(),
+            "Cobertura mede presenca de conteudo real nas fontes existentes. Ausencia e mostrada como lacuna editorial; nao vira score de qualidade clinica e nao e preenchida artificialmente.");
+
         return Ok(new BibliotecaMovimentoResponse(
             "Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão",
             modalidades.Length,
             exercicios.Count,
             modelosSessao.Count,
             modalidades,
+            cobertura,
             "Os exercícios vêm exclusivamente do catálogo profissional existente (`Exercicios`). A taxonomia organiza referências e não duplica movimentos.",
             "As sessões vêm exclusivamente de `ModelosSessoesTreino`, a mesma biblioteca reutilizável do Workout Builder. A taxonomia apenas organiza referências.",
             "A biblioteca descreve possibilidades de movimento. Seleção, progressão, regressão e prescrição continuam dependentes de contexto individual e julgamento profissional."));

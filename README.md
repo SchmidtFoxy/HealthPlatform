@@ -29,6 +29,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Movement Library Coverage & Quality 2.0
+
+A `v0.23.5` torna a biblioteca **auditável editorialmente**. O próprio `GET /api/biblioteca-movimento` passa a informar cobertura por modalidade e no recorte filtrado: capacidades com sessão, capacidades com exercício, movimentos relacionados, movimentos com descrição e movimentos com mídia.
+
+As lacunas são mostradas de forma explícita e viram uma lista de prioridades editoriais para o profissional. O sistema não atribui um “score clínico” à biblioteca e não preenche automaticamente conteúdo ausente; cobertura significa apenas presença real nas fontes existentes.
+
 ### Movement Instructions & Media Foundation
 
 A `v0.23.4` torna os movimentos da biblioteca mais ensináveis sem criar uma segunda ficha de exercício. Ao tocar em um movimento, a biblioteca busca `GET /api/biblioteca-movimento/exercicios/{id}` e apresenta a **descrição/instrução cadastrada** e a referência de **vídeo (`VideoUrl`)** do próprio registro `Exercicios`.
@@ -234,7 +241,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.4 — Movement Instructions & Media Foundation`
+- **Versão funcional:** `v0.23.5 — Movement Library Coverage & Quality 2.0`
 - **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
