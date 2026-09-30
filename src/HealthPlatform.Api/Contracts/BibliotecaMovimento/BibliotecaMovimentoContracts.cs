@@ -8,6 +8,18 @@ public sealed record BibliotecaMovimentoExercicioResponse(
     string? Descricao,
     string? VideoUrl);
 
+public sealed record BibliotecaMovimentoDetalheExercicioResponse(
+    Guid Id,
+    string Nome,
+    string? GrupoMuscular,
+    string? Equipamento,
+    string? InstrucaoCadastrada,
+    string? VideoUrl,
+    bool TemInstrucao,
+    bool TemMidia,
+    string Fonte,
+    string RegraDeSeguranca);
+
 public sealed record BibliotecaMovimentoSessaoResponse(
     Guid Id,
     string Nome,

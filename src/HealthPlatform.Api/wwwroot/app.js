@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.3';
+const HP_MVP_VERSION='0.23.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13054,6 +13054,66 @@ function hpMovementProgressionV0233(items){
   </div>`;
 }
 
+function hpMovementSafeMediaUrlV0234(value){
+  const raw=String(value||'').trim();
+  if(!raw)return null;
+  try{
+    const u=new URL(raw,window.location.origin);
+    return (u.protocol==='http:'||u.protocol==='https:')?u.href:null;
+  }catch{return null}
+}
+
+function hpMovementInstructionDetailV0234(x){
+  const media=hpMovementSafeMediaUrlV0234(x?.videoUrl);
+  return `<section class="movement-instruction-detail-v0234" data-movement-instruction-detail-v0234="${HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234}">
+    <div class="movement-instruction-detail-head-v0234">
+      <div>
+        <span class="eyebrow">MOVEMENT INSTRUCTIONS & MEDIA</span>
+        <h3>${esc(x?.nome||'Movimento')}</h3>
+        <p>${esc([x?.grupoMuscular,x?.equipamento].filter(Boolean).join(' • ')||'Catálogo profissional AESYN')}</p>
+      </div>
+      <button type="button" class="ghost" id="movementInstructionCloseV0234">Fechar</button>
+    </div>
+
+    <div class="movement-instruction-grid-v0234">
+      <article>
+        <span>INSTRUÇÃO CADASTRADA</span>
+        ${x?.temInstrucao
+          ?`<p>${esc(x.instrucaoCadastrada)}</p>`
+          :'<p class="muted-line">Este exercício ainda não possui descrição/instrução cadastrada no catálogo profissional.</p>'}
+      </article>
+      <article>
+        <span>MÍDIA</span>
+        ${media
+          ?`<a class="movement-media-link-v0234" href="${esc(media)}" target="_blank" rel="noopener noreferrer">Abrir referência em vídeo ↗</a><small>A URL vem do campo VideoUrl do exercício.</small>`
+          :'<p class="muted-line">Nenhuma referência em vídeo cadastrada para este exercício.</p>'}
+      </article>
+    </div>
+
+    <div class="movement-instruction-source-v0234">
+      <b>Fonte única: ${esc(x?.fonte||'Exercicios')}</b>
+      <span>${esc(x?.regraDeSeguranca||'A biblioteca mostra conteúdo cadastrado pelo profissional e não substitui orientação técnica individual.')}</span>
+    </div>
+
+    <div class="movement-instruction-actions-v0234">
+      <button type="button" class="secondary" id="movementInstructionOpenCatalogV0234">Abrir no catálogo de exercícios</button>
+    </div>
+  </section>`;
+}
+
+async function hpOpenMovementInstructionV0234(id,container){
+  if(!id||!container)return;
+  container.innerHTML='<div class="movement-instruction-loading-v0234">Carregando instruções e mídia...</div>';
+  try{
+    const detail=await api(`/api/biblioteca-movimento/exercicios/${id}`);
+    container.innerHTML=hpMovementInstructionDetailV0234(detail);
+    $('#movementInstructionCloseV0234').onclick=()=>{container.innerHTML='';container.hidden=true};
+    $('#movementInstructionOpenCatalogV0234').onclick=()=>{closeClinicalAction();openExerciseLibrary2()};
+  }catch(err){
+    container.innerHTML=`<div class="movement-library-no-results-v0231"><b>Não foi possível abrir este movimento.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
 function hpMovementCapabilityV0230(cap){
   const sessions=cap?.sessoes||[];
   const exercises=cap?.exercicios||[];
@@ -13071,7 +13131,7 @@ function hpMovementCapabilityV0230(cap){
     <div class="movement-exercise-layer-v0232">
       <div class="movement-session-layer-head-v0232"><span>EXERCÍCIOS</span><b>${exercises.length}</b></div>
       ${exercises.length
-        ?`<div class="movement-exercise-links-v0230">${exercises.slice(0,8).map(x=>`<button type="button" data-movement-exercise-v0230="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`
+        ?`<div class="movement-exercise-links-v0230">${exercises.slice(0,8).map(x=>`<button type="button" class="${x.videoUrl?'has-media':''} ${x.descricao?'has-instruction':''}" data-movement-exercise-v0230="${x.id}"><span>${esc(x.nome)}</span><small>${x.videoUrl?'vídeo':''}${x.videoUrl&&x.descricao?' • ':''}${x.descricao?'instrução':''}</small></button>`).join('')}</div>`
         :'<p>Nenhum exercício existente foi relacionado automaticamente. A taxonomia continua disponível sem criar item duplicado.</p>'}
     </div>
 
@@ -13102,6 +13162,7 @@ function hpMovementModalityV0230(mod){
 const HP_MOVEMENT_TAXONOMY_FILTERS_V0231='v0.23.1';
 const HP_MOVEMENT_SESSION_MODEL_V0232='v0.23.2';
 const HP_MOVEMENT_PROGRESSION_REGRESSION_V0233='v0.23.3';
+const HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234='v0.23.4';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13169,6 +13230,8 @@ async function openMovementLibraryV0230(){
         <span>Filtros estruturais no backend + busca textual local</span>
       </div>
 
+      <div id="movementInstructionHostV0234" class="movement-instruction-host-v0234" hidden></div>
+
       <div id="movementLibraryListV0230" class="movement-library-list-v0230">
         ${(current.modalidades||[]).map(hpMovementModalityV0230).join('')||'<div class="movement-library-no-results-v0231"><b>Nenhuma combinação encontrada.</b><span>Ajuste os filtros; nenhum exercício novo será criado automaticamente.</span></div>'}
       </div>
@@ -13220,9 +13283,12 @@ async function openMovementLibraryV0230(){
       };
 
       $$('[data-movement-exercise-v0230]').forEach(btn=>{
-        btn.onclick=()=>{
-          closeClinicalAction();
-          openExerciseLibrary2();
+        btn.onclick=async()=>{
+          const host=$('#movementInstructionHostV0234');
+          if(!host)return;
+          host.hidden=false;
+          await hpOpenMovementInstructionV0234(btn.dataset.movementExerciseV0230,host);
+          host.scrollIntoView({behavior:'smooth',block:'start'});
         };
       });
 

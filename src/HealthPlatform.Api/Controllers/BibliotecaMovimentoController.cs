@@ -194,6 +194,52 @@ public sealed class BibliotecaMovimentoController(
             "A biblioteca descreve possibilidades de movimento. Seleção, progressão, regressão e prescrição continuam dependentes de contexto individual e julgamento profissional."));
     }
 
+
+    [HttpGet("exercicios/{id:guid}")]
+    public async Task<ActionResult<BibliotecaMovimentoDetalheExercicioResponse>> DetalharExercicio(
+        Guid id,
+        CancellationToken ct = default)
+    {
+        var exercicio = await db.Exercicios.AsNoTracking()
+            .Where(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.GrupoMuscular,
+                x.Equipamento,
+                x.Descricao,
+                x.VideoUrl
+            })
+            .FirstOrDefaultAsync(ct);
+
+        if (exercicio is null)
+            return NotFound(new { message = "Exercicio nao encontrado na biblioteca ativa." });
+
+        var instrucao = string.IsNullOrWhiteSpace(exercicio.Descricao)
+            ? null
+            : exercicio.Descricao.Trim();
+
+        var video = string.IsNullOrWhiteSpace(exercicio.VideoUrl)
+            ? null
+            : exercicio.VideoUrl.Trim();
+
+        return Ok(new BibliotecaMovimentoDetalheExercicioResponse(
+            exercicio.Id,
+            exercicio.Nome,
+            exercicio.GrupoMuscular,
+            exercicio.Equipamento,
+            instrucao,
+            video,
+            instrucao is not null,
+            video is not null,
+            "Exercicios",
+            "Descricao e VideoUrl sao exibidos exatamente a partir do catalogo profissional existente. A biblioteca nao cria instrucao clinica, corrige tecnica automaticamente ou substitui demonstracao/orientacao profissional."));
+    }
+
     private static IReadOnlyCollection<BibliotecaMovimentoProgressaoResponse> CatalogoProgressao(
         string capacidadeCodigo,
         string capacidadeNome)

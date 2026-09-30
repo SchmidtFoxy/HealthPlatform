@@ -5821,3 +5821,17 @@ html[data-theme="light"] .movement-library-foundation-v0230{background:linear-gr
 .movement-progression-evidence-v0233{display:flex;gap:8px;padding:8px 9px;border:1px solid rgba(126,232,178,.13);border-radius:11px;background:rgba(126,232,178,.035)}.movement-progression-evidence-v0233 b{white-space:nowrap;font-size:7px}.movement-progression-evidence-v0233 span{color:var(--muted);font-size:7px;line-height:1.4}
 .movement-library-safety-v0233{display:grid}.movement-library-safety-v0233 small{display:block;color:var(--muted);font-size:7px;line-height:1.4}
 @media(max-width:760px){.movement-progression-pair-v0233{grid-template-columns:1fr}.movement-progression-evidence-v0233{display:grid}}
+
+
+/* ===== v0.23.4 — Movement Instructions & Media Foundation ===== */
+.movement-instruction-host-v0234{margin:0 0 12px}.movement-instruction-host-v0234[hidden]{display:none}
+.movement-instruction-loading-v0234{padding:15px;border:1px dashed var(--line);border-radius:15px;color:var(--muted);font-size:9px}
+.movement-instruction-detail-v0234{display:grid;gap:13px;padding:16px;border:1px solid rgba(126,232,178,.2);border-radius:18px;background:linear-gradient(145deg,rgba(8,24,22,.98),rgba(10,17,20,.98));box-shadow:0 12px 34px rgba(0,0,0,.14)}
+.movement-instruction-detail-head-v0234{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}.movement-instruction-detail-head-v0234 h3{margin:3px 0 4px;font-size:18px}.movement-instruction-detail-head-v0234 p{margin:0;color:var(--muted);font-size:8px}
+.movement-instruction-grid-v0234{display:grid;grid-template-columns:1.35fr .65fr;gap:8px}.movement-instruction-grid-v0234 article{display:grid;align-content:start;gap:7px;min-height:100px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}.movement-instruction-grid-v0234 article>span{font-size:7px;font-weight:900;letter-spacing:.07em;color:var(--muted)}.movement-instruction-grid-v0234 p{margin:0;font-size:9px;line-height:1.55;white-space:pre-line}.movement-instruction-grid-v0234 small{color:var(--muted);font-size:7px;line-height:1.4}
+.movement-media-link-v0234{display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px;border:1px solid rgba(126,232,178,.22);border-radius:11px;background:rgba(126,232,178,.05);color:var(--text);font-size:8px;font-weight:800;text-decoration:none}
+.movement-instruction-source-v0234{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border-top:1px solid var(--line)}.movement-instruction-source-v0234 b{white-space:nowrap;font-size:8px}.movement-instruction-source-v0234 span{color:var(--muted);font-size:8px;line-height:1.45}
+.movement-instruction-actions-v0234{display:flex;justify-content:flex-end}
+.movement-exercise-links-v0230 button{display:grid!important;gap:2px!important;text-align:left!important}.movement-exercise-links-v0230 button>span{font-size:7px}.movement-exercise-links-v0230 button>small{min-height:8px;color:var(--muted);font-size:6px}.movement-exercise-links-v0230 button.has-media,.movement-exercise-links-v0230 button.has-instruction{border-color:rgba(126,232,178,.16)}
+html[data-theme="light"] .movement-instruction-detail-v0234{background:linear-gradient(145deg,#fff,#f5faf8)}
+@media(max-width:760px){.movement-instruction-detail-head-v0234{display:grid}.movement-instruction-grid-v0234{grid-template-columns:1fr}.movement-instruction-source-v0234{display:grid}.movement-instruction-actions-v0234 .secondary{width:100%}}

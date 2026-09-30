@@ -1,3 +1,17 @@
+# v0.23.4 — Movement Instructions & Media Foundation
+
+- Adiciona detalhe de movimento diretamente na Sports & Movement Library.
+- Cria `GET /api/biblioteca-movimento/exercicios/{id}`.
+- Usa `Exercicio.Descricao` como instrução cadastrada.
+- Usa `Exercicio.VideoUrl` como referência de mídia.
+- Mostra indicadores de instrução/vídeo nos movimentos relacionados.
+- Trata ausência de instrução ou mídia sem gerar conteúdo artificial.
+- Valida no frontend mídia HTTP/HTTPS antes de exibir link.
+- Mantém `Exercicios` como fonte única e oferece atalho para o catálogo profissional.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.4.
+- Próxima etapa: v0.23.5 — Movement Library Coverage & Quality 2.0.
+
 # v0.23.3 — Movement Progression & Regression Foundation
 
 - Adiciona progressão e regressão como camada explícita da taxonomia esportiva.

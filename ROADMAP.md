@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.3 — Movement Progression & Regression Foundation
+> **Versão-base deste roadmap:** v0.23.4 — Movement Instructions & Media Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1007,7 +1007,7 @@ Introduzir a camada `Sessão` da taxonomia esportiva, conectando objetivos e cap
 
 **Próxima etapa:** `v0.23.4 — Movement Instructions & Media Foundation`.
 
-## ⏭ v0.23.4 — Movement Instructions & Media Foundation
+## ✅ v0.23.4 — Movement Instructions & Media Foundation — CONCLUÍDA
 
 Organizar instruções, descrição e mídia já existentes para tornar cada movimento mais ensinável dentro da biblioteca, preservando o catálogo profissional como fonte única.
 
@@ -1294,6 +1294,20 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - nenhuma duplicação de sessão, exercício ou migration.
 
 **Próxima etapa:** `v0.23.3 — Movement Progression & Regression Foundation`.
+
+
+
+**Entregue na v0.23.4:**
+- detalhe de movimento dentro da biblioteca;
+- instrução lida de `Exercicio.Descricao`;
+- mídia lida de `Exercicio.VideoUrl`;
+- indicador visual de exercício com instrução/vídeo;
+- URL de mídia restrita a HTTP/HTTPS no frontend;
+- ausência de conteúdo tratada explicitamente;
+- atalho para editar/completar o catálogo profissional;
+- nenhuma duplicação de ficha, instrução ou mídia.
+
+**Próxima etapa:** `v0.23.5 — Movement Library Coverage & Quality 2.0`.
 
 
 ## Promessa ao atleta

@@ -28,6 +28,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Movement Instructions & Media Foundation
+
+A `v0.23.4` torna os movimentos da biblioteca mais ensináveis sem criar uma segunda ficha de exercício. Ao tocar em um movimento, a biblioteca busca `GET /api/biblioteca-movimento/exercicios/{id}` e apresenta a **descrição/instrução cadastrada** e a referência de **vídeo (`VideoUrl`)** do próprio registro `Exercicios`.
+
+Quando descrição ou vídeo ainda não existem, a interface mostra explicitamente a ausência do conteúdo em vez de inventar instruções. O profissional pode abrir o catálogo de exercícios para completar a fonte original.
+
 ### Movement Progression & Regression Foundation
 
 A `v0.23.3` completa a primeira taxonomia da biblioteca com uma camada explícita de **progressão e regressão**. Cada capacidade passa a mostrar eixos estruturais como controle, volume, carga externa, duração/densidade, velocidade e amplitude quando aplicáveis.
@@ -227,7 +234,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.3 — Movement Progression & Regression Foundation`
+- **Versão funcional:** `v0.23.4 — Movement Instructions & Media Foundation`
 - **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
