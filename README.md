@@ -1402,3 +1402,29 @@ O sistema não usa similaridade semântica, fuzzy match ou inferência para esco
 
 **Próxima etapa:** `v0.30.7 — Progress Review Context Capture`.
 
+---
+
+## v0.30.7 — Progress Review Context Capture
+
+Permite iniciar uma nova nota profissional diretamente a partir de um item observacional já exibido no workspace.
+
+### Fluxo
+1. o item observacional expõe `data-progress-context-type` e `data-progress-context-ref`;
+2. aparece a ação **Criar nota deste contexto**;
+3. a modal Progress Review Notes é aberta;
+4. `ContextoTipo` e `ContextoReferencia` são preenchidos automaticamente;
+5. o profissional escolhe o campo estruturado e escreve a observação.
+
+### Contextos
+- `foundation`;
+- `context`;
+- `timeline`;
+- `window`;
+- `observation-map`;
+- `summary`.
+
+### Guardrail
+A captura copia somente os identificadores técnicos de contexto. Não copia texto clínico, não cria interpretação, não escolhe campo da nota e não salva automaticamente.
+
+**Próxima etapa:** `v0.30.8 — Progress Review Context Capture Confirmation`.
+

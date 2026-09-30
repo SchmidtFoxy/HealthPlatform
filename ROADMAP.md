@@ -2318,3 +2318,20 @@ Evoluir a navegação para destacar a referência contextual dentro da própria 
 ### v0.30.7 — Progress Review Context Capture
 Permitir iniciar uma nova nota diretamente a partir de um item observacional, preenchendo automaticamente tipo e referência contextual sem interpretar o conteúdo clínico.
 
+## ✅ v0.30.7 — Progress Review Context Capture — CONCLUÍDA
+
+**Entregue:**
+- ação Criar nota deste contexto;
+- tipo contextual exposto nos itens observacionais;
+- captura de referência existente;
+- abertura da modal de revisão;
+- preenchimento automático de tipo + referência;
+- conteúdo e campo continuam sob decisão do profissional;
+- sem persistência automática;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.8 — Progress Review Context Capture Confirmation
+Adicionar confirmação visual do contexto capturado antes do salvamento, com opção explícita de remover ou trocar o vínculo contextual.
+

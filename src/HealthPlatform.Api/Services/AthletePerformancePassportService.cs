@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.30.6",
+            "v0.30.7",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Context Focus permite foco somente quando a referência contextual encontra correspondência observacional única e inequívoca; caso contrário mantém navegação segura para a seção, sem inferência automática.")
+            "Progress Review Context Capture permite iniciar uma nota diretamente de um item observacional, preenchendo apenas tipo e referência contextual de forma determinística, sem copiar conteúdo clínico ou gerar interpretação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

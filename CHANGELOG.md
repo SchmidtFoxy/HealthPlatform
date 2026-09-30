@@ -1,4 +1,18 @@
-﻿# v0.30.6 — Progress Review Context Focus
+﻿# v0.30.7 — Progress Review Context Capture
+
+- Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307`.
+- Adiciona `data-progress-context-type` às seis camadas observacionais.
+- Adiciona ação `Criar nota deste contexto`.
+- Abre a modal Progress Review Notes a partir do item observado.
+- Preenche automaticamente `ContextoTipo` e `ContextoReferencia`.
+- Mantém seleção do campo e texto da nota sob controle do profissional.
+- Não copia conteúdo clínico.
+- Não cria nota automaticamente.
+- Preserva foco, navegação, histórico, filtros, privacidade e auditoria.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.8 — Progress Review Context Capture Confirmation.
+
+# v0.30.6 — Progress Review Context Focus
 
 - Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306`.
 - Adiciona `data-progress-context-ref` aos itens das seis camadas observacionais.
