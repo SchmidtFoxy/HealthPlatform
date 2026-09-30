@@ -1,3 +1,22 @@
+# v0.23.1-r1 — Movement Filter Build Fix (revisão local)
+
+- Corrige declaração duplicada de `capacidades` em `BibliotecaMovimentoController.cs`.
+- Remove o `Select(cap =>` duplicado que deixava parênteses/chaves desbalanceados e causava CS1026, CS1002 e CS1513.
+- Mantém `VERSION.txt` em `0.23.1`.
+- Sem mudança funcional, API, contrato, migration ou schema.
+- Revisão local: não deve gerar commit próprio; o commit funcional permanece `v0.23.1` após gate verde.
+
+# v0.23.1 — Movement Taxonomy & Filters 2.0
+
+- Adiciona filtros estruturais por modalidade, objetivo, capacidade, ambiente e equipamento.
+- Permite combinar filtros no `GET /api/biblioteca-movimento`.
+- Mantém busca textual instantânea no resultado carregado.
+- Adiciona estado vazio quando nenhuma combinação atende aos filtros.
+- Mantém `Exercicios` como única fonte de movimentos.
+- Não cria migration, tabela paralela ou duplicação de exercícios.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.1.
+- Próxima etapa: v0.23.2 — Movement Session Model 2.0.
+
 # v0.23.0 — Sports & Movement Library Foundation
 
 - Inicia a fase `v0.23.x — Sports & Movement Library`.

@@ -28,6 +28,10 @@ public sealed class BibliotecaMovimentoController(
     [HttpGet]
     public async Task<ActionResult<BibliotecaMovimentoResponse>> Get(
         [FromQuery] string? modalidade = null,
+        [FromQuery] string? objetivo = null,
+        [FromQuery] string? capacidade = null,
+        [FromQuery] string? ambiente = null,
+        [FromQuery] string? equipamento = null,
         CancellationToken ct = default)
     {
         var exercicios = await db.Exercicios.AsNoTracking()
@@ -56,14 +60,61 @@ public sealed class BibliotecaMovimentoController(
                 .ToArray();
         }
 
+        if (!string.IsNullOrWhiteSpace(ambiente))
+        {
+            var filtroAmbiente = ambiente.Trim();
+            defs = defs
+                .Where(x => x.Ambientes.Any(a =>
+                    a.Contains(filtroAmbiente, StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
+        }
+
+        if (!string.IsNullOrWhiteSpace(equipamento))
+        {
+            var filtroEquipamento = equipamento.Trim();
+            defs = defs
+                .Where(x =>
+                    x.EquipamentosComuns.Any(e =>
+                        e.Contains(filtroEquipamento, StringComparison.OrdinalIgnoreCase)) ||
+                    exercicios.Any(ex =>
+                        !string.IsNullOrWhiteSpace(ex.Equipamento) &&
+                        ex.Equipamento.Contains(filtroEquipamento, StringComparison.OrdinalIgnoreCase) &&
+                        Corresponde(ex.Nome, ex.GrupoMuscular, ex.Equipamento, ex.Descricao, x.Termos, [])))
+                .ToArray();
+        }
+
         var modalidades = defs.Select(mod =>
         {
-            var objetivos = mod.Objetivos.Select(obj =>
+            var objetivosDef = mod.Objetivos.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(objetivo))
             {
-                var capacidades = obj.Capacidades.Select(cap =>
+                var filtroObjetivo = objetivo.Trim();
+                objetivosDef = objetivosDef.Where(x =>
+                    x.Codigo.Equals(filtroObjetivo, StringComparison.OrdinalIgnoreCase) ||
+                    x.Nome.Contains(filtroObjetivo, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var objetivos = objetivosDef.Select(obj =>
+            {
+                var capacidadesDef = obj.Capacidades.AsEnumerable();
+
+                if (!string.IsNullOrWhiteSpace(capacidade))
+                {
+                    var filtroCapacidade = capacidade.Trim();
+                    capacidadesDef = capacidadesDef.Where(x =>
+                        x.Codigo.Equals(filtroCapacidade, StringComparison.OrdinalIgnoreCase) ||
+                        x.Nome.Contains(filtroCapacidade, StringComparison.OrdinalIgnoreCase));
+                }
+
+                var capacidades = capacidadesDef.Select(cap =>
                 {
                     var vinculados = exercicios
-                        .Where(ex => Corresponde(ex.Nome, ex.GrupoMuscular, ex.Equipamento, ex.Descricao, mod.Termos, cap.Termos))
+                        .Where(ex =>
+                            Corresponde(ex.Nome, ex.GrupoMuscular, ex.Equipamento, ex.Descricao, mod.Termos, cap.Termos) &&
+                            (string.IsNullOrWhiteSpace(equipamento) ||
+                             (!string.IsNullOrWhiteSpace(ex.Equipamento) &&
+                              ex.Equipamento.Contains(equipamento.Trim(), StringComparison.OrdinalIgnoreCase))))
                         .Take(40)
                         .Select(ex => new BibliotecaMovimentoExercicioResponse(
                             ex.Id,
@@ -84,7 +135,9 @@ public sealed class BibliotecaMovimentoController(
                     obj.Codigo,
                     obj.Nome,
                     capacidades);
-            }).ToArray();
+            })
+            .Where(x => string.IsNullOrWhiteSpace(capacidade) || x.Capacidades.Count > 0)
+            .ToArray();
 
             return new BibliotecaMovimentoModalidadeResponse(
                 mod.Codigo,
@@ -93,7 +146,9 @@ public sealed class BibliotecaMovimentoController(
                 mod.Ambientes,
                 mod.EquipamentosComuns,
                 objetivos);
-        }).ToArray();
+        })
+        .Where(x => string.IsNullOrWhiteSpace(objetivo) || x.Objetivos.Count > 0)
+        .ToArray();
 
         return Ok(new BibliotecaMovimentoResponse(
             "Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão",

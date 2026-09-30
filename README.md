@@ -25,6 +25,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Movement Taxonomy & Filters 2.0
+
+A `v0.23.1` transforma a fundação da biblioteca em navegação estruturada. O profissional pode combinar filtros de **modalidade, objetivo, capacidade, ambiente e equipamento**, além de fazer busca textual dentro do resultado visível.
+
+Os filtros estruturais são aplicados pelo endpoint `/api/biblioteca-movimento`; a busca textual continua instantânea no frontend. O catálogo `Exercicios` permanece a única fonte dos movimentos vinculados.
+
 ### Sports & Movement Library Foundation
 
 A `v0.23.0` inicia a fase de biblioteca esportiva com a taxonomia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`.
@@ -206,7 +213,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.0 — Sports & Movement Library Foundation`
+- **Versão funcional:** `v0.23.1 — Movement Taxonomy & Filters 2.0`
+- **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

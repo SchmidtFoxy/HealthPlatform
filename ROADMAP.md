@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.0 — Sports & Movement Library Foundation
+> **Versão-base deste roadmap:** v0.23.1 — Movement Taxonomy & Filters 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -966,6 +966,29 @@ Estrutura-alvo: `Modalidade → Objetivo → Capacidade → Sessão → Exercíc
 Fundação: musculação, caminhada, corrida, calistenia, mobilidade, condicionamento e ciclismo.
 
 Inclui taxonomia, instruções, mídia, progressões, regressões, equipamentos, ambientes, biblioteca AESYN, biblioteca profissional e templates.
+
+
+## ✅ v0.23.1 — Movement Taxonomy & Filters 2.0 — CONCLUÍDA
+
+> **Revisão local v0.23.1-r1:** corrigida declaração duplicada de `capacidades` em `BibliotecaMovimentoController`, que deixava um lambda `Select` sem fechamento e impedia a compilação. Sem alteração funcional, schema ou API. Não commitar separadamente.
+
+**Entregue na v0.23.1:**
+- filtro por modalidade;
+- filtro por objetivo;
+- filtro por capacidade;
+- filtro por ambiente;
+- filtro por equipamento;
+- combinação de filtros no backend;
+- busca textual instantânea no resultado;
+- estado vazio explicável;
+- catálogo `Exercicios` preservado como fonte única.
+
+**Próxima etapa:** `v0.23.2 — Movement Session Model 2.0`.
+
+## ⏭ v0.23.2 — Movement Session Model 2.0
+
+Introduzir a camada `Sessão` da taxonomia esportiva, conectando objetivos e capacidades a blocos reutilizáveis sem duplicar os modelos de sessão já existentes no Workout Builder.
+
 
 # 8. v0.24.x — AESYN Explore
 

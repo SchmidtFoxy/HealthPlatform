@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.0';
+const HP_MVP_VERSION='0.23.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13058,63 +13058,131 @@ function hpMovementModalityV0230(mod){
   </section>`;
 }
 
+const HP_MOVEMENT_TAXONOMY_FILTERS_V0231='v0.23.1';
+
+function hpMovementFilterOptionsV0231(modalidades){
+  const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  return {
+    modalidades:uniq((modalidades||[]).map(x=>x.nome)),
+    objetivos:uniq((modalidades||[]).flatMap(x=>(x.objetivos||[]).map(y=>y.nome))),
+    capacidades:uniq((modalidades||[]).flatMap(x=>(x.objetivos||[]).flatMap(y=>(y.capacidades||[]).map(z=>z.nome)))),
+    ambientes:uniq((modalidades||[]).flatMap(x=>x.ambientes||[])),
+    equipamentos:uniq((modalidades||[]).flatMap(x=>x.equipamentosComuns||[]))
+  };
+}
+
+function hpMovementQueryV0231(filters){
+  const q=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)q.set(k,v)});
+  const s=q.toString();
+  return `/api/biblioteca-movimento${s?`?${s}`:''}`;
+}
+
 async function openMovementLibraryV0230(){
   const box=$('#clinicalActionContent');
   const modal=$('#clinicalActionModal');
   modal.classList.remove('hidden');
-  modal.classList.add('movement-library-modal-v0230');
-  box.className='clinical-action-shell movement-library-shell-v0230';
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY • v0.23.0</span><h2>Biblioteca de Movimento & Esportes</h2><p>Carregando taxonomia e vínculos com o catálogo profissional existente...</p></div>`;
+  modal.classList.add('movement-library-modal-v0230','movement-library-modal-v0231');
+  box.className='clinical-action-shell movement-library-shell-v0230 movement-library-shell-v0231';
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY • v0.23.1</span><h2>Biblioteca de Movimento & Esportes</h2><p>Carregando taxonomia navegável e catálogo profissional...</p></div>`;
 
   try{
-    const data=await api('/api/biblioteca-movimento');
-    box.innerHTML=`<div class="modal-heading movement-library-heading-v0230">
-      <div>
-        <button type="button" class="back-link" id="movementLibraryBackV0230">← Treino & Nutrição</button>
-        <span class="eyebrow">AESYN • SPORTS & MOVEMENT LIBRARY FOUNDATION</span>
-        <h2>Biblioteca de Movimento & Esportes</h2>
-        <p>${esc(data.estrutura||'Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão')}</p>
+    const baseData=await api('/api/biblioteca-movimento');
+    const options=hpMovementFilterOptionsV0231(baseData.modalidades||[]);
+    let current=baseData;
+
+    const render=()=>{
+      box.innerHTML=`<div class="modal-heading movement-library-heading-v0230">
+        <div>
+          <button type="button" class="back-link" id="movementLibraryBackV0230">← Treino & Nutrição</button>
+          <span class="eyebrow">AESYN • MOVEMENT TAXONOMY & FILTERS 2.0</span>
+          <h2>Biblioteca de Movimento & Esportes</h2>
+          <p>${esc(current.estrutura||'Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão')}</p>
+        </div>
+        <div class="movement-library-summary-v0230">
+          <span><b>${current.totalModalidades||0}</b> modalidades</span>
+          <span><b>${current.totalExerciciosAtivos||0}</b> exercícios ativos</span>
+        </div>
       </div>
-      <div class="movement-library-summary-v0230">
-        <span><b>${data.totalModalidades||0}</b> modalidades</span>
-        <span><b>${data.totalExerciciosAtivos||0}</b> exercícios ativos</span>
+
+      <div class="movement-library-principle-v0230">
+        <b>Uma fonte de verdade</b>
+        <span>${esc(current.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span>
       </div>
-    </div>
 
-    <div class="movement-library-principle-v0230">
-      <b>Uma fonte de verdade</b>
-      <span>${esc(data.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span>
-    </div>
+      <div class="movement-taxonomy-toolbar-v0231" data-movement-taxonomy-filters-v0231="${HP_MOVEMENT_TAXONOMY_FILTERS_V0231}">
+        <input id="movementSearchV0230" class="search-input" placeholder="Buscar em tudo que está visível">
+        <select id="movementFilterModalityV0231"><option value="">Todas as modalidades</option>${options.modalidades.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
+        <select id="movementFilterObjectiveV0231"><option value="">Todos os objetivos</option>${options.objetivos.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
+        <select id="movementFilterCapabilityV0231"><option value="">Todas as capacidades</option>${options.capacidades.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
+        <select id="movementFilterEnvironmentV0231"><option value="">Todos os ambientes</option>${options.ambientes.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
+        <select id="movementFilterEquipmentV0231"><option value="">Todos os equipamentos</option>${options.equipamentos.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
+        <button type="button" class="ghost" id="movementClearFiltersV0231">Limpar filtros</button>
+      </div>
 
-    <div class="movement-library-filter-v0230">
-      <input id="movementSearchV0230" class="search-input" placeholder="Buscar modalidade, objetivo, capacidade ou exercício">
-    </div>
+      <div class="movement-filter-summary-v0231">
+        <span><b>${(current.modalidades||[]).length}</b> modalidade(s) visível(is)</span>
+        <span>Filtros estruturais no backend + busca textual local</span>
+      </div>
 
-    <div id="movementLibraryListV0230" class="movement-library-list-v0230">
-      ${(data.modalidades||[]).map(hpMovementModalityV0230).join('')}
-    </div>
+      <div id="movementLibraryListV0230" class="movement-library-list-v0230">
+        ${(current.modalidades||[]).map(hpMovementModalityV0230).join('')||'<div class="movement-library-no-results-v0231"><b>Nenhuma combinação encontrada.</b><span>Ajuste os filtros; nenhum exercício novo será criado automaticamente.</span></div>'}
+      </div>
 
-    <div class="movement-library-safety-v0230">
-      <b>Biblioteca não é prescrição</b>
-      <span>${esc(data.regraDeSeguranca||'Seleção e progressão dependem do contexto individual e do julgamento profissional.')}</span>
-    </div>`;
+      <div class="movement-library-safety-v0230">
+        <b>Biblioteca não é prescrição</b>
+        <span>${esc(current.regraDeSeguranca||'Seleção e progressão dependem do contexto individual e do julgamento profissional.')}</span>
+      </div>`;
 
-    $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
+      $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
 
-    const search=$('#movementSearchV0230');
-    search.oninput=()=>{
-      const q=(search.value||'').trim().toLowerCase();
-      $$('#movementLibraryListV0230 .movement-modality-v0230').forEach(el=>{
-        el.hidden=!!q&&!el.textContent.toLowerCase().includes(q);
+      const search=$('#movementSearchV0230');
+      search.oninput=()=>{
+        const q=(search.value||'').trim().toLowerCase();
+        $$('#movementLibraryListV0230 .movement-modality-v0230').forEach(el=>{
+          el.hidden=!!q&&!el.textContent.toLowerCase().includes(q);
+        });
+      };
+
+      const ids={
+        modalidade:'#movementFilterModalityV0231',
+        objetivo:'#movementFilterObjectiveV0231',
+        capacidade:'#movementFilterCapabilityV0231',
+        ambiente:'#movementFilterEnvironmentV0231',
+        equipamento:'#movementFilterEquipmentV0231'
+      };
+
+      const apply=async()=>{
+        const filters={};
+        Object.entries(ids).forEach(([key,selector])=>{
+          const value=$(selector)?.value||'';
+          if(value)filters[key]=value;
+        });
+        current=await api(hpMovementQueryV0231(filters));
+        render();
+        Object.entries(ids).forEach(([key,selector])=>{
+          if($(selector))$(selector).value=filters[key]||'';
+        });
+      };
+
+      Object.values(ids).forEach(selector=>{
+        if($(selector))$(selector).onchange=apply;
+      });
+
+      $('#movementClearFiltersV0231').onclick=()=>{
+        current=baseData;
+        render();
+      };
+
+      $$('[data-movement-exercise-v0230]').forEach(btn=>{
+        btn.onclick=()=>{
+          closeClinicalAction();
+          openExerciseLibrary2();
+        };
       });
     };
 
-    $$('[data-movement-exercise-v0230]').forEach(btn=>{
-      btn.onclick=()=>{
-        closeClinicalAction();
-        openExerciseLibrary2();
-      };
-    });
+    render();
   }catch(err){
     box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY</span><h2>Biblioteca indisponível</h2><p>${esc(err.message||'Não foi possível carregar a estrutura agora.')}</p></div>`;
   }
