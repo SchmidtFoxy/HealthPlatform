@@ -1,4 +1,20 @@
-﻿# v0.30.10 — Progress Review Context Integrity UX
+﻿# v0.30.11 — Progress Review Context Integrity Accessibility
+
+- Adiciona `HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011`.
+- Adiciona `role="status"` para estado válido.
+- Adiciona `role="alert"` para estado inválido.
+- Adiciona `aria-live` e `aria-atomic`.
+- Associa tipo e referência às mensagens com `aria-describedby`.
+- Mantém `aria-invalid` sincronizado.
+- Adiciona `aria-disabled` ao botão de salvar.
+- Adiciona helper `.sr-only`.
+- Remove associações antigas quando o vínculo volta a ser válido.
+- Preserva navegação por teclado nativa.
+- Não altera regras clínicas ou de persistência.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.12 — Progress Review Context Integrity Closure.
+
+# v0.30.10 — Progress Review Context Integrity UX
 
 - Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010`.
 - Adiciona estado visual `Pronto para salvar`.

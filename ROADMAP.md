@@ -2389,3 +2389,22 @@ Melhorar a experiência de correção do vínculo inválido com foco automático
 ### v0.30.11 — Progress Review Context Integrity Accessibility
 Evoluir feedback de integridade para leitores de tela e navegação por teclado, com região de status e associação explícita entre erro e campo.
 
+## ✅ v0.30.11 — Progress Review Context Integrity Accessibility — CONCLUÍDA
+
+**Entregue:**
+- status acessível para vínculo válido;
+- alerta acessível para vínculo inválido;
+- `aria-live`;
+- `aria-atomic`;
+- associação campo↔erro com `aria-describedby`;
+- `aria-disabled` no submit;
+- mensagens `.sr-only`;
+- limpeza das associações após correção;
+- navegação por teclado preservada;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.12 — Progress Review Context Integrity Closure
+Fechar o ciclo 0.30.x de revisão contextual consolidando captura, confirmação, integridade, UX e acessibilidade em um estado estrutural único de prontidão.
+

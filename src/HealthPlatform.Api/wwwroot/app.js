@@ -996,42 +996,74 @@ function hpRenderProgressReviewContextIntegrityV0309(form){
   const tipo=form.elements.contextoTipo;
   const referencia=form.elements.contextoReferencia;
   const submit=form.querySelector('button[type=submit]');
+  const tipoErrorId='progressReviewContextTypeErrorV03011';
+  const referenciaErrorId='progressReviewContextReferenceErrorV03011';
 
   [tipo,referencia].filter(Boolean).forEach(el=>{
     el.removeAttribute('aria-invalid');
+    el.removeAttribute('aria-describedby');
     el.removeAttribute('data-progress-context-field-invalid-v03010');
   });
 
   if(submit){
     submit.disabled=!integrity.valido;
     submit.setAttribute('data-progress-review-ready-v03010',integrity.valido?'true':'false');
+    submit.setAttribute('aria-disabled',integrity.valido?'false':'true');
+    submit.setAttribute('aria-describedby','progressReviewContextStatusV03011');
   }
 
+  const statusText=integrity.valido
+    ? (integrity.estado==='SemVinculoContextual'
+        ? 'Pronto para salvar sem vínculo contextual.'
+        : 'Pronto para salvar. Tipo e referência estão estruturalmente consistentes.')
+    : `Vínculo contextual inválido. ${integrity.erros.join(' ')}`;
+
   if(integrity.valido){
-    host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}" data-progress-review-integrity-ux-v03010="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010}">
+    host.innerHTML=`<div class="internal-note-privacy-v0204"
+      id="progressReviewContextStatusV03011"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}"
+      data-progress-review-integrity-ux-v03010="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010}"
+      data-progress-review-integrity-a11y-v03011="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011}">
       <b>${integrity.estado==='SemVinculoContextual'?'Pronto para salvar sem vínculo contextual':'Pronto para salvar'}</b>
       <small class="muted-line">${integrity.estado==='SemVinculoContextual'?'Nenhum contexto será persistido.':'Tipo e referência estão estruturalmente consistentes.'}</small>
+      <span class="sr-only">${esc(statusText)}</span>
     </div>`;
     return;
   }
 
-  const tipoError=integrity.erros.some(x=>x.toLowerCase().includes('tipo do contexto')||x.toLowerCase().includes('tipo de contexto'));
-  const referenciaError=integrity.erros.some(x=>x.toLowerCase().includes('referência')||x.includes('120')||x.includes('|'));
+  const tipoErrors=integrity.erros.filter(x=>x.toLowerCase().includes('tipo do contexto')||x.toLowerCase().includes('tipo de contexto'));
+  const referenciaErrors=integrity.erros.filter(x=>x.toLowerCase().includes('referência')||x.includes('120')||x.includes('|'));
+  const tipoError=tipoErrors.length>0;
+  const referenciaError=referenciaErrors.length>0;
 
   if(tipoError && tipo){
     tipo.setAttribute('aria-invalid','true');
+    tipo.setAttribute('aria-describedby',tipoErrorId);
     tipo.setAttribute('data-progress-context-field-invalid-v03010','true');
   }
 
   if(referenciaError && referencia){
     referencia.setAttribute('aria-invalid','true');
+    referencia.setAttribute('aria-describedby',referenciaErrorId);
     referencia.setAttribute('data-progress-context-field-invalid-v03010','true');
   }
 
-  host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}" data-progress-review-integrity-ux-v03010="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010}">
+  host.innerHTML=`<div class="internal-note-privacy-v0204"
+    id="progressReviewContextStatusV03011"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}"
+    data-progress-review-integrity-ux-v03010="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010}"
+    data-progress-review-integrity-a11y-v03011="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011}">
     <b>Revise o vínculo contextual antes de salvar:</b>
     <ul>${integrity.erros.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
-    <div class="form-actions"><button type="button" class="secondary" id="focusProgressReviewContextErrorV03010">Corrigir vínculo</button></div>
+    <span id="${tipoErrorId}" class="sr-only">${esc(tipoErrors.join(' '))}</span>
+    <span id="${referenciaErrorId}" class="sr-only">${esc(referenciaErrors.join(' '))}</span>
+    <div class="form-actions"><button type="button" class="secondary" id="focusProgressReviewContextErrorV03010" aria-describedby="progressReviewContextStatusV03011">Corrigir vínculo</button></div>
   </div>`;
 
   const focusButton=$('#focusProgressReviewContextErrorV03010');
@@ -4809,6 +4841,17 @@ const HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7';
 const HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010='v0.30.10';
+const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011='v0.30.11';
+
+function hpEnsureA11yHelpersV03011(){
+  if(document.getElementById('hpA11yHelpersV03011')) return;
+  const style=document.createElement('style');
+  style.id='hpA11yHelpersV03011';
+  style.textContent='.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}';
+  document.head.appendChild(style);
+}
+if(document?.head) hpEnsureA11yHelpersV03011();
+
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -10041,7 +10084,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.10';
+const HP_MVP_VERSION='0.30.11';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

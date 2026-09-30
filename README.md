@@ -1498,3 +1498,27 @@ A UX apenas orienta correção estrutural. Não sugere qual contexto usar, não 
 
 **Próxima etapa:** `v0.30.11 — Progress Review Context Integrity Accessibility`.
 
+---
+
+## v0.30.11 — Progress Review Context Integrity Accessibility
+
+Evolui o feedback de integridade para navegação por teclado e leitores de tela.
+
+### Acessibilidade
+- região `role="status"` para estados válidos;
+- região `role="alert"` para vínculos inválidos;
+- `aria-live` e `aria-atomic`;
+- `aria-describedby` associa cada campo à sua mensagem de erro;
+- `aria-invalid` permanece sincronizado com a integridade;
+- botão Salvar anuncia seu estado por `aria-disabled`;
+- botão **Corrigir vínculo** referencia a região de erro;
+- mensagens técnicas invisíveis visualmente usam `.sr-only`.
+
+### Comportamento
+Quando o vínculo volta a ser válido, associações de erro anteriores são removidas. A navegação por teclado continua usando elementos nativos, sem atalhos ocultos ou captura de teclas.
+
+### Guardrail
+A camada de acessibilidade comunica apenas o estado estrutural já calculado. Ela não introduz nova classificação clínica, recomendação ou interpretação.
+
+**Próxima etapa:** `v0.30.12 — Progress Review Context Integrity Closure`.
+
