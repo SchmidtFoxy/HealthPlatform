@@ -23,6 +23,19 @@ public sealed record AthletePerformanceRecordResponse(
     string Criterio,
     string Fonte);
 
+
+public sealed record AthleteTimedPerformanceResponse(
+    Guid SessaoTreinoId,
+    string Sessao,
+    int RegistrosComparaveis,
+    int DuracaoRecenteMinutos,
+    int MenorDuracaoMinutos,
+    int MaiorDuracaoMinutos,
+    decimal MediaDuracaoMinutos,
+    DateTime UltimaExecucaoUtc,
+    string OrigemDuracaoRecente,
+    string RegraDeLeitura);
+
 public sealed record AthletePerformancePassportResponse(
     string Versao, int DiasObservados, int TreinosObservados, int RecordesRecentes, string Estado,
     IReadOnlyCollection<AthletePerformancePassportDomainResponse> Dominios,
@@ -31,4 +44,7 @@ public sealed record AthletePerformancePassportResponse(
 {
     public IReadOnlyCollection<AthletePerformanceRecordResponse> Recordes { get; init; } =
         Array.Empty<AthletePerformanceRecordResponse>();
+
+    public IReadOnlyCollection<AthleteTimedPerformanceResponse> Tempos { get; init; } =
+        Array.Empty<AthleteTimedPerformanceResponse>();
 }

@@ -15,6 +15,7 @@ public static class AthletePerformancePassportService
         var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, hoje, ct);
         var recordes = await MontarRecordesAsync(db, pacienteId, hoje, ct);
+        var tempos = await MontarTemposAsync(db, pacienteId, hoje, ct);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -55,10 +56,10 @@ public static class AthletePerformancePassportService
             new(
                 "tempos",
                 "Tempos",
-                "SemFonteEstruturada",
-                "Foundation",
-                0,
-                "Duração de sessão não é convertida automaticamente em recorde de tempo."),
+                tempos.Count > 0 ? "ComDados" : "SemDados",
+                "Timed Performance 2.0",
+                tempos.Count,
+                "Duração real é comparada somente dentro da mesma sessão. Menor duração não significa melhor performance automaticamente."),
             new(
                 "provas",
                 "Provas",
@@ -89,19 +90,20 @@ public static class AthletePerformancePassportService
                 "Os records formam base para marcos futuros, sem criar conquistas retroativas.")
         };
 
-        var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : "BaseEmConstrucao";
+        var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.28.1",
+            "v0.28.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Performance Records 2.0 consolida registros comparáveis existentes. Não mistura unidades, não estima 1RM, não transforma volume derivado em carga observada e não fabrica recordes.")
+            "Timed Performance 2.0 adiciona duração real de sessões concluídas sem transformar menor tempo em melhor performance. Performance Records mantém observado e derivado separados.")
         {
-            Recordes = recordes
+            Recordes = recordes,
+            Tempos = tempos
         };
     }
 
@@ -227,6 +229,89 @@ public static class AthletePerformancePassportService
             .ThenBy(x => x.Exercicio)
             .ThenBy(x => x.Tipo)
             .ToArray();
+    }
+
+
+    public static async Task<IReadOnlyCollection<AthleteTimedPerformanceResponse>> MontarTemposAsync(
+        AppDbContext db,
+        Guid pacienteId,
+        DateOnly dia,
+        CancellationToken ct)
+    {
+        const int diasObservados = 180;
+        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+
+        var sessoes = await db.ExecucoesTreino.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId &&
+                x.Status == "Concluido" &&
+                x.DataHoraInicioUtc >= inicioUtc &&
+                x.DataHoraInicioUtc < fimUtc)
+            .Select(x => new
+            {
+                x.SessaoTreinoId,
+                Sessao = x.SessaoTreino.Nome,
+                x.DataHoraInicioUtc,
+                x.DataHoraFimUtc,
+                x.DuracaoMinutos
+            })
+            .ToListAsync(ct);
+
+        var comparaveis = sessoes
+            .Select(x => new
+            {
+                x.SessaoTreinoId,
+                x.Sessao,
+                x.DataHoraInicioUtc,
+                Duracao = ResolverDuracaoMinutos(x.DuracaoMinutos, x.DataHoraInicioUtc, x.DataHoraFimUtc),
+                Origem = x.DuracaoMinutos.HasValue && x.DuracaoMinutos.Value > 0
+                    ? "DuracaoRegistrada"
+                    : "CalculadaPorTimestamps"
+            })
+            .Where(x => x.Duracao.HasValue && x.Duracao.Value > 0)
+            .ToList();
+
+        return comparaveis
+            .GroupBy(x => new { x.SessaoTreinoId, x.Sessao })
+            .Select(grupo =>
+            {
+                var ordenados = grupo
+                    .OrderBy(x => x.DataHoraInicioUtc)
+                    .ToList();
+                var recente = ordenados[^1];
+                var duracoes = ordenados.Select(x => x.Duracao!.Value).ToArray();
+
+                return new AthleteTimedPerformanceResponse(
+                    grupo.Key.SessaoTreinoId,
+                    grupo.Key.Sessao,
+                    duracoes.Length,
+                    recente.Duracao!.Value,
+                    duracoes.Min(),
+                    duracoes.Max(),
+                    Math.Round((decimal)duracoes.Average(), 1),
+                    recente.DataHoraInicioUtc,
+                    recente.Origem,
+                    "Menor, maior e média descrevem duração da mesma sessão. Menor duração não significa melhor performance, maior intensidade ou melhor condicionamento automaticamente.");
+            })
+            .OrderByDescending(x => x.UltimaExecucaoUtc)
+            .ThenBy(x => x.Sessao)
+            .ToArray();
+    }
+
+    private static int? ResolverDuracaoMinutos(
+        int? duracaoRegistrada,
+        DateTime inicioUtc,
+        DateTime? fimUtc)
+    {
+        if (duracaoRegistrada.HasValue && duracaoRegistrada.Value > 0)
+            return duracaoRegistrada.Value;
+
+        if (!fimUtc.HasValue || fimUtc.Value <= inicioUtc)
+            return null;
+
+        var minutos = (int)Math.Round((fimUtc.Value - inicioUtc).TotalMinutes, MidpointRounding.AwayFromZero);
+        return minutos > 0 ? minutos : null;
     }
 
     private static string NormalizarUnidade(string? unidade) =>

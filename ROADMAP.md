@@ -2021,5 +2021,20 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - endpoints profissional e paciente para records;
 - sem migration nova.
 
-**Próxima etapa:** `v0.28.2 — Timed Performance 2.0`.
+**Próxima etapa concluída em `v0.28.2 — Timed Performance 2.0`.
+
+## ✅ v0.28.2 — Timed Performance 2.0 — CONCLUÍDA
+
+**Entregue na v0.28.2:**
+- tempo real de sessões concluídas dentro do Athlete Performance Passport;
+- duração registrada como fonte preferencial;
+- cálculo por timestamps quando necessário;
+- comparação somente dentro da mesma sessão;
+- duração recente, menor, maior e média;
+- origem e quantidade de registros comparáveis;
+- endpoints profissional e paciente;
+- menor tempo não é classificado automaticamente como melhor performance;
+- sem migration nova.
+
+**Próxima etapa:** `v0.28.3 — Competition & Test Results 2.0`.
 

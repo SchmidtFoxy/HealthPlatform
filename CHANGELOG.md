@@ -1,4 +1,19 @@
-﻿# v0.28.1 — Performance Records 2.0
+﻿# v0.28.2 — Timed Performance 2.0
+
+- Adiciona `AthleteTimedPerformanceResponse`.
+- Expande o passaporte com a coleção `Tempos`.
+- Usa `DuracaoMinutos` como fonte temporal preferencial.
+- Calcula duração por timestamps quando o valor explícito não existe.
+- Agrupa e compara somente execuções da mesma sessão.
+- Expõe duração recente, menor, maior e média.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte/tempos`.
+- Adiciona `GET /api/portal/me/performance/passaporte/tempos`.
+- Adiciona painel Timed Performance 2.0 ao passaporte profissional.
+- Guardrail: menor duração não significa automaticamente melhor performance, maior intensidade, melhor condicionamento, pace ou resultado de prova.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.28.3 — Competition & Test Results 2.0.
+
+# v0.28.1 — Performance Records 2.0
 
 - Adiciona `AthletePerformanceRecordResponse`.
 - Expande o passaporte com a coleção `Recordes`.

@@ -970,3 +970,24 @@ Performance Records 2.0 **não mistura unidades, não estima 1RM, não transform
 
 **Próxima etapa:** `v0.28.2 — Timed Performance 2.0`.
 
+---
+
+## v0.28.2 — Timed Performance 2.0
+
+O Athlete Performance Passport passa a reconhecer **tempo real de sessões concluídas** como uma dimensão própria, sem confundir duração com qualidade de performance.
+
+### Entregue
+- duração registrada da execução como fonte preferencial;
+- fallback calculado por `DataHoraInicioUtc` × `DataHoraFimUtc` quando a duração não foi persistida;
+- agrupamento somente pela mesma `SessaoTreino`;
+- duração mais recente, menor, maior e média;
+- quantidade de registros comparáveis;
+- origem explícita da duração mais recente;
+- endpoint profissional e endpoint do paciente;
+- coleção `Tempos` adicionada ao Performance Passport.
+
+### Guardrail
+Timed Performance 2.0 **não considera automaticamente a menor duração como melhor performance, maior intensidade, melhor condicionamento, pace ou resultado de prova**. A camada descreve tempo real dentro da mesma sessão.
+
+**Próxima etapa:** `v0.28.3 — Competition & Test Results 2.0`.
+
