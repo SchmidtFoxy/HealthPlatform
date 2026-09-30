@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.3 — Today's Plan 2.0
+> **Versão-base deste roadmap:** v0.22.4 — Action Hub 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -826,6 +826,40 @@ Evoluir a coleta rápida de sono, energia, dor/desconforto, estresse, humor e di
 ## ✅ v0.22.3 — Today's Plan 2.0 — CONCLUÍDA
 
 Transformar plano profissional, readiness e contexto do dia em uma visão prática do que está planejado para hoje, preservando autonomia e decisão profissional.
+
+
+
+**Entregue na v0.22.3:**
+- plano de hoje consolidado;
+- treino ativo;
+- nutrição ativa;
+- objetivo principal;
+- disponibilidade, contexto e recursos;
+- integração com readiness;
+- orientação contextual de execução;
+- nenhum ajuste automático de prescrição.
+
+**Próxima etapa:** `v0.22.4 — Action Hub 2.0`.
+
+
+## ✅ v0.22.4 — Action Hub 2.0 — CONCLUÍDA
+
+**Entregue na v0.22.4:**
+- hub de ações do dia;
+- iniciar treino;
+- abrir alimentação;
+- fazer/atualizar check-in;
+- registrar hidratação;
+- registrar peso;
+- rever contexto/readiness;
+- ações indisponíveis explicitamente desabilitadas;
+- foco mobile-first e redução de navegação.
+
+**Próxima etapa:** `v0.22.5 — Daily 30 Seconds Experience 2.0`.
+
+## ⏭ v0.22.5 — Daily 30 Seconds Experience 2.0
+
+Consolidar o fluxo diário essencial em uma experiência curta, clara e progressiva, priorizando check-in, contexto, plano e próxima ação em aproximadamente 30 segundos.
 
 
 # 7. v0.23.x — Sports & Movement Library

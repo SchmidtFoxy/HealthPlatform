@@ -18,6 +18,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Action Hub 2.0
+
+A `v0.22.4` centraliza as **ações mais úteis do dia** em um único ponto. O paciente consegue acessar rapidamente treino, alimentação, check-in, hidratação, peso e contexto diário sem precisar procurar cada função em telas diferentes.
+
+O hub é contextual: ações sem plano disponível aparecem desabilitadas, e o sistema não cria novas obrigações. O objetivo é reduzir atrito operacional, especialmente no mobile.
+
 ### Today's Plan 2.0
 
 A `v0.22.3` transforma o contexto diário em uma visão prática do **plano de hoje**. O AESYN reúne treino ativo, plano nutricional, objetivo principal, disponibilidade, logística, recursos e readiness para mostrar o que já está planejado e como abordar o dia.
@@ -151,7 +158,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.3 — Today's Plan 2.0`
+- **Versão funcional:** `v0.22.4 — Action Hub 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

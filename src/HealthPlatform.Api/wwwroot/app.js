@@ -9198,7 +9198,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.3';
+const HP_MVP_VERSION='0.22.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12440,4 +12440,81 @@ renderPatientTab=function(d){
   const readiness=host?.querySelector('[data-readiness-context-v0222]');
   if(!host||!readiness||host.querySelector('[data-today-plan-v0223]'))return;
   readiness.insertAdjacentHTML('afterend',hpTodayPlanV0223(d));
+};
+
+
+// ===== v0.22.4 — Action Hub 2.0 =====
+const HP_ACTION_HUB_V0224='v0.22.4';
+
+function hpActionHubDataV0224(d){
+  const portal=d?.portal||{};
+  const workout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const nutrition=(d?.planos||[]).find(x=>x.status==='Ativo')||(d?.planos||[])[0]||{};
+  const readiness=portal?.prontidaoHoje||portal?.readinessHoje||null;
+
+  return [
+    {key:'workout',title:'Iniciar treino',subtitle:workout?.nome||'Nenhum treino ativo',icon:'▶',enabled:!!workout?.nome,target:'treinos'},
+    {key:'nutrition',title:'Abrir alimentação',subtitle:nutrition?.nome||'Nenhum plano ativo',icon:'◫',enabled:!!nutrition?.nome,target:'nutricao'},
+    {key:'checkin',title:readiness?'Atualizar check-in':'Fazer check-in',subtitle:readiness?'Contexto de hoje já registrado':'Sono, energia, dor e recuperação',icon:'✓',enabled:true,target:'checkin'},
+    {key:'hydration',title:'Registrar hidratação',subtitle:'Atualize sua ingestão de água',icon:'◌',enabled:true,target:'hidratacao'},
+    {key:'weight',title:'Registrar peso',subtitle:'Atualize sua evolução corporal',icon:'↕',enabled:true,target:'peso'},
+    {key:'context',title:'Rever contexto do dia',subtitle:'Readiness, plano e disponibilidade',icon:'◎',enabled:true,target:'contexto'}
+  ];
+}
+function hpActionHubV0224(d){
+  const actions=hpActionHubDataV0224(d);
+  const available=actions.filter(x=>x.enabled).length;
+  return `<section class="action-hub-v0224" data-action-hub-v0224="${HP_ACTION_HUB_V0224}">
+    <div class="action-hub-head-v0224">
+      <div><span class="eyebrow">ACTION HUB 2.0</span><h3>O que você quer fazer agora?</h3><p>As ações mais úteis do dia reunidas em um único ponto, priorizando alcance rápido no mobile.</p></div>
+      <div class="action-hub-count-v0224"><b>${available}</b><span>ações disponíveis</span></div>
+    </div>
+    <div class="action-hub-grid-v0224">
+      ${actions.map(a=>`<button type="button" class="action-hub-item-v0224 ${a.enabled?'':'is-disabled'}" data-action-hub-key-v0224="${esc(a.key)}" data-action-hub-target-v0224="${esc(a.target)}" ${a.enabled?'':'disabled'}>
+        <span class="action-hub-icon-v0224">${esc(a.icon)}</span>
+        <span class="action-hub-copy-v0224"><b>${esc(a.title)}</b><small>${esc(a.subtitle)}</small></span>
+        <span class="action-hub-arrow-v0224">›</span>
+      </button>`).join('')}
+    </div>
+    <div class="action-hub-principle-v0224"><b>Menos procura, mais ação</b><span>O hub não cria novas obrigações. Ele apenas encurta o caminho até ações e registros que já fazem parte do acompanhamento.</span></div>
+  </section>`;
+}
+function hpActionHubNavigateV0224(target,d){
+  const host=$('#patientTabContent');
+  if(target==='checkin'){
+    const readiness=d?.portal?.prontidaoHoje||d?.portal?.readinessHoje||null;
+    openDailyReadiness(readiness);
+    return;
+  }
+  if(target==='contexto'){
+    const el=host?.querySelector('[data-readiness-context-v0222]');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  const selectors={
+    treinos:'[data-tab="treinos"],[data-patient-tab="treinos"]',
+    nutricao:'[data-tab="nutricao"],[data-patient-tab="nutricao"]',
+    hidratacao:'[data-action="hydration"],[data-patient-action="hydration"]',
+    peso:'[data-action="weight"],[data-patient-action="weight"]'
+  };
+  const selector=selectors[target];
+  const el=selector?document.querySelector(selector):null;
+  if(el&&typeof el.click==='function'){el.click();return;}
+  const fallback=host?.querySelector('[data-aesyn-daily-v0220]');
+  if(fallback)fallback.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function hpWireActionHubV0224(d){
+  document.querySelectorAll('[data-action-hub-target-v0224]').forEach(btn=>{
+    if(btn.disabled)return;
+    btn.onclick=()=>hpActionHubNavigateV0224(btn.dataset.actionHubTargetV0224,d);
+  });
+}
+const __renderPatientTab_v0224=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0224(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),plan=host?.querySelector('[data-today-plan-v0223]');
+  if(!host||!plan||host.querySelector('[data-action-hub-v0224]'))return;
+  plan.insertAdjacentHTML('afterend',hpActionHubV0224(d));
+  hpWireActionHubV0224(d);
 };

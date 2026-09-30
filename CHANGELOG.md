@@ -1,3 +1,14 @@
+# v0.22.4 — Action Hub 2.0
+
+- Centraliza as principais ações do dia em um único hub.
+- Inclui acesso rápido a treino, alimentação, check-in, hidratação, peso e contexto diário.
+- Ações dependentes de plano são explicitamente desabilitadas quando não estão disponíveis.
+- Prioriza alcance rápido e ergonomia mobile.
+- Não cria novas obrigações nem prescrição automática.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.4.
+- Próxima etapa: v0.22.5 — Daily 30 Seconds Experience 2.0.
+
 # v0.22.3 — Today's Plan 2.0
 
 - Adiciona visão prática do plano de hoje.
