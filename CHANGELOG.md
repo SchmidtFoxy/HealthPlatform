@@ -1,3 +1,14 @@
+# v0.21.2 — Sports Identity Foundation
+
+- Adiciona identidade esportiva ao Human Profile.
+- Consolida modalidades atuais, nível de experiência, frequência, contexto preferido e histórico esportivo.
+- Relaciona identidade esportiva aos objetivos ativos do Multi-Goal Engine.
+- Reaproveita exclusivamente dados já existentes no acompanhamento.
+- Não cria migration, tabela ou endpoint paralelo.
+- Explicita ausência de contexto sem inferir aptidão ou nível competitivo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.21.2.
+- Próxima etapa: v0.21.3 — Life Context Foundation.
+
 # v0.21.1 — Multi-Goal Engine
 
 - Adiciona mapa de objetivos simultâneos ao Human Profile.

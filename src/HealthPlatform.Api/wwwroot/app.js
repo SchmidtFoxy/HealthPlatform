@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.21.1';
+const HP_MVP_VERSION='0.21.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11802,4 +11802,121 @@ renderPatientTab=function(d){
   const host=$('#patientTabContent'),human=host?.querySelector('[data-human-profile-v0210]');
   if(!host||!human||host.querySelector('[data-multi-goal-v0211]'))return;
   human.insertAdjacentHTML('afterend',hpMultiGoalEngineV0211(d));
+};
+
+
+// ===== v0.21.2 — Sports Identity Foundation =====
+const HP_SPORTS_IDENTITY_V0212='v0.21.2';
+
+function hpSportTextV0212(value){
+  return String(value??'').trim();
+}
+function hpSportUniqueV0212(values){
+  const seen=new Set(),out=[];
+  values.forEach(v=>{
+    const text=hpSportTextV0212(v);
+    if(!text)return;
+    const key=text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+    if(seen.has(key))return;
+    seen.add(key);out.push(text);
+  });
+  return out;
+}
+function hpSportsIdentityDataV0212(d){
+  const portal=d?.portal||{},cycle=portal?.cicloEsportivoAtual||{};
+  const anamneses=[...(d?.anamneses||[])].sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const anam=anamneses[0]||{};
+  const activeWorkout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const goals=typeof hpCollectGoalsV0211==='function'?hpCollectGoalsV0211(d):[];
+
+  const modalities=hpSportUniqueV0212([
+    cycle.perfilEsportivo,
+    anam.atividadeFisica,
+    activeWorkout.modalidade,
+    activeWorkout.nome
+  ]);
+
+  const current=modalities.slice(0,3);
+  const experience=hpSportTextV0212(
+    cycle.nivelExperiencia || anam.nivelAtividadeFisica || anam.experienciaEsportiva
+  );
+  const frequency=anam.atividadeFisicaDiasSemana!=null
+    ?`${anam.atividadeFisicaDiasSemana} dia(s)/semana`
+    :(activeWorkout.frequenciaSemanal!=null?`${activeWorkout.frequenciaSemanal} dia(s)/semana`:'Não informada');
+  const preferredContext=hpSportTextV0212(
+    anam.localPreferidoTreino || anam.contextoTreino || cycle.contextoPreferido
+  );
+  const history=hpSportUniqueV0212([
+    anam.esportesPraticados,
+    anam.historicoEsportivo,
+    cycle.historicoModalidades
+  ]);
+  const goalLinks=goals.slice(0,3).map(g=>g.text);
+
+  return {current,experience,frequency,preferredContext,history,goalLinks};
+}
+function hpSportsIdentityV0212(d){
+  const s=hpSportsIdentityDataV0212(d);
+  const known=[
+    s.current.length>0,
+    !!s.experience,
+    s.frequency!=='Não informada',
+    !!s.preferredContext,
+    s.history.length>0
+  ].filter(Boolean).length;
+
+  return `<section class="sports-identity-v0212" data-sports-identity-v0212="${HP_SPORTS_IDENTITY_V0212}">
+    <div class="sports-identity-head-v0212">
+      <div>
+        <span class="eyebrow">AESYN • SPORTS IDENTITY FOUNDATION</span>
+        <h3>Quem esta pessoa é no esporte.</h3>
+        <p>O AESYN passa a reunir modalidade, experiência, frequência, contexto preferido e histórico esportivo em uma identidade explicável e longitudinal.</p>
+      </div>
+      <div class="sports-identity-known-v0212"><strong>${known}/5</strong><span>dimensões esportivas contextualizadas</span></div>
+    </div>
+
+    <div class="sports-identity-grid-v0212">
+      <article>
+        <span>MODALIDADES ATUAIS</span>
+        ${s.current.length?`<div class="sports-identity-tags-v0212">${s.current.map(x=>`<b>${esc(x)}</b>`).join('')}</div>`:'<p>Modalidade atual ainda não informada.</p>'}
+      </article>
+      <article>
+        <span>EXPERIÊNCIA</span>
+        <strong>${esc(s.experience||'Não informada')}</strong>
+        <small>Nível registrado no ciclo ou avaliação mais recente.</small>
+      </article>
+      <article>
+        <span>FREQUÊNCIA</span>
+        <strong>${esc(s.frequency)}</strong>
+        <small>Frequência praticada/planejada disponível no contexto atual.</small>
+      </article>
+      <article>
+        <span>CONTEXTO PREFERIDO</span>
+        <strong>${esc(s.preferredContext||'Não informado')}</strong>
+        <small>Ex.: academia, casa, ar livre, clube ou outro ambiente registrado.</small>
+      </article>
+      <article class="sports-identity-history-v0212">
+        <span>HISTÓRICO ESPORTIVO</span>
+        ${s.history.length?`<div class="sports-identity-tags-v0212">${s.history.map(x=>`<b>${esc(x)}</b>`).join('')}</div>`:'<p>Histórico esportivo ainda não estruturado.</p>'}
+      </article>
+      <article class="sports-identity-goals-v0212">
+        <span>RELAÇÃO COM OBJETIVOS ATIVOS</span>
+        ${s.goalLinks.length?`<ul>${s.goalLinks.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p>Nenhum objetivo ativo conectado ainda.</p>'}
+      </article>
+    </div>
+
+    <div class="sports-identity-safety-v0212">
+      <b>Identidade esportiva, não rótulo fixo</b>
+      <span>Modalidades e contexto podem mudar ao longo do tempo. O AESYN organiza registros existentes sem presumir preferência, aptidão ou nível competitivo.</span>
+    </div>
+  </section>`;
+}
+const __renderPatientTab_v0212=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0212(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent');
+  const goals=host?.querySelector('[data-multi-goal-v0211]');
+  if(!host||!goals||host.querySelector('[data-sports-identity-v0212]'))return;
+  goals.insertAdjacentHTML('afterend',hpSportsIdentityV0212(d));
 };

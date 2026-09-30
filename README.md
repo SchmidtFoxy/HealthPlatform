@@ -11,6 +11,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Sports Identity Foundation
+
+A `v0.21.2` acrescenta ao Human Profile uma leitura de **identidade esportiva**. O AESYN passa a reunir modalidades atuais, nível de experiência, frequência, contexto preferido, histórico esportivo e relação com objetivos ativos.
+
+A identidade esportiva é longitudinal e contextual: ela não é tratada como um rótulo fixo, não presume aptidão e não infere nível competitivo quando isso não estiver registrado.
+
 ### Multi-Goal Engine
 
 A `v0.21.1` amplia o Human Profile com um **mapa de objetivos simultâneos**. O motor reúne objetivos já existentes no ciclo atual, treino ativo, nutrição ativa e avaliação/intake; remove duplicidades sem perder as fontes originais e apresenta uma hierarquia operacional simples: **Principal / Complementar / Acompanhado**.
@@ -102,7 +109,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.21.1 — Multi-Goal Engine`
+- **Versão funcional:** `v0.21.2 — Sports Identity Foundation`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
