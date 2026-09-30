@@ -1,3 +1,15 @@
+# v0.25.3 — Tennis & Beach Tennis 2.0
+
+- Adiciona `GET /api/portal/me/explore/tennis-beach-tennis`.
+- Compara Tênis e Beach Tennis como contextos de raquete distintos.
+- Detalha saque, forehand/backhand, posicionamento, voleio e smash.
+- Contextualiza quique, quadra, areia, aceleração/frenagem, reação, rotação e estabilidade.
+- Relaciona sessões-modelo existentes de `ModelosSessoesTreino`.
+- Preserva estado editorial vazio quando não houver referência real.
+- Não define carga, volume, intensidade, aptidão ou retorno ao esporte automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.26.0 — Sports Expansion II Foundation.
+
 # v0.25.2 — Basketball & Volleyball 2.0
 
 - Adiciona `GET /api/portal/me/explore/basketball-volleyball`.

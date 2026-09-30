@@ -1,4 +1,4 @@
-﻿using HealthPlatform.Api.Contracts.Explore;
+using HealthPlatform.Api.Contracts.Explore;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
@@ -1680,5 +1680,113 @@ public sealed class ExplorePacienteController(
             "Basketball & Volleyball 2.0 compara contextos e referencia conteúdo existente. Não define posição, salto-alvo, carga, volume, intensidade ou retorno ao esporte automaticamente."));
     }
 
+
+
+    [HttpGet("tennis-beach-tennis")]
+    public async Task<ActionResult<TennisBeachTennisResponse>> TennisBeachTennis(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .OrderBy(x => x.Categoria)
+            .ThenBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var tenisRefs = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "tênis", "tenis", "tennis", "raquete", "saque", "forehand", "backhand", "quadra", "lateral", "agilidade" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(6)
+            .Select(x => new TennisBeachTennisSessaoReferenciaResponse(
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao,
+                "Sessão-modelo existente com termos relacionados a tênis, raquete ou deslocamento de quadra."))
+            .ToArray();
+
+        var beachRefs = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "beach tennis", "beach-tennis", "areia", "raquete", "saque", "voleio", "smash", "lateral", "agilidade" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(6)
+            .Select(x => new TennisBeachTennisSessaoReferenciaResponse(
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao,
+                "Sessão-modelo existente com termos relacionados a beach tennis, areia, raquete ou deslocamento."))
+            .ToArray();
+
+        var modalidades = new[]
+        {
+            new TennisBeachTennisModalidadeResponse(
+                "tenis",
+                "Tênis",
+                "Quadra — piso duro, saibro ou grama",
+                "Trocas com quique, variação de profundidade, acelerações, frenagens e reposicionamento conforme bola e superfície.",
+                ["Raquete", "Bolas", "Rede", "Quadra"],
+                [
+                    new("saque", "Saque", "Iniciar o ponto combinando lançamento, rotação do tronco, ação do ombro e transferência de força.", "Observe consistência do lançamento, equilíbrio e coordenação antes de buscar velocidade."),
+                    new("forehand-backhand", "Forehand e backhand", "Organizar preparação, contato e recuperação para golpes dos dois lados do corpo.", "Observe distância da bola, base, rotação e retorno à posição."),
+                    new("posicionamento", "Posicionamento", "Ajustar distância, base e recuperação conforme profundidade, direção e ritmo da troca.", "Observe split step, leitura do quique e reposicionamento após o golpe.")
+                ],
+                [
+                    new("aceleracao-frenagem", "Aceleração e frenagem", "Arranques curtos e desaceleração para chegar equilibrado à bola.", "Na quadra rígida ou saibro, aderência e deslizamento mudam a estratégia de apoio."),
+                    new("mudanca-direcao", "Mudança de direção", "Reorganizar apoios para responder a bolas abertas, curtas ou profundas.", "O quique amplia a necessidade de leitura da trajetória antes do contato."),
+                    new("rotacao-transferencia", "Rotação e transferência de força", "Integrar pernas, tronco e membro superior nos golpes e no saque.", "A cadeia de força acontece com base mais estável do que na areia.")
+                ],
+                tenisRefs,
+                "O quique e a superfície da quadra alteram tempo de leitura, apoio, frenagem e construção do ponto."),
+            new TennisBeachTennisModalidadeResponse(
+                "beach-tennis",
+                "Beach Tennis",
+                "Areia / quadra de beach tennis",
+                "Jogo sem quique, com deslocamento na areia, ações de rede, voleios, saque e bolas acima da cabeça em ritmo contínuo.",
+                ["Raquete de beach tennis", "Bolas", "Rede", "Quadra de areia"],
+                [
+                    new("saque", "Saque", "Iniciar o ponto com controle de lançamento, coordenação e contato acima da cabeça.", "Observe estabilidade na areia, trajetória do lançamento e equilíbrio após o contato."),
+                    new("voleio", "Voleio e controle sem quique", "Responder à bola no ar com preparação curta, direção e controle de raquete.", "Observe leitura precoce, contato à frente e recuperação rápida."),
+                    new("smash-lob", "Smash e leitura de lob", "Organizar deslocamento, ajuste sob a bola e ação acima da cabeça.", "Observe reposicionamento na areia e controle do tronco antes da potência.")
+                ],
+                [
+                    new("deslocamento-areia", "Deslocamento na areia", "Acelerar, frear e ajustar posição sobre uma superfície deformável.", "A areia aumenta custo locomotor e reduz resposta elástica do apoio em relação à quadra."),
+                    new("reacao-posicionamento", "Reação e posicionamento", "Responder cedo porque a bola não pode tocar o chão.", "Sem quique, leitura e primeiro passo ganham ainda mais importância."),
+                    new("ombro-tronco", "Ombro e tronco", "Saque, smash e ações altas repetem gestos acima da cabeça.", "A demanda aérea se combina com base instável e deslocamento na areia.")
+                ],
+                beachRefs,
+                "A ausência de quique e a areia mudam completamente tempo de reação, deslocamento e estabilidade.")
+        };
+
+        return Ok(new TennisBeachTennisResponse(
+            modalidades,
+            "Sports Expansion I + ModelosSessoesTreino",
+            "Tennis & Beach Tennis 2.0 compara superfícies, fundamentos e capacidades usando referências existentes. Não define carga, volume, intensidade, aptidão ou retorno ao esporte automaticamente."));
+    }
 
 }

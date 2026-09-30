@@ -1,4 +1,4 @@
-﻿:root{
+:root{
   --bg:#f5f7fb;--surface:#ffffff;--surface-2:#eef3f8;--text:#172033;--muted:#6f7b8d;--line:#e3e8ef;
   --navy:#0c1829;--navy-2:#13243b;--accent:#20b486;--accent-dark:#16966f;--accent-soft:#e7f7f1;
   --danger:#e45d68;--warning:#e8a23a;--shadow:0 18px 50px rgba(15,32,53,.10);--radius:20px;
@@ -6153,3 +6153,19 @@ html[data-theme="light"] .football-futsal-v0251{background:#fff}
 .basketball-volleyball-rule-v0252{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--line)}.basketball-volleyball-rule-v0252 b{white-space:nowrap;font-size:8px;color:var(--accent)}.basketball-volleyball-rule-v0252 span{font-size:8px;color:var(--muted);line-height:1.45}
 html[data-theme="light"] .basketball-volleyball-v0252{background:#fff}
 @media(max-width:720px){.basketball-volleyball-entry-v0252,.basketball-volleyball-head-v0252,.basketball-volleyball-rule-v0252{display:grid}.basketball-volleyball-entry-v0252 .primary{width:100%;min-height:48px}.basketball-volleyball-compare-v0252{grid-template-columns:1fr}.basketball-volleyball-title-v0252{display:grid}}
+
+
+/* ===== v0.25.3 — Tennis & Beach Tennis 2.0 ===== */
+.tennis-beach-tennis-entry-v0253{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid rgba(126,232,178,.18);border-radius:13px;background:rgba(126,232,178,.03)}.tennis-beach-tennis-entry-v0253 .primary{min-height:44px}.tennis-beach-tennis-entry-v0253 small{color:var(--muted);font-size:8px;line-height:1.4}
+.tennis-beach-tennis-host-v0253{display:grid;gap:10px}
+.tennis-beach-tennis-v0253{display:grid;gap:13px;padding:14px;border:1px solid rgba(126,232,178,.18);border-radius:18px;background:linear-gradient(145deg,rgba(7,22,20,.92),rgba(10,17,20,.92))}
+.tennis-beach-tennis-head-v0253{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.tennis-beach-tennis-head-v0253 h3{margin:3px 0 5px;font-size:17px}.tennis-beach-tennis-head-v0253 p{margin:0;color:var(--muted);font-size:8px;line-height:1.5}.tennis-beach-tennis-head-v0253>span{padding:5px 7px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:7px;white-space:nowrap}
+.tennis-beach-tennis-compare-v0253{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tennis-beach-tennis-modality-v0253{display:grid;gap:10px;padding:11px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+.tennis-beach-tennis-title-v0253{display:flex;justify-content:space-between;gap:8px}.tennis-beach-tennis-title-v0253>div{display:grid;gap:2px}.tennis-beach-tennis-title-v0253 span{font-size:7px;color:var(--muted)}.tennis-beach-tennis-title-v0253 h4{margin:0;font-size:13px}.tennis-beach-tennis-title-v0253 p{margin:2px 0 0;color:var(--muted);font-size:8px;line-height:1.4}.tennis-beach-tennis-title-v0253>b{font-size:7px;color:var(--muted);white-space:nowrap}
+.tennis-beach-tennis-difference-v0253{display:grid;gap:3px;padding:9px;border-radius:11px;background:rgba(126,232,178,.04)}.tennis-beach-tennis-difference-v0253 span{font-size:6px;color:var(--accent);font-weight:900}.tennis-beach-tennis-difference-v0253 b{font-size:8px;line-height:1.4}
+.tennis-beach-tennis-resources-v0253{display:flex;flex-wrap:wrap;gap:5px}.tennis-beach-tennis-resources-v0253 span{padding:4px 6px;border:1px solid var(--line);border-radius:999px;font-size:7px}
+.tennis-beach-tennis-section-v0253{display:grid;gap:7px}.tennis-beach-tennis-section-v0253 h5{margin:0;font-size:8px;letter-spacing:.03em}.tennis-beach-tennis-foundations-v0253,.tennis-beach-tennis-capabilities-v0253,.tennis-beach-tennis-references-v0253{display:grid;gap:6px}.tennis-beach-tennis-foundations-v0253>div,.tennis-beach-tennis-capabilities-v0253>div,.tennis-beach-tennis-references-v0253>div{display:grid;gap:3px;padding:8px;border:1px solid var(--line);border-radius:10px}.tennis-beach-tennis-section-v0253 b{font-size:8px}.tennis-beach-tennis-section-v0253 p{margin:0;color:var(--muted);font-size:7px;line-height:1.4}.tennis-beach-tennis-section-v0253 small,.tennis-beach-tennis-section-v0253 span{font-size:7px;color:var(--muted);line-height:1.4}
+.tennis-beach-tennis-empty-v0253{display:grid;gap:3px;padding:9px;border:1px dashed var(--line);border-radius:10px}.tennis-beach-tennis-empty-v0253 b{font-size:8px}.tennis-beach-tennis-empty-v0253 span{font-size:7px;color:var(--muted)}
+.tennis-beach-tennis-rule-v0253{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--line)}.tennis-beach-tennis-rule-v0253 b{white-space:nowrap;font-size:8px;color:var(--accent)}.tennis-beach-tennis-rule-v0253 span{font-size:8px;color:var(--muted);line-height:1.45}
+html[data-theme="light"] .tennis-beach-tennis-v0253{background:#fff}
+@media(max-width:720px){.tennis-beach-tennis-entry-v0253,.tennis-beach-tennis-head-v0253,.tennis-beach-tennis-rule-v0253{display:grid}.tennis-beach-tennis-entry-v0253 .primary{width:100%;min-height:48px}.tennis-beach-tennis-compare-v0253{grid-template-columns:1fr}.tennis-beach-tennis-title-v0253{display:grid}}

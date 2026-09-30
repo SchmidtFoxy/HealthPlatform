@@ -1,4 +1,4 @@
-﻿const HP_TAG_SEGMENTATION_V0205='v0.20.5';
+const HP_TAG_SEGMENTATION_V0205='v0.20.5';
 const state={token:localStorage.getItem('hp_token'),user:JSON.parse(localStorage.getItem('hp_user')||'null'),view:'dashboard',offset:-new Date().getTimezoneOffset(),selectedDate:new Date(),patientId:null,patientTab:'resumo'};
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)], content=$('#content');
 const esc=(v='')=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.25.2';
+const HP_MVP_VERSION='0.25.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14880,4 +14880,112 @@ hpOpenSportsExpansionIV0250=async function(host){
   const button=root?.querySelector('#openBasketballVolleyballV0252');
   const detail=root?.querySelector('#basketballVolleyballHostV0252');
   if(button&&detail)button.onclick=()=>hpOpenBasketballVolleyballV0252(detail);
+};
+
+
+// ===== v0.25.3 — Tennis & Beach Tennis 2.0 =====
+const HP_TENNIS_BEACH_TENNIS_V0253='v0.25.3';
+
+function hpTennisBeachTennisModalityV0253(sport){
+  const refs=Array.isArray(sport?.sessoesReferencia)?sport.sessoesReferencia:[];
+  return `<article class="tennis-beach-tennis-modality-v0253" data-tennis-beach-tennis-code-v0253="${esc(sport?.codigo||'')}">
+    <div class="tennis-beach-tennis-title-v0253">
+      <div>
+        <span>${esc(sport?.ambientePrincipal||'Modalidade de raquete')}</span>
+        <h4>${esc(sport?.nome||'Modalidade')}</h4>
+        <p>${esc(sport?.dinamica||'')}</p>
+      </div>
+      <b>${esc(sport?.codigo||'')}</b>
+    </div>
+
+    <div class="tennis-beach-tennis-difference-v0253">
+      <span>DIFERENÇA-CHAVE</span>
+      <b>${esc(sport?.diferencaChave||'Contexto específico da modalidade.')}</b>
+    </div>
+
+    <div class="tennis-beach-tennis-resources-v0253">${(sport?.recursos||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+
+    <section class="tennis-beach-tennis-section-v0253">
+      <h5>Fundamentos</h5>
+      <div class="tennis-beach-tennis-foundations-v0253">
+        ${(sport?.fundamentos||[]).map(x=>`<div><b>${esc(x.nome)}</b><p>${esc(x.descricao)}</p><small>${esc(x.oQueObservar)}</small></div>`).join('')}
+      </div>
+    </section>
+
+    <section class="tennis-beach-tennis-section-v0253">
+      <h5>Capacidades no contexto</h5>
+      <div class="tennis-beach-tennis-capabilities-v0253">
+        ${(sport?.capacidades||[]).map(x=>`<div><b>${esc(x.nome)}</b><p>${esc(x.contexto)}</p><small>${esc(x.diferencaDaOutraModalidade)}</small></div>`).join('')}
+      </div>
+    </section>
+
+    <section class="tennis-beach-tennis-section-v0253">
+      <h5>Sessões-modelo relacionadas</h5>
+      ${refs.length?`<div class="tennis-beach-tennis-references-v0253">${refs.map(x=>`<div>
+        <b>${esc(x.nome)}</b>
+        <span>${esc(x.categoria||'Sessão-modelo')}</span>
+        <p>${esc(x.descricao||'Sem descrição cadastrada.')}</p>
+        <small>${esc(x.motivoDaReferencia)}</small>
+      </div>`).join('')}</div>`:`<div class="tennis-beach-tennis-empty-v0253"><b>Sem referência editorial ainda.</b><span>O AESYN preserva a lacuna em vez de inventar uma sessão.</span></div>`}
+    </section>
+  </article>`;
+}
+
+function hpTennisBeachTennisV0253(data){
+  const sports=Array.isArray(data?.modalidades)?data.modalidades:[];
+  return `<section class="tennis-beach-tennis-v0253" data-tennis-beach-tennis-v0253="${HP_TENNIS_BEACH_TENNIS_V0253}" aria-labelledby="tennisBeachTennisTitleV0253">
+    <div class="tennis-beach-tennis-head-v0253">
+      <div>
+        <span class="eyebrow">TENNIS & BEACH TENNIS 2.0</span>
+        <h3 id="tennisBeachTennisTitleV0253">Mesma raquete? Contextos bem diferentes.</h3>
+        <p>Compare golpes, saque, posicionamento, deslocamentos e superfície sem transformar modalidade em prescrição.</p>
+      </div>
+      <span>2 modalidades</span>
+    </div>
+
+    <div class="tennis-beach-tennis-compare-v0253">
+      ${sports.map(hpTennisBeachTennisModalityV0253).join('')}
+    </div>
+
+    <div class="tennis-beach-tennis-rule-v0253">
+      <b>SUPERFÍCIE ≠ PRESCRIÇÃO</b>
+      <span>${esc(data?.regraDeUso||'Tênis e Beach Tennis são contextos esportivos distintos; o AESYN não define carga, volume, intensidade ou retorno automaticamente.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenTennisBeachTennisV0253(host){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Tênis & Beach Tennis...</div>';
+  try{
+    const data=await api('/api/portal/me/explore/tennis-beach-tennis');
+    host.innerHTML=hpTennisBeachTennisV0253(data);
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Tênis & Beach Tennis.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpSportsExpansionIV0253=hpSportsExpansionIV0250;
+hpSportsExpansionIV0250=function(data){
+  const html=__hpSportsExpansionIV0253(data);
+  return html.replace(
+    '<div class="sports-expansion-i-chain-v0250">',
+    `<div class="tennis-beach-tennis-entry-v0253">
+      <button type="button" class="primary" id="openTennisBeachTennisV0253">Comparar Tênis & Beach Tennis</button>
+      <small>Golpes, saque, deslocamentos, superfícies e referências reais de sessão.</small>
+    </div>
+    <div id="tennisBeachTennisHostV0253" class="tennis-beach-tennis-host-v0253" hidden></div>
+    <div class="sports-expansion-i-chain-v0250">`
+  );
+};
+
+const __hpOpenSportsExpansionIV0253=hpOpenSportsExpansionIV0250;
+hpOpenSportsExpansionIV0250=async function(host){
+  await __hpOpenSportsExpansionIV0253(host);
+  const root=host?.querySelector('[data-sports-expansion-i-v0250]');
+  const button=root?.querySelector('#openTennisBeachTennisV0253');
+  const detail=root?.querySelector('#tennisBeachTennisHostV0253');
+  if(button&&detail)button.onclick=()=>hpOpenTennisBeachTennisV0253(detail);
 };

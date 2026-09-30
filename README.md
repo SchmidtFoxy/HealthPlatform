@@ -46,6 +46,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Tennis & Beach Tennis 2.0
+
+A `v0.25.3` fecha a primeira expansão esportiva aprofundando **Tênis** e **Beach Tennis** como modalidades de raquete com contextos próprios. O Tênis considera quique, tipo de quadra, forehand/backhand, saque, aceleração, frenagem e mudança de direção; o Beach Tennis enfatiza jogo sem quique, areia, voleios, smash, reação e estabilidade em superfície deformável.
+
+O Explore relaciona `ModelosSessoesTreino` existentes quando houver correspondência editorial, sem criar sessão artificial. A plataforma não define carga, volume, intensidade, aptidão ou retorno ao esporte automaticamente.
+
 ### Basketball & Volleyball 2.0
 
 A `v0.25.2` aprofunda **Basquete** e **Vôlei** como contextos de quadra distintos. O Basquete enfatiza drible, passe, arremesso, aceleração e deslocamento lateral; o Vôlei destaca recepção, levantamento, ataque/saque, salto/aterrissagem e ações repetidas acima da cabeça.
@@ -353,7 +360,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.25.2 — Basketball & Volleyball 2.0`
+- **Versão funcional:** `v0.25.3 — Tennis & Beach Tennis 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

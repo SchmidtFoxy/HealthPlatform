@@ -1,4 +1,4 @@
-﻿namespace HealthPlatform.Api.Contracts.Explore;
+namespace HealthPlatform.Api.Contracts.Explore;
 
 public sealed record ExploreCaminhoResponse(
     string Codigo,
@@ -308,5 +308,41 @@ public sealed record BasketballVolleyballModalidadeResponse(
 
 public sealed record BasketballVolleyballResponse(
     IReadOnlyCollection<BasketballVolleyballModalidadeResponse> Modalidades,
+    string Fonte,
+    string RegraDeUso);
+
+
+public sealed record TennisBeachTennisFundamentoResponse(
+    string Codigo,
+    string Nome,
+    string Descricao,
+    string OQueObservar);
+
+public sealed record TennisBeachTennisCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string DiferencaDaOutraModalidade);
+
+public sealed record TennisBeachTennisSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record TennisBeachTennisModalidadeResponse(
+    string Codigo,
+    string Nome,
+    string AmbientePrincipal,
+    string Dinamica,
+    string[] Recursos,
+    IReadOnlyCollection<TennisBeachTennisFundamentoResponse> Fundamentos,
+    IReadOnlyCollection<TennisBeachTennisCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<TennisBeachTennisSessaoReferenciaResponse> SessoesReferencia,
+    string DiferencaChave);
+
+public sealed record TennisBeachTennisResponse(
+    IReadOnlyCollection<TennisBeachTennisModalidadeResponse> Modalidades,
     string Fonte,
     string RegraDeUso);

@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.25.2 — Basketball & Volleyball 2.0
+> **Versão-base deste roadmap:** v0.25.3 — Tennis & Beach Tennis 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1580,9 +1580,21 @@ Aprofundar Basquete e Vôlei com fundamentos de quadra, saltos, deslocamentos, c
 
 **Próxima etapa:** `v0.25.3 — Tennis & Beach Tennis 2.0`.
 
-## ⏭ v0.25.3 — Tennis & Beach Tennis 2.0
+## ✅ v0.25.3 — Tennis & Beach Tennis 2.0 — CONCLUÍDA
 
 Aprofundar Tênis e Beach Tennis com golpes, saque, posicionamento, deslocamentos, superfícies e referências de sessão específicas sem prescrição automática.
+
+**Entregue na v0.25.3:**
+- endpoint `/api/portal/me/explore/tennis-beach-tennis`;
+- comparação explícita de Tênis × Beach Tennis;
+- fundamentos de saque, forehand/backhand, posicionamento, voleio e smash;
+- diferenças de quique, quadra e areia contextualizadas;
+- aceleração, frenagem, mudança de direção, reação, rotação e estabilidade por modalidade;
+- referências a `ModelosSessoesTreino` existentes;
+- estado editorial vazio quando não há referência real;
+- nenhuma carga, volume, intensidade, aptidão ou retorno automático.
+
+**Próxima etapa:** `v0.26.0 — Sports Expansion II Foundation`.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA
