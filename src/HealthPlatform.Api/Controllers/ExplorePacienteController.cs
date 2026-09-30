@@ -120,6 +120,13 @@ public sealed class ExplorePacienteController(
                 "Explore fundamentos e capacidades de Futebol, Futsal, Basquete, Vôlei, Tênis e Beach Tennis.",
                 ["Campo", "Quadra", "Areia", "Raquete", "Coletivos"],
                 ["Futebol", "Futsal", "Basquete", "Vôlei", "Tênis", "Beach Tennis"],
+                "Esportes"),
+            new ExploreCaminhoResponse(
+                "sports-expansion-ii",
+                "Água, combate e aventura",
+                "Explore fundamentos e capacidades de Natação, Triathlon, Artes Marciais, Remo, Trekking e práticas recreativas.",
+                ["Piscina", "Águas abertas", "Tatame", "Remo", "Trilha", "Recreativo"],
+                ["Natação", "Triathlon", "Artes Marciais", "Remo", "Trekking", "Recreativos"],
                 "Esportes")
         };
 
@@ -1322,7 +1329,13 @@ public sealed class ExplorePacienteController(
         new("basquete", "Basquete"),
         new("volei", "Vôlei"),
         new("tenis", "Tênis"),
-        new("beach-tennis", "Beach Tennis")
+        new("beach-tennis", "Beach Tennis"),
+        new("natacao", "Natação"),
+        new("triathlon", "Triathlon"),
+        new("artes-marciais", "Artes Marciais"),
+        new("remo", "Remo"),
+        new("trekking", "Trekking"),
+        new("recreativos", "Esportes recreativos")
     ];
 
     private static string[] IntencoesExplore() =>
@@ -1787,6 +1800,139 @@ public sealed class ExplorePacienteController(
             modalidades,
             "Sports Expansion I + ModelosSessoesTreino",
             "Tennis & Beach Tennis 2.0 compara superfícies, fundamentos e capacidades usando referências existentes. Não define carga, volume, intensidade, aptidão ou retorno ao esporte automaticamente."));
+    }
+
+
+    [HttpGet("sports-expansion-ii")]
+    public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modalidades = new SportsExpansionIIModalidadeResponse[]
+        {
+            new(
+                "natacao",
+                "Natação",
+                "Modalidade aquática com técnica de nado, respiração, eficiência propulsiva e resistência específica.",
+                ["Piscina", "Águas abertas"],
+                ["Piscina", "Óculos", "Touca", "Prancha opcional"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("respiracao", "Respiração e alinhamento"),
+                        new("bracada", "Braçada e propulsão"),
+                        new("virada", "Saída e virada")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("resistencia-aquatica", "Resistência aquática"),
+                        new("ombro-escapula", "Ombro e escápula"),
+                        new("core", "Estabilidade de tronco")
+                    ])
+                ]),
+            new(
+                "triathlon",
+                "Triathlon",
+                "Integra natação, ciclismo e corrida, com transições e gestão de demandas entre modalidades.",
+                ["Piscina", "Águas abertas", "Rua", "Ciclovia", "Transição"],
+                ["Equipamento de natação", "Bicicleta", "Capacete", "Tênis"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("natacao", "Fundamentos de natação"),
+                        new("ciclismo", "Controle e eficiência no ciclismo"),
+                        new("corrida", "Técnica de corrida e transição")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("resistencia-multimodal", "Resistência multimodal"),
+                        new("transicoes", "Transições"),
+                        new("durabilidade", "Durabilidade de movimento")
+                    ])
+                ]),
+            new(
+                "artes-marciais",
+                "Artes Marciais",
+                "Família de modalidades de combate com base, deslocamento, coordenação, potência e controle técnico.",
+                ["Tatame", "Dojo", "Academia", "Ringue"],
+                ["Espaço seguro", "Aparadores opcionais", "Equipamento específico da modalidade"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("base-guarda", "Base e guarda"),
+                        new("deslocamento", "Deslocamento"),
+                        new("tecnica", "Técnica específica")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("potencia", "Potência"),
+                        new("agilidade", "Agilidade e reação"),
+                        new("condicionamento", "Condicionamento específico")
+                    ])
+                ]),
+            new(
+                "remo",
+                "Remo",
+                "Movimento cíclico de puxada e extensão coordenada, praticado na água ou em ergômetro.",
+                ["Água", "Raia", "Indoor"],
+                ["Barco e remo", "Remoergômetro"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("sequencia", "Sequência pernas–tronco–braços"),
+                        new("retorno", "Retorno e recuperação"),
+                        new("ritmo", "Ritmo técnico")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("cadeia-posterior", "Cadeia posterior"),
+                        new("resistencia", "Resistência"),
+                        new("core", "Estabilidade de tronco")
+                    ])
+                ]),
+            new(
+                "trekking",
+                "Trekking",
+                "Deslocamento prolongado em trilhas com variação de terreno, inclinação, apoio e contexto ambiental.",
+                ["Trilha", "Montanha", "Parque", "Estrada de terra"],
+                ["Calçado adequado", "Mochila", "Água", "Bastões opcionais"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("passada", "Passada em terreno irregular"),
+                        new("subida-descida", "Subida e descida"),
+                        new("orientacao", "Leitura de terreno e segurança")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("resistencia", "Resistência locomotora"),
+                        new("forca-pernas", "Força de membros inferiores"),
+                        new("equilibrio", "Equilíbrio e estabilidade")
+                    ])
+                ]),
+            new(
+                "recreativos",
+                "Esportes recreativos",
+                "Práticas de lazer e movimento que podem variar por ambiente, regras e recursos disponíveis.",
+                ["Parque", "Praia", "Clube", "Quadra", "Área livre"],
+                ["Recursos variáveis conforme a prática"],
+                [
+                    new("fundamentos", "Fundamentos", [
+                        new("regras-basicas", "Regras e segurança básicas"),
+                        new("coordenacao", "Coordenação"),
+                        new("exploracao", "Exploração do movimento")
+                    ]),
+                    new("preparacao", "Preparação física", [
+                        new("movimento-geral", "Capacidade geral de movimento"),
+                        new("reacao", "Reação e adaptação"),
+                        new("resistencia", "Resistência conforme o contexto")
+                    ])
+                ])
+        };
+
+        return Ok(new SportsExpansionIIResponse(
+            modalidades,
+            "Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão",
+            "Sports Expansion II amplia a taxonomia e a descoberta. A estrutura não declara aptidão, não escolhe modalidade de combate, não define distância, volume, intensidade, rota ou retorno ao esporte automaticamente."));
     }
 
 }

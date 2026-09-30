@@ -346,3 +346,25 @@ public sealed record TennisBeachTennisResponse(
     IReadOnlyCollection<TennisBeachTennisModalidadeResponse> Modalidades,
     string Fonte,
     string RegraDeUso);
+
+public sealed record SportsExpansionIICapacidadeResponse(
+    string Codigo,
+    string Nome);
+
+public sealed record SportsExpansionIIObjetivoResponse(
+    string Codigo,
+    string Nome,
+    IReadOnlyCollection<SportsExpansionIICapacidadeResponse> Capacidades);
+
+public sealed record SportsExpansionIIModalidadeResponse(
+    string Codigo,
+    string Nome,
+    string Descricao,
+    string[] Ambientes,
+    string[] Recursos,
+    IReadOnlyCollection<SportsExpansionIIObjetivoResponse> Objetivos);
+
+public sealed record SportsExpansionIIResponse(
+    IReadOnlyCollection<SportsExpansionIIModalidadeResponse> Modalidades,
+    string CadeiaEstrutural,
+    string RegraDeUso);

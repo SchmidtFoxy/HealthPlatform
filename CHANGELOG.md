@@ -1,3 +1,15 @@
+# v0.26.0 — Sports Expansion II Foundation
+
+- Expande a biblioteca profissional com Natação, Triathlon, Artes Marciais, Remo, Trekking e esportes recreativos.
+- Adiciona `GET /api/portal/me/explore/sports-expansion-ii`.
+- Adiciona o caminho `Água, combate e aventura` ao AESYN Explore.
+- Amplia o Interest Engine para as seis novas famílias/modalidades.
+- Mantém a cadeia Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão.
+- Organiza ambientes, recursos, fundamentos e capacidades sem declarar aptidão.
+- Não escolhe modalidade de combate, não monta rota e não define distância, volume, intensidade ou retorno ao esporte automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.26.1 — Swimming 2.0.
+
 # v0.25.3 — Tennis & Beach Tennis 2.0
 
 - Adiciona `GET /api/portal/me/explore/tennis-beach-tennis`.

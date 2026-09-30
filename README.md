@@ -47,6 +47,12 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+### Sports Expansion II Foundation
+
+A `v0.26.0` abre a segunda expansão esportiva do AESYN com **Natação, Triathlon, Artes Marciais, Remo, Trekking e esportes recreativos**. As modalidades entram na biblioteca profissional, no Explore e no Interest Engine usando a mesma cadeia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`.
+
+A fundação organiza ambientes, recursos, fundamentos e capacidades sem declarar aptidão, escolher automaticamente uma arte marcial, montar rota, definir distância, volume, intensidade ou retorno ao esporte. A próxima etapa aprofunda **Natação** como modalidade específica.
+
 ### Tennis & Beach Tennis 2.0
 
 A `v0.25.3` fecha a primeira expansão esportiva aprofundando **Tênis** e **Beach Tennis** como modalidades de raquete com contextos próprios. O Tênis considera quique, tipo de quadra, forehand/backhand, saque, aceleração, frenagem e mudança de direção; o Beach Tennis enfatiza jogo sem quique, areia, voleios, smash, reação e estabilidade em superfície deformável.
@@ -360,7 +366,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.25.3 — Tennis & Beach Tennis 2.0`
+- **Versão funcional:** `v0.26.0 — Sports Expansion II Foundation`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

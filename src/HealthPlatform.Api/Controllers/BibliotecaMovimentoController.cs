@@ -1,4 +1,4 @@
-﻿using HealthPlatform.Api.Contracts.BibliotecaMovimento;
+using HealthPlatform.Api.Contracts.BibliotecaMovimento;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -746,6 +746,120 @@ public sealed class BibliotecaMovimentoController(
                     new("deslocamento-areia", "Deslocamento na areia", ["areia", "deslocamento", "agilidade"]),
                     new("potencia", "Potência", ["potencia", "potência", "salto", "sprint"]),
                     new("ombro-tronco", "Ombro e tronco", ["ombro", "core", "rotacao", "rotação"])
+                ])
+            ]),
+        new(
+            "natacao",
+            "Natação",
+            "Modalidade aquática com técnica, eficiência propulsiva, respiração e resistência específica.",
+            ["Piscina", "Águas abertas"],
+            ["Piscina", "Óculos", "Touca", "Prancha opcional"],
+            ["natacao", "natação", "nado", "crawl", "piscina", "aquatico", "aquático"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("respiracao", "Respiração e alinhamento", ["respiracao", "respiração", "alinhamento", "nado"]),
+                    new("bracada", "Braçada e propulsão", ["bracada", "braçada", "propulsao", "propulsão", "crawl"]),
+                    new("virada", "Saída e virada", ["virada", "saida", "saída", "piscina"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("resistencia-aquatica", "Resistência aquática", ["resistencia", "resistência", "cardio", "nado"]),
+                    new("ombro-escapula", "Ombro e escápula", ["ombro", "escap", "manguito"]),
+                    new("core", "Estabilidade de tronco", ["core", "tronco", "estabilidade"])
+                ])
+            ]),
+        new(
+            "triathlon",
+            "Triathlon",
+            "Modalidade de endurance que integra natação, ciclismo, corrida e transições.",
+            ["Piscina", "Águas abertas", "Rua", "Ciclovia", "Transição"],
+            ["Equipamento de natação", "Bicicleta", "Capacete", "Tênis"],
+            ["triathlon", "triatlo", "natacao", "natação", "bike", "ciclismo", "corrida", "transicao", "transição"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("natacao", "Natação", ["natacao", "natação", "nado"]),
+                    new("ciclismo", "Ciclismo", ["bike", "bicicleta", "ciclismo"]),
+                    new("corrida", "Corrida e transição", ["corrida", "transicao", "transição"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("resistencia-multimodal", "Resistência multimodal", ["resistencia", "resistência", "endurance", "cardio"]),
+                    new("transicoes", "Transições", ["transicao", "transição", "brick"]),
+                    new("durabilidade", "Durabilidade de movimento", ["resistencia", "resistência", "estabilidade", "core"])
+                ])
+            ]),
+        new(
+            "artes-marciais",
+            "Artes Marciais",
+            "Família de modalidades de combate com base, deslocamento, coordenação e preparação física específica.",
+            ["Tatame", "Dojo", "Academia", "Ringue"],
+            ["Espaço seguro", "Aparadores opcionais", "Equipamento específico"],
+            ["artes marciais", "luta", "combate", "boxe", "muay thai", "jiu jitsu", "judo", "judô", "karate", "karatê"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("base-guarda", "Base e guarda", ["base", "guarda", "postura"]),
+                    new("deslocamento", "Deslocamento", ["deslocamento", "agilidade", "footwork"]),
+                    new("tecnica", "Técnica específica", ["tecnica", "técnica", "golpe", "luta"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("potencia", "Potência", ["potencia", "potência", "explosao", "explosão"]),
+                    new("agilidade", "Agilidade e reação", ["agilidade", "reacao", "reação"]),
+                    new("condicionamento", "Condicionamento específico", ["condicionamento", "intervalado", "resistencia", "resistência"])
+                ])
+            ]),
+        new(
+            "remo",
+            "Remo",
+            "Modalidade cíclica de puxada e extensão coordenada, na água ou em ergômetro.",
+            ["Água", "Raia", "Indoor"],
+            ["Barco e remo", "Remoergômetro"],
+            ["remo", "rowing", "remoergometro", "remoergômetro", "ergometro", "ergômetro"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("sequencia", "Sequência pernas–tronco–braços", ["pernas", "tronco", "bracos", "braços", "sequencia", "sequência"]),
+                    new("retorno", "Retorno e recuperação", ["retorno", "recuperacao", "recuperação"]),
+                    new("ritmo", "Ritmo técnico", ["ritmo", "cadencia", "cadência"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("cadeia-posterior", "Cadeia posterior", ["posterior", "gluteo", "glúteo", "dorsal"]),
+                    new("resistencia", "Resistência", ["resistencia", "resistência", "cardio"]),
+                    new("core", "Estabilidade de tronco", ["core", "tronco", "estabilidade"])
+                ])
+            ]),
+        new(
+            "trekking",
+            "Trekking",
+            "Deslocamento em trilhas e terrenos variados com demandas de resistência, equilíbrio e força de membros inferiores.",
+            ["Trilha", "Montanha", "Parque", "Estrada de terra"],
+            ["Calçado adequado", "Mochila", "Água", "Bastões opcionais"],
+            ["trekking", "trilha", "hiking", "caminhada", "montanha", "subida", "descida"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("passada", "Passada em terreno irregular", ["passada", "trilha", "terreno"]),
+                    new("subida-descida", "Subida e descida", ["subida", "descida", "inclinacao", "inclinação"]),
+                    new("orientacao", "Leitura de terreno e segurança", ["trilha", "equilibrio", "equilíbrio", "seguranca", "segurança"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("resistencia", "Resistência locomotora", ["caminhada", "resistencia", "resistência"]),
+                    new("forca-pernas", "Força de membros inferiores", ["agach", "perna", "panturrilha", "gluteo", "glúteo"]),
+                    new("equilibrio", "Equilíbrio e estabilidade", ["equilibrio", "equilíbrio", "estabilidade", "tornozelo"])
+                ])
+            ]),
+        new(
+            "recreativos",
+            "Esportes recreativos",
+            "Práticas de lazer e movimento organizadas por contexto, segurança e capacidades gerais.",
+            ["Parque", "Praia", "Clube", "Quadra", "Área livre"],
+            ["Recursos variáveis conforme a prática"],
+            ["recreativo", "recreacao", "recreação", "lazer", "jogo", "brincadeira"],
+            [
+                new("fundamentos", "Fundamentos", [
+                    new("regras-basicas", "Regras e segurança básicas", ["regra", "seguranca", "segurança"]),
+                    new("coordenacao", "Coordenação", ["coordenacao", "coordenação", "controle"]),
+                    new("exploracao", "Exploração do movimento", ["movimento", "exploracao", "exploração"])
+                ]),
+                new("preparacao", "Preparação física", [
+                    new("movimento-geral", "Capacidade geral de movimento", ["movimento", "mobilidade", "forca", "força"]),
+                    new("reacao", "Reação e adaptação", ["reacao", "reação", "agilidade"]),
+                    new("resistencia", "Resistência conforme o contexto", ["resistencia", "resistência", "cardio"])
                 ])
             ])
     ];
