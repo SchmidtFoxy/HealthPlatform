@@ -1,4 +1,20 @@
-﻿# v0.28.4 — Skills & Milestones 2.0
+﻿# v0.28.5 — Performance Evolution 2.0
+
+- Adiciona `AthletePerformanceEvolutionPointResponse`.
+- Adiciona `AthletePerformanceEvolutionResponse`.
+- Expande o passaporte com `Evolucao`.
+- Compara início × atual somente em bases compatíveis.
+- Carga permanece isolada por exercício e unidade.
+- Duração permanece isolada por sessão.
+- Expõe variação absoluta e percentual sem classificar melhora/piora.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte/evolucao`.
+- Adiciona `GET /api/portal/me/performance/passaporte/evolucao`.
+- Adiciona painel Performance Evolution 2.0.
+- Guardrail: não gera score, ranking, prognóstico, tendência clínica ou recomendação automática.
+- Não cria migration ou tabela nova.
+- Próxima fase: v0.29.0 — Progress Intelligence Foundation.
+
+# v0.28.4 — Skills & Milestones 2.0
 
 - Adiciona `AthleteSkillMilestoneResponse`.
 - Expande o passaporte com `HabilidadesMarcos`.

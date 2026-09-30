@@ -64,6 +64,30 @@ public sealed record AthleteSkillMilestoneResponse(
     string Fonte,
     string RegraDeLeitura);
 
+
+public sealed record AthletePerformanceEvolutionPointResponse(
+    string Dominio,
+    string Referencia,
+    string Medida,
+    decimal ValorInicial,
+    decimal ValorAtual,
+    string Unidade,
+    decimal VariacaoAbsoluta,
+    decimal? VariacaoPercentual,
+    DateTime DataInicialUtc,
+    DateTime DataAtualUtc,
+    int RegistrosComparaveis,
+    string InterpretacaoPermitida);
+
+public sealed record AthletePerformanceEvolutionResponse(
+    int DiasObservados,
+    IReadOnlyCollection<AthletePerformanceEvolutionPointResponse> Pontos,
+    int CargasComparaveis,
+    int SessoesTemporaisComparaveis,
+    int ResultadosSupervisionados,
+    int HabilidadesMarcos,
+    string RegraDeLeitura);
+
 public sealed record AthletePerformancePassportResponse(
     string Versao, int DiasObservados, int TreinosObservados, int RecordesRecentes, string Estado,
     IReadOnlyCollection<AthletePerformancePassportDomainResponse> Dominios,
@@ -81,4 +105,8 @@ public sealed record AthletePerformancePassportResponse(
 
     public IReadOnlyCollection<AthleteSkillMilestoneResponse> HabilidadesMarcos { get; init; } =
         Array.Empty<AthleteSkillMilestoneResponse>();
+
+    public AthletePerformanceEvolutionResponse Evolucao { get; init; } =
+        new(180, Array.Empty<AthletePerformanceEvolutionPointResponse>(), 0, 0, 0, 0,
+            "Sem base comparável suficiente para leitura longitudinal.");
 }

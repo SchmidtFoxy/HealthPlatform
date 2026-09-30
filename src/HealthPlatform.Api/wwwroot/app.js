@@ -4350,6 +4350,7 @@ const HP_PERFORMANCE_RECORDS_V0281='v0.28.1';
 const HP_TIMED_PERFORMANCE_V0282='v0.28.2';
 const HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3';
 const HP_SKILLS_MILESTONES_V0284='v0.28.4';
+const HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4394,6 +4395,13 @@ function hpAthletePassportDomainV0280(x){
 
 
 
+
+function hpPerformanceEvolutionPointV0285(x){
+  const pct=x.variacaoPercentual!=null?`${x.variacaoPercentual>0?'+':''}${num(x.variacaoPercentual,1)}%`:'—';
+  const sign=x.variacaoAbsoluta>0?'+':'';
+  return `<article class="workout-progression-signal-v0274 performance-evolution-v0285"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'EVOLUÇÃO')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(x.medida||'')}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${num(x.valorInicial||0,1)} ${esc(x.unidade||'')}</b>inicial</span><span><b>${num(x.valorAtual||0,1)} ${esc(x.unidade||'')}</b>atual</span><span><b>${sign}${num(x.variacaoAbsoluta||0,1)} ${esc(x.unidade||'')}</b>variação</span><span><b>${pct}</b>variação %</span></div><small class="muted-line">${x.registrosComparaveis??0} registro(s) comparável(is) • ${esc(x.interpretacaoPermitida||'')}</small></article>`;
+}
+
 function hpSkillMilestoneV0284(x){
   const when=x.dataAplicacaoUtc?new Date(x.dataAplicacaoUtc).toLocaleDateString('pt-BR'):'—';
   const skill=x.categoria==='HabilidadeRegistrada';
@@ -4437,6 +4445,7 @@ async function loadAthletePerformancePassportV0280(patient){
     <div class="workout-prescribed-performed-v0272" data-timed-performance-v0282="${HP_TIMED_PERFORMANCE_V0282}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">TIMED PERFORMANCE 2.0</span><h4>Tempo real por sessão comparável</h4><p>Menor duração é uma observação temporal, não uma classificação automática de melhor performance.</p></div><span class="pill Info">${(data.tempos||[]).length} sessão(ões)</span></div><div class="workout-comparisons-v0272">${(data.tempos||[]).map(hpTimedPerformanceV0282).join('')||'<div class="empty">Ainda não há sessões concluídas com duração comparável.</div>'}</div></div>
     <div class="workout-prescribed-performed-v0272" data-competition-test-results-v0283="${HP_COMPETITION_TEST_RESULTS_V0283}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">COMPETITION & TEST RESULTS 2.0</span><h4>Provas e testes supervisionados</h4><p>Somente registros explicitamente identificados entram aqui; sem inferir resultado numérico ausente.</p></div><span class="pill Info">${(data.resultados||[]).length} registro(s)</span></div><div class="workout-comparisons-v0272">${(data.resultados||[]).map(hpCompetitionTestResultV0283).join('')||'<div class="empty">Ainda não há prova, competição, teste ou avaliação supervisionada explicitamente registrada.</div>'}</div></div>
     <div class="workout-prescribed-performed-v0272" data-skills-milestones-v0284="${HP_SKILLS_MILESTONES_V0284}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">SKILLS & MILESTONES 2.0</span><h4>Habilidades e marcos supervisionados</h4><p>Somente registros explicitamente documentados; sem transformar performance bruta em certificação ou conquista.</p></div><span class="pill Info">${(data.habilidadesMarcos||[]).length} registro(s)</span></div><div class="workout-comparisons-v0272">${(data.habilidadesMarcos||[]).map(hpSkillMilestoneV0284).join('')||'<div class="empty">Ainda não há habilidade ou marco supervisionado explicitamente registrado.</div>'}</div></div>
+    <div class="workout-prescribed-performed-v0272" data-performance-evolution-v0285="${HP_PERFORMANCE_EVOLUTION_V0285}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PERFORMANCE EVOLUTION 2.0</span><h4>Início × atual em bases comparáveis</h4><p>Variação descritiva de carga e duração, sem score, ranking ou conclusão automática.</p></div><span class="pill Info">${(data.evolucao?.pontos||[]).length} comparação(ões)</span></div><div class="workout-comparisons-v0272">${(data.evolucao?.pontos||[]).map(hpPerformanceEvolutionPointV0285).join('')||'<div class="empty">Ainda não há dois registros comparáveis para formar evolução longitudinal.</div>'}</div><small class="muted-line">${esc(data.evolucao?.regraDeLeitura||'')}</small></div>
     <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
   host.appendChild(section);
 }
@@ -9503,7 +9512,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.28.4';
+const HP_MVP_VERSION='0.28.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

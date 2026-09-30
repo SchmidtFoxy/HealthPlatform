@@ -2,6 +2,7 @@
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
+# v0.28.5-r1 ROBUST_SQL_EXECUTOR
 # v0.3.11 FAST_DOTNET_CHECK
 # Em ciclos de desenvolvimento, nao instala nem atualiza o SDK automaticamente.
 # Apenas confirma que o dotnet existe; upgrades ficam a cargo do desenvolvedor quando uma versao futura realmente exigir.
@@ -23,6 +24,54 @@ function Invoke-NativeStep {
     if ($LASTEXITCODE -ne 0) {
         throw "Falha na etapa: $Label (codigo $LASTEXITCODE)"
     }
+}
+
+
+function Invoke-PostgresSqlFile {
+    param(
+        [Parameter(Mandatory=$true)][string]$Path,
+        [int]$MaxTentativas = 3
+    )
+
+    if (-not (Test-Path $Path)) {
+        throw "Arquivo SQL nao encontrado: $Path"
+    }
+
+    for ($tentativa = 1; $tentativa -le $MaxTentativas; $tentativa++) {
+        $running = (& docker inspect -f '{{.State.Running}}' healthplatform-postgres 2>$null)
+        if ($LASTEXITCODE -ne 0 -or ($running -join '').Trim() -ne 'true') {
+            Write-Host "    PostgreSQL nao esta em execucao; aguardando antes da tentativa $tentativa/$MaxTentativas..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 3
+            continue
+        }
+
+        $sql = Get-Content $Path -Raw -Encoding UTF8
+
+        # ON_ERROR_STOP transforma qualquer erro SQL real em exit code confiavel.
+        $sql | docker exec -i healthplatform-postgres `
+            psql -v ON_ERROR_STOP=1 -U healthplatform -d healthplatform
+
+        $code = $LASTEXITCODE
+        if ($code -eq 0) {
+            return
+        }
+
+        Write-Host "    Falha no psql/docker exec (codigo $code), tentativa $tentativa/$MaxTentativas." -ForegroundColor Yellow
+
+        if ($tentativa -lt $MaxTentativas) {
+            Start-Sleep -Seconds (2 * $tentativa)
+            continue
+        }
+
+        Write-Host "    Diagnostico do container PostgreSQL:" -ForegroundColor DarkYellow
+        docker ps -a --filter "name=healthplatform-postgres" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
+        Write-Host "    Ultimas linhas do PostgreSQL:" -ForegroundColor DarkYellow
+        docker logs healthplatform-postgres --tail 80 2>&1
+
+        throw "Falha ao aplicar SQL '$Path' apos $MaxTentativas tentativas (ultimo codigo: $code)."
+    }
+
+    throw "PostgreSQL indisponivel para aplicar SQL '$Path' apos $MaxTentativas tentativas."
 }
 
 # IMPORTANTE: o r6 aplicou esta migration com sucesso no banco de desenvolvimento.
@@ -52,34 +101,7 @@ if (-not $dotnetEfOk) {
     if ($LASTEXITCODE -ne 0) { throw "Nao foi possivel instalar dotnet-ef." }
 }
 
-Write-Host "[AESYN setup diagnostic v0.27.5-r6]" -ForegroundColor DarkCyan
-Write-Host "[3/38] Compilando..." -ForegroundColor Cyan
-$buildLog = Join-Path $root "AESYN-BUILD-LAST.log"
-$buildOutput = @(& dotnet build .\HealthPlatform.slnx --no-restore 2>&1)
-$buildExitCode = $LASTEXITCODE
-
-$buildOutput | ForEach-Object { Write-Host $_ }
-$buildOutput | Set-Content -Path $buildLog -Encoding UTF8
-
-if ($buildExitCode -ne 0) {
-    $compilerLines = @(
-        $buildOutput |
-            ForEach-Object { "$_" } |
-            Where-Object {
-                $_ -match '\berror\s+CS\d+' -or
-                $_ -match '\berror\s+[A-Z]{2,}\d+' -or
-                $_ -match ': error ' -or
-                $_ -match 'Build FAILED'
-            }
-    )
-
-    if ($compilerLines.Count -eq 0) {
-        $compilerLines = @($buildOutput | Select-Object -Last 30 | ForEach-Object { "$_" })
-    }
-
-    $detail = ($compilerLines | Select-Object -Last 40) -join [Environment]::NewLine
-    throw "Falha na etapa: [3/38] Compilando... (codigo $buildExitCode)`nERROS DO COMPILADOR:`n$detail`nLog completo: $buildLog"
-}
+Invoke-NativeStep "[3/38] Compilando..." { dotnet build .\HealthPlatform.slnx --no-restore }
 
 $migrationsPath = Join-Path $root "src\HealthPlatform.Infrastructure\Migrations"
 $initialMigration = $null
@@ -504,137 +526,137 @@ Invoke-NativeStep "[6/38] Atualizando banco..." {
 }
 
 Invoke-NativeStep "[7/38] Aplicando upgrade v0.1.3 (anamnese)..." {
-    Get-Content .\scripts\sql\v0.1.3_anamnese.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.1.3_anamnese.sql"
 }
 
 Invoke-NativeStep "[8/38] Aplicando upgrade v0.1.4 (exames laboratoriais)..." {
-    Get-Content .\scripts\sql\v0.1.4_exames.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.1.4_exames.sql"
 }
 
 Invoke-NativeStep "[9/38] Aplicando upgrade v0.1.5 (relatorios clinicos)..." {
-    Get-Content .\scripts\sql\v0.1.5_relatorios.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.1.5_relatorios.sql"
 }
 
 Invoke-NativeStep "[10/38] Aplicando upgrade v0.1.6 (plano alimentar)..." {
-    Get-Content .\scripts\sql\v0.1.6_plano_alimentar.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.1.6_plano_alimentar.sql"
 }
 
 Invoke-NativeStep "[11/38] Aplicando upgrade v0.1.7 (metas e diario)..." {
-    Get-Content .\scripts\sql\v0.1.7_metas_diario.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.1.7_metas_diario.sql"
 }
 
 Invoke-NativeStep "[12/38] Aplicando upgrade v0.3.0 (treinos)..." {
-    Get-Content .\scripts\sql\v0.3.0_treinos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.0_treinos.sql"
 }
 
 Invoke-NativeStep "[13/38] Aplicando upgrade v0.3.1 (execucoes de treino)..." {
-    Get-Content .\scripts\sql\v0.3.1_execucoes_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.1_execucoes_treino.sql"
 }
 
 Invoke-NativeStep "[14/38] Aplicando upgrade v0.3.4 (pendencias clinicas)..." {
-    Get-Content .\scripts\sql\v0.3.4_pendencias.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.4_pendencias.sql"
 }
 
 Invoke-NativeStep "[15/38] Aplicando upgrade v0.3.5 (notificacoes internas)..." {
-    Get-Content .\scripts\sql\v0.3.5_notificacoes.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.5_notificacoes.sql"
 }
 
 Invoke-NativeStep "[16/38] Aplicando upgrade v0.3.8 (follow-up)..." {
-    Get-Content .\scripts\sql\v0.3.8_followup.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.8_followup.sql"
 }
 
 Invoke-NativeStep "[17/38] Aplicando upgrade v0.3.15 (evolucoes clinicas SOAP)..." {
-    Get-Content .\scripts\sql\v0.3.15_evolucoes_clinicas.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.15_evolucoes_clinicas.sql"
 }
 
 Invoke-NativeStep "[18/38] Aplicando upgrade v0.3.21 (progressao de plano alimentar)..." {
-    Get-Content .\scripts\sql\v0.3.21_progressao_plano_alimentar.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.21_progressao_plano_alimentar.sql"
 }
 
 Invoke-NativeStep "[19/38] Aplicando upgrade v0.3.22 (progressao de treino)..." {
-    Get-Content .\scripts\sql\v0.3.22_progressao_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.22_progressao_treino.sql"
 }
 
 Invoke-NativeStep "[20/38] Aplicando upgrade v0.3.23 (modelos de plano alimentar)..." {
-    Get-Content .\scripts\sql\v0.3.23_modelos_plano_alimentar.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.23_modelos_plano_alimentar.sql"
 }
 
 Invoke-NativeStep "[21/38] Aplicando upgrade v0.3.24 (modelos de plano de treino)..." {
-    Get-Content .\scripts\sql\v0.3.24_modelos_plano_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.24_modelos_plano_treino.sql"
 }
 
 Invoke-NativeStep "[22/38] Aplicando upgrade v0.3.25 (metas nutricionais)..." {
-    Get-Content .\scripts\sql\v0.3.25_metas_nutricionais.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.25_metas_nutricionais.sql"
 }
 
 Invoke-NativeStep "[23/38] Aplicando upgrade v0.3.26 (biblioteca de refeicoes)..." {
-    Get-Content .\scripts\sql\v0.3.26_modelos_refeicoes.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.26_modelos_refeicoes.sql"
 }
 
 Invoke-NativeStep "[24/38] Aplicando upgrade v0.3.27 (biblioteca de sessoes de treino)..." {
-    Get-Content .\scripts\sql\v0.3.27_modelos_sessoes_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.27_modelos_sessoes_treino.sql"
 }
 
 Invoke-NativeStep "[25/38] Aplicando upgrade v0.3.29 (metas por refeicao)..." {
-    Get-Content .\scripts\sql\v0.3.29_metas_por_refeicao.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.29_metas_por_refeicao.sql"
 }
 
 Invoke-NativeStep "[26/38] Aplicando upgrade v0.3.30 (fases nutricionais)..." {
-    Get-Content .\scripts\sql\v0.3.30_fases_nutricionais.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.30_fases_nutricionais.sql"
 }
 
 Invoke-NativeStep "[27/38] Aplicando upgrade v0.3.31 (fases de treino)..." {
-    Get-Content .\scripts\sql\v0.3.31_fases_treino.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.31_fases_treino.sql"
 }
 
 Invoke-NativeStep "[28/38] Aplicando upgrade v0.3.32 (check-ins de acompanhamento)..." {
-    Get-Content .\scripts\sql\v0.3.32_checkins_acompanhamento.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.32_checkins_acompanhamento.sql"
 }
 
 Invoke-NativeStep "[29/38] Aplicando upgrade v0.3.34 (criterios de transicao das fases)..." {
-    Get-Content .\scripts\sql\v0.3.34_criterios_transicao_fases.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.34_criterios_transicao_fases.sql"
 }
 
 Invoke-NativeStep "[30/38] Aplicando upgrade v0.3.35 (revisoes e transicoes de fases)..." {
-    Get-Content .\scripts\sql\v0.3.35_revisoes_transicoes_fases.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.3.35_revisoes_transicoes_fases.sql"
 }
 
 Invoke-NativeStep "[31/38] Aplicando upgrade v0.5.1 (solicitacoes clinicas)..." {
-    Get-Content .\scripts\sql\v0.5.1_solicitacoes_clinicas.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.5.1_solicitacoes_clinicas.sql"
 }
 
 Invoke-NativeStep "[32/38] Aplicando upgrade v0.5.8 (protocolos de acompanhamento)..." {
-    Get-Content .\scripts\sql\v0.5.8_protocolos_acompanhamento.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.5.8_protocolos_acompanhamento.sql"
 }
 
 Invoke-NativeStep "[33/38] Aplicando upgrade v0.6.0 (medicamentos e adesao)..." {
-    Get-Content .\scripts\sql\v0.6.0_medicamentos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.6.0_medicamentos.sql"
 }
 
 Invoke-NativeStep "[34/38] Aplicando upgrade v0.6.1 (prontidao diaria)..." {
-    Get-Content .\scripts\sql\v0.6.1_prontidao_diaria.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.6.1_prontidao_diaria.sql"
 }
 
 Invoke-NativeStep "[35/38] Aplicando upgrade v0.6.2 (xp e consistencia)..." {
-    Get-Content .\scripts\sql\v0.6.2_xp_consistencia.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.6.2_xp_consistencia.sql"
 }
 
 Invoke-NativeStep "[36/38] Aplicando upgrade v0.6.3 (missoes e conquistas)..." {
-    Get-Content .\scripts\sql\v0.6.3_missoes_conquistas.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.6.3_missoes_conquistas.sql"
 }
 
 # Compatibilidade historica de smoke tests anteriores: [37/37] Aplicando upgrade v0.6.4
 Invoke-NativeStep "[37/38] Aplicando upgrade v0.6.4 (ciclos esportivos)..." {
-    Get-Content .\scripts\sql\v0.6.4_ciclos_esportivos.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.6.4_ciclos_esportivos.sql"
 }
 
 # Compatibilidade historica: [38/38] Aplicando upgrade v0.10.3
 Invoke-NativeStep "[38/39] Aplicando upgrade v0.10.3 (eventos de progressao supervisionada)..." {
-    Get-Content .\scripts\sql\v0.10.3_eventos_progressao_supervisionada.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.10.3_eventos_progressao_supervisionada.sql"
 }
 
 Invoke-NativeStep "[39/39] Aplicando upgrade v0.18.10 (programas de treino server-side)..." {
-    Get-Content .\scripts\sql\v0.18.10_programas_treino_modelo.sql -Raw | docker exec -i healthplatform-postgres psql -U healthplatform -d healthplatform
+    Invoke-PostgresSqlFile ".\scripts\sql\v0.18.10_programas_treino_modelo.sql"
 }
 
 Write-Host ""

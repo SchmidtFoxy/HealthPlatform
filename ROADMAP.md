@@ -2065,5 +2065,20 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - nenhuma certificação ou conquista automática;
 - sem migration nova.
 
-**Próxima etapa:** `v0.28.5 — Performance Evolution 2.0`.
+**Próxima etapa concluída em `v0.28.5 — Performance Evolution 2.0`.
+
+## ✅ v0.28.5 — Performance Evolution 2.0 — CONCLUÍDA
+
+**Entregue na v0.28.5:**
+- leitura longitudinal início × atual;
+- carga comparada somente no mesmo exercício e unidade;
+- duração comparada somente na mesma sessão;
+- valores inicial/atual, variação absoluta e percentual;
+- datas e registros comparáveis;
+- endpoints profissional e paciente;
+- coleção `Evolucao` no Athlete Performance Passport;
+- nenhuma classificação automática de melhora/piora;
+- sem migration nova.
+
+**Próxima fase:** `v0.29.0 — Progress Intelligence Foundation`.
 

@@ -18,6 +18,7 @@ public static class AthletePerformancePassportService
         var tempos = await MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
         var habilidadesMarcos = await MontarHabilidadesMarcosAsync(db, pacienteId, hoje, ct);
+        var evolucao = await MontarEvolucaoAsync(db, pacienteId, hoje, recordes, tempos, resultados, habilidadesMarcos, ct);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -95,19 +96,20 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.28.4",
+            "v0.28.5",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Skills & Milestones 2.0 incorpora somente habilidades e marcos explicitamente registrados em contexto supervisionado. Não certifica domínio técnico, não cria conquista automática e não converte recordes, cargas ou tempos em habilidade.")
+            "Performance Evolution 2.0 organiza variações longitudinais observáveis sem criar score, ranking, prognóstico ou conclusão clínica. Carga e duração permanecem métricas distintas e contextualizadas.")
         {
             Recordes = recordes,
             Tempos = tempos,
             Resultados = resultados,
-            HabilidadesMarcos = habilidadesMarcos
+            HabilidadesMarcos = habilidadesMarcos,
+            Evolucao = evolucao
         };
     }
 
@@ -237,6 +239,141 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static async Task<AthletePerformanceEvolutionResponse> MontarEvolucaoAsync(
+        AppDbContext db,
+        Guid pacienteId,
+        DateOnly dia,
+        IReadOnlyCollection<AthletePerformanceRecordResponse> recordes,
+        IReadOnlyCollection<AthleteTimedPerformanceResponse> tempos,
+        IReadOnlyCollection<AthleteCompetitionTestResultResponse> resultados,
+        IReadOnlyCollection<AthleteSkillMilestoneResponse> habilidadesMarcos,
+        CancellationToken ct)
+    {
+        const int diasObservados = 180;
+        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+
+        var itens = await db.ExecucoesItensTreino.AsNoTracking()
+            .Where(x =>
+                x.ExecucaoTreino.PacienteId == pacienteId &&
+                x.ExecucaoTreino.Status == "Concluido" &&
+                x.ExecucaoTreino.DataHoraInicioUtc >= inicioUtc &&
+                x.ExecucaoTreino.DataHoraInicioUtc < fimUtc &&
+                x.Concluido &&
+                x.CargaRealizada.HasValue &&
+                x.CargaRealizada.Value > 0m)
+            .Select(x => new
+            {
+                x.ItemTreino.ExercicioId,
+                Exercicio = x.ItemTreino.Exercicio.Nome,
+                Carga = x.CargaRealizada!.Value,
+                Unidade = x.UnidadeCarga ?? x.ItemTreino.UnidadeCarga,
+                x.ExecucaoTreino.DataHoraInicioUtc
+            })
+            .ToListAsync(ct);
+
+        var pontos = new List<AthletePerformanceEvolutionPointResponse>();
+
+        foreach (var grupo in itens.GroupBy(x => new
+        {
+            x.ExercicioId,
+            x.Exercicio,
+            Unidade = NormalizarUnidade(x.Unidade)
+        }))
+        {
+            var ordenados = grupo.OrderBy(x => x.DataHoraInicioUtc).ToArray();
+            if (ordenados.Length < 2)
+                continue;
+
+            var inicial = ordenados[0];
+            var atual = ordenados[^1];
+            var variacao = atual.Carga - inicial.Carga;
+            decimal? percentual = inicial.Carga > 0m
+                ? Math.Round(variacao / inicial.Carga * 100m, 1)
+                : null;
+
+            pontos.Add(new AthletePerformanceEvolutionPointResponse(
+                "Carga",
+                grupo.Key.Exercicio,
+                "Carga observada",
+                inicial.Carga,
+                atual.Carga,
+                grupo.Key.Unidade,
+                Math.Round(variacao, 2),
+                percentual,
+                inicial.DataHoraInicioUtc,
+                atual.DataHoraInicioUtc,
+                ordenados.Length,
+                "A variação descreve apenas a carga registrada no mesmo exercício e unidade. Não representa força máxima, qualidade técnica ou prognóstico."));
+        }
+
+        var sessoes = await db.ExecucoesTreino.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId &&
+                x.Status == "Concluido" &&
+                x.DataHoraInicioUtc >= inicioUtc &&
+                x.DataHoraInicioUtc < fimUtc)
+            .Select(x => new
+            {
+                x.SessaoTreinoId,
+                Sessao = x.SessaoTreino.Nome,
+                x.DataHoraInicioUtc,
+                x.DataHoraFimUtc,
+                x.DuracaoMinutos
+            })
+            .ToListAsync(ct);
+
+        foreach (var grupo in sessoes.GroupBy(x => new { x.SessaoTreinoId, x.Sessao }))
+        {
+            var ordenados = grupo
+                .Select(x => new
+                {
+                    x.DataHoraInicioUtc,
+                    Duracao = ResolverDuracaoMinutos(x.DuracaoMinutos, x.DataHoraInicioUtc, x.DataHoraFimUtc)
+                })
+                .Where(x => x.Duracao.HasValue && x.Duracao.Value > 0)
+                .OrderBy(x => x.DataHoraInicioUtc)
+                .ToArray();
+
+            if (ordenados.Length < 2)
+                continue;
+
+            var inicial = ordenados[0];
+            var atual = ordenados[^1];
+            var variacao = atual.Duracao!.Value - inicial.Duracao!.Value;
+            decimal? percentual = inicial.Duracao.Value > 0
+                ? Math.Round((decimal)variacao / inicial.Duracao.Value * 100m, 1)
+                : null;
+
+            pontos.Add(new AthletePerformanceEvolutionPointResponse(
+                "Tempo",
+                grupo.Key.Sessao,
+                "Duração da sessão",
+                inicial.Duracao.Value,
+                atual.Duracao.Value,
+                "min",
+                variacao,
+                percentual,
+                inicial.DataHoraInicioUtc,
+                atual.DataHoraInicioUtc,
+                ordenados.Length,
+                "A variação descreve duração da mesma sessão. Menor ou maior tempo não é classificado automaticamente como melhora, piora, intensidade ou condicionamento."));
+        }
+
+        return new AthletePerformanceEvolutionResponse(
+            diasObservados,
+            pontos
+                .OrderBy(x => x.Dominio)
+                .ThenBy(x => x.Referencia)
+                .ToArray(),
+            recordes.Count(x => x.Tipo == "MelhorCarga"),
+            tempos.Count,
+            resultados.Count,
+            habilidadesMarcos.Count,
+            "Performance Evolution 2.0 descreve início × atual somente em bases comparáveis. Não gera score, ranking, tendência clínica, prognóstico ou recomendação automática.");
+    }
 
     public static async Task<IReadOnlyCollection<AthleteSkillMilestoneResponse>> MontarHabilidadesMarcosAsync(
         AppDbContext db,

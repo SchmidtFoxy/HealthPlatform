@@ -1029,3 +1029,24 @@ Skills & Milestones 2.0 **não certifica domínio técnico, não cria conquista 
 
 **Próxima etapa:** `v0.28.5 — Performance Evolution 2.0`.
 
+---
+
+## v0.28.5 — Performance Evolution 2.0
+
+O Athlete Performance Passport passa a apresentar **início × atual** somente quando há pelo menos dois registros comparáveis dentro da mesma referência.
+
+### Entregue
+- evolução de carga dentro do mesmo exercício e unidade;
+- evolução temporal dentro da mesma sessão;
+- valor inicial, valor atual, variação absoluta e percentual;
+- datas inicial e atual;
+- quantidade de registros comparáveis;
+- resumo das demais dimensões do passaporte;
+- endpoint profissional e endpoint do paciente;
+- coleção `Evolucao` integrada ao passaporte.
+
+### Guardrail
+Performance Evolution 2.0 **não gera score, ranking, prognóstico, tendência clínica ou recomendação automática**. Variação de carga não equivale a força máxima; variação de duração não equivale automaticamente a melhora ou piora de performance.
+
+**Próxima fase:** `v0.29.0 — Progress Intelligence Foundation`.
+
