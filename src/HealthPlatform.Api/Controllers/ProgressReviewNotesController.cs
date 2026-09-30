@@ -80,6 +80,30 @@ public class ProgressReviewNotesController(
             "O destino de navegação aponta somente para a seção observacional relacionada. A referência da nota permanece descritiva e não seleciona automaticamente um dado clínico específico."));
     }
 
+    [HttpGet("context-closure")]
+    public ActionResult<ProgressReviewContextClosureResponse> ContextClosure()
+    {
+        var componentes = new[]
+        {
+            "ContextLinks",
+            "ContextNavigation",
+            "ContextFocus",
+            "ContextCapture",
+            "CaptureConfirmation",
+            "ContextIntegrity",
+            "IntegrityUx",
+            "IntegrityAccessibility"
+        };
+
+        return Ok(new ProgressReviewContextClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaContextualCompleta",
+            "O fechamento descreve apenas presença estrutural das capacidades de revisão contextual. Não representa qualidade clínica, certeza, prognóstico, recomendação ou adequação profissional."));
+    }
+
     [HttpGet("context-integrity")]
     public ActionResult<ProgressReviewContextIntegrityResponse> ContextIntegrity(
         [FromQuery] string? tipo = null,

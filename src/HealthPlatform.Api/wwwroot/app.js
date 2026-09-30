@@ -1344,6 +1344,7 @@ async function hpOpenProgressReviewNotesV0302(p){
       </div>
       <div id="progressReviewContextConfirmationV0308"></div>
       <div id="progressReviewContextIntegrityV0309"></div>
+      <div id="progressReviewContextClosureV03012"></div>
       <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, data e alterações ficam auditadas.</div>
       <div class="form-actions"><button type="button" class="secondary" id="cancelProgressReviewNoteV0302">Limpar</button><button class="primary" type="submit">Salvar nota</button></div>
     </form>
@@ -1363,6 +1364,10 @@ async function hpOpenProgressReviewNotesV0302(p){
 
     const form=$('#progressReviewNoteFormV0302');
     hpBindProgressReviewContextConfirmationV0308(form);
+    const closureHostV03012=$('#progressReviewContextClosureV03012');
+    hpLoadProgressReviewContextClosureV03012(p.id)
+      .then(x=>hpRenderProgressReviewContextClosureV03012(closureHostV03012,x))
+      .catch(()=>{ if(closureHostV03012) closureHostV03012.innerHTML=''; });
     $('#cancelProgressReviewNoteV0302').onclick=()=>{
       form.reset();
       form.elements.id.value='';
@@ -4842,6 +4847,25 @@ const HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010='v0.30.10';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011='v0.30.11';
+const HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012='v0.30.12';
+
+
+async function hpLoadProgressReviewContextClosureV03012(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/context-closure`);
+}
+
+function hpRenderProgressReviewContextClosureV03012(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaContextualCompleta';
+  host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-closure-v03012="${HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012}">
+    <div><b>${complete?'Estrutura contextual completa':'Estrutura contextual parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Este estado descreve disponibilidade técnica e não representa avaliação clínica.</small>
+  </div>`;
+}
 
 function hpEnsureA11yHelpersV03011(){
   if(document.getElementById('hpA11yHelpersV03011')) return;
@@ -10084,7 +10108,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.11';
+const HP_MVP_VERSION='0.30.12';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

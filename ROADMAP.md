@@ -2408,3 +2408,20 @@ Evoluir feedback de integridade para leitores de tela e navegação por teclado,
 ### v0.30.12 — Progress Review Context Integrity Closure
 Fechar o ciclo 0.30.x de revisão contextual consolidando captura, confirmação, integridade, UX e acessibilidade em um estado estrutural único de prontidão.
 
+## ✅ v0.30.12 — Progress Review Context Integrity Closure — CONCLUÍDA
+
+**Entregue:**
+- contrato de fechamento contextual;
+- endpoint `context-closure`;
+- oito componentes estruturais consolidados;
+- estado completo/parcial;
+- exibição do fechamento na modal profissional;
+- guardrail de presença estrutural;
+- encerramento da linha 0.30.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.0 — Progress Review Follow-up Foundation
+Criar a fundação estrutural para acompanhamento posterior às revisões, permitindo registrar próximos itens a acompanhar sem transformar notas em decisão clínica automatizada.
+

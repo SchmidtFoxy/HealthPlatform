@@ -1522,3 +1522,27 @@ A camada de acessibilidade comunica apenas o estado estrutural já calculado. El
 
 **Próxima etapa:** `v0.30.12 — Progress Review Context Integrity Closure`.
 
+---
+
+## v0.30.12 — Progress Review Context Integrity Closure
+
+Fecha o ciclo contextual da linha 0.30.x consolidando as capacidades de revisão em um único estado estrutural.
+
+### Componentes consolidados
+- Context Links;
+- Context Navigation;
+- Context Focus;
+- Context Capture;
+- Capture Confirmation;
+- Context Integrity;
+- Integrity UX;
+- Integrity Accessibility.
+
+### Estado
+O endpoint `context-closure` retorna componentes esperados/disponíveis, presentes/ausentes, estado estrutural e regra de uso.
+
+### Guardrail
+O fechamento mede somente presença estrutural das capacidades. Não representa qualidade clínica, confiança diagnóstica, prognóstico, recomendação ou adequação da conduta profissional.
+
+**Próxima etapa:** `v0.31.0 — Progress Review Follow-up Foundation`.
+

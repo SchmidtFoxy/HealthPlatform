@@ -1,4 +1,18 @@
-﻿# v0.30.11 — Progress Review Context Integrity Accessibility
+﻿# v0.30.12 — Progress Review Context Integrity Closure
+
+- Adiciona `ProgressReviewContextClosureResponse`.
+- Adiciona endpoint `GET .../progress-review-notes/context-closure`.
+- Consolida oito componentes contextuais da linha 0.30.x.
+- Adiciona estado `EstruturaContextualCompleta`.
+- Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012`.
+- Exibe o estado estrutural na modal de notas profissionais.
+- Mantém separação entre presença técnica e avaliação clínica.
+- Preserva Capture, Confirmation, Integrity, UX e Accessibility.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.30.x.
+- Próxima etapa: v0.31.0 — Progress Review Follow-up Foundation.
+
+# v0.30.11 — Progress Review Context Integrity Accessibility
 
 - Adiciona `HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011`.
 - Adiciona `role="status"` para estado válido.
