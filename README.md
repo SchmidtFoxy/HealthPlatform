@@ -1093,3 +1093,25 @@ Recência, cobertura e densidade descrevem **disponibilidade de dados**. Não re
 
 **Próxima etapa:** `v0.29.2 — Multi-Signal Timeline 2.0`.
 
+---
+
+## v0.29.2 — Multi-Signal Timeline 2.0
+
+Organiza os pontos observados de performance numa única linha do tempo cronológica.
+
+### Entregue
+- eventos `InicioComparavel` e `RegistroAtual`;
+- domínio, referência, medida, valor e unidade;
+- data/hora do registro;
+- recência herdada do contexto;
+- origem da evidência;
+- quantidade de registros comparáveis;
+- ordenação cronológica entre carga e tempo;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport e workspace profissional.
+
+### Guardrail
+A timeline usa **somente pontos observados**. Não cria pontos intermediários, não interpola dados, não projeta tendência e não interpreta proximidade temporal como relação causal.
+
+**Próxima etapa:** `v0.29.3 — Progress Evidence Windows 2.0`.
+

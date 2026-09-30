@@ -21,6 +21,7 @@ public static class AthletePerformancePassportService
         var evolucao = await MontarEvolucaoAsync(db, pacienteId, hoje, recordes, tempos, resultados, habilidadesMarcos, ct);
         var inteligenciaProgresso = MontarInteligenciaProgresso(evolucao, resultados, habilidadesMarcos);
         var contextoSinaisProgresso = MontarContextoSinaisProgresso(inteligenciaProgresso, hoje);
+        var timelineMultissinal = MontarTimelineMultissinal(evolucao, contextoSinaisProgresso);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -98,14 +99,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.1",
+            "v0.29.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Signal Context 2.0 adiciona recência, cobertura temporal, densidade observacional e origem da evidência aos sinais existentes. Não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.")
+            "Multi-Signal Timeline 2.0 organiza os pontos observados de início e atual em uma linha do tempo comum, preservando domínio, medida e unidade. Não interpola dados, não projeta tendência e não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -113,7 +114,8 @@ public static class AthletePerformancePassportService
             HabilidadesMarcos = habilidadesMarcos,
             Evolucao = evolucao,
             InteligenciaProgresso = inteligenciaProgresso,
-            ContextoSinaisProgresso = contextoSinaisProgresso
+            ContextoSinaisProgresso = contextoSinaisProgresso,
+            TimelineMultissinal = timelineMultissinal
         };
     }
 
@@ -246,6 +248,68 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static MultiSignalTimelineResponse MontarTimelineMultissinal(
+        AthletePerformanceEvolutionResponse evolucao,
+        ProgressSignalContextSummaryResponse contexto)
+    {
+        var contextoPorChave = contexto.Contextos
+            .GroupBy(x => $"{x.Dominio}::{x.Referencia}")
+            .ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
+
+        var eventos = new List<MultiSignalTimelineEventResponse>();
+
+        foreach (var ponto in evolucao.Pontos)
+        {
+            var chave = $"{ponto.Dominio}::{ponto.Referencia}";
+            contextoPorChave.TryGetValue(chave, out var contextoSinal);
+
+            var recencia = contextoSinal?.Recencia ?? "SemContexto";
+            var origem = contextoSinal?.OrigemEvidencia ?? "AthletePerformancePassport";
+
+            eventos.Add(new MultiSignalTimelineEventResponse(
+                ponto.Dominio,
+                ponto.Referencia,
+                ponto.DataInicialUtc,
+                "InicioComparavel",
+                ponto.Medida,
+                ponto.ValorInicial,
+                ponto.Unidade,
+                ponto.RegistrosComparaveis,
+                recencia,
+                origem));
+
+            eventos.Add(new MultiSignalTimelineEventResponse(
+                ponto.Dominio,
+                ponto.Referencia,
+                ponto.DataAtualUtc,
+                "RegistroAtual",
+                ponto.Medida,
+                ponto.ValorAtual,
+                ponto.Unidade,
+                ponto.RegistrosComparaveis,
+                recencia,
+                origem));
+        }
+
+        var ordenados = eventos
+            .OrderBy(x => x.DataUtc)
+            .ThenBy(x => x.Dominio)
+            .ThenBy(x => x.Referencia)
+            .ThenBy(x => x.Momento)
+            .ToArray();
+
+        return new MultiSignalTimelineResponse(
+            evolucao.DiasObservados,
+            ordenados,
+            ordenados.Count(x => x.Dominio == "Carga"),
+            ordenados.Count(x => x.Dominio == "Tempo"),
+            ordenados.Select(x => $"{x.Dominio}::{x.Referencia}")
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Count(),
+            "Multi-Signal Timeline 2.0 exibe somente pontos observados de início e atual. Não cria pontos intermediários, não interpola dados, não projeta tendência e não transforma proximidade temporal em relação causal.");
+    }
 
     public static ProgressSignalContextSummaryResponse MontarContextoSinaisProgresso(
         ProgressIntelligenceFoundationResponse foundation,

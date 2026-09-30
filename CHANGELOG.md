@@ -1,4 +1,20 @@
-﻿# v0.29.1 — Progress Signal Context 2.0
+﻿# v0.29.2 — Multi-Signal Timeline 2.0
+
+- Adiciona `MultiSignalTimelineEventResponse`.
+- Adiciona `MultiSignalTimelineResponse`.
+- Expande o passaporte com `TimelineMultissinal`.
+- Converte pontos longitudinais observados em eventos `InicioComparavel` e `RegistroAtual`.
+- Preserva domínio, referência, medida, valor e unidade.
+- Herda recência e origem da evidência do contexto.
+- Ordena carga e tempo numa linha temporal comum sem misturar suas unidades.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence/timeline`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence/timeline`.
+- Adiciona painel Multi-Signal Timeline 2.0.
+- Guardrail: não interpola dados, não projeta tendência e não infere causalidade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.29.3 — Progress Evidence Windows 2.0.
+
+# v0.29.1 — Progress Signal Context 2.0
 
 - Adiciona `ProgressSignalContextResponse`.
 - Adiciona `ProgressSignalContextSummaryResponse`.

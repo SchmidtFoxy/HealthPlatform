@@ -102,6 +102,27 @@ public sealed record ProgressIntelligenceSignalResponse(
     string LimiteInterpretativo);
 
 
+
+public sealed record MultiSignalTimelineEventResponse(
+    string Dominio,
+    string Referencia,
+    DateTime DataUtc,
+    string Momento,
+    string Medida,
+    decimal Valor,
+    string Unidade,
+    int RegistrosComparaveis,
+    string Recencia,
+    string OrigemEvidencia);
+
+public sealed record MultiSignalTimelineResponse(
+    int DiasObservados,
+    IReadOnlyCollection<MultiSignalTimelineEventResponse> Eventos,
+    int EventosCarga,
+    int EventosTempo,
+    int ReferenciasDistintas,
+    string RegraDeUso);
+
 public sealed record ProgressSignalContextResponse(
     string Dominio,
     string Referencia,
@@ -158,4 +179,8 @@ public sealed record AthletePerformancePassportResponse(
     public ProgressSignalContextSummaryResponse ContextoSinaisProgresso { get; init; } =
         new(180, Array.Empty<ProgressSignalContextResponse>(), 0, 0, 0,
             "Contextualização observacional sem score, ranking ou conclusão automática.");
+
+    public MultiSignalTimelineResponse TimelineMultissinal { get; init; } =
+        new(180, Array.Empty<MultiSignalTimelineEventResponse>(), 0, 0, 0,
+            "Linha do tempo composta apenas por registros observados, sem interpolação ou previsão.");
 }

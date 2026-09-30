@@ -2113,3 +2113,18 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 
 **Próxima etapa:** `v0.29.2 — Multi-Signal Timeline 2.0`.
 
+## ✅ v0.29.2 — Multi-Signal Timeline 2.0 — CONCLUÍDA
+
+**Entregue na v0.29.2:**
+- linha do tempo única para múltiplos sinais;
+- pontos observados de início e atual;
+- carga e tempo preservados em seus próprios domínios;
+- medida, valor, unidade e data;
+- recência e origem da evidência;
+- ordenação cronológica;
+- endpoints profissional e paciente;
+- sem interpolação, projeção de tendência ou inferência causal;
+- sem migration nova.
+
+**Próxima etapa:** `v0.29.3 — Progress Evidence Windows 2.0`.
+
