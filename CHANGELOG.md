@@ -1,3 +1,18 @@
+# v0.23.8 — Movement Library Mobile & Accessibility 2.0
+
+- Fecha a ergonomia profissional da fase `v0.23.x`.
+- Adiciona foco visível em botões, filtros, links e regiões.
+- Adiciona `aria-label` para navegação, filtros e resultados.
+- Adiciona região `aria-live` para mudanças internas.
+- Adiciona navegação por setas, Home e End na bancada profissional.
+- Adiciona fechamento por `Escape`.
+- Move foco de forma contextual após atalhos internos.
+- Garante alvos de toque mínimos de 44/48px.
+- Refina `safe-area`, telas ≤760px e ≤390px.
+- Respeita `prefers-reduced-motion` e `prefers-contrast`.
+- Não altera API, regra clínica, migration ou schema.
+- Próxima etapa: v0.24.0 — AESYN Explore Foundation.
+
 # v0.23.7 — Professional Movement Library 2.0
 
 - Consolida a biblioteca profissional em uma única experiência de curadoria.

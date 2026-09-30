@@ -5877,3 +5877,114 @@ html[data-theme="light"] .professional-movement-library-v0237{background:linear-
 @media(max-width:980px){.professional-movement-library-nav-v0237{grid-template-columns:repeat(2,minmax(0,1fr))}.professional-movement-library-nav-v0237 button:last-child{grid-column:span 2}}
 @media(max-width:620px){.professional-movement-library-v0237{padding:13px;border-radius:17px}.professional-movement-library-head-v0237{display:grid}.professional-movement-library-phase-v0237{justify-self:start}.professional-movement-library-nav-v0237{grid-template-columns:1fr}.professional-movement-library-nav-v0237 button,.professional-movement-library-nav-v0237 button:last-child{grid-column:auto;min-height:48px}.professional-movement-library-principle-v0237{display:grid}}
 @media(prefers-reduced-motion:reduce){.professional-movement-library-nav-v0237 button{transition:none!important}}
+
+
+/* ===== v0.23.8 — Movement Library Mobile & Accessibility 2.0 ===== */
+.movement-accessible-region-v0238:focus{outline:none}
+.movement-accessible-region-v0238:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.movement-library-shell-v0231 button:focus-visible,
+.movement-library-shell-v0231 input:focus-visible,
+.movement-library-shell-v0231 select:focus-visible,
+.movement-library-shell-v0231 a:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.movement-library-shell-v0231 button,
+.movement-library-shell-v0231 select,
+.movement-library-shell-v0231 input,
+.movement-library-shell-v0231 a{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.movement-library-shell-v0231 button,
+.movement-library-shell-v0231 select{
+  min-height:44px;
+}
+.professional-movement-library-nav-v0237 button[aria-current="location"]{
+  border-color:rgba(126,232,178,.42);
+  background:rgba(126,232,178,.08);
+  box-shadow:0 0 0 1px rgba(126,232,178,.06) inset;
+}
+.movement-library-list-v0230,
+.movement-coverage-v0235,
+.movement-starter-packs-host-v0236{
+  scroll-margin-top:88px;
+}
+@media(max-width:760px){
+  .movement-library-shell-v0230,.movement-library-shell-v0231{
+    width:100%;
+    max-width:100%;
+    padding-left:max(12px,env(safe-area-inset-left));
+    padding-right:max(12px,env(safe-area-inset-right));
+    padding-bottom:max(14px,env(safe-area-inset-bottom));
+  }
+  .movement-library-heading-v0230{
+    gap:12px;
+  }
+  .movement-library-summary-v0230{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%;
+  }
+  .movement-library-summary-v0230 span{
+    min-width:0;
+  }
+  .professional-movement-library-map-v0237{
+    justify-content:flex-start;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    scrollbar-width:thin;
+    -webkit-overflow-scrolling:touch;
+  }
+  .professional-movement-library-map-v0237 span,
+  .professional-movement-library-map-v0237 i{
+    flex:0 0 auto;
+  }
+  .movement-taxonomy-toolbar-v0231{
+    position:sticky;
+    top:0;
+    z-index:2;
+    padding:8px 0;
+    background:var(--bg);
+  }
+  .movement-modality-v0230,
+  .movement-capability-v0230,
+  .movement-coverage-v0235,
+  .movement-starter-packs-v0236,
+  .movement-instruction-detail-v0234{
+    border-radius:15px;
+  }
+  .movement-exercise-links-v0230 button,
+  .movement-session-links-v0232 button,
+  .movement-editorial-priorities-v0235 button{
+    min-height:48px;
+  }
+}
+@media(max-width:390px){
+  .movement-library-summary-v0230{
+    grid-template-columns:1fr;
+  }
+  .professional-movement-library-nav-v0237{
+    gap:8px;
+  }
+  .movement-filter-summary-v0231{
+    font-size:7px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .movement-library-shell-v0231 *,
+  .movement-library-shell-v0231 *::before,
+  .movement-library-shell-v0231 *::after{
+    scroll-behavior:auto!important;
+    transition-duration:.01ms!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+  }
+}
+@media(prefers-contrast:more){
+  .movement-library-shell-v0231 button,
+  .movement-library-shell-v0231 select,
+  .movement-library-shell-v0231 input,
+  .movement-library-shell-v0231 article{
+    border-color:currentColor;
+  }
+}

@@ -32,6 +32,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Movement Library Mobile & Accessibility 2.0
+
+A `v0.23.8` fecha a ergonomia da biblioteca profissional para telas pequenas e navegação assistiva. A bancada ganha foco visível, `aria-label`, região `aria-live`, navegação por setas/Home/End, suporte a `Escape`, alvos de toque maiores e foco contextual após navegação interna.
+
+No mobile, filtros, mapas, cards e áreas de conteúdo passam a respeitar `safe-area`, larguras pequenas e rolagem horizontal controlada. A interface também respeita `prefers-reduced-motion` e `prefers-contrast`.
+
 ### Professional Movement Library 2.0
 
 A `v0.23.7` consolida a fase profissional da biblioteca em uma única bancada de curadoria. Taxonomia, cobertura, Starter Packs, catálogo de exercícios e sessões reutilizáveis passam a ter navegação direta dentro da mesma experiência.
@@ -255,7 +262,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.7 — Professional Movement Library 2.0`
+- **Versão funcional:** `v0.23.8 — Movement Library Mobile & Accessibility 2.0`
 - **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal

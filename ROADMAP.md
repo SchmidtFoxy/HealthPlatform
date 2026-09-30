@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.7 — Professional Movement Library 2.0
+> **Versão-base deste roadmap:** v0.23.8 — Movement Library Mobile & Accessibility 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1035,6 +1035,12 @@ Organizar sessões-modelo existentes em conjuntos reutilizáveis por modalidade/
 
 # 8. v0.24.x — AESYN Explore
 
+
+## ⏭ v0.24.0 — AESYN Explore Foundation
+
+Criar a fundação da experiência de autonomia guiada que transforma interesses, contexto real e biblioteca de movimento em caminhos exploráveis — sem substituir o plano profissional e sem prescrição automática.
+
+
 Área de autonomia guiada para quem quer se movimentar e ainda não sabe por onde começar.
 
 - Start a Sport;
@@ -1360,9 +1366,25 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 
 **Próxima etapa:** `v0.23.8 — Movement Library Mobile & Accessibility 2.0`.
 
-## ⏭ v0.23.8 — Movement Library Mobile & Accessibility 2.0
+## ✅ v0.23.8 — Movement Library Mobile & Accessibility 2.0 — CONCLUÍDA
 
 Fechar a ergonomia da biblioteca profissional em telas pequenas, navegação por teclado, foco, regiões semânticas e redução de movimento antes da transição para a fase `v0.24.x — AESYN Explore`.
+
+
+
+**Entregue na v0.23.8:**
+- foco visível em controles e regiões;
+- `aria-label` para filtros, navegação e conteúdo;
+- região `aria-live` para mudanças de contexto;
+- navegação por setas, Home e End;
+- fechamento por `Escape`;
+- foco contextual após atalhos internos;
+- alvos de toque mínimos de 44/48px;
+- `safe-area` e ergonomia em telas ≤760px e ≤390px;
+- suporte a `prefers-reduced-motion` e `prefers-contrast`;
+- fechamento da fase profissional `v0.23.x — Sports & Movement Library`.
+
+**Próxima etapa:** `v0.24.0 — AESYN Explore Foundation`.
 
 
 ## Promessa ao atleta

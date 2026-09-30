@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.7';
+const HP_MVP_VERSION='0.23.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13070,22 +13070,22 @@ function hpProfessionalMovementLibraryNavV0237(current){
   const described=Number(coverage?.exerciciosComDescricao||0);
   const related=Number(coverage?.exerciciosRelacionados||0);
 
-  return `<section class="professional-movement-library-v0237" data-professional-movement-library-v0237="${HP_PROFESSIONAL_MOVEMENT_LIBRARY_V0237}">
+  return `<section class="professional-movement-library-v0237 movement-accessible-region-v0238" data-professional-movement-library-v0237="${HP_PROFESSIONAL_MOVEMENT_LIBRARY_V0237}" data-movement-accessibility-v0238="${HP_MOVEMENT_MOBILE_ACCESSIBILITY_V0238}" aria-labelledby="movementProfessionalTitleV0238" tabindex="-1">
     <div class="professional-movement-library-head-v0237">
       <div>
         <span class="eyebrow">PROFESSIONAL MOVEMENT LIBRARY 2.0</span>
-        <h3>Curadoria, cobertura e uso em uma única bancada.</h3>
+        <h3 id="movementProfessionalTitleV0238">Curadoria, cobertura e uso em uma única bancada.</h3>
         <p>A taxonomia organiza o caminho; Exercícios e ModelosSessoesTreino continuam sendo as fontes reais de conteúdo.</p>
       </div>
       <span class="professional-movement-library-phase-v0237">v0.23.x • PROFESSIONAL</span>
     </div>
 
     <nav class="professional-movement-library-nav-v0237" aria-label="Áreas da biblioteca profissional">
-      <button type="button" data-movement-professional-nav-v0237="taxonomy"><b>Taxonomia</b><small>modalidade → progressão</small></button>
-      <button type="button" data-movement-professional-nav-v0237="coverage"><b>Cobertura</b><small>${readySessions}/${capacities} capacidades com sessão</small></button>
-      <button type="button" data-movement-professional-nav-v0237="packs"><b>Starter Packs</b><small>agrupamentos reutilizáveis</small></button>
-      <button type="button" data-movement-professional-nav-v0237="exercises"><b>Exercícios</b><small>${described}/${related} relacionados descritos</small></button>
-      <button type="button" data-movement-professional-nav-v0237="sessions"><b>Sessões</b><small>ModelosSessoesTreino</small></button>
+      <button type="button" data-movement-professional-nav-v0237="taxonomy" aria-label="Ir para Taxonomia da biblioteca"><b>Taxonomia</b><small>modalidade → progressão</small></button>
+      <button type="button" data-movement-professional-nav-v0237="coverage" aria-label="Ir para Cobertura da biblioteca"><b>Cobertura</b><small>${readySessions}/${capacities} capacidades com sessão</small></button>
+      <button type="button" data-movement-professional-nav-v0237="packs" aria-label="Abrir Starter Packs"><b>Starter Packs</b><small>agrupamentos reutilizáveis</small></button>
+      <button type="button" data-movement-professional-nav-v0237="exercises" aria-label="Abrir catálogo de exercícios"><b>Exercícios</b><small>${described}/${related} relacionados descritos</small></button>
+      <button type="button" data-movement-professional-nav-v0237="sessions" aria-label="Abrir biblioteca de sessões"><b>Sessões</b><small>ModelosSessoesTreino</small></button>
     </nav>
 
     <div class="professional-movement-library-map-v0237">
@@ -13099,35 +13099,124 @@ function hpProfessionalMovementLibraryNavV0237(current){
   </section>`;
 }
 
+function hpMovementAnnounceV0238(message){
+  let live=document.querySelector('[data-movement-live-v0238]');
+  if(!live){
+    live=document.createElement('div');
+    live.className='sr-only';
+    live.dataset.movementLiveV0238='true';
+    live.setAttribute('aria-live','polite');
+    live.setAttribute('aria-atomic','true');
+    document.body.appendChild(live);
+  }
+  live.textContent='';
+  requestAnimationFrame(()=>{live.textContent=message||''});
+}
+
+function hpMovementFocusV0238(selector,message){
+  const el=document.querySelector(selector);
+  if(!el)return false;
+  el.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','-1');
+  setTimeout(()=>el.focus({preventScroll:true}),80);
+  hpMovementAnnounceV0238(message);
+  return true;
+}
+
+function hpMovementApplyAccessibilityV0238(){
+  const modal=$('#clinicalActionModal');
+  const box=$('#clinicalActionContent');
+  if(!modal||!box)return;
+
+  modal.setAttribute('aria-label','Biblioteca profissional de movimento e esportes');
+  box.setAttribute('role','document');
+
+  const search=$('#movementSearchV0230');
+  if(search){
+    search.setAttribute('aria-label','Buscar na biblioteca de movimento');
+    search.setAttribute('autocomplete','off');
+  }
+
+  const labels={
+    movementFilterModalityV0231:'Filtrar por modalidade',
+    movementFilterObjectiveV0231:'Filtrar por objetivo',
+    movementFilterCapabilityV0231:'Filtrar por capacidade',
+    movementFilterEnvironmentV0231:'Filtrar por ambiente',
+    movementFilterEquipmentV0231:'Filtrar por equipamento'
+  };
+  Object.entries(labels).forEach(([id,label])=>{
+    const el=document.getElementById(id);
+    if(el)el.setAttribute('aria-label',label);
+  });
+
+  $('#movementLibraryListV0230')?.setAttribute('aria-label','Resultados da taxonomia de movimento');
+  document.querySelector('[data-movement-coverage-v0235]')?.setAttribute('aria-label','Cobertura editorial da biblioteca');
+  $('#movementStarterPacksHostV0236')?.setAttribute('aria-label','Starter Packs profissionais');
+
+  $$('[data-movement-exercise-v0230]').forEach(btn=>{
+    btn.setAttribute('aria-label',`Abrir instruções do exercício ${btn.querySelector('span')?.textContent||btn.textContent||''}`.trim());
+  });
+
+  $$('[data-movement-session-v0232]').forEach(btn=>{
+    btn.setAttribute('aria-label',`Abrir sessão ${btn.querySelector('b')?.textContent||btn.textContent||''}`.trim());
+  });
+}
+
 function hpWireProfessionalMovementLibraryV0237(){
   $$('[data-movement-professional-nav-v0237]').forEach(btn=>{
     btn.onclick=async()=>{
       const target=btn.dataset.movementProfessionalNavV0237;
+      $$('[data-movement-professional-nav-v0237]').forEach(x=>x.removeAttribute('aria-current'));
+      btn.setAttribute('aria-current','location');
+
       if(target==='taxonomy'){
-        $('#movementLibraryListV0230')?.scrollIntoView({behavior:'smooth',block:'start'});
+        hpMovementFocusV0238('#movementLibraryListV0230','Taxonomia da biblioteca em foco.');
         return;
       }
       if(target==='coverage'){
-        document.querySelector('[data-movement-coverage-v0235]')?.scrollIntoView({behavior:'smooth',block:'start'});
+        hpMovementFocusV0238('[data-movement-coverage-v0235]','Cobertura editorial em foco.');
         return;
       }
       if(target==='packs'){
         const host=$('#movementStarterPacksHostV0236');
         if(host){
           await hpOpenMovementStarterPacksV0236(host);
-          host.scrollIntoView({behavior:'smooth',block:'start'});
+          hpMovementApplyAccessibilityV0238();
+      box.onkeydown=e=>{
+        if(e.key==='Escape'){
+          e.preventDefault();
+          closeClinicalAction();
+        }
+      };
+          hpMovementFocusV0238('#movementStarterPacksHostV0236','Starter Packs carregados.');
         }
         return;
       }
       if(target==='exercises'){
+        hpMovementAnnounceV0238('Abrindo catálogo de exercícios.');
         closeClinicalAction();
         openExerciseLibrary2();
         return;
       }
       if(target==='sessions'){
+        hpMovementAnnounceV0238('Abrindo biblioteca de sessões.');
         closeClinicalAction();
         openWorkoutLibrary();
       }
+    };
+
+    btn.onkeydown=e=>{
+      if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))return;
+      const buttons=$$('[data-movement-professional-nav-v0237]');
+      const index=buttons.indexOf(btn);
+      if(index<0)return;
+      e.preventDefault();
+      const delta=(e.key==='ArrowRight'||e.key==='ArrowDown')?1:-1;
+      let next=index;
+      if(e.key==='Home')next=0;
+      else if(e.key==='End')next=buttons.length-1;
+      else next=(index+delta+buttons.length)%buttons.length;
+      buttons[next]?.focus();
     };
   });
 }
@@ -13361,6 +13450,7 @@ const HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234='v0.23.4';
 const HP_MOVEMENT_COVERAGE_QUALITY_V0235='v0.23.5';
 const HP_MOVEMENT_STARTER_PACKS_V0236='v0.23.6';
 const HP_PROFESSIONAL_MOVEMENT_LIBRARY_V0237='v0.23.7';
+const HP_MOVEMENT_MOBILE_ACCESSIBILITY_V0238='v0.23.8';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13450,6 +13540,7 @@ async function openMovementLibraryV0230(){
       $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
       $('#movementStarterPacksOpenV0236').onclick=()=>hpOpenMovementStarterPacksV0236($('#movementStarterPacksHostV0236'));
       hpWireProfessionalMovementLibraryV0237();
+      hpMovementApplyAccessibilityV0238();
 
       $$('[data-movement-quality-open-catalog-v0235]').forEach(btn=>{
         btn.onclick=()=>{closeClinicalAction();openExerciseLibrary2()};
