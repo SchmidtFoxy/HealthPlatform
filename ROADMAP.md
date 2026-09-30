@@ -1,4 +1,4 @@
-# AESYN Performance — Roadmap Mestre
+﻿# AESYN Performance — Roadmap Mestre
 
 > **Hotfix local v0.22.1-r2:** alinha o gate histórico do guia do Morning Check-in à UX atual. O teste deixa de exigir a cópia antiga `Leva menos de 1 minuto.` e passa a aceitar a mensagem atual de aproximadamente 30 segundos. Revisão local; sem commit individual.
 
@@ -1992,4 +1992,20 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - nenhuma periodização ou transição automática;
 - sem migration nova.
 
-**Próxima fase:** `v0.28.0 — Athlete Performance Passport Foundation`.
+**Próxima fase concluída em `v0.28.0 — Athlete Performance Passport Foundation`.
+
+## ✅ v0.28.0 — Athlete Performance Passport Foundation — CONCLUÍDA
+
+**Entregue na v0.28.0:**
+- passaporte longitudinal inicial de performance;
+- melhores cargas reais por exercício e unidade;
+- PRs recentes reaproveitados da base de Performance Esportiva;
+- mapa de cobertura para cargas, recordes, tempos, provas, testes, habilidades e marcos;
+- domínios sem fonte estruturada declarados explicitamente, sem inferência;
+- endpoint profissional e endpoint do paciente;
+- painel profissional no módulo de treino;
+- nenhuma estimativa de 1RM, certificação de habilidade ou recorde fabricado;
+- sem migration nova.
+
+**Próxima etapa:** `v0.28.1 — Performance Records 2.0`.
+

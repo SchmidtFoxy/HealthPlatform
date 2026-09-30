@@ -1,4 +1,4 @@
-## v0.27.5 — Periodization 3.0
+﻿## v0.27.5 — Periodization 3.0
 
 A camada de Workout Intelligence passa a organizar o planejamento temporal já registrado, sem criar periodização automática.
 
@@ -936,3 +936,17 @@ Técnicas avançadas deixam de depender apenas de texto livre e passam a possuir
 - o AESYN não escolhe, combina ou aplica técnica automaticamente.
 
 Próxima etapa: **v0.27.4 — Progression & Regression 3.0**.
+
+---
+
+## v0.28.0 — Athlete Performance Passport Foundation
+
+A primeira versão do **Athlete Performance Passport** cria uma visão longitudinal de performance sem inventar dados. A Foundation reaproveita registros de treino que já existem e consolida melhores cargas por exercício, PRs recentes e um mapa explícito de cobertura para **cargas, recordes, tempos, provas, testes, habilidades e marcos**.
+
+Quando um domínio ainda não possui fonte estruturada, a API retorna `SemFonteEstruturada` em vez de inferir desempenho. Melhor carga é sempre comparada dentro do mesmo exercício e unidade.
+
+### Guardrail
+O Athlete Performance Passport **não estima 1RM, não fabrica recordes, não certifica habilidade e não substitui avaliação profissional**.
+
+**Próxima etapa:** `v0.28.1 — Performance Records 2.0`.
+

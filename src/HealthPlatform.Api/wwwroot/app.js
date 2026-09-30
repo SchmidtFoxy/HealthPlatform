@@ -4201,7 +4201,7 @@ renderPatientTab = function(d){
   $$('.workout-save-template').forEach(b=>b.onclick=()=>openSaveWorkoutTemplate(treinos.find(x=>x.id===b.dataset.workoutId)));
   $$('.workout-progress').forEach(b=>b.onclick=()=>openWorkoutProgression(patientForWorkout,treinos.find(x=>x.id===b.dataset.workoutId)));
   $$('.workout-edit').forEach(b=>b.onclick=()=>openWorkoutForm(patientForWorkout,treinos.find(x=>x.id===b.dataset.workoutId)));
-  loadWorkoutIntelligenceV0270(patientForWorkout).then(()=>loadWorkoutPhases(patientForWorkout,treinos)).catch(x=>console.warn('Workout Intelligence:',x));
+  loadWorkoutIntelligenceV0270(patientForWorkout).then(()=>loadAthletePerformancePassportV0280(patientForWorkout)).then(()=>loadWorkoutPhases(patientForWorkout,treinos)).catch(x=>console.warn('Workout/Passport:',x));
 };
 
 const __openClinicalForm_v030 = openClinicalForm;
@@ -4345,6 +4345,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
 const HP_PRESCRIBED_PERFORMED_V0272='v0.27.2';
 const HP_PROGRESSION_REGRESSION_V0274='v0.27.4';
 const HP_PERIODIZATION_V0275='v0.27.5';
+const HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4377,6 +4378,33 @@ function hpProgressionRegressionSignalV0274(x){
   const tone=x.estado==='RevisarProgressao'?'Ativa':x.estado==='RevisarRegressao'?'Agendada':x.estado==='SinaisMistos'?'Alta':'Info';
   const evidence=(x.evidencias||[]);
   return `<article class="workout-progression-signal-v0274" data-progression-regression-v0274="${HP_PROGRESSION_REGRESSION_V0274}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.sessao||'Sessão')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${tone}">${esc(x.estado||'')}</span></div>${evidence.length?`<div class="signal-list">${evidence.map(e=>`<div><small>${esc(e)}</small></div>`).join('')}</div>`:''}<p>${esc(x.sugestao||'')}</p><small class="muted-line">${esc(x.regraDeRevisao||'')}</small></article>`;
+}
+
+
+function hpAthletePassportDomainV0280(x){
+  const tone=x.estado==='ComDados'||x.estado==='BaseDisponivel'?'Ativa':x.estado==='SemFonteEstruturada'?'Info':'Agendada';
+  return `<article class="workout-intelligence-dimension-v0270"><div><b>${esc(x.nome||x.codigo||'Domínio')}</b><span class="pill ${tone}">${esc(x.estado||'')}</span></div><small>${esc(x.origem||'')}</small><p>${esc(x.observacao||'')}</p><em>${x.registros??0} registro(s)</em></article>`;
+}
+
+function hpAthletePassportRecordV0280(x){
+  const when=x.dataUtc?new Date(x.dataUtc).toLocaleDateString('pt-BR'):'—';
+  return `<article class="workout-progression-signal-v0274"><div class="workout-comparison-head-v0272"><div><small>${esc(x.grupoMuscular||'Performance')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${x.recente?'Ativa':'Info'}">${x.recente?'PR recente':'melhor marca'}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.valor!=null?num(x.valor,2):'—'} ${esc(x.unidade||'')}</b>melhor carga</span><span><b>${when}</b>data</span><span><b>${x.registros??0}</b>registros</span></div><small class="muted-line">${esc(x.fonte||'Registro existente')}</small></article>`;
+}
+
+async function loadAthletePerformancePassportV0280(patient){
+  const host=$('#patientTabContent');
+  if(!host||!patient?.id||host.querySelector('[data-athlete-performance-passport-v0280]'))return;
+  const data=await api(`/api/pacientes/${patient.id}/performance/passaporte`);
+  if(!host.isConnected)return;
+  const section=document.createElement('section');
+  section.className='card full-card workout-intelligence-v0270';
+  section.dataset.athletePerformancePassportV0280=HP_ATHLETE_PERFORMANCE_PASSPORT_V0280;
+  section.innerHTML=`<div class="card-head workout-intelligence-head-v0270"><div><span class="eyebrow">ATHLETE PERFORMANCE PASSPORT • FOUNDATION</span><h3>Histórico de performance que acompanha o atleta</h3><p>Melhores marcas já registradas e cobertura das próximas dimensões, sem fabricar recordes.</p></div><span class="pill Info">${esc(data.versao||HP_ATHLETE_PERFORMANCE_PASSPORT_V0280)}</span></div>
+    <div class="workout-intelligence-kpis-v0270"><span><b>${data.treinosObservados??0}</b>treinos observados</span><span><b>${data.recordesRecentes??0}</b>PRs recentes</span><span><b>${data.melhoresMarcas?.length??0}</b>melhores marcas</span><span><b>${data.diasObservados??0}d</b>janela</span></div>
+    <div class="workout-intelligence-dimensions-v0270">${(data.dominios||[]).map(hpAthletePassportDomainV0280).join('')}</div>
+    <div class="workout-prescribed-performed-v0272"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PERSONAL RECORDS</span><h4>Melhores cargas registradas</h4><p>Comparação somente dentro do mesmo exercício e unidade; sem estimativa de 1RM.</p></div><span class="pill Info">${esc(data.estado||'')}</span></div><div class="workout-comparisons-v0272">${(data.melhoresMarcas||[]).map(hpAthletePassportRecordV0280).join('')||'<div class="empty">Ainda não há carga registrada suficiente para formar o passaporte.</div>'}</div></div>
+    <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
+  host.appendChild(section);
 }
 
 async function loadWorkoutIntelligenceV0270(patient){
@@ -9441,7 +9469,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.27.5';
+const HP_MVP_VERSION='0.28.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,3 +1,16 @@
+﻿# v0.28.0 — Athlete Performance Passport Foundation
+
+- Adiciona contrato dedicado do Athlete Performance Passport.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte`.
+- Adiciona `GET /api/portal/me/performance/passaporte`.
+- Consolida melhores cargas registradas e PRs recentes já existentes.
+- Expõe cobertura explícita para cargas, recordes, tempos, provas, testes, habilidades e marcos.
+- Domínios sem fonte estruturada são retornados como `SemFonteEstruturada`.
+- Adiciona painel profissional no módulo de treino.
+- Guardrail: não estima 1RM, não fabrica recordes, não certifica habilidade e não substitui avaliação profissional.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.28.1 — Performance Records 2.0.
+
 ## v0.27.5 — Periodization 3.0
 
 - Estrutura leitura de microciclo, mesociclo, bloco e deload sobre `PlanoTreino` e `FaseTreino` existentes.
