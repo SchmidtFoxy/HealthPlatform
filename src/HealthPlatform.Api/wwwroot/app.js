@@ -4864,6 +4864,7 @@ const HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312='v0.31.2';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314='v0.31.4';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_SUMMARY_V0315='v0.31.5';
+const HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316='v0.31.6';
 
 
 
@@ -4892,6 +4893,24 @@ function hpRenderProgressReviewFollowUpFoundationV0310(host,foundation){
 }
 
 
+
+
+async function hpLoadProgressReviewFollowUpClosureV0316(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/follow-up/closure`);
+}
+
+function hpRenderProgressReviewFollowUpClosureV0316(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaFollowUpCompleta';
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-progress-review-follow-up-closure-v0316="${HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316}">
+    <div><b>${complete?'Estrutura de acompanhamento completa':'Estrutura de acompanhamento parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não representa score clínico, prioridade, risco ou recomendação.</small>
+  </section>`;
+}
 
 async function hpLoadProgressReviewFollowUpSummaryV0315(patientId){
   if(!patientId) return null;
@@ -4976,6 +4995,7 @@ async function hpOpenProgressReviewFollowUpV0311(p){
       <button type="button" class="ghost" id="closeProgressReviewFollowUpV0311">Fechar</button>
     </div>
 
+    <div id="progressReviewFollowUpClosureV0316"></div>
     <div id="progressReviewFollowUpSummaryV0315"></div>
     <form id="progressReviewFollowUpFiltersV0314" class="form-grid" data-progress-review-follow-up-filters-v0314="${HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314}">
       <label>Status<select name="status">
@@ -5015,6 +5035,11 @@ async function hpOpenProgressReviewFollowUpV0311(p){
     <div id="progressReviewFollowUpListV0311" class="stack"></div>
   </div>`;
   modal.classList.add('open');
+
+  const closureHostV0316=$('#progressReviewFollowUpClosureV0316');
+  hpLoadProgressReviewFollowUpClosureV0316(p.id)
+    .then(x=>hpRenderProgressReviewFollowUpClosureV0316(closureHostV0316,x))
+    .catch(()=>{ if(closureHostV0316) closureHostV0316.innerHTML=''; });
 
   const summaryHostV0315=$('#progressReviewFollowUpSummaryV0315');
   hpLoadProgressReviewFollowUpSummaryV0315(p.id)
@@ -10406,7 +10431,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.31.5';
+const HP_MVP_VERSION='0.31.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

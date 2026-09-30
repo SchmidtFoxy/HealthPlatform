@@ -136,6 +136,28 @@ public class ProgressReviewNotesController(
             "A fundação de follow-up organiza próximos itens a acompanhar. A partir da v0.31.1 possui persistência profissional auditada, sem criar decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
     }
 
+    [HttpGet("follow-up/closure")]
+    public ActionResult<ProgressReviewFollowUpClosureResponse> FechamentoFollowUp()
+    {
+        var componentes = new[]
+        {
+            "FollowUpFoundation",
+            "FollowUpPersistence",
+            "FollowUpStatus",
+            "FollowUpHistory",
+            "FollowUpFilters",
+            "FollowUpSummary"
+        };
+
+        return Ok(new ProgressReviewFollowUpClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaFollowUpCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural das capacidades de acompanhamento. Não representa score clínico, prioridade, risco, prognóstico, recomendação ou decisão terapêutica."));
+    }
+
     [HttpGet("follow-up/summary")]
     public async Task<ActionResult<ProgressReviewFollowUpSummaryResponse>> ResumoFollowUp(
         Guid pacienteId,

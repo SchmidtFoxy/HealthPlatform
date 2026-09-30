@@ -1710,3 +1710,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.31.6 — Progress Review Follow-up Closure`.
 
+---
+
+## v0.31.6 — Progress Review Follow-up Closure
+
+Fecha a linha 0.31.x consolidando todas as capacidades estruturais de acompanhamento posterior à revisão.
+
+### Componentes consolidados
+- Follow-up Foundation;
+- Follow-up Persistence;
+- Follow-up Status;
+- Follow-up History;
+- Follow-up Filters;
+- Follow-up Summary.
+
+### Estado
+O endpoint `follow-up/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaFollowUpCompleta`;
+- regra de uso.
+
+### UI
+O workspace profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica.
+
+**Próxima etapa:** `v0.32.0 — Progress Review Care Plan Foundation`.
+

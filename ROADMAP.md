@@ -2539,3 +2539,20 @@ Adicionar resumo estrutural do acompanhamento com contagem por status e itens at
 ### v0.31.6 — Progress Review Follow-up Closure
 Fechar o ciclo 0.31.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do acompanhamento.
 
+## ✅ v0.31.6 — Progress Review Follow-up Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewFollowUpClosureResponse`;
+- endpoint `follow-up/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaFollowUpCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no workspace profissional;
+- encerramento da linha 0.31.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.0 — Progress Review Care Plan Foundation
+Criar a fundação estrutural para transformar itens acompanhados em um plano profissional organizado de próximos cuidados, mantendo separação entre documentação, decisão clínica e execução.
+

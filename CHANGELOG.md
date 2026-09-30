@@ -1,4 +1,17 @@
-﻿# v0.31.5 — Progress Review Follow-up Summary
+﻿# v0.31.6 — Progress Review Follow-up Closure
+
+- Adiciona `ProgressReviewFollowUpClosureResponse`.
+- Adiciona endpoint `GET .../follow-up/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaFollowUpCompleta`.
+- Adiciona marcador `HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316`.
+- Adiciona painel de fechamento no workspace profissional.
+- Não cria score clínico, risco ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.31.x.
+- Próxima etapa: v0.32.0 — Progress Review Care Plan Foundation.
+
+# v0.31.5 — Progress Review Follow-up Summary
 
 - Adiciona `ProgressReviewFollowUpResponsavelResumoResponse`.
 - Adiciona `ProgressReviewFollowUpSummaryResponse`.
