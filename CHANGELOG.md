@@ -1,11 +1,3 @@
-# v0.25.2-r1 — App_Data Runtime Ignore (revisão local)
-
-- Adiciona `**/App_Data/` ao `.gitignore`.
-- Evita que dados locais gerados em runtime deixem o repositório sujo e bloqueiem o AESYN AUTO.
-- `VERSION.txt` permanece `0.25.2`.
-- Sem alteração funcional, API, schema ou migration.
-- Revisão local: não gerar commit próprio.
-
 # v0.25.2 — Basketball & Volleyball 2.0
 
 - Adiciona `GET /api/portal/me/explore/basketball-volleyball`.

@@ -1573,4 +1573,112 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("basketball-volleyball")]
+    public async Task<ActionResult<BasketballVolleyballResponse>> BasketballVolleyball(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .OrderBy(x => x.Categoria)
+            .ThenBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var basqueteRefs = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "basquete", "basket", "drible", "arremesso", "cesta", "salto", "lateral", "quadra" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(6)
+            .Select(x => new BasketballVolleyballSessaoReferenciaResponse(
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao,
+                "Sessão-modelo existente com termos relacionados a basquete/quadra."))
+            .ToArray();
+
+        var voleiRefs = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "volei", "vôlei", "volley", "manchete", "toque", "saque", "bloqueio", "salto", "quadra" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(6)
+            .Select(x => new BasketballVolleyballSessaoReferenciaResponse(
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao,
+                "Sessão-modelo existente com termos relacionados a vôlei/quadra."))
+            .ToArray();
+
+        var modalidades = new[]
+        {
+            new BasketballVolleyballModalidadeResponse(
+                "basquete",
+                "Basquete",
+                "Quadra / ginásio",
+                "Ações com bola em deslocamento, mudanças rápidas de direção, acelerações, saltos e finalização em cesta.",
+                ["Bola", "Cesta", "Cones", "Quadra"],
+                [
+                    new("drible", "Drible", "Controlar a bola enquanto o corpo muda direção, velocidade e relação com o defensor.", "Observe altura do drible, proteção da bola e visão do ambiente."),
+                    new("passe", "Passe", "Transferir a bola com precisão e tempo adequado para manter continuidade da jogada.", "Observe base, direção e leitura do companheiro."),
+                    new("arremesso", "Arremesso", "Organizar equilíbrio, alinhamento e coordenação para finalizar na cesta.", "Observe base, trajetória e controle antes de buscar distância.")
+                ],
+                [
+                    new("salto", "Salto", "Aparece em rebotes, arremessos, bloqueios e disputas próximas à cesta.", "No basquete, o salto frequentemente se combina com deslocamento e contato espacial."),
+                    new("deslocamento-lateral", "Deslocamento lateral", "Importante para defesa, contenção e reposicionamento sem perder equilíbrio.", "É mais contínuo e reativo em ações defensivas do que no vôlei."),
+                    new("aceleracao", "Aceleração", "Saídas curtas para transição, contra-ataque e criação de espaço.", "O basquete combina aceleração com domínio de bola e mudanças de direção.")
+                ],
+                basqueteRefs,
+                "Basquete mistura deslocamento contínuo com bola, contato espacial e finalizações em movimento."),
+            new BasketballVolleyballModalidadeResponse(
+                "volei",
+                "Vôlei",
+                "Quadra / ginásio",
+                "Ações separadas pela rede, com recepção, levantamento, ataque, saque, bloqueio e ciclos repetidos de salto e aterrissagem.",
+                ["Bola", "Rede", "Cones", "Quadra"],
+                [
+                    new("recepcao", "Recepção", "Controlar a primeira bola para criar continuidade e organização da jogada.", "Observe base, plataforma de contato e direção da bola."),
+                    new("levantamento", "Levantamento", "Organizar a bola para o ataque com controle de direção e altura.", "Observe posicionamento sob a bola e precisão do toque."),
+                    new("ataque-saque", "Ataque e saque", "Aplicar coordenação de tronco, braço e timing para enviar a bola com intenção.", "Observe sequência do movimento, contato e equilíbrio após a ação.")
+                ],
+                [
+                    new("salto-aterrissagem", "Salto e aterrissagem", "Aparece em ataque, bloqueio e saque, exigindo repetição com controle de retorno ao solo.", "No vôlei, saltos verticais e aterrissagens repetidas têm papel mais central."),
+                    new("deslocamento-quadra", "Deslocamento de quadra", "Ajustes curtos de posição para cobertura, recepção, bloqueio e aproximação.", "O deslocamento responde à trajetória da bola e ao sistema de jogo."),
+                    new("ombro", "Capacidade de ombro", "Saque e ataque envolvem repetição de ações acima da cabeça.", "No vôlei, a demanda de ombro aparece de forma mais repetida em gestos aéreos.")
+                ],
+                voleiRefs,
+                "Vôlei separa as equipes pela rede e concentra recepção, ações aéreas e aterrissagens repetidas.")
+        };
+
+        return Ok(new BasketballVolleyballResponse(
+            modalidades,
+            "Sports Expansion I + ModelosSessoesTreino",
+            "Basketball & Volleyball 2.0 compara contextos e referencia conteúdo existente. Não define posição, salto-alvo, carga, volume, intensidade ou retorno ao esporte automaticamente."));
+    }
+
+
 }

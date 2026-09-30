@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.25.1';
+const HP_MVP_VERSION='0.25.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14764,4 +14764,120 @@ hpOpenSportsExpansionIV0250=async function(host){
   const button=root?.querySelector('#openFootballFutsalV0251');
   const detail=root?.querySelector('#footballFutsalHostV0251');
   if(button&&detail)button.onclick=()=>hpOpenFootballFutsalV0251(detail);
+};
+
+
+// ===== v0.25.2 — Basketball & Volleyball 2.0 =====
+const HP_BASKETBALL_VOLLEYBALL_V0252='v0.25.2';
+
+function hpBasketballVolleyballModalityV0252(sport){
+  const refs=Array.isArray(sport?.sessoesReferencia)?sport.sessoesReferencia:[];
+  return `<article class="basketball-volleyball-modality-v0252" data-basketball-volleyball-code-v0252="${esc(sport?.codigo||'')}">
+    <div class="basketball-volleyball-title-v0252">
+      <div>
+        <span>${esc(sport?.ambientePrincipal||'Quadra')}</span>
+        <h4>${esc(sport?.nome||'Modalidade')}</h4>
+        <p>${esc(sport?.dinamica||'')}</p>
+      </div>
+      <b>${refs.length} referência(s)</b>
+    </div>
+
+    <div class="basketball-volleyball-difference-v0252">
+      <span>DIFERENÇA-CHAVE</span>
+      <b>${esc(sport?.diferencaChave||'Contexto específico da modalidade.')}</b>
+    </div>
+
+    <div class="basketball-volleyball-resources-v0252">${(sport?.recursos||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+
+    <section class="basketball-volleyball-section-v0252">
+      <h5>Fundamentos técnicos</h5>
+      <div class="basketball-volleyball-foundations-v0252">
+        ${(sport?.fundamentos||[]).map(x=>`<div>
+          <b>${esc(x.nome)}</b>
+          <p>${esc(x.descricao)}</p>
+          <small>OBSERVAR • ${esc(x.oQueObservar)}</small>
+        </div>`).join('')}
+      </div>
+    </section>
+
+    <section class="basketball-volleyball-section-v0252">
+      <h5>Capacidades físicas no contexto</h5>
+      <div class="basketball-volleyball-capabilities-v0252">
+        ${(sport?.capacidades||[]).map(x=>`<div>
+          <b>${esc(x.nome)}</b>
+          <p>${esc(x.contexto)}</p>
+          <small>${esc(x.diferencaDaOutraModalidade)}</small>
+        </div>`).join('')}
+      </div>
+    </section>
+
+    <section class="basketball-volleyball-section-v0252">
+      <h5>Sessões-modelo relacionadas</h5>
+      ${refs.length?`<div class="basketball-volleyball-references-v0252">${refs.map(x=>`<div>
+        <b>${esc(x.nome)}</b>
+        <span>${esc(x.categoria||'Sessão-modelo')}</span>
+        <p>${esc(x.descricao||'Sem descrição cadastrada.')}</p>
+        <small>${esc(x.motivoDaReferencia)}</small>
+      </div>`).join('')}</div>`:`<div class="basketball-volleyball-empty-v0252"><b>Sem referência editorial ainda.</b><span>O AESYN não inventa uma sessão para completar a modalidade.</span></div>`}
+    </section>
+  </article>`;
+}
+
+function hpBasketballVolleyballV0252(data){
+  const sports=Array.isArray(data?.modalidades)?data.modalidades:[];
+  return `<section class="basketball-volleyball-v0252" data-basketball-volleyball-v0252="${HP_BASKETBALL_VOLLEYBALL_V0252}" aria-labelledby="basketballVolleyballTitleV0252">
+    <div class="basketball-volleyball-head-v0252">
+      <div>
+        <span class="eyebrow">BASKETBALL & VOLLEYBALL 2.0</span>
+        <h3 id="basketballVolleyballTitleV0252">Mesma quadra, demandas diferentes.</h3>
+        <p>Compare técnica, saltos, deslocamentos e referências existentes sem reduzir Basquete e Vôlei a “esportes de quadra”.</p>
+      </div>
+      <span>2 modalidades</span>
+    </div>
+
+    <div class="basketball-volleyball-compare-v0252">
+      ${sports.map(hpBasketballVolleyballModalityV0252).join('')}
+    </div>
+
+    <div class="basketball-volleyball-rule-v0252">
+      <b>MODALIDADE ≠ PROTOCOLO</b>
+      <span>${esc(data?.regraDeUso||'Basquete e Vôlei são organizados como contextos esportivos, não prescrições automáticas.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenBasketballVolleyballV0252(host){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Basquete & Vôlei...</div>';
+  try{
+    const data=await api('/api/portal/me/explore/basketball-volleyball');
+    host.innerHTML=hpBasketballVolleyballV0252(data);
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Basquete & Vôlei.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpSportsExpansionIV0252=hpSportsExpansionIV0250;
+hpSportsExpansionIV0250=function(data){
+  const html=__hpSportsExpansionIV0252(data);
+  return html.replace(
+    '<div class="sports-expansion-i-chain-v0250">',
+    `<div class="basketball-volleyball-entry-v0252">
+      <button type="button" class="primary" id="openBasketballVolleyballV0252">Comparar Basquete & Vôlei</button>
+      <small>Fundamentos de bola e rede, saltos, deslocamentos e referências reais de sessão.</small>
+    </div>
+    <div id="basketballVolleyballHostV0252" class="basketball-volleyball-host-v0252" hidden></div>
+    <div class="sports-expansion-i-chain-v0250">`
+  );
+};
+
+const __hpOpenSportsExpansionIV0252=hpOpenSportsExpansionIV0250;
+hpOpenSportsExpansionIV0250=async function(host){
+  await __hpOpenSportsExpansionIV0252(host);
+  const root=host?.querySelector('[data-sports-expansion-i-v0250]');
+  const button=root?.querySelector('#openBasketballVolleyballV0252');
+  const detail=root?.querySelector('#basketballVolleyballHostV0252');
+  if(button&&detail)button.onclick=()=>hpOpenBasketballVolleyballV0252(detail);
 };

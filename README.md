@@ -354,7 +354,6 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 ## Estado atual
 
 - **Versão funcional:** `v0.25.2 — Basketball & Volleyball 2.0`
-- **Revisão local corrente:** `v0.25.2-r1 — App_Data Runtime Ignore`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

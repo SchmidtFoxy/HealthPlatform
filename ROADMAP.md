@@ -1565,8 +1565,6 @@ Aprofundar Futebol e Futsal com fundamentos, capacidades, preparação física e
 
 ## ✅ v0.25.2 — Basketball & Volleyball 2.0 — CONCLUÍDA
 
-> **Revisão local v0.25.2-r1:** ignora `**/App_Data/` no Git para impedir que arquivos gerados em runtime bloqueiem o AESYN AUTO. Sem mudança funcional e sem commit separado.
-
 Aprofundar Basquete e Vôlei com fundamentos de quadra, saltos, deslocamentos, capacidades específicas e referências editoriais de sessão sem prescrição automática.
 
 

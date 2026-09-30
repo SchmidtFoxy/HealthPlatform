@@ -274,3 +274,39 @@ public sealed record FootballFutsalResponse(
     IReadOnlyCollection<FootballFutsalModalidadeResponse> Modalidades,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record BasketballVolleyballFundamentoResponse(
+    string Codigo,
+    string Nome,
+    string Descricao,
+    string OQueObservar);
+
+public sealed record BasketballVolleyballCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto,
+    string DiferencaDaOutraModalidade);
+
+public sealed record BasketballVolleyballSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record BasketballVolleyballModalidadeResponse(
+    string Codigo,
+    string Nome,
+    string AmbientePrincipal,
+    string Dinamica,
+    string[] Recursos,
+    IReadOnlyCollection<BasketballVolleyballFundamentoResponse> Fundamentos,
+    IReadOnlyCollection<BasketballVolleyballCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<BasketballVolleyballSessaoReferenciaResponse> SessoesReferencia,
+    string DiferencaChave);
+
+public sealed record BasketballVolleyballResponse(
+    IReadOnlyCollection<BasketballVolleyballModalidadeResponse> Modalidades,
+    string Fonte,
+    string RegraDeUso);
