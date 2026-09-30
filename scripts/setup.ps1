@@ -2,6 +2,7 @@
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
+# v0.29.0-r1 DETERMINISTIC NATIVE DIAGNOSTICS
 # v0.28.5-r1 ROBUST_SQL_EXECUTOR
 # v0.3.11 FAST_DOTNET_CHECK
 # Em ciclos de desenvolvimento, nao instala nem atualiza o SDK automaticamente.
@@ -20,12 +21,37 @@ function Invoke-NativeStep {
     )
 
     Write-Host $Label -ForegroundColor Cyan
-    & $Command
-    if ($LASTEXITCODE -ne 0) {
-        throw "Falha na etapa: $Label (codigo $LASTEXITCODE)"
+
+    $oldErrorPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+
+    try {
+        $output = @(& $Command 2>&1)
+        $code = $LASTEXITCODE
+
+        foreach ($line in $output) {
+            if ($null -ne $line) {
+                Write-Host ($line.ToString())
+            }
+        }
+
+        if ($code -ne 0) {
+            $tail = $output |
+                ForEach-Object { $_.ToString() } |
+                Select-Object -Last 40
+
+            $details = ($tail -join [Environment]::NewLine).Trim()
+            if ([string]::IsNullOrWhiteSpace($details)) {
+                $details = "sem saida adicional do comando"
+            }
+
+            throw "Falha na etapa: $Label (codigo $code)`n--- SAIDA FINAL ---`n$details"
+        }
+    }
+    finally {
+        $ErrorActionPreference = $oldErrorPreference
     }
 }
-
 
 function Invoke-PostgresSqlFile {
     param(
@@ -64,9 +90,24 @@ function Invoke-PostgresSqlFile {
         }
 
         Write-Host "    Diagnostico do container PostgreSQL:" -ForegroundColor DarkYellow
-        docker ps -a --filter "name=healthplatform-postgres" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
-        Write-Host "    Ultimas linhas do PostgreSQL:" -ForegroundColor DarkYellow
-        docker logs healthplatform-postgres --tail 80 2>&1
+
+        $oldErrorPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $containerDiag = @(docker ps -a --filter "name=healthplatform-postgres" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}" 2>&1)
+            foreach ($line in $containerDiag) {
+                if ($null -ne $line) { Write-Host ($line.ToString()) }
+            }
+
+            Write-Host "    Ultimas linhas do PostgreSQL:" -ForegroundColor DarkYellow
+            $postgresLogs = @(docker logs healthplatform-postgres --tail 80 2>&1)
+            foreach ($line in $postgresLogs) {
+                if ($null -ne $line) { Write-Host ($line.ToString()) -ForegroundColor DarkYellow }
+            }
+        }
+        finally {
+            $ErrorActionPreference = $oldErrorPreference
+        }
 
         throw "Falha ao aplicar SQL '$Path' apos $MaxTentativas tentativas (ultimo codigo: $code)."
     }

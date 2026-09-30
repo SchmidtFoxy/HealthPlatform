@@ -2080,5 +2080,20 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 - nenhuma classificação automática de melhora/piora;
 - sem migration nova.
 
-**Próxima fase:** `v0.29.0 — Progress Intelligence Foundation`.
+**Próxima fase concluída em `v0.29.0 — Progress Intelligence Foundation`.
+
+## ✅ v0.29.0 — Progress Intelligence Foundation — CONCLUÍDA
+
+**Entregue na v0.29.0:**
+- foundation de inteligência de progresso;
+- sinais descritivos baseados somente em comparações existentes;
+- direção textual sem julgamento;
+- carga e tempo separados;
+- evidência e limite interpretativo por sinal;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport;
+- sem score, ranking, diagnóstico, prognóstico ou recomendação automática;
+- sem migration nova.
+
+**Próxima etapa:** `v0.29.1 — Progress Signal Context 2.0`.
 

@@ -1,4 +1,20 @@
-﻿# v0.28.5 — Performance Evolution 2.0
+﻿# v0.29.0 — Progress Intelligence Foundation
+
+- Adiciona `ProgressIntelligenceSignalResponse`.
+- Adiciona `ProgressIntelligenceFoundationResponse`.
+- Expande o passaporte com `InteligenciaProgresso`.
+- Cria sinais descritivos a partir da base longitudinal já existente.
+- Usa apenas `AcimaDoInicial`, `AbaixoDoInicial` e `EstavelNoPeriodo`.
+- Mantém carga e duração como dimensões distintas.
+- Adiciona evidência e limite interpretativo.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence`.
+- Adiciona painel Progress Intelligence Foundation.
+- Guardrail: não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.29.1 — Progress Signal Context 2.0.
+
+# v0.28.5 — Performance Evolution 2.0
 
 - Adiciona `AthletePerformanceEvolutionPointResponse`.
 - Adiciona `AthletePerformanceEvolutionResponse`.

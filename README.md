@@ -1050,3 +1050,24 @@ Performance Evolution 2.0 **não gera score, ranking, prognóstico, tendência c
 
 **Próxima fase:** `v0.29.0 — Progress Intelligence Foundation`.
 
+---
+
+## v0.29.0 — Progress Intelligence Foundation
+
+Inicia a nova camada de inteligência longitudinal sobre o Athlete Performance Passport.
+
+### Entregue
+- sinais descritivos derivados apenas de comparações já existentes;
+- direção textual `AcimaDoInicial`, `AbaixoDoInicial` ou `EstavelNoPeriodo`;
+- carga e tempo permanecem domínios separados;
+- evidência e limite interpretativo por sinal;
+- quantidade de registros comparáveis;
+- resumo de registros supervisionados;
+- endpoints profissional e paciente;
+- integração ao passaporte e ao workspace profissional.
+
+### Guardrail
+Progress Intelligence Foundation **não gera score, ranking, diagnóstico, prognóstico, recomendação automática ou julgamento clínico**. A direção apenas descreve a relação matemática entre o primeiro e o registro atual dentro de uma base comparável.
+
+**Próxima etapa:** `v0.29.1 — Progress Signal Context 2.0`.
+

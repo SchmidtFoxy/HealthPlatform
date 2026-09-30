@@ -19,6 +19,7 @@ public static class AthletePerformancePassportService
         var resultados = await MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
         var habilidadesMarcos = await MontarHabilidadesMarcosAsync(db, pacienteId, hoje, ct);
         var evolucao = await MontarEvolucaoAsync(db, pacienteId, hoje, recordes, tempos, resultados, habilidadesMarcos, ct);
+        var inteligenciaProgresso = MontarInteligenciaProgresso(evolucao, resultados, habilidadesMarcos);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -96,20 +97,21 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.28.5",
+            "v0.29.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Performance Evolution 2.0 organiza variações longitudinais observáveis sem criar score, ranking, prognóstico ou conclusão clínica. Carga e duração permanecem métricas distintas e contextualizadas.")
+            "Progress Intelligence Foundation organiza sinais descritivos de progresso a partir de dados comparáveis existentes. Não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
             Resultados = resultados,
             HabilidadesMarcos = habilidadesMarcos,
-            Evolucao = evolucao
+            Evolucao = evolucao,
+            InteligenciaProgresso = inteligenciaProgresso
         };
     }
 
@@ -240,6 +242,55 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressIntelligenceFoundationResponse MontarInteligenciaProgresso(
+        AthletePerformanceEvolutionResponse evolucao,
+        IReadOnlyCollection<AthleteCompetitionTestResultResponse> resultados,
+        IReadOnlyCollection<AthleteSkillMilestoneResponse> habilidadesMarcos)
+    {
+        var sinais = evolucao.Pontos
+            .Select(x =>
+            {
+                var direcao = x.VariacaoAbsoluta switch
+                {
+                    > 0m => "AcimaDoInicial",
+                    < 0m => "AbaixoDoInicial",
+                    _ => "EstavelNoPeriodo"
+                };
+
+                var evidencia = x.Dominio == "Carga"
+                    ? "Comparação longitudinal da carga observada no mesmo exercício e unidade."
+                    : "Comparação longitudinal da duração observada na mesma sessão.";
+
+                var limite = x.Dominio == "Carga"
+                    ? "A direção descreve somente a carga registrada. Não equivale a melhora de força máxima, técnica, segurança ou prognóstico."
+                    : "A direção descreve somente duração. Menor ou maior tempo não é automaticamente melhora, piora, intensidade ou condicionamento.";
+
+                return new ProgressIntelligenceSignalResponse(
+                    x.Dominio,
+                    x.Referencia,
+                    x.Medida,
+                    direcao,
+                    x.VariacaoPercentual,
+                    x.RegistrosComparaveis,
+                    x.DataInicialUtc,
+                    x.DataAtualUtc,
+                    evidencia,
+                    limite);
+            })
+            .OrderBy(x => x.Dominio)
+            .ThenBy(x => x.Referencia)
+            .ToArray();
+
+        return new ProgressIntelligenceFoundationResponse(
+            evolucao.DiasObservados,
+            sinais,
+            sinais.Count(x => x.Dominio == "Carga"),
+            sinais.Count(x => x.Dominio == "Tempo"),
+            resultados.Count + habilidadesMarcos.Count,
+            "Progress Intelligence Foundation resume somente sinais descritivos baseados em comparações existentes. Não cria score, ranking, diagnóstico, prognóstico, recomendação automática ou julgamento clínico.");
+    }
 
     public static async Task<AthletePerformanceEvolutionResponse> MontarEvolucaoAsync(
         AppDbContext db,

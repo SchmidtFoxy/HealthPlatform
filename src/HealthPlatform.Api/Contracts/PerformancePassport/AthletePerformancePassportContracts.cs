@@ -88,6 +88,27 @@ public sealed record AthletePerformanceEvolutionResponse(
     int HabilidadesMarcos,
     string RegraDeLeitura);
 
+
+public sealed record ProgressIntelligenceSignalResponse(
+    string Dominio,
+    string Referencia,
+    string Tipo,
+    string DirecaoDescritiva,
+    decimal? VariacaoPercentual,
+    int RegistrosComparaveis,
+    DateTime? DataInicialUtc,
+    DateTime? DataAtualUtc,
+    string Evidencia,
+    string LimiteInterpretativo);
+
+public sealed record ProgressIntelligenceFoundationResponse(
+    int DiasObservados,
+    IReadOnlyCollection<ProgressIntelligenceSignalResponse> Sinais,
+    int SinaisCarga,
+    int SinaisTempo,
+    int RegistrosSupervisionados,
+    string RegraDeUso);
+
 public sealed record AthletePerformancePassportResponse(
     string Versao, int DiasObservados, int TreinosObservados, int RecordesRecentes, string Estado,
     IReadOnlyCollection<AthletePerformancePassportDomainResponse> Dominios,
@@ -109,4 +130,8 @@ public sealed record AthletePerformancePassportResponse(
     public AthletePerformanceEvolutionResponse Evolucao { get; init; } =
         new(180, Array.Empty<AthletePerformanceEvolutionPointResponse>(), 0, 0, 0, 0,
             "Sem base comparável suficiente para leitura longitudinal.");
+
+    public ProgressIntelligenceFoundationResponse InteligenciaProgresso { get; init; } =
+        new(180, Array.Empty<ProgressIntelligenceSignalResponse>(), 0, 0, 0,
+            "Foundation descritiva sem score, ranking, diagnóstico ou recomendação automática.");
 }
