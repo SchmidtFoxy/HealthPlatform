@@ -253,6 +253,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearFollowUp(nota));
     }
 
+    [HttpGet("follow-up/{id:guid}/history")]
+    public async Task<ActionResult<ProgressReviewFollowUpHistoryResponse>> HistoricoFollowUp(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var followUpExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp),
+                cancellationToken);
+
+        if (!followUpExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROGRESS_REVIEW_FOLLOW_UP_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProgressReviewFollowUpHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoFollowUp(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProgressReviewFollowUpHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais de acompanhamento. Não interpreta evolução clínica, causalidade, prioridade ou resultado."));
+    }
+
     [HttpPatch("follow-up/{id:guid}/status")]
     public async Task<ActionResult<ProgressReviewFollowUpPersistedResponse>> AtualizarStatusFollowUp(
         Guid pacienteId,
@@ -663,6 +738,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoFollowUp(string acao) =>
+        acao switch
+        {
+            "PROGRESS_REVIEW_FOLLOW_UP_CREATED" => "Criado",
+            "PROGRESS_REVIEW_FOLLOW_UP_UPDATED" => "Editado",
+            "PROGRESS_REVIEW_FOLLOW_UP_STATUS_CHANGED" => "StatusAlterado",
+            "PROGRESS_REVIEW_FOLLOW_UP_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static FollowUpPayload LerPayloadFollowUp(NotaInternaProfissional nota)
     {

@@ -1,4 +1,18 @@
-﻿# v0.31.2 — Progress Review Follow-up Status
+﻿# v0.31.3 — Progress Review Follow-up History
+
+- Adiciona `ProgressReviewFollowUpHistoryItemResponse`.
+- Adiciona `ProgressReviewFollowUpHistoryResponse`.
+- Adiciona `GET .../follow-up/{id}/history`.
+- Reutiliza `AuditLog` já existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no workspace profissional.
+- Não interpreta evolução clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.31.4 — Progress Review Follow-up Filters.
+
+# v0.31.2 — Progress Review Follow-up Status
 
 - Adiciona `Status` ao follow-up persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

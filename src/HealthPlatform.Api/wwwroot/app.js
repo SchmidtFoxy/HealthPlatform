@@ -4861,6 +4861,7 @@ const HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012='v0.30.12';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_V0310='v0.31.0';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311='v0.31.1';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312='v0.31.2';
+const HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3';
 
 
 
@@ -4886,6 +4887,39 @@ function hpRenderProgressReviewFollowUpFoundationV0310(host,foundation){
     <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência profissional disponível.':'Nesta versão, o follow-up ainda não possui persistência própria.'}</small>
     ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-progress-follow-up-open-v0311="${HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311}">Gerenciar acompanhamento</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProgressReviewFollowUpHistoryV0313(p,followUp){
+  if(!p?.id || !followUp?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/follow-up/${followUp.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-progress-follow-up-history-v0313="${HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do acompanhamento</h3>
+        <p class="muted-line">${esc(followUp.itemAcompanhar||'Item de acompanhamento')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProgressReviewFollowUpHistoryV0313">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Profissional')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica.</small>
+  </div>`;
+  modal.classList.add('open');
+  $('#closeProgressReviewFollowUpHistoryV0313').onclick=()=>hpOpenProgressReviewFollowUpV0311(p);
 }
 
 async function hpOpenProgressReviewFollowUpV0311(p){
@@ -4943,6 +4977,7 @@ async function hpOpenProgressReviewFollowUpV0311(p){
         ${x.status!=='Aberto'?`<button type="button" class="ghost" data-follow-up-status-v0312="${x.id}" data-status-v0312="Aberto">Reabrir</button>`:''}
         ${x.status!=='Revisado'?`<button type="button" class="ghost" data-follow-up-status-v0312="${x.id}" data-status-v0312="Revisado">Marcar revisado</button>`:''}
         ${x.status!=='Encerrado'?`<button type="button" class="ghost" data-follow-up-status-v0312="${x.id}" data-status-v0312="Encerrado">Encerrar</button>`:''}
+        <button type="button" class="ghost" data-follow-up-history-v0313="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-follow-up-archive-v0311="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum item de acompanhamento registrado.</p>';
@@ -4957,6 +4992,11 @@ async function hpOpenProgressReviewFollowUpV0311(p){
       form.elements.responsavel.value=item.responsavel||'';
       form.elements.observacaoFollowUp.value=item.observacaoFollowUp||'';
       form.elements.itemAcompanhar.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-follow-up-history-v0313]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.followUpHistoryV0313);
+      if(item) await hpOpenProgressReviewFollowUpHistoryV0313(p,item);
     });
 
     [...listHost.querySelectorAll('[data-follow-up-status-v0312]')].forEach(btn=>btn.onclick=async()=>{
@@ -10267,7 +10307,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.31.2';
+const HP_MVP_VERSION='0.31.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

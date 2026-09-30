@@ -1624,3 +1624,35 @@ O status é documental. O sistema não decide automaticamente quando um item dev
 
 **Próxima etapa:** `v0.31.3 — Progress Review Follow-up History`.
 
+---
+
+## v0.31.3 — Progress Review Follow-up History
+
+Adiciona histórico consultável dos eventos auditados de acompanhamento profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../follow-up/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada item de follow-up passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, prioridade, resposta ao tratamento ou resultado.
+
+**Próxima etapa:** `v0.31.4 — Progress Review Follow-up Filters`.
+

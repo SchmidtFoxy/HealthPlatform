@@ -2481,3 +2481,21 @@ Adicionar estado documental dos itens de acompanhamento (aberto, revisado ou enc
 ### v0.31.3 — Progress Review Follow-up History
 Adicionar histórico consultável das mudanças de acompanhamento, incluindo transições de status, autoria e datas, sem gerar interpretação automática sobre evolução clínica.
 
+## ✅ v0.31.3 — Progress Review Follow-up History — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewFollowUpHistoryItemResponse`;
+- `ProgressReviewFollowUpHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por item;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.4 — Progress Review Follow-up Filters
+Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental do acompanhamento.
+

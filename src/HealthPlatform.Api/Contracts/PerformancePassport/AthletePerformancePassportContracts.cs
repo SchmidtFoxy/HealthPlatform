@@ -117,6 +117,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewFollowUpHistoryItemResponse(
+    Guid Id,
+    Guid FollowUpId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProgressReviewFollowUpHistoryResponse(
+    Guid FollowUpId,
+    IReadOnlyCollection<ProgressReviewFollowUpHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProgressReviewFollowUpPersistedResponse(
     Guid Id,
     string ItemAcompanhar,
