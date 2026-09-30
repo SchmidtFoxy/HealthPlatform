@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.9 — Daily Premium UX 2.0
+> **Versão-base deste roadmap:** v0.23.0 — Sports & Movement Library Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -956,7 +956,7 @@ Refinar hierarquia visual, densidade, estados, movimento, acessibilidade e ergon
 
 # 7. v0.23.x — Sports & Movement Library
 
-## ⏭ v0.23.0 — Sports & Movement Library Foundation
+## ✅ v0.23.0 — Sports & Movement Library Foundation — CONCLUÍDA
 
 Criar a fundação estrutural da biblioteca de movimento com taxonomia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`, inicialmente reutilizando o catálogo existente de exercícios e preparando musculação, caminhada, corrida, calistenia, mobilidade, condicionamento e ciclismo.
 
@@ -1224,6 +1224,19 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - sem penalidade, julgamento ou diagnóstico.
 
 **Próxima etapa:** `v0.22.6 — Evening Reflection 2.0`.
+
+
+
+**Entregue na v0.23.0:**
+- taxonomia Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão;
+- sete modalidades-base;
+- endpoint profissional `/api/biblioteca-movimento`;
+- vínculo com o catálogo `Exercicios` existente;
+- busca por modalidade, objetivo, capacidade e exercício;
+- painel integrado ao Professional Workout Studio;
+- nenhuma duplicação de exercício ou migration.
+
+**Próxima etapa:** `v0.23.1 — Movement Taxonomy & Filters 2.0`.
 
 
 ## Promessa ao atleta

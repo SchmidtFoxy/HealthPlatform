@@ -558,17 +558,18 @@ async function loadDashboard(){
   $$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));
 }
 async function loadPrescriptionWorkspace(){
-  const [patients,workoutModels,mealModels,sessionModels,mealLibrary,exercises]=await Promise.all([
+  const [patients,workoutModels,mealModels,sessionModels,mealLibrary,exercises,movementLibrary]=await Promise.all([
     api('/api/pacientes?pagina=1&tamanhoPagina=8'),
     api('/api/modelos-planos-treino').catch(()=>[]),
     api('/api/modelos-planos-alimentares').catch(()=>[]),
     api('/api/modelos-sessoes-treino').catch(()=>[]),
     api('/api/modelos-refeicoes').catch(()=>[]),
-    api('/api/exercicios?incluirInativos=true').catch(()=>[])
+    api('/api/exercicios?incluirInativos=true').catch(()=>[]),
+    api('/api/biblioteca-movimento').catch(()=>null)
   ]);
   const list=patients?.itens||[];
   const activeExercises=exercises.filter(x=>x.ativo).length;
-  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.7</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspacePrograms">Programas</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button></div></section>
+  content.innerHTML=`<section class="prescription-workspace-hero workout-studio-hero" data-workout-studio="v0.18.6"><div><span class="eyebrow">AESYN • PROFESSIONAL WORKOUT STUDIO • v0.18.7</span><h3>Construa sua cartela de treinos antes mesmo do próximo paciente chegar.</h3><p>Popule o catálogo de exercícios, monte fichas-modelo independentes e mantenha uma biblioteca profissional pronta para adaptar e atribuir quando precisar.</p></div><div class="workout-studio-hero-actions"><button class="primary" id="workspaceNewWorkoutTemplate">+ Montar treino-modelo</button><button class="secondary" id="workspacePrograms">Programas</button><button class="secondary" id="workspaceExerciseLibrary">Exercícios</button><button class="secondary" id="workspaceMovementLibrary">Movimento & Esportes</button></div></section>
   <div class="workout-studio-kpis">
     <article><span>Exercícios ativos</span><strong>${activeExercises}</strong><small>${exercises.length-activeExercises} inativo(s)</small></article>
     <article><span>Treinos-modelo</span><strong>${workoutModels.length||0}</strong><small>independentes de paciente</small></article>
@@ -583,12 +584,29 @@ async function loadPrescriptionWorkspace(){
     <section class="card"><div class="card-head"><div><span class="eyebrow">ATALHOS PROFISSIONAIS</span><h3>Produção de conteúdo clínico-esportivo</h3></div></div><div class="workout-studio-quick-actions"><button class="secondary" id="workspaceNewWorkoutTemplate2">+ Novo treino-modelo</button><button class="secondary" id="workspaceProgramBuilder">+ Novo programa</button><button class="secondary" id="workspaceExerciseLibrary3">+ Popular exercícios</button><button class="secondary" id="workspaceNutritionLibrary">Dietas & refeições</button><button class="ghost" id="workspaceAllPatients">Pacientes</button></div><p class="workspace-note">O treino-modelo pertence à biblioteca do profissional. Só vira ficha de paciente quando você explicitamente atribui uma cópia.</p></section>
     <section class="card"><div class="card-head"><div><span class="eyebrow">PACIENTES RECENTES</span><h3>Atribuir algo já preparado</h3></div><button class="ghost" id="workspacePatients">Ver todos</button></div>${list.length?`<div class="workspace-patient-list">${list.map(p=>`<button type="button" data-workspace-patient="${p.id}"><span class="mini-avatar">${initials(p.nome)}</span><span><b>${esc(p.nome)}</b><small>${esc(p.profissao||'Paciente')}</small></span><i>›</i></button>`).join('')}</div>`:sectionEmpty('Nenhum paciente disponível. Sua biblioteca pode continuar crescendo mesmo assim.')}</section>
   </div>
+  <section class="card movement-library-foundation-v0230" data-movement-library-foundation-v0230="v0.23.0">
+    <div class="card-head">
+      <div><span class="eyebrow">SPORTS & MOVEMENT LIBRARY • FOUNDATION</span><h3>Uma biblioteca para muito mais que musculação.</h3></div>
+      <button class="primary" id="workspaceMovementLibrary2">Explorar estrutura</button>
+    </div>
+    <p>AESYN organiza movimento em <b>Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão</b>, reutilizando o catálogo profissional atual como fonte única de exercícios.</p>
+    <div class="movement-library-foundation-stats-v0230">
+      <article><strong>${movementLibrary?.totalModalidades||7}</strong><span>modalidades-base</span></article>
+      <article><strong>${movementLibrary?.totalExerciciosAtivos??activeExercises}</strong><span>exercícios existentes</span></article>
+      <article><strong>1</strong><span>fonte de exercícios</span></article>
+    </div>
+    <div class="movement-library-foundation-tags-v0230">
+      ${(movementLibrary?.modalidades||[]).map(x=>`<span>${esc(x.nome)}</span>`).join('')||'<span>Musculação</span><span>Caminhada</span><span>Corrida</span><span>Calistenia</span><span>Mobilidade</span><span>Condicionamento</span><span>Ciclismo</span>'}
+    </div>
+  </section>
   <section class="card workspace-roadmap workout-studio-flow"><div><span class="eyebrow">NOVO FLUXO-ALVO</span><h3>Exercícios → treino-modelo → biblioteca → atribuição → adaptação</h3><p>O paciente deixa de ser pré-requisito para construir a oferta. A AESYN passa a tratar a biblioteca de treino como patrimônio reutilizável do profissional.</p></div></section>`;
   $('#workspaceNewWorkoutTemplate').onclick=()=>openStandaloneWorkoutBuilder();
   $('#workspaceNewWorkoutTemplate2').onclick=()=>openStandaloneWorkoutBuilder();
   $('#workspacePrograms').onclick=()=>openWorkoutProgramLibrary();
   $('#workspaceProgramBuilder').onclick=()=>openWorkoutProgramBuilder();
   $('#workspaceExerciseLibrary').onclick=()=>openExerciseLibrary2();
+  $('#workspaceMovementLibrary').onclick=()=>openMovementLibraryV0230();
+  $('#workspaceMovementLibrary2').onclick=()=>openMovementLibraryV0230();
   $('#workspaceExerciseLibrary2').onclick=()=>openExerciseLibrary2();
   $('#workspaceExerciseLibrary3').onclick=()=>openExerciseLibrary2();
   $('#workspacePatients').onclick=()=>navigate('pacientes');
@@ -9351,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.9';
+const HP_MVP_VERSION='0.23.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13006,3 +13024,98 @@ loadMyPatientPortal=async function(){
   hpApplyDailyPremiumUxV0229();
   hpDailyPremiumAnnounceV0229();
 };
+
+
+// ===== v0.23.0 — Sports & Movement Library Foundation =====
+const HP_SPORTS_MOVEMENT_LIBRARY_V0230='v0.23.0';
+
+function hpMovementCapabilityV0230(cap){
+  const exercises=cap?.exercicios||[];
+  return `<article class="movement-capability-v0230">
+    <div><span>CAPACIDADE</span><b>${esc(cap?.nome||'Capacidade')}</b></div>
+    <small>${exercises.length} exercício(s) relacionado(s) no catálogo atual</small>
+    ${exercises.length?`<div class="movement-exercise-links-v0230">${exercises.slice(0,8).map(x=>`<button type="button" data-movement-exercise-v0230="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`:'<p>Nenhum exercício existente foi relacionado automaticamente. A taxonomia continua disponível sem criar item duplicado.</p>'}
+  </article>`;
+}
+
+function hpMovementObjectiveV0230(obj){
+  return `<section class="movement-objective-v0230">
+    <div class="movement-objective-head-v0230"><span>OBJETIVO</span><h4>${esc(obj?.nome||'Objetivo')}</h4></div>
+    <div class="movement-capabilities-v0230">${(obj?.capacidades||[]).map(hpMovementCapabilityV0230).join('')}</div>
+  </section>`;
+}
+
+function hpMovementModalityV0230(mod){
+  return `<section class="movement-modality-v0230" data-movement-modality-v0230="${esc(mod?.codigo||'')}">
+    <div class="movement-modality-head-v0230">
+      <div><span>MODALIDADE</span><h3>${esc(mod?.nome||'Modalidade')}</h3><p>${esc(mod?.descricao||'')}</p></div>
+      <div class="movement-modality-meta-v0230">
+        <small>${(mod?.ambientes||[]).map(esc).join(' • ')}</small>
+        <small>${(mod?.equipamentosComuns||[]).map(esc).join(' • ')}</small>
+      </div>
+    </div>
+    <div class="movement-objectives-v0230">${(mod?.objetivos||[]).map(hpMovementObjectiveV0230).join('')}</div>
+  </section>`;
+}
+
+async function openMovementLibraryV0230(){
+  const box=$('#clinicalActionContent');
+  const modal=$('#clinicalActionModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('movement-library-modal-v0230');
+  box.className='clinical-action-shell movement-library-shell-v0230';
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY • v0.23.0</span><h2>Biblioteca de Movimento & Esportes</h2><p>Carregando taxonomia e vínculos com o catálogo profissional existente...</p></div>`;
+
+  try{
+    const data=await api('/api/biblioteca-movimento');
+    box.innerHTML=`<div class="modal-heading movement-library-heading-v0230">
+      <div>
+        <button type="button" class="back-link" id="movementLibraryBackV0230">← Treino & Nutrição</button>
+        <span class="eyebrow">AESYN • SPORTS & MOVEMENT LIBRARY FOUNDATION</span>
+        <h2>Biblioteca de Movimento & Esportes</h2>
+        <p>${esc(data.estrutura||'Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão')}</p>
+      </div>
+      <div class="movement-library-summary-v0230">
+        <span><b>${data.totalModalidades||0}</b> modalidades</span>
+        <span><b>${data.totalExerciciosAtivos||0}</b> exercícios ativos</span>
+      </div>
+    </div>
+
+    <div class="movement-library-principle-v0230">
+      <b>Uma fonte de verdade</b>
+      <span>${esc(data.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span>
+    </div>
+
+    <div class="movement-library-filter-v0230">
+      <input id="movementSearchV0230" class="search-input" placeholder="Buscar modalidade, objetivo, capacidade ou exercício">
+    </div>
+
+    <div id="movementLibraryListV0230" class="movement-library-list-v0230">
+      ${(data.modalidades||[]).map(hpMovementModalityV0230).join('')}
+    </div>
+
+    <div class="movement-library-safety-v0230">
+      <b>Biblioteca não é prescrição</b>
+      <span>${esc(data.regraDeSeguranca||'Seleção e progressão dependem do contexto individual e do julgamento profissional.')}</span>
+    </div>`;
+
+    $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
+
+    const search=$('#movementSearchV0230');
+    search.oninput=()=>{
+      const q=(search.value||'').trim().toLowerCase();
+      $$('#movementLibraryListV0230 .movement-modality-v0230').forEach(el=>{
+        el.hidden=!!q&&!el.textContent.toLowerCase().includes(q);
+      });
+    };
+
+    $$('[data-movement-exercise-v0230]').forEach(btn=>{
+      btn.onclick=()=>{
+        closeClinicalAction();
+        openExerciseLibrary2();
+      };
+    });
+  }catch(err){
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY</span><h2>Biblioteca indisponível</h2><p>${esc(err.message||'Não foi possível carregar a estrutura agora.')}</p></div>`;
+  }
+}

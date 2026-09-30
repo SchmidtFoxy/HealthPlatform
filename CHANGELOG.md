@@ -1,3 +1,16 @@
+# v0.23.0 — Sports & Movement Library Foundation
+
+- Inicia a fase `v0.23.x — Sports & Movement Library`.
+- Implementa a taxonomia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`.
+- Adiciona Musculação, Caminhada, Corrida, Calistenia, Mobilidade, Condicionamento e Ciclismo.
+- Adiciona `GET /api/biblioteca-movimento`.
+- A biblioteca referencia exclusivamente exercícios do catálogo profissional já existente.
+- Integra a biblioteca ao Professional Workout Studio.
+- Permite busca textual por modalidade, objetivo, capacidade e exercício.
+- Não cria migration, tabela de exercício paralela ou duplicação de movimentos.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.0.
+- Próxima etapa: v0.23.1 — Movement Taxonomy & Filters 2.0.
+
 # v0.22.9 — Daily Premium UX 2.0
 
 - Fecha a fase `v0.22.x — AESYN Daily`.

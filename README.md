@@ -24,6 +24,15 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Sports & Movement Library Foundation
+
+A `v0.23.0` inicia a fase de biblioteca esportiva com a taxonomia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`.
+
+A fundação começa com **Musculação, Caminhada, Corrida, Calistenia, Mobilidade, Condicionamento e Ciclismo**. A taxonomia não cria uma segunda tabela de exercícios: o endpoint `/api/biblioteca-movimento` referencia exclusivamente o catálogo profissional já existente em `Exercicios`.
+
+Isso permite ampliar modalidades sem quebrar o Workout Builder e sem duplicar movimentos. A biblioteca organiza possibilidades; seleção, progressão e prescrição continuam dependentes do contexto individual e do julgamento profissional.
+
 ### Daily Premium UX 2.0
 
 A `v0.22.9` fecha a fase `v0.22.x` refinando a experiência do Daily sem criar novas regras clínicas. Os blocos de visão do dia, contexto, plano, ações, fluxo rápido, reflexão e histórico passam a compartilhar hierarquia visual, espaçamento, foco, toque e estados mais consistentes.
@@ -197,7 +206,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.9 — Daily Premium UX 2.0`
+- **Versão funcional:** `v0.23.0 — Sports & Movement Library Foundation`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
