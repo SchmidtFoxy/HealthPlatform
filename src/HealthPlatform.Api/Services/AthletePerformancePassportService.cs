@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.30.2",
+            "v0.30.3",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Notes Persistence habilita persistência profissional reutilizando NotasInternasProfissionais, com autoria, timestamps, escopo do paciente e auditoria. Notas permanecem privadas da equipe e não geram decisão clínica automática.")
+            "Progress Review History & Filters adiciona consulta histórica profissional com filtros por campo, autor, período e status de arquivamento, preservando privacidade e auditoria. Não gera decisão clínica automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

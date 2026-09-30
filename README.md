@@ -1284,3 +1284,35 @@ Nenhuma tabela duplicada foi criada. A feature reutiliza `NotasInternasProfissio
 
 **Próxima etapa:** `v0.30.3 — Progress Review History & Filters`.
 
+---
+
+## v0.30.3 — Progress Review History & Filters
+
+Adiciona histórico filtrável das notas profissionais de revisão de progresso.
+
+### Filtros
+- campo estruturado;
+- autor;
+- período inicial/final;
+- incluir ou ocultar arquivadas;
+- ordenação ascendente ou descendente.
+
+### API
+`GET /api/pacientes/{pacienteId}/performance/progress-review-notes/history`
+
+Parâmetros opcionais:
+- `campo`;
+- `autorUsuarioId`;
+- `deUtc`;
+- `ateUtc`;
+- `incluirArquivadas`;
+- `ordenacao=asc|desc`.
+
+### UI
+A modal **Revisão de progresso** agora possui filtros antes da listagem de notas, preservando criação, edição e arquivamento.
+
+### Privacidade
+Histórico e filtros continuam restritos à equipe profissional. O portal do paciente não recebe endpoint de histórico dessas notas.
+
+**Próxima etapa:** `v0.30.4 — Progress Review Context Links`.
+

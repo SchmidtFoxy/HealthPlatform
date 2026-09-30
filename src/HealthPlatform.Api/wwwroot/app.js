@@ -973,10 +973,33 @@ async function hpOpenProgressReviewNotesV0302(p){
   ];
 
   const render=async()=>{
-    const notes=await api(`/api/pacientes/${p.id}/performance/progress-review-notes`);
+    const filterForm=$('#progressReviewFiltersV0303');
+    const filtro=filterForm?new FormData(filterForm):null;
+    const qs=new URLSearchParams();
+    if(filtro){
+      const campo=filtro.get('campo'); if(campo) qs.set('campo',campo);
+      const autor=filtro.get('autorUsuarioId'); if(autor) qs.set('autorUsuarioId',autor);
+      const de=filtro.get('deUtc'); if(de) qs.set('deUtc',`${de}T00:00:00Z`);
+      const ate=filtro.get('ateUtc'); if(ate) qs.set('ateUtc',`${ate}T23:59:59Z`);
+      const ordenacao=filtro.get('ordenacao'); if(ordenacao) qs.set('ordenacao',ordenacao);
+      if(filtro.get('incluirArquivadas')) qs.set('incluirArquivadas','true');
+    }
+    const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/history${qs.toString()?`?${qs.toString()}`:''}`);
+    const notes=history.itens||[];
     const host=$('#progressReviewNotesV0302');
 
-    host.innerHTML=`<form id="progressReviewNoteFormV0302" class="clinical-form internal-note-form-v0204">
+    host.innerHTML=`<form id="progressReviewFiltersV0303" class="clinical-form internal-note-form-v0204" data-progress-review-history-v0303="${HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303}">
+      <div class="form-grid">
+        <label>Campo<select name="campo"><option value="">Todos</option>${campos.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('')}</select></label>
+        <label>Autor ID<input name="autorUsuarioId" placeholder="GUID opcional"></label>
+        <label>De<input name="deUtc" type="date"></label>
+        <label>Até<input name="ateUtc" type="date"></label>
+        <label>Ordenação<select name="ordenacao"><option value="desc">Mais recentes</option><option value="asc">Mais antigas</option></select></label>
+        <label><input name="incluirArquivadas" type="checkbox"> Incluir arquivadas</label>
+      </div>
+      <div class="form-actions"><button type="button" class="secondary" id="clearProgressReviewFiltersV0303">Limpar filtros</button><button class="primary" type="submit">Aplicar filtros</button></div>
+    </form>
+    <form id="progressReviewNoteFormV0302" class="clinical-form internal-note-form-v0204">
       <input type="hidden" name="id">
       <div class="form-grid">
         <label>Campo estruturado<select name="campo" required>${campos.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('')}</select></label>
@@ -990,6 +1013,13 @@ async function hpOpenProgressReviewNotesV0302(p){
       <p>${esc(n.conteudo||'').replace(/\n/g,'<br>')}</p>
       <div class="internal-note-actions-v0204"><button type="button" class="ghost" data-progress-note-edit="${n.id}">Editar</button><button type="button" class="ghost danger" data-progress-note-archive="${n.id}">Arquivar</button></div>
     </article>`).join(''):'<div class="empty">Nenhuma nota de revisão registrada.</div>'}</div>`;
+
+    const filters=$('#progressReviewFiltersV0303');
+    if(filters){
+      filters.onsubmit=async e=>{e.preventDefault();await render();};
+      const clearBtn=$('#clearProgressReviewFiltersV0303');
+      if(clearBtn) clearBtn.onclick=async()=>{filters.reset();await render();};
+    }
 
     const form=$('#progressReviewNoteFormV0302');
     $('#cancelProgressReviewNoteV0302').onclick=()=>{form.reset();form.elements.id.value='';};
@@ -4439,6 +4469,7 @@ const HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296='v0.29.6';
 const HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0';
 const HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1';
 const HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2';
+const HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -9671,7 +9702,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.2';
+const HP_MVP_VERSION='0.30.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

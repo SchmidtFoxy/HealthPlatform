@@ -110,6 +110,17 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewHistoryResponse(
+    IReadOnlyCollection<ProgressReviewPersistedNoteResponse> Itens,
+    int Total,
+    string? Campo,
+    Guid? AutorUsuarioId,
+    DateTime? DeUtc,
+    DateTime? AteUtc,
+    bool IncluirArquivadas,
+    string Ordenacao);
+
 public sealed record ProgressReviewPersistedNoteResponse(
     Guid Id,
     string Campo,

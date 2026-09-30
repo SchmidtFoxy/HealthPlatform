@@ -53,6 +53,76 @@ public class ProgressReviewNotesController(
         return Ok(notas.Select(Mapear).ToArray());
     }
 
+
+    [HttpGet("history")]
+    public async Task<ActionResult<ProgressReviewHistoryResponse>> Historico(
+        Guid pacienteId,
+        [FromQuery] string? campo = null,
+        [FromQuery] Guid? autorUsuarioId = null,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken ct = default)
+    {
+        if (!await PacienteExiste(pacienteId, ct))
+            return NotFound(new { message = "Paciente nao encontrado." });
+
+        string? campoNormalizado = null;
+        if (!string.IsNullOrWhiteSpace(campo))
+        {
+            if (!TryNormalizarCampo(campo, out var valido))
+                return BadRequest(new { message = "Campo de revisao invalido." });
+
+            campoNormalizado = valido;
+        }
+
+        if (deUtc.HasValue && ateUtc.HasValue && deUtc.Value > ateUtc.Value)
+            return BadRequest(new { message = "Periodo invalido: deUtc deve ser anterior ou igual a ateUtc." });
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCategoria));
+
+        if (!incluirArquivadas)
+            query = query.Where(x => !x.Arquivada);
+
+        if (campoNormalizado is not null)
+        {
+            var categoria = PrefixoCategoria + campoNormalizado;
+            query = query.Where(x => x.Categoria == categoria);
+        }
+
+        if (autorUsuarioId.HasValue)
+            query = query.Where(x => x.AutorUsuarioId == autorUsuarioId.Value);
+
+        if (deUtc.HasValue)
+            query = query.Where(x => (x.UpdatedAtUtc ?? x.CreatedAtUtc) >= deUtc.Value);
+
+        if (ateUtc.HasValue)
+            query = query.Where(x => (x.UpdatedAtUtc ?? x.CreatedAtUtc) <= ateUtc.Value);
+
+        var desc = !string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        query = desc
+            ? query.OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            : query.OrderBy(x => x.UpdatedAtUtc ?? x.CreatedAtUtc);
+
+        var notas = await query.ToListAsync(ct);
+
+        return Ok(new ProgressReviewHistoryResponse(
+            notas.Select(Mapear).ToArray(),
+            notas.Count,
+            campoNormalizado,
+            autorUsuarioId,
+            deUtc,
+            ateUtc,
+            incluirArquivadas,
+            desc ? "desc" : "asc"));
+    }
+
     [HttpPost]
     public async Task<ActionResult<ProgressReviewPersistedNoteResponse>> Criar(
         Guid pacienteId,

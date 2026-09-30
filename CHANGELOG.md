@@ -1,4 +1,17 @@
-﻿# v0.30.2 — Progress Review Notes Persistence
+﻿# v0.30.3 — Progress Review History & Filters
+
+- Adiciona `ProgressReviewHistoryResponse`.
+- Adiciona endpoint `GET /api/pacientes/{pacienteId}/performance/progress-review-notes/history`.
+- Adiciona filtros por campo, autor, período, arquivamento e ordenação.
+- Mantém escopo por organização e paciente.
+- Mantém notas privadas da equipe profissional.
+- Não adiciona endpoint equivalente no portal do paciente.
+- Adiciona UI de filtros à modal Revisão de progresso.
+- Preserva CRUD e auditoria existentes da v0.30.2.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.4 — Progress Review Context Links.
+
+# v0.30.2 — Progress Review Notes Persistence
 
 - Habilita persistência real das notas de revisão de progresso.
 - Reutiliza `NotaInternaProfissional` e `AuditLog`.
