@@ -16,6 +16,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Daily Readiness Context 2.0
+
+A `v0.22.2` transforma o Morning Check-in em uma leitura diária **explicável**. Sono, energia, dor, disposição e recuperação aparecem como fatores separados, com indicação descritiva de contexto favorável, intermediário ou de atenção.
+
+O AESYN mostra **por que** o dia está sendo lido daquela forma, sem criar um score clínico opaco. Um único fator não determina conduta, treino ou diagnóstico; a leitura existe para apoiar conversa, autocuidado e decisão profissional contextualizada.
+
 ### Morning Check-in 2.0
 
 A `v0.22.1` evolui o check-in diário do paciente para uma experiência mobile-first de aproximadamente **30 segundos**. O fluxo organiza sono, qualidade do sono, energia, dor, disposição e recuperação percebida com escalas claras e feedback visual imediato.
@@ -137,8 +144,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.1 — Morning Check-in 2.0`
-- **Revisão local corrente:** `v0.22.1-r2 — Morning Check-in Guide Copy Gate Alignment`
+- **Versão funcional:** `v0.22.2 — Daily Readiness Context 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

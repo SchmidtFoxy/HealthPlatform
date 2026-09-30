@@ -9198,7 +9198,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.1';
+const HP_MVP_VERSION='0.22.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12241,4 +12241,90 @@ renderPatientTab=function(d){
   if(!host||!synthesis||host.querySelector('[data-aesyn-daily-v0220]'))return;
   synthesis.insertAdjacentHTML('afterend',hpAesynDailyV0220(d));
   hpWireAesynDailyV0220(host);
+};
+
+
+// ===== v0.22.2 — Daily Readiness Context 2.0 =====
+const HP_DAILY_READINESS_CONTEXT_V0222='v0.22.2';
+
+function hpReadinessNumberV0222(value){
+  const n=Number(value);
+  return Number.isFinite(n)?n:null;
+}
+function hpReadinessBandV0222(value,inverse=false){
+  const n=hpReadinessNumberV0222(value);
+  if(n==null)return {level:'Sem dado',tone:'neutral'};
+  const effective=inverse?10-n:n;
+  if(effective>=8)return {level:'Favorável',tone:'positive'};
+  if(effective>=5)return {level:'Intermediário',tone:'neutral'};
+  return {level:'Atenção',tone:'attention'};
+}
+function hpReadinessFactorV0222(label,value,inverse,explain){
+  const band=hpReadinessBandV0222(value,inverse);
+  return {label,value:hpReadinessNumberV0222(value),level:band.level,tone:band.tone,explain};
+}
+function hpReadinessContextDataV0222(d){
+  const portal=d?.portal||{};
+  const readiness=portal?.prontidaoHoje||portal?.readinessHoje||{};
+  const sleepHours=hpReadinessNumberV0222(readiness.sonoHoras ?? portal.sonoHorasHoje);
+
+  const factors=[
+    hpReadinessFactorV0222('Qualidade do sono',readiness.sonoQualidade,false,'Percepção da qualidade do sono registrada hoje.'),
+    hpReadinessFactorV0222('Energia',readiness.energiaNivel,false,'Energia percebida para as atividades do dia.'),
+    hpReadinessFactorV0222('Dor corporal',readiness.dorNivel,true,'Dor mais alta reduz a leitura favorável deste fator.'),
+    hpReadinessFactorV0222('Disposição',readiness.disposicaoNivel,false,'Disposição percebida para executar o plano.'),
+    hpReadinessFactorV0222('Recuperação',readiness.recuperacaoNivel,false,'Percepção de recuperação após esforço e rotina recente.')
+  ];
+
+  if(sleepHours!=null){
+    factors.unshift({
+      label:'Horas de sono',
+      value:sleepHours,
+      level:sleepHours>=7?'Favorável':(sleepHours>=5?'Intermediário':'Atenção'),
+      tone:sleepHours>=7?'positive':(sleepHours>=5?'neutral':'attention'),
+      explain:'Duração do sono registrada desde o dia anterior.',
+      suffix:'h'
+    });
+  }
+
+  const known=factors.filter(x=>x.value!=null);
+  const attention=known.filter(x=>x.tone==='attention');
+  const favorable=known.filter(x=>x.tone==='positive');
+
+  let summary='Contexto parcial';
+  if(known.length>=4 && attention.length===0) summary='Sinais majoritariamente favoráveis';
+  else if(attention.length>=2) summary='Há fatores que merecem atenção';
+  else if(known.length>=3) summary='Contexto misto';
+
+  return {factors,known,attention,favorable,summary};
+}
+function hpReadinessContextV0222(d){
+  const r=hpReadinessContextDataV0222(d);
+  return `<section class="readiness-context-v0222" data-readiness-context-v0222="${HP_DAILY_READINESS_CONTEXT_V0222}">
+    <div class="readiness-context-head-v0222">
+      <div><span class="eyebrow">DAILY READINESS CONTEXT 2.0</span><h3>O que está influenciando o dia.</h3><p>Uma leitura transparente dos sinais informados pela própria pessoa no Morning Check-in.</p></div>
+      <div class="readiness-context-summary-v0222"><b>${esc(r.summary)}</b><span>${r.known.length} fator(es) com dado</span></div>
+    </div>
+    <div class="readiness-context-factors-v0222">
+      ${r.factors.map(f=>`<article data-readiness-tone-v0222="${esc(f.tone)}">
+        <div class="readiness-context-factor-head-v0222"><span>${esc(f.label)}</span><b>${f.value==null?'—':`${esc(f.value)}${f.suffix||'/10'}`}</b></div>
+        <div class="readiness-context-level-v0222">${esc(f.level)}</div>
+        <p>${esc(f.explain)}</p>
+      </article>`).join('')}
+    </div>
+    <div class="readiness-context-why-v0222">
+      <div><b>Fatores favoráveis</b><span>${r.favorable.length?r.favorable.map(x=>x.label).join(' · '):'Nenhum fator favorável explícito nesta leitura.'}</span></div>
+      <div><b>Fatores de atenção</b><span>${r.attention.length?r.attention.map(x=>x.label).join(' · '):'Nenhum fator de atenção explícito nesta leitura.'}</span></div>
+    </div>
+    <div class="readiness-context-action-v0222"><b>Como usar isso</b><span>Leia esses sinais junto do plano profissional, do contexto de vida e do que a pessoa consegue fazer hoje. Um único fator não deve determinar sozinho a conduta.</span></div>
+    <div class="readiness-context-safety-v0222"><b>Sem score mágico</b><span>Esta leitura não diagnostica, não classifica risco clínico e não ajusta treino automaticamente. Ela apenas explica os sinais registrados e ajuda a contextualizar o dia.</span></div>
+  </section>`;
+}
+const __renderPatientTab_v0222=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0222(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),daily=host?.querySelector('[data-aesyn-daily-v0220]');
+  if(!host||!daily||host.querySelector('[data-readiness-context-v0222]'))return;
+  daily.insertAdjacentHTML('afterend',hpReadinessContextV0222(d));
 };

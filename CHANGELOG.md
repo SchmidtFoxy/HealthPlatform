@@ -1,3 +1,14 @@
+# v0.22.2 — Daily Readiness Context 2.0
+
+- Adiciona leitura explicável dos fatores do Morning Check-in.
+- Separa sono, energia, dor, disposição e recuperação em fatores compreensíveis.
+- Mostra fatores favoráveis e fatores que merecem atenção.
+- Resume o contexto do dia sem criar score clínico opaco.
+- Um único fator não determina automaticamente treino ou conduta.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.2.
+- Próxima etapa: v0.22.3 — Today's Plan 2.0.
+
 # v0.22.1-r2 — Morning Check-in Guide Copy Gate Alignment (local)
 
 - Corrige o gate histórico `[1373/1376]` do guia do Morning Check-in.
