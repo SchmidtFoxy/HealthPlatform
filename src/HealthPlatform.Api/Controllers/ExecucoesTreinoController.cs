@@ -19,7 +19,10 @@ public sealed record ExecucaoItemTreinoRequest(
     bool Concluido,
     string? Observacoes,
     Guid? ExercicioAlternativoId,
-    string? MotivoAlternativa);
+    string? MotivoAlternativa,
+    int? RirRealizado = null,
+    string? CadenciaRealizada = null,
+    string? TecnicaExecutada = null);
 
 public sealed record RegistrarExecucaoTreinoRequest(
     Guid SessaoTreinoId,
@@ -92,7 +95,8 @@ public sealed class ExecucoesTreinoPacienteController(
         if (request.Itens.Any(x =>
             (x.SeriesRealizadas.HasValue && x.SeriesRealizadas < 0) ||
             (x.CargaRealizada.HasValue && x.CargaRealizada < 0) ||
-            (x.EsforcoPercebido.HasValue && (x.EsforcoPercebido < 0 || x.EsforcoPercebido > 10))))
+            (x.EsforcoPercebido.HasValue && (x.EsforcoPercebido < 0 || x.EsforcoPercebido > 10)) ||
+            (x.RirRealizado.HasValue && (x.RirRealizado < 0 || x.RirRealizado > 10))))
             return BadRequest(new { message = "Valores de execucao invalidos." });
 
         var inicio = request.DataHoraInicioUtc.ToUniversalTime();
@@ -124,6 +128,9 @@ public sealed class ExecucoesTreinoPacienteController(
                 CargaRealizada = i.CargaRealizada,
                 UnidadeCarga = Limpar(i.UnidadeCarga),
                 EsforcoPercebido = i.EsforcoPercebido,
+                RirRealizado = i.RirRealizado,
+                CadenciaRealizada = Limpar(i.CadenciaRealizada),
+                TecnicaExecutada = Limpar(i.TecnicaExecutada),
                 Concluido = i.Concluido,
                 Observacoes = MontarObservacaoItem(i.Observacoes, i.ExercicioAlternativoId,
                     i.ExercicioAlternativoId.HasValue && alternativas.TryGetValue(i.ExercicioAlternativoId.Value, out var alternativa) ? alternativa.Nome : null,
@@ -261,6 +268,9 @@ public sealed class ExecucoesTreinoPacienteController(
             i.CargaRealizada,
             i.UnidadeCarga,
             i.EsforcoPercebido,
+            i.RirRealizado,
+            i.CadenciaRealizada,
+            i.TecnicaExecutada,
             i.Concluido,
             i.Observacoes
         })

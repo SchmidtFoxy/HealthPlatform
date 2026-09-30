@@ -13,6 +13,9 @@ public class ItemTreino : BaseEntity
     public string? UnidadeCarga { get; set; }
     public int? DescansoSegundos { get; set; }
     public int? TempoSegundos { get; set; }
+    public int? RirAlvo { get; set; }
+    public string? Cadencia { get; set; }
+    public string? TecnicaAvancada { get; set; }
     public string? Observacoes { get; set; }
 
     public SessaoTreino SessaoTreino { get; set; } = null!;

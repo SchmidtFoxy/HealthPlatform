@@ -1,4 +1,4 @@
-﻿## v0.27.0 — Workout Intelligence 3.0 Foundation
+## v0.27.0 — Workout Intelligence 3.0 Foundation
 
 Inicia a fase **Workout Intelligence 3.0** sobre os dados de treino que o AESYN já possui, sem criar schema prematuramente e sem automatizar decisões profissionais.
 
@@ -851,3 +851,17 @@ A direção de evolução, pendências protegidas e gates de produto estão docu
 ## v0.26.2 — Triathlon 2.0
 
 O Explore esportivo aprofunda Triathlon em três disciplinas (natação, ciclismo e corrida), duas transições (T1/T2), capacidades de suporte e referências a sessões-modelo já cadastradas. A camada é educacional/editorial: não gera distância, pace, potência, zonas, volume, intensidade, estratégia nutricional, aptidão ou retorno ao esporte automaticamente.
+
+## v0.27.1 — Prescription Variables 3.0
+
+A prescrição de treino passa a tratar **RIR-alvo**, **Cadência** e **Técnica avançada** como variáveis estruturadas do exercício, deixando de depender de observações livres. A execução também pode registrar RIR realizado, cadência realizada e técnica executada para comparação longitudinal.
+
+- RIR-alvo: inteiro de 0 a 10 por item prescrito;
+- Cadência: texto curto preservado sem interpretação automática (ex.: `3-1-1-0`);
+- Técnica avançada: estratégia explicitamente prescrita pelo profissional;
+- execução: `RirRealizado`, `CadenciaRealizada` e `TecnicaExecutada`;
+- Workout Intelligence passa a reconhecer RIR, cadência e técnica como dimensões estruturadas.
+
+**Guardrail:** Prescription Variables 3.0 não automatiza progressão e não prescreve ou altera automaticamente qualquer variável. A decisão continua sob responsabilidade profissional.
+
+Próxima etapa: **v0.27.2 — Prescribed vs Performed 3.0**.

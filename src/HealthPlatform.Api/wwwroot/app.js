@@ -4268,7 +4268,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
       const items=source?.itens?.length?source.itens:[null];
       items.forEach(item=>addItem(el,item));
     }
-    function readItem(r){return {exercicioId:r.querySelector('[name=exerciseId]').value,series:Number(r.querySelector('[name=series]').value||0),repeticoes:r.querySelector('[name=reps]').value.trim(),carga:r.querySelector('[name=load]').value?Number(r.querySelector('[name=load]').value):null,unidadeCarga:r.querySelector('[name=loadUnit]').value.trim()||null,descansoSegundos:r.querySelector('[name=rest]').value?Number(r.querySelector('[name=rest]').value):null,tempoSegundos:r.querySelector('[name=time]').value?Number(r.querySelector('[name=time]').value):null,observacoes:r.querySelector('[name=itemObs]').value.trim()||null}}
+    function readItem(r){return {exercicioId:r.querySelector('[name=exerciseId]').value,series:Number(r.querySelector('[name=series]').value||0),repeticoes:r.querySelector('[name=reps]').value.trim(),carga:r.querySelector('[name=load]').value?Number(r.querySelector('[name=load]').value):null,unidadeCarga:r.querySelector('[name=loadUnit]').value.trim()||null,descansoSegundos:r.querySelector('[name=rest]').value?Number(r.querySelector('[name=rest]').value):null,tempoSegundos:r.querySelector('[name=time]').value?Number(r.querySelector('[name=time]').value):null,observacoes:r.querySelector('[name=itemObs]').value.trim()||null,rirAlvo:r.querySelector('[name=rirAlvo]').value===''?null:Number(r.querySelector('[name=rirAlvo]').value),cadencia:r.querySelector('[name=cadencia]').value.trim()||null,tecnicaAvancada:r.querySelector('[name=tecnicaAvancada]').value.trim()||null}}
     function addItem(session,item=null){
       const list=$('.workout-items',session),row=document.createElement('div');row.className='workout-item-builder workout-item-builder2';
       row.innerHTML=`<label class="workout-exercise-search">Buscar exercício<input name="exerciseSearch" type="search" placeholder="Nome, grupo muscular ou equipamento"></label>
@@ -4279,6 +4279,9 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
         <label>Unidade<input name="loadUnit" value="${esc(item?.unidadeCarga||'kg')}"></label>
         <label>Descanso (s)<input name="rest" type="number" min="0" value="${item?.descansoSegundos??60}"></label>
         <label>Tempo (s)<input name="time" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
+        <label>RIR alvo<input name="rirAlvo" type="number" min="0" max="10" value="${item?.rirAlvo??''}"></label>
+        <label>Cadência<input name="cadencia" value="${esc(item?.cadencia||'')}" placeholder="Ex.: 3-1-1-0"></label>
+        <label>Técnica avançada<input name="tecnicaAvancada" value="${esc(item?.tecnicaAvancada||'')}" placeholder="Ex.: Drop set"></label>
         <label>Observação<input name="itemObs" value="${esc(item?.observacoes||'')}"></label>
         <div class="workout-item-tools"><button type="button" class="ghost duplicate-workout-item">Duplicar</button><button type="button" class="danger remove-workout-item" aria-label="Remover exercício" title="Remover exercício">Remover exercício</button></div>`;
       list.appendChild(row);wireExerciseFilter(row);
@@ -4333,6 +4336,8 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
 }
 
 // ===== v0.27.0 — Workout Intelligence 3.0 Foundation =====
+
+const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
 
 function hpWorkoutIntelligenceDimensionV0270(x){
@@ -4797,6 +4802,9 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
       unidadeCarga:row.querySelector('[name=unidadeCarga]').value.trim()||null,
       descansoSegundos:row.querySelector('[name=descanso]').value===''?null:Number(row.querySelector('[name=descanso]').value),
       tempoSegundos:row.querySelector('[name=tempo]').value===''?null:Number(row.querySelector('[name=tempo]').value),
+      rirAlvo:row.querySelector('[name=rirAlvo]').value===''?null:Number(row.querySelector('[name=rirAlvo]').value),
+      cadencia:row.querySelector('[name=cadencia]').value.trim()||null,
+      tecnicaAvancada:row.querySelector('[name=tecnica]')?.value||null,
       observacoes:row.querySelector('[name=itemObs]').value.trim()||null,
       tecnica:row.querySelector('[name=tecnica]')?.value||'Normal',
       grupoBiset:row.querySelector('[name=grupoBiset]')?.value.trim()||null,
@@ -4845,6 +4853,8 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
         <label>Unid.<input name="unidadeCarga" value="${esc(item?.unidadeCarga||'kg')}"></label>
         <label>Descanso<input name="descanso" type="number" min="0" value="${item?.descansoSegundos??defaultRest()}"></label>
         <label>Tempo<input name="tempo" type="number" min="0" value="${item?.tempoSegundos??''}"></label>
+        <label>RIR alvo<input name="rirAlvo" type="number" min="0" max="10" value="${item?.rirAlvo??''}"></label>
+        <label>Cadência<input name="cadencia" value="${esc(item?.cadencia||'')}" placeholder="Ex.: 3-1-1-0"></label>
         <label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}" placeholder="Cues, RIR/RPE e orientações do exercício"></label>
         <section class="advanced-technique-panel span2" data-technique-panel>
           <div class="advanced-technique-head"><div><small>TÉCNICA AVANÇADA</small><strong>BISET, DROP ou progressão de carga</strong></div><label>Estratégia<select name="tecnica"><option value="Normal">Normal</option><option value="Biset">BISET / conjugado</option><option value="DropSet">DROP set</option><option value="ProgressaoCarga">Progressão de carga</option></select></label></div>
@@ -5624,7 +5634,7 @@ async function loadPatientWorkout(){
           <div class="patient-exercise-card">
             <div class="exercise-order">${idx+1}</div>
             <div class="exercise-main"><div class="exercise-title"><strong>${esc(i.exercicio)}</strong>${i.grupoMuscular?`<small>${esc(i.grupoMuscular)}${i.equipamento?' • '+esc(i.equipamento):''}</small>`:''}</div>
-              <div class="exercise-prescription"><b>${i.series} × ${esc(i.repeticoes)}</b>${i.carga!=null?`<span>${num(i.carga)} ${esc(i.unidadeCarga||'kg')}</span>`:''}${i.descansoSegundos!=null?`<span>${i.descansoSegundos}s descanso</span>`:''}${i.tempoSegundos!=null?`<span>${i.tempoSegundos}s execução</span>`:''}</div>
+              <div class="exercise-prescription"><b>${i.series} × ${esc(i.repeticoes)}</b>${i.carga!=null?`<span>${num(i.carga)} ${esc(i.unidadeCarga||'kg')}</span>`:''}${i.descansoSegundos!=null?`<span>${i.descansoSegundos}s descanso</span>`:''}${i.tempoSegundos!=null?`<span>${i.tempoSegundos}s execução</span>`:''}${i.rirAlvo!=null?`<span>RIR ${i.rirAlvo}</span>`:''}${i.cadencia?`<span>Cadência ${esc(i.cadencia)}</span>`:''}${i.tecnicaAvancada?`<span>${esc(i.tecnicaAvancada)}</span>`:''}</div>
               ${i.observacoes?`<p>${esc(i.observacoes)}</p>`:''}
             </div>
             ${i.videoUrl?`<a class="exercise-video" href="${esc(i.videoUrl)}" target="_blank" rel="noopener noreferrer">▶ Ver vídeo</a>`:''}
@@ -9396,7 +9406,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.27.0';
+const HP_MVP_VERSION='0.27.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,4 +1,4 @@
-﻿# AESYN Performance — Roadmap Mestre
+# AESYN Performance — Roadmap Mestre
 
 > **Hotfix local v0.22.1-r2:** alinha o gate histórico do guia do Morning Check-in à UX atual. O teste deixa de exigir a cópia antiga `Leva menos de 1 minuto.` e passa a aceitar a mensagem atual de aproximadamente 30 segundos. Revisão local; sem commit individual.
 
@@ -1924,5 +1924,20 @@ A fase 0.27.x começa consolidando o que já existe antes de ampliar o schema. A
 - guardrail contra progressão, regressão ou prescrição automática;
 - nenhuma migration ou tabela nova.
 
-**Próxima etapa:** `v0.27.1 — Prescription Variables 3.0`.
+**Próxima etapa concluída em `v0.27.1 — Prescription Variables 3.0`.**
 
+## ✅ v0.27.1 — Prescription Variables 3.0 — CONCLUÍDA
+
+A segunda etapa do Workout Intelligence transforma lacunas da Foundation em variáveis persistidas e comparáveis.
+
+**Entregue na v0.27.1:**
+- RIR-alvo estruturado na prescrição;
+- Cadência estruturada na prescrição;
+- Técnica avançada estruturada na prescrição;
+- RIR realizado, cadência realizada e técnica executada na execução;
+- migration `V0271PrescriptionVariables`;
+- Workout Builder com entrada explícita de RIR e cadência;
+- Workout Intelligence reconhecendo as três dimensões como estruturadas;
+- guardrail: não automatiza progressão nem altera variáveis de treino por conta própria.
+
+**Próxima etapa:** `v0.27.2 — Prescribed vs Performed 3.0`.

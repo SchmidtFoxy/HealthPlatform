@@ -1,4 +1,4 @@
-﻿## v0.27.0 — Workout Intelligence 3.0 Foundation
+## v0.27.0 — Workout Intelligence 3.0 Foundation
 - Inicia a fase Workout Intelligence 3.0 com endpoint profissional e endpoint do paciente.
 - Mapeia cobertura de séries, repetições, carga, descanso, tempo e RPE usando dados já existentes.
 - Expõe RIR, cadência, técnicas avançadas e periodização como lacunas estruturais explícitas, sem inferência automática.
@@ -3519,3 +3519,13 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Integra o detalhamento ao Explore mobile-first.
 - Não ensina combate e não gera golpes, rounds, contato, carga, volume, intensidade, aptidão, retorno ao contato ou liberação clínica automaticamente.
 - Não cria migration ou tabela nova.
+
+## v0.27.1 — Prescription Variables 3.0
+- Adiciona `RirAlvo`, `Cadencia` e `TecnicaAvancada` a `ItemTreino`.
+- Adiciona `RirRealizado`, `CadenciaRealizada` e `TecnicaExecutada` a `ExecucaoItemTreino`.
+- Inclui migration `20260930073000_V0271PrescriptionVariables`.
+- Atualiza o Workout Builder para prescrição explícita de RIR-alvo e Cadência e persiste a Técnica avançada selecionada.
+- Atualiza a execução para aceitar as variáveis realizadas.
+- Workout Intelligence 3.0 passa a classificar RIR, Cadência e Técnica avançada como dimensões estruturadas.
+- Mantém o guardrail: não automatiza progressão e não prescreve ou altera automaticamente qualquer variável.
+- Próxima etapa: v0.27.2 — Prescribed vs Performed 3.0.

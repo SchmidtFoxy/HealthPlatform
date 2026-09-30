@@ -666,6 +666,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.ToTable("ItensTreino");
             entity.Property(x => x.Repeticoes).HasMaxLength(50).IsRequired();
             entity.Property(x => x.UnidadeCarga).HasMaxLength(20);
+            entity.Property(x => x.Cadencia).HasMaxLength(40);
+            entity.Property(x => x.TecnicaAvancada).HasMaxLength(80);
             entity.HasIndex(x => new { x.SessaoTreinoId, x.Ordem });
             entity.HasOne(x => x.SessaoTreino).WithMany(x => x.Itens)
                 .HasForeignKey(x => x.SessaoTreinoId).OnDelete(DeleteBehavior.Cascade);
@@ -694,6 +696,8 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.ToTable("ExecucoesItensTreino");
             entity.Property(x => x.RepeticoesRealizadas).HasMaxLength(80);
             entity.Property(x => x.UnidadeCarga).HasMaxLength(20);
+            entity.Property(x => x.CadenciaRealizada).HasMaxLength(40);
+            entity.Property(x => x.TecnicaExecutada).HasMaxLength(80);
             entity.Property(x => x.Observacoes).HasMaxLength(1000);
             entity.HasIndex(x => x.ExecucaoTreinoId);
             entity.HasIndex(x => x.ItemTreinoId);

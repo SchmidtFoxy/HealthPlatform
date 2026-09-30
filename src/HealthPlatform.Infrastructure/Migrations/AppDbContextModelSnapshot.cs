@@ -828,6 +828,10 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<decimal?>("CargaRealizada")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("CadenciaRealizada")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
                     b.Property<bool>("Concluido")
                         .HasColumnType("boolean");
 
@@ -835,6 +839,9 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("EsforcoPercebido")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RirRealizado")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("ExecucaoTreinoId")
@@ -853,6 +860,10 @@ namespace HealthPlatform.Infrastructure.Migrations
 
                     b.Property<int?>("SeriesRealizadas")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TecnicaExecutada")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
                     b.Property<string>("UnidadeCarga")
                         .HasMaxLength(20)
@@ -1285,6 +1296,10 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<decimal?>("Carga")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("Cadencia")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -1300,6 +1315,9 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<int>("Ordem")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("RirAlvo")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Repeticoes")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1313,6 +1331,10 @@ namespace HealthPlatform.Infrastructure.Migrations
 
                     b.Property<int?>("TempoSegundos")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TecnicaAvancada")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
                     b.Property<string>("UnidadeCarga")
                         .HasMaxLength(20)

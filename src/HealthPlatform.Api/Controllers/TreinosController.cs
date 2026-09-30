@@ -33,7 +33,10 @@ public sealed class TreinosController(
         string? UnidadeCarga,
         int? DescansoSegundos,
         int? TempoSegundos,
-        string? Observacoes);
+        string? Observacoes,
+        int? RirAlvo = null,
+        string? Cadencia = null,
+        string? TecnicaAvancada = null);
 
     public sealed record SessaoTreinoRequest(
         string Nome,
@@ -493,7 +496,10 @@ public sealed class TreinosController(
                         ? Math.Max(0, itemOrigem.DescansoSegundos.Value + request.AjusteDescansoSegundos)
                         : null,
                     TempoSegundos = itemOrigem.TempoSegundos,
-                    Observacoes = itemOrigem.Observacoes
+                    Observacoes = itemOrigem.Observacoes,
+                    RirAlvo = itemOrigem.RirAlvo,
+                    Cadencia = itemOrigem.Cadencia,
+                    TecnicaAvancada = itemOrigem.TecnicaAvancada
                 });
             }
 
@@ -657,7 +663,8 @@ public sealed class TreinosController(
             x.Series <= 0 ||
             string.IsNullOrWhiteSpace(x.Repeticoes) ||
             (x.DescansoSegundos.HasValue && x.DescansoSegundos < 0) ||
-            (x.TempoSegundos.HasValue && x.TempoSegundos < 0)))
+            (x.TempoSegundos.HasValue && x.TempoSegundos < 0) ||
+            (x.RirAlvo.HasValue && (x.RirAlvo < 0 || x.RirAlvo > 10))))
             return "Series, repeticoes, descanso e tempo possuem valores invalidos.";
 
         var ids = itens.Select(x => x.ExercicioId).Distinct().ToArray();
@@ -700,7 +707,10 @@ public sealed class TreinosController(
                     UnidadeCarga = Limpar(i.UnidadeCarga),
                     DescansoSegundos = i.DescansoSegundos,
                     TempoSegundos = i.TempoSegundos,
-                    Observacoes = Limpar(i.Observacoes)
+                    Observacoes = Limpar(i.Observacoes),
+                    RirAlvo = i.RirAlvo,
+                    Cadencia = Limpar(i.Cadencia),
+                    TecnicaAvancada = Limpar(i.TecnicaAvancada)
                 });
             }
 
@@ -812,7 +822,7 @@ public sealed class TreinosController(
             {
                 i.ExercicioId, i.Ordem, i.Series, i.Repeticoes,
                 i.Carga, i.UnidadeCarga, i.DescansoSegundos,
-                i.TempoSegundos, i.Observacoes
+                i.TempoSegundos, i.RirAlvo, i.Cadencia, i.TecnicaAvancada, i.Observacoes
             })
         })
     };

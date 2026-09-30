@@ -11,6 +11,9 @@ public class ExecucaoItemTreino : BaseEntity
     public decimal? CargaRealizada { get; set; }
     public string? UnidadeCarga { get; set; }
     public int? EsforcoPercebido { get; set; }
+    public int? RirRealizado { get; set; }
+    public string? CadenciaRealizada { get; set; }
+    public string? TecnicaExecutada { get; set; }
     public bool Concluido { get; set; } = true;
     public string? Observacoes { get; set; }
 

@@ -82,6 +82,9 @@ public sealed class MeuTreinoPacienteController(
                         i.UnidadeCarga,
                         i.DescansoSegundos,
                         i.TempoSegundos,
+                        i.RirAlvo,
+                        i.Cadencia,
+                        i.TecnicaAvancada,
                         i.Observacoes
                     })
                 })
@@ -156,6 +159,9 @@ public sealed class MeuTreinoPacienteController(
                         i.UnidadeCarga,
                         i.DescansoSegundos,
                         i.TempoSegundos,
+                        i.RirAlvo,
+                        i.Cadencia,
+                        i.TecnicaAvancada,
                         i.Observacoes
                     })
                 })

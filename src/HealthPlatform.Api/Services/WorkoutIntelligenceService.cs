@@ -37,9 +37,9 @@ public static class WorkoutIntelligenceService
             DimensaoPrescricao("descanso", "Descanso", itensPlano.Count(x => x.DescansoSegundos.HasValue), itensPlano.Count, "Descanso está estruturado na prescrição; a execução ainda não registra descanso realizado."),
             DimensaoPrescricao("tempo", "Tempo", itensPlano.Count(x => x.TempoSegundos.HasValue), itensPlano.Count, "Tempo por item está estruturado na prescrição e não equivale a cadência automaticamente."),
             DimensaoExecucao("rpe", "RPE", execucoes.Count(x => x.EsforcoPercebido.HasValue), execucoes.Count, "RPE de sessão e esforço percebido por item contextualizam a execução."),
-            NaoEstruturada("rir", "RIR", "Ainda não existe campo estruturado próprio para RIR."),
-            NaoEstruturada("cadencia", "Cadência", "Tempo do item não equivale a cadência; a cadência terá contrato próprio em etapa posterior."),
-            NaoEstruturada("tecnicas", "Técnicas avançadas", "Observações livres podem citar técnicas, mas ainda não há contrato estruturado para compará-las."),
+            Dimensao("rir", "RIR", "Prescrição + execução", itensPlano.Count(x => x.RirAlvo.HasValue), itensPlano.Count, itensExecucao.Count(x => x.RirRealizado.HasValue), itensExecucao.Count, "RIR-alvo e RIR realizado passam a possuir campos estruturados próprios."),
+            Dimensao("cadencia", "Cadência", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.Cadencia)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.CadenciaRealizada)), itensExecucao.Count, "Cadência prescrita e realizada são preservadas como texto estruturado, sem inferência automática."),
+            Dimensao("tecnicas", "Técnicas avançadas", "Prescrição + execução", itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaAvancada)), itensPlano.Count, itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.TecnicaExecutada)), itensExecucao.Count, "Técnica avançada prescrita e técnica executada ficam explícitas para comparação futura."),
             NaoEstruturada("periodizacao", "Microciclo / mesociclo / bloco", "Fases e programas existem, mas a periodização 3.0 ainda será consolidada como camada própria.")
         };
 
@@ -52,10 +52,10 @@ public static class WorkoutIntelligenceService
             itensPlano.Count(x => !string.IsNullOrWhiteSpace(x.Repeticoes)), itensExecucao.Count(x => !string.IsNullOrWhiteSpace(x.RepeticoesRealizadas)));
 
         return new WorkoutIntelligenceResponse(
-            "v0.27.0", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
+            "v0.27.1", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
             resumo, dimensoes,
-            new[] { "Prescription Variables 3.0: RIR, cadência e técnicas avançadas estruturadas.", "Prescrito vs realizado por exercício e por sessão com contexto longitudinal.", "Progressão/regressão explicável, sempre revisada pelo profissional.", "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
-            "Workout Intelligence descreve dados registrados e cobertura do modelo. Nesta fundação não prescreve progressão, regressão, carga, volume, RPE/RIR, descanso, cadência, técnica ou periodização automaticamente.");
+            new[] { "Prescrito vs realizado por exercício e por sessão com contexto longitudinal.", "Progressão/regressão explicável, sempre revisada pelo profissional.", "Microciclo, mesociclo, bloco e deload sobre histórico preservado." },
+            "Workout Intelligence descreve dados registrados e cobertura do modelo. Prescription Variables 3.0 estrutura RIR, cadência e técnica avançada, mas não prescreve ou altera automaticamente qualquer variável.");
     }
 
     private static WorkoutIntelligenceDimensionResponse Dimensao(string codigo,string nome,string origem,int planejadosComDado,int totalPlanejados,int executadosComDado,int totalExecutados,string observacao)
