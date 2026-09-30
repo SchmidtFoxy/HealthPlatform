@@ -2556,3 +2556,20 @@ Fechar o ciclo 0.31.x consolidando fundação, persistência, status, histórico
 ### v0.32.0 — Progress Review Care Plan Foundation
 Criar a fundação estrutural para transformar itens acompanhados em um plano profissional organizado de próximos cuidados, mantendo separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.32.0 — Progress Review Care Plan Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewCarePlanFieldResponse`;
+- `ProgressReviewCarePlanFoundationResponse`;
+- seis campos estruturados do Care Plan;
+- endpoint profissional `care-plan-foundation`;
+- estado `FundacaoCarePlanDisponivel`;
+- persistência ainda desabilitada;
+- painel da fundação no workspace profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.1 — Progress Review Care Plan Persistence
+Adicionar persistência profissional auditada ao Care Plan, mantendo vínculo opcional com follow-up e separação entre documentação, decisão clínica e execução.
+

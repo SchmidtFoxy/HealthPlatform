@@ -1,4 +1,19 @@
-﻿# v0.31.6 — Progress Review Follow-up Closure
+﻿# v0.32.0 — Progress Review Care Plan Foundation
+
+- Abre a linha funcional 0.32.x.
+- Adiciona `ProgressReviewCarePlanFieldResponse`.
+- Adiciona `ProgressReviewCarePlanFoundationResponse`.
+- Adiciona seis campos estruturados do Care Plan.
+- Adiciona `GET .../care-plan-foundation`.
+- Adiciona estado `FundacaoCarePlanDisponivel`.
+- Adiciona marcador `HP_PROGRESS_REVIEW_CARE_PLAN_V0320`.
+- Exibe a fundação no workspace profissional.
+- Mantém `PersistenciaDisponivel = false`.
+- Não executa ação ou prescrição automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.32.1 — Progress Review Care Plan Persistence.
+
+# v0.31.6 — Progress Review Follow-up Closure
 
 - Adiciona `ProgressReviewFollowUpClosureResponse`.
 - Adiciona endpoint `GET .../follow-up/closure`.

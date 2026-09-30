@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.31.6",
+            "v0.32.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Follow-up Closure fecha a linha 0.31.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão.")
+            "Progress Review Care Plan Foundation cria a fundação estrutural para organizar próximos cuidados profissionais após a revisão, ainda sem persistência própria, execução automática ou prescrição automatizada.")
         {
             Recordes = recordes,
             Tempos = tempos,

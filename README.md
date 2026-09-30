@@ -1741,3 +1741,25 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.32.0 — Progress Review Care Plan Foundation`.
 
+---
+
+## v0.32.0 — Progress Review Care Plan Foundation
+
+Abre a linha 0.32.x com a fundação estrutural para organizar os próximos cuidados profissionais após uma revisão.
+
+### Campos estruturados
+- `objetivo-cuidado` — obrigatório;
+- `acao-planejada` — obrigatório;
+- `responsavel`;
+- `horizonte`;
+- `follow-up-relacionado`;
+- `observacao-profissional`.
+
+### Escopo
+O Care Plan é da equipe profissional e organiza documentalmente os próximos cuidados. Nesta versão a fundação ainda não possui persistência própria.
+
+### Guardrail
+A fundação não executa ações, não prescreve automaticamente e não cria prioridade, diagnóstico, prognóstico ou recomendação automática.
+
+**Próxima etapa:** `v0.32.1 — Progress Review Care Plan Persistence`.
+

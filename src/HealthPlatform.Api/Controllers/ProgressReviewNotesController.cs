@@ -136,6 +136,52 @@ public class ProgressReviewNotesController(
             "A fundação de follow-up organiza próximos itens a acompanhar. A partir da v0.31.1 possui persistência profissional auditada, sem criar decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
     }
 
+    [HttpGet("care-plan-foundation")]
+    public ActionResult<ProgressReviewCarePlanFoundationResponse> CarePlanFoundation()
+    {
+        var campos = new[]
+        {
+            new ProgressReviewCarePlanFieldResponse(
+                "objetivo-cuidado",
+                "Objetivo do próximo cuidado",
+                "Registra o objetivo documental que orientará o próximo passo profissional.",
+                true),
+            new ProgressReviewCarePlanFieldResponse(
+                "acao-planejada",
+                "Ação planejada",
+                "Descreve a ação profissional prevista, sem executar ou prescrever automaticamente.",
+                true),
+            new ProgressReviewCarePlanFieldResponse(
+                "responsavel",
+                "Responsável",
+                "Identifica o profissional ou papel responsável pelo próximo cuidado.",
+                false),
+            new ProgressReviewCarePlanFieldResponse(
+                "horizonte",
+                "Prazo ou horizonte",
+                "Registra uma referência temporal documental, sem calcular prazo clínico.",
+                false),
+            new ProgressReviewCarePlanFieldResponse(
+                "follow-up-relacionado",
+                "Follow-up relacionado",
+                "Permite referenciar opcionalmente um item de acompanhamento já existente.",
+                false),
+            new ProgressReviewCarePlanFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                "Permite registrar contexto adicional do plano de cuidado de forma documental.",
+                false)
+        };
+
+        return Ok(new ProgressReviewCarePlanFoundationResponse(
+            campos,
+            campos.Length,
+            "FundacaoCarePlanDisponivel",
+            false,
+            "EquipeProfissional",
+            "A fundação do Care Plan organiza próximos cuidados de forma documental. Nesta versão não possui persistência própria, não executa ações e não cria prescrição, prioridade, diagnóstico, prognóstico ou recomendação automática."));
+    }
+
     [HttpGet("follow-up/closure")]
     public ActionResult<ProgressReviewFollowUpClosureResponse> FechamentoFollowUp()
     {
