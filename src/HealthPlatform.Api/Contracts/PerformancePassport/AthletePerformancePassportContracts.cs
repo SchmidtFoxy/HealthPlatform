@@ -103,6 +103,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressEvidenceWindowItemResponse(
+    string Janela,
+    int Dias,
+    DateTime InicioUtc,
+    DateTime FimUtc,
+    int EventosObservados,
+    int EventosCarga,
+    int EventosTempo,
+    int ReferenciasDistintas,
+    string CoberturaDescritiva);
+
+public sealed record ProgressEvidenceWindowsResponse(
+    int DiasObservados,
+    IReadOnlyCollection<ProgressEvidenceWindowItemResponse> Janelas,
+    string RegraDeUso);
+
 public sealed record MultiSignalTimelineEventResponse(
     string Dominio,
     string Referencia,
@@ -183,4 +200,8 @@ public sealed record AthletePerformancePassportResponse(
     public MultiSignalTimelineResponse TimelineMultissinal { get; init; } =
         new(180, Array.Empty<MultiSignalTimelineEventResponse>(), 0, 0, 0,
             "Linha do tempo composta apenas por registros observados, sem interpolação ou previsão.");
+
+    public ProgressEvidenceWindowsResponse JanelasEvidenciaProgresso { get; init; } =
+        new(180, Array.Empty<ProgressEvidenceWindowItemResponse>(),
+            "Janelas temporais descritivas sem score de confiança, prognóstico ou recomendação automática.");
 }

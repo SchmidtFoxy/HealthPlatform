@@ -1,4 +1,20 @@
-﻿# v0.29.2 — Multi-Signal Timeline 2.0
+﻿# v0.29.3 — Progress Evidence Windows 2.0
+
+- Adiciona `ProgressEvidenceWindowItemResponse`.
+- Adiciona `ProgressEvidenceWindowsResponse`.
+- Expande o passaporte com `JanelasEvidenciaProgresso`.
+- Adiciona janelas `Recente30d`, `Intermediaria90d` e `Ampla180d`.
+- Conta eventos observados de carga e tempo por janela.
+- Conta referências distintas.
+- Classifica cobertura como `SemEventosObservados`, `EventoIsolado`, `CoberturaCurta` ou `CoberturaMaisAmpla`.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence/windows`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence/windows`.
+- Adiciona painel Progress Evidence Windows 2.0.
+- Guardrail: maior quantidade de registros significa cobertura documental, não confiança clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.29.4 — Cross-Signal Observation Map 2.0.
+
+# v0.29.2 — Multi-Signal Timeline 2.0
 
 - Adiciona `MultiSignalTimelineEventResponse`.
 - Adiciona `MultiSignalTimelineResponse`.

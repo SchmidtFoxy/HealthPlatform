@@ -22,6 +22,7 @@ public static class AthletePerformancePassportService
         var inteligenciaProgresso = MontarInteligenciaProgresso(evolucao, resultados, habilidadesMarcos);
         var contextoSinaisProgresso = MontarContextoSinaisProgresso(inteligenciaProgresso, hoje);
         var timelineMultissinal = MontarTimelineMultissinal(evolucao, contextoSinaisProgresso);
+        var janelasEvidenciaProgresso = MontarJanelasEvidenciaProgresso(timelineMultissinal, hoje);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -99,14 +100,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.2",
+            "v0.29.3",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Multi-Signal Timeline 2.0 organiza os pontos observados de início e atual em uma linha do tempo comum, preservando domínio, medida e unidade. Não interpola dados, não projeta tendência e não gera score, ranking, diagnóstico, prognóstico ou recomendação automática.")
+            "Progress Evidence Windows 2.0 distribui eventos observados em janelas temporais explícitas de 30, 90 e 180 dias. Quantidade de registros descreve cobertura de dados; não representa confiança clínica, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -115,7 +116,8 @@ public static class AthletePerformancePassportService
             Evolucao = evolucao,
             InteligenciaProgresso = inteligenciaProgresso,
             ContextoSinaisProgresso = contextoSinaisProgresso,
-            TimelineMultissinal = timelineMultissinal
+            TimelineMultissinal = timelineMultissinal,
+            JanelasEvidenciaProgresso = janelasEvidenciaProgresso
         };
     }
 
@@ -249,6 +251,60 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressEvidenceWindowsResponse MontarJanelasEvidenciaProgresso(
+        MultiSignalTimelineResponse timeline,
+        DateOnly hoje)
+    {
+        var fimUtc = hoje.ToDateTime(TimeOnly.MaxValue, DateTimeKind.Utc);
+
+        var definicoes = new[]
+        {
+            new { Nome = "Recente30d", Dias = 30 },
+            new { Nome = "Intermediaria90d", Dias = 90 },
+            new { Nome = "Ampla180d", Dias = 180 }
+        };
+
+        var janelas = definicoes
+            .Select(def =>
+            {
+                var inicioUtc = fimUtc.AddDays(-def.Dias);
+                var eventos = timeline.Eventos
+                    .Where(x => x.DataUtc >= inicioUtc && x.DataUtc <= fimUtc)
+                    .ToArray();
+
+                var referencias = eventos
+                    .Select(x => $"{x.Dominio}::{x.Referencia}")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Count();
+
+                var cobertura = eventos.Length switch
+                {
+                    0 => "SemEventosObservados",
+                    1 => "EventoIsolado",
+                    <= 4 => "CoberturaCurta",
+                    _ => "CoberturaMaisAmpla"
+                };
+
+                return new ProgressEvidenceWindowItemResponse(
+                    def.Nome,
+                    def.Dias,
+                    inicioUtc,
+                    fimUtc,
+                    eventos.Length,
+                    eventos.Count(x => x.Dominio == "Carga"),
+                    eventos.Count(x => x.Dominio == "Tempo"),
+                    referencias,
+                    cobertura);
+            })
+            .ToArray();
+
+        return new ProgressEvidenceWindowsResponse(
+            timeline.DiasObservados,
+            janelas,
+            "Progress Evidence Windows 2.0 conta apenas eventos observados dentro de cada janela. Mais registros significam maior cobertura documental, não maior confiança clínica, melhor desempenho, prognóstico ou recomendação.");
+    }
 
     public static MultiSignalTimelineResponse MontarTimelineMultissinal(
         AthletePerformanceEvolutionResponse evolucao,

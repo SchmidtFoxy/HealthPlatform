@@ -2128,3 +2128,18 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 
 **Próxima etapa:** `v0.29.3 — Progress Evidence Windows 2.0`.
 
+## ✅ v0.29.3 — Progress Evidence Windows 2.0 — CONCLUÍDA
+
+**Entregue na v0.29.3:**
+- janelas de 30, 90 e 180 dias;
+- contagem apenas de eventos observados;
+- separação carga/tempo;
+- referências distintas;
+- cobertura descritiva por janela;
+- endpoints profissional e paciente;
+- integração ao passaporte;
+- sem score de confiança, prognóstico ou recomendação automática;
+- sem migration nova.
+
+**Próxima etapa:** `v0.29.4 — Cross-Signal Observation Map 2.0`.
+

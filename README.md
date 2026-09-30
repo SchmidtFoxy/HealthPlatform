@@ -1115,3 +1115,26 @@ A timeline usa **somente pontos observados**. Não cria pontos intermediários, 
 
 **Próxima etapa:** `v0.29.3 — Progress Evidence Windows 2.0`.
 
+---
+
+## v0.29.3 — Progress Evidence Windows 2.0
+
+Organiza os eventos observados em janelas temporais explícitas.
+
+### Entregue
+- janela `Recente30d`;
+- janela `Intermediaria90d`;
+- janela `Ampla180d`;
+- período inicial/final de cada janela;
+- total de eventos observados;
+- separação entre eventos de carga e tempo;
+- quantidade de referências distintas;
+- cobertura descritiva: `SemEventosObservados`, `EventoIsolado`, `CoberturaCurta` ou `CoberturaMaisAmpla`;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport.
+
+### Guardrail
+Mais registros representam **maior cobertura documental**, não maior confiança clínica, melhor desempenho, prognóstico ou recomendação automática.
+
+**Próxima etapa:** `v0.29.4 — Cross-Signal Observation Map 2.0`.
+
