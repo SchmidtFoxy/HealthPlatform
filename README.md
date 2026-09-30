@@ -20,6 +20,15 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Evening Reflection 2.0
+
+A `v0.22.6` evolui o fechamento diário existente para uma reflexão guiada e leve. Em menos de um minuto, a pessoa registra percepção final do dia, quanto conseguiu executar, dificuldade percebida, energia final e um aprendizado simples.
+
+A implementação reaproveita `/api/portal/me/fechamento-dia` e a fonte de verdade existente. Os novos elementos são consolidados no resumo do fechamento, preservando compatibilidade sem criar tabela ou endpoint paralelo.
+
+A reflexão não pune baixa execução nem interpreta cansaço como falha. O objetivo é aumentar qualidade do contexto longitudinal para a própria pessoa e para o profissional.
+
 ### Daily 30 Seconds Experience 2.0
 
 A `v0.22.5` consolida o fluxo diário essencial em uma experiência curta: **check-in → contexto → plano → próxima ação**. O objetivo é permitir que a pessoa entenda o dia e escolha o próximo passo em aproximadamente 30 segundos, principalmente no mobile.
@@ -165,7 +174,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.5 — Daily 30 Seconds Experience 2.0`
+- **Versão funcional:** `v0.22.6 — Evening Reflection 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

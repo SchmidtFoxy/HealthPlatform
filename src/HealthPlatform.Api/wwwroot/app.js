@@ -3501,10 +3501,118 @@ function hpExecutionDayCard(execution){
   </section>`;
 }
 
+const HP_EVENING_REFLECTION_V0226='v0.22.6';
+
+function hpEveningChipV0226(name,value,label){
+  return `<label class="evening-reflection-chip-v0226">
+    <input type="radio" name="${name}" value="${esc(value)}" required>
+    <span>${esc(label)}</span>
+  </label>`;
+}
+
+function hpEveningSummaryV0226(f,current){
+  const execucao=val(f,'execucaoPercebida');
+  const dificuldade=val(f,'dificuldadePercebida');
+  const energia=val(f,'energiaFinal');
+  const aprendizado=val(f,'aprendizado');
+  const livre=val(f,'resumoLivre');
+
+  const parts=[];
+  if(execucao)parts.push(`Execução: ${execucao}`);
+  if(dificuldade)parts.push(`Dificuldade: ${dificuldade}`);
+  if(energia)parts.push(`Energia final: ${energia}`);
+  if(aprendizado)parts.push(`Aprendizado: ${aprendizado}`);
+  if(livre)parts.push(`Observação: ${livre}`);
+
+  return parts.join(' • ')||current?.resumoFechamento||null;
+}
+
+function hpWireEveningReflectionV0226(){
+  const slider=document.querySelector('[name="percepcaoDoDia"]');
+  const output=document.querySelector('[data-evening-score-v0226]');
+  if(slider&&output){
+    const sync=()=>{output.textContent=`${slider.value}/10`;};
+    slider.addEventListener('input',sync);
+    sync();
+  }
+}
+
 function openCloseAthleteDay(current){
-  patientPortalModal('Fechamento do dia',`${field('Como o dia terminou? (0–10)','percepcaoDoDia','number',`min="0" max="10" value="${current?.percepcaoDoDia??7}" required`)}${area('Resumo rápido','resumo',current?.resumoFechamento?`placeholder="${esc(current.resumoFechamento)}"`:'placeholder="O que funcionou? O que precisa de ajuste amanhã?"')}`,async f=>{
-    await api('/api/portal/me/fechamento-dia',{method:'POST',body:JSON.stringify({percepcaoDoDia:integer(f,'percepcaoDoDia'),resumo:val(f,'resumo')||current?.resumoFechamento||null})});
+  const score=current?.percepcaoDoDia??7;
+
+  patientPortalModal('Reflexão do fim do dia',`
+    <div class="span-2 evening-reflection-v0226" data-evening-reflection-v0226="${HP_EVENING_REFLECTION_V0226}">
+      <div class="evening-reflection-head-v0226">
+        <div>
+          <span class="eyebrow">EVENING REFLECTION 2.0</span>
+          <h3>Feche o dia em menos de 1 minuto.</h3>
+          <p>Registre como foi de verdade. O objetivo é aprender com o dia, não dar nota para você.</p>
+        </div>
+        <div class="evening-reflection-time-v0226"><b>≈45s</b><span>para fechar o dia</span></div>
+      </div>
+
+      <label class="evening-reflection-score-v0226">
+        <div><span>Como o dia terminou?</span><output data-evening-score-v0226>${score}/10</output></div>
+        <input type="range" name="percepcaoDoDia" min="0" max="10" step="1" value="${score}" required>
+        <div class="evening-reflection-scale-v0226"><small>Muito difícil</small><small>Muito bom</small></div>
+      </label>
+
+      <fieldset class="evening-reflection-group-v0226">
+        <legend>Quanto do planejado você conseguiu executar?</legend>
+        <div class="evening-reflection-chips-v0226">
+          ${hpEveningChipV0226('execucaoPercebida','Quase nada','Quase nada')}
+          ${hpEveningChipV0226('execucaoPercebida','Parte do plano','Parte')}
+          ${hpEveningChipV0226('execucaoPercebida','Maioria do plano','Maioria')}
+          ${hpEveningChipV0226('execucaoPercebida','Tudo que estava previsto','Tudo')}
+        </div>
+      </fieldset>
+
+      <fieldset class="evening-reflection-group-v0226">
+        <legend>Como foi a dificuldade do dia?</legend>
+        <div class="evening-reflection-chips-v0226">
+          ${hpEveningChipV0226('dificuldadePercebida','Leve','Leve')}
+          ${hpEveningChipV0226('dificuldadePercebida','Adequada','Adequada')}
+          ${hpEveningChipV0226('dificuldadePercebida','Alta','Alta')}
+          ${hpEveningChipV0226('dificuldadePercebida','Muito alta','Muito alta')}
+        </div>
+      </fieldset>
+
+      <fieldset class="evening-reflection-group-v0226">
+        <legend>Como está sua energia agora?</legend>
+        <div class="evening-reflection-chips-v0226">
+          ${hpEveningChipV0226('energiaFinal','Muito baixa','Muito baixa')}
+          ${hpEveningChipV0226('energiaFinal','Baixa','Baixa')}
+          ${hpEveningChipV0226('energiaFinal','Boa','Boa')}
+          ${hpEveningChipV0226('energiaFinal','Alta','Alta')}
+        </div>
+      </fieldset>
+
+      <label class="evening-reflection-note-v0226">
+        <span>O que o dia te ensinou?</span>
+        <textarea name="aprendizado" rows="2" maxlength="240" placeholder="Ex.: treinar mais cedo funcionou melhor; senti fome no meio da tarde; o treino encaixou bem."></textarea>
+      </label>
+
+      <label class="evening-reflection-note-v0226">
+        <span>Observação opcional</span>
+        <textarea name="resumoLivre" rows="2" maxlength="240" placeholder="${esc(current?.resumoFechamento||'Algo que seu profissional deveria saber?')}"></textarea>
+      </label>
+
+      <div class="evening-reflection-safety-v0226">
+        <b>Sem punição</b>
+        <span>Executar menos, sentir dificuldade ou terminar cansado não reduz seu valor nem gera diagnóstico. Esses registros ajudam a entender padrões e ajustar o acompanhamento.</span>
+      </div>
+    </div>
+  `,async f=>{
+    await api('/api/portal/me/fechamento-dia',{
+      method:'POST',
+      body:JSON.stringify({
+        percepcaoDoDia:integer(f,'percepcaoDoDia'),
+        resumo:hpEveningSummaryV0226(f,current)
+      })
+    });
   });
+
+  setTimeout(hpWireEveningReflectionV0226,0);
 }
 
 function patientScaleField(label,name,value=5){
@@ -9198,7 +9306,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.5';
+const HP_MVP_VERSION='0.22.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12645,4 +12753,35 @@ renderPatientTab=function(d){
   if(!host||!hub||host.querySelector('[data-daily-30s-v0225]'))return;
   hub.insertAdjacentHTML('afterend',hpDaily30V0225(d));
   hpWireDaily30V0225(d);
+};
+
+
+function hpEveningReflectionCardV0226(d){
+  const execution=d?.execucaoDoDia||{};
+  const closed=!!execution.diaFechado;
+  return `<section class="evening-reflection-card-v0226" data-evening-reflection-card-v0226="${HP_EVENING_REFLECTION_V0226}">
+    <div>
+      <span class="eyebrow">EVENING REFLECTION</span>
+      <h3>${closed?'Dia fechado.':'Quando o dia acabar, feche o ciclo.'}</h3>
+      <p>${closed
+        ?`Percepção final ${execution.percepcaoDoDia??'—'}/10${execution.resumoFechamento?` • ${esc(execution.resumoFechamento)}`:''}`
+        :'Uma reflexão curta ajuda a conectar plano, execução e como você terminou o dia.'}</p>
+    </div>
+    <button type="button" class="btn ${closed?'ghost':'primary'}" data-evening-reflection-action-v0226>${closed?'Atualizar reflexão':'Fechar meu dia'}</button>
+  </section>`;
+}
+
+function hpWireEveningReflectionCardV0226(d){
+  const btn=document.querySelector('[data-evening-reflection-action-v0226]');
+  if(btn)btn.onclick=()=>openCloseAthleteDay(d?.execucaoDoDia);
+}
+
+const __renderPatientTab_v0226=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0226(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),daily30=host?.querySelector('[data-daily-30s-v0225]');
+  if(!host||!daily30||host.querySelector('[data-evening-reflection-card-v0226]'))return;
+  daily30.insertAdjacentHTML('afterend',hpEveningReflectionCardV0226(d));
+  hpWireEveningReflectionCardV0226(d);
 };

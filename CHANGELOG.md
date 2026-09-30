@@ -1,3 +1,15 @@
+# v0.22.6 — Evening Reflection 2.0
+
+- Evolui o fechamento diário para uma reflexão guiada de menos de 1 minuto.
+- Mantém percepção final do dia em escala 0–10.
+- Adiciona execução percebida, dificuldade, energia final e aprendizado.
+- Consolida os novos elementos no resumo do fechamento já existente.
+- Reutiliza `/api/portal/me/fechamento-dia`, sem endpoint ou fonte paralela.
+- Mantém linguagem sem punição, julgamento ou diagnóstico.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.6.
+- Próxima etapa: v0.22.7 — Daily History 2.0.
+
 # v0.22.5 — Daily 30 Seconds Experience 2.0
 
 - Consolida o fluxo diário em check-in → contexto → plano → próxima ação.
