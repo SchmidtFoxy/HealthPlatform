@@ -457,4 +457,141 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("quick-movement")]
+    public async Task<ActionResult<QuickMovementResponse>> QuickMovement(
+        [FromQuery] string? janela = null,
+        [FromQuery] string? contexto = null,
+        [FromQuery] string? preferencia = null,
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var janelas = new[] { "Até 5 min", "5 a 10 min", "10 a 20 min" };
+        var contextos = new[] { "Em casa", "No trabalho", "Ao ar livre", "Qualquer lugar" };
+        var preferencias = new[] { "Mobilidade", "Ativação", "Força leve", "Movimento geral" };
+
+        var janelaAtual = NormalizarOpcao(janela, janelas, "5 a 10 min");
+        var contextoAtual = NormalizarOpcao(contexto, contextos, "Qualquer lugar");
+        var preferenciaAtual = NormalizarOpcao(preferencia, preferencias, "Movimento geral");
+
+        var exercicios = await db.Exercicios.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.GrupoMuscular,
+                x.Equipamento,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var possibilidades = exercicios
+            .Select(x => new
+            {
+                Exercicio = x,
+                Texto = $"{x.Nome} {x.GrupoMuscular} {x.Equipamento} {x.Descricao}".ToLowerInvariant()
+            })
+            .Where(x => CompativelComMovimentoRapido(x.Texto, contextoAtual, preferenciaAtual))
+            .Take(12)
+            .Select(x => new QuickMovementPossibilidadeResponse(
+                x.Exercicio.Id,
+                x.Exercicio.Nome,
+                x.Exercicio.GrupoMuscular,
+                x.Exercicio.Equipamento,
+                x.Exercicio.Descricao,
+                MotivoMovimentoRapido(x.Texto, janelaAtual, contextoAtual, preferenciaAtual)))
+            .ToArray();
+
+        return Ok(new QuickMovementResponse(
+            janelaAtual,
+            contextoAtual,
+            preferenciaAtual,
+            janelas,
+            contextos,
+            preferencias,
+            possibilidades,
+            "Exercicios",
+            "Quick Movement organiza possibilidades curtas pelo contexto escolhido. A janela de tempo e apenas um filtro de exploracao: nao define intensidade, series, repeticoes, volume ou treino pronto."));
+    }
+
+    private static bool CompativelComMovimentoRapido(
+        string texto,
+        string contexto,
+        string preferencia)
+    {
+        var contextoOk = contexto switch
+        {
+            "Em casa" => !texto.Contains("máquina") &&
+                         !texto.Contains("maquina") &&
+                         !texto.Contains("polia"),
+            "No trabalho" => !texto.Contains("barra") &&
+                             !texto.Contains("halter") &&
+                             !texto.Contains("máquina") &&
+                             !texto.Contains("maquina") &&
+                             !texto.Contains("polia"),
+            "Ao ar livre" => !texto.Contains("máquina") &&
+                             !texto.Contains("maquina") &&
+                             !texto.Contains("polia"),
+            "Qualquer lugar" => true,
+            _ => true
+        };
+
+        var preferenciaOk = preferencia switch
+        {
+            "Mobilidade" => texto.Contains("mobil") ||
+                            texto.Contains("along") ||
+                            texto.Contains("quadril") ||
+                            texto.Contains("tornozelo") ||
+                            texto.Contains("ombro"),
+            "Ativação" => texto.Contains("ativ") ||
+                          texto.Contains("aquec") ||
+                          texto.Contains("mobil") ||
+                          texto.Contains("core") ||
+                          texto.Contains("estabil"),
+            "Força leve" => texto.Contains("agach") ||
+                            texto.Contains("flex") ||
+                            texto.Contains("remada") ||
+                            texto.Contains("peso corporal") ||
+                            texto.Contains("isometr"),
+            "Movimento geral" => true,
+            _ => true
+        };
+
+        return contextoOk && preferenciaOk;
+    }
+
+    private static string MotivoMovimentoRapido(
+        string texto,
+        string janela,
+        string contexto,
+        string preferencia)
+    {
+        var partes = new List<string>
+        {
+            $"Janela escolhida: {janela}",
+            $"Contexto: {contexto}",
+            $"Preferencia: {preferencia}"
+        };
+
+        if (texto.Contains("mobil"))
+            partes.Add("catalogado com indicio de mobilidade");
+        else if (texto.Contains("peso corporal"))
+            partes.Add("catalogado como peso corporal");
+        else if (texto.Contains("core") || texto.Contains("estabil"))
+            partes.Add("catalogado com indicio de estabilizacao");
+
+        return string.Join(" • ", partes);
+    }
+
+
 }

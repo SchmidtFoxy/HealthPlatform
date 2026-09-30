@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.3';
+const HP_MVP_VERSION='0.24.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13975,5 +13975,97 @@ hpWireExploreFoundationV0240=function(host,data){
   homeBtn.onclick=()=>{
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenHomeWorkoutV0243(detail);
+  };
+};
+
+
+// ===== v0.24.4 — Quick Movement 2.0 =====
+const HP_QUICK_MOVEMENT_V0244='v0.24.4';
+
+function hpQuickMovementQueryV0244(filters){
+  const p=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)p.set(k,v)});
+  const qs=p.toString();
+  return `/api/portal/me/explore/quick-movement${qs?`?${qs}`:''}`;
+}
+
+function hpQuickMovementV0244(data){
+  const items=Array.isArray(data?.possibilidades)?data.possibilidades:[];
+  const option=(value,current)=>`<option ${value===current?'selected':''}>${esc(value)}</option>`;
+
+  return `<section class="quick-movement-v0244" data-quick-movement-v0244="${HP_QUICK_MOVEMENT_V0244}" aria-labelledby="quickMovementTitleV0244">
+    <div class="quick-movement-head-v0244">
+      <div>
+        <span class="eyebrow">QUICK MOVEMENT 2.0</span>
+        <h3 id="quickMovementTitleV0244">Pouco tempo não precisa virar treino intenso.</h3>
+        <p>Use a janela disponível apenas para filtrar possibilidades. O AESYN não transforma minutos livres em prescrição automática.</p>
+      </div>
+      <span>${items.length} possibilidade(s)</span>
+    </div>
+
+    <div class="quick-movement-filters-v0244">
+      <label><span>JANELA DISPONÍVEL</span><select id="quickMovementWindowV0244">${(data?.janelasDisponiveis||[]).map(x=>option(x,data?.janela)).join('')}</select></label>
+      <label><span>CONTEXTO</span><select id="quickMovementContextV0244">${(data?.contextosDisponiveis||[]).map(x=>option(x,data?.contexto)).join('')}</select></label>
+      <label><span>PREFERÊNCIA</span><select id="quickMovementPreferenceV0244">${(data?.preferenciasDisponiveis||[]).map(x=>option(x,data?.preferencia)).join('')}</select></label>
+    </div>
+
+    <div class="quick-movement-principle-v0244">
+      <b>CURTO ≠ INTENSO</b>
+      <span>${esc(data?.janela||'Janela curta')}</span>
+      <span>${esc(data?.contexto||'Contexto livre')}</span>
+      <span>${esc(data?.preferencia||'Movimento geral')}</span>
+    </div>
+
+    <div class="quick-movement-grid-v0244">
+      ${items.length?items.map(x=>`<article>
+        <div><span>${esc(x.grupoMuscular||'Movimento')}</span><b>${esc(x.nome)}</b></div>
+        <p>${esc(x.descricao||'Sem descrição cadastrada no catálogo profissional.')}</p>
+        <small>${esc(x.equipamento||'Sem equipamento informado')}</small>
+        <footer>${esc(x.motivoDaCompatibilidade||'Compatível com o contexto selecionado.')}</footer>
+      </article>`).join(''):`<div class="quick-movement-empty-v0244"><b>Nenhuma possibilidade real apareceu neste recorte.</b><span>Ajuste contexto ou preferência. O AESYN não inventa movimentos para preencher a tela.</span></div>`}
+    </div>
+
+    <div class="quick-movement-source-v0244">
+      <b>Fonte: ${esc(data?.fonte||'Exercicios')}</b>
+      <span>${esc(data?.regraDeUso||'Quick Movement organiza possibilidades sem montar treino.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenQuickMovementV0244(host,filters={}){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando possibilidades para pouco tempo...</div>';
+
+  try{
+    const data=await api(hpQuickMovementQueryV0244(filters));
+    host.innerHTML=hpQuickMovementV0244(data);
+
+    const current=()=>({
+      janela:host.querySelector('#quickMovementWindowV0244')?.value||'',
+      contexto:host.querySelector('#quickMovementContextV0244')?.value||'',
+      preferencia:host.querySelector('#quickMovementPreferenceV0244')?.value||''
+    });
+
+    ['#quickMovementWindowV0244','#quickMovementContextV0244','#quickMovementPreferenceV0244'].forEach(selector=>{
+      const el=host.querySelector(selector);
+      if(el)el.onchange=()=>hpOpenQuickMovementV0244(host,current());
+    });
+
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Quick Movement.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0244=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0244(host,data);
+  if(!host)return;
+  const quickBtn=host.querySelector('[data-explore-path-v0240="quick-movement"]');
+  if(!quickBtn)return;
+  quickBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenQuickMovementV0244(detail);
   };
 };

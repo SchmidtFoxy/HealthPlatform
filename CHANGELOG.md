@@ -1,3 +1,15 @@
+# v0.24.4 — Quick Movement 2.0
+
+- Adiciona `GET /api/portal/me/explore/quick-movement`.
+- Permite explorar possibilidades por janela disponível, contexto e preferência.
+- Reutiliza exclusivamente o catálogo ativo `Exercicios`.
+- Expõe justificativa de compatibilidade por possibilidade.
+- Reforça o princípio `Curto ≠ intenso`.
+- Integra Quick Movement ao caminho “Tenho pouco tempo”.
+- Não define duração exata, séries, repetições, carga, volume ou intensidade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.5 — Travel Mode 2.0.
+
 # v0.24.3 — Home Workout 2.0
 
 - Adiciona `GET /api/portal/me/explore/home-workout`.

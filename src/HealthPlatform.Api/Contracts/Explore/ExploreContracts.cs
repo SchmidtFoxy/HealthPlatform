@@ -82,3 +82,23 @@ public sealed record HomeWorkoutResponse(
     IReadOnlyCollection<HomeWorkoutMovimentoResponse> Movimentos,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record QuickMovementPossibilidadeResponse(
+    Guid Id,
+    string Nome,
+    string? GrupoMuscular,
+    string? Equipamento,
+    string? Descricao,
+    string MotivoDaCompatibilidade);
+
+public sealed record QuickMovementResponse(
+    string Janela,
+    string Contexto,
+    string Preferencia,
+    string[] JanelasDisponiveis,
+    string[] ContextosDisponiveis,
+    string[] PreferenciasDisponiveis,
+    IReadOnlyCollection<QuickMovementPossibilidadeResponse> Possibilidades,
+    string Fonte,
+    string RegraDeUso);

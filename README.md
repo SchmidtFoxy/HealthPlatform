@@ -37,6 +37,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Quick Movement 2.0
+
+A `v0.24.4` transforma **Tenho pouco tempo** em um explorador contextual. A pessoa escolhe uma janela disponível, o contexto e a preferência; o AESYN consulta `Exercicios` e organiza possibilidades reais do catálogo.
+
+A janela de tempo é apenas contexto de exploração. **Curto não significa intenso**: o sistema não define duração exata da execução, séries, repetições, carga, volume ou intensidade.
+
 ### Home Workout 2.0
 
 A `v0.24.3` transforma **Mover em casa** em um explorador contextual. O paciente escolhe espaço disponível, recurso e preferência de movimento; o AESYN consulta o catálogo profissional `Exercicios` e mostra possibilidades compatíveis com aquele recorte.
@@ -290,7 +297,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.3 — Home Workout 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
+- **Versão funcional:** `v0.24.4 — Quick Movement 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
