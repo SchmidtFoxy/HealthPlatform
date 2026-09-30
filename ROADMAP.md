@@ -2463,3 +2463,21 @@ Adicionar persistência profissional para itens de acompanhamento, preservando a
 ### v0.31.2 — Progress Review Follow-up Status
 Adicionar estado documental dos itens de acompanhamento (aberto, revisado ou encerrado), com transições explícitas realizadas pelo profissional e histórico auditável.
 
+## ✅ v0.31.2 — Progress Review Follow-up Status — CONCLUÍDA
+
+**Entregue:**
+- status `Aberto`, `Revisado` e `Encerrado`;
+- `StatusAtualizadoEmUtc`;
+- endpoint PATCH de transição;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- UI com badge de status;
+- ações Reabrir, Marcar revisado e Encerrar;
+- edição comum preserva o status;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.3 — Progress Review Follow-up History
+Adicionar histórico consultável das mudanças de acompanhamento, incluindo transições de status, autoria e datas, sem gerar interpretação automática sobre evolução clínica.
+

@@ -4860,6 +4860,7 @@ const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011='v0.30.11';
 const HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012='v0.30.12';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_V0310='v0.31.0';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311='v0.31.1';
+const HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312='v0.31.2';
 
 
 
@@ -4927,17 +4928,21 @@ async function hpOpenProgressReviewFollowUpV0311(p){
 
   const render=async()=>{
     const items=await load();
-    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204" data-progress-follow-up-status-v0312="${HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312}">
       <div class="row-between">
         <b>${esc(x.itemAcompanhar||'Item de acompanhamento')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Aberto')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.contextoRelacionado?`<small class="muted-line">Contexto: ${esc(x.contextoRelacionado)}</small>`:''}
       ${x.horizonteRevisao?`<small class="muted-line">Horizonte: ${esc(x.horizonteRevisao)}</small>`:''}
       ${x.responsavel?`<small class="muted-line">Responsável: ${esc(x.responsavel)}</small>`:''}
       ${x.observacaoFollowUp?`<p>${esc(x.observacaoFollowUp).replace(/\n/g,'<br>')}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-follow-up-edit-v0311="${x.id}">Editar</button>
+        ${x.status!=='Aberto'?`<button type="button" class="ghost" data-follow-up-status-v0312="${x.id}" data-status-v0312="Aberto">Reabrir</button>`:''}
+        ${x.status!=='Revisado'?`<button type="button" class="ghost" data-follow-up-status-v0312="${x.id}" data-status-v0312="Revisado">Marcar revisado</button>`:''}
+        ${x.status!=='Encerrado'?`<button type="button" class="ghost" data-follow-up-status-v0312="${x.id}" data-status-v0312="Encerrado">Encerrar</button>`:''}
         <button type="button" class="ghost danger" data-follow-up-archive-v0311="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum item de acompanhamento registrado.</p>';
@@ -4952,6 +4957,16 @@ async function hpOpenProgressReviewFollowUpV0311(p){
       form.elements.responsavel.value=item.responsavel||'';
       form.elements.observacaoFollowUp.value=item.observacaoFollowUp||'';
       form.elements.itemAcompanhar.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-follow-up-status-v0312]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0312;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/follow-up/${btn.dataset.followUpStatusV0312}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Acompanhamento atualizado para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-follow-up-archive-v0311]')].forEach(btn=>btn.onclick=async()=>{
@@ -10252,7 +10267,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.31.1';
+const HP_MVP_VERSION='0.31.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

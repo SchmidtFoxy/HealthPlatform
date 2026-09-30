@@ -234,17 +234,74 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadFollowUp(
+        var payloadAtual = LerPayloadFollowUp(nota);
+        var payloadAtualizado = new FollowUpPayload(
             item,
-            request.ContextoRelacionado,
-            request.HorizonteRevisao,
-            request.Responsavel,
-            request.ObservacaoFollowUp);
+            NormalizarOpcional(request.ContextoRelacionado, 240),
+            NormalizarOpcional(request.HorizonteRevisao, 120),
+            NormalizarOpcional(request.Responsavel, 160),
+            NormalizarOpcional(request.ObservacaoFollowUp, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROGRESS_REVIEW_FOLLOW_UP_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearFollowUp(nota));
+    }
+
+    [HttpPatch("follow-up/{id:guid}/status")]
+    public async Task<ActionResult<ProgressReviewFollowUpPersistedResponse>> AtualizarStatusFollowUp(
+        Guid pacienteId,
+        Guid id,
+        ProgressReviewFollowUpStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusFollowUpValido(status))
+            return BadRequest(new { message = "Status inválido. Use Aberto, Revisado ou Encerrado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadFollowUp(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROGRESS_REVIEW_FOLLOW_UP_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearFollowUp(nota));
     }
 
@@ -555,7 +612,9 @@ public class ProgressReviewNotesController(
         string? ContextoRelacionado,
         string? HorizonteRevisao,
         string? Responsavel,
-        string? ObservacaoFollowUp);
+        string? ObservacaoFollowUp,
+        string Status = "Aberto",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadFollowUp(
         string itemAcompanhar,
@@ -569,7 +628,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(contextoRelacionado, 240),
             NormalizarOpcional(horizonteRevisao, 120),
             NormalizarOpcional(responsavel, 160),
-            NormalizarOpcional(observacaoFollowUp, 2000));
+            NormalizarOpcional(observacaoFollowUp, 2000),
+            "Aberto",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -594,12 +655,30 @@ public class ProgressReviewNotesController(
             payload?.HorizonteRevisao,
             payload?.Responsavel,
             payload?.ObservacaoFollowUp,
+            payload?.Status ?? "Aberto",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static FollowUpPayload LerPayloadFollowUp(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<FollowUpPayload>(nota.Conteudo)
+                ?? new FollowUpPayload(nota.Conteudo, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new FollowUpPayload(nota.Conteudo, null, null, null, null);
+        }
+    }
+
+    private static bool StatusFollowUpValido(string? status) =>
+        status is "Aberto" or "Revisado" or "Encerrado";
 
     private static string? NormalizarObrigatorio(string? valor, int limite)
     {

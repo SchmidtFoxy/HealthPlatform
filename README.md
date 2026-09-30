@@ -1599,3 +1599,28 @@ Persistir um follow-up significa registrar documentalmente o que deverá ser aco
 
 **Próxima etapa:** `v0.31.2 — Progress Review Follow-up Status`.
 
+---
+
+## v0.31.2 — Progress Review Follow-up Status
+
+Adiciona estado documental explícito aos itens persistidos de acompanhamento.
+
+### Estados
+- `Aberto`
+- `Revisado`
+- `Encerrado`
+
+### Transições
+As mudanças são feitas manualmente pelo profissional por endpoint `PATCH .../follow-up/{id}/status`. Cada alteração registra horário e auditoria `PROGRESS_REVIEW_FOLLOW_UP_STATUS_CHANGED`.
+
+### UI
+O workspace profissional passa a mostrar o status atual e ações explícitas:
+- Reabrir;
+- Marcar revisado;
+- Encerrar.
+
+### Guardrail
+O status é documental. O sistema não decide automaticamente quando um item deve ser revisado ou encerrado, não calcula prioridade e não transforma estado em conclusão clínica.
+
+**Próxima etapa:** `v0.31.3 — Progress Review Follow-up History`.
+

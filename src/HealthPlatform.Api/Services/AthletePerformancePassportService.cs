@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.31.1",
+            "v0.31.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Follow-up Persistence adiciona persistência profissional auditada para itens de acompanhamento, preservando registro documental, contexto opcional e ausência de decisão clínica automatizada.")
+            "Progress Review Follow-up Status adiciona estado documental explícito aos itens de acompanhamento, com transições manuais auditadas entre Aberto, Revisado e Encerrado, sem inferência automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

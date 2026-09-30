@@ -124,11 +124,16 @@ public sealed record ProgressReviewFollowUpPersistedResponse(
     string? HorizonteRevisao,
     string? Responsavel,
     string? ObservacaoFollowUp,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProgressReviewFollowUpStatusRequest(
+    string Status);
 
 public sealed record ProgressReviewFollowUpFieldResponse(
     string Chave,

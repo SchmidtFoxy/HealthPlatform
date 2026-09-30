@@ -1,4 +1,19 @@
-﻿# v0.31.1 — Progress Review Follow-up Persistence
+﻿# v0.31.2 — Progress Review Follow-up Status
+
+- Adiciona `Status` ao follow-up persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProgressReviewFollowUpStatusRequest`.
+- Adiciona endpoint `PATCH .../follow-up/{id}/status`.
+- Estados permitidos: `Aberto`, `Revisado`, `Encerrado`.
+- Adiciona auditoria `PROGRESS_REVIEW_FOLLOW_UP_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir, Marcar revisado e Encerrar.
+- Não adiciona decisão automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.31.3 — Progress Review Follow-up History.
+
+# v0.31.1 — Progress Review Follow-up Persistence
 
 - Adiciona `ProgressReviewFollowUpPersistedResponse`.
 - Reutiliza `NotaInternaProfissional` com namespace `ProgressReviewFollowUp:`.
