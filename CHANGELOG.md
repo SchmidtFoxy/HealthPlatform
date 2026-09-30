@@ -1,4 +1,17 @@
-﻿# v0.31.4 — Progress Review Follow-up Filters
+﻿# v0.31.5 — Progress Review Follow-up Summary
+
+- Adiciona `ProgressReviewFollowUpResponsavelResumoResponse`.
+- Adiciona `ProgressReviewFollowUpSummaryResponse`.
+- Adiciona `GET .../follow-up/summary`.
+- Consolida total, ativos, abertos, revisados, encerrados e arquivados.
+- Adiciona distribuição por responsável.
+- Adiciona painel `Resumo do acompanhamento`.
+- Atualiza o resumo após mudanças no follow-up.
+- Não cria score clínico, risco ou prioridade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.31.6 — Progress Review Follow-up Closure.
+
+# v0.31.4 — Progress Review Follow-up Filters
 
 - Adiciona `ProgressReviewFollowUpFiltersResponse`.
 - Adiciona endpoint `GET .../follow-up/search`.

@@ -2518,3 +2518,24 @@ Adicionar filtros profissionais por status, responsável, horizonte e texto, pre
 ### v0.31.5 — Progress Review Follow-up Summary
 Adicionar resumo estrutural do acompanhamento com contagem por status e itens ativos, sem transformar agregações em score clínico ou prioridade automática.
 
+## ✅ v0.31.5 — Progress Review Follow-up Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewFollowUpSummaryResponse`;
+- `ProgressReviewFollowUpResponsavelResumoResponse`;
+- total de itens;
+- ativos;
+- abertos;
+- revisados;
+- encerrados;
+- arquivados;
+- agrupamento por responsável;
+- painel de resumo no workspace profissional;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.6 — Progress Review Follow-up Closure
+Fechar o ciclo 0.31.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do acompanhamento.
+

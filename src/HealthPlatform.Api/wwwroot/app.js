@@ -4863,6 +4863,7 @@ const HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311='v0.31.1';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312='v0.31.2';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314='v0.31.4';
+const HP_PROGRESS_REVIEW_FOLLOW_UP_SUMMARY_V0315='v0.31.5';
 
 
 
@@ -4890,6 +4891,33 @@ function hpRenderProgressReviewFollowUpFoundationV0310(host,foundation){
   </section>`;
 }
 
+
+
+async function hpLoadProgressReviewFollowUpSummaryV0315(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/follow-up/summary`);
+}
+
+function hpRenderProgressReviewFollowUpSummaryV0315(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porResponsavel)?summary.porResponsavel:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-progress-review-follow-up-summary-v0315="${HP_PROGRESS_REVIEW_FOLLOW_UP_SUMMARY_V0315}">
+    <div><b>Resumo do acompanhamento</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Abertos</span><b>${esc(String(summary.abertos??0))}</b></div>
+      <div class="row-between"><span>Revisados</span><b>${esc(String(summary.revisados??0))}</b></div>
+      <div class="row-between"><span>Encerrados</span><b>${esc(String(summary.encerrados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.responsavel||'Sem responsável')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco ou prioridade.</small>
+  </section>`;
+}
 
 async function hpOpenProgressReviewFollowUpHistoryV0313(p,followUp){
   if(!p?.id || !followUp?.id) return;
@@ -4948,6 +4976,7 @@ async function hpOpenProgressReviewFollowUpV0311(p){
       <button type="button" class="ghost" id="closeProgressReviewFollowUpV0311">Fechar</button>
     </div>
 
+    <div id="progressReviewFollowUpSummaryV0315"></div>
     <form id="progressReviewFollowUpFiltersV0314" class="form-grid" data-progress-review-follow-up-filters-v0314="${HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -4986,6 +5015,11 @@ async function hpOpenProgressReviewFollowUpV0311(p){
     <div id="progressReviewFollowUpListV0311" class="stack"></div>
   </div>`;
   modal.classList.add('open');
+
+  const summaryHostV0315=$('#progressReviewFollowUpSummaryV0315');
+  hpLoadProgressReviewFollowUpSummaryV0315(p.id)
+    .then(x=>hpRenderProgressReviewFollowUpSummaryV0315(summaryHostV0315,x))
+    .catch(()=>{ if(summaryHostV0315) summaryHostV0315.innerHTML=''; });
 
   const form=$('#progressReviewFollowUpFormV0311');
   const listHost=$('#progressReviewFollowUpListV0311');
@@ -5048,12 +5082,18 @@ async function hpOpenProgressReviewFollowUpV0311(p){
       });
       toast(`Acompanhamento atualizado para ${status}.`);
       await render();
+      hpLoadProgressReviewFollowUpSummaryV0315(p.id)
+        .then(x=>hpRenderProgressReviewFollowUpSummaryV0315(summaryHostV0315,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-follow-up-archive-v0311]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/follow-up/${btn.dataset.followUpArchiveV0311}`,{method:'DELETE'});
       toast('Item de acompanhamento arquivado.');
       await render();
+      hpLoadProgressReviewFollowUpSummaryV0315(p.id)
+        .then(x=>hpRenderProgressReviewFollowUpSummaryV0315(summaryHostV0315,x))
+        .catch(()=>{});
     });
   };
 
@@ -5099,6 +5139,9 @@ async function hpOpenProgressReviewFollowUpV0311(p){
     form.reset();
     form.elements.id.value='';
     await render();
+    hpLoadProgressReviewFollowUpSummaryV0315(p.id)
+      .then(x=>hpRenderProgressReviewFollowUpSummaryV0315(summaryHostV0315,x))
+      .catch(()=>{});
   };
 
   await render();
@@ -10363,7 +10406,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.31.4';
+const HP_MVP_VERSION='0.31.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

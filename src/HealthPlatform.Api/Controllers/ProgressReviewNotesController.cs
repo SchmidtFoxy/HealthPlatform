@@ -136,6 +136,52 @@ public class ProgressReviewNotesController(
             "A fundação de follow-up organiza próximos itens a acompanhar. A partir da v0.31.1 possui persistência profissional auditada, sem criar decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
     }
 
+    [HttpGet("follow-up/summary")]
+    public async Task<ActionResult<ProgressReviewFollowUpSummaryResponse>> ResumoFollowUp(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearFollowUp).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var abertos = itens.Count(x => !x.Arquivada && x.Status == "Aberto");
+        var revisados = itens.Count(x => !x.Arquivada && x.Status == "Revisado");
+        var encerrados = itens.Count(x => !x.Arquivada && x.Status == "Encerrado");
+
+        var porResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.Responsavel))
+            .GroupBy(x => x.Responsavel!.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProgressReviewFollowUpResponsavelResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Responsavel)
+            .ToArray();
+
+        return Ok(new ProgressReviewFollowUpSummaryResponse(
+            total,
+            ativos,
+            abertos,
+            revisados,
+            encerrados,
+            arquivados,
+            porResponsavel,
+            "O resumo apresenta somente agregações documentais dos registros de acompanhamento. Não representa score clínico, risco, prioridade, prognóstico ou recomendação."));
+    }
+
     [HttpGet("follow-up/search")]
     public async Task<ActionResult<ProgressReviewFollowUpFiltersResponse>> FiltrarFollowUp(
         Guid pacienteId,

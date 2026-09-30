@@ -119,6 +119,21 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewFollowUpResponsavelResumoResponse(
+    string Responsavel,
+    int Total);
+
+public sealed record ProgressReviewFollowUpSummaryResponse(
+    int Total,
+    int Ativos,
+    int Abertos,
+    int Revisados,
+    int Encerrados,
+    int Arquivados,
+    IReadOnlyCollection<ProgressReviewFollowUpResponsavelResumoResponse> PorResponsavel,
+    string RegraDeUso);
+
 public sealed record ProgressReviewFollowUpFiltersResponse(
     string? Status,
     string? Responsavel,

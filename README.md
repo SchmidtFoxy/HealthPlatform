@@ -1684,3 +1684,29 @@ Os filtros apenas localizam registros. Eles não classificam prioridade, gravida
 
 **Próxima etapa:** `v0.31.5 — Progress Review Follow-up Summary`.
 
+---
+
+## v0.31.5 — Progress Review Follow-up Summary
+
+Adiciona um resumo estrutural dos itens de acompanhamento profissional.
+
+### Indicadores
+- total;
+- ativos;
+- abertos;
+- revisados;
+- encerrados;
+- arquivados;
+- distribuição por responsável.
+
+### Endpoint
+`GET .../follow-up/summary`
+
+### UI
+O workspace profissional passa a exibir **Resumo do acompanhamento** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, gravidade, prioridade, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.31.6 — Progress Review Follow-up Closure`.
+
