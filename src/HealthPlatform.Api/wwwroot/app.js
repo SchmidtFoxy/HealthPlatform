@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.0';
+const HP_MVP_VERSION='0.24.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13696,4 +13696,104 @@ const __loadMyPatientPortal_v0240=loadMyPatientPortal;
 loadMyPatientPortal=async function(){
   await __loadMyPatientPortal_v0240();
   await hpInjectExploreFoundationV0240();
+};
+
+
+// ===== v0.24.1 — Start a Sport 2.0 =====
+const HP_START_A_SPORT_V0241='v0.24.1';
+
+function hpStartSportJourneyV0241(data){
+  const sports=Array.isArray(data?.modalidades)?data.modalidades:[];
+  return `<section class="start-sport-v0241" data-start-sport-v0241="${HP_START_A_SPORT_V0241}" aria-labelledby="startSportTitleV0241">
+    <div class="start-sport-head-v0241">
+      <div>
+        <span class="eyebrow">START A SPORT 2.0</span>
+        <h3 id="startSportTitleV0241">Começar sem transformar curiosidade em prescrição.</h3>
+        <p>${esc(data?.mensagemDeContexto||'Explore modalidades e fundamentos no seu ritmo.')}</p>
+      </div>
+      <span>${sports.length} modalidade(s)</span>
+    </div>
+
+    <div class="start-sport-grid-v0241">
+      ${sports.map(s=>`<button type="button" class="start-sport-card-v0241" data-start-sport-code-v0241="${esc(s.codigo)}">
+        <span>${(s.ambientes||[]).slice(0,2).map(esc).join(' • ')}</span>
+        <strong>${esc(s.nome)}</strong>
+        <p>${esc(s.descricao)}</p>
+        <small>${(s.recursos||[]).slice(0,3).map(esc).join(' • ')}</small>
+      </button>`).join('')}
+    </div>
+
+    <div id="startSportDetailV0241" class="start-sport-detail-v0241" hidden aria-live="polite"></div>
+
+    <div class="start-sport-safety-v0241">
+      <b>Conhecer ≠ estar liberado</b>
+      <span>${esc(data?.regraDeAutonomia||'Explore não substitui avaliação nem prescrição profissional.')}</span>
+    </div>
+  </section>`;
+}
+
+function hpStartSportDetailV0241(sport){
+  return `<article class="start-sport-selected-v0241">
+    <div class="start-sport-selected-head-v0241">
+      <div><span class="eyebrow">COMEÇANDO POR</span><h3>${esc(sport?.nome||'Modalidade')}</h3><p>${esc(sport?.descricao||'')}</p></div>
+      <button type="button" class="ghost" id="startSportCloseV0241">Fechar</button>
+    </div>
+
+    <div class="start-sport-foundations-v0241">
+      ${(sport?.fundamentos||[]).map((f,i)=>`<section><b>${i+1}</b><div><strong>${esc(f.titulo)}</strong><p>${esc(f.descricao)}</p></div></section>`).join('')}
+    </div>
+
+    <div class="start-sport-context-v0241">
+      <div><span>AMBIENTES</span>${(sport?.ambientes||[]).map(x=>`<b>${esc(x)}</b>`).join('')}</div>
+      <div><span>RECURSOS</span>${(sport?.recursos||[]).map(x=>`<b>${esc(x)}</b>`).join('')}</div>
+    </div>
+
+    <div class="start-sport-milestone-v0241">
+      <div><span>PRIMEIRO MARCO</span><b>${esc(sport?.primeiroMarco||'Conhecer a modalidade.')}</b></div>
+      <div><span>PRÓXIMO PASSO</span><b>${esc(sport?.proximoPasso||'Aprender os fundamentos.')}</b></div>
+    </div>
+
+    <div class="start-sport-rule-v0241"><b>Como usar</b><span>${esc(sport?.regraDeUso||'Use como educação e descoberta, não como prescrição.')}</span></div>
+  </article>`;
+}
+
+function hpWireStartSportV0241(host,data){
+  if(!host)return;
+  host.querySelectorAll('[data-start-sport-code-v0241]').forEach(btn=>{
+    btn.onclick=()=>{
+      const sport=(data?.modalidades||[]).find(x=>x.codigo===btn.dataset.startSportCodeV0241);
+      const detail=host.querySelector('#startSportDetailV0241');
+      if(!sport||!detail)return;
+      detail.hidden=false;
+      detail.innerHTML=hpStartSportDetailV0241(sport);
+      detail.querySelector('#startSportCloseV0241').onclick=()=>{detail.hidden=true;detail.innerHTML='';btn.focus()};
+      detail.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+    };
+  });
+}
+
+async function hpOpenStartSportV0241(detailHost){
+  if(!detailHost)return;
+  detailHost.hidden=false;
+  detailHost.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando jornada Start a Sport...</div>';
+  try{
+    const data=await api('/api/portal/me/explore/start-a-sport');
+    detailHost.innerHTML=hpStartSportJourneyV0241(data);
+    hpWireStartSportV0241(detailHost.querySelector('[data-start-sport-v0241]'),data);
+    detailHost.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    detailHost.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Start a Sport.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0241=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0241(host,data);
+  if(!host)return;
+  const startBtn=host.querySelector('[data-explore-path-v0240="start-a-sport"]');
+  if(!startBtn)return;
+  startBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenStartSportV0241(detail);
+  };
 };

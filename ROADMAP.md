@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.0 — AESYN Explore Foundation
+> **Versão-base deste roadmap:** v0.24.1 — Start a Sport 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1365,9 +1365,28 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 
 **Próxima etapa:** `v0.24.1 — Start a Sport 2.0`.
 
-## ⏭ v0.24.1 — Start a Sport 2.0
+## ✅ v0.24.1 — Start a Sport 2.0 — CONCLUÍDA
+
+> **Revisão local v0.24.1-r1:** corrige somente o token do gate de backend para corresponder ao texto real UTF-8 `não declara aptidão clínica`. Sem alteração funcional, contrato, endpoint, migration ou schema. Não commitar separadamente.
 
 Transformar o caminho “Começar um esporte” em uma jornada inicial navegável, com contexto, fundamentos e próximos passos sem prescrição automática.
+
+
+
+**Entregue na v0.24.1:**
+- endpoint `/api/portal/me/explore/start-a-sport`;
+- cinco modalidades iniciais navegáveis;
+- fundamentos por modalidade;
+- ambientes e recursos;
+- primeiro marco e próximo passo;
+- contexto do plano ativo preservado;
+- nenhuma prescrição, liberação clínica ou ajuste de intensidade automático.
+
+**Próxima etapa:** `v0.24.2 — Beginner Journeys 2.0`.
+
+## ⏭ v0.24.2 — Beginner Journeys 2.0
+
+Criar jornadas progressivas de aprendizagem para iniciantes, estruturadas em etapas educacionais e marcos de familiaridade sem transformar a jornada em prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

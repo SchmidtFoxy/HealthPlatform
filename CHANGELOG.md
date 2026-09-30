@@ -1,3 +1,22 @@
+# v0.24.1-r1 — Start a Sport Backend Gate Accent Fix (revisão local)
+
+- Corrige somente o gate estático de backend da `v0.24.1`.
+- O controller contém `não declara aptidão clínica` em UTF-8; o teste procurava a variante sem acentos.
+- `VERSION.txt` permanece `0.24.1`.
+- Sem mudança funcional, contrato, endpoint, migration ou schema.
+- Revisão local: não gerar commit próprio.
+
+# v0.24.1 — Start a Sport 2.0
+
+- Adiciona `GET /api/portal/me/explore/start-a-sport`.
+- Cria jornadas iniciais para Caminhada, Corrida, Ciclismo, Calistenia e Musculação.
+- Cada modalidade expõe ambientes, recursos, fundamentos, primeiro marco e próximo passo.
+- Integra Start a Sport ao caminho existente do AESYN Explore.
+- Mantém contexto do plano ativo visível.
+- Não declara aptidão clínica, não libera retorno ao esporte e não prescreve intensidade automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.2 — Beginner Journeys 2.0.
+
 # v0.24.0-r1 — Explore UI Gate Alignment (revisão local)
 
 - Corrige o gate estático da UI da `v0.24.0`.

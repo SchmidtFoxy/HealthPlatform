@@ -34,6 +34,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Start a Sport 2.0
+
+A `v0.24.1` transforma **Começar um esporte** em uma jornada navegável. O paciente pode explorar Caminhada, Corrida, Ciclismo, Calistenia e Musculação, entendendo ambientes, recursos, fundamentos, primeiro marco e próximo passo de aprendizado.
+
+A jornada é educacional: não define carga, pace, volume, zona, séries, repetições ou aptidão clínica. Quando existe um plano ativo, a própria API deixa explícito que Explore é complementar e não substitui a prescrição atual.
+
 ### AESYN Explore Foundation
 
 A `v0.24.0` inicia a fase de autonomia guiada do atleta. Explore conecta o plano ativo, o ciclo esportivo, a atividade relatada e caminhos de descoberta como **Começar um esporte**, **Mover em casa**, **Tenho pouco tempo**, **Quero ir para fora** e **Aprender fundamentos**.
@@ -269,9 +276,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.0 — AESYN Explore Foundation`
-- **Revisão local corrente:** `v0.24.0-r1 — Explore UI Gate Alignment`
-- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
+- **Versão funcional:** `v0.24.1 — Start a Sport 2.0`
+- **Revisão local corrente:** `v0.24.1-r1 — Start a Sport Backend Gate Accent Fix`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
