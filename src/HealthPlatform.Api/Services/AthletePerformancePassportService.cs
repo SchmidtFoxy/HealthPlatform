@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.30.1",
+            "v0.30.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Notes Foundation adiciona uma estrutura explícita para observações profissionais separadas dos dados observados. Nesta fundação não há persistência nem decisão clínica automática.")
+            "Progress Review Notes Persistence habilita persistência profissional reutilizando NotasInternasProfissionais, com autoria, timestamps, escopo do paciente e auditoria. Notas permanecem privadas da equipe e não geram decisão clínica automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -314,9 +314,9 @@ public static class AthletePerformancePassportService
             workspace.EstadoPreparacao,
             campos,
             campos.Length,
-            false,
+            true,
             "RevisaoProfissional",
-            "Progress Review Notes Foundation define somente a estrutura das observações profissionais. Os campos não substituem o dado observado, não representam diagnóstico, prognóstico, prescrição ou recomendação automática e ainda não possuem persistência própria nesta versão.");
+            "Progress Review Notes Persistence mantém observações profissionais privadas, com autoria, timestamps e auditoria. Os campos não substituem o dado observado e não representam diagnóstico, prognóstico, prescrição ou recomendação automática.");
     }
 
     public static ProgressReviewWorkspaceResponse MontarWorkspaceRevisaoProgresso(

@@ -1,4 +1,19 @@
-﻿# v0.30.1 — Progress Review Notes Foundation
+﻿# v0.30.2 — Progress Review Notes Persistence
+
+- Habilita persistência real das notas de revisão de progresso.
+- Reutiliza `NotaInternaProfissional` e `AuditLog`.
+- Adiciona `ProgressReviewPersistedNoteResponse`.
+- Adiciona `ProgressReviewNotesController`.
+- Implementa listar, criar, editar e arquivar notas.
+- Persiste autoria, timestamps, paciente e organização.
+- Audita `PROGRESS_REVIEW_NOTE_CREATED`, `PROGRESS_REVIEW_NOTE_UPDATED` e `PROGRESS_REVIEW_NOTE_ARCHIVED`.
+- Restringe os registros aos cinco campos estruturados da v0.30.1.
+- Adiciona UI profissional "Revisão de progresso" no perfil do paciente.
+- Mantém notas privadas da equipe profissional.
+- Não cria migration ou tabela nova: reutiliza infraestrutura existente.
+- Próxima etapa: v0.30.3 — Progress Review History & Filters.
+
+# v0.30.1 — Progress Review Notes Foundation
 
 - Adiciona `ProgressReviewNoteFieldResponse`.
 - Adiciona `ProgressReviewNotesFoundationResponse`.

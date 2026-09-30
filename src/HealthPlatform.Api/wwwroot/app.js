@@ -958,7 +958,85 @@ async function hpOpenInternalNotesV0204(patient){
   };
   try{await render()}catch(err){box.innerHTML=hpUiState('error','Não foi possível carregar as notas internas',err.message,{actionLabel:'Tentar novamente'});hpBindStateAction(box,()=>hpOpenInternalNotesV0204(p))}
 }
-async function loadPatient(){if(!state.patientId){navigate('pacientes');return}const id=state.patientId;const [p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo]=await Promise.all([api(`/api/pacientes/${id}`),api(`/api/pacientes/${id}/timeline?limite=160`),api(`/api/pacientes/${id}/portal/home?data=${todayISO()}`),api(`/api/pacientes/${id}/resumo-clinico`),api(`/api/pacientes/${id}/consultas`),api(`/api/pacientes/${id}/evolucoes`),api(`/api/pacientes/${id}/anamneses`),api(`/api/pacientes/${id}/avaliacoes`),api(`/api/pacientes/${id}/exames`),api(`/api/pacientes/${id}/planos-alimentares`),api(`/api/pacientes/${id}/metas?incluirEncerradas=true`),api(`/api/pacientes/${id}/diario`),api(`/api/pacientes/${id}/relatorios`),api(`/api/pacientes/${id}/treinos`),api(`/api/pacientes/${id}/treinos/historico?dias=90`),api(`/api/pacientes/${id}/monitoramento?dias=7`),api(`/api/pacientes/${id}/protocolo-acompanhamento?offsetMinutos=${state.offset}`) ]);content.innerHTML=`<div class="patient-page performance-profile-page"><div class="patient-page-head"><button class="back-link" id="backPatients">← Pacientes</button>${hpPatientPerformanceProfile(p,portal,resumoClinico,monitoramento,protocolo)}<div class="patient-profile-actions"><div class="patient-profile-actions-main"><button class="primary" id="registerClinical">+ Registrar</button><button class="secondary" id="patientPrescriptionReview">Revisar & publicar</button><button class="secondary" id="openPrescriptionWorkspace">Treino & Nutrição</button></div><details class="patient-profile-more"><summary>Mais ações</summary><div><button class="ghost" id="patientAccess">Acesso do paciente</button><button class="ghost" id="editPatient">Editar dados</button><button class="ghost" id="patientStatusV0203">Status do acompanhamento</button><button class="ghost" id="patientInternalNotesV0204">Notas internas</button><button class="ghost" id="patientTagsV0205">Tags & segmentação</button><button class="ghost" id="patientIntake">Avaliação inicial</button><button class="ghost" id="patientGoalRecommendation">Objetivo & sugestão</button><button class="ghost" id="patientSmartAdaptation">Preferências & adaptação</button></div></details></div><div class="patient-info-grid compact">${info('Telefone',p.telefone)}${info('E-mail',p.email)}${info('CPF',p.cpf)}${info('Sexo',p.sexo)}</div></div><div class="patient-tabs performance-profile-tabs">${tabButton('resumo','Visão geral')}${tabButton('evolution-dashboard','Evolução')}${tabButton('consultas',`Consultas ${consultas.length}`)}${tabButton('avaliacoes',`Corpo ${avaliacoes.length}`)}${tabButton('fotos',`Fotos ${diario.filter(x=>String(x.tipo||'').startsWith('FotoEvolucao')).length}`)}${tabButton('treinos',`Treino ${treinos.length}`)}${tabButton('alimentacao',`Nutrição ${planos.length}`)}${tabButton('exames',`Exames ${exames.length}`)}${tabButton('diario',`Check-ins ${diario.length}`)}${tabButton('evolucoes',`Evoluções ${evolucoes.length}`)}${tabButton('anamnese',`Anamnese ${anamneses.length}`)}${tabButton('metas',`Metas ${metas.length}`)}${tabButton('relatorios',`Relatórios ${relatorios.length}`)}${tabButton('arquivos','Arquivos')}${tabButton('chat','Chat')}${tabButton('timeline','Timeline')}</div><div id="patientTabContent"></div></div>`;$('#backPatients').onclick=()=>navigate('pacientes');$('#registerClinical').onclick=()=>openClinicalActionMenu(p);$('#patientAccess').onclick=()=>openPatientAccess(p);$('#editPatient').onclick=()=>openEditPatientForm(p);$('#patientStatusV0203').onclick=()=>hpOpenPatientStatusV0203(p);$('#patientInternalNotesV0204').onclick=()=>hpOpenInternalNotesV0204(p);$('#patientTagsV0205').onclick=()=>hpOpenPatientTagsV0205(p);$('#patientIntake').onclick=()=>openPatientIntake(p);$('#patientGoalRecommendation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientSmartAdaptation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientPrescriptionReview').onclick=()=>openPrescriptionReview(p);$('#openPrescriptionWorkspace').onclick=()=>navigate('prescricoes');const data={p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo};const setPatientTab=tab=>{state.patientTab=tab;$$('.patient-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.patientTab));renderPatientTab(data);window.scrollTo({top:0,behavior:'smooth'})};$$('.patient-tab').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.tab));$$('[data-profile-tab]').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.profileTab));renderPatientTab(data)}
+
+async function hpOpenProgressReviewNotesV0302(p){
+  const box=$('#clinicalActionContent');
+  openClinicalAction(box);
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">PROGRESS REVIEW NOTES • ${HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302}</span><h2>Notas de revisão do progresso</h2><p>${esc(p.nome)} • conteúdo privado da equipe profissional, com autoria e auditoria.</p></div><div id="progressReviewNotesV0302">${hpUiState('loading','Carregando notas de revisão')}</div>`;
+
+  const campos=[
+    ['dado-observado','Dado observado'],
+    ['interpretacao-profissional','Interpretação profissional'],
+    ['ponto-atencao','Ponto de atenção'],
+    ['hipotese-acompanhamento','Hipótese de acompanhamento'],
+    ['proximo-item-revisar','Próximo item a revisar']
+  ];
+
+  const render=async()=>{
+    const notes=await api(`/api/pacientes/${p.id}/performance/progress-review-notes`);
+    const host=$('#progressReviewNotesV0302');
+
+    host.innerHTML=`<form id="progressReviewNoteFormV0302" class="clinical-form internal-note-form-v0204">
+      <input type="hidden" name="id">
+      <div class="form-grid">
+        <label>Campo estruturado<select name="campo" required>${campos.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('')}</select></label>
+        <label class="span-2">Observação profissional<textarea name="conteudo" rows="5" maxlength="4000" required placeholder="Registre a observação mantendo separado o fato observado da interpretação profissional."></textarea></label>
+      </div>
+      <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, data e alterações ficam auditadas.</div>
+      <div class="form-actions"><button type="button" class="secondary" id="cancelProgressReviewNoteV0302">Limpar</button><button class="primary" type="submit">Salvar nota</button></div>
+    </form>
+    <div class="internal-note-list-v0204">${notes.length?notes.map(n=>`<article class="internal-note-v0204" data-progress-review-note="${n.id}">
+      <div class="internal-note-v0204-head"><div><span class="pill">${esc(n.rotulo||n.campo)}</span></div><small>${esc(n.autorNome||'Profissional')} • ${fmtDateTime(n.atualizadoEmUtc||n.criadoEmUtc)}</small></div>
+      <p>${esc(n.conteudo||'').replace(/\n/g,'<br>')}</p>
+      <div class="internal-note-actions-v0204"><button type="button" class="ghost" data-progress-note-edit="${n.id}">Editar</button><button type="button" class="ghost danger" data-progress-note-archive="${n.id}">Arquivar</button></div>
+    </article>`).join(''):'<div class="empty">Nenhuma nota de revisão registrada.</div>'}</div>`;
+
+    const form=$('#progressReviewNoteFormV0302');
+    $('#cancelProgressReviewNoteV0302').onclick=()=>{form.reset();form.elements.id.value='';};
+
+    form.onsubmit=async e=>{
+      e.preventDefault();
+      const id=form.elements.id.value;
+      const body={campo:form.elements.campo.value,conteudo:form.elements.conteudo.value};
+      const btn=form.querySelector('button[type=submit]');
+      hpSetActionPending(btn,true,id?'Atualizando...':'Salvando...');
+      try{
+        await api(id?`/api/pacientes/${p.id}/performance/progress-review-notes/${id}`:`/api/pacientes/${p.id}/performance/progress-review-notes`,{
+          method:id?'PUT':'POST',
+          body:JSON.stringify(body),
+          queueIfOffline:false
+        });
+        toast(id?'Nota de revisão atualizada.':'Nota de revisão registrada.');
+        await render();
+      }catch(err){
+        toast(err.message,true);
+        hpSetActionPending(btn,false);
+      }
+    };
+
+    [...host.querySelectorAll('[data-progress-note-edit]')].forEach(b=>b.onclick=()=>{
+      const note=notes.find(n=>n.id===b.dataset.progressNoteEdit);
+      if(!note)return;
+      form.elements.id.value=note.id;
+      form.elements.campo.value=note.campo;
+      form.elements.conteudo.value=note.conteudo;
+      form.elements.conteudo.focus();
+    });
+
+    [...host.querySelectorAll('[data-progress-note-archive]')].forEach(b=>b.onclick=async()=>{
+      if(!confirm('Arquivar esta nota de revisão?'))return;
+      try{
+        await api(`/api/pacientes/${p.id}/performance/progress-review-notes/${b.dataset.progressNoteArchive}`,{method:'DELETE',queueIfOffline:false});
+        toast('Nota de revisão arquivada.');
+        await render();
+      }catch(err){toast(err.message,true)}
+    });
+  };
+
+  await render();
+}
+
+async function loadPatient(){if(!state.patientId){navigate('pacientes');return}const id=state.patientId;const [p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo]=await Promise.all([api(`/api/pacientes/${id}`),api(`/api/pacientes/${id}/timeline?limite=160`),api(`/api/pacientes/${id}/portal/home?data=${todayISO()}`),api(`/api/pacientes/${id}/resumo-clinico`),api(`/api/pacientes/${id}/consultas`),api(`/api/pacientes/${id}/evolucoes`),api(`/api/pacientes/${id}/anamneses`),api(`/api/pacientes/${id}/avaliacoes`),api(`/api/pacientes/${id}/exames`),api(`/api/pacientes/${id}/planos-alimentares`),api(`/api/pacientes/${id}/metas?incluirEncerradas=true`),api(`/api/pacientes/${id}/diario`),api(`/api/pacientes/${id}/relatorios`),api(`/api/pacientes/${id}/treinos`),api(`/api/pacientes/${id}/treinos/historico?dias=90`),api(`/api/pacientes/${id}/monitoramento?dias=7`),api(`/api/pacientes/${id}/protocolo-acompanhamento?offsetMinutos=${state.offset}`) ]);content.innerHTML=`<div class="patient-page performance-profile-page"><div class="patient-page-head"><button class="back-link" id="backPatients">← Pacientes</button>${hpPatientPerformanceProfile(p,portal,resumoClinico,monitoramento,protocolo)}<div class="patient-profile-actions"><div class="patient-profile-actions-main"><button class="primary" id="registerClinical">+ Registrar</button><button class="secondary" id="patientPrescriptionReview">Revisar & publicar</button><button class="secondary" id="openPrescriptionWorkspace">Treino & Nutrição</button></div><details class="patient-profile-more"><summary>Mais ações</summary><div><button class="ghost" id="patientAccess">Acesso do paciente</button><button class="ghost" id="editPatient">Editar dados</button><button class="ghost" id="patientStatusV0203">Status do acompanhamento</button><button class="ghost" id="patientInternalNotesV0204">Notas internas</button><button class="ghost" id="patientProgressReviewNotesV0302">Revisão de progresso</button><button class="ghost" id="patientTagsV0205">Tags & segmentação</button><button class="ghost" id="patientIntake">Avaliação inicial</button><button class="ghost" id="patientGoalRecommendation">Objetivo & sugestão</button><button class="ghost" id="patientSmartAdaptation">Preferências & adaptação</button></div></details></div><div class="patient-info-grid compact">${info('Telefone',p.telefone)}${info('E-mail',p.email)}${info('CPF',p.cpf)}${info('Sexo',p.sexo)}</div></div><div class="patient-tabs performance-profile-tabs">${tabButton('resumo','Visão geral')}${tabButton('evolution-dashboard','Evolução')}${tabButton('consultas',`Consultas ${consultas.length}`)}${tabButton('avaliacoes',`Corpo ${avaliacoes.length}`)}${tabButton('fotos',`Fotos ${diario.filter(x=>String(x.tipo||'').startsWith('FotoEvolucao')).length}`)}${tabButton('treinos',`Treino ${treinos.length}`)}${tabButton('alimentacao',`Nutrição ${planos.length}`)}${tabButton('exames',`Exames ${exames.length}`)}${tabButton('diario',`Check-ins ${diario.length}`)}${tabButton('evolucoes',`Evoluções ${evolucoes.length}`)}${tabButton('anamnese',`Anamnese ${anamneses.length}`)}${tabButton('metas',`Metas ${metas.length}`)}${tabButton('relatorios',`Relatórios ${relatorios.length}`)}${tabButton('arquivos','Arquivos')}${tabButton('chat','Chat')}${tabButton('timeline','Timeline')}</div><div id="patientTabContent"></div></div>`;$('#backPatients').onclick=()=>navigate('pacientes');$('#registerClinical').onclick=()=>openClinicalActionMenu(p);$('#patientAccess').onclick=()=>openPatientAccess(p);$('#editPatient').onclick=()=>openEditPatientForm(p);$('#patientStatusV0203').onclick=()=>hpOpenPatientStatusV0203(p);$('#patientInternalNotesV0204').onclick=()=>hpOpenInternalNotesV0204(p);$('#patientProgressReviewNotesV0302').onclick=()=>hpOpenProgressReviewNotesV0302(p);$('#patientTagsV0205').onclick=()=>hpOpenPatientTagsV0205(p);$('#patientIntake').onclick=()=>openPatientIntake(p);$('#patientGoalRecommendation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientSmartAdaptation').onclick=()=>openTreatmentGoalRecommendation(p);$('#patientPrescriptionReview').onclick=()=>openPrescriptionReview(p);$('#openPrescriptionWorkspace').onclick=()=>navigate('prescricoes');const data={p,timeline,portal,resumoClinico,consultas,evolucoes,anamneses,avaliacoes,exames,planos,metas,diario,relatorios,treinos,treinosHistorico,monitoramento,protocolo};const setPatientTab=tab=>{state.patientTab=tab;$$('.patient-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.patientTab));renderPatientTab(data);window.scrollTo({top:0,behavior:'smooth'})};$$('.patient-tab').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.tab));$$('[data-profile-tab]').forEach(b=>b.onclick=()=>setPatientTab(b.dataset.profileTab));renderPatientTab(data)}
 function hpMonitoringCard(d,protocolo,paciente){
   const itens=(protocolo?.itens||[]).filter(x=>x.ativo);
   const hasMetrics=d&&(d.metricas||[]).some(x=>x.total);
@@ -4360,6 +4438,7 @@ const HP_PROGRESS_OBSERVATION_SUMMARY_V0295='v0.29.5';
 const HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296='v0.29.6';
 const HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0';
 const HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1';
+const HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4525,7 +4604,7 @@ async function loadAthletePerformancePassportV0280(patient){
     <div class="workout-prescribed-performed-v0272" data-progress-observation-summary-v0295="${HP_PROGRESS_OBSERVATION_SUMMARY_V0295}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS OBSERVATION SUMMARY 2.0</span><h4>Resumo observacional do progresso</h4><p>Síntese de sinais, eventos, janelas, coobservações e cobertura documental.</p></div></div>${hpProgressObservationSummaryV0295(data.resumoObservacionalProgresso)}</div>
     <div class="workout-prescribed-performed-v0272" data-progress-intelligence-closure-v0296="${HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS INTELLIGENCE CLOSURE 2.0</span><h4>Fechamento da fundação observacional</h4><p>Confirma presença estrutural das camadas de inteligência de progresso.</p></div></div>${hpProgressIntelligenceClosureV0296(data.fechamentoInteligenciaProgresso)}</div>
     <div class="workout-prescribed-performed-v0272" data-progress-review-workspace-v0300="${HP_PROGRESS_REVIEW_WORKSPACE_V0300}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS REVIEW WORKSPACE</span><h4>Workspace de revisão profissional</h4><p>Organiza as camadas observacionais em uma visão única para revisão.</p></div><span class="pill Info">${data.workspaceRevisaoProgresso?.secoesDisponiveis??0}/${data.workspaceRevisaoProgresso?.secoesEsperadas??6}</span></div>${hpProgressReviewWorkspaceV0300(data.workspaceRevisaoProgresso)}</div>
-    <div class="workout-prescribed-performed-v0272" data-progress-review-notes-v0301="${HP_PROGRESS_REVIEW_NOTES_V0301}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS REVIEW NOTES FOUNDATION</span><h4>Estrutura de observações profissionais</h4><p>Separa dado observado, interpretação, atenção, hipótese e próximo item de revisão.</p></div><span class="pill Info">${data.fundacaoNotasRevisaoProgresso?.camposDisponiveis??0} campos</span></div>${hpProgressReviewNotesFoundationV0301(data.fundacaoNotasRevisaoProgresso)}</div>
+    <div class="workout-prescribed-performed-v0272" data-progress-review-notes-v0301="${HP_PROGRESS_REVIEW_NOTES_V0301}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS REVIEW NOTES FOUNDATION</span><h4>Estrutura de observações profissionais</h4><p>Separa dado observado, interpretação, atenção, hipótese e próximo item de revisão, agora com persistência profissional.</p></div><span class="pill Info">${data.fundacaoNotasRevisaoProgresso?.camposDisponiveis??0} campos</span></div>${hpProgressReviewNotesFoundationV0301(data.fundacaoNotasRevisaoProgresso)}</div>
     <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
   host.appendChild(section);
 }
@@ -9592,7 +9671,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.1';
+const HP_MVP_VERSION='0.30.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

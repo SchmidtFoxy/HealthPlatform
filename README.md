@@ -1251,3 +1251,36 @@ A estrutura não transforma observação profissional em diagnóstico, prognóst
 
 **Próxima etapa:** `v0.30.2 — Progress Review Notes Persistence`.
 
+---
+
+## v0.30.2 — Progress Review Notes Persistence
+
+Habilita persistência real das notas estruturadas de revisão de progresso reutilizando a infraestrutura consolidada de `NotaInternaProfissional`.
+
+### Persistência
+- vínculo com organização e paciente;
+- autor (`AutorUsuarioId` e `AutorNome`);
+- `CreatedAtUtc` e `UpdatedAtUtc`;
+- arquivamento lógico;
+- auditoria de criação, edição e arquivamento;
+- conteúdo privado da equipe profissional.
+
+### Campos estruturados
+As notas continuam limitadas aos cinco campos definidos na v0.30.1:
+- `dado-observado`;
+- `interpretacao-profissional`;
+- `ponto-atencao`;
+- `hipotese-acompanhamento`;
+- `proximo-item-revisar`.
+
+### API profissional
+- `GET /api/pacientes/{pacienteId}/performance/progress-review-notes`;
+- `POST /api/pacientes/{pacienteId}/performance/progress-review-notes`;
+- `PUT /api/pacientes/{pacienteId}/performance/progress-review-notes/{id}`;
+- `DELETE /api/pacientes/{pacienteId}/performance/progress-review-notes/{id}`.
+
+### Arquitetura
+Nenhuma tabela duplicada foi criada. A feature reutiliza `NotasInternasProfissionais` e `AuditLogs`, mantendo compatibilidade com o módulo de notas internas existente.
+
+**Próxima etapa:** `v0.30.3 — Progress Review History & Filters`.
+

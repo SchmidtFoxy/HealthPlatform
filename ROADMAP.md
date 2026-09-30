@@ -2233,3 +2233,20 @@ Base para registrar observações profissionais vinculadas à revisão do progre
 ### v0.30.2 — Progress Review Notes Persistence
 Persistência profissional das notas de revisão, com autoria, timestamp, escopo do paciente e trilha de auditoria.
 
+## ✅ v0.30.2 — Progress Review Notes Persistence — CONCLUÍDA
+
+**Entregue:**
+- persistência profissional das notas de revisão;
+- autoria e timestamps;
+- vínculo organização/paciente;
+- edição e arquivamento lógico;
+- trilha de auditoria;
+- UI própria no perfil profissional do paciente;
+- reutilização de `NotaInternaProfissional`;
+- sem tabela ou migration duplicada.
+
+## Próxima etapa
+
+### v0.30.3 — Progress Review History & Filters
+Histórico de revisão com filtros por campo, autor e período, preservando o caráter privado das notas profissionais.
+

@@ -109,6 +109,17 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewPersistedNoteResponse(
+    Guid Id,
+    string Campo,
+    string Rotulo,
+    string Conteudo,
+    Guid AutorUsuarioId,
+    string AutorNome,
+    DateTime CriadoEmUtc,
+    DateTime? AtualizadoEmUtc);
+
 public sealed record ProgressReviewNoteFieldResponse(
     string Chave,
     string Rotulo,
