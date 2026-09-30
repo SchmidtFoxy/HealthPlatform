@@ -108,6 +108,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewNoteFieldResponse(
+    string Chave,
+    string Rotulo,
+    string Categoria,
+    string Descricao,
+    bool Obrigatorio);
+
+public sealed record ProgressReviewNotesFoundationResponse(
+    int DiasObservados,
+    string EstadoPreparacao,
+    IReadOnlyCollection<ProgressReviewNoteFieldResponse> Campos,
+    int CamposDisponiveis,
+    bool PersistenciaDisponivel,
+    string Escopo,
+    string RegraDeUso);
+
 public sealed record ProgressReviewWorkspaceSectionResponse(
     string Chave,
     string Titulo,
@@ -279,4 +296,9 @@ public sealed record AthletePerformancePassportResponse(
     public ProgressReviewWorkspaceResponse WorkspaceRevisaoProgresso { get; init; } =
         new(180, "PreparacaoParcial", Array.Empty<ProgressReviewWorkspaceSectionResponse>(), 0, 6,
             "Workspace de revisão profissional sem decisão clínica automática.");
+
+    public ProgressReviewNotesFoundationResponse FundacaoNotasRevisaoProgresso { get; init; } =
+        new(180, "PreparacaoParcial", Array.Empty<ProgressReviewNoteFieldResponse>(), 0, false,
+            "RevisaoProfissional",
+            "Estrutura de notas separada dos dados observados e sem decisão clínica automática.");
 }

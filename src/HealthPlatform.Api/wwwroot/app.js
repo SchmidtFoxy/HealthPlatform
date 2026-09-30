@@ -4359,6 +4359,7 @@ const HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4';
 const HP_PROGRESS_OBSERVATION_SUMMARY_V0295='v0.29.5';
 const HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296='v0.29.6';
 const HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0';
+const HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4411,6 +4412,13 @@ function hpAthletePassportDomainV0280(x){
 
 
 
+
+
+function hpProgressReviewNotesFoundationV0301(x){
+  if(!x) return '<div class="empty">Fundação de notas indisponível.</div>';
+  const fields=(x.campos||[]).map(f=>`<article class="workout-progression-signal-v0274"><div class="workout-comparison-head-v0272"><div><small>${esc(f.categoria||'CAMPO')}</small><b>${esc(f.rotulo||'')}</b></div><span class="pill Info">${f.obrigatorio?'Obrigatório':'Opcional'}</span></div><p>${esc(f.descricao||'')}</p><small class="muted-line">${esc(f.chave||'')}</small></article>`).join('');
+  return `<div class="workout-comparisons-v0272">${fields||'<div class="empty">Nenhum campo definido.</div>'}</div><small class="muted-line">${esc(x.regraDeUso||'')}</small>`;
+}
 
 function hpProgressReviewWorkspaceV0300(x){
   if(!x) return '<div class="empty">Workspace de revisão indisponível.</div>';
@@ -4517,6 +4525,7 @@ async function loadAthletePerformancePassportV0280(patient){
     <div class="workout-prescribed-performed-v0272" data-progress-observation-summary-v0295="${HP_PROGRESS_OBSERVATION_SUMMARY_V0295}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS OBSERVATION SUMMARY 2.0</span><h4>Resumo observacional do progresso</h4><p>Síntese de sinais, eventos, janelas, coobservações e cobertura documental.</p></div></div>${hpProgressObservationSummaryV0295(data.resumoObservacionalProgresso)}</div>
     <div class="workout-prescribed-performed-v0272" data-progress-intelligence-closure-v0296="${HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS INTELLIGENCE CLOSURE 2.0</span><h4>Fechamento da fundação observacional</h4><p>Confirma presença estrutural das camadas de inteligência de progresso.</p></div></div>${hpProgressIntelligenceClosureV0296(data.fechamentoInteligenciaProgresso)}</div>
     <div class="workout-prescribed-performed-v0272" data-progress-review-workspace-v0300="${HP_PROGRESS_REVIEW_WORKSPACE_V0300}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS REVIEW WORKSPACE</span><h4>Workspace de revisão profissional</h4><p>Organiza as camadas observacionais em uma visão única para revisão.</p></div><span class="pill Info">${data.workspaceRevisaoProgresso?.secoesDisponiveis??0}/${data.workspaceRevisaoProgresso?.secoesEsperadas??6}</span></div>${hpProgressReviewWorkspaceV0300(data.workspaceRevisaoProgresso)}</div>
+    <div class="workout-prescribed-performed-v0272" data-progress-review-notes-v0301="${HP_PROGRESS_REVIEW_NOTES_V0301}"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PROGRESS REVIEW NOTES FOUNDATION</span><h4>Estrutura de observações profissionais</h4><p>Separa dado observado, interpretação, atenção, hipótese e próximo item de revisão.</p></div><span class="pill Info">${data.fundacaoNotasRevisaoProgresso?.camposDisponiveis??0} campos</span></div>${hpProgressReviewNotesFoundationV0301(data.fundacaoNotasRevisaoProgresso)}</div>
     <small class="muted-line">${esc(data.regraDeUso||'')}</small>`;
   host.appendChild(section);
 }
@@ -9583,7 +9592,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.0';
+const HP_MVP_VERSION='0.30.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

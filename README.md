@@ -1224,3 +1224,30 @@ Abre a linha 0.30.x transformando a fundação observacional em um workspace ún
 
 **Próxima etapa:** `v0.30.1 — Progress Review Notes Foundation`.
 
+---
+
+## v0.30.1 — Progress Review Notes Foundation
+
+Adiciona a estrutura-base de observações profissionais vinculadas ao workspace de revisão.
+
+### Campos estruturados
+- `dado-observado`;
+- `interpretacao-profissional`;
+- `ponto-atencao`;
+- `hipotese-acompanhamento`;
+- `proximo-item-revisar`.
+
+### Entregue
+- contrato explícito de campo de nota;
+- fundação integrada ao Athlete Performance Passport;
+- endpoint profissional;
+- endpoint do portal do paciente em modo somente leitura;
+- UI de estrutura de notas;
+- separação explícita entre observação e interpretação;
+- `PersistenciaDisponivel = false` nesta fundação.
+
+### Guardrail
+A estrutura não transforma observação profissional em diagnóstico, prognóstico, prescrição ou recomendação automática. Persistência própria será introduzida somente após estabilização do modelo.
+
+**Próxima etapa:** `v0.30.2 — Progress Review Notes Persistence`.
+

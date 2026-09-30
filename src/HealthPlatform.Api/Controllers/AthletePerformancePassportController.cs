@@ -692,4 +692,39 @@ public sealed class AthletePerformancePassportController(
         return Ok(passport.WorkspaceRevisaoProgresso);
     }
 
+
+    [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-review-notes-foundation")]
+    public async Task<IActionResult> ProgressReviewNotesFoundationProfissional(Guid pacienteId, CancellationToken ct = default)
+    {
+        var existe = await db.Pacientes.AsNoTracking().AnyAsync(x =>
+            x.Id == pacienteId &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.Ativo, ct);
+
+        if (!existe)
+            return NotFound(new { message = "Paciente nao encontrado." });
+
+        var passport = await AthletePerformancePassportService.MontarAsync(db, pacienteId, ct);
+        return Ok(passport.FundacaoNotasRevisaoProgresso);
+    }
+
+    [Authorize(Policy = "PatientOnly")]
+    [HttpGet("api/portal/me/performance/progress-review-notes-foundation")]
+    public async Task<IActionResult> ProgressReviewNotesFoundationPaciente(CancellationToken ct = default)
+    {
+        var pacienteId = await db.Pacientes.AsNoTracking()
+            .Where(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .Select(x => (Guid?)x.Id)
+            .FirstOrDefaultAsync(ct);
+
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var passport = await AthletePerformancePassportService.MontarAsync(db, pacienteId.Value, ct);
+        return Ok(passport.FundacaoNotasRevisaoProgresso);
+    }
+
 }

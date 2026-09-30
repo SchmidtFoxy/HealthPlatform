@@ -27,6 +27,7 @@ public static class AthletePerformancePassportService
         var resumoObservacionalProgresso = MontarResumoObservacionalProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada);
         var fechamentoInteligenciaProgresso = MontarFechamentoInteligenciaProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada, resumoObservacionalProgresso);
         var workspaceRevisaoProgresso = MontarWorkspaceRevisaoProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada, resumoObservacionalProgresso, fechamentoInteligenciaProgresso);
+        var fundacaoNotasRevisaoProgresso = MontarFundacaoNotasRevisaoProgresso(workspaceRevisaoProgresso);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -104,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.30.0",
+            "v0.30.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Workspace Foundation organiza as camadas observacionais já existentes para revisão profissional em um único workspace. Não toma decisão clínica, não gera diagnóstico, prognóstico ou recomendação automática.")
+            "Progress Review Notes Foundation adiciona uma estrutura explícita para observações profissionais separadas dos dados observados. Nesta fundação não há persistência nem decisão clínica automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -125,7 +126,8 @@ public static class AthletePerformancePassportService
             MapaObservacaoCruzada = mapaObservacaoCruzada,
             ResumoObservacionalProgresso = resumoObservacionalProgresso,
             FechamentoInteligenciaProgresso = fechamentoInteligenciaProgresso,
-            WorkspaceRevisaoProgresso = workspaceRevisaoProgresso
+            WorkspaceRevisaoProgresso = workspaceRevisaoProgresso,
+            FundacaoNotasRevisaoProgresso = fundacaoNotasRevisaoProgresso
         };
     }
 
@@ -264,6 +266,58 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressReviewNotesFoundationResponse MontarFundacaoNotasRevisaoProgresso(
+        ProgressReviewWorkspaceResponse workspace)
+    {
+        var campos = new[]
+        {
+            new ProgressReviewNoteFieldResponse(
+                "dado-observado",
+                "Dado observado",
+                "Observacao",
+                "Registrar o fato ou evidência objetiva que motivou a revisão, sem interpretação embutida.",
+                true),
+
+            new ProgressReviewNoteFieldResponse(
+                "interpretacao-profissional",
+                "Interpretação profissional",
+                "Interpretacao",
+                "Registrar a leitura profissional de forma separada do dado observado.",
+                false),
+
+            new ProgressReviewNoteFieldResponse(
+                "ponto-atencao",
+                "Ponto de atenção",
+                "Acompanhamento",
+                "Registrar algo que merece revisão posterior sem classificá-lo automaticamente como problema.",
+                false),
+
+            new ProgressReviewNoteFieldResponse(
+                "hipotese-acompanhamento",
+                "Hipótese de acompanhamento",
+                "Hipotese",
+                "Registrar hipótese profissional explícita como hipótese, não como diagnóstico ou conclusão.",
+                false),
+
+            new ProgressReviewNoteFieldResponse(
+                "proximo-item-revisar",
+                "Próximo item a revisar",
+                "Planejamento",
+                "Registrar qual informação, sinal ou contexto deve ser revisitado posteriormente.",
+                false)
+        };
+
+        return new ProgressReviewNotesFoundationResponse(
+            workspace.DiasObservados,
+            workspace.EstadoPreparacao,
+            campos,
+            campos.Length,
+            false,
+            "RevisaoProfissional",
+            "Progress Review Notes Foundation define somente a estrutura das observações profissionais. Os campos não substituem o dado observado, não representam diagnóstico, prognóstico, prescrição ou recomendação automática e ainda não possuem persistência própria nesta versão.");
+    }
 
     public static ProgressReviewWorkspaceResponse MontarWorkspaceRevisaoProgresso(
         ProgressIntelligenceFoundationResponse foundation,

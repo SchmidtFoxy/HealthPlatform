@@ -1,4 +1,19 @@
-﻿# v0.30.0 — Progress Review Workspace Foundation
+﻿# v0.30.1 — Progress Review Notes Foundation
+
+- Adiciona `ProgressReviewNoteFieldResponse`.
+- Adiciona `ProgressReviewNotesFoundationResponse`.
+- Expande o passaporte com `FundacaoNotasRevisaoProgresso`.
+- Estrutura cinco campos de revisão profissional.
+- Separa dado observado de interpretação profissional.
+- Expõe hipótese como hipótese e não como diagnóstico.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-review-notes-foundation`.
+- Adiciona `GET /api/portal/me/performance/progress-review-notes-foundation`.
+- Adiciona painel Progress Review Notes Foundation.
+- Marca `PersistenciaDisponivel = false` nesta etapa.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.2 — Progress Review Notes Persistence.
+
+# v0.30.0 — Progress Review Workspace Foundation
 
 - Abre a linha funcional 0.30.x.
 - Adiciona `ProgressReviewWorkspaceSectionResponse`.

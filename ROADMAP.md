@@ -2216,3 +2216,20 @@ A fundação de inteligência de progresso passa a incluir:
 ### v0.30.1 — Progress Review Notes Foundation
 Base para registrar observações profissionais vinculadas à revisão do progresso, mantendo separação clara entre dado observado e interpretação profissional.
 
+## ✅ v0.30.1 — Progress Review Notes Foundation — CONCLUÍDA
+
+**Entregue:**
+- cinco campos estruturados para revisão profissional;
+- separação entre dado observado e interpretação;
+- hipótese explicitamente marcada como hipótese;
+- próximo item de revisão;
+- integração ao passaporte;
+- endpoints profissional e paciente read-only;
+- sem persistência própria nesta versão;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.2 — Progress Review Notes Persistence
+Persistência profissional das notas de revisão, com autoria, timestamp, escopo do paciente e trilha de auditoria.
+
