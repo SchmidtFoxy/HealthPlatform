@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.2';
+const HP_MVP_VERSION='0.24.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13885,4 +13885,95 @@ hpWireStartSportV0241=function(host,data){
       });
     };
   });
+};
+
+
+// ===== v0.24.3 — Home Workout 2.0 =====
+const HP_HOME_WORKOUT_V0243='v0.24.3';
+
+function hpHomeWorkoutQueryV0243(filters){
+  const p=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)p.set(k,v)});
+  const qs=p.toString();
+  return `/api/portal/me/explore/home-workout${qs?`?${qs}`:''}`;
+}
+
+function hpHomeWorkoutV0243(data){
+  const movements=Array.isArray(data?.movimentos)?data.movimentos:[];
+  const option=(value,current)=>`<option ${value===current?'selected':''}>${esc(value)}</option>`;
+
+  return `<section class="home-workout-v0243" data-home-workout-v0243="${HP_HOME_WORKOUT_V0243}" aria-labelledby="homeWorkoutTitleV0243">
+    <div class="home-workout-head-v0243">
+      <div>
+        <span class="eyebrow">HOME WORKOUT 2.0</span>
+        <h3 id="homeWorkoutTitleV0243">Mover em casa começa pelo contexto, não pela ficha.</h3>
+        <p>Escolha espaço, recurso e preferência para explorar movimentos já existentes no catálogo profissional.</p>
+      </div>
+      <span>${movements.length} possibilidade(s)</span>
+    </div>
+
+    <div class="home-workout-filters-v0243">
+      <label><span>ESPAÇO</span><select id="homeWorkoutSpaceV0243">${(data?.espacosDisponiveis||[]).map(x=>option(x,data?.espaco)).join('')}</select></label>
+      <label><span>RECURSO</span><select id="homeWorkoutResourceV0243">${(data?.recursosDisponiveis||[]).map(x=>option(x,data?.recurso)).join('')}</select></label>
+      <label><span>PREFERÊNCIA</span><select id="homeWorkoutPreferenceV0243">${(data?.preferenciasDisponiveis||[]).map(x=>option(x,data?.preferencia)).join('')}</select></label>
+    </div>
+
+    <div class="home-workout-context-v0243">
+      <b>${esc(data?.espaco||'Casa')}</b>
+      <span>${esc(data?.recurso||'Sem equipamento')}</span>
+      <span>${esc(data?.preferencia||'Corpo inteiro')}</span>
+    </div>
+
+    <div class="home-workout-grid-v0243">
+      ${movements.length?movements.map(x=>`<article>
+        <div><span>${esc(x.grupoMuscular||'Movimento')}</span><b>${esc(x.nome)}</b></div>
+        <p>${esc(x.descricao||'Sem descrição cadastrada no catálogo profissional.')}</p>
+        <small>${esc(x.equipamento||'Sem equipamento informado')}</small>
+        <footer>${esc(x.motivoDaCompatibilidade||'Compatível com o contexto selecionado.')}</footer>
+      </article>`).join(''):`<div class="home-workout-empty-v0243"><b>Nenhum movimento do catálogo combinou com este recorte.</b><span>Troque recurso ou preferência. O AESYN não inventa exercícios para preencher a lista.</span></div>`}
+    </div>
+
+    <div class="home-workout-source-v0243">
+      <b>Fonte: ${esc(data?.fonte||'Exercicios')}</b>
+      <span>${esc(data?.regraDeUso||'Home Workout organiza possibilidades sem criar prescrição.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenHomeWorkoutV0243(host,filters={}){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando possibilidades para casa...</div>';
+
+  try{
+    const data=await api(hpHomeWorkoutQueryV0243(filters));
+    host.innerHTML=hpHomeWorkoutV0243(data);
+
+    const current=()=>({
+      espaco:host.querySelector('#homeWorkoutSpaceV0243')?.value||'',
+      recurso:host.querySelector('#homeWorkoutResourceV0243')?.value||'',
+      preferencia:host.querySelector('#homeWorkoutPreferenceV0243')?.value||''
+    });
+
+    ['#homeWorkoutSpaceV0243','#homeWorkoutResourceV0243','#homeWorkoutPreferenceV0243'].forEach(selector=>{
+      const el=host.querySelector(selector);
+      if(el)el.onchange=()=>hpOpenHomeWorkoutV0243(host,current());
+    });
+
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Home Workout.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0243=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0243(host,data);
+  if(!host)return;
+  const homeBtn=host.querySelector('[data-explore-path-v0240="home-movement"]');
+  if(!homeBtn)return;
+  homeBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenHomeWorkoutV0243(detail);
+  };
 };

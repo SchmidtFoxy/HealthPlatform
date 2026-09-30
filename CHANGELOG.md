@@ -1,3 +1,15 @@
+# v0.24.3 — Home Workout 2.0
+
+- Adiciona `GET /api/portal/me/explore/home-workout`.
+- Permite explorar movimento em casa por espaço, recurso e preferência.
+- Reutiliza exclusivamente o catálogo ativo `Exercicios`.
+- Expõe justificativa de compatibilidade contextual para cada movimento.
+- Mostra estado vazio quando o catálogo não possui correspondência.
+- Integra Home Workout ao caminho “Mover em casa”.
+- Não monta ficha, não define séries, repetições, carga, intensidade ou progressão.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.4 — Quick Movement 2.0.
+
 # v0.24.2 — Beginner Journeys 2.0
 
 - Adiciona `GET /api/portal/me/explore/beginner-journeys`.

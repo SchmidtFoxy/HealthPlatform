@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.2 — Beginner Journeys 2.0
+> **Versão-base deste roadmap:** v0.24.3 — Home Workout 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1402,9 +1402,26 @@ Criar jornadas progressivas de aprendizagem para iniciantes, estruturadas em eta
 
 **Próxima etapa:** `v0.24.3 — Home Workout 2.0`.
 
-## ⏭ v0.24.3 — Home Workout 2.0
+## ✅ v0.24.3 — Home Workout 2.0 — CONCLUÍDA
 
 Criar uma experiência de exploração de movimento em casa baseada em espaço, recursos e preferências, reutilizando a biblioteca existente sem montar prescrição automática.
+
+
+
+**Entregue na v0.24.3:**
+- endpoint `/api/portal/me/explore/home-workout`;
+- filtros de espaço, recurso e preferência;
+- reutilização do catálogo `Exercicios`;
+- justificativa de compatibilidade por movimento;
+- estado vazio sem conteúdo artificial;
+- integração ao caminho “Mover em casa”;
+- nenhuma ficha, série, repetição, carga ou progressão automática.
+
+**Próxima etapa:** `v0.24.4 — Quick Movement 2.0`.
+
+## ⏭ v0.24.4 — Quick Movement 2.0
+
+Criar exploração para momentos de pouco tempo, organizando possibilidades curtas por contexto sem transformar “rápido” em intensidade automática ou prescrição pronta.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

@@ -310,4 +310,151 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("home-workout")]
+    public async Task<ActionResult<HomeWorkoutResponse>> HomeWorkout(
+        [FromQuery] string? espaco = null,
+        [FromQuery] string? recurso = null,
+        [FromQuery] string? preferencia = null,
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var espacos = new[] { "Pouco espaço", "Sala ou quarto", "Quintal ou área externa" };
+        var recursos = new[] { "Sem equipamento", "Faixa ou elástico", "Halter", "Banco ou cadeira" };
+        var preferencias = new[] { "Força", "Mobilidade", "Condicionamento", "Corpo inteiro" };
+
+        var espacoAtual = NormalizarOpcao(espaco, espacos, "Sala ou quarto");
+        var recursoAtual = NormalizarOpcao(recurso, recursos, "Sem equipamento");
+        var preferenciaAtual = NormalizarOpcao(preferencia, preferencias, "Corpo inteiro");
+
+        var exercicios = await db.Exercicios.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.GrupoMuscular,
+                x.Equipamento,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var candidatos = exercicios
+            .Select(x => new
+            {
+                Exercicio = x,
+                Texto = $"{x.Nome} {x.GrupoMuscular} {x.Equipamento} {x.Descricao}".ToLowerInvariant()
+            })
+            .Where(x => CompativelComCasa(x.Texto, recursoAtual, preferenciaAtual))
+            .Take(16)
+            .Select(x => new HomeWorkoutMovimentoResponse(
+                x.Exercicio.Id,
+                x.Exercicio.Nome,
+                x.Exercicio.GrupoMuscular,
+                x.Exercicio.Equipamento,
+                x.Exercicio.Descricao,
+                MotivoCompatibilidade(x.Texto, espacoAtual, recursoAtual, preferenciaAtual)))
+            .ToArray();
+
+        return Ok(new HomeWorkoutResponse(
+            espacoAtual,
+            recursoAtual,
+            preferenciaAtual,
+            espacos,
+            recursos,
+            preferencias,
+            candidatos,
+            "Exercicios",
+            "Home Workout organiza possibilidades do catalogo profissional por contexto de casa. Nao monta ficha, nao define series, repeticoes, carga, intensidade ou progressao automaticamente."));
+    }
+
+    private static string NormalizarOpcao(string? valor, string[] opcoes, string padrao)
+    {
+        if (string.IsNullOrWhiteSpace(valor))
+            return padrao;
+
+        var encontrada = opcoes.FirstOrDefault(x =>
+            x.Equals(valor.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        return encontrada ?? padrao;
+    }
+
+    private static bool CompativelComCasa(string texto, string recurso, string preferencia)
+    {
+        var recursoOk = recurso switch
+        {
+            "Sem equipamento" => !texto.Contains("barra") &&
+                                !texto.Contains("máquina") &&
+                                !texto.Contains("maquina") &&
+                                !texto.Contains("cabo") &&
+                                !texto.Contains("polia"),
+            "Faixa ou elástico" => texto.Contains("elástico") ||
+                                  texto.Contains("elastico") ||
+                                  texto.Contains("faixa") ||
+                                  texto.Contains("peso corporal"),
+            "Halter" => texto.Contains("halter") || texto.Contains("dumbbell"),
+            "Banco ou cadeira" => texto.Contains("banco") ||
+                                 texto.Contains("cadeira") ||
+                                 texto.Contains("peso corporal"),
+            _ => true
+        };
+
+        var preferenciaOk = preferencia switch
+        {
+            "Força" => texto.Contains("força") ||
+                       texto.Contains("forca") ||
+                       texto.Contains("agach") ||
+                       texto.Contains("flex") ||
+                       texto.Contains("remada") ||
+                       texto.Contains("press"),
+            "Mobilidade" => texto.Contains("mobil") ||
+                            texto.Contains("along") ||
+                            texto.Contains("quadril") ||
+                            texto.Contains("tornozelo") ||
+                            texto.Contains("ombro"),
+            "Condicionamento" => texto.Contains("cardio") ||
+                                 texto.Contains("condicion") ||
+                                 texto.Contains("polichinelo") ||
+                                 texto.Contains("corrida") ||
+                                 texto.Contains("salt"),
+            "Corpo inteiro" => true,
+            _ => true
+        };
+
+        return recursoOk && preferenciaOk;
+    }
+
+    private static string MotivoCompatibilidade(
+        string texto,
+        string espaco,
+        string recurso,
+        string preferencia)
+    {
+        var partes = new List<string>
+        {
+            $"Contexto: {espaco}",
+            $"Recurso: {recurso}",
+            $"Preferencia: {preferencia}"
+        };
+
+        if (texto.Contains("peso corporal"))
+            partes.Add("catalogado como peso corporal");
+        else if (texto.Contains("halter"))
+            partes.Add("catalogado com halter");
+        else if (texto.Contains("elástico") || texto.Contains("elastico"))
+            partes.Add("catalogado com elástico/faixa");
+
+        return string.Join(" • ", partes);
+    }
+
+
 }

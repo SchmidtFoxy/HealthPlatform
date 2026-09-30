@@ -62,3 +62,23 @@ public sealed record BeginnerJourneysResponse(
     IReadOnlyCollection<BeginnerJourneyResponse> Jornadas,
     string Fonte,
     string RegraGeral);
+
+
+public sealed record HomeWorkoutMovimentoResponse(
+    Guid Id,
+    string Nome,
+    string? GrupoMuscular,
+    string? Equipamento,
+    string? Descricao,
+    string MotivoDaCompatibilidade);
+
+public sealed record HomeWorkoutResponse(
+    string Espaco,
+    string Recurso,
+    string Preferencia,
+    string[] EspacosDisponiveis,
+    string[] RecursosDisponiveis,
+    string[] PreferenciasDisponiveis,
+    IReadOnlyCollection<HomeWorkoutMovimentoResponse> Movimentos,
+    string Fonte,
+    string RegraDeUso);
