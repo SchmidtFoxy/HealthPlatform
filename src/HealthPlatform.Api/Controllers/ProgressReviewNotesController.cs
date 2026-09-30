@@ -136,6 +136,68 @@ public class ProgressReviewNotesController(
             "A fundação de follow-up organiza próximos itens a acompanhar. A partir da v0.31.1 possui persistência profissional auditada, sem criar decisão clínica, alerta automático, diagnóstico, prognóstico ou recomendação."));
     }
 
+    [HttpGet("follow-up/search")]
+    public async Task<ActionResult<ProgressReviewFollowUpFiltersResponse>> FiltrarFollowUp(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? responsavel = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusFollowUpValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Aberto, Revisado ou Encerrado." });
+
+        var responsavelNormalizado = NormalizarOpcional(responsavel, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoFollowUp) &&
+                (incluirArquivadas || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearFollowUp)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (responsavelNormalizado is null ||
+                    (x.Responsavel?.Contains(responsavelNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (horizonteNormalizado is null ||
+                    (x.HorizonteRevisao?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ItemAcompanhar.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ContextoRelacionado?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoFollowUp?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProgressReviewFollowUpFiltersResponse(
+            statusNormalizado,
+            responsavelNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivadas,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar registros de acompanhamento. Não classificam prioridade clínica, gravidade, resposta ao tratamento ou necessidade de intervenção."));
+    }
+
     [HttpGet("follow-up")]
     public async Task<ActionResult<IReadOnlyCollection<ProgressReviewFollowUpPersistedResponse>>> ListarFollowUp(
         Guid pacienteId,

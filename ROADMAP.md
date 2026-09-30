@@ -2499,3 +2499,22 @@ Adicionar histórico consultável das mudanças de acompanhamento, incluindo tra
 ### v0.31.4 — Progress Review Follow-up Filters
 Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental do acompanhamento.
 
+## ✅ v0.31.4 — Progress Review Follow-up Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewFollowUpFiltersResponse`;
+- endpoint `follow-up/search`;
+- filtro por status;
+- filtro por responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros no workspace profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.31.5 — Progress Review Follow-up Summary
+Adicionar resumo estrutural do acompanhamento com contagem por status e itens ativos, sem transformar agregações em score clínico ou prioridade automática.
+

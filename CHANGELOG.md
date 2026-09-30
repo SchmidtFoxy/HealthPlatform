@@ -1,4 +1,19 @@
-﻿# v0.31.3 — Progress Review Follow-up History
+﻿# v0.31.4 — Progress Review Follow-up Filters
+
+- Adiciona `ProgressReviewFollowUpFiltersResponse`.
+- Adiciona endpoint `GET .../follow-up/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros ao workspace profissional.
+- Não cria classificação clínica ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.31.5 — Progress Review Follow-up Summary.
+
+# v0.31.3 — Progress Review Follow-up History
 
 - Adiciona `ProgressReviewFollowUpHistoryItemResponse`.
 - Adiciona `ProgressReviewFollowUpHistoryResponse`.

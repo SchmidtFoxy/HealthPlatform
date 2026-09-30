@@ -1656,3 +1656,31 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.31.4 — Progress Review Follow-up Filters`.
 
+---
+
+## v0.31.4 — Progress Review Follow-up Filters
+
+Adiciona filtros profissionais para localizar itens de acompanhamento persistidos.
+
+### Filtros
+- status;
+- responsável;
+- horizonte de revisão;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa livre considera:
+- item a acompanhar;
+- contexto relacionado;
+- observação de follow-up.
+
+### UI
+O workspace profissional passa a ter um formulário de filtros com ações **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros. Eles não classificam prioridade, gravidade, resposta ao tratamento ou necessidade de intervenção clínica.
+
+**Próxima etapa:** `v0.31.5 — Progress Review Follow-up Summary`.
+

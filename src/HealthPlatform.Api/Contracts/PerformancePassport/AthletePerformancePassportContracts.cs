@@ -118,6 +118,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewFollowUpFiltersResponse(
+    string? Status,
+    string? Responsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProgressReviewFollowUpPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProgressReviewFollowUpHistoryItemResponse(
     Guid Id,
     Guid FollowUpId,
