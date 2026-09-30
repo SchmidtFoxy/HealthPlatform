@@ -3529,3 +3529,13 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Workout Intelligence 3.0 passa a classificar RIR, Cadência e Técnica avançada como dimensões estruturadas.
 - Mantém o guardrail: não automatiza progressão e não prescreve ou altera automaticamente qualquer variável.
 - Próxima etapa: v0.27.2 — Prescribed vs Performed 3.0.
+
+
+## v0.27.2 — Prescribed vs Performed 3.0
+- Workout Intelligence passa a devolver `Comparacoes` por item prescrito.
+- Exibe última execução comparável e diferenças em Séries, Repetições, Carga, RIR, Cadência e Técnica.
+- Adiciona contadores de itens com execução comparável e itens com diferenças registradas.
+- UI profissional recebe painel Prescrito × realizado.
+- Guardrail: diferenças são contexto; não geram score de adesão nem alteração automática da prescrição.
+- Sem migration nova.
+- Próxima etapa: v0.27.3 — Advanced Techniques 3.0.

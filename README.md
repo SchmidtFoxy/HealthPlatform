@@ -865,3 +865,18 @@ A prescrição de treino passa a tratar **RIR-alvo**, **Cadência** e **Técnica
 **Guardrail:** Prescription Variables 3.0 não automatiza progressão e não prescreve ou altera automaticamente qualquer variável. A decisão continua sob responsabilidade profissional.
 
 Próxima etapa: **v0.27.2 — Prescribed vs Performed 3.0**.
+
+
+## v0.27.2 — Prescribed vs Performed 3.0
+
+A camada de Workout Intelligence passa a comparar, por exercício, a prescrição vigente com a última execução concluída disponível na janela selecionada.
+
+**Entregue na v0.27.2:**
+- comparação de Séries, Repetições, Carga, RIR, Cadência e Técnica;
+- estado `SemExecucaoNoPeriodo`, `SemDiferencaRegistrada` ou `DiferencasRegistradas`;
+- contagem de execuções comparáveis por item;
+- visual profissional Prescrito × realizado dentro do Workout Intelligence;
+- diferença registrada é contexto, não score de adesão nem julgamento de execução;
+- nenhuma mudança automática de carga, volume, RIR, cadência, técnica ou prescrição.
+
+Próxima etapa: **v0.27.3 — Advanced Techniques 3.0**.

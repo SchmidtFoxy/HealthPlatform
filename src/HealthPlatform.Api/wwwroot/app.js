@@ -4337,6 +4337,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
 
 // ===== v0.27.0 — Workout Intelligence 3.0 Foundation =====
 
+const HP_PRESCRIBED_PERFORMED_V0272='v0.27.2';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
 
@@ -4345,6 +4346,15 @@ function hpWorkoutIntelligenceDimensionV0270(x){
   const ready=!status.includes('AindaNao')&&!status.includes('SemRegistro')&&!status.includes('SemDados');
   const coverage=x.totalItens>0?`${x.itensComDado}/${x.totalItens}`:'roadmap';
   return `<article class="workout-intelligence-dimension-v0270 ${ready?'ready':'roadmap'}"><div><b>${esc(x.nome)}</b><span>${esc(x.origem||'')}</span></div><strong>${esc(coverage)}</strong><small>${esc(x.observacao||'')}</small></article>`;
+}
+
+function hpWorkoutComparisonV0272(x){
+  const performed=x.execucoesNoPeriodo>0;
+  const diffs=(x.diferencas||[]);
+  const cell=(label,prescrito,realizado)=>`<div class="workout-compare-cell-v0272"><small>${label}</small><span><b>${esc(prescrito??'—')}</b><i>→</i><b>${esc(realizado??'—')}</b></span></div>`;
+  const cargaP=x.cargaPrescrita!=null?`${num(x.cargaPrescrita,1)} ${esc(x.unidadeCargaPrescrita||'')}`.trim():'—';
+  const cargaR=x.cargaRealizada!=null?`${num(x.cargaRealizada,1)} ${esc(x.unidadeCargaRealizada||x.unidadeCargaPrescrita||'')}`.trim():'—';
+  return `<article class="workout-comparison-v0272 ${performed?'performed':'missing'}" data-prescribed-performed-v0272="${HP_PRESCRIBED_PERFORMED_V0272}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.sessao||'Sessão')}</small><b>${esc(x.exercicio||'Exercício')}</b></div><span class="pill ${diffs.length?'Atencao':'Info'}">${performed?(diffs.length?`${diffs.length} diferença(s)`:'sem diferença registrada'):'sem execução no período'}</span></div>${performed?`<div class="workout-comparison-grid-v0272">${cell('Séries',x.seriesPrescritas,x.seriesRealizadas)}${cell('Repetições',x.repeticoesPrescritas,x.repeticoesRealizadas)}${cell('Carga',cargaP,cargaR)}${cell('RIR',x.rirAlvo,x.rirRealizado)}${cell('Cadência',x.cadenciaPrescrita,x.cadenciaRealizada)}${cell('Técnica',x.tecnicaPrescrita,x.tecnicaExecutada)}</div><small class="workout-comparison-note-v0272">${diffs.length?`Diferenças registradas: ${esc(diffs.join(', '))}.`:'Os campos comparáveis da última execução coincidem com o registrado na prescrição.'} ${x.execucoesNoPeriodo||0} execução(ões) no período.</small>`:'<small class="workout-comparison-note-v0272">Ainda não há execução concluída desse item na janela selecionada.</small>'}</article>`;
 }
 
 async function loadWorkoutIntelligenceV0270(patient){
@@ -4360,6 +4370,7 @@ async function loadWorkoutIntelligenceV0270(patient){
     <div class="workout-intelligence-kpis-v0270"><span><b>${data.sessoesPlanejadas??0}</b>sessões no plano</span><span><b>${data.itensPlanejados??0}</b>itens prescritos</span><span><b>${data.sessoesExecutadas??0}</b>execuções / ${data.periodoDias||28}d</span><span><b>${r.rpeMedioSessao!=null?num(r.rpeMedioSessao,1):'—'}</b>RPE médio</span></div>
     <div class="workout-intelligence-compare-v0270"><div><small>SÉRIES PRESCRITAS NO PLANO</small><b>${r.seriesPrescritasNoPlano??0}</b></div><span>≠</span><div><small>SÉRIES REALIZADAS NO PERÍODO</small><b>${r.seriesRealizadasNoPeriodo??0}</b></div><p>Os totais têm janelas diferentes e são contexto, não score de adesão.</p></div>
     <div class="workout-intelligence-dimensions-v0270">${(data.dimensoes||[]).map(hpWorkoutIntelligenceDimensionV0270).join('')}</div>
+    <div class="workout-prescribed-performed-v0272"><div class="workout-prescribed-performed-head-v0272"><div><span class="eyebrow">PRESCRIBED VS PERFORMED 3.0</span><h4>Prescrito × última execução comparável</h4><p>Diferenças são contexto clínico/esportivo para revisão profissional, não score de adesão.</p></div><span class="pill Info">${r.itensComExecucaoComparavel??0}/${data.itensPlanejados??0} comparáveis</span></div><div class="workout-comparisons-v0272">${(data.comparacoes||[]).map(hpWorkoutComparisonV0272).join('')||'<div class="empty">Nenhum item prescrito disponível para comparação.</div>'}</div></div>
     <div class="workout-intelligence-next-v0270"><div><b>Próximas camadas</b>${(data.proximasCamadas||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div><p>${esc(data.regraDeUso||'')}</p></div>`;
   host.appendChild(section);
 }
@@ -9406,7 +9417,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.27.1';
+const HP_MVP_VERSION='0.27.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
