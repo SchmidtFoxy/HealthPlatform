@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.21.0';
+const HP_MVP_VERSION='0.21.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11717,4 +11717,89 @@ renderPatientTab=function(d){
   if(!host||!overview||host.querySelector('[data-human-profile-v0210]'))return;
   overview.insertAdjacentHTML('afterend',hpHumanProfileV0210(d));
   hpWireHumanProfileV0210(host);
+};
+
+
+// ===== v0.21.1 — Multi-Goal Engine =====
+const HP_MULTI_GOAL_V0211='v0.21.1';
+
+function hpGoalKeyV0211(value){
+  return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/\s+/g,' ');
+}
+function hpGoalSourceV0211(label,value,kind,order){
+  const text=String(value??'').trim();
+  return text?{label,text,kind,order}:null;
+}
+function hpCollectGoalsV0211(d){
+  const portal=d?.portal||{}, cycle=portal?.cicloEsportivoAtual||{};
+  const anamneses=[...(d?.anamneses||[])].sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const anam=anamneses[0]||{};
+  const activeWorkout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const activeNutrition=(d?.planos||[]).find(x=>x.status==='Ativo')||(d?.planos||[])[0]||{};
+
+  const sources=[
+    hpGoalSourceV0211('Ciclo atual',cycle.objetivo,'cycle',0),
+    hpGoalSourceV0211('Treino ativo',activeWorkout.objetivo,'workout',1),
+    hpGoalSourceV0211('Nutrição ativa',activeNutrition.objetivo,'nutrition',2),
+    hpGoalSourceV0211('Avaliação / intake',anam.objetivoAcompanhamento,'intake',3)
+  ].filter(Boolean);
+
+  const map=new Map();
+  sources.forEach(src=>{
+    const key=hpGoalKeyV0211(src.text);
+    if(!key)return;
+    if(!map.has(key)){
+      map.set(key,{text:src.text,sources:[src.label],kinds:[src.kind],order:src.order});
+      return;
+    }
+    const goal=map.get(key);
+    if(!goal.sources.includes(src.label))goal.sources.push(src.label);
+    if(!goal.kinds.includes(src.kind))goal.kinds.push(src.kind);
+    goal.order=Math.min(goal.order,src.order);
+  });
+
+  return [...map.values()]
+    .sort((a,b)=>a.order-b.order)
+    .map((goal,index)=>({
+      ...goal,
+      role:index===0?'Principal':(index===1?'Complementar':'Acompanhado'),
+      roleHint:index===0
+        ?'Primeiro objetivo explícito no contexto ativo.'
+        :(index===1?'Objetivo simultâneo que complementa o foco principal.':'Objetivo registrado que permanece visível no acompanhamento.')
+    }));
+}
+function hpGoalDomainV0211(goal){
+  const text=hpGoalKeyV0211(goal?.text);
+  if(/peso|gordura|emagrec|composicao|massa|hipertrof/.test(text))return 'Composição corporal';
+  if(/corrida|correr|prova|pace|performance|forca|potencia|resistencia|treino/.test(text))return 'Performance';
+  if(/mobilidade|dor|retorno|reabil|movimento|funcional/.test(text))return 'Movimento';
+  if(/saude|qualidade de vida|bem-estar|longevidade|habito/.test(text))return 'Saúde & rotina';
+  return 'Objetivo individual';
+}
+function hpMultiGoalEngineV0211(d){
+  const goals=hpCollectGoalsV0211(d);
+  const sourceCount=goals.reduce((sum,g)=>sum+g.sources.length,0);
+  return `<section class="multi-goal-v0211" data-multi-goal-v0211="${HP_MULTI_GOAL_V0211}">
+    <div class="multi-goal-head-v0211">
+      <div><span class="eyebrow">AESYN • MULTI-GOAL ENGINE</span><h3>Objetivos simultâneos, sem perder o foco.</h3><p>O AESYN organiza objetivos já registrados em diferentes partes do acompanhamento, remove duplicidades e mantém a origem de cada informação visível.</p></div>
+      <div class="multi-goal-count-v0211"><strong>${goals.length}</strong><span>objetivo(s) único(s)</span><small>${sourceCount} fonte(s)</small></div>
+    </div>
+    ${goals.length?`<div class="multi-goal-list-v0211">${goals.map((g,i)=>`<article class="multi-goal-item-v0211" data-goal-role-v0211="${esc(g.role)}">
+      <div class="multi-goal-order-v0211">${String(i+1).padStart(2,'0')}</div>
+      <div class="multi-goal-main-v0211">
+        <div class="multi-goal-role-v0211"><b>${esc(g.role)}</b><span>${esc(hpGoalDomainV0211(g))}</span></div>
+        <h4>${esc(g.text)}</h4><p>${esc(g.roleHint)}</p>
+        <div class="multi-goal-sources-v0211">${g.sources.map(src=>`<i>${esc(src)}</i>`).join('')}</div>
+      </div>
+    </article>`).join('')}</div>`:`<div class="multi-goal-empty-v0211"><b>Nenhum objetivo explícito encontrado.</b><span>Registre um objetivo no ciclo esportivo, avaliação, treino ou plano nutricional para iniciar o mapa multiobjetivo.</span></div>`}
+    <div class="multi-goal-safety-v0211"><b>Hierarquia operacional, não clínica</b><span>“Principal”, “Complementar” e “Acompanhado” organizam o contexto disponível. Não substituem decisão profissional nem inferem prioridade médica.</span></div>
+  </section>`;
+}
+const __renderPatientTab_v0211=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0211(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),human=host?.querySelector('[data-human-profile-v0210]');
+  if(!host||!human||host.querySelector('[data-multi-goal-v0211]'))return;
+  human.insertAdjacentHTML('afterend',hpMultiGoalEngineV0211(d));
 };

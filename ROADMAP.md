@@ -41,7 +41,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.21.0 — Human Profile Foundation
+> **Versão-base deste roadmap:** v0.21.1 — Multi-Goal Engine
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -689,6 +689,23 @@ A pessoa passa a ser a unidade central do domínio longitudinal.
 - Limitations & Restrictions;
 - visão profissional;
 - visão do atleta.
+
+## ✅ v0.21.1 — Multi-Goal Engine — CONCLUÍDA
+
+**Entregue na v0.21.1:**
+- consolidação de objetivos simultâneos de ciclo, treino, nutrição e intake;
+- deduplicação textual mantendo todas as fontes;
+- hierarquia operacional Principal / Complementar / Acompanhado;
+- domínio descritivo do objetivo;
+- ausência de objetivo tratada explicitamente;
+- sem score clínico, sem diagnóstico e sem inferência de prioridade médica;
+- integração direta ao Human Profile sem nova fonte de verdade.
+
+**Próxima etapa:** `v0.21.2 — Sports Identity Foundation`.
+
+## ⏭ v0.21.2 — Sports Identity Foundation
+
+Estruturar identidade esportiva da pessoa: modalidades atuais e históricas, nível de experiência, frequência, contexto preferido e relação com objetivos ativos.
 
 # 6. v0.22.x — AESYN Daily
 

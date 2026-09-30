@@ -1,3 +1,15 @@
+# v0.21.1 — Multi-Goal Engine
+
+- Adiciona mapa de objetivos simultâneos ao Human Profile.
+- Consolida objetivos do ciclo esportivo atual, treino ativo, plano nutricional ativo e avaliação/intake.
+- Deduplica objetivos equivalentes preservando todas as fontes originais.
+- Organiza o conjunto em Principal, Complementar e Acompanhado para leitura operacional.
+- Classifica objetivos em domínios descritivos e explicáveis, sem diagnóstico.
+- Mostra explicitamente quando ainda não há objetivo registrado.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.21.1.
+- Próxima etapa: v0.21.2 — Sports Identity Foundation.
+
 # v0.21.0-r7 — Period Comparison Historical Gate Alignment (local)
 
 - Corrige o gate histórico da `v0.20.10 — Period Comparison 2.0`.

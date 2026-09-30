@@ -10,6 +10,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Multi-Goal Engine
+
+A `v0.21.1` amplia o Human Profile com um **mapa de objetivos simultâneos**. O motor reúne objetivos já existentes no ciclo atual, treino ativo, nutrição ativa e avaliação/intake; remove duplicidades sem perder as fontes originais e apresenta uma hierarquia operacional simples: **Principal / Complementar / Acompanhado**.
+
+A hierarquia serve para organizar contexto, não para produzir prioridade clínica. O motor também classifica objetivos em domínios descritivos como composição corporal, performance, movimento e saúde/rotina, sempre de forma explicável e sem diagnóstico.
+
 ### Human Profile Foundation
 
 A `v0.21.0` inaugura o **Human Profile** como camada longitudinal da pessoa. A visão profissional passa a reunir, em um único bloco, identidade, objetivos já registrados, esporte/movimento, rotina/recuperação e contexto/limitações presentes na anamnese e nos planos existentes.
@@ -95,8 +102,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.21.0 — Human Profile Foundation`
-- **Revisão local corrente:** `v0.21.0-r7 — Period Comparison Historical Gate Alignment`
+- **Versão funcional:** `v0.21.1 — Multi-Goal Engine`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
