@@ -45,6 +45,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Basketball & Volleyball 2.0
+
+A `v0.25.2` aprofunda **Basquete** e **Vôlei** como contextos de quadra distintos. O Basquete enfatiza drible, passe, arremesso, aceleração e deslocamento lateral; o Vôlei destaca recepção, levantamento, ataque/saque, salto/aterrissagem e ações repetidas acima da cabeça.
+
+O atleta também vê referências reais de `ModelosSessoesTreino` quando houver correspondência editorial. A plataforma explica diferenças esportivas sem criar protocolo, salto-alvo, intensidade ou retorno ao esporte automaticamente.
+
 ### Football & Futsal 2.0
 
 A `v0.25.1` aprofunda **Futebol** e **Futsal** como contextos esportivos diferentes. Campo e quadra passam a ter explicações próprias de dinâmica, fundamentos técnicos, capacidades físicas e recursos.
@@ -346,7 +353,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.25.1 — Football & Futsal 2.0`
+- **Versão funcional:** `v0.25.2 — Basketball & Volleyball 2.0`
+- **Revisão local corrente:** `v0.25.2-r1 — App_Data Runtime Ignore`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

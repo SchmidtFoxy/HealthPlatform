@@ -1,3 +1,22 @@
+# v0.25.2-r1 — App_Data Runtime Ignore (revisão local)
+
+- Adiciona `**/App_Data/` ao `.gitignore`.
+- Evita que dados locais gerados em runtime deixem o repositório sujo e bloqueiem o AESYN AUTO.
+- `VERSION.txt` permanece `0.25.2`.
+- Sem alteração funcional, API, schema ou migration.
+- Revisão local: não gerar commit próprio.
+
+# v0.25.2 — Basketball & Volleyball 2.0
+
+- Adiciona `GET /api/portal/me/explore/basketball-volleyball`.
+- Compara Basquete e Vôlei como contextos de quadra diferentes.
+- Detalha drible, passe, arremesso, recepção, levantamento, ataque e saque.
+- Contextualiza salto, aterrissagem, deslocamento lateral e capacidade de ombro.
+- Relaciona sessões-modelo existentes de `ModelosSessoesTreino`.
+- Não define posição, salto-alvo, carga, volume, intensidade ou retorno ao esporte.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.25.3 — Tennis & Beach Tennis 2.0.
+
 # v0.25.1 — Football & Futsal 2.0
 
 - Adiciona `GET /api/portal/me/explore/football-futsal`.

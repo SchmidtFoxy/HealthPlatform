@@ -7,3 +7,6 @@
 *.suo
 .env
 appsettings.Production.json
+
+# Runtime/local application data
+**/App_Data/

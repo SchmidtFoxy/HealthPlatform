@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.25.1 — Football & Futsal 2.0
+> **Versão-base deste roadmap:** v0.25.2 — Basketball & Volleyball 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1563,9 +1563,28 @@ Aprofundar Futebol e Futsal com fundamentos, capacidades, preparação física e
 
 **Próxima etapa:** `v0.25.2 — Basketball & Volleyball 2.0`.
 
-## ⏭ v0.25.2 — Basketball & Volleyball 2.0
+## ✅ v0.25.2 — Basketball & Volleyball 2.0 — CONCLUÍDA
+
+> **Revisão local v0.25.2-r1:** ignora `**/App_Data/` no Git para impedir que arquivos gerados em runtime bloqueiem o AESYN AUTO. Sem mudança funcional e sem commit separado.
 
 Aprofundar Basquete e Vôlei com fundamentos de quadra, saltos, deslocamentos, capacidades específicas e referências editoriais de sessão sem prescrição automática.
+
+
+
+**Entregue na v0.25.2:**
+- endpoint `/api/portal/me/explore/basketball-volleyball`;
+- comparação explícita de Basquete × Vôlei;
+- fundamentos técnicos específicos;
+- saltos, aterrissagens, deslocamentos e capacidade de ombro contextualizados;
+- referências a `ModelosSessoesTreino` existentes;
+- estado vazio sem sessão artificial;
+- nenhuma posição, salto-alvo, carga, volume, intensidade ou retorno automático.
+
+**Próxima etapa:** `v0.25.3 — Tennis & Beach Tennis 2.0`.
+
+## ⏭ v0.25.3 — Tennis & Beach Tennis 2.0
+
+Aprofundar Tênis e Beach Tennis com golpes, saque, posicionamento, deslocamentos, superfícies e referências de sessão específicas sem prescrição automática.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA
