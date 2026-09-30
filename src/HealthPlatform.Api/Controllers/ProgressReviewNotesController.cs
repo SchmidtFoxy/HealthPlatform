@@ -40,6 +40,17 @@ public class ProgressReviewNotesController(
             ["summary"] = ("Summary", "Resumo observacional do progresso.")
         };
 
+    private static readonly IReadOnlyDictionary<string, (string Destino, string Seletor)> NavegacaoContextos =
+        new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["foundation"] = ("Progress Intelligence Foundation", "[data-progress-intelligence-v0290]"),
+            ["context"] = ("Progress Signal Context", "[data-progress-signal-context-v0291]"),
+            ["timeline"] = ("Multi-Signal Timeline", "[data-multi-signal-timeline-v0292]"),
+            ["window"] = ("Progress Evidence Windows", "[data-progress-evidence-windows-v0293]"),
+            ["observation-map"] = ("Cross-Signal Observation Map", "[data-cross-signal-observation-map-v0294]"),
+            ["summary"] = ("Progress Observation Summary", "[data-progress-observation-summary-v0295]")
+        };
+
     public sealed record CriarProgressReviewNoteRequest(
         string Campo,
         string Conteudo,
@@ -51,6 +62,23 @@ public class ProgressReviewNotesController(
         string Conteudo,
         string? ContextoTipo = null,
         string? ContextoReferencia = null);
+
+    [HttpGet("context-navigation/{tipo}")]
+    public ActionResult<ProgressReviewContextNavigationResponse> ContextNavigation(string tipo)
+    {
+        var normalizado = tipo?.Trim().ToLowerInvariant() ?? string.Empty;
+
+        if (!Contextos.TryGetValue(normalizado, out var contexto) ||
+            !NavegacaoContextos.TryGetValue(normalizado, out var navegacao))
+            return NotFound(new { message = "Contexto de revisao nao encontrado." });
+
+        return Ok(new ProgressReviewContextNavigationResponse(
+            normalizado,
+            contexto.Rotulo,
+            navegacao.Destino,
+            navegacao.Seletor,
+            "O destino de navegação aponta somente para a seção observacional relacionada. A referência da nota permanece descritiva e não seleciona automaticamente um dado clínico específico."));
+    }
 
     [HttpGet("context-options")]
     public ActionResult<ProgressReviewContextLinksResponse> ContextOptions()
@@ -299,6 +327,11 @@ public class ProgressReviewNotesController(
             ? nome
             : campo;
 
+        var navegacaoDestino = contextoTipo is not null &&
+            NavegacaoContextos.TryGetValue(contextoTipo, out var navegacao)
+                ? navegacao.Seletor
+                : null;
+
         return new ProgressReviewPersistedNoteResponse(
             nota.Id,
             campo,
@@ -306,6 +339,7 @@ public class ProgressReviewNotesController(
             nota.Conteudo,
             contextoTipo,
             contextoReferencia,
+            navegacaoDestino,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,

@@ -2285,3 +2285,19 @@ Vincular notas de revisão às camadas observacionais existentes (sinal, timelin
 ### v0.30.5 — Progress Review Context Navigation
 Transformar vínculos contextuais em navegação direta para a seção observacional correspondente dentro do workspace profissional.
 
+## ✅ v0.30.5 — Progress Review Context Navigation — CONCLUÍDA
+
+**Entregue:**
+- mapeamento de seis contextos para seções observacionais;
+- destino de navegação retornado com a nota;
+- endpoint de navegação por tipo;
+- botão Abrir contexto;
+- scroll e destaque temporário;
+- fallback quando o alvo não existe;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.6 — Progress Review Context Focus
+Evoluir a navegação para destacar a referência contextual dentro da própria seção quando houver correspondência observacional inequívoca, mantendo fallback seguro para a seção.
+

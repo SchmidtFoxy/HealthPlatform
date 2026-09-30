@@ -1,4 +1,18 @@
-﻿# v0.30.4 — Progress Review Context Links
+﻿# v0.30.5 — Progress Review Context Navigation
+
+- Adiciona `NavegacaoDestino` às notas de revisão.
+- Adiciona `ProgressReviewContextNavigationResponse`.
+- Adiciona mapeamento entre os seis tipos de contexto e as seções observacionais.
+- Adiciona `GET .../progress-review-notes/context-navigation/{tipo}`.
+- Adiciona botão `Abrir contexto` nas notas contextualizadas.
+- Adiciona scroll suave e foco temporário da seção alvo.
+- Mantém fallback quando a seção não está disponível.
+- Não interpreta automaticamente `ContextoReferencia`.
+- Preserva CRUD, histórico, filtros, privacidade e auditoria.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.6 — Progress Review Context Focus.
+
+# v0.30.4 — Progress Review Context Links
 
 - Adiciona `ContextoTipo` e `ContextoReferencia` às notas persistidas.
 - Adiciona `ProgressReviewContextOptionResponse`.

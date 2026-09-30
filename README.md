@@ -1346,3 +1346,30 @@ O vínculo contextual é apenas uma referência documental. Não duplica o conte
 
 **Próxima etapa:** `v0.30.5 — Progress Review Context Navigation`.
 
+---
+
+## v0.30.5 — Progress Review Context Navigation
+
+Transforma os vínculos contextuais das notas profissionais em navegação direta para a seção observacional correspondente no workspace.
+
+### Mapeamento
+- `foundation` → Progress Intelligence Foundation;
+- `context` → Progress Signal Context;
+- `timeline` → Multi-Signal Timeline;
+- `window` → Progress Evidence Windows;
+- `observation-map` → Cross-Signal Observation Map;
+- `summary` → Progress Observation Summary.
+
+### Entregue
+- `NavegacaoDestino` nas notas persistidas;
+- endpoint `context-navigation/{tipo}`;
+- botão **Abrir contexto** nas notas contextualizadas;
+- scroll suave até a seção observacional;
+- destaque temporário da seção alvo;
+- fallback quando a seção não estiver disponível.
+
+### Guardrail
+A navegação apenas abre a seção relacionada. Ela não interpreta `ContextoReferencia`, não seleciona automaticamente um achado clínico e não transforma a referência documental em conclusão.
+
+**Próxima etapa:** `v0.30.6 — Progress Review Context Focus`.
+

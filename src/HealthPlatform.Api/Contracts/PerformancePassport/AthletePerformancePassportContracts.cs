@@ -112,6 +112,14 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewContextNavigationResponse(
+    string Tipo,
+    string Rotulo,
+    string Destino,
+    string Seletor,
+    string RegraDeUso);
+
 public sealed record ProgressReviewContextOptionResponse(
     string Tipo,
     string Rotulo,
@@ -138,6 +146,7 @@ public sealed record ProgressReviewPersistedNoteResponse(
     string Conteudo,
     string? ContextoTipo,
     string? ContextoReferencia,
+    string? NavegacaoDestino,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
