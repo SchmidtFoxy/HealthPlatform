@@ -1642,7 +1642,18 @@ Aprofundar Triathlon dentro da Sports Expansion II sem transformar descoberta es
 - sem distância, pace, potência, zonas, frequência cardíaca-alvo, volume, intensidade, estratégia nutricional, aptidão ou retorno automáticos;
 - nenhuma migration ou tabela nova.
 
-**Próxima etapa:** `v0.26.3 — Martial Arts 2.0`.
+## ✅ v0.26.3 — Martial Arts 2.0 — CONCLUÍDA
+
+**Entregue na v0.26.3:**
+- fundamentos gerais de artes marciais sem eleger uma luta específica;
+- base/postura, deslocamento, distância/espaço, rotação/transferência de força e reação/coordenação;
+- equilíbrio/estabilidade, core, ombro/escápula, quadril, potência/agilidade e condicionamento de suporte;
+- referências a sessões-modelo existentes;
+- integração mobile ao card Sports Expansion II;
+- sem golpes, rounds, contato, carga, volume, intensidade, aptidão, retorno ao contato ou liberação clínica automáticos;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.26.4 — Rowing 2.0`.
 
 
 

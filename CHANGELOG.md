@@ -3469,3 +3469,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Não gera distância, pace, potência, zonas, frequência cardíaca-alvo, volume, intensidade, estratégia nutricional, aptidão ou retorno ao esporte automaticamente.
 - Não cria migration ou tabela nova.
 
+## v0.26.3 — Martial Arts 2.0
+- Aprofunda Artes Marciais dentro da Sports Expansion II sem escolher automaticamente uma modalidade de luta.
+- Organiza base/postura, deslocamento, distância/espaço, rotação/transferência de força e reação/coordenação.
+- Expõe equilíbrio/estabilidade, core rotacional, ombro/escápula, quadril/mobilidade, potência/agilidade e condicionamento de suporte.
+- Reutiliza sessões-modelo existentes como referências editoriais sem inventar prescrição ou conteúdo de combate.
+- Integra o detalhamento ao Explore mobile-first.
+- Não ensina combate e não gera golpes, rounds, contato, carga, volume, intensidade, aptidão, retorno ao contato ou liberação clínica automaticamente.
+- Não cria migration ou tabela nova.
+

@@ -1921,6 +1921,61 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("martial-arts")]
+    public async Task<ActionResult<MartialArtsResponse>> MartialArts(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria).ThenBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.Categoria, x.Descricao })
+            .ToListAsync(ct);
+
+        var referencias = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "arte marcial", "artes marciais", "martial", "luta", "combate", "boxe", "boxing", "muay", "karate", "karatê", "judo", "judô", "jiu", "taekwondo", "kickboxing", "core", "rotacao", "rotação", "equilibrio", "equilíbrio", "agilidade" }
+                    .Any(token => texto.Contains(token, StringComparison.Ordinal));
+            })
+            .Take(10)
+            .Select(x => new MartialArtsSessaoReferenciaResponse(
+                x.Id, x.Nome, x.Categoria, x.Descricao,
+                "Sessão-modelo existente com termos relacionados a artes marciais ou capacidades físicas de suporte."))
+            .ToArray();
+
+        var fundamentos = new MartialArtsFundamentoResponse[]
+        {
+            new("base-postura", "Base e postura", "Organizar apoio, centro de massa e posição corporal sem eleger uma arte marcial específica como padrão."),
+            new("deslocamento", "Deslocamento", "Explorar avanço, recuo, lateralidade e reposicionamento com controle corporal."),
+            new("distancia", "Distância e espaço", "Compreender alcance e organização espacial sem instruir combate ou estratégia de confronto."),
+            new("rotacao-transferencia", "Rotação e transferência de força", "Relacionar quadril, tronco e membros em movimentos coordenados sem prescrever golpes."),
+            new("reacao-coordenacao", "Reação e coordenação", "Trabalhar percepção, resposta motora e mudanças de direção com tarefas gerais e seguras.")
+        };
+
+        var capacidades = new MartialArtsCapacidadeResponse[]
+        {
+            new("equilibrio-estabilidade", "Equilíbrio e estabilidade", "Sustentar controle do corpo durante mudanças de apoio e direção."),
+            new("core-rotacional", "Core e controle rotacional", "Dar suporte à transmissão de força e ao controle do tronco."),
+            new("ombro-escapula", "Ombro e escápula", "Apoiar mobilidade e estabilidade do complexo do ombro sem definir carga clínica."),
+            new("quadril-mobilidade", "Quadril e mobilidade", "Organizar amplitude útil e controle de membros inferiores sem definir técnica de chute."),
+            new("potencia-agilidade", "Potência e agilidade", "Explorar produção rápida de força e mudança de direção sem prescrever rounds, intensidade ou contato."),
+            new("condicionamento-suporte", "Condicionamento de suporte", "Desenvolver capacidade geral para tolerar esforços intermitentes sem criar protocolo de combate automaticamente.")
+        };
+
+        return Ok(new MartialArtsResponse(
+            fundamentos, capacidades, referencias,
+            "Sports Expansion II + ModelosSessoesTreino",
+            "Martial Arts 2.0 organiza fundamentos e capacidades gerais e referencia conteúdo existente. Não escolhe automaticamente uma arte marcial, não ensina combate, não prescreve golpes, rounds, carga, volume, intensidade, contato, aptidão, retorno ao contato ou liberação clínica automaticamente."));
+    }
+
+
     [HttpGet("sports-expansion-ii")]
     public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
         CancellationToken ct = default)

@@ -1,3 +1,12 @@
+## v0.26.3 — Martial Arts 2.0
+
+- Aprofunda Artes Marciais sem eleger uma luta específica como padrão.
+- Organiza Base e postura, deslocamento, distância/espaço, rotação/transferência de força e reação/coordenação.
+- Expõe capacidades de equilíbrio, core, ombro/escápula, quadril, potência/agilidade e Condicionamento de suporte.
+- Referencia `ModelosSessoesTreino` já existentes quando houver correspondência editorial.
+- Não ensina combate nem prescreve golpes, rounds, contato, carga, volume, intensidade, aptidão, retorno ao contato ou liberação clínica automaticamente.
+- Não cria migration ou tabela nova.
+
 
 
 ## v0.26.1 — Swimming 2.0

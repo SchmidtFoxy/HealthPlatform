@@ -433,3 +433,27 @@ public sealed record TriathlonResponse(
     IReadOnlyCollection<TriathlonSessaoReferenciaResponse> SessoesReferencia,
     string Fonte,
     string RegraDeUso);
+
+public sealed record MartialArtsFundamentoResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record MartialArtsCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record MartialArtsSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record MartialArtsResponse(
+    IReadOnlyCollection<MartialArtsFundamentoResponse> Fundamentos,
+    IReadOnlyCollection<MartialArtsCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<MartialArtsSessaoReferenciaResponse> SessoesReferencia,
+    string Fonte,
+    string RegraDeUso);
