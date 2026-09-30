@@ -17,6 +17,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Today's Plan 2.0
+
+A `v0.22.3` transforma o contexto diário em uma visão prática do **plano de hoje**. O AESYN reúne treino ativo, plano nutricional, objetivo principal, disponibilidade, logística, recursos e readiness para mostrar o que já está planejado e como abordar o dia.
+
+O sistema não inventa prescrição quando não existe plano e não altera intensidade automaticamente. O contexto diário serve para apoiar execução, autocuidado e conversa com o profissional.
+
 ### Daily Readiness Context 2.0
 
 A `v0.22.2` transforma o Morning Check-in em uma leitura diária **explicável**. Sono, energia, dor, disposição e recuperação aparecem como fatores separados, com indicação descritiva de contexto favorável, intermediário ou de atenção.
@@ -144,7 +151,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.2 — Daily Readiness Context 2.0`
+- **Versão funcional:** `v0.22.3 — Today's Plan 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

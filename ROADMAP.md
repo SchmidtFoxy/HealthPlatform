@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.2 — Daily Readiness Context 2.0
+> **Versão-base deste roadmap:** v0.22.3 — Today's Plan 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -823,7 +823,7 @@ Evoluir a coleta rápida de sono, energia, dor/desconforto, estresse, humor e di
 
 **Próxima etapa:** `v0.22.3 — Today's Plan 2.0`.
 
-## ⏭ v0.22.3 — Today's Plan 2.0
+## ✅ v0.22.3 — Today's Plan 2.0 — CONCLUÍDA
 
 Transformar plano profissional, readiness e contexto do dia em uma visão prática do que está planejado para hoje, preservando autonomia e decisão profissional.
 
@@ -1065,6 +1065,20 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - linguagem sem julgamento e sem diagnóstico.
 
 **Próxima etapa:** `v0.22.2 — Daily Readiness Context 2.0`.
+
+
+
+**Entregue na v0.22.3:**
+- plano de hoje consolidado;
+- treino ativo;
+- nutrição ativa;
+- objetivo principal;
+- disponibilidade, contexto e recursos;
+- integração com readiness;
+- orientação contextual de execução;
+- nenhum ajuste automático de prescrição.
+
+**Próxima etapa:** `v0.22.4 — Action Hub 2.0`.
 
 
 ## Promessa ao atleta

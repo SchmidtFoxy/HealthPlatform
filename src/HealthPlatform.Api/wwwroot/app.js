@@ -9198,7 +9198,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.2';
+const HP_MVP_VERSION='0.22.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12327,4 +12327,117 @@ renderPatientTab=function(d){
   const host=$('#patientTabContent'),daily=host?.querySelector('[data-aesyn-daily-v0220]');
   if(!host||!daily||host.querySelector('[data-readiness-context-v0222]'))return;
   daily.insertAdjacentHTML('afterend',hpReadinessContextV0222(d));
+};
+
+
+// ===== v0.22.3 — Today's Plan 2.0 =====
+const HP_TODAYS_PLAN_V0223='v0.22.3';
+
+function hpTodayPlanDataV0223(d){
+  const portal=d?.portal||{};
+  const goals=typeof hpCollectGoalsV0211==='function'?hpCollectGoalsV0211(d):[];
+  const life=typeof hpLifeContextDataV0213==='function'?hpLifeContextDataV0213(d):{};
+  const readiness=typeof hpReadinessContextDataV0222==='function'?hpReadinessContextDataV0222(d):{known:[],attention:[],summary:'Contexto parcial'};
+  const workout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const nutrition=(d?.planos||[]).find(x=>x.status==='Ativo')||(d?.planos||[])[0]||{};
+
+  const blocks=[];
+
+  if(workout?.nome){
+    blocks.push({
+      kind:'Treino',
+      title:workout.nome,
+      detail:workout.objetivo||'Plano de treino ativo',
+      source:'Prescrição profissional'
+    });
+  }
+
+  if(nutrition?.nome){
+    blocks.push({
+      kind:'Nutrição',
+      title:nutrition.nome,
+      detail:nutrition.objetivo||'Plano nutricional ativo',
+      source:'Plano publicado'
+    });
+  }
+
+  if(goals[0]?.text){
+    blocks.push({
+      kind:'Objetivo',
+      title:goals[0].text,
+      detail:`Prioridade operacional: ${goals[0].role}`,
+      source:(goals[0].sources||[]).join(' · ')||'Contexto do acompanhamento'
+    });
+  }
+
+  const context=[];
+  if(life.availability)context.push(`Disponibilidade: ${life.availability}`);
+  if(life.logistics)context.push(`Contexto: ${life.logistics}`);
+  if(life.equipment)context.push(`Recursos: ${life.equipment}`);
+  if(readiness.summary)context.push(`Readiness: ${readiness.summary}`);
+
+  let guidance='Siga o plano profissional usando o contexto do dia como referência.';
+  if(readiness.attention?.length>=2){
+    guidance='Há múltiplos fatores de atenção hoje. Use o plano como referência e considere conversar com o profissional antes de aumentar exigência.';
+  } else if(readiness.attention?.length===1){
+    guidance='Há um fator de atenção hoje. Observe como ele se comporta durante a execução sem deixar um único sinal decidir o dia inteiro.';
+  } else if(readiness.known?.length>=4){
+    guidance='Os sinais registrados estão suficientemente contextualizados para orientar a execução do plano previsto.';
+  }
+
+  return {blocks,context,guidance};
+}
+
+function hpTodayPlanV0223(d){
+  const p=hpTodayPlanDataV0223(d);
+  return `<section class="today-plan-v0223" data-today-plan-v0223="${HP_TODAYS_PLAN_V0223}">
+    <div class="today-plan-head-v0223">
+      <div>
+        <span class="eyebrow">TODAY'S PLAN 2.0</span>
+        <h3>Seu plano de hoje, em ordem prática.</h3>
+        <p>O AESYN reúne o que já foi prescrito, o objetivo principal e o contexto disponível para facilitar a execução do dia.</p>
+      </div>
+      <div class="today-plan-count-v0223"><b>${p.blocks.length}</b><span>bloco(s) planejado(s)</span></div>
+    </div>
+
+    <div class="today-plan-list-v0223">
+      ${p.blocks.length?p.blocks.map((x,i)=>`<article>
+        <div class="today-plan-order-v0223">${String(i+1).padStart(2,'0')}</div>
+        <div class="today-plan-main-v0223">
+          <span>${esc(x.kind)}</span>
+          <h4>${esc(x.title)}</h4>
+          <p>${esc(x.detail)}</p>
+          <small>${esc(x.source)}</small>
+        </div>
+      </article>`).join(''):`<div class="today-plan-empty-v0223">
+        <b>Nenhum bloco planejado apareceu nesta síntese.</b>
+        <span>O AESYN não inventa treino, dieta ou tarefa quando não existe prescrição/contexto disponível.</span>
+      </div>`}
+    </div>
+
+    <div class="today-plan-context-v0223">
+      <span>CONTEXTO PARA EXECUÇÃO</span>
+      ${p.context.length?`<ul>${p.context.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p>Contexto de tempo, local, recursos ou readiness ainda está incompleto.</p>'}
+    </div>
+
+    <div class="today-plan-guidance-v0223">
+      <b>Como abordar o dia</b>
+      <span>${esc(p.guidance)}</span>
+    </div>
+
+    <div class="today-plan-safety-v0223">
+      <b>Plano não é comando automático</b>
+      <span>O AESYN organiza o plano já existente. Ele não cria prescrição, não altera intensidade por conta própria e não substitui decisão profissional ou percepção da própria pessoa.</span>
+    </div>
+  </section>`;
+}
+
+const __renderPatientTab_v0223=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0223(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent');
+  const readiness=host?.querySelector('[data-readiness-context-v0222]');
+  if(!host||!readiness||host.querySelector('[data-today-plan-v0223]'))return;
+  readiness.insertAdjacentHTML('afterend',hpTodayPlanV0223(d));
 };

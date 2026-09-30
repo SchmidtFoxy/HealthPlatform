@@ -1,3 +1,14 @@
+# v0.22.3 — Today's Plan 2.0
+
+- Adiciona visão prática do plano de hoje.
+- Consolida treino ativo, plano nutricional, objetivo principal e contexto diário.
+- Integra disponibilidade, logística, recursos e readiness.
+- Mostra orientação contextual de execução sem alterar prescrição automaticamente.
+- Não inventa tarefas quando não há plano ativo.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.3.
+- Próxima etapa: v0.22.4 — Action Hub 2.0.
+
 # v0.22.2 — Daily Readiness Context 2.0
 
 - Adiciona leitura explicável dos fatores do Morning Check-in.
