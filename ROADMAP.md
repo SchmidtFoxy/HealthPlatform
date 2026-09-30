@@ -2197,3 +2197,22 @@ A fundação de inteligência de progresso passa a incluir:
 
 **Próxima etapa:** `v0.30.0 — próxima fase funcional do ROADMAP`.
 
+# Linha 0.30.x — Professional Progress Review
+
+## ✅ v0.30.0 — Progress Review Workspace Foundation — CONCLUÍDA
+
+**Entregue:**
+- workspace único de revisão profissional;
+- seis seções observacionais;
+- disponibilidade estrutural por seção;
+- estado de preparação;
+- endpoints profissional e paciente;
+- integração ao passaporte;
+- sem decisão clínica automática;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.1 — Progress Review Notes Foundation
+Base para registrar observações profissionais vinculadas à revisão do progresso, mantendo separação clara entre dado observado e interpretação profissional.
+

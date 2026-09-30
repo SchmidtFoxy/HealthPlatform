@@ -26,6 +26,7 @@ public static class AthletePerformancePassportService
         var mapaObservacaoCruzada = MontarMapaObservacaoCruzada(timelineMultissinal);
         var resumoObservacionalProgresso = MontarResumoObservacionalProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada);
         var fechamentoInteligenciaProgresso = MontarFechamentoInteligenciaProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada, resumoObservacionalProgresso);
+        var workspaceRevisaoProgresso = MontarWorkspaceRevisaoProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada, resumoObservacionalProgresso, fechamentoInteligenciaProgresso);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -103,14 +104,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.6",
+            "v0.30.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Intelligence Closure 2.0 fecha a fundação observacional informando presença estrutural dos componentes de progresso. Estado estrutural não representa qualidade clínica, prognóstico ou recomendação automática.")
+            "Progress Review Workspace Foundation organiza as camadas observacionais já existentes para revisão profissional em um único workspace. Não toma decisão clínica, não gera diagnóstico, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -123,7 +124,8 @@ public static class AthletePerformancePassportService
             JanelasEvidenciaProgresso = janelasEvidenciaProgresso,
             MapaObservacaoCruzada = mapaObservacaoCruzada,
             ResumoObservacionalProgresso = resumoObservacionalProgresso,
-            FechamentoInteligenciaProgresso = fechamentoInteligenciaProgresso
+            FechamentoInteligenciaProgresso = fechamentoInteligenciaProgresso,
+            WorkspaceRevisaoProgresso = workspaceRevisaoProgresso
         };
     }
 
@@ -261,6 +263,76 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressReviewWorkspaceResponse MontarWorkspaceRevisaoProgresso(
+        ProgressIntelligenceFoundationResponse foundation,
+        ProgressSignalContextSummaryResponse contexto,
+        MultiSignalTimelineResponse timeline,
+        ProgressEvidenceWindowsResponse janelas,
+        CrossSignalObservationMapResponse mapa,
+        ProgressObservationSummaryResponse resumo,
+        ProgressIntelligenceClosureResponse fechamento)
+    {
+        var secoes = new[]
+        {
+            new ProgressReviewWorkspaceSectionResponse(
+                "foundation",
+                "Progress Intelligence Foundation",
+                foundation is not null,
+                foundation?.Sinais.Count ?? 0,
+                "Sinais descritivos disponíveis para revisão."),
+
+            new ProgressReviewWorkspaceSectionResponse(
+                "context",
+                "Progress Signal Context",
+                contexto is not null,
+                contexto?.Contextos.Count ?? 0,
+                "Contexto temporal e densidade observacional."),
+
+            new ProgressReviewWorkspaceSectionResponse(
+                "timeline",
+                "Multi-Signal Timeline",
+                timeline is not null,
+                timeline?.Eventos.Count ?? 0,
+                "Eventos observados organizados cronologicamente."),
+
+            new ProgressReviewWorkspaceSectionResponse(
+                "windows",
+                "Progress Evidence Windows",
+                janelas is not null,
+                janelas?.Janelas.Count ?? 0,
+                "Cobertura documental por janelas temporais."),
+
+            new ProgressReviewWorkspaceSectionResponse(
+                "observation-map",
+                "Cross-Signal Observation Map",
+                mapa is not null,
+                mapa?.Dias.Count ?? 0,
+                "Coobservações documentais agrupadas por data."),
+
+            new ProgressReviewWorkspaceSectionResponse(
+                "summary",
+                "Progress Observation Summary",
+                resumo is not null,
+                resumo?.EventosTimeline ?? 0,
+                "Síntese operacional das camadas observacionais.")
+        };
+
+        var disponiveis = secoes.Count(x => x.Disponivel);
+
+        var estado = fechamento.EstadoEstrutural == "EstruturaObservacionalCompleta"
+            ? "PreparacaoEstruturalCompleta"
+            : "PreparacaoParcial";
+
+        return new ProgressReviewWorkspaceResponse(
+            timeline?.DiasObservados ?? 180,
+            estado,
+            secoes,
+            disponiveis,
+            secoes.Length,
+            "Progress Review Workspace Foundation apenas organiza dados existentes para revisão profissional. Preparação estrutural completa não significa decisão clínica pronta, maior certeza, melhor desempenho, diagnóstico, prognóstico ou recomendação automática.");
+    }
 
     public static ProgressIntelligenceClosureResponse MontarFechamentoInteligenciaProgresso(
         ProgressIntelligenceFoundationResponse foundation,

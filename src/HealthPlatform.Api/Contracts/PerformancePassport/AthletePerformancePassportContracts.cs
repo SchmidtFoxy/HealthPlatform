@@ -107,6 +107,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewWorkspaceSectionResponse(
+    string Chave,
+    string Titulo,
+    bool Disponivel,
+    int Itens,
+    string Leitura);
+
+public sealed record ProgressReviewWorkspaceResponse(
+    int DiasObservados,
+    string EstadoPreparacao,
+    IReadOnlyCollection<ProgressReviewWorkspaceSectionResponse> Secoes,
+    int SecoesDisponiveis,
+    int SecoesEsperadas,
+    string RegraDeUso);
+
 public sealed record ProgressIntelligenceClosureResponse(
     int ComponentesEsperados,
     int ComponentesDisponiveis,
@@ -259,4 +275,8 @@ public sealed record AthletePerformancePassportResponse(
         new(6, 0, Array.Empty<string>(), Array.Empty<string>(),
             "EstruturaObservacionalParcial",
             "Fechamento estrutural sem score clínico, prognóstico ou recomendação automática.");
+
+    public ProgressReviewWorkspaceResponse WorkspaceRevisaoProgresso { get; init; } =
+        new(180, "PreparacaoParcial", Array.Empty<ProgressReviewWorkspaceSectionResponse>(), 0, 6,
+            "Workspace de revisão profissional sem decisão clínica automática.");
 }

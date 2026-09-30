@@ -1,4 +1,19 @@
-﻿# v0.29.6 — Progress Intelligence Closure 2.0
+﻿# v0.30.0 — Progress Review Workspace Foundation
+
+- Abre a linha funcional 0.30.x.
+- Adiciona `ProgressReviewWorkspaceSectionResponse`.
+- Adiciona `ProgressReviewWorkspaceResponse`.
+- Expande o passaporte com `WorkspaceRevisaoProgresso`.
+- Organiza foundation, contexto, timeline, janelas, observation map e summary em um workspace.
+- Adiciona estado `PreparacaoEstruturalCompleta` ou `PreparacaoParcial`.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-review-workspace`.
+- Adiciona `GET /api/portal/me/performance/progress-review-workspace`.
+- Adiciona painel Progress Review Workspace.
+- Guardrail: preparação estrutural não representa decisão clínica pronta.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.1 — Progress Review Notes Foundation.
+
+# v0.29.6 — Progress Intelligence Closure 2.0
 
 - Adiciona `ProgressIntelligenceClosureResponse`.
 - Expande o passaporte com `FechamentoInteligenciaProgresso`.

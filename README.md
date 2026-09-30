@@ -1204,3 +1204,23 @@ Fecha formalmente a fundação observacional construída na linha 0.29.x.
 
 **Próxima etapa:** `v0.30.0 — próxima fase funcional do ROADMAP`.
 
+---
+
+## v0.30.0 — Progress Review Workspace Foundation
+
+Abre a linha 0.30.x transformando a fundação observacional em um workspace único de revisão.
+
+### Entregue
+- `ProgressReviewWorkspaceResponse`;
+- seis seções de revisão;
+- estado de preparação estrutural;
+- contagem de seções disponíveis;
+- foundation, contexto, timeline, janelas, mapa e summary organizados em uma visão;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport.
+
+### Guardrail
+`PreparacaoEstruturalCompleta` significa apenas que os componentes necessários para a revisão estão disponíveis. Não significa decisão clínica pronta, diagnóstico, prognóstico, recomendação ou maior certeza.
+
+**Próxima etapa:** `v0.30.1 — Progress Review Notes Foundation`.
+
