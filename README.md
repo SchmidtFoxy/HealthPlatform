@@ -1452,3 +1452,27 @@ Capturar um contexto não significa confirmar seu conteúdo clínico. O sistema 
 
 **Próxima etapa:** `v0.30.9 — Progress Review Context Integrity`.
 
+---
+
+## v0.30.9 — Progress Review Context Integrity
+
+Adiciona validação estrutural explícita para o vínculo contextual antes do envio da nota.
+
+### Regras
+- tipo e referência vazios: válido, nota sem vínculo contextual;
+- tipo sem referência: inválido;
+- referência sem tipo: inválido;
+- tipo deve pertencer aos seis contextos suportados;
+- referência limitada a 120 caracteres;
+- `|` é reservado pelo namespace interno e não pode fazer parte da referência.
+
+### Dupla validação
+- frontend bloqueia o submit e mostra feedback local;
+- backend expõe `context-integrity` e reutiliza a mesma regra estrutural antes de persistir;
+- o backend permanece como autoridade final.
+
+### Guardrail
+A integridade valida apenas forma e coerência estrutural. Não determina significado clínico, causalidade, relevância, diagnóstico ou pertinência da observação profissional.
+
+**Próxima etapa:** `v0.30.10 — Progress Review Context Integrity UX`.
+

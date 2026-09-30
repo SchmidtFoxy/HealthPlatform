@@ -2353,3 +2353,21 @@ Adicionar confirmação visual do contexto capturado antes do salvamento, com op
 ### v0.30.9 — Progress Review Context Integrity
 Validar a coerência estrutural entre tipo e referência antes do envio, impedindo vínculos incompletos e apresentando feedback local sem inferir conteúdo clínico.
 
+## ✅ v0.30.9 — Progress Review Context Integrity — CONCLUÍDA
+
+**Entregue:**
+- validação local antes do submit;
+- feedback de vínculo válido/inválido;
+- bloqueio de vínculos incompletos;
+- validação dos seis tipos suportados;
+- limite de referência;
+- proteção do separador reservado;
+- endpoint server-side `context-integrity`;
+- regra compartilhada com persistência;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.10 — Progress Review Context Integrity UX
+Melhorar a experiência de correção do vínculo inválido com foco automático no campo responsável, mensagens contextuais e estado visual de prontidão para salvar.
+

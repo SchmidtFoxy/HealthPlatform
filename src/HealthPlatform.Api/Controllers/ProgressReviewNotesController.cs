@@ -80,6 +80,15 @@ public class ProgressReviewNotesController(
             "O destino de navegação aponta somente para a seção observacional relacionada. A referência da nota permanece descritiva e não seleciona automaticamente um dado clínico específico."));
     }
 
+    [HttpGet("context-integrity")]
+    public ActionResult<ProgressReviewContextIntegrityResponse> ContextIntegrity(
+        [FromQuery] string? tipo = null,
+        [FromQuery] string? referencia = null)
+    {
+        var resultado = ValidarIntegridadeContexto(tipo, referencia);
+        return Ok(resultado);
+    }
+
     [HttpGet("context-options")]
     public ActionResult<ProgressReviewContextLinksResponse> ContextOptions()
     {
@@ -368,6 +377,55 @@ public class ProgressReviewNotesController(
             partes.ElementAtOrDefault(2));
     }
 
+    private static ProgressReviewContextIntegrityResponse ValidarIntegridadeContexto(
+        string? tipo,
+        string? referencia)
+    {
+        var tipoNormalizado = string.IsNullOrWhiteSpace(tipo)
+            ? null
+            : tipo.Trim().ToLowerInvariant();
+
+        var referenciaNormalizada = string.IsNullOrWhiteSpace(referencia)
+            ? null
+            : referencia.Trim();
+
+        var erros = new List<string>();
+
+        if (tipoNormalizado is null && referenciaNormalizada is null)
+        {
+            return new ProgressReviewContextIntegrityResponse(
+                true,
+                "SemVinculoContextual",
+                null,
+                null,
+                Array.Empty<string>(),
+                "Ausência de contexto é válida. Integridade estrutural não interpreta conteúdo clínico.");
+        }
+
+        if (tipoNormalizado is null)
+            erros.Add("Informe o tipo do contexto antes da referência.");
+
+        if (tipoNormalizado is not null && !Contextos.ContainsKey(tipoNormalizado))
+            erros.Add("Tipo de contexto de revisão inválido.");
+
+        if (referenciaNormalizada is null)
+            erros.Add("Informe a referência do contexto selecionado.");
+
+        if (referenciaNormalizada is not null && referenciaNormalizada.Length > 120)
+            erros.Add("A referência contextual deve possuir no máximo 120 caracteres.");
+
+        if (referenciaNormalizada is not null && referenciaNormalizada.Contains('|'))
+            erros.Add("A referência contextual não pode conter o caractere reservado |.");
+
+        return new ProgressReviewContextIntegrityResponse(
+            erros.Count == 0,
+            erros.Count == 0 ? "VinculoContextualValido" : "VinculoContextualInvalido",
+            tipoNormalizado,
+            referenciaNormalizada,
+            erros,
+            "A validação verifica somente coerência estrutural entre tipo e referência. Não valida significado clínico, causalidade ou pertinência profissional.");
+    }
+
     private static bool TryNormalizarContexto(
         string? tipo,
         string? referencia,
@@ -375,45 +433,17 @@ public class ProgressReviewNotesController(
         out string? referenciaNormalizada,
         out string? erro)
     {
-        tipoNormalizado = string.IsNullOrWhiteSpace(tipo)
-            ? null
-            : tipo.Trim().ToLowerInvariant();
+        var integridade = ValidarIntegridadeContexto(tipo, referencia);
 
-        referenciaNormalizada = string.IsNullOrWhiteSpace(referencia)
-            ? null
-            : referencia.Trim();
+        tipoNormalizado = integridade.Tipo;
+        referenciaNormalizada = integridade.Referencia;
+        erro = integridade.Erros.FirstOrDefault();
 
-        erro = null;
-
-        if (tipoNormalizado is null)
-        {
-            if (referenciaNormalizada is not null)
-            {
-                erro = "Informe o tipo do contexto antes da referencia.";
-                return false;
-            }
-
-            return true;
-        }
-
-        if (!Contextos.ContainsKey(tipoNormalizado))
-        {
-            erro = "Tipo de contexto de revisao invalido.";
+        if (!integridade.Valido)
             return false;
-        }
 
-        if (referenciaNormalizada is null)
-        {
-            erro = "Informe a referencia do contexto selecionado.";
-            return false;
-        }
-
-        referenciaNormalizada = referenciaNormalizada
-            .Replace("|", "/")
-            .Trim();
-
-        if (referenciaNormalizada.Length > 120)
-            referenciaNormalizada = referenciaNormalizada[..120];
+        if (referenciaNormalizada is not null)
+            referenciaNormalizada = referenciaNormalizada.Trim();
 
         return true;
     }

@@ -113,6 +113,15 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewContextIntegrityResponse(
+    bool Valido,
+    string Estado,
+    string? Tipo,
+    string? Referencia,
+    IReadOnlyCollection<string> Erros,
+    string RegraDeUso);
+
 public sealed record ProgressReviewContextNavigationResponse(
     string Tipo,
     string Rotulo,

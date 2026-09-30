@@ -1,4 +1,21 @@
-﻿# v0.30.8 — Progress Review Context Capture Confirmation
+﻿# v0.30.9 — Progress Review Context Integrity
+
+- Adiciona `ProgressReviewContextIntegrityResponse`.
+- Adiciona endpoint `GET .../progress-review-notes/context-integrity`.
+- Adiciona `ValidarIntegridadeContexto` no backend.
+- `TryNormalizarContexto` passa a reutilizar a validação estrutural.
+- Adiciona `HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309`.
+- Adiciona `hpValidateProgressReviewContextIntegrityV0309`.
+- Adiciona feedback local antes do submit.
+- Bloqueia tipo sem referência e referência sem tipo.
+- Valida os seis tipos de contexto.
+- Limita referência a 120 caracteres e rejeita `|`.
+- Mantém ausência completa de vínculo como válida.
+- Não interpreta conteúdo clínico.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.10 — Progress Review Context Integrity UX.
+
+# v0.30.8 — Progress Review Context Capture Confirmation
 
 - Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308`.
 - Adiciona `hpRenderProgressReviewContextConfirmationV0308`.

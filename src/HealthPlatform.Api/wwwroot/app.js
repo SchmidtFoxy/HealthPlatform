@@ -962,9 +962,53 @@ async function hpOpenInternalNotesV0204(patient){
 
 
 
+
+function hpValidateProgressReviewContextIntegrityV0309(form){
+  const tipo=String(form?.elements?.contextoTipo?.value||'').trim();
+  const referencia=String(form?.elements?.contextoReferencia?.value||'').trim();
+  const allowed=new Set(['foundation','context','timeline','window','observation-map','summary']);
+  const errors=[];
+
+  if(!tipo && !referencia){
+    return {valido:true,estado:'SemVinculoContextual',tipo:null,referencia:null,erros:[]};
+  }
+
+  if(!tipo) errors.push('Informe o tipo do contexto antes da referência.');
+  if(tipo && !allowed.has(tipo)) errors.push('Tipo de contexto de revisão inválido.');
+  if(!referencia) errors.push('Informe a referência do contexto selecionado.');
+  if(referencia.length>120) errors.push('A referência contextual deve possuir no máximo 120 caracteres.');
+  if(referencia.includes('|')) errors.push('A referência contextual não pode conter o caractere reservado |.');
+
+  return {
+    valido:errors.length===0,
+    estado:errors.length===0?'VinculoContextualValido':'VinculoContextualInvalido',
+    tipo:tipo||null,
+    referencia:referencia||null,
+    erros:errors
+  };
+}
+
+function hpRenderProgressReviewContextIntegrityV0309(form){
+  const host=$('#progressReviewContextIntegrityV0309');
+  if(!host || !form) return;
+
+  const integrity=hpValidateProgressReviewContextIntegrityV0309(form);
+
+  if(integrity.valido){
+    host.innerHTML=`<small class="muted-line" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}">${integrity.estado==='SemVinculoContextual'?'Sem vínculo contextual — válido.':'Vínculo contextual estruturalmente válido.'}</small>`;
+    return;
+  }
+
+  host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}">
+    <b>Revise o vínculo contextual antes de salvar:</b>
+    <ul>${integrity.erros.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+  </div>`;
+}
+
 function hpRenderProgressReviewContextConfirmationV0308(form){
   const host=$('#progressReviewContextConfirmationV0308');
   if(!host || !form) return;
+  hpRenderProgressReviewContextIntegrityV0309(form);
 
   const tipo=String(form.elements.contextoTipo?.value||'').trim();
   const referencia=String(form.elements.contextoReferencia?.value||'').trim();
@@ -1225,6 +1269,7 @@ async function hpOpenProgressReviewNotesV0302(p){
         <label class="span-2">Observação profissional<textarea name="conteudo" rows="5" maxlength="4000" required placeholder="Registre a observação mantendo separado o fato observado da interpretação profissional."></textarea></label>
       </div>
       <div id="progressReviewContextConfirmationV0308"></div>
+      <div id="progressReviewContextIntegrityV0309"></div>
       <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, data e alterações ficam auditadas.</div>
       <div class="form-actions"><button type="button" class="secondary" id="cancelProgressReviewNoteV0302">Limpar</button><button class="primary" type="submit">Salvar nota</button></div>
     </form>
@@ -1254,7 +1299,13 @@ async function hpOpenProgressReviewNotesV0302(p){
     form.onsubmit=async e=>{
       e.preventDefault();
       const id=form.elements.id.value;
-      const body={campo:form.elements.campo.value,conteudo:form.elements.conteudo.value,contextoTipo:form.elements.contextoTipo.value||null,contextoReferencia:form.elements.contextoReferencia.value||null};
+      const integrity=hpValidateProgressReviewContextIntegrityV0309(form);
+      hpRenderProgressReviewContextIntegrityV0309(form);
+      if(!integrity.valido){
+        toast('Revise o vínculo contextual antes de salvar.',true);
+        return;
+      }
+      const body={campo:form.elements.campo.value,conteudo:form.elements.conteudo.value,contextoTipo:integrity.tipo,contextoReferencia:integrity.referencia};
       const btn=form.querySelector('button[type=submit]');
       hpSetActionPending(btn,true,id?'Atualizando...':'Salvando...');
       try{
@@ -4711,6 +4762,7 @@ const HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5';
 const HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6';
 const HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7';
 const HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8';
+const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -9943,7 +9995,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.8';
+const HP_MVP_VERSION='0.30.9';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
