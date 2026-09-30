@@ -9306,7 +9306,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.6';
+const HP_MVP_VERSION='0.22.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12784,4 +12784,97 @@ renderPatientTab=function(d){
   if(!host||!daily30||host.querySelector('[data-evening-reflection-card-v0226]'))return;
   daily30.insertAdjacentHTML('afterend',hpEveningReflectionCardV0226(d));
   hpWireEveningReflectionCardV0226(d);
+};
+
+
+// ===== v0.22.7 — Daily History 2.0 =====
+const HP_DAILY_HISTORY_V0227='v0.22.7';
+
+function hpDailyHistoryToneV0227(item){
+  if(item?.diaFechado)return 'closed';
+  if(item?.temCheckIn||Number(item?.treinosConcluidos||0)>0)return 'active';
+  return 'empty';
+}
+
+function hpDailyHistoryItemV0227(item){
+  const date=new Date(`${item.data}T12:00:00`);
+  const day=new Intl.DateTimeFormat('pt-BR',{weekday:'short',day:'2-digit'}).format(date);
+  const facts=[];
+
+  if(item.temCheckIn){
+    if(item.prontidaoScore!=null)facts.push(`Prontidão ${item.prontidaoScore}/100`);
+    if(item.sonoHoras!=null)facts.push(`Sono ${num(item.sonoHoras,1)} h`);
+    if(item.energiaNivel!=null)facts.push(`Energia ${item.energiaNivel}/10`);
+    if(item.dorNivel!=null)facts.push(`Dor ${item.dorNivel}/10`);
+  }
+  if(Number(item.treinosConcluidos||0)>0){
+    facts.push(`${item.treinosConcluidos} treino(s)${item.esforcoMedio!=null?` • RPE ${num(item.esforcoMedio,1)}`:''}`);
+  }
+  if(item.diaFechado){
+    facts.push(`Fechamento ${item.percepcaoDoDia??'—'}/10`);
+  }
+
+  return `<article class="daily-history-item-v0227 is-${hpDailyHistoryToneV0227(item)}">
+    <div class="daily-history-date-v0227"><b>${esc(day)}</b><span>${esc(item.data)}</span></div>
+    <div class="daily-history-body-v0227">
+      ${facts.length
+        ?`<div class="daily-history-facts-v0227">${facts.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`
+        :'<p>Sem registros neste dia.</p>'}
+      ${item.resumoFechamento?`<small>${esc(item.resumoFechamento)}</small>`:''}
+    </div>
+    <div class="daily-history-state-v0227">${item.diaFechado?'✓':facts.length?'•':'—'}</div>
+  </article>`;
+}
+
+function hpDailyHistoryV0227(data){
+  const items=Array.isArray(data?.itens)?data.itens:[];
+  return `<section class="daily-history-v0227" data-daily-history-v0227="${HP_DAILY_HISTORY_V0227}">
+    <div class="daily-history-head-v0227">
+      <div>
+        <span class="eyebrow">DAILY HISTORY 2.0</span>
+        <h3>Os últimos dias, sem inventar história.</h3>
+        <p>Check-in, treino executado e reflexão aparecem na mesma linha do tempo. Lacunas continuam sendo lacunas — não viram julgamento.</p>
+      </div>
+      <div class="daily-history-count-v0227"><b>${data?.diasComContexto??0}/${data?.dias??items.length}</b><span>dias com contexto</span></div>
+    </div>
+
+    <div class="daily-history-list-v0227">
+      ${items.length?items.map(hpDailyHistoryItemV0227).join(''):'<div class="daily-history-empty-v0227">Ainda não há histórico suficiente para esta janela.</div>'}
+    </div>
+
+    <div class="daily-history-legend-v0227">
+      <span><i class="is-closed"></i>Dia fechado</span>
+      <span><i class="is-active"></i>Algum contexto registrado</span>
+      <span><i class="is-empty"></i>Sem registro</span>
+    </div>
+
+    <div class="daily-history-safety-v0227">
+      <b>Histórico não é nota</b>
+      <span>${esc(data?.mensagemSeguranca||'Dias sem registro permanecem visíveis como lacuna e não significam falha.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpInjectDailyHistoryV0227(){
+  const host=$('#patientPortalContent');
+  if(!host||host.querySelector('[data-daily-history-v0227]'))return;
+
+  try{
+    const data=await api('/api/portal/me/historico-diario?dias=14');
+    if(!host.isConnected||host.querySelector('[data-daily-history-v0227]'))return;
+
+    const evening=host.querySelector('[data-evening-reflection-card-v0226]');
+    const target=evening||host.querySelector('.patient-mobile-home')?.lastElementChild;
+    if(evening)evening.insertAdjacentHTML('afterend',hpDailyHistoryV0227(data));
+    else if(target)target.insertAdjacentHTML('afterend',hpDailyHistoryV0227(data));
+    else host.insertAdjacentHTML('beforeend',hpDailyHistoryV0227(data));
+  }catch(err){
+    console.warn('Daily History 2.0 indisponível:',err);
+  }
+}
+
+const __loadMyPatientPortal_v0227=loadMyPatientPortal;
+loadMyPatientPortal=async function(){
+  await __loadMyPatientPortal_v0227();
+  await hpInjectDailyHistoryV0227();
 };

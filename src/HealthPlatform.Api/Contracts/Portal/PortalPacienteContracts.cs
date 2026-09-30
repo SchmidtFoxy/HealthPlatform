@@ -622,4 +622,27 @@ public record PortalPacienteHomeResponse(
     IReadOnlyCollection<PortalRegistroDiarioResponse> RegistrosHoje,
     IReadOnlyCollection<PortalExameRecenteResponse> ExamesRecentes);
 
+
+public sealed record PortalHistoricoDiarioItemResponse(
+    DateOnly Data,
+    bool TemCheckIn,
+    int? ProntidaoScore,
+    decimal? SonoHoras,
+    int? EnergiaNivel,
+    int? DorNivel,
+    int? RecuperacaoNivel,
+    int TreinosConcluidos,
+    decimal? EsforcoMedio,
+    bool DiaFechado,
+    int? PercepcaoDoDia,
+    string? ResumoFechamento);
+
+public sealed record PortalHistoricoDiarioResponse(
+    DateOnly Inicio,
+    DateOnly Fim,
+    int Dias,
+    int DiasComContexto,
+    IReadOnlyCollection<PortalHistoricoDiarioItemResponse> Itens,
+    string MensagemSeguranca);
+
 public sealed record PortalJornadaItemResponse(string Tipo, Guid Id, DateTime DataUtc, string Titulo, string? Resumo, string? Complemento, string Destino);

@@ -21,6 +21,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Daily History 2.0
+
+A `v0.22.7` cria uma linha do tempo diária real dos últimos dias, reunindo **Morning Check-in, treino executado e Evening Reflection** a partir dos registros persistidos.
+
+O endpoint `/api/portal/me/historico-diario` consulta as fontes já existentes (`ProntidoesDiarias`, `ExecucoesTreino` e `RegistrosDiarioPaciente`) e não cria tabela paralela. Dias sem informação permanecem explicitamente como lacunas, sem serem classificados como fracasso, baixa adesão ou risco.
+
 ### Evening Reflection 2.0
 
 A `v0.22.6` evolui o fechamento diário existente para uma reflexão guiada e leve. Em menos de um minuto, a pessoa registra percepção final do dia, quanto conseguiu executar, dificuldade percebida, energia final e um aprendizado simples.
@@ -174,7 +181,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.6 — Evening Reflection 2.0`
+- **Versão funcional:** `v0.22.7 — Daily History 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

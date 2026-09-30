@@ -1,3 +1,16 @@
+# v0.22.7 — Daily History 2.0
+
+- Cria histórico diário real dos últimos 14 dias.
+- Reúne prontidão, sono, energia, dor, recuperação, treino executado e fechamento diário.
+- Mostra RPE médio dos treinos quando disponível.
+- Mantém dias sem registro explicitamente como lacunas.
+- Adiciona `GET /api/portal/me/historico-diario?dias=14`.
+- O endpoint lê `ProntidoesDiarias`, `ExecucoesTreino` e `RegistrosDiarioPaciente`.
+- Não cria migration, tabela ou fonte paralela.
+- Histórico é descritivo: lacuna não significa falha, risco ou baixa adesão.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.7.
+- Próxima etapa: v0.22.8 — Professional Daily Signals 2.0.
+
 # v0.22.6 — Evening Reflection 2.0
 
 - Evolui o fechamento diário para uma reflexão guiada de menos de 1 minuto.

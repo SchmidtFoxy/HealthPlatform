@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.6 — Evening Reflection 2.0
+> **Versão-base deste roadmap:** v0.22.7 — Daily History 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -894,6 +894,26 @@ Consolidar o fluxo diário essencial em uma experiência curta, clara e progress
 ## ⏭ v0.22.7 — Daily History 2.0
 
 Criar uma leitura histórica coerente dos dias recentes, conectando check-in, plano, execução e reflexão para mostrar padrões sem transformar histórico em score de valor pessoal.
+
+
+
+## ✅ v0.22.7 — Daily History 2.0 — CONCLUÍDA
+
+**Entregue na v0.22.7:**
+- histórico real de 14 dias;
+- prontidão/check-in por dia;
+- sono, energia, dor e recuperação;
+- treinos concluídos e RPE médio quando disponível;
+- fechamento diário e percepção final;
+- resumo da Evening Reflection;
+- dias sem registro mantidos como lacuna explícita;
+- endpoint de leitura sobre fontes existentes, sem tabela paralela.
+
+**Próxima etapa:** `v0.22.8 — Professional Daily Signals 2.0`.
+
+## ⏭ v0.22.8 — Professional Daily Signals 2.0
+
+Levar ao profissional sinais diários úteis e explicáveis derivados do contexto recente, priorizando quem precisa ser visto sem criar score clínico opaco ou diagnóstico automático.
 
 
 # 7. v0.23.x — Sports & Movement Library

@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using HealthPlatform.Api.Contracts.Diario;
 using HealthPlatform.Api.Contracts.Metas;
 using HealthPlatform.Api.Contracts.Portal;
@@ -278,6 +278,125 @@ public sealed class MeuPortalPacienteController(
         await db.SaveChangesAsync(ct);
 
         return Ok(await AdesaoNutricionalService.MontarAsync(db, pacienteId.Value, dia, ct));
+    }
+
+
+    [HttpGet("historico-diario")]
+    public async Task<ActionResult<PortalHistoricoDiarioResponse>> HistoricoDiario(
+        [FromQuery] int dias = 14,
+        CancellationToken ct = default)
+    {
+        dias = Math.Clamp(dias, 7, 60);
+
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var fim = DateOnly.FromDateTime(DateTime.UtcNow);
+        var inicio = fim.AddDays(-(dias - 1));
+        var inicioUtc = DateTime.SpecifyKind(inicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fimExclusivoUtc = DateTime.SpecifyKind(fim.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+
+        var prontidoes = await db.ProntidoesDiarias.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId.Value &&
+                x.Data >= inicio &&
+                x.Data <= fim)
+            .OrderByDescending(x => x.Data)
+            .Select(x => new
+            {
+                x.Data,
+                x.Score,
+                x.SonoHoras,
+                x.EnergiaNivel,
+                x.DorNivel,
+                x.RecuperacaoNivel
+            })
+            .ToListAsync(ct);
+
+        var treinos = await db.ExecucoesTreino.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId.Value &&
+                x.Status == "Concluido" &&
+                x.DataHoraInicioUtc >= inicioUtc &&
+                x.DataHoraInicioUtc < fimExclusivoUtc)
+            .Select(x => new
+            {
+                x.DataHoraInicioUtc,
+                x.EsforcoPercebido
+            })
+            .ToListAsync(ct);
+
+        var fechamentos = await db.RegistrosDiarioPaciente.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId.Value &&
+                x.Tipo == "FechamentoDia" &&
+                x.DataHoraUtc >= inicioUtc &&
+                x.DataHoraUtc < fimExclusivoUtc)
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Select(x => new
+            {
+                x.DataHoraUtc,
+                x.Escala,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var prontidaoPorDia = prontidoes
+            .GroupBy(x => x.Data)
+            .ToDictionary(x => x.Key, x => x.First());
+
+        var treinosPorDia = treinos
+            .GroupBy(x => DateOnly.FromDateTime(x.DataHoraInicioUtc))
+            .ToDictionary(
+                x => x.Key,
+                x => new
+                {
+                    Quantidade = x.Count(),
+                    EsforcoMedio = x.Any(y => y.EsforcoPercebido.HasValue)
+                        ? Math.Round((decimal)x.Where(y => y.EsforcoPercebido.HasValue).Average(y => y.EsforcoPercebido!.Value), 1)
+                        : (decimal?)null
+                });
+
+        var fechamentoPorDia = fechamentos
+            .GroupBy(x => DateOnly.FromDateTime(x.DataHoraUtc))
+            .ToDictionary(x => x.Key, x => x.First());
+
+        var itens = new List<PortalHistoricoDiarioItemResponse>(dias);
+
+        for (var data = fim; data >= inicio; data = data.AddDays(-1))
+        {
+            prontidaoPorDia.TryGetValue(data, out var prontidao);
+            treinosPorDia.TryGetValue(data, out var treino);
+            fechamentoPorDia.TryGetValue(data, out var fechamento);
+
+            itens.Add(new PortalHistoricoDiarioItemResponse(
+                data,
+                prontidao is not null,
+                prontidao?.Score,
+                prontidao?.SonoHoras,
+                prontidao?.EnergiaNivel,
+                prontidao?.DorNivel,
+                prontidao?.RecuperacaoNivel,
+                treino?.Quantidade ?? 0,
+                treino?.EsforcoMedio,
+                fechamento is not null,
+                fechamento?.Escala,
+                fechamento?.Descricao));
+        }
+
+        var diasComContexto = itens.Count(x =>
+            x.TemCheckIn ||
+            x.TreinosConcluidos > 0 ||
+            x.DiaFechado);
+
+        return Ok(new PortalHistoricoDiarioResponse(
+            inicio,
+            fim,
+            dias,
+            diasComContexto,
+            itens,
+            "Historico descritivo dos registros reais da pessoa. Dias sem registro permanecem visiveis como lacuna e nao significam falha, risco ou baixa adesao."));
     }
 
     [HttpPost("fechamento-dia")]
