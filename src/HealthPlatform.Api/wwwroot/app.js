@@ -960,6 +960,47 @@ async function hpOpenInternalNotesV0204(patient){
 }
 
 
+function hpNormalizeProgressContextRefV0306(value){
+  return String(value||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .trim()
+    .toLowerCase();
+}
+
+function hpResolveProgressContextFocusV0306(section,note){
+  const raw=String(note?.contextoReferencia||'').trim();
+  if(!raw) return null;
+
+  const full=hpNormalizeProgressContextRefV0306(raw);
+  const parts=raw.split('::');
+  const short=parts.length>1?hpNormalizeProgressContextRefV0306(parts.slice(1).join('::')):full;
+  const refs=new Set([full,short].filter(Boolean));
+
+  const candidates=[...section.querySelectorAll('[data-progress-context-ref]')]
+    .filter(el=>refs.has(hpNormalizeProgressContextRefV0306(el.getAttribute('data-progress-context-ref'))));
+
+  return candidates.length===1?candidates[0]:null;
+}
+
+function hpHighlightProgressContextFocusV0306(target){
+  const previousOutline=target.style.outline;
+  const previousOffset=target.style.outlineOffset;
+  const previousTransition=target.style.transition;
+
+  target.setAttribute('data-progress-review-reference-focus-v0306','true');
+  target.style.outline='2px solid currentColor';
+  target.style.outlineOffset='4px';
+  target.style.transition='outline-offset .2s ease';
+
+  setTimeout(()=>{
+    target.removeAttribute('data-progress-review-reference-focus-v0306');
+    target.style.outline=previousOutline;
+    target.style.outlineOffset=previousOffset;
+    target.style.transition=previousTransition;
+  },2200);
+}
+
 function hpNavigateProgressReviewContextV0305(note){
   const selector=note?.navegacaoDestino;
   if(!selector){
@@ -967,8 +1008,8 @@ function hpNavigateProgressReviewContextV0305(note){
     return;
   }
 
-  const target=document.querySelector(selector);
-  if(!target){
+  const section=document.querySelector(selector);
+  if(!section){
     toast('A seção contextual não está disponível nesta tela.',true);
     return;
   }
@@ -976,10 +1017,17 @@ function hpNavigateProgressReviewContextV0305(note){
   const modal=$('#clinicalActionModal');
   if(modal) modal.classList.remove('open');
 
-  target.scrollIntoView({behavior:'smooth',block:'start'});
-  target.setAttribute('data-progress-review-context-focus-v0305','true');
-  setTimeout(()=>target.removeAttribute('data-progress-review-context-focus-v0305'),1800);
-  toast(`Contexto aberto: ${note.contextoTipo||'revisão'}`);
+  const focused=hpResolveProgressContextFocusV0306(section,note);
+  const target=focused||section;
+
+  target.scrollIntoView({behavior:'smooth',block:focused?'center':'start'});
+  hpHighlightProgressContextFocusV0306(target);
+
+  if(focused){
+    toast(`Referência localizada: ${note.contextoReferencia}`);
+  }else{
+    toast(`Contexto aberto: ${note.contextoTipo||'revisão'} • referência sem correspondência única`);
+  }
 }
 
 async function hpOpenProgressReviewNotesV0302(p){
@@ -4507,6 +4555,7 @@ const HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2';
 const HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3';
 const HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4';
 const HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5';
+const HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -4582,36 +4631,36 @@ function hpProgressIntelligenceClosureV0296(x){
 
 function hpProgressObservationSummaryV0295(x){
   if(!x) return '<div class="empty">Resumo observacional indisponível.</div>';
-  return `<article class="workout-progression-signal-v0274 progress-observation-summary-v0295"><div class="workout-comparison-head-v0272"><div><small>RESUMO OBSERVACIONAL</small><b>${esc(x.coberturaGeral||'Sem cobertura')}</b></div><span class="pill Info">${x.diasObservados??0} dias</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.sinaisDescritivos??0}</b>sinais</span><span><b>${x.eventosTimeline??0}</b>eventos</span><span><b>${x.diasObservadosNoMapa??0}</b>dias mapeados</span><span><b>${x.referenciasDistintasTimeline??0}</b>referências</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.contextosDisponiveis??0}</b>contextos</span><span><b>${x.janelasTemporais??0}</b>janelas</span><span><b>${x.diasComMultiplosDominios??0}</b>dias multidomínio</span><span><b>${x.diasComMultiplasReferencias??0}</b>dias multirreferência</span></div><small class="muted-line">${esc(x.leituraPermitida||'')}</small></article>`;
+  return `<article class="workout-progression-signal-v0274 progress-observation-summary-v0295" data-progress-context-ref="summary"><div class="workout-comparison-head-v0272"><div><small>RESUMO OBSERVACIONAL</small><b>${esc(x.coberturaGeral||'Sem cobertura')}</b></div><span class="pill Info">${x.diasObservados??0} dias</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.sinaisDescritivos??0}</b>sinais</span><span><b>${x.eventosTimeline??0}</b>eventos</span><span><b>${x.diasObservadosNoMapa??0}</b>dias mapeados</span><span><b>${x.referenciasDistintasTimeline??0}</b>referências</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.contextosDisponiveis??0}</b>contextos</span><span><b>${x.janelasTemporais??0}</b>janelas</span><span><b>${x.diasComMultiplosDominios??0}</b>dias multidomínio</span><span><b>${x.diasComMultiplasReferencias??0}</b>dias multirreferência</span></div><small class="muted-line">${esc(x.leituraPermitida||'')}</small></article>`;
 }
 
 function hpCrossSignalObservationDayV0294(x){
   const domains=(x.dominiosObservados||[]).join(' + ')||'—';
   const refs=(x.referenciasObservadas||[]).join(' • ')||'—';
-  return `<article class="workout-progression-signal-v0274 cross-signal-observation-v0294"><div class="workout-comparison-head-v0272"><div><small>COOBSERVAÇÃO</small><b>${x.data?fmtDate(x.data):'Data'}</b></div><span class="pill Info">${esc(x.leituraPermitida||'')}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.eventosObservados??0}</b>eventos</span><span><b>${x.eventosCarga??0}</b>carga</span><span><b>${x.eventosTempo??0}</b>tempo</span><span><b>${x.referenciasDistintas??0}</b>referências</span></div><p>${esc(domains)}</p><small class="muted-line">${esc(refs)}</small></article>`;
+  return `<article class="workout-progression-signal-v0274 cross-signal-observation-v0294" data-progress-context-ref="${esc(x.data||'')}"><div class="workout-comparison-head-v0272"><div><small>COOBSERVAÇÃO</small><b>${x.data?fmtDate(x.data):'Data'}</b></div><span class="pill Info">${esc(x.leituraPermitida||'')}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.eventosObservados??0}</b>eventos</span><span><b>${x.eventosCarga??0}</b>carga</span><span><b>${x.eventosTempo??0}</b>tempo</span><span><b>${x.referenciasDistintas??0}</b>referências</span></div><p>${esc(domains)}</p><small class="muted-line">${esc(refs)}</small></article>`;
 }
 
 function hpProgressEvidenceWindowV0293(x){
-  return `<article class="workout-progression-signal-v0274 progress-evidence-window-v0293"><div class="workout-comparison-head-v0272"><div><small>JANELA DE EVIDÊNCIA</small><b>${esc(x.janela||'Janela')}</b></div><span class="pill Info">${x.dias??0} dias</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.eventosObservados??0}</b>eventos</span><span><b>${x.eventosCarga??0}</b>carga</span><span><b>${x.eventosTempo??0}</b>tempo</span><span><b>${x.referenciasDistintas??0}</b>referências</span></div><p>${esc(x.coberturaDescritiva||'')}</p><small class="muted-line">${x.inicioUtc?fmtDateTime(x.inicioUtc):'—'} → ${x.fimUtc?fmtDateTime(x.fimUtc):'—'}</small></article>`;
+  return `<article class="workout-progression-signal-v0274 progress-evidence-window-v0293" data-progress-context-ref="${esc(x.janela||'')}"><div class="workout-comparison-head-v0272"><div><small>JANELA DE EVIDÊNCIA</small><b>${esc(x.janela||'Janela')}</b></div><span class="pill Info">${x.dias??0} dias</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.eventosObservados??0}</b>eventos</span><span><b>${x.eventosCarga??0}</b>carga</span><span><b>${x.eventosTempo??0}</b>tempo</span><span><b>${x.referenciasDistintas??0}</b>referências</span></div><p>${esc(x.coberturaDescritiva||'')}</p><small class="muted-line">${x.inicioUtc?fmtDateTime(x.inicioUtc):'—'} → ${x.fimUtc?fmtDateTime(x.fimUtc):'—'}</small></article>`;
 }
 
 function hpMultiSignalTimelineEventV0292(x){
   const moment=x.momento==='InicioComparavel'?'início':'atual';
   const value=x.valor!=null?`${num(x.valor,2)} ${esc(x.unidade||'')}`:'—';
   const when=x.dataUtc?fmtDateTime(x.dataUtc):'—';
-  return `<article class="workout-progression-signal-v0274 multi-signal-timeline-v0292"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'SINAL')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(moment)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${value}</b>${esc(x.medida||'medida')}</span><span><b>${esc(x.recencia||'—')}</b>recência</span><span><b>${x.registrosComparaveis??0}</b>registros</span></div><p>${when} • ${esc(x.origemEvidencia||'')}</p></article>`;
+  return `<article class="workout-progression-signal-v0274 multi-signal-timeline-v0292" data-progress-context-ref="${esc(x.referencia||'')}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'SINAL')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(moment)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${value}</b>${esc(x.medida||'medida')}</span><span><b>${esc(x.recencia||'—')}</b>recência</span><span><b>${x.registrosComparaveis??0}</b>registros</span></div><p>${when} • ${esc(x.origemEvidencia||'')}</p></article>`;
 }
 
 function hpProgressSignalContextV0291(x){
   const recency=x.recencia||'—';
   const density=x.densidadeObservacional||'—';
-  return `<article class="workout-progression-signal-v0274 progress-signal-context-v0291"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'CONTEXTO')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(recency)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.diasDesdeUltimoRegistro??0}</b>dias desde último</span><span><b>${x.diasCobertos??0}</b>dias cobertos</span><span><b>${x.registrosComparaveis??0}</b>registros</span></div><p>${esc(density)} • ${esc(x.origemEvidencia||'')}</p><small class="muted-line">${esc(x.contextoDeLeitura||'')}</small></article>`;
+  return `<article class="workout-progression-signal-v0274 progress-signal-context-v0291" data-progress-context-ref="${esc(x.referencia||'')}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'CONTEXTO')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(recency)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${x.diasDesdeUltimoRegistro??0}</b>dias desde último</span><span><b>${x.diasCobertos??0}</b>dias cobertos</span><span><b>${x.registrosComparaveis??0}</b>registros</span></div><p>${esc(density)} • ${esc(x.origemEvidencia||'')}</p><small class="muted-line">${esc(x.contextoDeLeitura||'')}</small></article>`;
 }
 
 function hpProgressIntelligenceSignalV0290(x){
   const pct=x.variacaoPercentual!=null?`${x.variacaoPercentual>0?'+':''}${num(x.variacaoPercentual,1)}%`:'—';
   const direction=x.direcaoDescritiva==='AcimaDoInicial'?'acima do inicial':(x.direcaoDescritiva==='AbaixoDoInicial'?'abaixo do inicial':'estável no período');
-  return `<article class="workout-progression-signal-v0274 progress-intelligence-v0290"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'SINAL')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(direction)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${pct}</b>variação</span><span><b>${x.registrosComparaveis??0}</b>registros</span><span><b>${esc(x.tipo||'')}</b>medida</span></div><p>${esc(x.evidencia||'')}</p><small class="muted-line">${esc(x.limiteInterpretativo||'')}</small></article>`;
+  return `<article class="workout-progression-signal-v0274 progress-intelligence-v0290" data-progress-context-ref="${esc(x.referencia||'')}"><div class="workout-comparison-head-v0272"><div><small>${esc(x.dominio||'SINAL')}</small><b>${esc(x.referencia||'Referência')}</b></div><span class="pill Info">${esc(direction)}</span></div><div class="workout-intelligence-kpis-v0270"><span><b>${pct}</b>variação</span><span><b>${x.registrosComparaveis??0}</b>registros</span><span><b>${esc(x.tipo||'')}</b>medida</span></div><p>${esc(x.evidencia||'')}</p><small class="muted-line">${esc(x.limiteInterpretativo||'')}</small></article>`;
 }
 
 function hpPerformanceEvolutionPointV0285(x){
@@ -9739,7 +9788,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.5';
+const HP_MVP_VERSION='0.30.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

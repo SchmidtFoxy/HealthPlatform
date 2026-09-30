@@ -1,4 +1,18 @@
-﻿# v0.30.5 — Progress Review Context Navigation
+﻿# v0.30.6 — Progress Review Context Focus
+
+- Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306`.
+- Adiciona `data-progress-context-ref` aos itens das seis camadas observacionais.
+- Adiciona normalização determinística de referência.
+- Suporta referência `dominio::referencia`.
+- Foca item somente quando existe exatamente uma correspondência.
+- Mantém fallback para a seção em caso de ausência ou ambiguidade.
+- Adiciona destaque visual temporário.
+- Não usa fuzzy match, similaridade semântica ou inferência.
+- Preserva navegação, CRUD, histórico, filtros, privacidade e auditoria.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.7 — Progress Review Context Capture.
+
+# v0.30.5 — Progress Review Context Navigation
 
 - Adiciona `NavegacaoDestino` às notas de revisão.
 - Adiciona `ProgressReviewContextNavigationResponse`.

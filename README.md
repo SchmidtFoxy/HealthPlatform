@@ -1373,3 +1373,32 @@ A navegação apenas abre a seção relacionada. Ela não interpreta `ContextoRe
 
 **Próxima etapa:** `v0.30.6 — Progress Review Context Focus`.
 
+---
+
+## v0.30.6 — Progress Review Context Focus
+
+Evolui a navegação contextual para focar um item observacional específico somente quando a referência registrada na nota possui correspondência única e inequívoca dentro da seção.
+
+### Estratégia
+- itens observacionais recebem `data-progress-context-ref`;
+- a referência da nota é normalizada para comparação;
+- referências no formato `dominio::referencia` também consideram a parte após `::`;
+- somente uma correspondência exata única recebe foco;
+- zero correspondências ou múltiplas correspondências mantêm fallback para a seção inteira.
+
+### Contextos focáveis
+- Foundation: `referencia`;
+- Context: `referencia`;
+- Timeline: `referencia`;
+- Evidence Window: `janela`;
+- Observation Map: `data`;
+- Summary: referência estável `summary`.
+
+### UX
+O item localizado recebe scroll centralizado e destaque temporário. Em caso ambíguo, o sistema informa que não houve correspondência única e abre apenas a seção.
+
+### Guardrail
+O sistema não usa similaridade semântica, fuzzy match ou inferência para escolher registros. Foco específico só ocorre diante de correspondência textual normalizada única.
+
+**Próxima etapa:** `v0.30.7 — Progress Review Context Capture`.
+

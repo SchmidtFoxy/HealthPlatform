@@ -2301,3 +2301,20 @@ Transformar vínculos contextuais em navegação direta para a seção observaci
 ### v0.30.6 — Progress Review Context Focus
 Evoluir a navegação para destacar a referência contextual dentro da própria seção quando houver correspondência observacional inequívoca, mantendo fallback seguro para a seção.
 
+## ✅ v0.30.6 — Progress Review Context Focus — CONCLUÍDA
+
+**Entregue:**
+- referência técnica nos itens observacionais;
+- resolução determinística de referência;
+- suporte a `dominio::referencia`;
+- foco apenas com correspondência única;
+- fallback seguro para a seção;
+- scroll e destaque temporário;
+- sem fuzzy matching;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.7 — Progress Review Context Capture
+Permitir iniciar uma nova nota diretamente a partir de um item observacional, preenchendo automaticamente tipo e referência contextual sem interpretar o conteúdo clínico.
+
