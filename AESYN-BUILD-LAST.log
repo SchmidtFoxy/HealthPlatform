@@ -1,21 +1,21 @@
 ﻿  HealthPlatform.Domain -> C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Domain\bin\Debug\net10.0\HealthPlatform.Domain.dll
   HealthPlatform.Application -> C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Application\bin\Debug\net10.0\HealthPlatform.Application.dll
   HealthPlatform.Infrastructure -> C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Infrastructure\bin\Debug\net10.0\HealthPlatform.Infrastructure.dll
+C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\PasswordRecoveryController.cs(94,84): warning CS8604: Poss├¡vel argumento de refer├¬ncia nula para o par├ómetro 'email' em 'string PasswordRecoveryController.MaskEmail(string email)'. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(201,17): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(204,22): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(204,44): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(205,21): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
-C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\PasswordRecoveryController.cs(94,84): warning CS8604: Poss├¡vel argumento de refer├¬ncia nula para o par├ómetro 'email' em 'string PasswordRecoveryController.MaskEmail(string email)'. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
   HealthPlatform.Api -> C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\bin\Debug\net10.0\HealthPlatform.Api.dll
 
 Compila├º├úo com ├¬xito.
 
+C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\PasswordRecoveryController.cs(94,84): warning CS8604: Poss├¡vel argumento de refer├¬ncia nula para o par├ómetro 'email' em 'string PasswordRecoveryController.MaskEmail(string email)'. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(201,17): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(204,22): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(204,44): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
 C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\CarteiraController.cs(205,21): warning CS8629: O tipo de valor de nulidade pode ser nulo. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
-C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\Controllers\PasswordRecoveryController.cs(94,84): warning CS8604: Poss├¡vel argumento de refer├¬ncia nula para o par├ómetro 'email' em 'string PasswordRecoveryController.MaskEmail(string email)'. [C:\Projetos\HealthPlatform\HealthPlatform\HealthPlatform\src\HealthPlatform.Api\HealthPlatform.Api.csproj]
     5 Aviso(s)
     0 Erro(s)
 
-Tempo Decorrido 00:00:08.65
+Tempo Decorrido 00:00:06.12

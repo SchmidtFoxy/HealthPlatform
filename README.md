@@ -991,3 +991,22 @@ Timed Performance 2.0 **não considera automaticamente a menor duração como me
 
 **Próxima etapa:** `v0.28.3 — Competition & Test Results 2.0`.
 
+---
+
+## v0.28.3 — Competition & Test Results 2.0
+
+O Athlete Performance Passport passa a reconhecer **provas/competições** e **testes/avaliações** a partir de registros supervisionados já existentes em `EventosProgressaoSupervisionada`.
+
+### Entregue
+- classificação `ProvaCompeticao` apenas quando eixo/descrição traz indicação explícita de prova, competição, campeonato, torneio ou corrida;
+- classificação `TesteAvaliacao` apenas quando há indicação explícita de teste, avaliação, benchmark ou protocolo;
+- data, status, eixo, descrição, observações e ciclo esportivo vinculável;
+- endpoint profissional e endpoint do paciente;
+- coleção `Resultados` no passaporte;
+- domínios `provas` e `testes` deixam de ser permanentemente `SemFonteEstruturada` quando existe base supervisionada compatível.
+
+### Guardrail
+Competition & Test Results 2.0 **não inventa colocação, tempo, distância, nota, aprovação, recorde ou melhora** quando esses dados não existem de forma estruturada. Um registro supervisionado é contexto, não um resultado numérico presumido.
+
+**Próxima etapa:** `v0.28.4 — Skills & Milestones 2.0`.
+

@@ -1,4 +1,18 @@
-﻿# v0.28.2 — Timed Performance 2.0
+﻿# v0.28.3 — Competition & Test Results 2.0
+
+- Adiciona `AthleteCompetitionTestResultResponse`.
+- Expande o passaporte com a coleção `Resultados`.
+- Reaproveita `EventosProgressaoSupervisionada`.
+- Classifica somente eventos com indicação explícita de prova/competição ou teste/avaliação.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/passaporte/resultados`.
+- Adiciona `GET /api/portal/me/performance/passaporte/resultados`.
+- Atualiza os domínios `provas` e `testes` do passaporte.
+- Adiciona painel Competition & Test Results 2.0.
+- Guardrail: não inventa colocação, tempo, distância, nota, aprovação, recorde ou melhora.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.28.4 — Skills & Milestones 2.0.
+
+# v0.28.2 — Timed Performance 2.0
 
 - Adiciona `AthleteTimedPerformanceResponse`.
 - Expande o passaporte com a coleção `Tempos`.

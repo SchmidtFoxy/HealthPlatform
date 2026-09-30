@@ -16,6 +16,7 @@ public static class AthletePerformancePassportService
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, hoje, ct);
         var recordes = await MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await MontarTemposAsync(db, pacienteId, hoje, ct);
+        var resultados = await MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -63,17 +64,17 @@ public static class AthletePerformancePassportService
             new(
                 "provas",
                 "Provas",
-                "SemFonteEstruturada",
-                "Foundation",
-                0,
-                "Resultados de prova ainda não possuem contrato dedicado no Performance Passport."),
+                resultados.Any(x => x.Categoria == "ProvaCompeticao") ? "ComDados" : "SemDados",
+                "Competition & Test Results 2.0",
+                resultados.Count(x => x.Categoria == "ProvaCompeticao"),
+                "Somente eventos supervisionados com indicação explícita de prova, competição, campeonato, corrida ou torneio entram neste domínio."),
             new(
                 "testes",
                 "Testes",
-                "SemFonteEstruturada",
-                "Foundation",
-                0,
-                "Testes de performance ainda não possuem contrato dedicado no Performance Passport."),
+                resultados.Any(x => x.Categoria == "TesteAvaliacao") ? "ComDados" : "SemDados",
+                "Competition & Test Results 2.0",
+                resultados.Count(x => x.Categoria == "TesteAvaliacao"),
+                "Somente eventos supervisionados com indicação explícita de teste, avaliação, benchmark ou protocolo entram neste domínio."),
             new(
                 "habilidades",
                 "Habilidades",
@@ -93,17 +94,18 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.28.2",
+            "v0.28.3",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Timed Performance 2.0 adiciona duração real de sessões concluídas sem transformar menor tempo em melhor performance. Performance Records mantém observado e derivado separados.")
+            "Competition & Test Results 2.0 incorpora somente eventos supervisionados explicitamente identificados como prova/competição ou teste/avaliação. Não inventa colocação, tempo, distância, nota, resultado ou recorde.")
         {
             Recordes = recordes,
-            Tempos = tempos
+            Tempos = tempos,
+            Resultados = resultados
         };
     }
 
@@ -231,6 +233,73 @@ public static class AthletePerformancePassportService
             .ToArray();
     }
 
+
+
+    public static async Task<IReadOnlyCollection<AthleteCompetitionTestResultResponse>> MontarResultadosCompeticaoTesteAsync(
+        AppDbContext db,
+        Guid pacienteId,
+        DateOnly dia,
+        CancellationToken ct)
+    {
+        const int diasObservados = 365;
+        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+
+        var eventos = await db.EventosProgressaoSupervisionada.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == pacienteId &&
+                x.DataAplicacaoUtc >= inicioUtc &&
+                x.DataAplicacaoUtc < fimUtc)
+            .OrderByDescending(x => x.DataAplicacaoUtc)
+            .Select(x => new
+            {
+                x.Id,
+                x.Eixo,
+                x.Descricao,
+                x.DataAplicacaoUtc,
+                x.Status,
+                x.Observacoes,
+                x.CicloEsportivoPacienteId
+            })
+            .ToListAsync(ct);
+
+        return eventos
+            .Select(x => new
+            {
+                Evento = x,
+                Categoria = ClassificarResultadoCompeticaoTeste(x.Eixo, x.Descricao)
+            })
+            .Where(x => x.Categoria is not null)
+            .Select(x => new AthleteCompetitionTestResultResponse(
+                x.Evento.Id,
+                x.Categoria!,
+                x.Evento.Eixo,
+                x.Evento.Descricao,
+                x.Evento.DataAplicacaoUtc,
+                x.Evento.Status,
+                x.Evento.Observacoes,
+                x.Evento.CicloEsportivoPacienteId,
+                "RegistroSupervisionado",
+                "EventosProgressaoSupervisionada",
+                "O passaporte preserva o registro supervisionado como contexto. Sem campo estruturado específico, não infere colocação, tempo, distância, nota, aprovação, recorde ou melhora."))
+            .ToArray();
+    }
+
+    private static string? ClassificarResultadoCompeticaoTeste(string? eixo, string? descricao)
+    {
+        var texto = $"{eixo} {descricao}".ToLowerInvariant();
+
+        if (ContemTermoExplicito(texto, "prova", "competição", "competicao", "campeonato", "torneio", "corrida"))
+            return "ProvaCompeticao";
+
+        if (ContemTermoExplicito(texto, "teste", "avaliação", "avaliacao", "benchmark", "protocolo"))
+            return "TesteAvaliacao";
+
+        return null;
+    }
+
+    private static bool ContemTermoExplicito(string texto, params string[] termos) =>
+        termos.Any(termo => texto.Contains(termo, StringComparison.OrdinalIgnoreCase));
 
     public static async Task<IReadOnlyCollection<AthleteTimedPerformanceResponse>> MontarTemposAsync(
         AppDbContext db,
