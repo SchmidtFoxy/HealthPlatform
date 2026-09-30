@@ -1,4 +1,5 @@
 ﻿$ErrorActionPreference = "Stop"
+# v0.29.3-r1 BUILD_LOCK_HARDENING
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
@@ -47,6 +48,35 @@ function Invoke-NativeStep {
 
             throw "Falha na etapa: $Label (codigo $code)`n--- SAIDA FINAL ---`n$details"
         }
+    }
+    finally {
+        $ErrorActionPreference = $oldErrorPreference
+    }
+}
+
+
+function Reset-DotNetBuildLock {
+    Write-Host "    Liberando build servers e locks do compilador..." -ForegroundColor DarkCyan
+
+    $oldErrorPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+
+    try {
+        & dotnet build-server shutdown *> $null
+
+        Get-Process -Name 'VBCSCompiler' -ErrorAction SilentlyContinue |
+            ForEach-Object {
+                try {
+                    Stop-Process -Id $_.Id -Force -ErrorAction Stop
+                    Write-Host "    VBCSCompiler encerrado: PID $($_.Id)" -ForegroundColor DarkGray
+                }
+                catch {
+                    Write-Host "    Aviso ao encerrar VBCSCompiler PID $($_.Id): $($_.Exception.Message)" -ForegroundColor Yellow
+                }
+            }
+
+        # O processo pode levar alguns instantes para liberar handles de obj/bin no Windows.
+        Start-Sleep -Milliseconds 1200
     }
     finally {
         $ErrorActionPreference = $oldErrorPreference
@@ -142,7 +172,10 @@ if (-not $dotnetEfOk) {
     if ($LASTEXITCODE -ne 0) { throw "Nao foi possivel instalar dotnet-ef." }
 }
 
-Invoke-NativeStep "[3/38] Compilando..." { dotnet build .\HealthPlatform.slnx --no-restore }
+Invoke-NativeStep "[3/38] Compilando..." {
+    Reset-DotNetBuildLock
+    dotnet build .\HealthPlatform.slnx --no-restore /p:UseSharedCompilation=false
+}
 
 $migrationsPath = Join-Path $root "src\HealthPlatform.Infrastructure\Migrations"
 $initialMigration = $null
@@ -557,7 +590,10 @@ if (Test-Path $tagsMigrationPath) {
     Write-Host "    Migration v0.20.5 registrada no EF: OK." -ForegroundColor DarkGray
 }
 
-Invoke-NativeStep "[5/38] Recompilando com as migrations..." { dotnet build .\HealthPlatform.slnx --no-restore }
+Invoke-NativeStep "[5/38] Recompilando com as migrations..." {
+    Reset-DotNetBuildLock
+    dotnet build .\HealthPlatform.slnx --no-restore /p:UseSharedCompilation=false
+}
 
 Invoke-NativeStep "[6/38] Atualizando banco..." {
     dotnet ef database update `
