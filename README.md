@@ -23,6 +23,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Daily Premium UX 2.0
+
+A `v0.22.9` fecha a fase `v0.22.x` refinando a experiência do Daily sem criar novas regras clínicas. Os blocos de visão do dia, contexto, plano, ações, fluxo rápido, reflexão e histórico passam a compartilhar hierarquia visual, espaçamento, foco, toque e estados mais consistentes.
+
+A experiência mobile ganha áreas tocáveis mínimas, feedback de interação, foco visível por teclado, `aria-label`, `aria-live`, suporte a `prefers-reduced-motion` e menor densidade visual. O bloco de 30 segundos recebe destaque como foco operacional do dia.
+
 ### Professional Daily Signals 2.0
 
 A `v0.22.8` leva sinais recentes do Daily para o **Professional Command Center**. A fila não usa um score clínico novo: ela reaproveita a recomendação de prontidão já existente, o fechamento do dia e a ausência de check-in recente.
@@ -190,7 +197,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.8 — Professional Daily Signals 2.0`
+- **Versão funcional:** `v0.22.9 — Daily Premium UX 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

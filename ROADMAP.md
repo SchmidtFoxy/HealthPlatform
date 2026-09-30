@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.8 — Professional Daily Signals 2.0
+> **Versão-base deste roadmap:** v0.22.9 — Daily Premium UX 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -936,7 +936,30 @@ Levar ao profissional sinais diários úteis e explicáveis derivados do context
 Refinar hierarquia visual, densidade, estados, movimento, acessibilidade e ergonomia do Daily para fechar a fase v0.22.x com experiência premium e coerente entre atleta e profissional.
 
 
+
+## ✅ v0.22.9 — Daily Premium UX 2.0 — CONCLUÍDA
+
+**Entregue na v0.22.9:**
+- hierarquia visual unificada entre blocos do Daily;
+- numeração contextual das seções;
+- destaque do fluxo de 30 segundos como foco operacional;
+- alvos de toque de pelo menos 44px;
+- feedback visual de interação;
+- foco visível por teclado;
+- `aria-label` e região `aria-live`;
+- suporte a `prefers-reduced-motion`;
+- refinamento mobile para 760px e 390px;
+- fechamento da fase `v0.22.x — AESYN Daily`.
+
+**Próxima etapa:** `v0.23.0 — Sports & Movement Library Foundation`.
+
+
 # 7. v0.23.x — Sports & Movement Library
+
+## ⏭ v0.23.0 — Sports & Movement Library Foundation
+
+Criar a fundação estrutural da biblioteca de movimento com taxonomia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`, inicialmente reutilizando o catálogo existente de exercícios e preparando musculação, caminhada, corrida, calistenia, mobilidade, condicionamento e ciclismo.
+
 
 Estrutura-alvo: `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão`.
 

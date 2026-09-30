@@ -1,3 +1,18 @@
+# v0.22.9 — Daily Premium UX 2.0
+
+- Fecha a fase `v0.22.x — AESYN Daily`.
+- Unifica hierarquia visual e espaçamento dos blocos do Daily.
+- Destaca a experiência de 30 segundos como foco operacional.
+- Adiciona numeração contextual às seções.
+- Garante alvos de toque de pelo menos 44px.
+- Adiciona feedback visual de interação e foco visível por teclado.
+- Adiciona `aria-label` às seções e região `aria-live`.
+- Respeita `prefers-reduced-motion`.
+- Refina responsividade em 760px e 390px.
+- Não altera regra clínica, API, migration ou schema.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.9.
+- Próxima etapa: v0.23.0 — Sports & Movement Library Foundation.
+
 # v0.22.8 — Professional Daily Signals 2.0
 
 - Adiciona fila de sinais diários ao Professional Command Center.

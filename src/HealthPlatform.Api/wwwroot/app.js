@@ -9351,7 +9351,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.8';
+const HP_MVP_VERSION='0.22.9';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -12922,4 +12922,87 @@ const __loadMyPatientPortal_v0227=loadMyPatientPortal;
 loadMyPatientPortal=async function(){
   await __loadMyPatientPortal_v0227();
   await hpInjectDailyHistoryV0227();
+};
+
+
+// ===== v0.22.9 — Daily Premium UX 2.0 =====
+const HP_DAILY_PREMIUM_UX_V0229='v0.22.9';
+
+function hpDailyPremiumLabelV0229(section){
+  const map={
+    '[data-aesyn-daily-v0220]':'Visão do dia',
+    '[data-readiness-context-v0222]':'Contexto',
+    '[data-today-plan-v0223]':'Plano',
+    '[data-action-hub-v0224]':'Ações',
+    '[data-daily-30s-v0225]':'Fluxo rápido',
+    '[data-evening-reflection-card-v0226]':'Fechamento',
+    '[data-daily-history-v0227]':'Histórico'
+  };
+  return map[section]||'Daily';
+}
+
+function hpApplyDailyPremiumUxV0229(){
+  const host=$('#patientTabContent')||$('#patientPortalContent');
+  if(!host)return;
+
+  const selectors=[
+    '[data-aesyn-daily-v0220]',
+    '[data-readiness-context-v0222]',
+    '[data-today-plan-v0223]',
+    '[data-action-hub-v0224]',
+    '[data-daily-30s-v0225]',
+    '[data-evening-reflection-card-v0226]',
+    '[data-daily-history-v0227]'
+  ];
+
+  selectors.forEach((selector,index)=>{
+    const el=host.querySelector(selector);
+    if(!el)return;
+    el.classList.add('daily-premium-section-v0229');
+    el.dataset.dailyPremiumOrderV0229=String(index+1);
+    el.setAttribute('aria-label',hpDailyPremiumLabelV0229(selector));
+  });
+
+  const quick=host.querySelector('[data-daily-30s-v0225]');
+  if(quick){
+    quick.classList.add('daily-premium-primary-v0229');
+    quick.setAttribute('data-daily-premium-primary-v0229','true');
+  }
+
+  host.querySelectorAll('.daily-premium-section-v0229 button').forEach(btn=>{
+    btn.classList.add('daily-premium-touch-v0229');
+  });
+
+  host.querySelectorAll(
+    '.daily-premium-section-v0229 [data-readiness-tone-v0222],'+
+    '.daily-premium-section-v0229 .daily-30s-step-v0225,'+
+    '.daily-premium-section-v0229 .action-hub-item-v0224'
+  ).forEach(el=>{
+    el.classList.add('daily-premium-interactive-v0229');
+  });
+}
+
+function hpDailyPremiumAnnounceV0229(){
+  if(document.querySelector('[data-daily-premium-announcer-v0229]'))return;
+  const node=document.createElement('div');
+  node.className='sr-only';
+  node.dataset.dailyPremiumAnnouncerV0229='true';
+  node.setAttribute('aria-live','polite');
+  node.textContent='Daily carregado.';
+  document.body.appendChild(node);
+}
+
+const __renderPatientTab_v0229=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0229(d);
+  if(state.patientTab!=='resumo')return;
+  hpApplyDailyPremiumUxV0229();
+  hpDailyPremiumAnnounceV0229();
+};
+
+const __loadMyPatientPortal_v0229=loadMyPatientPortal;
+loadMyPatientPortal=async function(){
+  await __loadMyPatientPortal_v0229();
+  hpApplyDailyPremiumUxV0229();
+  hpDailyPremiumAnnounceV0229();
 };
