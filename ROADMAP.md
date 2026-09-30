@@ -2371,3 +2371,21 @@ Validar a coerência estrutural entre tipo e referência antes do envio, impedin
 ### v0.30.10 — Progress Review Context Integrity UX
 Melhorar a experiência de correção do vínculo inválido com foco automático no campo responsável, mensagens contextuais e estado visual de prontidão para salvar.
 
+## ✅ v0.30.10 — Progress Review Context Integrity UX — CONCLUÍDA
+
+**Entregue:**
+- foco automático no campo inválido;
+- `aria-invalid`;
+- marcação visual/técnica do campo problemático;
+- ação Corrigir vínculo;
+- submit desabilitado quando inválido;
+- estado Pronto para salvar;
+- atualização em tempo real;
+- ausência de contexto segue válida;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.30.11 — Progress Review Context Integrity Accessibility
+Evoluir feedback de integridade para leitores de tela e navegação por teclado, com região de status e associação explícita entre erro e campo.
+

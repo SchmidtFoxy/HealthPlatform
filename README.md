@@ -1476,3 +1476,25 @@ A integridade valida apenas forma e coerência estrutural. Não determina signif
 
 **Próxima etapa:** `v0.30.10 — Progress Review Context Integrity UX`.
 
+---
+
+## v0.30.10 — Progress Review Context Integrity UX
+
+Melhora a experiência de correção dos vínculos contextuais inválidos no formulário de notas profissionais.
+
+### UX
+- campos inválidos recebem `aria-invalid`;
+- campo responsável recebe marcador técnico `data-progress-context-field-invalid-v03010`;
+- botão **Corrigir vínculo** move o foco para o campo responsável;
+- submit fica desabilitado quando a estrutura contextual está inválida;
+- estado `Pronto para salvar` aparece quando o vínculo está válido;
+- ausência completa de contexto continua sendo uma condição válida.
+
+### Comportamento
+O estado visual acompanha alterações de tipo e referência em tempo real. Quando o vínculo volta a ser válido, os marcadores de erro são removidos e o botão de salvar é reabilitado.
+
+### Guardrail
+A UX apenas orienta correção estrutural. Não sugere qual contexto usar, não interpreta referência, não modifica a observação e não toma decisão clínica.
+
+**Próxima etapa:** `v0.30.11 — Progress Review Context Integrity Accessibility`.
+

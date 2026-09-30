@@ -1,4 +1,19 @@
-﻿# v0.30.9 — Progress Review Context Integrity
+﻿# v0.30.10 — Progress Review Context Integrity UX
+
+- Adiciona marcador `HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010`.
+- Adiciona estado visual `Pronto para salvar`.
+- Desabilita o submit enquanto o vínculo contextual estiver inválido.
+- Adiciona `aria-invalid` aos campos inconsistentes.
+- Adiciona `data-progress-context-field-invalid-v03010`.
+- Adiciona ação `Corrigir vínculo`.
+- Move foco para o campo responsável pelo erro.
+- Atualiza integridade em tempo real após alterações.
+- Remove os marcadores quando o vínculo volta a ser válido.
+- Não sugere nem interpreta conteúdo clínico.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.11 — Progress Review Context Integrity Accessibility.
+
+# v0.30.9 — Progress Review Context Integrity
 
 - Adiciona `ProgressReviewContextIntegrityResponse`.
 - Adiciona endpoint `GET .../progress-review-notes/context-integrity`.

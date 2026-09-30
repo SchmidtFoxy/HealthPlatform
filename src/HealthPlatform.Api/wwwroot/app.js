@@ -993,16 +993,57 @@ function hpRenderProgressReviewContextIntegrityV0309(form){
   if(!host || !form) return;
 
   const integrity=hpValidateProgressReviewContextIntegrityV0309(form);
+  const tipo=form.elements.contextoTipo;
+  const referencia=form.elements.contextoReferencia;
+  const submit=form.querySelector('button[type=submit]');
+
+  [tipo,referencia].filter(Boolean).forEach(el=>{
+    el.removeAttribute('aria-invalid');
+    el.removeAttribute('data-progress-context-field-invalid-v03010');
+  });
+
+  if(submit){
+    submit.disabled=!integrity.valido;
+    submit.setAttribute('data-progress-review-ready-v03010',integrity.valido?'true':'false');
+  }
 
   if(integrity.valido){
-    host.innerHTML=`<small class="muted-line" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}">${integrity.estado==='SemVinculoContextual'?'Sem vínculo contextual — válido.':'Vínculo contextual estruturalmente válido.'}</small>`;
+    host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}" data-progress-review-integrity-ux-v03010="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010}">
+      <b>${integrity.estado==='SemVinculoContextual'?'Pronto para salvar sem vínculo contextual':'Pronto para salvar'}</b>
+      <small class="muted-line">${integrity.estado==='SemVinculoContextual'?'Nenhum contexto será persistido.':'Tipo e referência estão estruturalmente consistentes.'}</small>
+    </div>`;
     return;
   }
 
-  host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}">
+  const tipoError=integrity.erros.some(x=>x.toLowerCase().includes('tipo do contexto')||x.toLowerCase().includes('tipo de contexto'));
+  const referenciaError=integrity.erros.some(x=>x.toLowerCase().includes('referência')||x.includes('120')||x.includes('|'));
+
+  if(tipoError && tipo){
+    tipo.setAttribute('aria-invalid','true');
+    tipo.setAttribute('data-progress-context-field-invalid-v03010','true');
+  }
+
+  if(referenciaError && referencia){
+    referencia.setAttribute('aria-invalid','true');
+    referencia.setAttribute('data-progress-context-field-invalid-v03010','true');
+  }
+
+  host.innerHTML=`<div class="internal-note-privacy-v0204" data-progress-review-context-integrity-v0309="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309}" data-progress-review-integrity-ux-v03010="${HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010}">
     <b>Revise o vínculo contextual antes de salvar:</b>
     <ul>${integrity.erros.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    <div class="form-actions"><button type="button" class="secondary" id="focusProgressReviewContextErrorV03010">Corrigir vínculo</button></div>
   </div>`;
+
+  const focusButton=$('#focusProgressReviewContextErrorV03010');
+  if(focusButton){
+    focusButton.onclick=()=>{
+      const target=(tipoError&&tipo)?tipo:(referenciaError&&referencia)?referencia:null;
+      if(target){
+        target.focus();
+        if(typeof target.scrollIntoView==='function') target.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+    };
+  }
 }
 
 function hpRenderProgressReviewContextConfirmationV0308(form){
@@ -1060,6 +1101,7 @@ function hpBindProgressReviewContextConfirmationV0308(form){
   const changed=()=>{
     form.dataset.contextCapturedV0308='false';
     hpRenderProgressReviewContextConfirmationV0308(form);
+    hpRenderProgressReviewContextIntegrityV0309(form);
   };
 
   if(tipo) tipo.addEventListener('change',changed);
@@ -1303,6 +1345,9 @@ async function hpOpenProgressReviewNotesV0302(p){
       hpRenderProgressReviewContextIntegrityV0309(form);
       if(!integrity.valido){
         toast('Revise o vínculo contextual antes de salvar.',true);
+        const tipoError=integrity.erros.some(x=>x.toLowerCase().includes('tipo do contexto')||x.toLowerCase().includes('tipo de contexto'));
+        const target=tipoError?form.elements.contextoTipo:form.elements.contextoReferencia;
+        if(target) target.focus();
         return;
       }
       const body={campo:form.elements.campo.value,conteudo:form.elements.conteudo.value,contextoTipo:integrity.tipo,contextoReferencia:integrity.referencia};
@@ -4763,6 +4808,7 @@ const HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6';
 const HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7';
 const HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8';
 const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9';
+const HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010='v0.30.10';
 const HP_ADVANCED_TECHNIQUES_V0273='v0.27.3';
 const HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1';
 const HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0';
@@ -9995,7 +10041,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.30.9';
+const HP_MVP_VERSION='0.30.10';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

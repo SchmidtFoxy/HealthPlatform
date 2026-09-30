@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.30.9",
+            "v0.30.10",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Context Integrity valida a coerência estrutural entre tipo e referência antes do envio, sem interpretar o conteúdo clínico do vínculo e sem substituir a validação do servidor.")
+            "Progress Review Context Integrity UX melhora a correção de vínculos inválidos com foco no campo responsável, estado visual de prontidão e bloqueio local do salvamento enquanto a estrutura estiver inválida.")
         {
             Recordes = recordes,
             Tempos = tempos,
