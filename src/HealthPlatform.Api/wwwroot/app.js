@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.6';
+const HP_MVP_VERSION='0.23.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13063,6 +13063,75 @@ function hpMovementSafeMediaUrlV0234(value){
   }catch{return null}
 }
 
+function hpProfessionalMovementLibraryNavV0237(current){
+  const coverage=current?.cobertura||{};
+  const readySessions=Number(coverage?.capacidadesComSessao||0);
+  const capacities=Number(coverage?.capacidades||0);
+  const described=Number(coverage?.exerciciosComDescricao||0);
+  const related=Number(coverage?.exerciciosRelacionados||0);
+
+  return `<section class="professional-movement-library-v0237" data-professional-movement-library-v0237="${HP_PROFESSIONAL_MOVEMENT_LIBRARY_V0237}">
+    <div class="professional-movement-library-head-v0237">
+      <div>
+        <span class="eyebrow">PROFESSIONAL MOVEMENT LIBRARY 2.0</span>
+        <h3>Curadoria, cobertura e uso em uma única bancada.</h3>
+        <p>A taxonomia organiza o caminho; Exercícios e ModelosSessoesTreino continuam sendo as fontes reais de conteúdo.</p>
+      </div>
+      <span class="professional-movement-library-phase-v0237">v0.23.x • PROFESSIONAL</span>
+    </div>
+
+    <nav class="professional-movement-library-nav-v0237" aria-label="Áreas da biblioteca profissional">
+      <button type="button" data-movement-professional-nav-v0237="taxonomy"><b>Taxonomia</b><small>modalidade → progressão</small></button>
+      <button type="button" data-movement-professional-nav-v0237="coverage"><b>Cobertura</b><small>${readySessions}/${capacities} capacidades com sessão</small></button>
+      <button type="button" data-movement-professional-nav-v0237="packs"><b>Starter Packs</b><small>agrupamentos reutilizáveis</small></button>
+      <button type="button" data-movement-professional-nav-v0237="exercises"><b>Exercícios</b><small>${described}/${related} relacionados descritos</small></button>
+      <button type="button" data-movement-professional-nav-v0237="sessions"><b>Sessões</b><small>ModelosSessoesTreino</small></button>
+    </nav>
+
+    <div class="professional-movement-library-map-v0237">
+      <span>MODALIDADE</span><i>→</i><span>OBJETIVO</span><i>→</i><span>CAPACIDADE</span><i>→</i><span>SESSÃO</span><i>→</i><span>EXERCÍCIO</span><i>→</i><span>PROGRESSÃO</span>
+    </div>
+
+    <div class="professional-movement-library-principle-v0237">
+      <b>Curadoria antes de prescrição</b>
+      <span>Esta área prepara e organiza o patrimônio profissional. Nada aqui publica, troca ou progride automaticamente a prescrição de um paciente.</span>
+    </div>
+  </section>`;
+}
+
+function hpWireProfessionalMovementLibraryV0237(){
+  $$('[data-movement-professional-nav-v0237]').forEach(btn=>{
+    btn.onclick=async()=>{
+      const target=btn.dataset.movementProfessionalNavV0237;
+      if(target==='taxonomy'){
+        $('#movementLibraryListV0230')?.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
+      if(target==='coverage'){
+        document.querySelector('[data-movement-coverage-v0235]')?.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
+      if(target==='packs'){
+        const host=$('#movementStarterPacksHostV0236');
+        if(host){
+          await hpOpenMovementStarterPacksV0236(host);
+          host.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+        return;
+      }
+      if(target==='exercises'){
+        closeClinicalAction();
+        openExerciseLibrary2();
+        return;
+      }
+      if(target==='sessions'){
+        closeClinicalAction();
+        openWorkoutLibrary();
+      }
+    };
+  });
+}
+
 function hpMovementStarterPackV0236(pack){
   const sessions=Array.isArray(pack?.sessoes)?pack.sessoes:[];
   const capacities=Array.isArray(pack?.capacidades)?pack.capacidades:[];
@@ -13291,6 +13360,7 @@ const HP_MOVEMENT_PROGRESSION_REGRESSION_V0233='v0.23.3';
 const HP_MOVEMENT_INSTRUCTIONS_MEDIA_V0234='v0.23.4';
 const HP_MOVEMENT_COVERAGE_QUALITY_V0235='v0.23.5';
 const HP_MOVEMENT_STARTER_PACKS_V0236='v0.23.6';
+const HP_PROFESSIONAL_MOVEMENT_LIBRARY_V0237='v0.23.7';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13316,7 +13386,7 @@ async function openMovementLibraryV0230(){
   modal.classList.remove('hidden');
   modal.classList.add('movement-library-modal-v0230','movement-library-modal-v0231');
   box.className='clinical-action-shell movement-library-shell-v0230 movement-library-shell-v0231';
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SPORTS & MOVEMENT LIBRARY • v0.23.1</span><h2>Biblioteca de Movimento & Esportes</h2><p>Carregando taxonomia navegável e catálogo profissional...</p></div>`;
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">PROFESSIONAL MOVEMENT LIBRARY • v0.23.7</span><h2>Biblioteca de Movimento & Esportes</h2><p>Carregando curadoria, cobertura, sessões e Starter Packs...</p></div>`;
 
   try{
     const baseData=await api('/api/biblioteca-movimento');
@@ -13327,7 +13397,7 @@ async function openMovementLibraryV0230(){
       box.innerHTML=`<div class="modal-heading movement-library-heading-v0230">
         <div>
           <button type="button" class="back-link" id="movementLibraryBackV0230">← Treino & Nutrição</button>
-          <span class="eyebrow">AESYN • MOVEMENT TAXONOMY & FILTERS 2.0</span>
+          <span class="eyebrow">AESYN • PROFESSIONAL MOVEMENT LIBRARY 2.0</span>
           <h2>Biblioteca de Movimento & Esportes</h2>
           <p>${esc(current.estrutura||'Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão')}</p>
           <button type="button" class="secondary movement-starter-pack-open-v0236" id="movementStarterPacksOpenV0236">Starter Packs</button>
@@ -13338,6 +13408,8 @@ async function openMovementLibraryV0230(){
           <span><b>${current.totalModelosSessaoAtivos||0}</b> sessões-modelo</span>
         </div>
       </div>
+
+      ${hpProfessionalMovementLibraryNavV0237(current)}
 
       <div class="movement-library-principle-v0230 movement-library-sources-v0232">
         <div><b>Exercícios</b><span>${esc(current.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span></div>
@@ -13377,6 +13449,7 @@ async function openMovementLibraryV0230(){
 
       $('#movementLibraryBackV0230').onclick=()=>{closeClinicalAction();navigate('prescricoes')};
       $('#movementStarterPacksOpenV0236').onclick=()=>hpOpenMovementStarterPacksV0236($('#movementStarterPacksHostV0236'));
+      hpWireProfessionalMovementLibraryV0237();
 
       $$('[data-movement-quality-open-catalog-v0235]').forEach(btn=>{
         btn.onclick=()=>{closeClinicalAction();openExerciseLibrary2()};

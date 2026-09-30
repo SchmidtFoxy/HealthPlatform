@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.6 — Movement Templates & Starter Packs Foundation
+> **Versão-base deste roadmap:** v0.23.7 — Professional Movement Library 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1342,6 +1342,27 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - nenhum clone de sessão, plano ou publicação automática.
 
 **Próxima etapa:** `v0.23.7 — Professional Movement Library 2.0`.
+
+
+
+## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA
+
+
+
+**Entregue na v0.23.7:**
+- bancada profissional unificada da biblioteca;
+- navegação direta para Taxonomia, Cobertura e Starter Packs;
+- acesso direto aos catálogos de Exercícios e Sessões;
+- cadeia completa Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão sempre visível;
+- indicadores contextuais de cobertura;
+- princípio explícito de curadoria antes de prescrição;
+- nenhuma nova fonte de dados, migration ou publicação automática.
+
+**Próxima etapa:** `v0.23.8 — Movement Library Mobile & Accessibility 2.0`.
+
+## ⏭ v0.23.8 — Movement Library Mobile & Accessibility 2.0
+
+Fechar a ergonomia da biblioteca profissional em telas pequenas, navegação por teclado, foco, regiões semânticas e redução de movimento antes da transição para a fase `v0.24.x — AESYN Explore`.
 
 
 ## Promessa ao atleta

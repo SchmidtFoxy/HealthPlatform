@@ -31,6 +31,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Professional Movement Library 2.0
+
+A `v0.23.7` consolida a fase profissional da biblioteca em uma única bancada de curadoria. Taxonomia, cobertura, Starter Packs, catálogo de exercícios e sessões reutilizáveis passam a ter navegação direta dentro da mesma experiência.
+
+A tela mantém visível a cadeia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão` e reforça a separação entre **curadoria** e **prescrição**: organizar a biblioteca não publica nem altera automaticamente o plano de qualquer paciente.
+
 ### Movement Templates & Starter Packs Foundation
 
 A `v0.23.6` organiza `ModelosSessoesTreino` existentes em **Starter Packs profissionais** derivados da taxonomia de modalidade, objetivo e capacidade. Cada pack é apenas um agrupamento de referências: nenhuma sessão é clonada, nenhum plano é criado e nada é publicado automaticamente para pacientes.
@@ -248,7 +255,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.6 — Movement Templates & Starter Packs Foundation`
+- **Versão funcional:** `v0.23.7 — Professional Movement Library 2.0`
 - **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal

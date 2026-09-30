@@ -1,3 +1,16 @@
+# v0.23.7 — Professional Movement Library 2.0
+
+- Consolida a biblioteca profissional em uma única experiência de curadoria.
+- Adiciona navegação direta para Taxonomia, Cobertura e Starter Packs.
+- Adiciona atalhos para os catálogos existentes de Exercícios e Sessões.
+- Mantém a cadeia `Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão` visível.
+- Exibe indicadores contextuais de cobertura na navegação.
+- Reforça `curadoria antes de prescrição`.
+- Não cria endpoint, migration, tabela ou fonte de conteúdo paralela.
+- Não publica ou altera prescrição automaticamente.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.7.
+- Próxima etapa: v0.23.8 — Movement Library Mobile & Accessibility 2.0.
+
 # v0.23.6 — Movement Templates & Starter Packs Foundation
 
 - Adiciona Starter Packs profissionais derivados da taxonomia esportiva.
