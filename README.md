@@ -41,6 +41,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Sports Starter Packs 2.0
+
+A `v0.24.8` leva Starter Packs ao AESYN Explore como **referências navegáveis por modalidade e objetivo**. Os packs reutilizam `ModelosSessoesTreino` já existentes e mostram capacidades e sessões-modelo relacionadas.
+
+O atleta pode explorar a estrutura, mas o sistema não copia sessão, não atribui plano, não inicia treino e não publica prescrição automaticamente. Packs sem sessão relacionada aparecem como lacuna editorial, em vez de ganhar conteúdo artificial.
+
 ### Learn Fundamentals 2.0
 
 A `v0.24.7` transforma **Aprender fundamentos** em uma experiência educacional navegável por modalidade e capacidade. Cada fundamento explica o conceito, o que observar, um erro comum e o próximo passo de aprendizagem.
@@ -318,7 +325,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.7 — Learn Fundamentals 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
+- **Versão funcional:** `v0.24.8 — Sports Starter Packs 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`

@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.7';
+const HP_MVP_VERSION='0.24.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -14340,5 +14340,107 @@ hpWireExploreFoundationV0240=function(host,data){
   learnBtn.onclick=()=>{
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenLearnFundamentalsV0247(detail);
+  };
+};
+
+
+// ===== v0.24.8 — Sports Starter Packs 2.0 =====
+const HP_SPORTS_STARTER_PACKS_V0248='v0.24.8';
+
+function hpSportsStarterPacksQueryV0248(filters){
+  const p=new URLSearchParams();
+  Object.entries(filters||{}).forEach(([k,v])=>{if(v)p.set(k,v)});
+  const qs=p.toString();
+  return `/api/portal/me/explore/starter-packs${qs?`?${qs}`:''}`;
+}
+
+function hpSportsStarterPackV0248(pack){
+  const sessions=Array.isArray(pack?.sessoes)?pack.sessoes:[];
+  return `<article class="sports-starter-pack-v0248 ${pack?.possuiReferencias?'is-ready':'is-gap'}">
+    <div class="sports-starter-pack-head-v0248">
+      <div>
+        <span>${esc(pack?.modalidadeNome||'Modalidade')}</span>
+        <strong>${esc(pack?.objetivoNome||'Objetivo')}</strong>
+      </div>
+      <b>${sessions.length} sessão(ões)</b>
+    </div>
+
+    <div class="sports-starter-pack-capabilities-v0248">
+      ${(pack?.capacidades||[]).map(x=>`<span>${esc(x)}</span>`).join('')}
+    </div>
+
+    ${sessions.length?`<div class="sports-starter-pack-sessions-v0248">
+      ${sessions.map(s=>`<section>
+        <b>${esc(s.nome)}</b>
+        <span>${esc(s.categoria||'Sessão-modelo')}</span>
+        <p>${esc(s.descricao||'Sem descrição cadastrada.')}</p>
+      </section>`).join('')}
+    </div>`:`<div class="sports-starter-pack-gap-v0248"><b>Lacuna editorial</b><span>Nenhuma sessão-modelo existente corresponde a este pack ainda.</span></div>`}
+
+    <footer>${esc(pack?.estadoEditorial||'Referência editorial.')}</footer>
+  </article>`;
+}
+
+function hpSportsStarterPacksV0248(data){
+  const packs=Array.isArray(data?.packs)?data.packs:[];
+  const sports=Array.isArray(data?.modalidadesDisponiveis)?data.modalidadesDisponiveis:[];
+
+  return `<section class="sports-starter-packs-v0248" data-sports-starter-packs-v0248="${HP_SPORTS_STARTER_PACKS_V0248}" aria-labelledby="sportsStarterPacksTitleV0248">
+    <div class="sports-starter-packs-head-v0248">
+      <div>
+        <span class="eyebrow">SPORTS STARTER PACKS 2.0</span>
+        <h3 id="sportsStarterPacksTitleV0248">Referências para explorar, não treinos para receber.</h3>
+        <p>Os packs agrupam sessões-modelo já existentes por modalidade e objetivo.</p>
+      </div>
+      <span>${packs.length} pack(s)</span>
+    </div>
+
+    <div class="sports-starter-packs-filter-v0248">
+      <label><span>MODALIDADE</span>
+        <select id="sportsStarterPacksSportV0248">
+          <option value="">Todas</option>
+          ${sports.map(x=>`<option ${x===data?.modalidade?'selected':''}>${esc(x)}</option>`).join('')}
+        </select>
+      </label>
+    </div>
+
+    <div class="sports-starter-packs-list-v0248">
+      ${packs.length?packs.map(hpSportsStarterPackV0248).join(''):`<div class="sports-starter-packs-empty-v0248"><b>Nenhum pack encontrado.</b><span>Troque a modalidade. O AESYN não cria sessão-modelo artificial para preencher a lista.</span></div>`}
+    </div>
+
+    <div class="sports-starter-packs-rule-v0248">
+      <b>REFERÊNCIA ≠ ATRIBUIÇÃO</b>
+      <span>${esc(data?.regraDeUso||'Starter Packs não atribuem ou publicam treinos automaticamente.')}</span>
+    </div>
+  </section>`;
+}
+
+async function hpOpenSportsStarterPacksV0248(host,filters={}){
+  if(!host)return;
+  host.hidden=false;
+  host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Starter Packs...</div>';
+
+  try{
+    const data=await api(hpSportsStarterPacksQueryV0248(filters));
+    host.innerHTML=hpSportsStarterPacksV0248(data);
+
+    const sport=host.querySelector('#sportsStarterPacksSportV0248');
+    if(sport)sport.onchange=()=>hpOpenSportsStarterPacksV0248(host,{modalidade:sport.value});
+
+    host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  }catch(err){
+    host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Sports Starter Packs.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;
+  }
+}
+
+const __hpWireExploreFoundationV0248=hpWireExploreFoundationV0240;
+hpWireExploreFoundationV0240=function(host,data){
+  __hpWireExploreFoundationV0248(host,data);
+  if(!host)return;
+  const packsBtn=host.querySelector('[data-explore-path-v0240="sports-starter-packs"]');
+  if(!packsBtn)return;
+  packsBtn.onclick=()=>{
+    const detail=host.querySelector('#aesynExploreDetailV0240');
+    hpOpenSportsStarterPacksV0248(detail);
   };
 };

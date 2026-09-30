@@ -92,7 +92,14 @@ public sealed class ExplorePacienteController(
                 "Veja a base de uma modalidade antes de pensar em intensidade ou performance.",
                 ["Aprender", "Iniciante"],
                 ["Musculação", "Corrida", "Calistenia", "Mobilidade"],
-                "Educacao")
+                "Educacao"),
+            new ExploreCaminhoResponse(
+                "sports-starter-packs",
+                "Explorar Starter Packs",
+                "Veja agrupamentos de referência por modalidade e objetivo usando sessões-modelo já existentes.",
+                ["Explorar", "Referências"],
+                ["Musculação", "Corrida", "Calistenia", "Mobilidade", "Ciclismo"],
+                "Referencia")
         };
 
         return Ok(new ExploreFoundationResponse(
@@ -983,6 +990,155 @@ public sealed class ExplorePacienteController(
             new("contexto", "Contexto", "O mesmo fundamento pode mudar conforme pessoa, ambiente e recurso.", "Observe diferenças entre variações.", "Assumir que existe uma única execução universal.", "Comparar possibilidades com orientação quando necessário."),
             new("familiaridade", "Familiaridade", "Aprender o conceito antes de buscar intensidade ou performance.", "Observe se consegue explicar o fundamento com suas palavras.", "Confundir conhecer com estar apto ou prescrito.", "Usar o conhecimento para conversar melhor com o profissional.")
         ];
+    }
+
+
+    [HttpGet("starter-packs")]
+    public async Task<ActionResult<ExploreStarterPacksResponse>> ExploreStarterPacks(
+        [FromQuery] string? modalidade = null,
+        [FromQuery] string? objetivo = null,
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelosSessao = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria)
+            .ThenBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
+        var definicoes = new[]
+        {
+            new
+            {
+                Codigo = "musculacao",
+                Nome = "Musculação",
+                Objetivos = new[]
+                {
+                    new { Codigo = "forca", Nome = "Força", Capacidades = new[] { "Padrões de movimento", "Controle", "Força" }, Termos = new[] { "força", "forca", "muscul", "resist", "empurr", "pux", "agach" } },
+                    new { Codigo = "hipertrofia", Nome = "Hipertrofia", Capacidades = new[] { "Tensão", "Volume", "Execução" }, Termos = new[] { "hipertrof", "muscul", "volume", "resist", "força", "forca" } }
+                }
+            },
+            new
+            {
+                Codigo = "corrida",
+                Nome = "Corrida",
+                Objetivos = new[]
+                {
+                    new { Codigo = "iniciacao", Nome = "Iniciação", Capacidades = new[] { "Técnica básica", "Percepção de esforço", "Ritmo" }, Termos = new[] { "corrida", "correr", "caminh", "run", "trote" } },
+                    new { Codigo = "base", Nome = "Base", Capacidades = new[] { "Ritmo", "Continuidade", "Controle" }, Termos = new[] { "corrida", "base", "ritmo", "cardio", "aerob" } }
+                }
+            },
+            new
+            {
+                Codigo = "calistenia",
+                Nome = "Calistenia",
+                Objetivos = new[]
+                {
+                    new { Codigo = "fundamentos", Nome = "Fundamentos", Capacidades = new[] { "Apoio", "Alavanca", "Estabilidade" }, Termos = new[] { "calisten", "peso corporal", "flex", "prancha", "barra", "agach" } }
+                }
+            },
+            new
+            {
+                Codigo = "mobilidade",
+                Nome = "Mobilidade",
+                Objetivos = new[]
+                {
+                    new { Codigo = "controle", Nome = "Controle de movimento", Capacidades = new[] { "Amplitude", "Controle", "Respiração" }, Termos = new[] { "mobil", "along", "quadril", "tornozelo", "ombro" } }
+                }
+            },
+            new
+            {
+                Codigo = "ciclismo",
+                Nome = "Ciclismo",
+                Objetivos = new[]
+                {
+                    new { Codigo = "iniciacao", Nome = "Iniciação", Capacidades = new[] { "Controle", "Cadência", "Ambiente" }, Termos = new[] { "cicl", "bike", "bicic", "pedal", "cadencia", "cadência" } }
+                }
+            }
+        };
+
+        var modalidadeFiltro = modalidade?.Trim();
+        var objetivoFiltro = objetivo?.Trim();
+
+        var defs = definicoes.AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(modalidadeFiltro))
+        {
+            defs = defs.Where(x =>
+                x.Codigo.Equals(modalidadeFiltro, StringComparison.OrdinalIgnoreCase) ||
+                x.Nome.Contains(modalidadeFiltro, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var packs = new List<ExploreStarterPackResponse>();
+
+        foreach (var mod in defs)
+        {
+            var objetivos = mod.Objetivos.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(objetivoFiltro))
+            {
+                objetivos = objetivos.Where(x =>
+                    x.Codigo.Equals(objetivoFiltro, StringComparison.OrdinalIgnoreCase) ||
+                    x.Nome.Contains(objetivoFiltro, StringComparison.OrdinalIgnoreCase));
+            }
+
+            foreach (var obj in objetivos)
+            {
+                var sessoes = modelosSessao
+                    .Where(modelo =>
+                    {
+                        var texto = $"{modelo.Nome} {modelo.Categoria} {modelo.Descricao}".ToLowerInvariant();
+                        return obj.Termos.Any(termo =>
+                            texto.Contains(termo.ToLowerInvariant(), StringComparison.Ordinal));
+                    })
+                    .Take(8)
+                    .Select(x => new ExploreStarterPackSessaoResponse(
+                        x.Id,
+                        x.Nome,
+                        x.Categoria,
+                        x.Descricao))
+                    .ToArray();
+
+                var possuiReferencias = sessoes.Length > 0;
+
+                packs.Add(new ExploreStarterPackResponse(
+                    $"{mod.Codigo}:{obj.Codigo}",
+                    $"{mod.Nome} • {obj.Nome}",
+                    mod.Codigo,
+                    mod.Nome,
+                    obj.Codigo,
+                    obj.Nome,
+                    obj.Capacidades,
+                    sessoes,
+                    possuiReferencias,
+                    possuiReferencias
+                        ? $"{sessoes.Length} sessão(ões)-modelo existente(s) relacionada(s)."
+                        : "Ainda não há sessão-modelo relacionada; o pack permanece como referência editorial."));
+            }
+        }
+
+        return Ok(new ExploreStarterPacksResponse(
+            modalidadeFiltro,
+            objetivoFiltro,
+            definicoes.Select(x => x.Nome).ToArray(),
+            packs,
+            "ModelosSessoesTreino",
+            "Sports Starter Packs sao referencias exploraveis. Nao copiam sessoes, nao atribuem plano, nao iniciam treino e nao publicam prescricao automaticamente."));
     }
 
 

@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.7 — Learn Fundamentals 2.0
+> **Versão-base deste roadmap:** v0.24.8 — Sports Starter Packs 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1489,9 +1489,26 @@ Transformar “Aprender fundamentos” em uma experiência educacional por modal
 
 **Próxima etapa:** `v0.24.8 — Sports Starter Packs 2.0`.
 
-## ⏭ v0.24.8 — Sports Starter Packs 2.0
+## ✅ v0.24.8 — Sports Starter Packs 2.0 — CONCLUÍDA
 
 Levar Starter Packs para a experiência do atleta como referências exploráveis por modalidade e objetivo, sem copiar, atribuir ou publicar treino automaticamente.
+
+
+
+**Entregue na v0.24.8:**
+- novo caminho “Explorar Starter Packs” no AESYN Explore;
+- endpoint `/api/portal/me/explore/starter-packs`;
+- packs por modalidade e objetivo;
+- capacidades e sessões-modelo relacionadas;
+- reutilização exclusiva de `ModelosSessoesTreino`;
+- lacunas editoriais explícitas;
+- nenhuma cópia, atribuição, início ou publicação automática de treino.
+
+**Próxima etapa:** `v0.24.9 — Interest Engine Foundation`.
+
+## ⏭ v0.24.9 — Interest Engine Foundation
+
+Criar a base explícita de interesses do atleta para o Explore, separando “atividade relatada” de “quero experimentar” e permitindo descoberta contextual sem inferir preferência clínica.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

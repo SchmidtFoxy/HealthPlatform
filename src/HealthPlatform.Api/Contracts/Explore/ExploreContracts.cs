@@ -161,3 +161,30 @@ public sealed record LearnFundamentalsResponse(
     IReadOnlyCollection<LearnFundamentalsItemResponse> Fundamentos,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record ExploreStarterPackSessaoResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao);
+
+public sealed record ExploreStarterPackResponse(
+    string Codigo,
+    string Nome,
+    string ModalidadeCodigo,
+    string ModalidadeNome,
+    string ObjetivoCodigo,
+    string ObjetivoNome,
+    IReadOnlyCollection<string> Capacidades,
+    IReadOnlyCollection<ExploreStarterPackSessaoResponse> Sessoes,
+    bool PossuiReferencias,
+    string EstadoEditorial);
+
+public sealed record ExploreStarterPacksResponse(
+    string? Modalidade,
+    string? Objetivo,
+    string[] ModalidadesDisponiveis,
+    IReadOnlyCollection<ExploreStarterPackResponse> Packs,
+    string Fonte,
+    string RegraDeUso);

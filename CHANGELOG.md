@@ -1,3 +1,15 @@
+# v0.24.8 — Sports Starter Packs 2.0
+
+- Adiciona o caminho `Explorar Starter Packs` ao AESYN Explore.
+- Adiciona `GET /api/portal/me/explore/starter-packs`.
+- Organiza packs por modalidade e objetivo.
+- Mostra capacidades e sessões-modelo relacionadas.
+- Reutiliza exclusivamente `ModelosSessoesTreino`.
+- Exibe lacunas editoriais quando não existem sessões relacionadas.
+- Não copia, atribui, inicia ou publica treino automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.24.9 — Interest Engine Foundation.
+
 # v0.24.7 — Learn Fundamentals 2.0
 
 - Adiciona `GET /api/portal/me/explore/learn-fundamentals`.
