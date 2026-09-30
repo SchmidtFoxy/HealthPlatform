@@ -13,6 +13,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Human Profile Synthesis 2.0
+
+A `v0.21.4` fecha a fundação do Human Profile com uma **síntese profissional compacta** de seis dimensões: objetivos, identidade esportiva, corpo, plano atual, contexto de vida e sinais recentes.
+
+A síntese serve como ponto de partida para consulta e acompanhamento. Ela mantém caráter explicável e descritivo: não gera diagnóstico, não classifica risco e não substitui a abertura das fontes originais quando o profissional precisa de detalhe.
+
 ### Life Context Foundation
 
 A `v0.21.3` adiciona ao Human Profile uma camada de **contexto de vida**. O AESYN passa a reunir rotina, disponibilidade, logística, equipamentos, preferências e limitações registradas para responder melhor à tríade **Preciso fazer / Quero fazer / Posso fazer hoje**.
@@ -116,7 +123,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.21.3 — Life Context Foundation`
+- **Versão funcional:** `v0.21.4 — Human Profile Synthesis 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

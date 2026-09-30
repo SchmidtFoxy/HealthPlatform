@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.21.3';
+const HP_MVP_VERSION='0.21.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11988,4 +11988,87 @@ renderPatientTab=function(d){
   const host=$('#patientTabContent'),sports=host?.querySelector('[data-sports-identity-v0212]');
   if(!host||!sports||host.querySelector('[data-life-context-v0213]'))return;
   sports.insertAdjacentHTML('afterend',hpLifeContextV0213(d));
+};
+
+
+// ===== v0.21.4 — Human Profile Synthesis 2.0 =====
+const HP_HUMAN_SYNTHESIS_V0214='v0.21.4';
+
+function hpHumanSynthesisDataV0214(d){
+  const p=d?.p||{};
+  const goals=typeof hpCollectGoalsV0211==='function'?hpCollectGoalsV0211(d):[];
+  const sports=typeof hpSportsIdentityDataV0212==='function'?hpSportsIdentityDataV0212(d):{};
+  const life=typeof hpLifeContextDataV0213==='function'?hpLifeContextDataV0213(d):{};
+  const avaliacoes=[...(d?.avaliacoes||[])].sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const latest=avaliacoes[0]||{};
+  const portal=d?.portal||{};
+  const readiness=portal?.prontidaoHoje||portal?.readinessHoje||{};
+  const activeWorkout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const activeNutrition=(d?.planos||[]).find(x=>x.status==='Ativo')||(d?.planos||[])[0]||{};
+
+  const body=[];
+  if(latest.pesoKg!=null)body.push(`Peso ${num(latest.pesoKg,1)} kg`);
+  if(latest.percentualGordura!=null)body.push(`Gordura ${num(latest.percentualGordura,1)}%`);
+  if(latest.cinturaCm!=null)body.push(`Cintura ${num(latest.cinturaCm,1)} cm`);
+
+  const plan=[];
+  if(activeWorkout?.nome)plan.push(`Treino: ${activeWorkout.nome}`);
+  if(activeNutrition?.nome)plan.push(`Nutrição: ${activeNutrition.nome}`);
+
+  const context=[
+    life.routine,
+    life.availability,
+    life.logistics,
+    life.preferences
+  ].map(x=>String(x??'').trim()).filter(Boolean);
+
+  const signals=[];
+  if(readiness?.score!=null)signals.push(`Prontidão ${readiness.score}`);
+  if(readiness?.nivel)signals.push(`Prontidão ${readiness.nivel}`);
+  if(portal?.aderencia30d!=null)signals.push(`Adesão 30d ${num(portal.aderencia30d,0)}%`);
+
+  return {
+    name:p.nome||'Paciente',
+    goals:goals.slice(0,3),
+    sports:(sports.current||[]).slice(0,3),
+    body,
+    plan,
+    context:context.slice(0,3),
+    signals:signals.slice(0,3)
+  };
+}
+function hpHumanSynthesisV0214(d){
+  const s=hpHumanSynthesisDataV0214(d);
+  const hasAny=s.goals.length||s.sports.length||s.body.length||s.plan.length||s.context.length||s.signals.length;
+  return `<section class="human-synthesis-v0214" data-human-synthesis-v0214="${HP_HUMAN_SYNTHESIS_V0214}">
+    <div class="human-synthesis-head-v0214">
+      <div><span class="eyebrow">AESYN • HUMAN PROFILE SYNTHESIS 2.0</span><h3>${esc(s.name)} em uma leitura.</h3><p>Objetivos, esporte, corpo, plano, contexto e sinais recentes reunidos para orientar a conversa profissional sem esconder as fontes originais.</p></div>
+      <div class="human-synthesis-badge-v0214"><b>6</b><span>dimensões conectadas</span></div>
+    </div>
+
+    ${hasAny?`<div class="human-synthesis-grid-v0214">
+      <article><span>OBJETIVOS</span>${s.goals.length?s.goals.map(g=>`<b>${esc(g.role)} · ${esc(g.text)}</b>`).join(''):'<p>Sem objetivo explícito.</p>'}</article>
+      <article><span>IDENTIDADE ESPORTIVA</span>${s.sports.length?s.sports.map(x=>`<b>${esc(x)}</b>`).join(''):'<p>Sem modalidade estruturada.</p>'}</article>
+      <article><span>CORPO</span>${s.body.length?s.body.map(x=>`<b>${esc(x)}</b>`).join(''):'<p>Sem medida corporal recente.</p>'}</article>
+      <article><span>PLANO ATUAL</span>${s.plan.length?s.plan.map(x=>`<b>${esc(x)}</b>`).join(''):'<p>Sem plano ativo nesta síntese.</p>'}</article>
+      <article><span>CONTEXTO DE VIDA</span>${s.context.length?s.context.map(x=>`<b>${esc(x)}</b>`).join(''):'<p>Contexto ainda pouco estruturado.</p>'}</article>
+      <article><span>SINAIS RECENTES</span>${s.signals.length?s.signals.map(x=>`<b>${esc(x)}</b>`).join(''):'<p>Sem sinal recente nesta síntese.</p>'}</article>
+    </div>`:`<div class="human-synthesis-empty-v0214">Ainda não há contexto suficiente para montar a síntese.</div>`}
+
+    <div class="human-synthesis-guidance-v0214">
+      <div><b>Para a consulta</b><span>Use esta síntese como ponto de partida e abra as fontes originais quando precisar de detalhe.</span></div>
+      <div><b>Para o acompanhamento</b><span>Observe mudanças entre objetivo, contexto, execução e sinais ao longo do tempo.</span></div>
+    </div>
+
+    <div class="human-synthesis-safety-v0214"><b>Síntese explicável</b><span>Este bloco não diagnostica, não classifica risco e não substitui avaliação profissional. Ele apenas organiza dados já registrados.</span></div>
+  </section>`;
+}
+const __renderPatientTab_v0214=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0214(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent');
+  const life=host?.querySelector('[data-life-context-v0213]');
+  if(!host||!life||host.querySelector('[data-human-synthesis-v0214]'))return;
+  life.insertAdjacentHTML('afterend',hpHumanSynthesisV0214(d));
 };

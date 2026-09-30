@@ -41,7 +41,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.21.3 — Life Context Foundation
+> **Versão-base deste roadmap:** v0.21.4 — Human Profile Synthesis 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -735,9 +735,24 @@ Estruturar identidade esportiva da pessoa: modalidades atuais e históricas, ní
 
 **Próxima etapa:** `v0.21.4 — Human Profile Synthesis 2.0`.
 
-## ⏭ v0.21.4 — Human Profile Synthesis 2.0
+## ✅ v0.21.4 — Human Profile Synthesis 2.0 — CONCLUÍDA
 
 Consolidar objetivos, identidade esportiva, contexto de vida, corpo e acompanhamento em uma síntese profissional compacta e acionável.
+
+
+
+**Entregue na v0.21.4:**
+- síntese profissional em seis dimensões;
+- objetivos e prioridade operacional;
+- identidade esportiva;
+- medidas corporais recentes;
+- planos ativos;
+- contexto de vida;
+- sinais recentes disponíveis;
+- orientação para consulta/acompanhamento;
+- sem diagnóstico, score de risco ou fonte paralela.
+
+**Próxima etapa:** `v0.22.0 — AESYN Daily Foundation`.
 
 
 # 6. v0.22.x — AESYN Daily

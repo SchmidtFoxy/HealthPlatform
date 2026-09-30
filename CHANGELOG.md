@@ -1,3 +1,14 @@
+# v0.21.4 — Human Profile Synthesis 2.0
+
+- Consolida o Human Profile em uma síntese profissional de seis dimensões.
+- Reúne objetivos, identidade esportiva, corpo, planos ativos, contexto de vida e sinais recentes.
+- Reaproveita os motores introduzidos em v0.21.1, v0.21.2 e v0.21.3.
+- Explicita ausência de dados sem inferir ausência de condição.
+- Mantém caráter descritivo e explicável, sem diagnóstico ou score clínico.
+- Não cria migration, tabela ou endpoint paralelo.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.21.4.
+- Próxima etapa: v0.22.0 — AESYN Daily Foundation.
+
 # v0.21.3 — Life Context Foundation
 
 - Adiciona contexto de vida ao Human Profile.
