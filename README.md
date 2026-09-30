@@ -22,6 +22,15 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Professional Daily Signals 2.0
+
+A `v0.22.8` leva sinais recentes do Daily para o **Professional Command Center**. A fila não usa um score clínico novo: ela reaproveita a recomendação de prontidão já existente, o fechamento do dia e a ausência de check-in recente.
+
+As regras são explícitas: `Recuperacao` entra como **Revisar hoje**; `Leve` ou fechamento com percepção `≤ 4/10` entram como **Observar**; ausência de check-in por 3 ou mais dias entra como **Contexto pendente**. Cada paciente mostra o motivo e os fatores brutos disponíveis.
+
+A fila é operacional e explicável. Não representa diagnóstico, risco clínico, prioridade médica automática ou substituição da avaliação profissional.
+
 ### Daily History 2.0
 
 A `v0.22.7` cria uma linha do tempo diária real dos últimos dias, reunindo **Morning Check-in, treino executado e Evening Reflection** a partir dos registros persistidos.
@@ -181,7 +190,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.22.7 — Daily History 2.0`
+- **Versão funcional:** `v0.22.8 — Professional Daily Signals 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

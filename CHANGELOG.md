@@ -1,3 +1,17 @@
+# v0.22.8 — Professional Daily Signals 2.0
+
+- Adiciona fila de sinais diários ao Professional Command Center.
+- Cria `GET /api/profissional/sinais-diarios?dias=7`.
+- Reutiliza prontidão, fechamento diário e execução já persistidos.
+- Regra explícita: `Recuperacao` = Revisar hoje.
+- Regra explícita: `Leve` ou fechamento `≤ 4/10` = Observar.
+- Regra explícita: 3+ dias sem check-in = Contexto pendente.
+- Exibe motivo da entrada e fatores brutos disponíveis.
+- Não cria score clínico, diagnóstico ou prioridade médica automática.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.22.8.
+- Próxima etapa: v0.22.9 — Daily Premium UX 2.0.
+
 # v0.22.7 — Daily History 2.0
 
 - Cria histórico diário real dos últimos 14 dias.

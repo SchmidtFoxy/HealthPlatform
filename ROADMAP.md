@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.22.7 — Daily History 2.0
+> **Versão-base deste roadmap:** v0.22.8 — Professional Daily Signals 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -914,6 +914,26 @@ Criar uma leitura histórica coerente dos dias recentes, conectando check-in, pl
 ## ⏭ v0.22.8 — Professional Daily Signals 2.0
 
 Levar ao profissional sinais diários úteis e explicáveis derivados do contexto recente, priorizando quem precisa ser visto sem criar score clínico opaco ou diagnóstico automático.
+
+
+
+## ✅ v0.22.8 — Professional Daily Signals 2.0 — CONCLUÍDA
+
+**Entregue na v0.22.8:**
+- fila diária no Professional Command Center;
+- níveis Revisar hoje, Observar e Contexto pendente;
+- reutilização da recomendação de prontidão existente;
+- fechamento diário como sinal operacional;
+- ausência de check-in recente explicitada;
+- motivo visível para cada entrada na fila;
+- fatores brutos de prontidão disponíveis no card;
+- nenhuma classificação de risco clínico ou diagnóstico automático.
+
+**Próxima etapa:** `v0.22.9 — Daily Premium UX 2.0`.
+
+## ⏭ v0.22.9 — Daily Premium UX 2.0
+
+Refinar hierarquia visual, densidade, estados, movimento, acessibilidade e ergonomia do Daily para fechar a fase v0.22.x com experiência premium e coerente entre atleta e profissional.
 
 
 # 7. v0.23.x — Sports & Movement Library

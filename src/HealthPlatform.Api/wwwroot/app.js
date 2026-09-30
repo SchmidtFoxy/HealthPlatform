@@ -424,10 +424,13 @@ $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
 function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['AESYN • PERFORMANCE CLÍNICA','Performance'],pacientes:['AESYN • ACOMPANHAMENTO','Pacientes'],prescricoes:['AESYN • PLANO INTEGRADO','Treino & Nutrição'],agenda:['AESYN • CONSULTAS','Agenda'],paciente:['AESYN • PERFORMANCE PROFILE','Paciente']};const title=titles[view]||titles.dashboard;$('#pageEyebrow').textContent=title[0];$('#pageTitle').textContent=title[1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,prescricoes:loadPrescriptionWorkspace,agenda:loadAgenda,paciente:loadPatient}[view]||loadDashboard)().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
 function stat(label,value,hint){return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value??0}</div><div class="hint">${hint}</div></div>`}
 function agendaRow(x){return `<div class="list-row clickable" data-patient="${x.pacienteId}"><div class="time-badge">${fmtTime(x.dataHoraLocal)}</div><div class="row-main"><strong>${esc(x.pacienteNome)}</strong><small>${esc(x.motivo||'Consulta')}</small></div><span class="pill ${esc(x.status)}">${esc(x.status)}</span></div>`}
+const HP_PROFESSIONAL_DAILY_SIGNALS_V0228='v0.22.8';
+
 async function loadDashboard(){
-  const [d,insights]=await Promise.all([
+  const [d,insights,dailySignals]=await Promise.all([
     api(`/api/profissional/dashboard?offsetMinutos=${state.offset}`),
-    api('/api/insights/dashboard?limite=8').catch(()=>null)
+    api('/api/insights/dashboard?limite=8').catch(()=>null),
+    api('/api/profissional/sinais-diarios?dias=7').catch(()=>null)
   ]);
   const agenda=d.agendaHoje||[],proximas=d.proximasConsultas||[],atencao=d.pacientesQuePrecisamAtencao||[];
   const insightPatients=insights?.pacientes||[];
@@ -442,6 +445,26 @@ async function loadDashboard(){
     const first=(x.insights||[])[0];
     const severity=(x.severidadeMaxima||'Baixa').toLowerCase();
     return `<button class="performance-patient-row" data-patient="${x.pacienteId}"><span class="performance-severity ${severity}"></span><span class="performance-patient-main"><strong>${esc(x.pacienteNome)}</strong><small>${esc(first?.titulo||`${x.total} sinal(is) para revisar`)}</small></span><span class="performance-count">${x.total}</span><span class="performance-arrow">›</span></button>`
+  }).join('');
+  const dailySignalItems=dailySignals?.sinais||[];
+  const dailySignalRows=dailySignalItems.slice(0,8).map(x=>{
+    const tone=x.nivel==='RevisarHoje'?'review':x.nivel==='Observar'?'watch':'pending';
+    const label=x.nivel==='RevisarHoje'?'Revisar hoje':x.nivel==='Observar'?'Observar':'Contexto pendente';
+    const factors=[];
+    if(x.prontidaoScore!=null)factors.push(`Prontidão ${x.prontidaoScore}/100`);
+    if(x.energiaNivel!=null)factors.push(`Energia ${x.energiaNivel}/10`);
+    if(x.dorNivel!=null)factors.push(`Dor ${x.dorNivel}/10`);
+    if(x.recuperacaoNivel!=null)factors.push(`Recuperação ${x.recuperacaoNivel}/10`);
+    if(Number(x.treinosUltimos7Dias||0)>0)factors.push(`${x.treinosUltimos7Dias} treino(s) / 7d`);
+    return `<button type="button" class="professional-daily-signal-row-v0228 is-${tone}" data-patient="${x.pacienteId}">
+      <span class="professional-daily-signal-level-v0228">${esc(label)}</span>
+      <span class="professional-daily-signal-main-v0228">
+        <strong>${esc(x.pacienteNome)}</strong>
+        <small>${esc((x.razoes||[])[0]||'Sinal diário disponível para revisão.')}</small>
+        ${factors.length?`<i>${factors.map(esc).join(' • ')}</i>`:''}
+      </span>
+      <span class="professional-daily-signal-arrow-v0228">›</span>
+    </button>`;
   }).join('');
   content.innerHTML=`
   <section class="aesyn-performance-hero">
@@ -488,6 +511,28 @@ async function loadDashboard(){
       <div class="performance-patient-list">${insightRows||atencao.slice(0,6).map(x=>`<button class="performance-patient-row" data-patient="${x.pacienteId}"><span class="performance-severity media"></span><span class="performance-patient-main"><strong>${esc(x.nome)}</strong><small>${x.retornoPendente?'Retorno pendente • ':''}${x.diasSemRegistroDiario>=999?'Sem check-ins recentes':`${x.diasSemRegistroDiario} dia(s) sem check-in`}</small></span><span class="performance-arrow">›</span></button>`).join('')||'<div class="performance-empty"><strong>Nenhum paciente em alerta.</strong><span>A operação está estável neste momento.</span></div>'}</div>
     </section>
   </div>
+
+  <section class="professional-daily-signals-v0228" data-professional-daily-signals-v0228="${HP_PROFESSIONAL_DAILY_SIGNALS_V0228}">
+    <div class="professional-daily-signals-head-v0228">
+      <div>
+        <span class="eyebrow">PROFESSIONAL DAILY SIGNALS 2.0</span>
+        <h3>Quem merece uma olhada hoje — e por quê.</h3>
+        <p>Sinais operacionais derivados de prontidão, fechamento do dia e ausência de contexto recente. Cada item mostra a regra que o colocou na fila.</p>
+      </div>
+      <div class="professional-daily-signals-kpis-v0228">
+        <span><b>${dailySignals?.revisarHoje||0}</b>revisar hoje</span>
+        <span><b>${dailySignals?.observar||0}</b>observar</span>
+        <span><b>${dailySignals?.contextoPendente||0}</b>contexto pendente</span>
+      </div>
+    </div>
+    <div class="professional-daily-signals-list-v0228">
+      ${dailySignalRows||'<div class="professional-daily-signals-empty-v0228"><b>Nenhum sinal diário operacional.</b><span>Os registros recentes não acionaram as regras desta fila.</span></div>'}
+    </div>
+    <div class="professional-daily-signals-rule-v0228">
+      <b>Regra visível</b>
+      <span>${esc(dailySignals?.regraDeLeitura||'Os sinais organizam contexto para revisão profissional e não representam diagnóstico ou risco clínico.')}</span>
+    </div>
+  </section>
 
   <div class="performance-day-grid">
     <section class="card">
@@ -9306,7 +9351,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.22.7';
+const HP_MVP_VERSION='0.22.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
