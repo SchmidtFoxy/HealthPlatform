@@ -1,3 +1,14 @@
+
+
+## v0.26.1 — Swimming 2.0
+
+- Aprofunda Natação com Crawl, Costas, Peito e Borboleta.
+- Organiza respiração/alinhamento, braçada/propulsão, pernada e saída/virada.
+- Expõe capacidades de resistência aquática, ombro/escápula, core/alinhamento e mobilidade útil.
+- Referencia `ModelosSessoesTreino` já existentes quando houver correspondência editorial.
+- Não prescreve metragem, séries, ritmo, volume, intensidade, águas abertas, aptidão ou retorno à água automaticamente.
+- Não cria migration ou tabela nova.
+
 # AESYN Performance
 
 > **Athlete & Human Performance** — acompanhamento humano, saúde e performance centrados em medicina do esporte.
@@ -366,7 +377,7 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.26.0 — Sports Expansion II Foundation`
+- **Versão funcional:** `v0.26.1 — Swimming 2.0`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

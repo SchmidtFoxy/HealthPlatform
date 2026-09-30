@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.26.0 — Sports Expansion II Foundation
+> **Versão-base deste roadmap:** v0.26.1 — Swimming 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1611,6 +1611,24 @@ Abrir a segunda expansão esportiva conectando modalidades aquáticas, endurance
 - nenhuma migration ou tabela nova.
 
 **Próxima etapa:** `v0.26.1 — Swimming 2.0`.
+
+## ✅ v0.26.1 — Swimming 2.0 — CONCLUÍDA
+
+Aprofundar Natação dentro da Sports Expansion II sem converter descoberta em prescrição automática.
+
+**Entregue na v0.26.1:**
+- endpoint `/api/portal/me/explore/swimming`;
+- Crawl, Costas, Peito e Borboleta com características e foco técnico;
+- fundamentos de respiração/alinhamento, braçada/propulsão, pernada e saída/virada;
+- capacidades de resistência aquática, ombro/escápula, core/alinhamento e mobilidade útil;
+- referências a sessões-modelo existentes;
+- integração mobile ao card Sports Expansion II;
+- sem metragem, séries, ritmo, volume, intensidade, águas abertas, aptidão ou retorno automáticos;
+- nenhuma migration ou tabela nova.
+
+**Próxima etapa:** `v0.26.2 — Triathlon 2.0`.
+
+
 
 
 

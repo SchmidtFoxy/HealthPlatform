@@ -1,3 +1,13 @@
+# v0.26.1 — Swimming 2.0
+
+- Adiciona endpoint `GET /api/portal/me/explore/swimming`.
+- Aprofunda Natação em quatro estilos: Crawl, Costas, Peito e Borboleta.
+- Estrutura fundamentos técnicos, capacidades de suporte e referências a sessões-modelo existentes.
+- Integra Swimming 2.0 ao caminho Sports Expansion II no Explore.
+- Mantém guardrail: técnica e descoberta não geram metragem, séries, ritmo, volume, intensidade, aptidão ou retorno à água automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.26.2 — Triathlon 2.0.
+
 # v0.26.0 — Sports Expansion II Foundation
 
 - Expande a biblioteca profissional com Natação, Triathlon, Artes Marciais, Remo, Trekking e esportes recreativos.

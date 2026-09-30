@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.26.0';
+const HP_MVP_VERSION='0.26.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -15053,4 +15053,40 @@ hpWireExploreFoundationV0240=function(host,data){
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenSportsExpansionIIV0260(detail);
   };
+};
+
+// ===== v0.26.1 — Swimming 2.0 =====
+const HP_SWIMMING_V0261='v0.26.1';
+
+function hpSwimmingV0261(data){
+  const refs=Array.isArray(data?.sessoesReferencia)?data.sessoesReferencia:[];
+  return `<section class="swimming-v0261" data-swimming-v0261="${HP_SWIMMING_V0261}" aria-labelledby="swimmingTitleV0261">
+    <div class="swimming-head-v0261"><div><span class="eyebrow">SWIMMING 2.0</span><h3 id="swimmingTitleV0261">Nadar melhor começa por entender o movimento.</h3><p>Estilos, respiração, propulsão, viradas e capacidades de suporte organizados sem transformar descoberta em planilha de metragem.</p></div><span>4 estilos</span></div>
+    <section class="swimming-section-v0261"><h5>Estilos</h5><div class="swimming-styles-v0261">${(data?.estilos||[]).map(x=>`<article><b>${esc(x.nome)}</b><p>${esc(x.caracteristica)}</p><small>${esc(x.focoTecnico)}</small></article>`).join('')}</div></section>
+    <section class="swimming-section-v0261"><h5>Fundamentos técnicos</h5><div class="swimming-grid-v0261">${(data?.fundamentos||[]).map(x=>`<article><b>${esc(x.nome)}</b><p>${esc(x.descricao)}</p><small>${esc(x.oQueObservar)}</small></article>`).join('')}</div></section>
+    <section class="swimming-section-v0261"><h5>Capacidades de suporte</h5><div class="swimming-capabilities-v0261">${(data?.capacidades||[]).map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.contexto)}</span></article>`).join('')}</div></section>
+    <section class="swimming-section-v0261"><h5>Sessões-modelo relacionadas</h5>${refs.length?`<div class="swimming-references-v0261">${refs.map(x=>`<article><b>${esc(x.nome)}</b><span>${esc(x.categoria||'Sessão-modelo')}</span><p>${esc(x.descricao||'Sem descrição cadastrada.')}</p><small>${esc(x.motivoDaReferencia)}</small></article>`).join('')}</div>`:`<div class="swimming-empty-v0261"><b>Sem referência editorial ainda.</b><span>O AESYN mantém a lacuna em vez de inventar uma sessão de natação.</span></div>`}</section>
+    <div class="swimming-rule-v0261"><b>TÉCNICA ≠ PRESCRIÇÃO</b><span>${esc(data?.regraDeUso||'A exploração técnica não define automaticamente metragem, séries, ritmo, volume ou intensidade.')}</span></div>
+  </section>`;
+}
+
+async function hpOpenSwimmingV0261(host){
+  if(!host)return;host.hidden=false;host.innerHTML='<div class="aesyn-explore-detail-v0240">Carregando Swimming 2.0...</div>';
+  try{const data=await api('/api/portal/me/explore/swimming');host.innerHTML=hpSwimmingV0261(data);host.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}
+  catch(err){host.innerHTML=`<div class="aesyn-explore-detail-v0240"><b>Não foi possível abrir Swimming 2.0.</b><span>${esc(err.message||'Tente novamente.')}</span></div>`;}
+}
+
+const __hpSportsExpansionIIV0261=hpSportsExpansionIIV0260;
+hpSportsExpansionIIV0260=function(data){
+  const html=__hpSportsExpansionIIV0261(data);
+  return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="swimming-entry-v0261"><button type="button" class="primary" id="openSwimmingV0261">Abrir Swimming 2.0</button><small>Estilos, fundamentos, capacidades e referências reais de sessão.</small></div><div id="swimmingHostV0261" class="swimming-host-v0261" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
+};
+
+const __hpOpenSportsExpansionIIV0261=hpOpenSportsExpansionIIV0260;
+hpOpenSportsExpansionIIV0260=async function(host){
+  await __hpOpenSportsExpansionIIV0261(host);
+  const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
+  const button=root?.querySelector('#openSwimmingV0261');
+  const detail=root?.querySelector('#swimmingHostV0261');
+  if(button&&detail)button.onclick=()=>hpOpenSwimmingV0261(detail);
 };

@@ -1803,6 +1803,66 @@ public sealed class ExplorePacienteController(
     }
 
 
+    [HttpGet("swimming")]
+    public async Task<ActionResult<SwimmingResponse>> Swimming(
+        CancellationToken ct = default)
+    {
+        var pacienteExiste = await db.Pacientes.AsNoTracking()
+            .AnyAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+        if (!pacienteExiste)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var modelos = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria).ThenBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.Categoria, x.Descricao })
+            .ToListAsync(ct);
+
+        var referencias = modelos
+            .Where(x =>
+            {
+                var texto = $"{x.Nome} {x.Categoria} {x.Descricao}".ToLowerInvariant();
+                return new[] { "natação", "natacao", "nado", "crawl", "piscina", "aquático", "aquatico", "ombro", "escápula", "escapula", "core", "cardio" }
+                    .Any(t => texto.Contains(t, StringComparison.Ordinal));
+            })
+            .Take(8)
+            .Select(x => new SwimmingSessaoReferenciaResponse(
+                x.Id, x.Nome, x.Categoria, x.Descricao,
+                "Sessão-modelo existente com termos relacionados a natação, técnica aquática ou capacidades de suporte."))
+            .ToArray();
+
+        var estilos = new SwimmingEstiloResponse[]
+        {
+            new("crawl", "Crawl", "Nado alternado com rotação longitudinal e respiração coordenada.", "Alinhamento, entrada da mão, apoio aquático, rotação e timing respiratório."),
+            new("costas", "Costas", "Nado alternado em posição dorsal com rotação do tronco.", "Linha corporal, rotação, entrada da mão e continuidade da braçada."),
+            new("peito", "Peito", "Nado simultâneo com ciclo coordenado de braços, respiração e pernada.", "Timing entre puxada, respiração, recuperação, pernada e deslize."),
+            new("borboleta", "Borboleta", "Nado simultâneo com ondulação corporal e ação coordenada dos braços.", "Ritmo da ondulação, estabilidade do tronco, recuperação dos braços e respiração.")
+        };
+
+        var fundamentos = new SwimmingFundamentoResponse[]
+        {
+            new("respiracao-alinhamento", "Respiração e alinhamento", "Organizar posição corporal e respiração sem interromper excessivamente a continuidade do nado.", "Observe cabeça, quadril, linha corporal e se a respiração desorganiza o movimento."),
+            new("bracada-propulsao", "Braçada e propulsão", "Criar apoio e deslocamento com trajetória eficiente dos membros superiores.", "Observe entrada, apoio, direção da força e recuperação sem impor um modelo único."),
+            new("pernada", "Pernada", "Contribuir para equilíbrio, propulsão e sustentação conforme o estilo.", "Observe coordenação com tronco e braços, amplitude e continuidade."),
+            new("saida-virada", "Saída e virada", "Organizar transições de borda e retomada do nado com controle técnico.", "Observe aproximação, orientação, impulsão e retomada antes de buscar velocidade.")
+        };
+
+        var capacidades = new SwimmingCapacidadeResponse[]
+        {
+            new("resistencia-aquatica", "Resistência aquática", "Sustentar técnica e organização do movimento ao longo do tempo na água."),
+            new("ombro-escapula", "Ombro e escápula", "Dar suporte ao volume repetido de ações de membros superiores e controle escapular."),
+            new("core-alinhamento", "Core e alinhamento", "Manter transmissão de força e posição corporal eficiente no meio aquático."),
+            new("mobilidade", "Mobilidade útil", "Permitir posições necessárias ao gesto sem transformar amplitude isolada em objetivo automático.")
+        };
+
+        return Ok(new SwimmingResponse(
+            estilos, fundamentos, capacidades, referencias,
+            "Sports Expansion II + ModelosSessoesTreino",
+            "Swimming 2.0 organiza estilos, fundamentos e capacidades e referencia conteúdo existente. Não prescreve metragem, séries, ritmo, volume, intensidade, águas abertas, aptidão ou retorno à água automaticamente."));
+    }
+
+
     [HttpGet("sports-expansion-ii")]
     public async Task<ActionResult<SportsExpansionIIResponse>> SportsExpansionII(
         CancellationToken ct = default)

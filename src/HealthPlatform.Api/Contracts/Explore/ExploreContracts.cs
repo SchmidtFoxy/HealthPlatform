@@ -368,3 +368,35 @@ public sealed record SportsExpansionIIResponse(
     IReadOnlyCollection<SportsExpansionIIModalidadeResponse> Modalidades,
     string CadeiaEstrutural,
     string RegraDeUso);
+
+public sealed record SwimmingFundamentoResponse(
+    string Codigo,
+    string Nome,
+    string Descricao,
+    string OQueObservar);
+
+public sealed record SwimmingEstiloResponse(
+    string Codigo,
+    string Nome,
+    string Caracteristica,
+    string FocoTecnico);
+
+public sealed record SwimmingCapacidadeResponse(
+    string Codigo,
+    string Nome,
+    string Contexto);
+
+public sealed record SwimmingSessaoReferenciaResponse(
+    Guid Id,
+    string Nome,
+    string? Categoria,
+    string? Descricao,
+    string MotivoDaReferencia);
+
+public sealed record SwimmingResponse(
+    IReadOnlyCollection<SwimmingEstiloResponse> Estilos,
+    IReadOnlyCollection<SwimmingFundamentoResponse> Fundamentos,
+    IReadOnlyCollection<SwimmingCapacidadeResponse> Capacidades,
+    IReadOnlyCollection<SwimmingSessaoReferenciaResponse> SessoesReferencia,
+    string Fonte,
+    string RegraDeUso);
