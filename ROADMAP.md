@@ -2173,3 +2173,27 @@ A segunda etapa do Workout Intelligence transforma lacunas da Foundation em vari
 
 **Próxima etapa:** `v0.29.6 — Progress Intelligence Closure 2.0`.
 
+## ✅ v0.29.6 — Progress Intelligence Closure 2.0 — CONCLUÍDA
+
+**Entregue na v0.29.6:**
+- fechamento estrutural da fundação observacional;
+- 6 componentes esperados;
+- componentes presentes e ausentes;
+- estado estrutural completo ou parcial;
+- endpoints profissional e paciente;
+- integração ao passaporte;
+- sem score, ranking, diagnóstico, prognóstico ou recomendação automática;
+- sem migration nova.
+
+### Fechamento da linha 0.29.x
+A fundação de inteligência de progresso passa a incluir:
+1. Progress Intelligence Foundation;
+2. Progress Signal Context;
+3. Multi-Signal Timeline;
+4. Progress Evidence Windows;
+5. Cross-Signal Observation Map;
+6. Progress Observation Summary;
+7. Progress Intelligence Closure.
+
+**Próxima etapa:** `v0.30.0 — próxima fase funcional do ROADMAP`.
+

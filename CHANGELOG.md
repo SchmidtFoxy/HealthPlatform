@@ -1,4 +1,19 @@
-﻿# v0.29.5 — Progress Observation Summary 2.0
+﻿# v0.29.6 — Progress Intelligence Closure 2.0
+
+- Adiciona `ProgressIntelligenceClosureResponse`.
+- Expande o passaporte com `FechamentoInteligenciaProgresso`.
+- Valida presença estrutural das seis camadas-base anteriores.
+- Expõe componentes presentes e ausentes.
+- Classifica como `EstruturaObservacionalCompleta` ou `EstruturaObservacionalParcial`.
+- Adiciona `GET /api/pacientes/{pacienteId}/performance/progress-intelligence/closure`.
+- Adiciona `GET /api/portal/me/performance/progress-intelligence/closure`.
+- Adiciona painel Progress Intelligence Closure 2.0.
+- Fecha formalmente a linha funcional 0.29.x.
+- Guardrail: estado estrutural não representa qualidade clínica, prognóstico ou recomendação.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.30.0 — próxima fase funcional do ROADMAP.
+
+# v0.29.5 — Progress Observation Summary 2.0
 
 - Adiciona `ProgressObservationSummaryResponse`.
 - Expande o passaporte com `ResumoObservacionalProgresso`.

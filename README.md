@@ -1184,3 +1184,23 @@ Cobertura mais ampla significa apenas **mais dados observados disponíveis**. N�
 
 **Próxima etapa:** `v0.29.6 — Progress Intelligence Closure 2.0`.
 
+---
+
+## v0.29.6 — Progress Intelligence Closure 2.0
+
+Fecha formalmente a fundação observacional construída na linha 0.29.x.
+
+### Entregue
+- fechamento estrutural das 6 camadas de inteligência de progresso;
+- contagem de componentes esperados e disponíveis;
+- lista de componentes presentes;
+- lista de componentes ausentes;
+- estado `EstruturaObservacionalCompleta` ou `EstruturaObservacionalParcial`;
+- endpoints profissional e paciente;
+- integração ao Athlete Performance Passport.
+
+### Guardrail
+`EstruturaObservacionalCompleta` significa apenas que os componentes técnicos previstos estão presentes. Não significa melhor desempenho, maior qualidade clínica, maior certeza, prognóstico favorável ou recomendação automática.
+
+**Próxima etapa:** `v0.30.0 — próxima fase funcional do ROADMAP`.
+

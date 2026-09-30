@@ -25,6 +25,7 @@ public static class AthletePerformancePassportService
         var janelasEvidenciaProgresso = MontarJanelasEvidenciaProgresso(timelineMultissinal, hoje);
         var mapaObservacaoCruzada = MontarMapaObservacaoCruzada(timelineMultissinal);
         var resumoObservacionalProgresso = MontarResumoObservacionalProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada);
+        var fechamentoInteligenciaProgresso = MontarFechamentoInteligenciaProgresso(inteligenciaProgresso, contextoSinaisProgresso, timelineMultissinal, janelasEvidenciaProgresso, mapaObservacaoCruzada, resumoObservacionalProgresso);
 
         var melhoresMarcas = performance.Destaques
             .Where(x => x.MelhorCarga.HasValue)
@@ -102,14 +103,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.29.5",
+            "v0.29.6",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Observation Summary 2.0 consolida contagens e cobertura das camadas observacionais existentes. Resume disponibilidade documental; não produz score, ranking, diagnóstico, prognóstico ou recomendação automática.")
+            "Progress Intelligence Closure 2.0 fecha a fundação observacional informando presença estrutural dos componentes de progresso. Estado estrutural não representa qualidade clínica, prognóstico ou recomendação automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
@@ -121,7 +122,8 @@ public static class AthletePerformancePassportService
             TimelineMultissinal = timelineMultissinal,
             JanelasEvidenciaProgresso = janelasEvidenciaProgresso,
             MapaObservacaoCruzada = mapaObservacaoCruzada,
-            ResumoObservacionalProgresso = resumoObservacionalProgresso
+            ResumoObservacionalProgresso = resumoObservacionalProgresso,
+            FechamentoInteligenciaProgresso = fechamentoInteligenciaProgresso
         };
     }
 
@@ -258,6 +260,50 @@ public static class AthletePerformancePassportService
 
 
 
+
+
+    public static ProgressIntelligenceClosureResponse MontarFechamentoInteligenciaProgresso(
+        ProgressIntelligenceFoundationResponse foundation,
+        ProgressSignalContextSummaryResponse contexto,
+        MultiSignalTimelineResponse timeline,
+        ProgressEvidenceWindowsResponse janelas,
+        CrossSignalObservationMapResponse mapa,
+        ProgressObservationSummaryResponse resumo)
+    {
+        var componentes = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["ProgressIntelligenceFoundation"] = foundation is not null,
+            ["ProgressSignalContext"] = contexto is not null,
+            ["MultiSignalTimeline"] = timeline is not null,
+            ["ProgressEvidenceWindows"] = janelas is not null,
+            ["CrossSignalObservationMap"] = mapa is not null,
+            ["ProgressObservationSummary"] = resumo is not null
+        };
+
+        var presentes = componentes
+            .Where(x => x.Value)
+            .Select(x => x.Key)
+            .OrderBy(x => x)
+            .ToArray();
+
+        var ausentes = componentes
+            .Where(x => !x.Value)
+            .Select(x => x.Key)
+            .OrderBy(x => x)
+            .ToArray();
+
+        var estado = ausentes.Length == 0
+            ? "EstruturaObservacionalCompleta"
+            : "EstruturaObservacionalParcial";
+
+        return new ProgressIntelligenceClosureResponse(
+            componentes.Count,
+            presentes.Length,
+            presentes,
+            ausentes,
+            estado,
+            "Progress Intelligence Closure 2.0 descreve apenas a presença estrutural das camadas observacionais. Estrutura completa não significa melhor desempenho, maior qualidade clínica, maior certeza, prognóstico favorável ou recomendação automática.");
+    }
 
     public static ProgressObservationSummaryResponse MontarResumoObservacionalProgresso(
         ProgressIntelligenceFoundationResponse foundation,
