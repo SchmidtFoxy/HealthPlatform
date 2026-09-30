@@ -131,11 +131,16 @@ public sealed record ProgressReviewCarePlanPersistedResponse(
     string? Horizonte,
     Guid? FollowUpRelacionadoId,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProgressReviewCarePlanStatusRequest(
+    string Status);
 
 public sealed record ProgressReviewCarePlanFieldResponse(
     string Chave,

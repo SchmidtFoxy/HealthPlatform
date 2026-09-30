@@ -1,4 +1,19 @@
-﻿# v0.32.1 — Progress Review Care Plan Persistence
+﻿# v0.32.2 — Progress Review Care Plan Status
+
+- Adiciona `Status` ao Care Plan persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProgressReviewCarePlanStatusRequest`.
+- Adiciona endpoint `PATCH .../care-plan/{id}/status`.
+- Estados permitidos: `Planejado`, `EmAndamento`, `Concluido`, `Cancelado`.
+- Adiciona auditoria `PROGRESS_REVIEW_CARE_PLAN_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.32.3 — Progress Review Care Plan History.
+
+# v0.32.1 — Progress Review Care Plan Persistence
 
 - Adiciona `ProgressReviewCarePlanPersistedResponse`.
 - Reutiliza `NotaInternaProfissional` com namespace `ProgressReviewCarePlan:`.

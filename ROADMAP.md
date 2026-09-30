@@ -2595,3 +2595,21 @@ Adicionar persistência profissional auditada ao Care Plan, mantendo vínculo op
 ### v0.32.2 — Progress Review Care Plan Status
 Adicionar estados documentais explícitos ao plano de cuidados, com transições manuais realizadas pelo profissional e histórico auditável, sem execução clínica automática.
 
+## ✅ v0.32.2 — Progress Review Care Plan Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejado`, `EmAndamento`, `Concluido` e `Cancelado`;
+- `StatusAtualizadoEmUtc`;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge no workspace;
+- ações Replanejar, Iniciar, Concluir e Cancelar;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.3 — Progress Review Care Plan History
+Adicionar histórico consultável de criação, edição, mudanças de status e arquivamento do Care Plan, com autoria e datas, sem inferência clínica automática.
+

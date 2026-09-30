@@ -1791,3 +1791,35 @@ Persistir um Care Plan registra documentalmente próximos cuidados definidos pel
 
 **Próxima etapa:** `v0.32.2 — Progress Review Care Plan Status`.
 
+---
+
+## v0.32.2 — Progress Review Care Plan Status
+
+Adiciona estado documental explícito aos planos de próximos cuidados.
+
+### Estados
+- `Planejado`
+- `EmAndamento`
+- `Concluido`
+- `Cancelado`
+
+### Transições
+As mudanças são feitas manualmente pelo profissional via `PATCH .../care-plan/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva o restante do payload;
+- gera auditoria `PROGRESS_REVIEW_CARE_PLAN_STATUS_CHANGED`.
+
+### UI
+O workspace profissional passa a mostrar badge de status e ações explícitas:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela cuidados automaticamente e não converte estado em prioridade, risco ou recomendação clínica.
+
+**Próxima etapa:** `v0.32.3 — Progress Review Care Plan History`.
+
