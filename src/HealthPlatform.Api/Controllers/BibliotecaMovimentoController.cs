@@ -48,6 +48,19 @@ public sealed class BibliotecaMovimentoController(
             })
             .ToListAsync(ct);
 
+        var modelosSessao = await db.ModelosSessoesTreino.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Categoria)
+            .ThenBy(x => x.Nome)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Categoria,
+                x.Descricao
+            })
+            .ToListAsync(ct);
+
         var defs = CatalogoFundacao();
 
         if (!string.IsNullOrWhiteSpace(modalidade))
@@ -125,9 +138,26 @@ public sealed class BibliotecaMovimentoController(
                             ex.VideoUrl))
                         .ToArray();
 
+                    var sessoes = modelosSessao
+                        .Where(modelo => CorrespondeSessao(
+                            modelo.Nome,
+                            modelo.Categoria,
+                            modelo.Descricao,
+                            mod.Termos,
+                            obj.Nome,
+                            cap.Termos))
+                        .Take(20)
+                        .Select(modelo => new BibliotecaMovimentoSessaoResponse(
+                            modelo.Id,
+                            modelo.Nome,
+                            modelo.Categoria,
+                            modelo.Descricao))
+                        .ToArray();
+
                     return new BibliotecaMovimentoCapacidadeResponse(
                         cap.Codigo,
                         cap.Nome,
+                        sessoes,
                         vinculados);
                 }).ToArray();
 
@@ -154,9 +184,38 @@ public sealed class BibliotecaMovimentoController(
             "Modalidade → Objetivo → Capacidade → Sessão → Exercício → Progressão",
             modalidades.Length,
             exercicios.Count,
+            modelosSessao.Count,
             modalidades,
             "Os exercícios vêm exclusivamente do catálogo profissional existente (`Exercicios`). A taxonomia organiza referências e não duplica movimentos.",
+            "As sessões vêm exclusivamente de `ModelosSessoesTreino`, a mesma biblioteca reutilizável do Workout Builder. A taxonomia apenas organiza referências.",
             "A biblioteca descreve possibilidades de movimento. Seleção, progressão, regressão e prescrição continuam dependentes de contexto individual e julgamento profissional."));
+    }
+
+    private static bool CorrespondeSessao(
+        string nome,
+        string? categoria,
+        string? descricao,
+        IReadOnlyCollection<string> termosModalidade,
+        string objetivo,
+        IReadOnlyCollection<string> termosCapacidade)
+    {
+        var texto = $"{nome} {categoria} {descricao}".ToLowerInvariant();
+        var objetivoNormalizado = objetivo.ToLowerInvariant();
+
+        var capacidadeCombina = termosCapacidade.Any(x =>
+            texto.Contains(x.ToLowerInvariant()));
+
+        var modalidadeCombina = termosModalidade.Any(x =>
+            texto.Contains(x.ToLowerInvariant()));
+
+        var objetivoCombina = texto.Contains(objetivoNormalizado);
+
+        // Sessões genéricas de treino resistido e mobilidade podem ser
+        // reutilizadas quando o texto do modelo descreve a capacidade.
+        return capacidadeCombina ||
+               (modalidadeCombina && objetivoCombina) ||
+               (modalidadeCombina && termosModalidade.Contains("forca")) ||
+               (modalidadeCombina && termosModalidade.Contains("mobilidade"));
     }
 
     private static bool Corresponde(

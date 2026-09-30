@@ -1,3 +1,25 @@
+# v0.23.2-r1 — Historical Movement Library Gate Alignment (revisão local)
+
+- Corrige o gate histórico da `v0.23.0` no `TESTAR.ps1`.
+- Remove dependência do texto visual legado `Uma fonte de verdade`.
+- O gate passa a validar `fonteDosExercicios`, que representa a mesma garantia estrutural de fonte única.
+- Mantém a evolução da v0.23.2, que agora separa visualmente fontes de Exercícios e Sessões.
+- `VERSION.txt` permanece `0.23.2`.
+- Sem mudança funcional, API, migration ou schema.
+- Revisão local: não gerar commit próprio.
+
+# v0.23.2 — Movement Session Model 2.0
+
+- Preenche a camada `Sessão` da taxonomia esportiva.
+- Reutiliza exclusivamente `ModelosSessoesTreino`, já usados pelo Workout Builder.
+- Relaciona sessões existentes a modalidade, objetivo e capacidade.
+- Exibe sessões e exercícios como camadas distintas dentro de cada capacidade.
+- Sessões abrem a biblioteca profissional existente.
+- Não duplica modelos de sessão, exercícios ou fontes de verdade.
+- Não cria migration ou tabela nova.
+- Atualiza identidade funcional, PWA/cache, documentação e gates para v0.23.2.
+- Próxima etapa: v0.23.3 — Movement Progression & Regression Foundation.
+
 # v0.23.1-r1 — Movement Filter Build Fix (revisão local)
 
 - Corrige declaração duplicada de `capacidades` em `BibliotecaMovimentoController.cs`.

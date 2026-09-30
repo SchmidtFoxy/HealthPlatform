@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.23.1';
+const HP_MVP_VERSION='0.23.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13030,11 +13030,25 @@ loadMyPatientPortal=async function(){
 const HP_SPORTS_MOVEMENT_LIBRARY_V0230='v0.23.0';
 
 function hpMovementCapabilityV0230(cap){
+  const sessions=cap?.sessoes||[];
   const exercises=cap?.exercicios||[];
   return `<article class="movement-capability-v0230">
     <div><span>CAPACIDADE</span><b>${esc(cap?.nome||'Capacidade')}</b></div>
-    <small>${exercises.length} exercício(s) relacionado(s) no catálogo atual</small>
-    ${exercises.length?`<div class="movement-exercise-links-v0230">${exercises.slice(0,8).map(x=>`<button type="button" data-movement-exercise-v0230="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`:'<p>Nenhum exercício existente foi relacionado automaticamente. A taxonomia continua disponível sem criar item duplicado.</p>'}
+    <small>${sessions.length} sessão(ões) • ${exercises.length} exercício(s) relacionados</small>
+
+    <div class="movement-session-layer-v0232">
+      <div class="movement-session-layer-head-v0232"><span>SESSÕES REUTILIZÁVEIS</span><b>${sessions.length}</b></div>
+      ${sessions.length
+        ?`<div class="movement-session-links-v0232">${sessions.slice(0,6).map(x=>`<button type="button" data-movement-session-v0232="${x.id}"><b>${esc(x.nome)}</b><small>${esc(x.categoria||'Sessão-modelo')}</small></button>`).join('')}</div>`
+        :'<p>Nenhuma sessão-modelo existente foi relacionada a esta capacidade.</p>'}
+    </div>
+
+    <div class="movement-exercise-layer-v0232">
+      <div class="movement-session-layer-head-v0232"><span>EXERCÍCIOS</span><b>${exercises.length}</b></div>
+      ${exercises.length
+        ?`<div class="movement-exercise-links-v0230">${exercises.slice(0,8).map(x=>`<button type="button" data-movement-exercise-v0230="${x.id}">${esc(x.nome)}</button>`).join('')}</div>`
+        :'<p>Nenhum exercício existente foi relacionado automaticamente. A taxonomia continua disponível sem criar item duplicado.</p>'}
+    </div>
   </article>`;
 }
 
@@ -13059,6 +13073,7 @@ function hpMovementModalityV0230(mod){
 }
 
 const HP_MOVEMENT_TAXONOMY_FILTERS_V0231='v0.23.1';
+const HP_MOVEMENT_SESSION_MODEL_V0232='v0.23.2';
 
 function hpMovementFilterOptionsV0231(modalidades){
   const uniq=arr=>[...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -13102,12 +13117,13 @@ async function openMovementLibraryV0230(){
         <div class="movement-library-summary-v0230">
           <span><b>${current.totalModalidades||0}</b> modalidades</span>
           <span><b>${current.totalExerciciosAtivos||0}</b> exercícios ativos</span>
+          <span><b>${current.totalModelosSessaoAtivos||0}</b> sessões-modelo</span>
         </div>
       </div>
 
-      <div class="movement-library-principle-v0230">
-        <b>Uma fonte de verdade</b>
-        <span>${esc(current.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span>
+      <div class="movement-library-principle-v0230 movement-library-sources-v0232">
+        <div><b>Exercícios</b><span>${esc(current.fonteDosExercicios||'Os exercícios permanecem no catálogo profissional existente.')}</span></div>
+        <div><b>Sessões</b><span>${esc(current.fonteDasSessoes||'As sessões reutilizam os modelos existentes do Workout Builder.')}</span></div>
       </div>
 
       <div class="movement-taxonomy-toolbar-v0231" data-movement-taxonomy-filters-v0231="${HP_MOVEMENT_TAXONOMY_FILTERS_V0231}">
@@ -13178,6 +13194,13 @@ async function openMovementLibraryV0230(){
         btn.onclick=()=>{
           closeClinicalAction();
           openExerciseLibrary2();
+        };
+      });
+
+      $$('[data-movement-session-v0232]').forEach(btn=>{
+        btn.onclick=()=>{
+          closeClinicalAction();
+          openWorkoutLibrary();
         };
       });
     };

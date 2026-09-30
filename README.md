@@ -26,6 +26,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Movement Session Model 2.0
+
+A `v0.23.2` preenche a camada **Sessão** da taxonomia esportiva sem criar uma biblioteca paralela. Cada capacidade passa a exibir sessões reutilizáveis encontradas em `ModelosSessoesTreino`, a mesma fonte usada pelo Workout Builder.
+
+A relação entre modalidade/objetivo/capacidade e sessão é organizada pela taxonomia e pelo conteúdo descritivo dos modelos existentes. Clicar em uma sessão leva à biblioteca profissional de treinos/sessões; nenhum modelo é copiado ou recriado automaticamente.
+
 ### Movement Taxonomy & Filters 2.0
 
 A `v0.23.1` transforma a fundação da biblioteca em navegação estruturada. O profissional pode combinar filtros de **modalidade, objetivo, capacidade, ambiente e equipamento**, além de fazer busca textual dentro do resultado visível.
@@ -213,7 +220,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.23.1 — Movement Taxonomy & Filters 2.0`
+- **Versão funcional:** `v0.23.2 — Movement Session Model 2.0`
+- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
 - **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`

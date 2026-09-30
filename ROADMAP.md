@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.23.1 — Movement Taxonomy & Filters 2.0
+> **Versão-base deste roadmap:** v0.23.2 — Movement Session Model 2.0
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -985,7 +985,9 @@ Inclui taxonomia, instruções, mídia, progressões, regressões, equipamentos,
 
 **Próxima etapa:** `v0.23.2 — Movement Session Model 2.0`.
 
-## ⏭ v0.23.2 — Movement Session Model 2.0
+## ✅ v0.23.2 — Movement Session Model 2.0 — CONCLUÍDA
+
+> **Revisão local v0.23.2-r1:** alinha o gate histórico da v0.23.0 ao contrato atual da biblioteca. O teste deixa de exigir o texto visual legado `Uma fonte de verdade` e passa a validar `fonteDosExercicios`, preservando a semântica histórica sem impedir a evolução da camada de Sessões. Sem alteração funcional ou de schema. Não commitar separadamente.
 
 Introduzir a camada `Sessão` da taxonomia esportiva, conectando objetivos e capacidades a blocos reutilizáveis sem duplicar os modelos de sessão já existentes no Workout Builder.
 
@@ -1260,6 +1262,18 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - nenhuma duplicação de exercício ou migration.
 
 **Próxima etapa:** `v0.23.1 — Movement Taxonomy & Filters 2.0`.
+
+
+
+**Entregue na v0.23.2:**
+- camada Sessão preenchida na taxonomia;
+- reutilização de `ModelosSessoesTreino`;
+- vínculo explicável entre capacidade e sessões existentes;
+- sessões e exercícios apresentados separadamente;
+- navegação da sessão para a biblioteca profissional;
+- nenhuma duplicação de sessão, exercício ou migration.
+
+**Próxima etapa:** `v0.23.3 — Movement Progression & Regression Foundation`.
 
 
 ## Promessa ao atleta
