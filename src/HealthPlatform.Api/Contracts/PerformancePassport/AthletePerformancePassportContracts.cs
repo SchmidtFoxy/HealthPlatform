@@ -122,6 +122,21 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewCarePlanPersistedResponse(
+    Guid Id,
+    string ObjetivoCuidado,
+    string AcaoPlanejada,
+    string? Responsavel,
+    string? Horizonte,
+    Guid? FollowUpRelacionadoId,
+    string? ObservacaoProfissional,
+    Guid AutorUsuarioId,
+    string AutorNome,
+    DateTime CriadoEmUtc,
+    DateTime? AtualizadoEmUtc,
+    bool Arquivada);
+
 public sealed record ProgressReviewCarePlanFieldResponse(
     string Chave,
     string Rotulo,

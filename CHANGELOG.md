@@ -1,4 +1,20 @@
-﻿# v0.32.0 — Progress Review Care Plan Foundation
+﻿# v0.32.1 — Progress Review Care Plan Persistence
+
+- Adiciona `ProgressReviewCarePlanPersistedResponse`.
+- Reutiliza `NotaInternaProfissional` com namespace `ProgressReviewCarePlan:`.
+- Adiciona CRUD profissional de Care Plan.
+- Adiciona arquivamento lógico.
+- Adiciona auditoria `PROGRESS_REVIEW_CARE_PLAN_CREATED`.
+- Adiciona auditoria `PROGRESS_REVIEW_CARE_PLAN_UPDATED`.
+- Adiciona auditoria `PROGRESS_REVIEW_CARE_PLAN_ARCHIVED`.
+- Valida vínculo opcional com follow-up do mesmo paciente.
+- Fundação v0.32.0 passa a anunciar `PersistenciaDisponivel = true`.
+- Adiciona workspace profissional do Care Plan.
+- Não cria endpoint de paciente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.32.2 — Progress Review Care Plan Status.
+
+# v0.32.0 — Progress Review Care Plan Foundation
 
 - Abre a linha funcional 0.32.x.
 - Adiciona `ProgressReviewCarePlanFieldResponse`.

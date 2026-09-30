@@ -4866,6 +4866,7 @@ const HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314='v0.31.4';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_SUMMARY_V0315='v0.31.5';
 const HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316='v0.31.6';
 const HP_PROGRESS_REVIEW_CARE_PLAN_V0320='v0.32.0';
+const HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321='v0.32.1';
 
 
 
@@ -4916,8 +4917,124 @@ function hpRenderProgressReviewCarePlanFoundationV0320(host,foundation){
       </div>
       <small class="muted-line">${esc(x.descricao||'')}</small>`).join('')}
     </div>
-    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência disponível.':'Nesta versão, o Care Plan ainda não possui persistência própria.'}</small>
+    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência profissional disponível.':'Nesta versão, o Care Plan ainda não possui persistência própria.'}</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-care-plan-open-v0321="${HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321}">Gerenciar plano de cuidados</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProgressReviewCarePlanV0321(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/care-plan`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-progress-review-care-plan-persistence-v0321="${HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321}">
+    <div class="row-between">
+      <div>
+        <h3>Plano de próximos cuidados</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProgressReviewCarePlanV0321">Fechar</button>
+    </div>
+
+    <form id="progressReviewCarePlanFormV0321" class="form-grid">
+      <input type="hidden" name="id">
+      <label class="span-2">Objetivo do próximo cuidado<textarea name="objetivoCuidado" maxlength="500" rows="2" required></textarea></label>
+      <label class="span-2">Ação planejada<textarea name="acaoPlanejada" maxlength="1000" rows="3" required></textarea></label>
+      <label>Responsável<input name="responsavel" maxlength="160"></label>
+      <label>Prazo ou horizonte<input name="horizonte" maxlength="120"></label>
+      <label>Follow-up relacionado<input name="followUpRelacionadoId" placeholder="ID opcional do follow-up"></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="button" class="secondary" id="cancelProgressReviewCarePlanV0321">Limpar</button>
+        <button type="submit">Salvar plano de cuidados</button>
+      </div>
+    </form>
+
+    <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, alterações e arquivamento ficam auditados.</div>
+    <div id="progressReviewCarePlanListV0321" class="stack"></div>
+  </div>`;
+  modal.classList.add('open');
+
+  const form=$('#progressReviewCarePlanFormV0321');
+  const listHost=$('#progressReviewCarePlanListV0321');
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.objetivoCuidado||'Objetivo do cuidado')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      <p>${esc(x.acaoPlanejada||'')}</p>
+      ${x.responsavel?`<small class="muted-line">Responsável: ${esc(x.responsavel)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.followUpRelacionadoId?`<small class="muted-line">Follow-up: ${esc(x.followUpRelacionadoId)}</small>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional).replace(/\n/g,'<br>')}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-care-plan-edit-v0321="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-care-plan-archive-v0321="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum plano de cuidado registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-care-plan-edit-v0321]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.carePlanEditV0321);
+      if(!item) return;
+      form.elements.id.value=item.id;
+      form.elements.objetivoCuidado.value=item.objetivoCuidado||'';
+      form.elements.acaoPlanejada.value=item.acaoPlanejada||'';
+      form.elements.responsavel.value=item.responsavel||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.followUpRelacionadoId.value=item.followUpRelacionadoId||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.objetivoCuidado.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-care-plan-archive-v0321]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/care-plan/${btn.dataset.carePlanArchiveV0321}`,{method:'DELETE'});
+      toast('Plano de cuidados arquivado.');
+      await render();
+    });
+  };
+
+  $('#closeProgressReviewCarePlanV0321').onclick=()=>modal.classList.remove('open');
+  $('#cancelProgressReviewCarePlanV0321').onclick=()=>{
+    form.reset();
+    form.elements.id.value='';
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+
+    const followUpRaw=(form.elements.followUpRelacionadoId.value||'').trim();
+    const body={
+      objetivoCuidado:form.elements.objetivoCuidado.value,
+      acaoPlanejada:form.elements.acaoPlanejada.value,
+      responsavel:form.elements.responsavel.value||null,
+      horizonte:form.elements.horizonte.value||null,
+      followUpRelacionadoId:followUpRaw||null,
+      observacaoProfissional:form.elements.observacaoProfissional.value||null
+    };
+
+    const id=form.elements.id.value;
+    const url=id
+      ? `/api/pacientes/${p.id}/performance/progress-review-notes/care-plan/${id}`
+      : `/api/pacientes/${p.id}/performance/progress-review-notes/care-plan`;
+
+    await api(url,{method:id?'PUT':'POST',body:JSON.stringify(body)});
+    toast(id?'Plano de cuidados atualizado.':'Plano de cuidados registrado.');
+    form.reset();
+    form.elements.id.value='';
+    await render();
+  };
+
+  await render();
 }
 
 async function hpLoadProgressReviewFollowUpClosureV0316(patientId){
@@ -5064,7 +5181,11 @@ async function hpOpenProgressReviewFollowUpV0311(p){
 
   const carePlanHostV0320=$('#progressReviewCarePlanFoundationV0320');
   hpLoadProgressReviewCarePlanFoundationV0320(p.id)
-    .then(x=>hpRenderProgressReviewCarePlanFoundationV0320(carePlanHostV0320,x))
+    .then(x=>{
+      hpRenderProgressReviewCarePlanFoundationV0320(carePlanHostV0320,x);
+      const openCarePlan=$('[data-care-plan-open-v0321]');
+      if(openCarePlan) openCarePlan.onclick=()=>hpOpenProgressReviewCarePlanV0321(p);
+    })
     .catch(()=>{ if(carePlanHostV0320) carePlanHostV0320.innerHTML=''; });
 
   const closureHostV0316=$('#progressReviewFollowUpClosureV0316');
@@ -10462,7 +10583,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.32.0';
+const HP_MVP_VERSION='0.32.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1763,3 +1763,31 @@ A fundação não executa ações, não prescreve automaticamente e não cria pr
 
 **Próxima etapa:** `v0.32.1 — Progress Review Care Plan Persistence`.
 
+---
+
+## v0.32.1 — Progress Review Care Plan Persistence
+
+Adiciona persistência profissional auditada à fundação do Care Plan.
+
+### Persistência
+A implementação reutiliza `NotaInternaProfissional` com namespace `ProgressReviewCarePlan:` e payload JSON estruturado, sem criar tabela ou migration nesta etapa.
+
+### Operações
+- listar planos ativos;
+- criar;
+- editar;
+- arquivar logicamente;
+- autoria e timestamps;
+- auditoria de criação, alteração e arquivamento.
+
+### Vínculo com follow-up
+O campo `FollowUpRelacionadoId` é opcional. Quando informado, o backend valida que o follow-up pertence ao mesmo paciente e organização e que não está arquivado.
+
+### Privacidade
+Os endpoints permanecem no controller profissional já protegido por função. Não foi criado endpoint equivalente no portal do paciente.
+
+### Guardrail
+Persistir um Care Plan registra documentalmente próximos cuidados definidos pelo profissional. Não executa ação, não prescreve automaticamente e não cria prioridade, diagnóstico, prognóstico ou recomendação automática.
+
+**Próxima etapa:** `v0.32.2 — Progress Review Care Plan Status`.
+

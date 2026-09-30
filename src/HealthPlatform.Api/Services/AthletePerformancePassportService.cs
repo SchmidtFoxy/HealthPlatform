@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.32.0",
+            "v0.32.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Care Plan Foundation cria a fundação estrutural para organizar próximos cuidados profissionais após a revisão, ainda sem persistência própria, execução automática ou prescrição automatizada.")
+            "Progress Review Care Plan Persistence adiciona persistência profissional auditada aos próximos cuidados, preservando vínculo opcional com follow-up e separação entre documentação, decisão clínica e execução.")
         {
             Recordes = recordes,
             Tempos = tempos,

@@ -2573,3 +2573,25 @@ Criar a fundação estrutural para transformar itens acompanhados em um plano pr
 ### v0.32.1 — Progress Review Care Plan Persistence
 Adicionar persistência profissional auditada ao Care Plan, mantendo vínculo opcional com follow-up e separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.32.1 — Progress Review Care Plan Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewCarePlanPersistedResponse`;
+- namespace `ProgressReviewCarePlan:`;
+- payload JSON estruturado;
+- listagem;
+- criação;
+- edição;
+- arquivamento lógico;
+- autoria;
+- auditoria;
+- vínculo opcional validado com follow-up;
+- workspace profissional de gerenciamento;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.2 — Progress Review Care Plan Status
+Adicionar estados documentais explícitos ao plano de cuidados, com transições manuais realizadas pelo profissional e histórico auditável, sem execução clínica automática.
+
