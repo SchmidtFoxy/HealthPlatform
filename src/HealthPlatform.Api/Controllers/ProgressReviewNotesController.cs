@@ -338,6 +338,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearCarePlan(nota));
     }
 
+    [HttpGet("care-plan/{id:guid}/history")]
+    public async Task<ActionResult<ProgressReviewCarePlanHistoryResponse>> HistoricoCarePlan(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var carePlanExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCarePlan),
+                cancellationToken);
+
+        if (!carePlanExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROGRESS_REVIEW_CARE_PLAN_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProgressReviewCarePlanHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoCarePlan(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProgressReviewCarePlanHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais do Care Plan. Não interpreta evolução clínica, causalidade, prioridade, risco ou resultado."));
+    }
+
     [HttpPatch("care-plan/{id:guid}/status")]
     public async Task<ActionResult<ProgressReviewCarePlanPersistedResponse>> AtualizarStatusCarePlan(
         Guid pacienteId,
@@ -1184,6 +1259,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoCarePlan(string acao) =>
+        acao switch
+        {
+            "PROGRESS_REVIEW_CARE_PLAN_CREATED" => "Criado",
+            "PROGRESS_REVIEW_CARE_PLAN_UPDATED" => "Editado",
+            "PROGRESS_REVIEW_CARE_PLAN_STATUS_CHANGED" => "StatusAlterado",
+            "PROGRESS_REVIEW_CARE_PLAN_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static CarePlanPayload LerPayloadCarePlan(NotaInternaProfissional nota)
     {

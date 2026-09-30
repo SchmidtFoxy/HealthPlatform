@@ -4868,6 +4868,7 @@ const HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316='v0.31.6';
 const HP_PROGRESS_REVIEW_CARE_PLAN_V0320='v0.32.0';
 const HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321='v0.32.1';
 const HP_PROGRESS_REVIEW_CARE_PLAN_STATUS_V0322='v0.32.2';
+const HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3';
 
 
 
@@ -4923,6 +4924,39 @@ function hpRenderProgressReviewCarePlanFoundationV0320(host,foundation){
   </section>`;
 }
 
+
+
+async function hpOpenProgressReviewCarePlanHistoryV0323(p,carePlan){
+  if(!p?.id || !carePlan?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/care-plan/${carePlan.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-progress-care-plan-history-v0323="${HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do plano de cuidados</h3>
+        <p class="muted-line">${esc(carePlan.objetivoCuidado||'Objetivo do cuidado')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProgressReviewCarePlanHistoryV0323">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica.</small>
+  </div>`;
+  modal.classList.add('open');
+  $('#closeProgressReviewCarePlanHistoryV0323').onclick=()=>hpOpenProgressReviewCarePlanV0321(p);
+}
 
 async function hpOpenProgressReviewCarePlanV0321(p){
   if(!p?.id) return;
@@ -4985,6 +5019,7 @@ async function hpOpenProgressReviewCarePlanV0321(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-care-plan-status-v0322="${x.id}" data-status-v0322="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluido'?`<button type="button" class="ghost" data-care-plan-status-v0322="${x.id}" data-status-v0322="Concluido">Concluir</button>`:''}
         ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-care-plan-status-v0322="${x.id}" data-status-v0322="Cancelado">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-care-plan-history-v0323="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-care-plan-archive-v0321="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum plano de cuidado registrado.</p>';
@@ -5000,6 +5035,11 @@ async function hpOpenProgressReviewCarePlanV0321(p){
       form.elements.followUpRelacionadoId.value=item.followUpRelacionadoId||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.objetivoCuidado.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-care-plan-history-v0323]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.carePlanHistoryV0323);
+      if(item) await hpOpenProgressReviewCarePlanHistoryV0323(p,item);
     });
 
     [...listHost.querySelectorAll('[data-care-plan-status-v0322]')].forEach(btn=>btn.onclick=async()=>{
@@ -10599,7 +10639,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.32.2';
+const HP_MVP_VERSION='0.32.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

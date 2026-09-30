@@ -2613,3 +2613,21 @@ Adicionar estados documentais explícitos ao plano de cuidados, com transições
 ### v0.32.3 — Progress Review Care Plan History
 Adicionar histórico consultável de criação, edição, mudanças de status e arquivamento do Care Plan, com autoria e datas, sem inferência clínica automática.
 
+## ✅ v0.32.3 — Progress Review Care Plan History — CONCLUÍDA
+
+**Entregue:**
+- `ProgressReviewCarePlanHistoryItemResponse`;
+- `ProgressReviewCarePlanHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por Care Plan;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.32.4 — Progress Review Care Plan Filters
+Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental do plano de cuidados.
+

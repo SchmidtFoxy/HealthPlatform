@@ -1,4 +1,18 @@
-﻿# v0.32.2 — Progress Review Care Plan Status
+﻿# v0.32.3 — Progress Review Care Plan History
+
+- Adiciona `ProgressReviewCarePlanHistoryItemResponse`.
+- Adiciona `ProgressReviewCarePlanHistoryResponse`.
+- Adiciona `GET .../care-plan/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no workspace profissional.
+- Não interpreta evolução clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.32.4 — Progress Review Care Plan Filters.
+
+# v0.32.2 — Progress Review Care Plan Status
 
 - Adiciona `Status` ao Care Plan persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

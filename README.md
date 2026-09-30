@@ -1823,3 +1823,35 @@ O status é documental. O sistema não inicia, conclui ou cancela cuidados autom
 
 **Próxima etapa:** `v0.32.3 — Progress Review Care Plan History`.
 
+---
+
+## v0.32.3 — Progress Review Care Plan History
+
+Adiciona histórico consultável dos eventos auditados do Care Plan.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../care-plan/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada Care Plan passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, prioridade, risco ou resultado.
+
+**Próxima etapa:** `v0.32.4 — Progress Review Care Plan Filters`.
+

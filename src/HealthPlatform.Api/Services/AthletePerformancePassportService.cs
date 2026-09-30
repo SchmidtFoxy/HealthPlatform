@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.32.2",
+            "v0.32.3",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Progress Review Care Plan Status adiciona estado documental explícito ao plano de cuidados, com transições manuais auditadas entre Planejado, EmAndamento, Concluido e Cancelado, sem execução clínica automática.")
+            "Progress Review Care Plan History torna consultáveis os eventos auditados do plano de cuidados, incluindo criação, edição, status e arquivamento, sem inferência clínica automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

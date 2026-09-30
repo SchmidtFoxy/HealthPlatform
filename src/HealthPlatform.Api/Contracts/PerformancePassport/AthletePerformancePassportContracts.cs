@@ -123,6 +123,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProgressReviewCarePlanHistoryItemResponse(
+    Guid Id,
+    Guid CarePlanId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProgressReviewCarePlanHistoryResponse(
+    Guid CarePlanId,
+    IReadOnlyCollection<ProgressReviewCarePlanHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProgressReviewCarePlanPersistedResponse(
     Guid Id,
     string ObjetivoCuidado,
