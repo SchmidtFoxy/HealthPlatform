@@ -9119,7 +9119,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.20.10';
+const HP_MVP_VERSION='0.21.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -11615,4 +11615,106 @@ renderPatientTab=function(d){
   if(!host||!snapshot||host.querySelector('[data-period-comparison-v02010]'))return;
   snapshot.insertAdjacentHTML('afterend',hpPeriodComparisonV02010(d));
   hpWirePeriodComparisonV02010(host,d);
+};
+
+
+// ===== v0.21.0 — Human Profile Foundation =====
+const HP_HUMAN_PROFILE_V0210='v0.21.0';
+
+function hpAgeV0210(value){
+  if(!value)return null;
+  const birth=new Date(`${value}T12:00:00`);
+  if(Number.isNaN(birth.getTime()))return null;
+  const now=new Date();
+  let age=now.getFullYear()-birth.getFullYear();
+  const m=now.getMonth()-birth.getMonth();
+  if(m<0||(m===0&&now.getDate()<birth.getDate()))age--;
+  return age>=0&&age<130?age:null;
+}
+function hpHumanTextV0210(value,fallback='Não informado'){
+  const x=String(value??'').trim();
+  return x||fallback;
+}
+function hpHumanUniqueV0210(values){
+  return [...new Set(values.map(x=>String(x??'').trim()).filter(Boolean))];
+}
+function hpHumanProfileV0210(d){
+  const p=d?.p||{},portal=d?.portal||{};
+  const anamneses=[...(d?.anamneses||[])].sort((a,b)=>new Date(b.dataUtc)-new Date(a.dataUtc));
+  const anam=anamneses[0]||{};
+  const cycle=portal?.cicloEsportivoAtual||{};
+  const activeWorkout=(d?.treinos||[]).find(x=>x.status==='Ativo')||(d?.treinos||[])[0]||{};
+  const activeNutrition=(d?.planos||[]).find(x=>x.status==='Ativo')||(d?.planos||[])[0]||{};
+  const age=hpAgeV0210(p.dataNascimento);
+  const goals=hpHumanUniqueV0210([cycle.objetivo,anam.objetivoAcompanhamento,activeWorkout.objetivo,activeNutrition.objetivo]);
+  const sports=hpHumanUniqueV0210([cycle.perfilEsportivo,anam.atividadeFisica]);
+  const tags=Array.isArray(p.tags)?p.tags:[];
+  const clinicalContext=hpHumanUniqueV0210([
+    anam.alergias?`Alergias: ${anam.alergias}`:'',
+    anam.medicamentos?`Medicamentos: ${anam.medicamentos}`:'',
+    anam.historicoDoencas?`Histórico: ${anam.historicoDoencas}`:'',
+    anam.observacoes?`Observações: ${anam.observacoes}`:''
+  ]);
+  const dimensions=[
+    !!(p.profissao||p.dataNascimento||p.sexo),
+    goals.length>0,
+    sports.length>0,
+    !!(anam.sonoHorasMedia||anam.sonoQualidade||anam.estresseNivel!=null||anam.aguaLitrosDia),
+    clinicalContext.length>0
+  ];
+  const known=dimensions.filter(Boolean).length;
+  return `<section class="human-profile-v0210" data-human-profile-v0210="${HP_HUMAN_PROFILE_V0210}">
+    <div class="human-profile-head-v0210">
+      <div><span class="eyebrow">AESYN • HUMAN PROFILE FOUNDATION</span><h3>Uma pessoa, vários contextos conectados.</h3><p>O Human Profile reúne o que já sabemos sobre identidade, objetivos, movimento, rotina e contexto clínico sem criar uma fonte paralela de dados.</p></div>
+      <div class="human-profile-completeness-v0210"><strong>${known}/5</strong><span>dimensões com contexto</span></div>
+    </div>
+    <div class="human-profile-grid-v0210">
+      <article>
+        <div class="human-profile-domain-v0210"><span>IDENTIDADE</span><button type="button" data-human-tab-v0210="resumo">Ver contexto</button></div>
+        <strong>${esc(p.nome||'Paciente')}</strong>
+        <p>${age!=null?`${age} anos • `:''}${esc(hpHumanTextV0210(p.profissao,'Profissão não informada'))}</p>
+        <div class="human-profile-chips-v0210">${p.sexo?`<i>${esc(p.sexo)}</i>`:''}<i>${esc(hpPatientStatusLabelV0203(p.statusAcompanhamento))}</i>${tags.slice(0,3).map(x=>`<i>${esc(x)}</i>`).join('')}</div>
+      </article>
+      <article>
+        <div class="human-profile-domain-v0210"><span>OBJETIVOS</span><button type="button" data-human-tab-v0210="anamnese">Abrir origem</button></div>
+        ${goals.length?`<ul>${goals.slice(0,4).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p class="human-profile-empty-v0210">Nenhum objetivo explícito registrado ainda.</p>'}
+        <small>${cycle.nome?`Ciclo atual: ${esc(cycle.nome)}`:'Objetivos podem vir de ciclo, anamnese e planos ativos.'}</small>
+      </article>
+      <article>
+        <div class="human-profile-domain-v0210"><span>ESPORTE & MOVIMENTO</span><button type="button" data-human-tab-v0210="treinos">Abrir treino</button></div>
+        ${sports.length?`<div class="human-profile-sports-v0210">${sports.slice(0,4).map(x=>`<b>${esc(x)}</b>`).join('')}</div>`:'<p class="human-profile-empty-v0210">Modalidade ou atividade ainda não contextualizada.</p>'}
+        <small>${anam.atividadeFisicaDiasSemana!=null?`${anam.atividadeFisicaDiasSemana} dia(s)/semana registrados na anamnese.`:'Frequência semanal não informada.'}</small>
+      </article>
+      <article>
+        <div class="human-profile-domain-v0210"><span>ROTINA & RECUPERAÇÃO</span><button type="button" data-human-tab-v0210="anamnese">Abrir anamnese</button></div>
+        <div class="human-profile-metrics-v0210">
+          <span><b>${anam.sonoHorasMedia!=null?`${num(anam.sonoHorasMedia,1)}h`:'—'}</b>sono médio</span>
+          <span><b>${anam.estresseNivel!=null?`${anam.estresseNivel}/10`:'—'}</b>estresse</span>
+          <span><b>${anam.aguaLitrosDia!=null?`${num(anam.aguaLitrosDia,1)} L`:'—'}</b>água/dia</span>
+        </div>
+        <small>${esc(hpHumanTextV0210(anam.sonoQualidade,'Qualidade do sono não informada'))}</small>
+      </article>
+      <article class="human-profile-clinical-v0210">
+        <div class="human-profile-domain-v0210"><span>CONTEXTO & LIMITAÇÕES REGISTRADAS</span><button type="button" data-human-tab-v0210="anamnese">Revisar fonte</button></div>
+        ${clinicalContext.length?`<ul>${clinicalContext.slice(0,4).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p class="human-profile-empty-v0210">Nenhuma limitação ou contexto clínico adicional registrado nesta síntese.</p>'}
+        <small>O AESYN apenas reúne registros existentes. Ausência de informação não significa ausência de condição ou limitação.</small>
+      </article>
+    </div>
+    <div class="human-profile-safety-v0210"><b>Perfil longitudinal, não diagnóstico</b><span>Esta fundação conecta contexto já registrado. Próximas etapas vão permitir objetivos múltiplos e perfil esportivo estruturado sem substituir avaliação profissional.</span></div>
+  </section>`;
+}
+function hpWireHumanProfileV0210(host){
+  host?.querySelectorAll('[data-human-tab-v0210]').forEach(btn=>btn.onclick=()=>{
+    const target=document.querySelector(`.patient-tab[data-tab="${btn.dataset.humanTabV0210}"]`);
+    if(target)target.click();
+  });
+}
+const __renderPatientTab_v0210=renderPatientTab;
+renderPatientTab=function(d){
+  __renderPatientTab_v0210(d);
+  if(state.patientTab!=='resumo')return;
+  const host=$('#patientTabContent'),overview=host?.querySelector('[data-patient-overview-v0206]');
+  if(!host||!overview||host.querySelector('[data-human-profile-v0210]'))return;
+  overview.insertAdjacentHTML('afterend',hpHumanProfileV0210(d));
+  hpWireHumanProfileV0210(host);
 };

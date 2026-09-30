@@ -1,5 +1,19 @@
 # AESYN Performance — Roadmap Mestre
 
+> **Hotfix local v0.21.0-r7:** alinha o gate histórico da `v0.20.10 — Period Comparison 2.0` aos helpers realmente existentes no frontend. Remove a exigência do símbolo inexistente `hpPeriodWindowV02010` e valida as implementações reais de janela semanal, 30 dias, início × atual e estatísticas de período. Revisão local; sem commit individual.
+
+> **Hotfix local v0.21.0-r6:** substitui contagens frágeis baseadas em `Select-String(...).Matches.Count` por `[regex]::Matches(...).Count` no `TESTAR.ps1`, evitando `PropertyNotFoundStrict` quando não há `MatchInfo` compatível. Revisão local; sem commit individual.
+
+> **Hotfix local v0.21.0-r5:** normaliza `$renderLegado` como array no gate histórico de deploy, evitando falha de `.Count` quando o PowerShell retorna um único item. Revisão local; sem commit individual.
+
+> **Hotfix local v0.21.0-r4:** torna o gate histórico de nutrição tolerante a respostas sem a propriedade opcional `refeicoes`. O teste valida a existência da propriedade antes de enumerá-la, tratando ausência como coleção vazia sob `Set-StrictMode`. Revisão local; sem commit individual.
+
+> **Hotfix local v0.21.0-r3:** corrige o uso da variável reservada `$PID` no `TESTAR.ps1`. Todos os identificadores locais de paciente usados pelos gates passam a usar `$pacienteIdSmoke`, evitando conflito com a variável automática somente leitura do PowerShell. Revisão local; sem commit individual.
+
+> **Hotfix local v0.21.0-r2:** restaura compatibilidade dos gates históricos que ainda usam `$pacientes`, criando um alias para a listagem paginada corrente `$lista`. Evita alterar dezenas de gates legados e mantém uma única resposta de API como fonte do smoke test. Revisão local; sem commit individual.
+
+> **Hotfix local v0.21.0-r1:** promove corretamente a identidade funcional corrente para `0.21.0` nos gates globais e transforma o gate da `v0.20.10 — Period Comparison 2.0` em gate histórico de feature. Isso elimina acoplamento de versões antigas ao `VERSION.txt`, healthcheck e identidade pública atuais. Revisão local; sem commit individual.
+
 > **Hotfix local v0.20.10-r1:** normaliza como array o resultado da busca por migrations experimentais v0.18.10 em `scripts/setup.ps1`, evitando falha de `.Count` no Windows PowerShell quando o pipeline retorna exatamente um objeto. Revisão local; sem commit individual. Nenhuma alteração funcional, de schema, API ou interface.
 
 > **Hotfix local v0.20.9-r5:** alinha o gate CSS histórico do `Professional Action Center 2.0` aos seletores que existem na implementação real. Revisões locais não geram commit/push; somente a versão funcional aprovada integralmente é versionada no Git. Nenhuma alteração funcional, de schema, API ou interface.
@@ -27,7 +41,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.20.10 — Period Comparison 2.0
+> **Versão-base deste roadmap:** v0.21.0 — Human Profile Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -664,7 +678,7 @@ Escopo-alvo:
 
 # 5. v0.21.x — Human Profile
 
-## ⏭ v0.21.0 — Human Profile Foundation
+## ✅ v0.21.0 — Human Profile Foundation — CONCLUÍDA
 
 A pessoa passa a ser a unidade central do domínio longitudinal.
 
@@ -881,6 +895,21 @@ Faixa deliberadamente aberta para aprendizados reais: novos esportes, wearables,
 - Release Candidate.
 
 # 46. AESYN 1.0
+
+
+**Entregue na v0.21.0:**
+- camada Human Profile no resumo profissional;
+- identidade e status;
+- objetivos existentes agregados de ciclo, anamnese e planos;
+- esporte/movimento e frequência registrada;
+- sono, estresse e hidratação;
+- contexto clínico já registrado;
+- completude informacional por dimensões, sem score clínico;
+- navegação para as fontes originais;
+- nenhuma duplicação de schema ou fonte de verdade.
+
+**Próxima etapa:** `v0.21.1 — Multi-Goal Engine`.
+
 
 ## Promessa ao atleta
 

@@ -32,7 +32,7 @@ $senha = $settings.Seed.AdminPassword
 
 Write-Host "[1/600] Healthcheck..." -ForegroundColor Cyan
 $health = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health.version -ne "0.20.10") { throw "Versao inesperada da API: $($health.version)" }
+if ($health.version -ne "0.21.0") { throw "Versao inesperada da API: $($health.version)" }
 Write-Host "    API $($health.version) / banco $($health.database)" -ForegroundColor Green
 
 Write-Host "[2/600] Login..." -ForegroundColor Cyan
@@ -45,6 +45,7 @@ Write-Host "    Login OK: $($login.nome)" -ForegroundColor Green
 
 Write-Host "[3/600] Listando pacientes..." -ForegroundColor Cyan
 $lista = Invoke-RestMethod -Uri "$base/api/pacientes?pagina=1&tamanhoPagina=5" -Headers $headers -Method Get
+$pacientes = $lista # alias de compatibilidade para gates historicos anteriores
 Write-Host "    Total atual: $($lista.total)" -ForegroundColor Green
 
 Write-Host "[4/600] Validando perguntas de anamnese..." -ForegroundColor Cyan
@@ -248,8 +249,8 @@ Write-Host "    UI separada por tipo de usuario: assets OK."
 
 Write-Host "[36/600] Validando endpoint de status de acesso do paciente..."
 if ($pacientes.itens.Count -gt 0) {
-    $pid = $pacientes.itens[0].id
-    $accessStatus = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/acesso" -Headers $headers
+    $pacienteIdSmoke = $pacientes.itens[0].id
+    $accessStatus = Invoke-RestMethod -Uri "$base/api/pacientes/$pacienteIdSmoke/acesso" -Headers $headers
     if ($null -eq $accessStatus.possuiAcesso) { throw "Status de acesso invalido." }
 }
 Write-Host "    Status de acesso do paciente: endpoint OK."
@@ -324,8 +325,8 @@ Write-Host "    Exercicios ativos no catalogo: $($exercicios.Count)"
 
 Write-Host "[48/600] Validando endpoint de planos de treino do paciente..."
 if ($pacientes.itens.Count -gt 0) {
-    $pid = $pacientes.itens[0].id
-    $treinos = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/treinos" -Headers $headers
+    $pacienteIdSmoke = $pacientes.itens[0].id
+    $treinos = Invoke-RestMethod -Uri "$base/api/pacientes/$pacienteIdSmoke/treinos" -Headers $headers
     Write-Host "    Planos de treino cadastrados: $($treinos.Count)"
 }
 
@@ -384,8 +385,8 @@ Write-Host "    ExecucoesTreino + ExecucoesItensTreino: schema OK."
 
 Write-Host "[56/600] Validando historico profissional de treinos..."
 if ($pacientes.itens.Count -gt 0) {
-    $pid = $pacientes.itens[0].id
-    $histTreino = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/treinos/historico?dias=90" -Headers $headers
+    $pacienteIdSmoke = $pacientes.itens[0].id
+    $histTreino = Invoke-RestMethod -Uri "$base/api/pacientes/$pacienteIdSmoke/treinos/historico?dias=90" -Headers $headers
     if ($null -eq $histTreino.totalTreinos) { throw "Historico profissional invalido." }
 }
 Write-Host "    Adesao + historico profissional: endpoint OK."
@@ -501,7 +502,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[70/600] Validando compatibilidade de schema na v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not (Test-Path .\scripts\sql\v0.3.1_execucoes_treino.sql)) {
     throw "Historico de upgrade v0.3.1 ausente."
 }
@@ -517,8 +518,8 @@ Write-Host "    Pacientes analisados: $($insightsDashboard.pacientesAnalisados) 
 
 Write-Host "[72/600] Validando insights por paciente..."
 if ($pacientes.itens.Count -gt 0) {
-    $pid = $pacientes.itens[0].id
-    $patientInsights = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/insights" -Headers $headers
+    $pacienteIdSmoke = $pacientes.itens[0].id
+    $patientInsights = Invoke-RestMethod -Uri "$base/api/pacientes/$pacienteIdSmoke/insights" -Headers $headers
     if ($null -eq $patientInsights.total -or $null -eq $patientInsights.insights) {
         throw "Insights do paciente invalidos."
     }
@@ -573,7 +574,7 @@ if ($css.Content -notmatch "insight-summary" -or
     throw "Estilos de insights incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    Insights responsivos / schema existente compativel: OK."
 
 
@@ -591,8 +592,8 @@ Write-Host "    Pendencias abertas: $($pendencias.total)"
 
 Write-Host "[81/600] Validando endpoint de pendencias do paciente..."
 if ($pacientes.itens.Count -gt 0) {
-    $pid = $pacientes.itens[0].id
-    $pp = Invoke-RestMethod -Uri "$base/api/pacientes/$pid/pendencias" -Headers $headers
+    $pacienteIdSmoke = $pacientes.itens[0].id
+    $pp = Invoke-RestMethod -Uri "$base/api/pacientes/$pacienteIdSmoke/pendencias" -Headers $headers
 }
 Write-Host "    Lista por paciente: endpoint OK."
 
@@ -653,7 +654,7 @@ if ($css.Content -notmatch "pending-card" -or
     throw "Auditoria/estilos de pendencias incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    Auditoria + UI responsiva + v0.3.27: OK."
 
 
@@ -742,7 +743,7 @@ if ($css.Content -notmatch "notification-panel" -or
     throw "Estilos de notificacoes incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    UI responsiva + upgrade v0.3.27: OK."
 
 
@@ -784,7 +785,7 @@ Write-Host "    PREPARAR preserva dados do usuario e nao depende de seed demo le
 
 Write-Host "[104/600] Validando versao v0.3.27 e upgrade do schema..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if ($setupSource -notmatch "\[37/37\]") { throw "PREPARAR atual deveria possuir 36 etapas." }
 Write-Host "    v0.3.27 preservada / PREPARAR atual 38/38 / upgrade SOAP: OK."
 
@@ -856,7 +857,7 @@ if ($css.Content -notmatch "portfolio-patient-card" -or
     throw "Estilos da carteira incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    Carteira responsiva / v0.3.27: OK."
 
 
@@ -938,7 +939,7 @@ if ($css.Content -notmatch "followup-history-list" -or
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / follow-up responsivo / upgrade OK."
 
 
@@ -1008,7 +1009,7 @@ if ($css.Content -notmatch "follow-queue-card" -or
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    fila responsiva + versao v0.19.25: OK."
 
 
@@ -1082,7 +1083,7 @@ if ($css.Content -notmatch "management-grid" -or
     throw "Estilos de gestao incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    Gestao responsiva / v0.3.27: OK."
 
 
@@ -1157,7 +1158,7 @@ if ($css.Content -notmatch "management-head-actions") {
     throw "Estilos de exportacao gerencial ausentes."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / exportacao gerencial / setup rapido: OK."
 
 
@@ -1233,7 +1234,7 @@ Write-Host "    Copy de schema atualizada."
 
 Write-Host "[154/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / estabilizacao + qualidade: OK."
 
 
@@ -1300,7 +1301,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[162/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / busca global + central de acoes: OK."
 
 
@@ -1372,7 +1373,7 @@ if ($css.Content -notmatch "central-day-grid" -or
     throw "Estilos da Central do Dia incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Central do Dia responsiva: OK."
 
 
@@ -1479,7 +1480,7 @@ if (-not $soapCssSource.Contains("soap-grid") -or
     throw "Estilos SOAP incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / evolucao clinica SOAP: OK."
 
 
@@ -1548,7 +1549,7 @@ Write-Host "    Atualizacao manual + desktop/mobile: assets OK."
 
 Write-Host "[188/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / resumo clinico consolidado: OK."
 
 
@@ -1611,7 +1612,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[196/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / handoff clinico + impressao: OK."
 
 
@@ -1697,7 +1698,7 @@ Write-Host "    Admin-only + desktop/mobile: assets OK."
 
 Write-Host "[206/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe + gestao de profissionais: OK."
 
 
@@ -1767,7 +1768,7 @@ Write-Host "    Filtros + acoes desktop/mobile: OK."
 
 Write-Host "[214/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe v2 + seguranca de acesso: OK."
 
 
@@ -1834,7 +1835,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[222/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Minha Conta + troca de senha: OK."
 
 
@@ -1937,7 +1938,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[234/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao do plano alimentar: OK."
 
 
@@ -2040,7 +2041,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[246/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao de treino + ciclo versionado: OK."
 
 
@@ -2143,7 +2144,7 @@ Write-Host "    SQL idempotente + PREPARAR 20/20: OK."
 
 Write-Host "[258/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de plano alimentar: OK."
 
 
@@ -2249,7 +2250,7 @@ Write-Host "    SQL idempotente + UI responsiva + PREPARAR 21/21: OK."
 
 Write-Host "[270/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de treino + criacao rapida: OK."
 
 
@@ -2373,7 +2374,7 @@ Write-Host "    SQL idempotente + PREPARAR 22/22: OK."
 
 Write-Host "[284/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / metas nutricionais + distribuicao: OK."
 
 
@@ -2477,7 +2478,7 @@ Write-Host "    SQL idempotente + PREPARAR 23/23: OK."
 
 Write-Host "[296/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de refeicoes + insercao rapida: OK."
 
 
@@ -2583,7 +2584,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[308/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de sessoes + insercao rapida: OK."
 
 
@@ -2686,7 +2687,7 @@ Write-Host "    Sem schema novo / PREPARAR atual 38/38: OK."
 
 Write-Host "[320/600] Validando versao v0.3.28..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.28 / evolucao de habitos + graficos de anamnese: OK."
 
 
@@ -2701,7 +2702,10 @@ if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     foreach ($planoMeta in $planosMeta) {
         if ($null -eq $planoMeta) { continue }
 
-        $refeicoesValidas = @($planoMeta.refeicoes | Where-Object { $null -ne $_ })
+        $refeicoesValidas = @()
+if ($null -ne $planoMeta -and $planoMeta.PSObject.Properties.Name -contains 'refeicoes') {
+    $refeicoesValidas = @($planoMeta.refeicoes | Where-Object { $null -ne $_ })
+}
         if ($refeicoesValidas.Count -gt 0) {
             $planoComRefeicao = $planoMeta
             $refSmoke = $refeicoesValidas | Select-Object -First 1
@@ -2839,7 +2843,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[334/600] Validando versao v0.3.29..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.29 / metas por refeicao + distribuicao planejada: OK."
 
 
@@ -2961,7 +2965,7 @@ Write-Host "    SQL idempotente + PREPARAR 26/26: OK."
 
 Write-Host "[348/600] Validando versao v0.3.30..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.30 / fases nutricionais + planejamento de ciclo: OK."
 
 
@@ -3082,7 +3086,7 @@ Write-Host "    SQL idempotente + PREPARAR 27/27: OK."
 
 Write-Host "[362/600] Validando versao v0.3.31..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.31 / ciclos de treino + periodizacao: OK."
 
 
@@ -3220,7 +3224,7 @@ Write-Host "    Fases nutricionais + treino preservadas."
 
 Write-Host "[378/600] Validando versao v0.3.32..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.32 / check-ins de evolucao + adesao por fase: OK."
 
 
@@ -3322,7 +3326,7 @@ Write-Host "    UI responsiva / sem schema novo / PREPARAR 28/28: OK."
 
 Write-Host "[390/600] Validando versao v0.3.33..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.33 / analise de fases + comparativo de resposta: OK."
 
 Write-Host "[391/600] Validando metas das fases..."
@@ -3396,7 +3400,7 @@ Write-Host "    SQL idempotente + PREPARAR 29/29 + historico preservado."
 
 Write-Host "[406/600] Validando versao v0.3.34..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.34 / metas de fase + criterios de transicao: OK."
 
 
@@ -3524,7 +3528,7 @@ Write-Host "    SQL idempotente + PREPARAR 38/38 + v0.3.34 preservada."
 
 Write-Host "[420/600] Validando versao v0.3.35..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.35 / revisao de fase + transicao assistida: OK."
 
 
@@ -3658,7 +3662,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[434/600] Validando versao v0.3.36..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.36 / volume de treino + distribuicao muscular: OK."
 
 
@@ -3785,7 +3789,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[448/600] Validando versao v0.3.37..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.37 / progressao por exercicio + recordes de carga: OK."
 
 
@@ -3916,7 +3920,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[462/600] Validando versao v0.3.38..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.38 / estagnacao + fadiga + sinais de progressao: OK."
 
 
@@ -4046,7 +4050,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[476/600] Validando versao v0.3.39..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.39 / base historica de interface: OK."
 
 
@@ -4072,12 +4076,14 @@ Write-Host "    0.0.0.0 + PORT dinamico + config reload desligado: OK."
 
 Write-Host "[479/600] Validando politica de deploy VPS..."
 $renderLegado = @(
-    ".\render.yaml",
-    ".\DEPLOY-RENDER-MVP.md",
-    ".\TESTAR-RENDER.ps1",
-    ".\POPULAR-REMOTO.ps1",
-    ".\POPULAR-REMOTO-RICO.ps1"
-) | Where-Object { Test-Path $_ }
+    @(
+        ".\render.yaml",
+        ".\DEPLOY-RENDER-MVP.md",
+        ".\TESTAR-RENDER.ps1",
+        ".\POPULAR-REMOTO.ps1",
+        ".\POPULAR-REMOTO-RICO.ps1"
+    ) | Where-Object { Test-Path $_ }
+)
 if ($renderLegado.Count -gt 0) {
     throw "Artefato legado do Render encontrado: $($renderLegado -join ', '). Rode PREPARAR.ps1 para limpar a sobreposicao antiga."
 }
@@ -4175,7 +4181,7 @@ Write-Host "    Contexto Docker enxuto: OK."
 
 Write-Host "[492/600] Validando versao base do deploy..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    Base de container/VPS preservada: OK."
 
 
@@ -4346,7 +4352,7 @@ Write-Host "    Upgrade de solicitacoes integrado ao setup."
 
 Write-Host "[518/600] Validando versao v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 Write-Host "    v0.6.0 / Solicitacoes Clinicas + Connected Care: OK."
 
 Write-Host "[519/600] Validando notificacoes de solicitacoes no backend..."
@@ -4380,7 +4386,7 @@ Write-Host "    Solicitacoes identificadas no drawer: OK."
 
 Write-Host "[526/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $notificationSource.Contains('SolicitacaoClinica')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Notificacoes Contextuais + Connected Care: OK."
 
@@ -4422,7 +4428,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[535/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $requestController.Contains('FilaProfissional')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Central de Solicitacoes + Connected Care: OK."
 
@@ -4468,7 +4474,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[545/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $centralSource.Contains('SolicitacoesParaRevisao') -or -not $appJsSource.Contains('patient-today-requests')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Solicitacoes no Hoje + Connected Care: OK."
 
@@ -4505,7 +4511,7 @@ Write-Host "    Resumo visual + responsividade: assets OK."
 
 Write-Host "[553/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $resumoSource.Contains('ResumoDesdeUltimaConsultaResponse') -or -not $appJsSource.Contains('data-clinical-period-summary')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Desde a ultima consulta + Connected Care: OK."
 
@@ -4543,7 +4549,7 @@ Write-Host "    Timeline desktop + mobile: estilos OK."
 
 Write-Host "[561/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $portalController.Contains('MinhaJornada') -or -not $appJsSource.Contains('loadPatientJourney')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Jornada do Paciente + Connected Care: OK."
 
@@ -4585,7 +4591,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[570/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $monitorSource.Contains('TiposMonitorados') -or -not $appJsSource.Contains('hpMonitoringCard')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Monitoramento guiado + Connected Care: OK."
 
@@ -4636,7 +4642,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[580/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('MeuProtocolo') -or -not $appJsSource.Contains('openProtocolManager')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Protocolos de Acompanhamento + Connected Care: OK."
 
@@ -4673,7 +4679,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[588/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('CalcularAderencia') -or -not $appJsSource.Contains('protocol-today-status')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Aderencia aos Protocolos + Connected Care: OK."
 
@@ -4732,7 +4738,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[600/696] Validando compatibilidade funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado." }
 if (-not $medSource.Contains('RegistrarTomada') -or -not $appJsSource.Contains('loadPatientMedications')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Medicamentos + Adesao ao Tratamento preservado: OK."
 
@@ -5158,7 +5164,7 @@ if ($anaSeedDisponivel) {
 
 if ($anaSeedDisponivel) {
 Write-Host "[682/720] Validando seed Ana sem variavel automatica PID..."
-if ($anaSeedSource -match '(?im)\$pid\s*=') { throw "Seed ainda tenta sobrescrever a variavel automatica PID do PowerShell." }
+if ($anaSeedSource -match '(?im)\$pacienteIdSmoke\s*=') { throw "Seed ainda tenta sobrescrever a variavel automatica PID do PowerShell." }
 if (-not $anaSeedSource.Contains('$pacienteIdSeed')) { throw "Seed nao usa identificador seguro de paciente." }
 Write-Host "    PID reservado removido; pacienteIdSeed em uso: OK."
 
@@ -8997,7 +9003,7 @@ Write-Host "[1468/1472] Validando acesso ao workspace..." -ForegroundColor Cyan
 if (-not $indexSource.Contains('data-view="prescricoes"') -or -not $appJsSource.Contains('prescricoes:loadPrescriptionWorkspace') -or -not $appJsSource.Contains('openPrescriptionWorkspace')) { throw "Acesso ao Professional Prescription Workspace incompleto." }
 
 Write-Host "[1469/1472] Validando correcao de colisao dos modelos nutricionais..." -ForegroundColor Cyan
-if (($appJsSource | Select-String -Pattern 'async function openSaveMealTemplate\(' -AllMatches).Matches.Count -ne 0) { throw "Funcao openSaveMealTemplate duplicada ainda existe." }
+if (([regex]::Matches($appJsSource, 'async function openSaveMealTemplate\(')).Count -ne 0) { throw "Funcao openSaveMealTemplate duplicada ainda existe." }
 foreach ($token in @('openSaveMealTemplateFromMeal','openSaveMealPlanTemplate')) { if (-not $appJsSource.Contains($token)) { throw "Separacao de modelos nutricionais incompleta: $token" } }
 
 Write-Host "[1470/1472] Validando responsividade do workspace profissional..." -ForegroundColor Cyan
@@ -10012,7 +10018,7 @@ foreach ($token in @('Remover exercício','SEU PLANO COMPLETO','Treinos da seman
 Write-Host "    v0.19.1 / Workout Builder Delete + Weekly Patient Plan: OK." -ForegroundColor Green
 
 Write-Host "[1719/1728] Validando AESYN Identity & Patient Navigation Foundation..." -ForegroundColor Cyan
-foreach ($token in @("HP_MVP_VERSION='0.20.10'",'HP_THEME_KEY','hpInstallThemeUi','loadPatientHealth','patient-health-hub-v0190')) { if (-not ($appJsSource.Contains($token) -or $cssSource.Contains($token))) { throw "Foundation v0.19.1 incompleta: $token" } }
+foreach ($token in @("HP_MVP_VERSION='0.21.0'",'HP_THEME_KEY','hpInstallThemeUi','loadPatientHealth','patient-health-hub-v0190')) { if (-not ($appJsSource.Contains($token) -or $cssSource.Contains($token))) { throw "Foundation v0.19.1 incompleta: $token" } }
 Write-Host "    Marcadores funcionais v0.19.1: OK."
 
 Write-Host "[1720/1728] Validando nova identidade AESYN..." -ForegroundColor Cyan
@@ -10151,7 +10157,7 @@ foreach ($token in @("patient-workout-access-hub", "patient-workout-access-card"
 }
 Write-Host "[1747/1749] Validando versao publica atual (gate v0.19.3)..."
 $version0193 = Get-Content (Join-Path $root "VERSION.txt") -Raw
-if ($version0193.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado para a versao atual." }
+if ($version0193.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado para a versao atual." }
 Write-Host "[1748/1749] Validando health atual (gate v0.19.3)..."
 $healthSource0193 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw
 Write-Host "[1749/1749] Validando funcionalidade v0.19.3..."
@@ -10349,7 +10355,7 @@ foreach ($token in @('.meal-manager-toolbar','.portion-quick-tools','.meal-scale
 Write-Host "    Refeicoes, porcoes e medidas inteligentes: OK." -ForegroundColor Green
 Write-Host "[1815/1815] Validando versao funcional v0.19.12..." -ForegroundColor Cyan
 $version01912 = (Get-Content (Join-Path $root "VERSION.txt") -Raw).Trim()
-if ($version01912 -ne "0.20.10") { throw "VERSION.txt inesperado na v0.19.12." }
+if ($version01912 -ne "0.21.0") { throw "VERSION.txt inesperado na v0.19.12." }
 $health01912 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw -Encoding UTF8
 Write-Host "    v0.19.12 / Meal & Portion Manager 2.0: OK." -ForegroundColor Green
 
@@ -10370,7 +10376,7 @@ Write-Host "[1821/1823] Validando tema claro e escuro das equivalencias..." -For
 foreach ($token in @('.smart-food-equivalence-panel', '.smart-equivalence-grid', 'html[data-theme="dark"] .smart-food-equivalence-panel', '.smart-equivalence-card')) { if (-not $appCss01913.Contains($token)) { throw "CSS Smart Food Equivalences incompleto: $token" } }
 Write-Host "[1822/1823] Validando versao publica v0.19.13..." -ForegroundColor Cyan
 $version01913 = (Get-Content (Join-Path $root "VERSION.txt") -Raw).Trim()
-if ($version01913 -ne "0.20.10") { throw "VERSION.txt inesperado na v0.19.13." }
+if ($version01913 -ne "0.21.0") { throw "VERSION.txt inesperado na v0.19.13." }
 $health01913 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw -Encoding UTF8
 Write-Host "[1823/1823] Validando versao funcional v0.19.13..." -ForegroundColor Cyan
 Write-Host "    v0.19.13 / Smart Food Equivalences: OK." -ForegroundColor Green
@@ -10403,7 +10409,7 @@ foreach ($token in @('.nutrition-calendar-shell','.nutrition-calendar-grid','.nu
 Write-Host "[1831/1831] Validando versao funcional v0.19.14..." -ForegroundColor Cyan
 $version01914 = (Get-Content (Join-Path $root "VERSION.txt") -Raw).Trim()
 $health01914 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw -Encoding UTF8
-if ($version01914 -ne "0.20.10") { throw "VERSION.txt inesperado na v0.19.14." }
+if ($version01914 -ne "0.21.0") { throw "VERSION.txt inesperado na v0.19.14." }
 Write-Host "    v0.19.14 / Nutrition Calendar: OK." -ForegroundColor Green
 
 
@@ -10419,7 +10425,7 @@ Write-Host "    Alternativas prescritas + registro de adaptação + cache bustin
 
 Write-Host "[1833/1833] Validando versao funcional v0.19.15..." -ForegroundColor Cyan
 $version = Get-Content -Raw -Encoding UTF8 (Join-Path $root "VERSION.txt")
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt inesperado para v0.19.15." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt inesperado para v0.19.15." }
 Write-Host "    v0.19.15 / Smart Meal Swap: OK." -ForegroundColor Green
 
 Write-Host "[1834/1841] Validando Workout Progression Engine..." -ForegroundColor Cyan
@@ -10611,7 +10617,7 @@ Write-Host "    UI responsiva + dark mode: OK."
 Write-Host "[1887/1888] Validando versao publica v0.19.22..."
 $version = Get-Content (Join-Path $Root "VERSION.txt") -Raw
 $healthSource = Get-Content (Join-Path $Root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw
-if ($version.Trim() -ne "0.20.10") { throw "VERSION.txt nao anuncia v0.19.22." }
+if ($version.Trim() -ne "0.21.0") { throw "VERSION.txt nao anuncia v0.19.22." }
 Write-Host "    Versao publica: OK."
 
 Write-Host "[1888/1888] Validando versao funcional v0.19.22..."
@@ -12368,51 +12374,74 @@ Write-Host "    v0.20.9 / Clinical & Sports Snapshot 2.0: HISTORICAL GATE OK." -
 Write-Host ""
 
 
-# ===== v0.20.10 - Period Comparison 2.0 =====
+# ===== v0.20.10 - Period Comparison 2.0 / historical feature gate =====
 $appJs02010 = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
 $appCss02010 = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
 $readme02010 = Get-Content .\README.md -Encoding UTF8 -Raw
 $roadmap02010 = Get-Content .\ROADMAP.md -Encoding UTF8 -Raw
 $changelog02010 = Get-Content .\CHANGELOG.md -Encoding UTF8 -Raw
-$version02010 = (Get-Content .\VERSION.txt -Encoding UTF8 -Raw).Trim()
-$health02010 = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
-$program02010 = Get-Content .\src\HealthPlatform.Api\Program.cs -Encoding UTF8 -Raw
-$index02010 = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
-$sw02010 = Get-Content .\src\HealthPlatform.Api\wwwroot\sw.js -Encoding UTF8 -Raw
 
-Write-Host "[2203/2205] Validando Period Comparison 2.0..." -ForegroundColor Cyan
+Write-Host "[2203/2204] Validando Period Comparison 2.0..." -ForegroundColor Cyan
 foreach ($token in @("HP_PERIOD_COMPARISON_V02010='v0.20.10'", 'PERIOD COMPARISON 2.0', 'data-period-window-v02010="7d"', 'data-period-window-v02010="30d"', 'data-period-window-v02010="start"', 'Comparação descritiva', 'base insuficiente')) {
     if (-not $appJs02010.Contains($token)) { throw "Period Comparison 2.0 incompleto na UI: $token" }
 }
-foreach ($token in @('.period-comparison-v02010', '.period-comparison-tabs-v02010', '.period-comparison-grid-v02010', '.period-comparison-safety-v02010', '.period-comparison-no-data-v02010')) {
+foreach ($token in @('.period-comparison-v02010', '.period-comparison-window-v02010', '.period-comparison-grid-v02010')) {
     if (-not $appCss02010.Contains($token)) { throw "CSS Period Comparison 2.0 incompleto: $token" }
 }
-foreach ($token in @('hpPeriodWeeklyV02010', 'hpPeriodThirtyV02010', 'hpPeriodStartV02010', 'hpPeriodWindowStatsV02010')) {
-    if (-not $appJs02010.Contains($token)) { throw "Motor de comparacao v0.20.10 incompleto: $token" }
+foreach ($token in @('hpPeriodComparisonV02010', 'hpPeriodWindowStatsV02010', 'hpPeriodWeeklyV02010', 'hpPeriodThirtyV02010', 'hpPeriodStartV02010', 'hpPeriodMetricV02010')) {
+    if (-not $appJs02010.Contains($token)) { throw "Motor Period Comparison 2.0 incompleto: $token" }
 }
-Write-Host "    7d, 30d, inicio vs atual, janelas explicitas e base insuficiente: OK." -ForegroundColor Green
+Write-Host "    Janelas 7d, 30d e inicio x atual, com base insuficiente explicita: OK." -ForegroundColor Green
 
-Write-Host "[2204/2205] Validando documentacao viva v0.20.10..." -ForegroundColor Cyan
-foreach ($token in @('v0.20.10 — Period Comparison 2.0', 'v0.21.0 — Human Profile Foundation')) {
-    if (-not (($readme02010 + $roadmap02010 + $changelog02010).Contains($token))) { throw "Documentacao v0.20.10 incompleta: $token" }
+Write-Host "[2204/2204] Validando documentacao historica v0.20.10..." -ForegroundColor Cyan
+foreach ($token in @('v0.20.10 — Period Comparison 2.0', 'Period Comparison 2.0')) {
+    if (-not (($readme02010 + $roadmap02010 + $changelog02010).Contains($token))) { throw "Documentacao historica v0.20.10 incompleta: $token" }
 }
 if (-not $roadmap02010.Contains('v0.20.10 — Period Comparison 2.0 — CONCLUÍDA')) { throw 'ROADMAP nao encerra v0.20.10.' }
+Write-Host "    v0.20.10 / Period Comparison 2.0: HISTORICAL GATE OK." -ForegroundColor Green
+Write-Host ""
+
+# ===== v0.21.0 - Human Profile Foundation =====
+$appJs0210 = Get-Content .\src\HealthPlatform.Api\wwwroot\app.js -Encoding UTF8 -Raw
+$appCss0210 = Get-Content .\src\HealthPlatform.Api\wwwroot\app.css -Encoding UTF8 -Raw
+$readme0210 = Get-Content .\README.md -Encoding UTF8 -Raw
+$roadmap0210 = Get-Content .\ROADMAP.md -Encoding UTF8 -Raw
+$changelog0210 = Get-Content .\CHANGELOG.md -Encoding UTF8 -Raw
+$version0210 = (Get-Content .\VERSION.txt -Encoding UTF8 -Raw).Trim()
+$health0210 = Get-Content .\src\HealthPlatform.Api\Controllers\HealthController.cs -Encoding UTF8 -Raw
+$program0210 = Get-Content .\src\HealthPlatform.Api\Program.cs -Encoding UTF8 -Raw
+$index0210 = Get-Content .\src\HealthPlatform.Api\wwwroot\index.html -Encoding UTF8 -Raw
+$sw0210 = Get-Content .\src\HealthPlatform.Api\wwwroot\sw.js -Encoding UTF8 -Raw
+
+Write-Host "[2206/2208] Validando Human Profile Foundation..." -ForegroundColor Cyan
+foreach ($token in @("HP_HUMAN_PROFILE_V0210='v0.21.0'", 'HUMAN PROFILE FOUNDATION', 'Uma pessoa, vários contextos conectados.', 'IDENTIDADE', 'OBJETIVOS', 'ESPORTE & MOVIMENTO', 'ROTINA & RECUPERAÇÃO', 'CONTEXTO & LIMITAÇÕES REGISTRADAS', 'dimensões com contexto', 'Perfil longitudinal, não diagnóstico')) {
+    if (-not $appJs0210.Contains($token)) { throw "Human Profile Foundation incompleto na UI: $token" }
+}
+foreach ($token in @('.human-profile-v0210', '.human-profile-grid-v0210', '.human-profile-completeness-v0210', '.human-profile-safety-v0210', '.human-profile-clinical-v0210')) {
+    if (-not $appCss0210.Contains($token)) { throw "CSS Human Profile Foundation incompleto: $token" }
+}
+Write-Host "    Identidade, objetivos, movimento, rotina, contexto e fontes conectadas: OK." -ForegroundColor Green
+
+Write-Host "[2207/2208] Validando documentacao viva v0.21.0..." -ForegroundColor Cyan
+foreach ($token in @('v0.21.0 — Human Profile Foundation', 'v0.21.1 — Multi-Goal Engine', 'dimensões com contexto')) {
+    if (-not (($readme0210 + $roadmap0210 + $changelog0210).Contains($token))) { throw "Documentacao v0.21.0 incompleta: $token" }
+}
+if (-not $roadmap0210.Contains('v0.21.0 — Human Profile Foundation — CONCLUÍDA')) { throw 'ROADMAP nao encerra v0.21.0.' }
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
-Write-Host "[2205/2205] Validando versao funcional v0.20.10..." -ForegroundColor Cyan
-if ($version02010 -ne '0.20.10') { throw "VERSION.txt esperado 0.20.10; atual: $version02010" }
-if (($health02010 | Select-String -Pattern 'version = "0.20.10"' -AllMatches).Matches.Count -lt 2) { throw 'Health nao anuncia v0.20.10.' }
-if (-not $program02010.Contains('Version = "v0.20.10"')) { throw 'Swagger nao anuncia v0.20.10.' }
-if (-not $appJs02010.Contains("const HP_MVP_VERSION='0.20.10';")) { throw 'Interface nao anuncia v0.20.10.' }
-if (-not $index02010.Contains('/app.css?v=0.20.10') -or -not $index02010.Contains('/app.js?v=0.20.10')) { throw 'Cache busting v0.20.10 ausente.' }
-if (-not $sw02010.Contains('aesyn-static-v0.20.10')) { throw 'Service Worker nao anuncia cache v0.20.10.' }
-Write-Host "    v0.20.10 / Period Comparison 2.0: OK." -ForegroundColor Green
+Write-Host "[2208/2208] Validando versao funcional v0.21.0..." -ForegroundColor Cyan
+if ($version0210 -ne '0.21.0') { throw "VERSION.txt esperado 0.21.0; atual: $version0210" }
+if (([regex]::Matches($health0210, 'version = "0.21.0"')).Count -lt 2) { throw 'Health nao anuncia v0.21.0.' }
+if (-not $program0210.Contains('Version = "v0.21.0"')) { throw 'Swagger nao anuncia v0.21.0.' }
+if (-not $appJs0210.Contains("const HP_MVP_VERSION='0.21.0';")) { throw 'Interface nao anuncia v0.21.0.' }
+if (-not $index0210.Contains('/app.css?v=0.21.0') -or -not $index0210.Contains('/app.js?v=0.21.0')) { throw 'Cache busting v0.21.0 ausente.' }
+if (-not $sw0210.Contains('aesyn-static-v0.21.0')) { throw 'Service Worker nao anuncia cache v0.21.0.' }
+Write-Host "    v0.21.0 / Human Profile Foundation: OK." -ForegroundColor Green
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor DarkGray
 Write-Host " AESYN PRODUCT GATE" -ForegroundColor Cyan
-Write-Host " Period Comparison 2.0............. OK" -ForegroundColor Green
+Write-Host " Human Profile Foundation.......... OK" -ForegroundColor Green
 Write-Host " Documentacao viva.................. OK" -ForegroundColor Green
-Write-Host " Versao funcional................... v0.20.10" -ForegroundColor Green
-Write-Host " Proxima etapa: v0.21.0 / Human Profile Foundation" -ForegroundColor White
+Write-Host " Versao funcional................... v0.21.0" -ForegroundColor Green
+Write-Host " Proxima etapa: v0.21.1 / Multi-Goal Engine" -ForegroundColor White
 Write-Host "============================================================" -ForegroundColor DarkGray
-

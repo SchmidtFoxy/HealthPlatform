@@ -1,3 +1,93 @@
+# v0.21.0-r7 — Period Comparison Historical Gate Alignment (local)
+
+- Corrige o gate histórico da `v0.20.10 — Period Comparison 2.0`.
+- Remove a exigência do helper inexistente `hpPeriodWindowV02010`.
+- Passa a validar os helpers reais:
+  - `hpPeriodWindowStatsV02010`
+  - `hpPeriodWeeklyV02010`
+  - `hpPeriodThirtyV02010`
+  - `hpPeriodStartV02010`
+  - `hpPeriodComparisonV02010`
+  - `hpPeriodMetricV02010`
+- O gate passa a refletir a implementação real e o comportamento entregue.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.21.0`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0-r6 — Regex Match Count Gate Fix (local)
+
+- Corrige falha do `TESTAR.ps1`: `.Matches` ausente em resultado de `Select-String` sob `Set-StrictMode`.
+- Contagens textuais passam a usar `[regex]::Matches(...).Count`, que sempre retorna uma coleção de matches.
+- A correção foi aplicada a todas as ocorrências equivalentes encontradas no script, não apenas ao primeiro gate.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.21.0`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0-r5 — Render Legacy Array Normalization Fix (local)
+
+- Corrige falha do `TESTAR.ps1` no gate de política de deploy VPS.
+- `$renderLegado` passa a ser materializado explicitamente como array.
+- Evita `PropertyNotFoundStrict` ao consultar `.Count` quando houver exatamente um artefato legado detectado.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.21.0`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0-r4 — Optional Meal Collection Gate Fix (local)
+
+- Corrige falha do `TESTAR.ps1` quando `$planoMeta` não possui a propriedade opcional `refeicoes`.
+- O gate verifica `PSObject.Properties.Name` antes do acesso.
+- Ausência de `refeicoes` passa a ser tratada como coleção vazia, compatível com `Set-StrictMode`.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.21.0`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0-r3 — Reserved PID Variable Fix (local)
+
+- Corrige falha do `TESTAR.ps1`: `Não é possível substituir a variável PID porque ela é somente leitura ou constante`.
+- PowerShell trata `$pid` e `$PID` como a mesma variável automática reservada.
+- Todos os identificadores temporários de paciente no smoke test passam a usar `$pacienteIdSmoke`.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.21.0`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0-r2 — Patient List Compatibility Alias Fix (local)
+
+- Corrige falha do `TESTAR.ps1`: `$pacientes` não definida em gates históricos.
+- A listagem inicial continua sendo carregada em `$lista`.
+- Adiciona `$pacientes = $lista` como alias explícito de compatibilidade para os gates antigos.
+- Evita nova chamada HTTP e evita reescrever vários gates históricos.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Mantém `VERSION.txt` em `0.21.0`.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0-r1 — Version Gate Promotion Fix (local)
+
+- Corrige o healthcheck inicial do `TESTAR.ps1`, que ainda esperava `0.20.10`.
+- Sincroniza gates globais legados de identidade/`VERSION.txt` com a versão funcional corrente `0.21.0`.
+- Converte `v0.20.10 — Period Comparison 2.0` em gate histórico imutável de feature.
+- O gate histórico de `0.20.10` não valida mais VERSION.txt, Swagger, healthcheck, PWA ou cache corrente.
+- Mantém os marcadores próprios da feature `Period Comparison 2.0` em `v0.20.10`.
+- Revisão local: não deve gerar commit/push individual.
+- O commit continua sendo somente `v0.21.0` quando todos os gates passarem.
+- Nenhuma alteração funcional, de schema, API ou frontend.
+
+# v0.21.0 — Human Profile Foundation
+
+- Inaugura o Human Profile como camada longitudinal da pessoa no resumo profissional.
+- Conecta identidade, objetivos existentes, esporte/movimento, rotina/recuperação e contexto clínico registrado.
+- Reaproveita exclusivamente dados já carregados no prontuário, sem migration, tabela ou endpoint paralelo.
+- Mostra completude informacional em cinco dimensões; o indicador não representa saúde, risco ou avaliação clínica.
+- Permite navegar do Human Profile para anamnese, treino e demais fontes originais.
+- Explicita ausência de informação sem inferir ausência de condição ou limitação.
+- Atualiza README, ROADMAP, VERSION, healthcheck, Swagger, PWA/cache e gates para v0.21.0.
+- Próxima etapa: v0.21.1 — Multi-Goal Engine.
+
 # v0.20.10-r1 — Setup Array Normalization Fix (local)
 
 - Corrige falha do `PREPARAR.ps1`/`scripts/setup.ps1` no Windows PowerShell 5.1:

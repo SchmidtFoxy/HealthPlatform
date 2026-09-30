@@ -9,6 +9,15 @@ O AESYN está evoluindo de um sistema que registra dados de treino, nutrição e
 O objetivo não é substituir médicos, nutricionistas, treinadores ou outros profissionais. O AESYN deve **aumentar autonomia com contexto**, reduzir atrito, organizar informação e ajudar o profissional a perceber o que merece atenção.
 
 
+
+### Human Profile Foundation
+
+A `v0.21.0` inaugura o **Human Profile** como camada longitudinal da pessoa. A visão profissional passa a reunir, em um único bloco, identidade, objetivos já registrados, esporte/movimento, rotina/recuperação e contexto/limitações presentes na anamnese e nos planos existentes.
+
+A fundação não cria uma segunda fonte de verdade: ela agrega dados já existentes e deixa explícito quando uma dimensão ainda não possui contexto. O indicador **dimensões com contexto** mede somente completude informacional, não saúde, risco ou qualidade clínica.
+
+A próxima etapa é o **Multi-Goal Engine**, para permitir objetivos simultâneos com prioridade e acompanhamento explícitos.
+
 ### Period Comparison 2.0
 
 O profissional pode alternar entre **7 dias**, **30 dias** e **início × atual**. A comparação reaproveita dados já carregados de treino, diário, tendência semanal e avaliações corporais; não cria uma fonte paralela nem infere significado clínico a partir da direção numérica.
@@ -86,8 +95,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.20.10 — Period Comparison 2.0`
-- **Revisão local corrente:** `v0.20.10-r1 — Setup Array Normalization Fix`
+- **Versão funcional:** `v0.21.0 — Human Profile Foundation`
+- **Revisão local corrente:** `v0.21.0-r7 — Period Comparison Historical Gate Alignment`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.
