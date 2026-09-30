@@ -1,5 +1,6 @@
 ﻿using HealthPlatform.Api.Contracts.Explore;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,19 @@ public sealed class ExplorePacienteController(
                 x.AtividadeFisicaDiasSemana
             })
             .FirstOrDefaultAsync(ct);
+
+        var interessesDeclarados = await db.InteressesExplorePaciente.AsNoTracking()
+            .Where(x => x.PacienteId == paciente.Id &&
+                        x.OrganizacaoId == currentUser.OrganizationId)
+            .OrderBy(x => x.Nome)
+            .Select(x => new InteresseExploreResponse(
+                x.Id,
+                x.Codigo,
+                x.Nome,
+                x.Intencao,
+                x.Origem,
+                x.CreatedAtUtc))
+            .ToArrayAsync(ct);
 
         var caminhos = new[]
         {
@@ -109,6 +123,7 @@ public sealed class ExplorePacienteController(
             anamnese?.AtividadeFisica,
             anamnese?.AtividadeFisicaDiasSemana,
             caminhos,
+            interessesDeclarados,
             "Explore organiza possibilidades. Ele nao substitui o plano profissional, nao libera atividade clinicamente contraindicada e nao prescreve intensidade automaticamente."));
     }
     [HttpGet("start-a-sport")]
@@ -1140,6 +1155,169 @@ public sealed class ExplorePacienteController(
             "ModelosSessoesTreino",
             "Sports Starter Packs sao referencias exploraveis. Nao copiam sessoes, nao atribuem plano, nao iniciam treino e nao publicam prescricao automaticamente."));
     }
+
+
+    [HttpGet("interesses")]
+    public async Task<ActionResult<InteresseExploreCatalogoResponse>> GetInteresses(
+        CancellationToken ct = default)
+    {
+        var paciente = await db.Pacientes.AsNoTracking()
+            .Where(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo)
+            .Select(x => new { x.Id })
+            .FirstOrDefaultAsync(ct);
+
+        if (paciente is null)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var interesses = await db.InteressesExplorePaciente.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == paciente.Id &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .OrderBy(x => x.Nome)
+            .Select(x => new InteresseExploreResponse(
+                x.Id,
+                x.Codigo,
+                x.Nome,
+                x.Intencao,
+                x.Origem,
+                x.CreatedAtUtc))
+            .ToArrayAsync(ct);
+
+        return Ok(new InteresseExploreCatalogoResponse(
+            interesses,
+            CatalogoInteressesExplore(),
+            IntencoesExplore(),
+            "Interesses sao declarados pelo atleta. Atividade relatada, plano profissional e interesse sao contextos diferentes; o AESYN nao infere preferencia clinica."));
+    }
+
+    [HttpPut("interesses")]
+    public async Task<ActionResult<InteresseExploreCatalogoResponse>> PutInteresses(
+        AtualizarInteressesExploreRequest request,
+        CancellationToken ct = default)
+    {
+        var paciente = await db.Pacientes
+            .FirstOrDefaultAsync(x =>
+                x.UsuarioId == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo,
+                ct);
+
+        if (paciente is null)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+
+        var catalogo = CatalogoInteressesExplore();
+        var porCodigo = catalogo.ToDictionary(x => x.Codigo, StringComparer.OrdinalIgnoreCase);
+        var intencoes = IntencoesExplore();
+
+        var recebidos = (request.Interesses ?? Array.Empty<AtualizarInteresseExploreItemRequest>())
+            .Where(x => !string.IsNullOrWhiteSpace(x.Codigo))
+            .GroupBy(x => x.Codigo.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(x => x.Last())
+            .ToArray();
+
+        if (recebidos.Length > 12)
+            return BadRequest(new { message = "Informe no maximo 12 interesses." });
+
+        foreach (var item in recebidos)
+        {
+            if (!porCodigo.ContainsKey(item.Codigo.Trim()))
+                return BadRequest(new { message = $"Modalidade de interesse invalida: {item.Codigo}" });
+
+            if (!intencoes.Contains(item.Intencao, StringComparer.OrdinalIgnoreCase))
+                return BadRequest(new { message = $"Intencao invalida para {item.Codigo}." });
+        }
+
+        var atuais = await db.InteressesExplorePaciente
+            .Where(x =>
+                x.PacienteId == paciente.Id &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .ToListAsync(ct);
+
+        var codigosRecebidos = recebidos
+            .Select(x => x.Codigo.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var remover = atuais
+            .Where(x => !codigosRecebidos.Contains(x.Codigo))
+            .ToArray();
+
+        if (remover.Length > 0)
+            db.InteressesExplorePaciente.RemoveRange(remover);
+
+        foreach (var item in recebidos)
+        {
+            var codigo = item.Codigo.Trim();
+            var opcao = porCodigo[codigo];
+            var intencao = intencoes.First(x =>
+                x.Equals(item.Intencao, StringComparison.OrdinalIgnoreCase));
+
+            var existente = atuais.FirstOrDefault(x =>
+                x.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase));
+
+            if (existente is null)
+            {
+                db.InteressesExplorePaciente.Add(new InteresseExplorePaciente
+                {
+                    OrganizacaoId = currentUser.OrganizationId,
+                    PacienteId = paciente.Id,
+                    Codigo = opcao.Codigo,
+                    Nome = opcao.Nome,
+                    Intencao = intencao,
+                    Origem = "DeclaradoPeloAtleta"
+                });
+            }
+            else
+            {
+                existente.Nome = opcao.Nome;
+                existente.Intencao = intencao;
+                existente.Origem = "DeclaradoPeloAtleta";
+                existente.UpdatedAtUtc = DateTime.UtcNow;
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+
+        var salvos = await db.InteressesExplorePaciente.AsNoTracking()
+            .Where(x =>
+                x.PacienteId == paciente.Id &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .OrderBy(x => x.Nome)
+            .Select(x => new InteresseExploreResponse(
+                x.Id,
+                x.Codigo,
+                x.Nome,
+                x.Intencao,
+                x.Origem,
+                x.CreatedAtUtc))
+            .ToArrayAsync(ct);
+
+        return Ok(new InteresseExploreCatalogoResponse(
+            salvos,
+            catalogo,
+            intencoes,
+            "Interesses atualizados por declaracao explicita do atleta. Nenhum interesse altera plano, intensidade, aptidao ou conduta profissional automaticamente."));
+    }
+
+    private static InteresseExploreOpcaoResponse[] CatalogoInteressesExplore() =>
+    [
+        new("musculacao", "Musculação"),
+        new("caminhada", "Caminhada"),
+        new("corrida", "Corrida"),
+        new("calistenia", "Calistenia"),
+        new("mobilidade", "Mobilidade"),
+        new("condicionamento", "Condicionamento"),
+        new("ciclismo", "Ciclismo")
+    ];
+
+    private static string[] IntencoesExplore() =>
+    [
+        "QueroExperimentar",
+        "QueroRetomar",
+        "TenhoCuriosidade"
+    ];
 
 
 }

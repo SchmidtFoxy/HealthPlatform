@@ -9369,7 +9369,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.24.8';
+const HP_MVP_VERSION='0.24.9';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -13617,8 +13617,9 @@ function hpExploreContextV0240(x){
   if(x?.cicloAtual)must.push(x.cicloAtual);
   if(x?.objetivoAtual)must.push(x.objetivoAtual);
 
-  const want=[];
-  if(x?.atividadeRelatada)want.push(x.atividadeRelatada);
+  const want=(Array.isArray(x?.interessesDeclarados)?x.interessesDeclarados:[])
+    .map(v=>v?.nome)
+    .filter(Boolean);
 
   const can=[];
   if(x?.frequenciaSemanalRelatada!=null)can.push(`${x.frequenciaSemanalRelatada} dia(s)/semana relatados`);
@@ -14443,4 +14444,138 @@ hpWireExploreFoundationV0240=function(host,data){
     const detail=host.querySelector('#aesynExploreDetailV0240');
     hpOpenSportsStarterPacksV0248(detail);
   };
+};
+
+
+// ===== v0.24.9 — Interest Engine Foundation =====
+const HP_INTEREST_ENGINE_V0249='v0.24.9';
+
+function hpInterestLabelV0249(value){
+  return ({
+    QueroExperimentar:'Quero experimentar',
+    QueroRetomar:'Quero retomar',
+    TenhoCuriosidade:'Tenho curiosidade'
+  })[value]||value||'Interesse';
+}
+
+function hpInterestEngineV0249(data){
+  const selected=new Map((data?.interesses||[]).map(x=>[x.codigo,x]));
+  const options=Array.isArray(data?.modalidadesDisponiveis)?data.modalidadesDisponiveis:[];
+  const intents=Array.isArray(data?.intencoesDisponiveis)?data.intencoesDisponiveis:[];
+
+  return `<section class="interest-engine-v0249" data-interest-engine-v0249="${HP_INTEREST_ENGINE_V0249}" aria-labelledby="interestEngineTitleV0249">
+    <div class="interest-engine-head-v0249">
+      <div>
+        <span class="eyebrow">INTEREST ENGINE • FOUNDATION</span>
+        <h3 id="interestEngineTitleV0249">O que você quer experimentar?</h3>
+        <p>Escolha explicitamente seus interesses. O que você já faz não vira preferência automaticamente.</p>
+      </div>
+      <span>${selected.size} interesse(s)</span>
+    </div>
+
+    <div class="interest-engine-options-v0249">
+      ${options.map(opt=>{
+        const current=selected.get(opt.codigo);
+        return `<article class="${current?'is-selected':''}" data-interest-option-v0249="${esc(opt.codigo)}">
+          <label>
+            <input type="checkbox" ${current?'checked':''} data-interest-check-v0249="${esc(opt.codigo)}">
+            <span><b>${esc(opt.nome)}</b><small>${current?esc(hpInterestLabelV0249(current.intencao)):'Ainda não declarado'}</small></span>
+          </label>
+          <select data-interest-intent-v0249="${esc(opt.codigo)}" ${current?'':'disabled'}>
+            ${intents.map(i=>`<option value="${esc(i)}" ${(current?.intencao||'QueroExperimentar')===i?'selected':''}>${esc(hpInterestLabelV0249(i))}</option>`).join('')}
+          </select>
+        </article>`;
+      }).join('')}
+    </div>
+
+    <div class="interest-engine-actions-v0249">
+      <button type="button" class="primary" id="interestEngineSaveV0249">Salvar meus interesses</button>
+      <span id="interestEngineStatusV0249" aria-live="polite"></span>
+    </div>
+
+    <div class="interest-engine-rule-v0249">
+      <b>DECLARADO ≠ INFERIDO</b>
+      <span>${esc(data?.regraDeUso||'Interesses são declarados pelo atleta e não alteram o plano profissional automaticamente.')}</span>
+    </div>
+  </section>`;
+}
+
+function hpInterestEnginePayloadV0249(host){
+  return {
+    interesses:[...host.querySelectorAll('[data-interest-check-v0249]:checked')].map(check=>({
+      codigo:check.dataset.interestCheckV0249,
+      intencao:host.querySelector(`[data-interest-intent-v0249="${CSS.escape(check.dataset.interestCheckV0249)}"]`)?.value||'QueroExperimentar'
+    }))
+  };
+}
+
+function hpWireInterestEngineV0249(host){
+  if(!host)return;
+
+  host.querySelectorAll('[data-interest-check-v0249]').forEach(check=>{
+    check.onchange=()=>{
+      const code=check.dataset.interestCheckV0249;
+      const select=host.querySelector(`[data-interest-intent-v0249="${CSS.escape(code)}"]`);
+      const card=host.querySelector(`[data-interest-option-v0249="${CSS.escape(code)}"]`);
+      if(select)select.disabled=!check.checked;
+      card?.classList.toggle('is-selected',check.checked);
+    };
+  });
+
+  const save=host.querySelector('#interestEngineSaveV0249');
+  const status=host.querySelector('#interestEngineStatusV0249');
+  if(save)save.onclick=async()=>{
+    save.disabled=true;
+    if(status)status.textContent='Salvando...';
+    try{
+      const updated=await api('/api/portal/me/explore/interesses',{
+        method:'PUT',
+        body:JSON.stringify(hpInterestEnginePayloadV0249(host))
+      });
+      host.outerHTML=hpInterestEngineV0249(updated);
+      const next=document.querySelector('[data-interest-engine-v0249]');
+      hpWireInterestEngineV0249(next);
+      if(next?.querySelector('#interestEngineStatusV0249'))next.querySelector('#interestEngineStatusV0249').textContent='Interesses salvos.';
+      await hpRefreshExploreInterestsV0249();
+    }catch(err){
+      save.disabled=false;
+      if(status)status.textContent=err.message||'Não foi possível salvar.';
+    }
+  };
+}
+
+async function hpRefreshExploreInterestsV0249(){
+  const portal=$('#patientPortalContent');
+  const explore=portal?.querySelector('[data-aesyn-explore-v0240]');
+  if(!explore)return;
+  try{
+    const data=await api('/api/portal/me/explore');
+    const want=hpExploreContextV0240(data).want;
+    const card=explore.querySelector('.aesyn-explore-compass-v0240 article:nth-child(2)');
+    if(card)card.innerHTML=`<span>QUERO FAZER</span>${want.length?want.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Declare interesses para separar curiosidade do que você já pratica.</p>'}`;
+  }catch(err){
+    console.warn('Não foi possível atualizar interesses no Explore:',err?.message||err);
+  }
+}
+
+async function hpInjectInterestEngineV0249(){
+  const portal=$('#patientPortalContent');
+  if(!portal||portal.querySelector('[data-interest-engine-v0249]'))return;
+  try{
+    const data=await api('/api/portal/me/explore/interesses');
+    const explore=portal.querySelector('[data-aesyn-explore-v0240]');
+    const home=portal.querySelector('.patient-mobile-home')||portal;
+    const html=hpInterestEngineV0249(data);
+    if(explore)explore.insertAdjacentHTML('afterend',html);
+    else home.insertAdjacentHTML('beforeend',html);
+    hpWireInterestEngineV0249(portal.querySelector('[data-interest-engine-v0249]'));
+  }catch(err){
+    console.warn('Interest Engine indisponível:',err?.message||err);
+  }
+}
+
+const __loadMyPatientPortal_v0249=loadMyPatientPortal;
+loadMyPatientPortal=async function(){
+  await __loadMyPatientPortal_v0249();
+  await hpInjectInterestEngineV0249();
 };

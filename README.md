@@ -42,6 +42,13 @@ O objetivo não é substituir médicos, nutricionistas, treinadores ou outros pr
 
 
 
+
+### Interest Engine Foundation
+
+A `v0.24.9` cria uma fonte explícita de **interesses declarados pelo atleta**. O sistema passa a separar três contextos que antes podiam se confundir: atividade já relatada, plano profissional e aquilo que a pessoa quer experimentar/retomar/conhecer.
+
+Os interesses são persistidos por paciente e organização, podem ser atualizados pelo próprio atleta e alimentam o bloco **QUERO FAZER** da bússola do Explore. O AESYN não infere preferência clínica a partir de atividade passada, adesão, prontidão ou plano.
+
 ### Sports Starter Packs 2.0
 
 A `v0.24.8` leva Starter Packs ao AESYN Explore como **referências navegáveis por modalidade e objetivo**. Os packs reutilizam `ModelosSessoesTreino` já existentes e mostram capacidades e sessões-modelo relacionadas.
@@ -325,8 +332,8 @@ Uma versão não está completa apenas porque o código funciona: **produto, tes
 
 ## Estado atual
 
-- **Versão funcional:** `v0.24.8 — Sports Starter Packs 2.0`- **Revisão local corrente:** `v0.23.2-r1 — Historical Movement Library Gate Alignment`
-- **Revisão local corrente:** `v0.23.1-r1 — Movement Filter Build Fix`
+- **Versão funcional:** `v0.24.9 — Interest Engine Foundation`
+- **Revisão local corrente:** `v0.24.9-r1 — Interest Engine Contracts Fix`
 - **Fase:** Professional Core / transição para acompanhamento humano longitudinal
 - **Próxima versão planejada:** `v0.21.0 — Human Profile Foundation`
 - **Baseline aprovada:** `v0.20.9 — Clinical & Sports Snapshot 2.0` aprovada pelo AESYN Product Gate e commitada como versão funcional estável.

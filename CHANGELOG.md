@@ -1,3 +1,23 @@
+# v0.24.9-r1 — Interest Engine Contracts Fix (revisão local)
+
+- Adiciona os records `InteresseExploreResponse`, `InteresseExploreOpcaoResponse`, `InteresseExploreCatalogoResponse`, `AtualizarInteressesExploreRequest` e `AtualizarInteresseExploreItemRequest`.
+- Corrige os 5 erros `CS0246` da compilação da API.
+- `VERSION.txt` permanece `0.24.9`.
+- Sem alteração de endpoint, migration, schema ou comportamento funcional.
+- Revisão local: não gerar commit próprio.
+
+# v0.24.9 — Interest Engine Foundation
+
+- Cria a entidade persistente `InteresseExplorePaciente`.
+- Adiciona GET/PUT `/api/portal/me/explore/interesses`.
+- Separa atividade relatada de interesse declarado.
+- Adiciona intenções `QueroExperimentar`, `QueroRetomar` e `TenhoCuriosidade`.
+- O bloco `QUERO FAZER` da bússola passa a usar somente interesses declarados.
+- Adiciona interface mobile para selecionar e salvar interesses.
+- Não infere preferência clínica nem altera plano/prescrição automaticamente.
+- Inclui migration EF para `InteressesExplorePaciente`.
+- Próxima etapa: v0.25.0 — Sports Expansion I Foundation.
+
 # v0.24.8 — Sports Starter Packs 2.0
 
 - Adiciona o caminho `Explorar Starter Packs` ao AESYN Explore.

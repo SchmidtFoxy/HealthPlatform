@@ -45,7 +45,7 @@
 > **Hotfix v0.19.25-r1:** `TESTAR.ps1` deve permanecer em **UTF-8 com BOM** para compatibilidade com Windows PowerShell 5.1. O `PREPARAR.ps1` valida essa condição para impedir regressões de encoding.
 
 
-> **Versão-base deste roadmap:** v0.24.8 — Sports Starter Packs 2.0
+> **Versão-base deste roadmap:** v0.24.9 — Interest Engine Foundation
 
 > Hotfix `v0.19.44-r1`: sincronizados os gates de versão corrente do `TESTAR.ps1` para `0.19.44`, sem alteração funcional.
 > Hotfix `v0.19.44-r3`: sincronizado o gate de roadmap do fechamento da Lista 03 com o status concluído da v0.19.44 e com a próxima fase v0.20.0, sem alteração funcional.
@@ -1506,9 +1506,29 @@ Levar Starter Packs para a experiência do atleta como referências exploráveis
 
 **Próxima etapa:** `v0.24.9 — Interest Engine Foundation`.
 
-## ⏭ v0.24.9 — Interest Engine Foundation
+## ✅ v0.24.9 — Interest Engine Foundation — CONCLUÍDA
+
+> **Revisão local v0.24.9-r1:** adiciona os records de contrato do Interest Engine que ficaram ausentes no pacote inicial. Sem mudança funcional, endpoint, migration ou versão funcional. Não commitar separadamente.
 
 Criar a base explícita de interesses do atleta para o Explore, separando “atividade relatada” de “quero experimentar” e permitindo descoberta contextual sem inferir preferência clínica.
+
+
+
+**Entregue na v0.24.9:**
+- entidade persistente `InteresseExplorePaciente`;
+- interesses isolados por paciente e organização;
+- intenções Quero experimentar / Quero retomar / Tenho curiosidade;
+- GET/PUT `/api/portal/me/explore/interesses`;
+- atividade relatada deixa de alimentar automaticamente “Quero fazer”;
+- bússola Explore passa a usar interesses declarados;
+- interface mobile para selecionar e atualizar interesses;
+- nenhuma inferência de preferência clínica.
+
+**Próxima etapa:** `v0.25.0 — Sports Expansion I Foundation`.
+
+## ⏭ v0.25.0 — Sports Expansion I Foundation
+
+Abrir a próxima fase de expansão esportiva sobre a base do Explore, ampliando modalidades e estruturas específicas sem perder taxonomia, autonomia e segurança.
 
 
 ## ✅ v0.23.7 — Professional Movement Library 2.0 — CONCLUÍDA

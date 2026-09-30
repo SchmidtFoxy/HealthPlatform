@@ -1,4 +1,4 @@
-using HealthPlatform.Domain.Common;
+﻿using HealthPlatform.Domain.Common;
 
 namespace HealthPlatform.Domain.Entities;
 
@@ -43,4 +43,5 @@ public class Paciente : BaseEntity
     public ICollection<DesafioSemanalPaciente> DesafiosSemanais { get; set; } = new List<DesafioSemanalPaciente>();
     public ICollection<ConquistaPaciente> Conquistas { get; set; } = new List<ConquistaPaciente>();
     public ICollection<CicloEsportivoPaciente> CiclosEsportivos { get; set; } = new List<CicloEsportivoPaciente>();
+    public ICollection<InteresseExplorePaciente> InteressesExplore { get; set; } = new List<InteresseExplorePaciente>();
 }

@@ -1,4 +1,4 @@
-using HealthPlatform.Domain.Common;
+﻿using HealthPlatform.Domain.Common;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -61,6 +61,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<DesafioSemanalPaciente> DesafiosSemanaisPaciente => Set<DesafioSemanalPaciente>();
     public DbSet<ConquistaPaciente> ConquistasPaciente => Set<ConquistaPaciente>();
     public DbSet<CicloEsportivoPaciente> CiclosEsportivosPaciente => Set<CicloEsportivoPaciente>();
+    public DbSet<InteresseExplorePaciente> InteressesExplorePaciente => Set<InteresseExplorePaciente>();
     public DbSet<EventoProgressaoSupervisionada> EventosProgressaoSupervisionada => Set<EventoProgressaoSupervisionada>();
     public DbSet<NotaInternaProfissional> NotasInternasProfissionais => Set<NotaInternaProfissional>();
 
@@ -575,6 +576,22 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasForeignKey(x => x.FaseTreinoId).OnDelete(DeleteBehavior.SetNull);
             entity.HasOne(x => x.FaseNutricional).WithMany()
                 .HasForeignKey(x => x.FaseNutricionalId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        builder.Entity<InteresseExplorePaciente>(entity =>
+        {
+            entity.ToTable("InteressesExplorePaciente");
+            entity.Property(x => x.Codigo).HasMaxLength(60).IsRequired();
+            entity.Property(x => x.Nome).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Intencao).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.Origem).HasMaxLength(40).IsRequired();
+            entity.HasIndex(x => new { x.PacienteId, x.Codigo }).IsUnique()
+                .HasDatabaseName("IX_InteressesExplorePaciente_PacienteId_Codigo");
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Intencao });
+            entity.HasOne(x => x.Organizacao).WithMany()
+                .HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Paciente).WithMany(x => x.InteressesExplore)
+                .HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<EventoProgressaoSupervisionada>(entity =>

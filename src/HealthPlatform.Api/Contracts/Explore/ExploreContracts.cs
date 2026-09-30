@@ -15,6 +15,7 @@ public sealed record ExploreFoundationResponse(
     string? AtividadeRelatada,
     int? FrequenciaSemanalRelatada,
     IReadOnlyCollection<ExploreCaminhoResponse> Caminhos,
+    IReadOnlyCollection<InteresseExploreResponse> InteressesDeclarados,
     string RegraDeAutonomia);
 
 
@@ -188,3 +189,29 @@ public sealed record ExploreStarterPacksResponse(
     IReadOnlyCollection<ExploreStarterPackResponse> Packs,
     string Fonte,
     string RegraDeUso);
+
+
+public sealed record InteresseExploreResponse(
+    Guid Id,
+    string Codigo,
+    string Nome,
+    string Intencao,
+    string Origem,
+    DateTime DeclaradoEmUtc);
+
+public sealed record InteresseExploreOpcaoResponse(
+    string Codigo,
+    string Nome);
+
+public sealed record InteresseExploreCatalogoResponse(
+    IReadOnlyCollection<InteresseExploreResponse> Interesses,
+    IReadOnlyCollection<InteresseExploreOpcaoResponse> ModalidadesDisponiveis,
+    string[] IntencoesDisponiveis,
+    string RegraDeUso);
+
+public sealed record AtualizarInteressesExploreRequest(
+    IReadOnlyCollection<AtualizarInteresseExploreItemRequest> Interesses);
+
+public sealed record AtualizarInteresseExploreItemRequest(
+    string Codigo,
+    string Intencao);
