@@ -1,4 +1,23 @@
-﻿# v0.49.0 — Professional Review Team Knowledge Application Foundation
+﻿# v0.49.1 — Professional Review Team Knowledge Application Persistence
+
+- Adiciona persistência auditada de Team Knowledge Application.
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamKnowledgeApplication:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar aplicações`.
+- Não transforma aplicação registrada em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.49.2 — Professional Review Team Knowledge Application Status.
+
+# v0.49.0 — Professional Review Team Knowledge Application Foundation
 
 - Abre a linha funcional 0.49.x.
 - Adiciona `ProfessionalReviewTeamKnowledgeApplicationFieldResponse`.
