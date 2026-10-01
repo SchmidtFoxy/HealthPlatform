@@ -5422,3 +5422,35 @@ A persistência registra conhecimento documentado da equipe. Não transforma con
 
 **Próxima etapa:** `v0.48.2 — Professional Review Team Knowledge Status`.
 
+---
+
+## v0.48.2 — Professional Review Team Knowledge Status
+
+Adiciona estados documentais explícitos ao conhecimento registrado da equipe profissional.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-knowledge/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do conhecimento;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir registro;
+- Revisar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não transforma conhecimento em evidência clínica validada, não infere causalidade, prognóstico, recomendação ou decisão terapêutica a partir do estado, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.48.3 — Professional Review Team Knowledge History`.
+

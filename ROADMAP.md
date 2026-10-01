@@ -4754,3 +4754,21 @@ Adicionar persistência auditada do conhecimento documentado da equipe profissio
 ### v0.48.2 — Professional Review Team Knowledge Status
 Adicionar estados documentais explícitos ao conhecimento registrado da equipe, com transições manuais e auditadas sem transformar conhecimento em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.
 
+## ✅ v0.48.2 — Professional Review Team Knowledge Status — CONCLUÍDA
+
+**Entregue:**
+- status `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.48.3 — Professional Review Team Knowledge History
+Adicionar histórico consultável do conhecimento registrado da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+
