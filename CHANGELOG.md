@@ -1,4 +1,20 @@
-﻿# v0.39.0 — Professional Review Escalation Foundation
+﻿# v0.39.1 — Professional Review Escalation Persistence
+
+- Adiciona persistência auditada de Escalation.
+- Adiciona `ProfessionalReviewEscalationPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewEscalation:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Continuity, Handoff, Delegation e Assignment do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar escalonamentos`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.39.2 — Professional Review Escalation Status.
+
+# v0.39.0 — Professional Review Escalation Foundation
 
 - Abre a linha funcional 0.39.x.
 - Adiciona `ProfessionalReviewEscalationFieldResponse`.

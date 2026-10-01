@@ -3503,3 +3503,25 @@ Criar a fundação estrutural para escalonamento profissional documentado, permi
 ### v0.39.1 — Professional Review Escalation Persistence
 Adicionar persistência auditada dos registros de escalonamento profissional, com vínculos opcionais a Continuity, Handoff, Delegation e Assignment e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
 
+## ✅ v0.39.1 — Professional Review Escalation Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewEscalationPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewEscalation:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Continuity;
+- vínculo opcional a Handoff;
+- vínculo opcional à Delegation;
+- vínculo opcional à Assignment;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de escalonamento profissional;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.39.2 — Professional Review Escalation Status
+Adicionar estados documentais explícitos aos registros de escalonamento profissional, com transições manuais e auditadas pela equipe.
+

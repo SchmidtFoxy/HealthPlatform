@@ -3278,3 +3278,45 @@ A fundação organiza escalonamento documental entre profissionais. Não executa
 
 **Próxima etapa:** `v0.39.1 — Professional Review Escalation Persistence`.
 
+---
+
+## v0.39.1 — Professional Review Escalation Persistence
+
+Adiciona persistência auditada para registros de escalonamento profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Continuity relacionada opcional;
+- Handoff relacionado opcional;
+- Delegation relacionada opcional;
+- Assignment relacionada opcional;
+- profissional de origem;
+- profissional de destino;
+- contexto escalado;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_ESCALATION_CREATED`
+- `PROFESSIONAL_REVIEW_ESCALATION_UPDATED`
+- `PROFESSIONAL_REVIEW_ESCALATION_ARCHIVED`
+
+### Vínculos
+Quando informados, Continuity, Handoff, Delegation e Assignment precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar escalonamentos**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra escalonamento documental. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco, urgência ou prioridade clínica.
+
+**Próxima etapa:** `v0.39.2 — Professional Review Escalation Status`.
+

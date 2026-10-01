@@ -4915,6 +4915,7 @@ const HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384='v0.38.4';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385='v0.38.5';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386='v0.38.6';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0';
+const HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1';
 
 
 
@@ -5357,7 +5358,132 @@ function hpRenderProfessionalReviewEscalationFoundationV0390(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza escalonamento documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-escalation-open-v0391="${HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391}">Gerenciar escalonamentos</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewEscalationV0391(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-escalation-persistence-v0391="${HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391}">
+    <div class="row-between">
+      <div>
+        <h3>Escalonamento profissional</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewEscalationV0391">Fechar</button>
+    </div>
+    <form id="professionalReviewEscalationFormV0391" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional de origem<input name="profissionalOrigem" maxlength="160" required></label>
+      <label>Profissional de destino<input name="profissionalDestino" maxlength="160" required></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label>Handoff relacionado<input name="handoffRelacionadoId" placeholder="ID opcional do handoff"></label>
+      <label>Delegation relacionada<input name="delegationRelacionadaId" placeholder="ID opcional da delegação"></label>
+      <label>Assignment relacionada<input name="assignmentRelacionadaId" placeholder="ID opcional da atribuição"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto escalado<textarea name="contextoEscalado" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar escalonamento</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewEscalationV0391">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewEscalationListV0391" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewEscalationFormV0391');
+  const listHost=$('#professionalReviewEscalationListV0391');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalOrigem||'Origem')} → ${esc(x.profissionalDestino||'Destino')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      ${x.handoffRelacionadoId?`<small class="muted-line">Handoff: ${esc(x.handoffRelacionadoId)}</small>`:''}
+      ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
+      ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
+      ${x.contextoEscalado?`<p>${esc(x.contextoEscalado)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-escalation-edit-v0391="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-escalation-archive-v0391="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum escalonamento profissional registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-escalation-edit-v0391]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.escalationEditV0391);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalOrigem.value=item.profissionalOrigem||'';
+      form.elements.profissionalDestino.value=item.profissionalDestino||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.handoffRelacionadoId.value=item.handoffRelacionadoId||'';
+      form.elements.delegationRelacionadaId.value=item.delegationRelacionadaId||'';
+      form.elements.assignmentRelacionadaId.value=item.assignmentRelacionadaId||'';
+      form.elements.contextoEscalado.value=item.contextoEscalado||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalOrigem.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-escalation-archive-v0391]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation/${btn.dataset.escalationArchiveV0391}`,{method:'DELETE'});
+      toast('Escalonamento profissional arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalOrigem:String(fd.get('profissionalOrigem')||'').trim(),
+      profissionalDestino:String(fd.get('profissionalDestino')||'').trim(),
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      handoffRelacionadoId:String(fd.get('handoffRelacionadoId')||'').trim()||null,
+      delegationRelacionadaId:String(fd.get('delegationRelacionadaId')||'').trim()||null,
+      assignmentRelacionadaId:String(fd.get('assignmentRelacionadaId')||'').trim()||null,
+      contextoEscalado:String(fd.get('contextoEscalado')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Escalonamento profissional atualizado.':'Escalonamento profissional registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewEscalationV0391').onclick=clear;
+  $('#closeProfessionalReviewEscalationV0391').onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewContinuityClosureV0386(patientId){
@@ -5479,7 +5605,11 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
 
   const escalationFoundationHostV0390=$('#professionalReviewEscalationFoundationV0390');
   hpLoadProfessionalReviewEscalationFoundationV0390(p.id)
-    .then(x=>hpRenderProfessionalReviewEscalationFoundationV0390(escalationFoundationHostV0390,x))
+    .then(x=>{
+      hpRenderProfessionalReviewEscalationFoundationV0390(escalationFoundationHostV0390,x);
+      const openEscalationV0391=escalationFoundationHostV0390?.querySelector('[data-escalation-open-v0391]');
+      if(openEscalationV0391) openEscalationV0391.onclick=()=>hpOpenProfessionalReviewEscalationV0391(p);
+    })
     .catch(()=>{ if(escalationFoundationHostV0390) escalationFoundationHostV0390.innerHTML=''; });
 
   const continuityClosureHostV0386=$('#professionalReviewContinuityClosureV0386');
@@ -12842,7 +12972,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.39.0';
+const HP_MVP_VERSION='0.39.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
