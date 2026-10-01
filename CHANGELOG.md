@@ -1,4 +1,19 @@
-﻿# v0.33.6 — Professional Review Action Plan Closure
+﻿# v0.34.0 — Professional Review Task Coordination Foundation
+
+- Abre a linha funcional 0.34.x.
+- Adiciona `ProfessionalReviewTaskCoordinationFieldResponse`.
+- Adiciona `ProfessionalReviewTaskCoordinationFoundationResponse`.
+- Adiciona `GET .../task-coordination/foundation`.
+- Define tarefa operacional, Action Plan relacionado, responsável, horizonte e observação profissional.
+- Define `FundacaoTaskCoordinationDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Coordenação operacional` ao workspace profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.34.1 — Professional Review Task Coordination Persistence.
+
+# v0.33.6 — Professional Review Action Plan Closure
 
 - Adiciona `ProfessionalReviewActionPlanClosureResponse`.
 - Adiciona endpoint `GET .../action-plan/closure`.

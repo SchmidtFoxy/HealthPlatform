@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.33.6",
+            "v0.34.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Action Plan Closure fecha a linha 0.33.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do Action Plan.")
+            "Professional Review Task Coordination Foundation abre a linha 0.34.x com uma fundação estrutural para tarefas operacionais acompanháveis pela equipe profissional, sem execução automática ou priorização clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

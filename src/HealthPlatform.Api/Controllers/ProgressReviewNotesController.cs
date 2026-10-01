@@ -262,6 +262,51 @@ public class ProgressReviewNotesController(
             "A fundação do Action Plan organiza ações profissionais de forma documental. A partir da v0.33.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, risco, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("task-coordination/foundation")]
+    public ActionResult<ProfessionalReviewTaskCoordinationFoundationResponse> TaskCoordinationFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTaskCoordinationFieldResponse(
+                "tarefa-operacional",
+                "Tarefa operacional",
+                true,
+                "texto",
+                "Descreve a atividade acompanhável pela equipe profissional."),
+            new ProfessionalReviewTaskCoordinationFieldResponse(
+                "action-plan-relacionado",
+                "Action Plan relacionado",
+                false,
+                "referencia",
+                "Permite vincular a tarefa a uma ação operacional já documentada."),
+            new ProfessionalReviewTaskCoordinationFieldResponse(
+                "responsavel",
+                "Responsável",
+                false,
+                "texto",
+                "Identifica quem ficará responsável pelo acompanhamento operacional."),
+            new ProfessionalReviewTaskCoordinationFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra janela ou referência temporal operacional, sem definir urgência clínica."),
+            new ProfessionalReviewTaskCoordinationFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar contexto operacional relevante para a equipe.")
+        };
+
+        return Ok(new ProfessionalReviewTaskCoordinationFoundationResponse(
+            "FundacaoTaskCoordinationDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza tarefas acompanháveis pela equipe profissional. Não executa condutas, não atribui prioridade clínica e não substitui decisão profissional."));
+    }
+
     [HttpGet("action-plan/closure")]
     public ActionResult<ProfessionalReviewActionPlanClosureResponse> FechamentoActionPlan()
     {

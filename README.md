@@ -2141,3 +2141,32 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.34.0 — Professional Review Task Coordination Foundation`.
 
+---
+
+## v0.34.0 — Professional Review Task Coordination Foundation
+
+Abre a linha 0.34.x com a fundação estrutural para coordenação operacional das ações profissionais.
+
+### Campos da fundação
+- tarefa operacional;
+- Action Plan relacionado;
+- responsável;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../task-coordination/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTaskCoordinationDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O workspace profissional passa a exibir a seção **Coordenação operacional**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza tarefas acompanháveis. Não executa condutas, não atribui prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.34.1 — Professional Review Task Coordination Persistence`.
+

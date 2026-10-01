@@ -2822,3 +2822,21 @@ Fechar o ciclo 0.33.x consolidando fundação, persistência, status, histórico
 ### v0.34.0 — Professional Review Task Coordination Foundation
 Criar a fundação estrutural para coordenação operacional das ações profissionais, com organização de tarefas acompanháveis e responsabilidades, mantendo separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.34.0 — Professional Review Task Coordination Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTaskCoordinationFieldResponse`;
+- `ProfessionalReviewTaskCoordinationFoundationResponse`;
+- endpoint `task-coordination/foundation`;
+- cinco campos estruturais;
+- estado `FundacaoTaskCoordinationDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no workspace profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.34.1 — Professional Review Task Coordination Persistence
+Adicionar persistência auditada das tarefas operacionais profissionais, com vínculo opcional ao Action Plan e preservação da separação entre documentação, decisão clínica e execução.
+
