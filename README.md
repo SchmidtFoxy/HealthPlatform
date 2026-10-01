@@ -4813,3 +4813,34 @@ As contagens são agregações documentais. Não inferem causalidade, prognósti
 
 **Próxima etapa:** `v0.45.6 — Professional Review Team Outcome Closure`.
 
+---
+
+## v0.45.6 — Professional Review Team Outcome Closure
+
+Fecha a linha 0.45.x consolidando todas as capacidades estruturais dos resultados documentados da equipe.
+
+### Componentes consolidados
+- Team Outcome Foundation;
+- Team Outcome Persistence;
+- Team Outcome Status;
+- Team Outcome History;
+- Team Outcome Filters;
+- Team Outcome Summary.
+
+### Estado
+O endpoint `team-outcome/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamOutcomeCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.46.0 — Professional Review Team Learning Foundation`.
+

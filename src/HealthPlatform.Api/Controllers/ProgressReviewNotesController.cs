@@ -1310,6 +1310,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza resultados documentados das decisões da equipe usando Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.45.1, possui persistência auditada. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-outcome/closure")]
+    public ActionResult<ProfessionalReviewTeamOutcomeClosureResponse> FechamentoTeamOutcomes()
+    {
+        var componentes = new[]
+        {
+            "TeamOutcomeFoundation",
+            "TeamOutcomePersistence",
+            "TeamOutcomeStatus",
+            "TeamOutcomeHistory",
+            "TeamOutcomeFilters",
+            "TeamOutcomeSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamOutcomeClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamOutcomeCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos resultados documentados da equipe. Não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-outcome/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamOutcomeSummaryResponse>> ResumoTeamOutcomes(
         Guid pacienteId,

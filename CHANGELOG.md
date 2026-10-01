@@ -1,4 +1,20 @@
-﻿# v0.45.5 — Professional Review Team Outcome Summary
+﻿# v0.45.6 — Professional Review Team Outcome Closure
+
+- Adiciona `ProfessionalReviewTeamOutcomeClosureResponse`.
+- Adiciona endpoint `GET .../team-outcome/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamOutcomeCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_CLOSURE_V0456`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não infere causalidade, prognóstico ou recomendação.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.45.x.
+- Próxima etapa: v0.46.0 — Professional Review Team Learning Foundation.
+
+# v0.45.5 — Professional Review Team Outcome Summary
 
 - Adiciona `ProfessionalReviewTeamOutcomeProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamOutcomeSummaryResponse`.
