@@ -1,4 +1,19 @@
-﻿# v0.38.2 — Professional Review Continuity Status
+﻿# v0.38.3 — Professional Review Continuity History
+
+- Adiciona `ProfessionalReviewContinuityHistoryItemResponse`.
+- Adiciona `ProfessionalReviewContinuityHistoryResponse`.
+- Adiciona `GET .../continuity/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.38.4 — Professional Review Continuity Filters.
+
+# v0.38.2 — Professional Review Continuity Status
 
 - Adiciona `Status` ao Continuity persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

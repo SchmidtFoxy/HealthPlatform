@@ -159,6 +159,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewContinuityHistoryItemResponse(
+    Guid Id,
+    Guid ContinuityId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewContinuityHistoryResponse(
+    Guid ContinuityId,
+    IReadOnlyCollection<ProfessionalReviewContinuityHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewContinuityPersistedResponse(
     Guid Id,
     Guid? HandoffRelacionadoId,

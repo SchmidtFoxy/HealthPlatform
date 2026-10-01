@@ -3127,3 +3127,35 @@ O status é documental. O sistema não inicia, conclui ou cancela continuidade a
 
 **Próxima etapa:** `v0.38.3 — Professional Review Continuity History`.
 
+---
+
+## v0.38.3 — Professional Review Continuity History
+
+Adiciona histórico consultável dos eventos auditados da continuidade profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../continuity/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada registro de continuidade passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.38.4 — Professional Review Continuity Filters`.
+

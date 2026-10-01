@@ -765,6 +765,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearContinuity(nota));
     }
 
+    [HttpGet("continuity/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewContinuityHistoryResponse>> HistoricoContinuity(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var continuityExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoContinuity),
+                cancellationToken);
+
+        if (!continuityExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_CONTINUITY_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewContinuityHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoContinuity(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewContinuityHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais de continuidade profissional. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("continuity/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewContinuityPersistedResponse>> AtualizarStatusContinuity(
         Guid pacienteId,
@@ -4235,6 +4310,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoContinuity(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_CONTINUITY_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_CONTINUITY_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_CONTINUITY_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_CONTINUITY_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static ContinuityPayload LerPayloadContinuity(NotaInternaProfissional nota)
     {

@@ -3409,3 +3409,21 @@ Adicionar estados documentais explícitos aos registros de continuidade profissi
 ### v0.38.3 — Professional Review Continuity History
 Adicionar histórico consultável dos registros de continuidade profissional, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.38.3 — Professional Review Continuity History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewContinuityHistoryItemResponse`;
+- `ProfessionalReviewContinuityHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por registro de continuidade;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.38.4 — Professional Review Continuity Filters
+Adicionar filtros profissionais por status, profissional de seguimento, horizonte e texto, preservando a natureza documental da continuidade profissional.
+

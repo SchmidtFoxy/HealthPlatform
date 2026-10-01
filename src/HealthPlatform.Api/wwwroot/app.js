@@ -4910,6 +4910,7 @@ const HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_STATUS_V0382='v0.38.2';
+const HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3';
 
 
 
@@ -5291,6 +5292,40 @@ function hpRenderProfessionalReviewContinuityFoundationV0380(host,foundation){
 }
 
 
+
+async function hpOpenProfessionalReviewContinuityHistoryV0383(p,continuity){
+  if(!p?.id || !continuity?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/continuity/${continuity.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-continuity-history-v0383="${HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico da continuidade profissional</h3>
+        <p class="muted-line">${esc(continuity.profissionalSeguimento||'Profissional de seguimento')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewContinuityHistoryV0383">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica ou transferência automática de responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewContinuityHistoryV0383').onclick=()=>hpOpenProfessionalReviewContinuityV0381(p);
+}
+
 async function hpOpenProfessionalReviewContinuityV0381(p){
   if(!p?.id) return;
 
@@ -5358,6 +5393,7 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluida'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="Concluida">Concluir</button>`:''}
         ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="Cancelada">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-continuity-history-v0383="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-continuity-archive-v0381="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum registro de continuidade profissional.</p>';
@@ -5374,6 +5410,11 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalSeguimento.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-continuity-history-v0383]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.continuityHistoryV0383);
+      if(item) await hpOpenProfessionalReviewContinuityHistoryV0383(p,item);
     });
 
     [...listHost.querySelectorAll('[data-continuity-status-v0382]')].forEach(btn=>btn.onclick=async()=>{
@@ -12639,7 +12680,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.38.2';
+const HP_MVP_VERSION='0.38.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
