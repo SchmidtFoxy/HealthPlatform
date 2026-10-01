@@ -6715,3 +6715,35 @@ O status é documental. O sistema não transforma estado em validação causal o
 
 **Próxima etapa:** `v0.53.3 — Professional Review Team Knowledge Effect Decision Review History`.
 
+---
+
+## v0.53.3 — Professional Review Team Knowledge Effect Decision Review History
+
+Adiciona histórico consultável dos eventos auditados das revisões profissionais das decisões sobre os efeitos observados do conhecimento da equipe.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada revisão profissional passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não transforma revisão registrada em validação causal ou evidência clínica validada, não interpreta evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.53.4 — Professional Review Team Knowledge Effect Decision Review Filters`.
+

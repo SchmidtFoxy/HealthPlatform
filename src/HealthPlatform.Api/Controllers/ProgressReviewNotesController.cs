@@ -2946,6 +2946,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearTeamKnowledgeEffectDecisionReview(nota));
     }
 
+    [HttpGet("team-knowledge-effect-decision-review/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewHistoryResponse>> HistoricoTeamKnowledgeEffectDecisionReview(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var reviewExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReview),
+                cancellationToken);
+
+        if (!reviewExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewTeamKnowledgeEffectDecisionReviewHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoTeamKnowledgeEffectDecisionReview(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra apenas eventos documentais das revisões profissionais das decisões sobre os efeitos observados do conhecimento da equipe. Não transforma revisão registrada em validação causal ou evidência clínica validada, não interpreta evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("team-knowledge-effect-decision-review/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewPersistedResponse>> AtualizarStatusTeamKnowledgeEffectDecisionReview(
         Guid pacienteId,
@@ -13905,6 +13980,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoTeamKnowledgeEffectDecisionReview(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static TeamKnowledgeEffectDecisionReviewPayload LerPayloadTeamKnowledgeEffectDecisionReview(NotaInternaProfissional nota)
     {
