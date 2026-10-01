@@ -4895,3 +4895,21 @@ Adicionar persistência auditada da aplicação documentada do conhecimento da e
 ### v0.49.2 — Professional Review Team Knowledge Application Status
 Adicionar estados documentais explícitos à aplicação registrada do conhecimento da equipe, com transições manuais e auditadas sem transformar aplicação em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.
 
+## ✅ v0.49.2 — Professional Review Team Knowledge Application Status — CONCLUÍDA
+
+**Entregue:**
+- status `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.49.3 — Professional Review Team Knowledge Application History
+Adicionar histórico consultável da aplicação registrada do conhecimento da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.49.1",
+            "v0.49.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Application Persistence adiciona persistência auditada à aplicação documentada do conhecimento da equipe profissional, com vínculos opcionais a Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e sem transformar aplicação registrada em evidência clínica validada, causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou execução automática.")
+            "Professional Review Team Knowledge Application Status adiciona estados documentais explícitos à aplicação registrada do conhecimento da equipe, com transições manuais auditadas entre Registrado, EmRevisao, Consolidado e Descartado, sem transformar aplicação em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
         {
             Recordes = recordes,
             Tempos = tempos,

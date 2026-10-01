@@ -2166,7 +2166,8 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadTeamKnowledgeApplication(
+        var payloadAtual = LerPayloadTeamKnowledgeApplication(nota);
+        var payloadAtualizado = new TeamKnowledgeApplicationPayload(
             profissionalResponsavel,
             aplicacaoDocumentada,
             request.TeamKnowledgeRelacionadoId,
@@ -2180,19 +2181,75 @@ public class ProgressReviewNotesController(
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.Participantes,
-            request.ObjetivoAplicacao,
-            request.ContextoAplicacao,
-            request.BaseObservacionalEvidenciaSuporte,
-            request.InterpretacaoProfissional,
-            request.ResultadoEsperadoDocumentado,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Participantes, 1000),
+            NormalizarOpcional(request.ObjetivoAplicacao, 3000),
+            NormalizarOpcional(request.ContextoAplicacao, 3000),
+            NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000),
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000),
+            NormalizarOpcional(request.ResultadoEsperadoDocumentado, 3000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamKnowledgeApplication(nota));
+    }
+
+    [HttpPatch("team-knowledge-application/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeApplicationPersistedResponse>> AtualizarStatusTeamKnowledgeApplication(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTeamKnowledgeApplicationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusTeamKnowledgeApplicationValido(status))
+            return BadRequest(new { message = "Status inválido. Use Registrado, EmRevisao, Consolidado ou Descartado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeApplication) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTeamKnowledgeApplication(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearTeamKnowledgeApplication(nota));
     }
 
@@ -10784,7 +10841,9 @@ public class ProgressReviewNotesController(
         string? InterpretacaoProfissional,
         string? ResultadoEsperadoDocumentado,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Registrado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadTeamKnowledgeApplication(
         string profissionalResponsavel,
@@ -10830,7 +10889,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(interpretacaoProfissional, 3000),
             NormalizarOpcional(resultadoEsperadoDocumentado, 3000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Registrado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -10871,12 +10932,30 @@ public class ProgressReviewNotesController(
             payload?.ResultadoEsperadoDocumentado,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Registrado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static TeamKnowledgeApplicationPayload LerPayloadTeamKnowledgeApplication(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamKnowledgeApplicationPayload>(nota.Conteudo)
+                ?? new TeamKnowledgeApplicationPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new TeamKnowledgeApplicationPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusTeamKnowledgeApplicationValido(string? status) =>
+        status is "Registrado" or "EmRevisao" or "Consolidado" or "Descartado";
 
     private sealed record TeamKnowledgePayload(
         string ProfissionalResponsavel,

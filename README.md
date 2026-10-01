@@ -5675,3 +5675,35 @@ A persistência registra aplicação documentada do conhecimento da equipe. Não
 
 **Próxima etapa:** `v0.49.2 — Professional Review Team Knowledge Application Status`.
 
+---
+
+## v0.49.2 — Professional Review Team Knowledge Application Status
+
+Adiciona estados documentais explícitos à aplicação registrada do conhecimento da equipe profissional.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-knowledge-application/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da aplicação;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir registro;
+- Revisar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não transforma aplicação em evidência clínica validada, não infere causalidade, prognóstico, recomendação ou decisão terapêutica a partir do estado, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.49.3 — Professional Review Team Knowledge Application History`.
+

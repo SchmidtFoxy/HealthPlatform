@@ -248,11 +248,16 @@ public sealed record ProfessionalReviewTeamKnowledgeApplicationPersistedResponse
     string? ResultadoEsperadoDocumentado,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamKnowledgeApplicationStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamKnowledgeApplicationFieldResponse(
     string Chave,

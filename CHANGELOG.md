@@ -1,4 +1,22 @@
-﻿# v0.49.1 — Professional Review Team Knowledge Application Persistence
+﻿# v0.49.2 — Professional Review Team Knowledge Application Status
+
+- Adiciona `Status` ao Team Knowledge Application persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationStatusRequest`.
+- Adiciona endpoint `PATCH .../team-knowledge-application/{id}/status`.
+- Estados permitidos: `Registrado`, `EmRevisao`, `Consolidado`, `Descartado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir registro, Revisar, Consolidar e Descartar.
+- Não transforma aplicação em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.49.3 — Professional Review Team Knowledge Application History.
+
+# v0.49.1 — Professional Review Team Knowledge Application Persistence
 
 - Adiciona persistência auditada de Team Knowledge Application.
 - Adiciona `ProfessionalReviewTeamKnowledgeApplicationPersistedResponse`.
