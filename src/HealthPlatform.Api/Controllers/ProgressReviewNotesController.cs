@@ -2358,6 +2358,74 @@ public class ProgressReviewNotesController(
             "A fundação organiza revisões profissionais de efeitos observados do conhecimento da equipe usando Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.51.1, possui persistência auditada. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-effect-review/search")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectReviewFiltersResponse>> FiltrarTeamKnowledgeEffectReviews(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? profissionalRevisor = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivados = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusTeamKnowledgeEffectReviewValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Registrado, EmRevisao, Consolidado ou Descartado." });
+
+        var revisorNormalizado = NormalizarOpcional(profissionalRevisor, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectReview) &&
+                (incluirArquivados || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearTeamKnowledgeEffectReview)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (revisorNormalizado is null ||
+                    x.ProfissionalRevisor.Contains(revisorNormalizado, StringComparison.OrdinalIgnoreCase)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ProfissionalRevisor.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.Participantes?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    x.RevisaoDocumentada.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ContextoRevisao?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.BaseObservacionalEvidenciaSuporte?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.InterpretacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ConclusaoDocumental?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.NecessidadeAcompanhamentoDocumentada?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectReviewFiltersResponse(
+            statusNormalizado,
+            revisorNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivados,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar revisões profissionais documentadas dos efeitos observados do conhecimento da equipe. Não transformam revisão em validação causal ou evidência clínica validada, não produzem prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-review")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectReviewPersistedResponse>>> ListarTeamKnowledgeEffectReviews(
         Guid pacienteId,

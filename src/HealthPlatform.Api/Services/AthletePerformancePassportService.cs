@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.51.3",
+            "v0.51.4",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Effect Review History torna consultáveis os eventos auditados das revisões profissionais registradas, incluindo criação, edição, status e arquivamento, sem transformar revisão em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.")
+            "Professional Review Team Knowledge Effect Review Filters adiciona busca profissional por status, profissional revisor, horizonte, texto e arquivamento, sem transformar filtros em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

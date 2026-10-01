@@ -238,6 +238,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectReviewFiltersResponse(
+    string? Status,
+    string? ProfissionalRevisor,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivados,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectReviewPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectReviewHistoryItemResponse(
     Guid Id,
     Guid TeamKnowledgeEffectReviewId,
