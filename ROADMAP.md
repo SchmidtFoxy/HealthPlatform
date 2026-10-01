@@ -4475,3 +4475,21 @@ Adicionar persistência auditada dos aprendizados documentados da equipe profiss
 ### v0.46.2 — Professional Review Team Learning Status
 Adicionar estados documentais explícitos aos aprendizados registrados da equipe, com transições manuais e auditadas sem transformar aprendizado em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, conduta ou prescrição.
 
+## ✅ v0.46.2 — Professional Review Team Learning Status — CONCLUÍDA
+
+**Entregue:**
+- status `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.46.3 — Professional Review Team Learning History
+Adicionar histórico consultável dos aprendizados registrados da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

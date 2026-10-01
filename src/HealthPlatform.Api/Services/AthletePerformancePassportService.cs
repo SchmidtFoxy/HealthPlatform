@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.46.1",
+            "v0.46.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Learning Persistence adiciona persistência auditada aos aprendizados documentados da equipe profissional, com vínculos opcionais a Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e sem transformar aprendizado registrado em evidência clínica validada, causalidade, prognóstico, recomendação, conduta ou execução automática.")
+            "Professional Review Team Learning Status adiciona estados documentais explícitos aos aprendizados registrados da equipe, com transições manuais auditadas entre Registrado, EmRevisao, Consolidado e Descartado, sem transformar aprendizado em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, conduta ou prescrição.")
         {
             Recordes = recordes,
             Tempos = tempos,

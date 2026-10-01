@@ -4931,3 +4931,35 @@ A persistência registra aprendizados documentados da equipe. Não transforma ap
 
 **Próxima etapa:** `v0.46.2 — Professional Review Team Learning Status`.
 
+---
+
+## v0.46.2 — Professional Review Team Learning Status
+
+Adiciona estados documentais explícitos aos aprendizados registrados da equipe profissional.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-learning/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do aprendizado;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir registro;
+- Revisar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não transforma aprendizado em evidência clínica validada, não infere causalidade, prognóstico ou recomendação a partir do estado, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.46.3 — Professional Review Team Learning History`.
+

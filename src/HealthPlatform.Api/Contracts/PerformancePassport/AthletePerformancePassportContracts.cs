@@ -224,11 +224,16 @@ public sealed record ProfessionalReviewTeamLearningPersistedResponse(
     string? Aplicabilidade,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamLearningStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamLearningFieldResponse(
     string Chave,

@@ -1,4 +1,22 @@
-﻿# v0.46.1 — Professional Review Team Learning Persistence
+﻿# v0.46.2 — Professional Review Team Learning Status
+
+- Adiciona `Status` ao Team Learning persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamLearningStatusRequest`.
+- Adiciona endpoint `PATCH .../team-learning/{id}/status`.
+- Estados permitidos: `Registrado`, `EmRevisao`, `Consolidado`, `Descartado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir registro, Revisar, Consolidar e Descartar.
+- Não transforma aprendizado em evidência clínica validada.
+- Não infere causalidade, prognóstico ou recomendação automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.46.3 — Professional Review Team Learning History.
+
+# v0.46.1 — Professional Review Team Learning Persistence
 
 - Adiciona persistência auditada de Team Learning.
 - Adiciona `ProfessionalReviewTeamLearningPersistedResponse`.
