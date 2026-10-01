@@ -6781,3 +6781,30 @@ Os filtros apenas localizam registros documentais. Não transformam revisão reg
 
 **Próxima etapa:** `v0.53.5 — Professional Review Team Knowledge Effect Decision Review Summary`.
 
+---
+
+## v0.53.5 — Professional Review Team Knowledge Effect Decision Review Summary
+
+Adiciona resumo estrutural das revisões profissionais documentadas das decisões sobre os efeitos observados do conhecimento da equipe.
+
+### Indicadores
+- total;
+- ativas;
+- registradas;
+- em revisão;
+- consolidadas;
+- descartadas;
+- arquivadas;
+- distribuição por profissional revisor.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo das revisões profissionais das decisões sobre os efeitos observados** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não transformam revisão em validação causal ou evidência clínica validada, não produzem prognóstico, recomendação ou decisão terapêutica, não representam score clínico, risco, urgência ou prioridade, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.53.6 — Professional Review Team Knowledge Effect Decision Review Closure`.
+

@@ -5017,6 +5017,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_PERSISTENCE_V
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_STATUS_V0532='v0.53.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_HISTORY_V0533='v0.53.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_FILTERS_V0534='v0.53.4';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_SUMMARY_V0535='v0.53.5';
 
 
 
@@ -6422,6 +6423,36 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewHistoryV
   $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewHistoryV0533').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p);
 }
 
+
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review/summary`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(host,summary){
+  if(!host || !summary) return;
+
+  const porRevisor=Array.isArray(summary.porProfissionalRevisor)?summary.porProfissionalRevisor:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-review-summary-v0535="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_SUMMARY_V0535}">
+    <div><b>Resumo das revisões profissionais das decisões sobre os efeitos observados</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Total</span><b>${esc(String(summary.total??0))}</b></div>
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativas??0))}</b></div>
+      <div class="row-between"><span>Registradas</span><b>${esc(String(summary.registradas??0))}</b></div>
+      <div class="row-between"><span>Em revisão</span><b>${esc(String(summary.emRevisao??0))}</b></div>
+      <div class="row-between"><span>Consolidadas</span><b>${esc(String(summary.consolidadas??0))}</b></div>
+      <div class="row-between"><span>Descartadas</span><b>${esc(String(summary.descartadas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porRevisor.length?`<div class="stack">
+      <small class="muted-line">Por profissional revisor</small>
+      ${porRevisor.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não valida causalidade, não valida evidência clínica, não representa prognóstico, recomendação, decisão terapêutica, score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição automática.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p){
   if(!p?.id) return;
 
@@ -6449,6 +6480,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionReviewFiltersV0534" class="form-grid" data-professional-review-team-knowledge-effect-decision-review-filters-v0534="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_FILTERS_V0534}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -6508,6 +6540,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
   </div>`;
 
   modal.classList.add('open');
+
+  const teamKnowledgeEffectDecisionReviewSummaryHostV0535=$('#professionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535');
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(teamKnowledgeEffectDecisionReviewSummaryHostV0535,x))
+    .catch(()=>{ if(teamKnowledgeEffectDecisionReviewSummaryHostV0535) teamKnowledgeEffectDecisionReviewSummaryHostV0535.innerHTML=''; });
 
   const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewFormV0531');
   const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewListV0531');
@@ -6578,12 +6615,18 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
       });
       toast(`Revisão profissional atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(teamKnowledgeEffectDecisionReviewSummaryHostV0535,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-effect-decision-review-archive-v0531]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review/${btn.dataset.teamKnowledgeEffectDecisionReviewArchiveV0531}`,{method:'DELETE'});
       toast('Revisão profissional arquivada.');
       await render();
+      hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(teamKnowledgeEffectDecisionReviewSummaryHostV0535,x))
+        .catch(()=>{});
     });
   };
 
@@ -6628,6 +6671,9 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
     toast(id?'Revisão profissional atualizada.':'Revisão profissional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(p.id)
+      .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535(teamKnowledgeEffectDecisionReviewSummaryHostV0535,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -18326,7 +18372,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.53.4';
+const HP_MVP_VERSION='0.53.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
