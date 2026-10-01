@@ -5198,3 +5198,21 @@ Adicionar estados documentais explícitos às revisões profissionais registrada
 ### v0.51.3 — Professional Review Team Knowledge Effect Review History
 Adicionar histórico consultável das revisões profissionais registradas, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.51.3 — Professional Review Team Knowledge Effect Review History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectReviewHistoryItemResponse`;
+- `ProfessionalReviewTeamKnowledgeEffectReviewHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por revisão profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.51.4 — Professional Review Team Knowledge Effect Review Filters
+Adicionar filtros profissionais por status, profissional revisor, horizonte e texto, preservando a natureza documental das revisões e sem promover o registro a validação causal ou evidência clínica validada.
+

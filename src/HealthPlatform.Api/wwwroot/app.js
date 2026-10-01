@@ -5001,6 +5001,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CLOSURE_V0506='v0.50.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_V0510='v0.51.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_PERSISTENCE_V0511='v0.51.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_STATUS_V0512='v0.51.2';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_HISTORY_V0513='v0.51.3';
 
 
 
@@ -6240,6 +6241,40 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510(host
 }
 
 
+
+async function hpOpenProfessionalReviewTeamKnowledgeEffectReviewHistoryV0513(p,review){
+  if(!p?.id || !review?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-review/${review.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-review-history-v0513="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_HISTORY_V0513}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico das revisões profissionais dos efeitos observados</h3>
+        <p class="muted-line">${esc(review.profissionalRevisor||'Revisor')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectReviewHistoryV0513">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não valida causalidade, não valida evidência clínica, não representa prognóstico, recomendação, decisão terapêutica, conduta executada ou prescrição automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTeamKnowledgeEffectReviewHistoryV0513').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectReviewV0511(p);
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeEffectReviewV0511(p){
   if(!p?.id) return;
 
@@ -6339,6 +6374,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectReviewV0511(p){
         ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-knowledge-effect-review-status-v0512="${x.id}" data-status-v0512="EmRevisao">Revisar</button>`:''}
         ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-knowledge-effect-review-status-v0512="${x.id}" data-status-v0512="Consolidado">Consolidar</button>`:''}
         ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-knowledge-effect-review-status-v0512="${x.id}" data-status-v0512="Descartado">Descartar</button>`:''}
+        <button type="button" class="ghost" data-team-knowledge-effect-review-history-v0513="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-team-knowledge-effect-review-archive-v0511="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma revisão profissional registrada.</p>';
@@ -6371,6 +6407,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectReviewV0511(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalRevisor.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-review-history-v0513]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamKnowledgeEffectReviewHistoryV0513);
+      if(item) await hpOpenProfessionalReviewTeamKnowledgeEffectReviewHistoryV0513(p,item);
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-effect-review-status-v0512]')].forEach(btn=>btn.onclick=async()=>{
@@ -17473,7 +17514,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.51.2';
+const HP_MVP_VERSION='0.51.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
