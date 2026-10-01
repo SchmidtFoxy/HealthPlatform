@@ -4218,3 +4218,21 @@ Adicionar estados documentais explícitos às decisões registradas da equipe, c
 ### v0.44.3 — Professional Review Team Decision History
 Adicionar histórico consultável das decisões registradas da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.44.3 — Professional Review Team Decision History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamDecisionHistoryItemResponse`;
+- `ProfessionalReviewTeamDecisionHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por decisão documentada;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.44.4 — Professional Review Team Decision Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental das decisões registradas da equipe.
+

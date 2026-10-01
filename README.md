@@ -4489,3 +4489,35 @@ O status é documental. O sistema não inicia, conclui ou cancela decisões auto
 
 **Próxima etapa:** `v0.44.3 — Professional Review Team Decision History`.
 
+---
+
+## v0.44.3 — Professional Review Team Decision History
+
+Adiciona histórico consultável dos eventos auditados das decisões registradas da equipe profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-decision/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada decisão passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.44.4 — Professional Review Team Decision Filters`.
+

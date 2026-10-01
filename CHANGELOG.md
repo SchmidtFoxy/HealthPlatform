@@ -1,4 +1,20 @@
-﻿# v0.44.2 — Professional Review Team Decision Status
+﻿# v0.44.3 — Professional Review Team Decision History
+
+- Adiciona `ProfessionalReviewTeamDecisionHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamDecisionHistoryResponse`.
+- Adiciona `GET .../team-decision/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.44.4 — Professional Review Team Decision Filters.
+
+# v0.44.2 — Professional Review Team Decision Status
 
 - Adiciona `Status` à Team Decision persistida.
 - Adiciona `StatusAtualizadoEmUtc`.
