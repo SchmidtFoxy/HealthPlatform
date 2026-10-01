@@ -262,6 +262,28 @@ public class ProgressReviewNotesController(
             "A fundação do Action Plan organiza ações profissionais de forma documental. A partir da v0.33.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, risco, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("action-plan/closure")]
+    public ActionResult<ProfessionalReviewActionPlanClosureResponse> FechamentoActionPlan()
+    {
+        var componentes = new[]
+        {
+            "ActionPlanFoundation",
+            "ActionPlanPersistence",
+            "ActionPlanStatus",
+            "ActionPlanHistory",
+            "ActionPlanFilters",
+            "ActionPlanSummary"
+        };
+
+        return Ok(new ProfessionalReviewActionPlanClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaActionPlanCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural do Action Plan. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica."));
+    }
+
     [HttpGet("action-plan/summary")]
     public async Task<ActionResult<ProfessionalReviewActionPlanSummaryResponse>> ResumoActionPlan(
         Guid pacienteId,

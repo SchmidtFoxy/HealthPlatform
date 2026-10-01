@@ -2110,3 +2110,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.33.6 — Professional Review Action Plan Closure`.
 
+---
+
+## v0.33.6 — Professional Review Action Plan Closure
+
+Fecha a linha 0.33.x consolidando todas as capacidades estruturais do Action Plan profissional.
+
+### Componentes consolidados
+- Action Plan Foundation;
+- Action Plan Persistence;
+- Action Plan Status;
+- Action Plan History;
+- Action Plan Filters;
+- Action Plan Summary.
+
+### Estado
+O endpoint `action-plan/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaActionPlanCompleta`;
+- regra de uso.
+
+### UI
+O workspace profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica.
+
+**Próxima etapa:** `v0.34.0 — Professional Review Task Coordination Foundation`.
+

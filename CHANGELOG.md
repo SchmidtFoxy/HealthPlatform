@@ -1,4 +1,17 @@
-﻿# v0.33.5 — Professional Review Action Plan Summary
+﻿# v0.33.6 — Professional Review Action Plan Closure
+
+- Adiciona `ProfessionalReviewActionPlanClosureResponse`.
+- Adiciona endpoint `GET .../action-plan/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaActionPlanCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_ACTION_PLAN_CLOSURE_V0336`.
+- Adiciona painel de fechamento no workspace profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.33.x.
+- Próxima etapa: v0.34.0 — Professional Review Task Coordination Foundation.
+
+# v0.33.5 — Professional Review Action Plan Summary
 
 - Adiciona `ProfessionalReviewActionPlanResponsavelResumoResponse`.
 - Adiciona `ProfessionalReviewActionPlanSummaryResponse`.
