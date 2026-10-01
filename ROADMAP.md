@@ -3312,3 +3312,26 @@ Adicionar filtros profissionais por status, profissional de origem, profissional
 ### v0.37.5 — Professional Review Handoff Summary
 Adicionar resumo estrutural dos handoffs profissionais com contagem por status e distribuição por profissional de origem e destino, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.37.5 — Professional Review Handoff Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewHandoffSummaryResponse`;
+- `ProfessionalReviewHandoffProfissionalResumoResponse`;
+- total de handoffs;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- agrupamento por profissional de origem;
+- agrupamento por profissional de destino;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.6 — Professional Review Handoff Closure
+Fechar o ciclo 0.37.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão dos handoffs profissionais.
+

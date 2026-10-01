@@ -1,4 +1,19 @@
-﻿# v0.37.4 — Professional Review Handoff Filters
+﻿# v0.37.5 — Professional Review Handoff Summary
+
+- Adiciona `ProfessionalReviewHandoffProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewHandoffSummaryResponse`.
+- Adiciona `GET .../handoff/summary`.
+- Consolida total, ativos, planejados, em andamento, concluídos, cancelados e arquivados.
+- Adiciona distribuição por profissional de origem.
+- Adiciona distribuição por profissional de destino.
+- Adiciona painel `Resumo dos handoffs profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.37.6 — Professional Review Handoff Closure.
+
+# v0.37.4 — Professional Review Handoff Filters
 
 - Adiciona `ProfessionalReviewHandoffFiltersResponse`.
 - Adiciona endpoint `GET .../handoff/search`.

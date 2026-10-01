@@ -4905,6 +4905,7 @@ const HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4';
+const HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5';
 
 
 
@@ -5254,6 +5255,40 @@ async function hpOpenProfessionalReviewHandoffHistoryV0373(p,handoff){
   $('#closeProfessionalReviewHandoffHistoryV0373').onclick=()=>hpOpenProfessionalReviewHandoffV0371(p);
 }
 
+
+async function hpLoadProfessionalReviewHandoffSummaryV0375(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/handoff/summary`);
+}
+
+function hpRenderProfessionalReviewHandoffSummaryV0375(host,summary){
+  if(!host || !summary) return;
+
+  const porOrigem=Array.isArray(summary.porOrigem)?summary.porOrigem:[];
+  const porDestino=Array.isArray(summary.porDestino)?summary.porDestino:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-handoff-summary-v0375="${HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375}">
+    <div><b>Resumo dos handoffs profissionais</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejados</span><b>${esc(String(summary.planejados??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídos</span><b>${esc(String(summary.concluidos??0))}</b></div>
+      <div class="row-between"><span>Cancelados</span><b>${esc(String(summary.cancelados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porOrigem.length?`<div class="stack">
+      <small class="muted-line">Por profissional de origem</small>
+      ${porOrigem.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    ${porDestino.length?`<div class="stack">
+      <small class="muted-line">Por profissional de destino</small>
+      ${porDestino.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewHandoffV0371(p){
   if(!p?.id) return;
 
@@ -5282,6 +5317,7 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewHandoffV0371">Fechar</button>
     </div>
+    <div id="professionalReviewHandoffSummaryV0375"></div>
     <form id="professionalReviewHandoffFiltersV0374" class="form-grid" data-professional-review-handoff-filters-v0374="${HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5324,6 +5360,11 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const handoffSummaryHostV0375=$('#professionalReviewHandoffSummaryV0375');
+  hpLoadProfessionalReviewHandoffSummaryV0375(p.id)
+    .then(x=>hpRenderProfessionalReviewHandoffSummaryV0375(handoffSummaryHostV0375,x))
+    .catch(()=>{ if(handoffSummaryHostV0375) handoffSummaryHostV0375.innerHTML=''; });
 
   const form=$('#professionalReviewHandoffFormV0371');
   const listHost=$('#professionalReviewHandoffListV0371');
@@ -5396,12 +5437,18 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       });
       toast(`Handoff atualizado para ${status}.`);
       await render();
+      hpLoadProfessionalReviewHandoffSummaryV0375(p.id)
+        .then(x=>hpRenderProfessionalReviewHandoffSummaryV0375(handoffSummaryHostV0375,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-handoff-archive-v0371]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/handoff/${btn.dataset.handoffArchiveV0371}`,{method:'DELETE'});
       toast('Handoff profissional arquivado.');
       await render();
+      hpLoadProfessionalReviewHandoffSummaryV0375(p.id)
+        .then(x=>hpRenderProfessionalReviewHandoffSummaryV0375(handoffSummaryHostV0375,x))
+        .catch(()=>{});
     });
   };
 
@@ -5427,6 +5474,9 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
     toast(id?'Handoff profissional atualizado.':'Handoff profissional registrado.');
     clear();
     await render();
+    hpLoadProfessionalReviewHandoffSummaryV0375(p.id)
+      .then(x=>hpRenderProfessionalReviewHandoffSummaryV0375(handoffSummaryHostV0375,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -12390,7 +12440,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.37.4';
+const HP_MVP_VERSION='0.37.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

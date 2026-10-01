@@ -155,6 +155,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewHandoffProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewHandoffSummaryResponse(
+    int Total,
+    int Ativos,
+    int Planejados,
+    int EmAndamento,
+    int Concluidos,
+    int Cancelados,
+    int Arquivados,
+    IReadOnlyCollection<ProfessionalReviewHandoffProfissionalResumoResponse> PorOrigem,
+    IReadOnlyCollection<ProfessionalReviewHandoffProfissionalResumoResponse> PorDestino,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewHandoffFiltersResponse(
     string? Status,
     string? ProfissionalOrigem,

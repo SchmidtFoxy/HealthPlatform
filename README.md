@@ -2965,3 +2965,31 @@ Os filtros apenas localizam registros documentais. Não classificam urgência, r
 
 **Próxima etapa:** `v0.37.5 — Professional Review Handoff Summary`.
 
+---
+
+## v0.37.5 — Professional Review Handoff Summary
+
+Adiciona resumo estrutural dos handoffs profissionais.
+
+### Indicadores
+- total;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- distribuição por profissional de origem;
+- distribuição por profissional de destino.
+
+### Endpoint
+`GET .../handoff/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo dos handoffs profissionais** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.37.6 — Professional Review Handoff Closure`.
+
