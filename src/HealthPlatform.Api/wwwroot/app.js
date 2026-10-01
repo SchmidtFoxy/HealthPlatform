@@ -4884,6 +4884,7 @@ const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_V0342='v0.34.2';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344='v0.34.4';
+const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_SUMMARY_V0345='v0.34.5';
 
 
 
@@ -5035,6 +5036,34 @@ async function hpOpenProfessionalReviewTaskCoordinationHistoryV0343(p,task){
   $('#closeProfessionalReviewTaskCoordinationHistoryV0343').onclick=()=>hpOpenProfessionalReviewTaskCoordinationV0341(p);
 }
 
+
+async function hpLoadProfessionalReviewTaskCoordinationSummaryV0345(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/task-coordination/summary`);
+}
+
+function hpRenderProfessionalReviewTaskCoordinationSummaryV0345(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porResponsavel)?summary.porResponsavel:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-task-coordination-summary-v0345="${HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_SUMMARY_V0345}">
+    <div><b>Resumo da coordenação operacional</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativas??0))}</b></div>
+      <div class="row-between"><span>Planejadas</span><b>${esc(String(summary.planejadas??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídas</span><b>${esc(String(summary.concluidas??0))}</b></div>
+      <div class="row-between"><span>Canceladas</span><b>${esc(String(summary.canceladas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.responsavel||'Sem responsável')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência ou prioridade.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
   if(!p?.id) return;
 
@@ -5062,6 +5091,7 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTaskCoordinationV0341">Fechar</button>
     </div>
+    <div id="professionalReviewTaskCoordinationSummaryV0345"></div>
     <form id="professionalReviewTaskCoordinationFiltersV0344" class="form-grid" data-professional-review-task-coordination-filters-v0344="${HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5101,6 +5131,11 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const taskCoordinationSummaryHostV0345=$('#professionalReviewTaskCoordinationSummaryV0345');
+  hpLoadProfessionalReviewTaskCoordinationSummaryV0345(p.id)
+    .then(x=>hpRenderProfessionalReviewTaskCoordinationSummaryV0345(taskCoordinationSummaryHostV0345,x))
+    .catch(()=>{ if(taskCoordinationSummaryHostV0345) taskCoordinationSummaryHostV0345.innerHTML=''; });
 
   const form=$('#professionalReviewTaskCoordinationFormV0341');
   const listHost=$('#professionalReviewTaskCoordinationListV0341');
@@ -5169,12 +5204,18 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
       });
       toast(`Tarefa operacional atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewTaskCoordinationSummaryV0345(p.id)
+        .then(x=>hpRenderProfessionalReviewTaskCoordinationSummaryV0345(taskCoordinationSummaryHostV0345,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-task-coordination-archive-v0341]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/task-coordination/${btn.dataset.taskCoordinationArchiveV0341}`,{method:'DELETE'});
       toast('Tarefa operacional arquivada.');
       await render();
+      hpLoadProfessionalReviewTaskCoordinationSummaryV0345(p.id)
+        .then(x=>hpRenderProfessionalReviewTaskCoordinationSummaryV0345(taskCoordinationSummaryHostV0345,x))
+        .catch(()=>{});
     });
   };
 
@@ -5198,6 +5239,9 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
     toast(id?'Tarefa operacional atualizada.':'Tarefa operacional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewTaskCoordinationSummaryV0345(p.id)
+      .then(x=>hpRenderProfessionalReviewTaskCoordinationSummaryV0345(taskCoordinationSummaryHostV0345,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -11362,7 +11406,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.34.4';
+const HP_MVP_VERSION='0.34.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -137,6 +137,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTaskCoordinationResponsavelResumoResponse(
+    string Responsavel,
+    int Total);
+
+public sealed record ProfessionalReviewTaskCoordinationSummaryResponse(
+    int Total,
+    int Ativas,
+    int Planejadas,
+    int EmAndamento,
+    int Concluidas,
+    int Canceladas,
+    int Arquivadas,
+    IReadOnlyCollection<ProfessionalReviewTaskCoordinationResponsavelResumoResponse> PorResponsavel,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTaskCoordinationFiltersResponse(
     string? Status,
     string? Responsavel,

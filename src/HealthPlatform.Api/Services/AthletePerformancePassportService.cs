@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.34.4",
+            "v0.34.5",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Task Coordination Filters adiciona busca profissional por status, responsável, horizonte, texto e arquivamento, sem converter filtros em urgência, risco ou prioridade clínica.")
+            "Professional Review Task Coordination Summary consolida contagens documentais por status e responsável, sem transformar agregações em score clínico, risco, urgência ou prioridade automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

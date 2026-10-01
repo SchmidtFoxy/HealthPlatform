@@ -2299,3 +2299,30 @@ Os filtros apenas localizam registros operacionais. Não classificam urgência, 
 
 **Próxima etapa:** `v0.34.5 — Professional Review Task Coordination Summary`.
 
+---
+
+## v0.34.5 — Professional Review Task Coordination Summary
+
+Adiciona resumo estrutural das tarefas operacionais profissionais.
+
+### Indicadores
+- total;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- distribuição por responsável.
+
+### Endpoint
+`GET .../task-coordination/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo da coordenação operacional** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.34.6 — Professional Review Task Coordination Closure`.
+

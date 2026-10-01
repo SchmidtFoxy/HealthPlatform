@@ -322,6 +322,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza tarefas acompanháveis pela equipe profissional e, a partir da v0.34.1, possui persistência auditada. Não executa condutas, não atribui prioridade clínica e não substitui decisão profissional."));
     }
 
+    [HttpGet("task-coordination/summary")]
+    public async Task<ActionResult<ProfessionalReviewTaskCoordinationSummaryResponse>> ResumoTaskCoordination(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTaskCoordination))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearTaskCoordination).ToArray();
+
+        var total = itens.Length;
+        var arquivadas = itens.Count(x => x.Arquivada);
+        var ativas = itens.Count(x => !x.Arquivada);
+        var planejadas = itens.Count(x => !x.Arquivada && x.Status == "Planejada");
+        var emAndamento = itens.Count(x => !x.Arquivada && x.Status == "EmAndamento");
+        var concluidas = itens.Count(x => !x.Arquivada && x.Status == "Concluida");
+        var canceladas = itens.Count(x => !x.Arquivada && x.Status == "Cancelada");
+
+        var porResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.Responsavel))
+            .GroupBy(x => x.Responsavel!.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewTaskCoordinationResponsavelResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Responsavel)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewTaskCoordinationSummaryResponse(
+            total,
+            ativas,
+            planejadas,
+            emAndamento,
+            concluidas,
+            canceladas,
+            arquivadas,
+            porResponsavel,
+            "O resumo apresenta somente agregações documentais das tarefas operacionais. Não representa score clínico, risco, urgência, prioridade, prognóstico ou recomendação."));
+    }
+
     [HttpGet("task-coordination/search")]
     public async Task<ActionResult<ProfessionalReviewTaskCoordinationFiltersResponse>> FiltrarTaskCoordination(
         Guid pacienteId,

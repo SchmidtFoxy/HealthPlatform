@@ -1,4 +1,17 @@
-﻿# v0.34.4 — Professional Review Task Coordination Filters
+﻿# v0.34.5 — Professional Review Task Coordination Summary
+
+- Adiciona `ProfessionalReviewTaskCoordinationResponsavelResumoResponse`.
+- Adiciona `ProfessionalReviewTaskCoordinationSummaryResponse`.
+- Adiciona `GET .../task-coordination/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por responsável.
+- Adiciona painel `Resumo da coordenação operacional`.
+- Atualiza o resumo após alterações na Task Coordination.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.34.6 — Professional Review Task Coordination Closure.
+
+# v0.34.4 — Professional Review Task Coordination Filters
 
 - Adiciona `ProfessionalReviewTaskCoordinationFiltersResponse`.
 - Adiciona endpoint `GET .../task-coordination/search`.
