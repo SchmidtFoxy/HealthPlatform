@@ -2358,6 +2358,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza revisões profissionais de efeitos observados do conhecimento da equipe usando Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.51.1, possui persistência auditada. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-effect-review/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectReviewClosureResponse> FechamentoTeamKnowledgeEffectReviews()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeEffectReviewFoundation",
+            "TeamKnowledgeEffectReviewPersistence",
+            "TeamKnowledgeEffectReviewStatus",
+            "TeamKnowledgeEffectReviewHistory",
+            "TeamKnowledgeEffectReviewFilters",
+            "TeamKnowledgeEffectReviewSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectReviewClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeEffectReviewCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural das revisões profissionais documentadas dos efeitos observados do conhecimento da equipe. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-review/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectReviewSummaryResponse>> ResumoTeamKnowledgeEffectReviews(
         Guid pacienteId,
