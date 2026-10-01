@@ -1,4 +1,22 @@
-﻿# v0.53.6 — Professional Review Team Knowledge Effect Decision Review Closure
+﻿# v0.54.0 — Professional Review Team Knowledge Effect Decision Review Outcome Foundation
+
+- Abre a linha funcional 0.54.x.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFieldResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationResponse`.
+- Adiciona `GET .../team-knowledge-effect-decision-review-outcome/foundation`.
+- Adiciona estado `FundacaoTeamKnowledgeEffectDecisionReviewOutcomeDisponivel`.
+- Adiciona 26 campos estruturais.
+- Mantém `PersistenciaDisponivel=false` nesta fundação.
+- Integra a fundação ao gerenciador de revisões profissionais.
+- Não valida causalidade ou evidência clínica.
+- Não produz prognóstico, recomendação ou decisão terapêutica.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration nova.
+- Próxima etapa: v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence.
+
+# v0.53.6 — Professional Review Team Knowledge Effect Decision Review Closure
 
 - Encerra a linha funcional 0.53.x.
 

@@ -5019,6 +5019,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_HISTORY_V0533
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_FILTERS_V0534='v0.53.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_SUMMARY_V0535='v0.53.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_CLOSURE_V0536='v0.53.6';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_V0540='v0.54.0';
 
 
 
@@ -6425,6 +6426,34 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewHistoryV
 }
 
 
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome/foundation`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-review-outcome-v0540="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_V0540}">
+    <div class="row-between">
+      <div>
+        <b>Resultado documentado da revisão das decisões sobre os efeitos observados</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza resultados documentados das revisões profissionais. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
+  </section>`;
+}
+
+
 async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewClosureV0536(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review/closure`);
@@ -6497,6 +6526,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionReviewClosureV0536"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionReviewSummaryV0535"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionReviewFiltersV0534" class="form-grid" data-professional-review-team-knowledge-effect-decision-review-filters-v0534="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_FILTERS_V0534}">
@@ -6558,6 +6588,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
   </div>`;
 
   modal.classList.add('open');
+
+  const teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540');
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540,x))
+    .catch(()=>{ if(teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540) teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540.innerHTML=''; });
 
   const teamKnowledgeEffectDecisionReviewClosureHostV0536=$('#professionalReviewTeamKnowledgeEffectDecisionReviewClosureV0536');
   hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewClosureV0536(p.id)
@@ -18395,7 +18430,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.53.6';
+const HP_MVP_VERSION='0.54.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
