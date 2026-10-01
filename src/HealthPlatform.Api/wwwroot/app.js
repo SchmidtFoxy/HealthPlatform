@@ -4918,6 +4918,7 @@ const HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3';
+const HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394='v0.39.4';
 
 
 
@@ -5405,9 +5406,18 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
   const modal=$('#clinicalActionModal');
   if(!modal) return;
 
-  const load=async()=>{
-    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation`);
-    return Array.isArray(items)?items:[];
+  const load=async(filters={})=>{
+    const params=new URLSearchParams();
+    if(filters.status) params.set('status',filters.status);
+    if(filters.profissionalOrigem) params.set('profissionalOrigem',filters.profissionalOrigem);
+    if(filters.profissionalDestino) params.set('profissionalDestino',filters.profissionalDestino);
+    if(filters.horizonte) params.set('horizonte',filters.horizonte);
+    if(filters.texto) params.set('texto',filters.texto);
+    if(filters.incluirArquivadas) params.set('incluirArquivadas','true');
+    params.set('ordenacao',filters.ordenacao||'desc');
+
+    const result=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation/search?${params.toString()}`);
+    return Array.isArray(result?.itens)?result.itens:[];
   };
 
   modal.innerHTML=`<div class="modal-card large" data-professional-review-escalation-persistence-v0391="${HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391}">
@@ -5418,6 +5428,29 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewEscalationV0391">Fechar</button>
     </div>
+    <form id="professionalReviewEscalationFiltersV0394" class="form-grid" data-professional-review-escalation-filters-v0394="${HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394}">
+      <label>Status<select name="status">
+        <option value="">Todos</option>
+        <option value="Planejado">Planejado</option>
+        <option value="EmAndamento">Em andamento</option>
+        <option value="Concluido">Concluído</option>
+        <option value="Cancelado">Cancelado</option>
+      </select></label>
+      <label>Profissional de origem<input name="profissionalOrigem" maxlength="160" placeholder="Filtrar por origem"></label>
+      <label>Profissional de destino<input name="profissionalDestino" maxlength="160" placeholder="Filtrar por destino"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120" placeholder="Ex.: esta semana"></label>
+      <label class="span-2">Texto<input name="texto" maxlength="240" placeholder="Buscar profissionais, contexto ou observação"></label>
+      <label><input type="checkbox" name="incluirArquivadas"> Incluir arquivados</label>
+      <label>Ordenação<select name="ordenacao">
+        <option value="desc">Mais recentes</option>
+        <option value="asc">Mais antigos</option>
+      </select></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="secondary">Aplicar filtros</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewEscalationFiltersV0394">Limpar filtros</button>
+      </div>
+    </form>
+
     <form id="professionalReviewEscalationFormV0391" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional de origem<input name="profissionalOrigem" maxlength="160" required></label>
@@ -5448,8 +5481,20 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
     if(form?.elements.id) form.elements.id.value='';
   };
 
+  const filtersForm=$('#professionalReviewEscalationFiltersV0394');
+
+  const readFilters=()=>({
+    status:filtersForm?.elements.status?.value||'',
+    profissionalOrigem:filtersForm?.elements.profissionalOrigem?.value||'',
+    profissionalDestino:filtersForm?.elements.profissionalDestino?.value||'',
+    horizonte:filtersForm?.elements.horizonte?.value||'',
+    texto:filtersForm?.elements.texto?.value||'',
+    incluirArquivadas:!!filtersForm?.elements.incluirArquivadas?.checked,
+    ordenacao:filtersForm?.elements.ordenacao?.value||'desc'
+  });
+
   const render=async()=>{
-    const items=await load();
+    const items=await load(readFilters());
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalOrigem||'Origem')} → ${esc(x.profissionalDestino||'Destino')}</b>
@@ -5537,6 +5582,21 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
     clear();
     await render();
   };
+
+  if(filtersForm){
+    filtersForm.onsubmit=async e=>{
+      e.preventDefault();
+      await render();
+    };
+  }
+
+  const clearFiltersV0394=$('#clearProfessionalReviewEscalationFiltersV0394');
+  if(clearFiltersV0394){
+    clearFiltersV0394.onclick=async()=>{
+      filtersForm?.reset();
+      await render();
+    };
+  }
 
   $('#clearProfessionalReviewEscalationV0391').onclick=clear;
   $('#closeProfessionalReviewEscalationV0391').onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
@@ -13029,7 +13089,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.39.3';
+const HP_MVP_VERSION='0.39.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

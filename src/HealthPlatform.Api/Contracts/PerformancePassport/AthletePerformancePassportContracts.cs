@@ -166,6 +166,19 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewEscalationFiltersResponse(
+    string? Status,
+    string? ProfissionalOrigem,
+    string? ProfissionalDestino,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewEscalationPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewEscalationHistoryItemResponse(
     Guid Id,
     Guid EscalationId,

@@ -3561,3 +3561,23 @@ Adicionar histórico consultável dos escalonamentos profissionais, cobrindo cri
 ### v0.39.4 — Professional Review Escalation Filters
 Adicionar filtros profissionais por status, profissional de origem, profissional de destino, horizonte e texto, preservando a natureza documental dos escalonamentos.
 
+## ✅ v0.39.4 — Professional Review Escalation Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewEscalationFiltersResponse`;
+- endpoint `escalation/search`;
+- filtro por status;
+- filtro por profissional de origem;
+- filtro por profissional de destino;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.39.5 — Professional Review Escalation Summary
+Adicionar resumo estrutural dos escalonamentos profissionais com contagem por status e distribuição por profissional de origem e destino, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+

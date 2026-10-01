@@ -3384,3 +3384,33 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.39.4 — Professional Review Escalation Filters`.
 
+---
+
+## v0.39.4 — Professional Review Escalation Filters
+
+Adiciona filtros profissionais para localizar escalonamentos persistidos.
+
+### Filtros
+- status;
+- profissional de origem;
+- profissional de destino;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional de origem;
+- profissional de destino;
+- contexto escalado;
+- observação profissional.
+
+### UI
+O gerenciador de escalonamentos passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.39.5 — Professional Review Escalation Summary`.
+

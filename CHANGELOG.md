@@ -1,4 +1,21 @@
-﻿# v0.39.3 — Professional Review Escalation History
+﻿# v0.39.4 — Professional Review Escalation Filters
+
+- Adiciona `ProfessionalReviewEscalationFiltersResponse`.
+- Adiciona endpoint `GET .../escalation/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional de origem.
+- Adiciona filtro por profissional de destino.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.39.5 — Professional Review Escalation Summary.
+
+# v0.39.3 — Professional Review Escalation History
 
 - Adiciona `ProfessionalReviewEscalationHistoryItemResponse`.
 - Adiciona `ProfessionalReviewEscalationHistoryResponse`.
