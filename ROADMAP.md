@@ -3662,3 +3662,21 @@ Adicionar persistência auditada dos registros de coordenação profissional int
 ### v0.40.2 — Professional Review Coordination Status
 Adicionar estados documentais explícitos aos registros de coordenação profissional integrada, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.40.2 — Professional Review Coordination Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejada`, `EmAndamento`, `Concluida` e `Cancelada`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.40.3 — Professional Review Coordination History
+Adicionar histórico consultável das coordenações profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

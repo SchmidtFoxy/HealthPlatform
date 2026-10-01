@@ -1,4 +1,20 @@
-﻿# v0.40.1 — Professional Review Coordination Persistence
+﻿# v0.40.2 — Professional Review Coordination Status
+
+- Adiciona `Status` à Coordination persistida.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewCoordinationStatusRequest`.
+- Adiciona endpoint `PATCH .../coordination/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_COORDINATION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.40.3 — Professional Review Coordination History.
+
+# v0.40.1 — Professional Review Coordination Persistence
 
 - Adiciona persistência auditada de Coordination.
 - Adiciona `ProfessionalReviewCoordinationPersistedResponse`.

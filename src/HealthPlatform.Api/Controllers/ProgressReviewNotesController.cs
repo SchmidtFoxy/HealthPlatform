@@ -934,21 +934,78 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadCoordination(
+        var payloadAtual = LerPayloadCoordination(nota);
+        var payloadAtualizado = new CoordinationPayload(
             profissionalCoordenador,
             request.AssignmentRelacionadaId,
             request.DelegationRelacionadaId,
             request.HandoffRelacionadoId,
             request.ContinuityRelacionadaId,
             request.EscalationRelacionadaId,
-            request.ContextoCoordenacao,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ContextoCoordenacao, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_COORDINATION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearCoordination(nota));
+    }
+
+    [HttpPatch("coordination/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewCoordinationPersistedResponse>> AtualizarStatusCoordination(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewCoordinationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusCoordinationValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCoordination) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadCoordination(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_COORDINATION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearCoordination(nota));
     }
 
@@ -5246,7 +5303,9 @@ public class ProgressReviewNotesController(
         Guid? EscalationRelacionadaId,
         string? ContextoCoordenacao,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadCoordination(
         string profissionalCoordenador,
@@ -5268,7 +5327,9 @@ public class ProgressReviewNotesController(
             escalationRelacionadaId,
             NormalizarOpcional(contextoCoordenacao, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -5297,12 +5358,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoCoordenacao,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static CoordinationPayload LerPayloadCoordination(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<CoordinationPayload>(nota.Conteudo)
+                ?? new CoordinationPayload(nota.Conteudo, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new CoordinationPayload(nota.Conteudo, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusCoordinationValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private sealed record EscalationPayload(
         string ProfissionalOrigem,

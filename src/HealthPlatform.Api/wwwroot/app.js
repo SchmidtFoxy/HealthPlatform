@@ -4923,6 +4923,7 @@ const HP_PROFESSIONAL_REVIEW_ESCALATION_SUMMARY_V0395='v0.39.5';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_CLOSURE_V0396='v0.39.6';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_V0400='v0.40.0';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401='v0.40.1';
+const HP_PROFESSIONAL_REVIEW_COORDINATION_STATUS_V0402='v0.40.2';
 
 
 
@@ -5490,8 +5491,9 @@ async function hpOpenProfessionalReviewCoordinationV0401(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalCoordenador||'Coordenador')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejada')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
       ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
@@ -5502,6 +5504,10 @@ async function hpOpenProfessionalReviewCoordinationV0401(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-coordination-edit-v0401="${x.id}">Editar</button>
+        ${x.status!=='Planejada'?`<button type="button" class="ghost" data-coordination-status-v0402="${x.id}" data-status-v0402="Planejada">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-coordination-status-v0402="${x.id}" data-status-v0402="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluida'?`<button type="button" class="ghost" data-coordination-status-v0402="${x.id}" data-status-v0402="Concluida">Concluir</button>`:''}
+        ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-coordination-status-v0402="${x.id}" data-status-v0402="Cancelada">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-coordination-archive-v0401="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma coordenação profissional registrada.</p>';
@@ -5520,6 +5526,16 @@ async function hpOpenProfessionalReviewCoordinationV0401(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalCoordenador.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-coordination-status-v0402]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0402;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/coordination/${btn.dataset.coordinationStatusV0402}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Coordenação atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-coordination-archive-v0401]')].forEach(btn=>btn.onclick=async()=>{
@@ -13330,7 +13346,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.40.1';
+const HP_MVP_VERSION='0.40.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

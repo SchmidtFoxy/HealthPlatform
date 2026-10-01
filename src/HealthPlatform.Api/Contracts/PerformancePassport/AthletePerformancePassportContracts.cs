@@ -182,11 +182,16 @@ public sealed record ProfessionalReviewCoordinationPersistedResponse(
     string? ContextoCoordenacao,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewCoordinationStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewCoordinationFieldResponse(
     string Chave,
