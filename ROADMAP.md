@@ -4236,3 +4236,22 @@ Adicionar histórico consultável das decisões registradas da equipe, cobrindo 
 ### v0.44.4 — Professional Review Team Decision Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental das decisões registradas da equipe.
 
+## ✅ v0.44.4 — Professional Review Team Decision Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamDecisionFiltersResponse`;
+- endpoint `team-decision/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.44.5 — Professional Review Team Decision Summary
+Adicionar resumo estrutural das decisões documentadas da equipe com contagem por status e distribuição por profissional responsável, sem gerar score clínico, prioridade automática, prescrição, execução ou transferência automática de responsabilidade clínica.
+

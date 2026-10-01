@@ -4521,3 +4521,33 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.44.4 — Professional Review Team Decision Filters`.
 
+---
+
+## v0.44.4 — Professional Review Team Decision Filters
+
+Adiciona filtros profissionais para localizar decisões documentadas da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- decisão documentada;
+- racional / justificativa;
+- observação profissional.
+
+### UI
+O gerenciador de decisões passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.44.5 — Professional Review Team Decision Summary`.
+

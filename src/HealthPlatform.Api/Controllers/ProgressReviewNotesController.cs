@@ -1186,6 +1186,70 @@ public class ProgressReviewNotesController(
             "A fundação organiza decisões documentadas entre profissionais usando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.44.1, possui persistência auditada. Não executa condutas, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("team-decision/search")]
+    public async Task<ActionResult<ProfessionalReviewTeamDecisionFiltersResponse>> FiltrarTeamDecisions(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? profissionalResponsavel = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivados = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusTeamDecisionValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var responsavelNormalizado = NormalizarOpcional(profissionalResponsavel, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamDecision) &&
+                (incluirArquivados || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearTeamDecision)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (responsavelNormalizado is null ||
+                    x.ProfissionalResponsavel.Contains(responsavelNormalizado, StringComparison.OrdinalIgnoreCase)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ProfissionalResponsavel.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.Participantes?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    x.DecisaoDocumentada.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.RacionalJustificativa?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewTeamDecisionFiltersResponse(
+            statusNormalizado,
+            responsavelNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivados,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar decisões documentadas da equipe. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-decision")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamDecisionPersistedResponse>>> ListarTeamDecisions(
         Guid pacienteId,

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.44.3",
+            "v0.44.4",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Decision History torna consultáveis os eventos auditados das decisões registradas da equipe, incluindo criação, edição, status e arquivamento, sem inferência clínica automática, execução de conduta, prescrição automática ou transferência automática de responsabilidade clínica.")
+            "Professional Review Team Decision Filters adiciona busca profissional por status, profissional responsável, horizonte, texto e arquivamento, sem converter filtros em urgência, risco, prioridade clínica, prognóstico, execução de conduta ou prescrição automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

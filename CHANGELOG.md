@@ -1,4 +1,21 @@
-﻿# v0.44.3 — Professional Review Team Decision History
+﻿# v0.44.4 — Professional Review Team Decision Filters
+
+- Adiciona `ProfessionalReviewTeamDecisionFiltersResponse`.
+- Adiciona endpoint `GET .../team-decision/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.44.5 — Professional Review Team Decision Summary.
+
+# v0.44.3 — Professional Review Team Decision History
 
 - Adiciona `ProfessionalReviewTeamDecisionHistoryItemResponse`.
 - Adiciona `ProfessionalReviewTeamDecisionHistoryResponse`.
