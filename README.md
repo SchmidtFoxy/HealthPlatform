@@ -3214,3 +3214,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.38.6 — Professional Review Continuity Closure`.
 
+---
+
+## v0.38.6 — Professional Review Continuity Closure
+
+Fecha a linha 0.38.x consolidando todas as capacidades estruturais de continuidade profissional.
+
+### Componentes consolidados
+- Continuity Foundation;
+- Continuity Persistence;
+- Continuity Status;
+- Continuity History;
+- Continuity Filters;
+- Continuity Summary.
+
+### Estado
+O endpoint `continuity/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaContinuityCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.39.0 — Professional Review Escalation Foundation`.
+

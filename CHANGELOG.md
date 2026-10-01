@@ -1,4 +1,18 @@
-﻿# v0.38.5 — Professional Review Continuity Summary
+﻿# v0.38.6 — Professional Review Continuity Closure
+
+- Adiciona `ProfessionalReviewContinuityClosureResponse`.
+- Adiciona endpoint `GET .../continuity/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaContinuityCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.38.x.
+- Próxima etapa: v0.39.0 — Professional Review Escalation Foundation.
+
+# v0.38.5 — Professional Review Continuity Summary
 
 - Adiciona `ProfessionalReviewContinuityProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewContinuitySummaryResponse`.

@@ -610,6 +610,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza continuidade documental entre profissionais e, a partir da v0.38.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("continuity/closure")]
+    public ActionResult<ProfessionalReviewContinuityClosureResponse> FechamentoContinuities()
+    {
+        var componentes = new[]
+        {
+            "ContinuityFoundation",
+            "ContinuityPersistence",
+            "ContinuityStatus",
+            "ContinuityHistory",
+            "ContinuityFilters",
+            "ContinuitySummary"
+        };
+
+        return Ok(new ProfessionalReviewContinuityClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaContinuityCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural da continuidade profissional. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("continuity/summary")]
     public async Task<ActionResult<ProfessionalReviewContinuitySummaryResponse>> ResumoContinuities(
         Guid pacienteId,
