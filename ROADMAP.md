@@ -3756,3 +3756,21 @@ Fechar o ciclo 0.40.x consolidando fundação, persistência, status, histórico
 ### v0.41.0 — Professional Review Collaboration Foundation
 Criar a fundação estrutural de colaboração profissional, conectando coordenação, escalonamento e continuidade em uma camada documental compartilhada para acompanhamento entre profissionais, sem automatizar conduta, risco, urgência, prioridade clínica ou transferência de responsabilidade.
 
+## ✅ v0.41.0 — Professional Review Collaboration Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCollaborationFieldResponse`;
+- `ProfessionalReviewCollaborationFoundationResponse`;
+- endpoint `collaboration/foundation`;
+- oito campos estruturais;
+- estado `FundacaoCollaborationDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.41.1 — Professional Review Collaboration Persistence
+Adicionar persistência auditada dos registros de colaboração profissional compartilhada, com vínculos opcionais a Coordination, Escalation e Continuity e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
+

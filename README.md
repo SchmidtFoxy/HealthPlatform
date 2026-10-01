@@ -3698,3 +3698,35 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.41.0 — Professional Review Collaboration Foundation`.
 
+---
+
+## v0.41.0 — Professional Review Collaboration Foundation
+
+Abre a linha 0.41.x com a fundação estrutural de colaboração profissional compartilhada, conectando Coordination, Escalation e Continuity em uma única camada documental.
+
+### Campos da fundação
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- profissionais participantes;
+- contexto de colaboração;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../collaboration/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoCollaborationDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Colaboração profissional**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza colaboração documental entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.41.1 — Professional Review Collaboration Persistence`.
+

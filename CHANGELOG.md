@@ -1,4 +1,21 @@
-﻿# v0.40.6 — Professional Review Coordination Closure
+﻿# v0.41.0 — Professional Review Collaboration Foundation
+
+- Abre a linha funcional 0.41.x.
+- Adiciona `ProfessionalReviewCollaborationFieldResponse`.
+- Adiciona `ProfessionalReviewCollaborationFoundationResponse`.
+- Adiciona `GET .../collaboration/foundation`.
+- Define vínculos opcionais com Coordination, Escalation e Continuity.
+- Define profissional responsável, profissionais participantes, contexto de colaboração, horizonte e observação profissional.
+- Define `FundacaoCollaborationDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Colaboração profissional` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.41.1 — Professional Review Collaboration Persistence.
+
+# v0.40.6 — Professional Review Coordination Closure
 
 - Adiciona `ProfessionalReviewCoordinationClosureResponse`.
 - Adiciona endpoint `GET .../coordination/closure`.
