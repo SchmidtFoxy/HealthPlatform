@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.36.2",
+            "v0.36.3",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Delegation Status adiciona estados documentais explícitos às delegações profissionais, com transições manuais auditadas entre Planejada, EmAndamento, Concluida e Cancelada, sem execução automática ou transferência automática de responsabilidade clínica.")
+            "Professional Review Delegation History torna consultáveis os eventos auditados das delegações profissionais, incluindo criação, edição, status e arquivamento, sem inferência clínica automática ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

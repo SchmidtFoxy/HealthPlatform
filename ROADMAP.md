@@ -3140,3 +3140,21 @@ Adicionar estados documentais explícitos às delegações profissionais, com tr
 ### v0.36.3 — Professional Review Delegation History
 Adicionar histórico consultável das delegações profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.36.3 — Professional Review Delegation History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewDelegationHistoryItemResponse`;
+- `ProfessionalReviewDelegationHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por delegação;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.4 — Professional Review Delegation Filters
+Adicionar filtros profissionais por status, profissional delegante, profissional delegado, horizonte e texto, preservando a natureza documental das delegações.
+

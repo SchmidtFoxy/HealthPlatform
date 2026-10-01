@@ -1,4 +1,19 @@
-﻿# v0.36.2 — Professional Review Delegation Status
+﻿# v0.36.3 — Professional Review Delegation History
+
+- Adiciona `ProfessionalReviewDelegationHistoryItemResponse`.
+- Adiciona `ProfessionalReviewDelegationHistoryResponse`.
+- Adiciona `GET .../delegation/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.36.4 — Professional Review Delegation Filters.
+
+# v0.36.2 — Professional Review Delegation Status
 
 - Adiciona `Status` à Delegation persistida.
 - Adiciona `StatusAtualizadoEmUtc`.

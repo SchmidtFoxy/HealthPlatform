@@ -4896,6 +4896,7 @@ const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356='v0.35.6';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_STATUS_V0362='v0.36.2';
+const HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3';
 
 
 
@@ -5145,6 +5146,40 @@ function hpRenderProfessionalReviewDelegationFoundationV0360(host,foundation){
 }
 
 
+
+async function hpOpenProfessionalReviewDelegationHistoryV0363(p,delegation){
+  if(!p?.id || !delegation?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/delegation/${delegation.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-delegation-history-v0363="${HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico da delegação profissional</h3>
+        <p class="muted-line">${esc(delegation.profissionalDelegante||'Delegante')} → ${esc(delegation.profissionalDelegado||'Delegado')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewDelegationHistoryV0363">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica ou transferência automática de responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewDelegationHistoryV0363').onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
+}
+
 async function hpOpenProfessionalReviewDelegationV0361(p){
   if(!p?.id) return;
 
@@ -5209,6 +5244,7 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluida'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="Concluida">Concluir</button>`:''}
         ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="Cancelada">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-delegation-history-v0363="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-delegation-archive-v0361="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma delegação profissional registrada.</p>';
@@ -5224,6 +5260,11 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalDelegante.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-delegation-history-v0363]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.delegationHistoryV0363);
+      if(item) await hpOpenProfessionalReviewDelegationHistoryV0363(p,item);
     });
 
     [...listHost.querySelectorAll('[data-delegation-status-v0362]')].forEach(btn=>btn.onclick=async()=>{
@@ -11940,7 +11981,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.36.2';
+const HP_MVP_VERSION='0.36.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
