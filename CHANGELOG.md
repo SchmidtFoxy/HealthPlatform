@@ -1,4 +1,20 @@
-﻿# v0.38.1 — Professional Review Continuity Persistence
+﻿# v0.38.2 — Professional Review Continuity Status
+
+- Adiciona `Status` ao Continuity persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewContinuityStatusRequest`.
+- Adiciona endpoint `PATCH .../continuity/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_CONTINUITY_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.38.3 — Professional Review Continuity History.
+
+# v0.38.1 — Professional Review Continuity Persistence
 
 - Adiciona persistência auditada de Continuity.
 - Adiciona `ProfessionalReviewContinuityPersistedResponse`.

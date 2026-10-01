@@ -4909,6 +4909,7 @@ const HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1';
+const HP_PROFESSIONAL_REVIEW_CONTINUITY_STATUS_V0382='v0.38.2';
 
 
 
@@ -5342,8 +5343,9 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalSeguimento||'Profissional de seguimento')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejada')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.handoffRelacionadoId?`<small class="muted-line">Handoff: ${esc(x.handoffRelacionadoId)}</small>`:''}
       ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
@@ -5352,6 +5354,10 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-continuity-edit-v0381="${x.id}">Editar</button>
+        ${x.status!=='Planejada'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="Planejada">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluida'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="Concluida">Concluir</button>`:''}
+        ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-continuity-status-v0382="${x.id}" data-status-v0382="Cancelada">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-continuity-archive-v0381="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum registro de continuidade profissional.</p>';
@@ -5368,6 +5374,16 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalSeguimento.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-continuity-status-v0382]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0382;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/continuity/${btn.dataset.continuityStatusV0382}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Continuidade atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-continuity-archive-v0381]')].forEach(btn=>btn.onclick=async()=>{
@@ -12623,7 +12639,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.38.1';
+const HP_MVP_VERSION='0.38.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

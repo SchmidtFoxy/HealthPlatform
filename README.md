@@ -3095,3 +3095,35 @@ A persistência registra continuidade documental. Não executa conduta, não cri
 
 **Próxima etapa:** `v0.38.2 — Professional Review Continuity Status`.
 
+---
+
+## v0.38.2 — Professional Review Continuity Status
+
+Adiciona estados documentais explícitos aos registros de continuidade profissional.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são manuais via `PATCH .../continuity/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da continuidade;
+- gera auditoria `PROFESSIONAL_REVIEW_CONTINUITY_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela continuidade automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.38.3 — Professional Review Continuity History`.
+

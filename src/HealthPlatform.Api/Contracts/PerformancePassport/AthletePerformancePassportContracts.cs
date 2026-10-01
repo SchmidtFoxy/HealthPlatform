@@ -168,11 +168,16 @@ public sealed record ProfessionalReviewContinuityPersistedResponse(
     string? ContextoContinuidade,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewContinuityStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewContinuityFieldResponse(
     string Chave,
