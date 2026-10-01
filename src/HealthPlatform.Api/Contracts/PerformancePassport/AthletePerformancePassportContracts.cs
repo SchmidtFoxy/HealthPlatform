@@ -185,6 +185,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewSharedContextProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewSharedContextSummaryResponse(
+    int Total,
+    int Ativos,
+    int Planejados,
+    int EmAndamento,
+    int Concluidos,
+    int Cancelados,
+    int Arquivados,
+    IReadOnlyCollection<ProfessionalReviewSharedContextProfissionalResumoResponse> PorProfissionalResponsavel,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewSharedContextFiltersResponse(
     string? Status,
     string? ProfissionalResponsavel,

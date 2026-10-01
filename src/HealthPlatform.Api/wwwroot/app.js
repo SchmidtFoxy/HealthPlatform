@@ -4940,6 +4940,7 @@ const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424='v0.42.4';
+const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425='v0.42.5';
 
 
 
@@ -5619,6 +5620,35 @@ async function hpOpenProfessionalReviewSharedContextHistoryV0423(p,sharedContext
   $('#closeProfessionalReviewSharedContextHistoryV0423').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
 }
 
+
+async function hpLoadProfessionalReviewSharedContextSummaryV0425(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/shared-context/summary`);
+}
+
+function hpRenderProfessionalReviewSharedContextSummaryV0425(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porProfissionalResponsavel)?summary.porProfissionalResponsavel:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-shared-context-summary-v0425="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425}">
+    <div><b>Resumo dos contextos profissionais compartilhados</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejados</span><b>${esc(String(summary.planejados??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídos</span><b>${esc(String(summary.concluidos??0))}</b></div>
+      <div class="row-between"><span>Cancelados</span><b>${esc(String(summary.cancelados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por profissional responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewSharedContextV0421(p){
   if(!p?.id) return;
 
@@ -5646,6 +5676,7 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewSharedContextV0421">Fechar</button>
     </div>
+    <div id="professionalReviewSharedContextSummaryV0425"></div>
     <form id="professionalReviewSharedContextFiltersV0424" class="form-grid" data-professional-review-shared-context-filters-v0424="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5689,6 +5720,11 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const sharedContextSummaryHostV0425=$('#professionalReviewSharedContextSummaryV0425');
+  hpLoadProfessionalReviewSharedContextSummaryV0425(p.id)
+    .then(x=>hpRenderProfessionalReviewSharedContextSummaryV0425(sharedContextSummaryHostV0425,x))
+    .catch(()=>{ if(sharedContextSummaryHostV0425) sharedContextSummaryHostV0425.innerHTML=''; });
 
   const form=$('#professionalReviewSharedContextFormV0421');
   const listHost=$('#professionalReviewSharedContextListV0421');
@@ -5765,12 +5801,18 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
       });
       toast(`Contexto compartilhado atualizado para ${status}.`);
       await render();
+      hpLoadProfessionalReviewSharedContextSummaryV0425(p.id)
+        .then(x=>hpRenderProfessionalReviewSharedContextSummaryV0425(sharedContextSummaryHostV0425,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-shared-context-archive-v0421]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/shared-context/${btn.dataset.sharedContextArchiveV0421}`,{method:'DELETE'});
       toast('Contexto profissional compartilhado arquivado.');
       await render();
+      hpLoadProfessionalReviewSharedContextSummaryV0425(p.id)
+        .then(x=>hpRenderProfessionalReviewSharedContextSummaryV0425(sharedContextSummaryHostV0425,x))
+        .catch(()=>{});
     });
   };
 
@@ -5798,6 +5840,9 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
     toast(id?'Contexto profissional compartilhado atualizado.':'Contexto profissional compartilhado registrado.');
     clear();
     await render();
+    hpLoadProfessionalReviewSharedContextSummaryV0425(p.id)
+      .then(x=>hpRenderProfessionalReviewSharedContextSummaryV0425(sharedContextSummaryHostV0425,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -14140,7 +14185,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.42.4';
+const HP_MVP_VERSION='0.42.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

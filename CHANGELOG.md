@@ -1,4 +1,18 @@
-﻿# v0.42.4 — Professional Review Shared Context Filters
+﻿# v0.42.5 — Professional Review Shared Context Summary
+
+- Adiciona `ProfessionalReviewSharedContextProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewSharedContextSummaryResponse`.
+- Adiciona `GET .../shared-context/summary`.
+- Consolida total, ativos, planejados, em andamento, concluídos, cancelados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo dos contextos profissionais compartilhados`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.42.6 — Professional Review Shared Context Closure.
+
+# v0.42.4 — Professional Review Shared Context Filters
 
 - Adiciona `ProfessionalReviewSharedContextFiltersResponse`.
 - Adiciona endpoint `GET .../shared-context/search`.

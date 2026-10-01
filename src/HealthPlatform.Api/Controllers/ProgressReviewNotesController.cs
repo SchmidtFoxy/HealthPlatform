@@ -970,6 +970,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza contexto profissional compartilhado entre Collaboration, Coordination, Escalation e Continuity e, a partir da v0.42.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("shared-context/summary")]
+    public async Task<ActionResult<ProfessionalReviewSharedContextSummaryResponse>> ResumoSharedContexts(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoSharedContext))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearSharedContext).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var planejados = itens.Count(x => !x.Arquivada && x.Status == "Planejado");
+        var emAndamento = itens.Count(x => !x.Arquivada && x.Status == "EmAndamento");
+        var concluidos = itens.Count(x => !x.Arquivada && x.Status == "Concluido");
+        var cancelados = itens.Count(x => !x.Arquivada && x.Status == "Cancelado");
+
+        var porProfissionalResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalResponsavel))
+            .GroupBy(x => x.ProfissionalResponsavel.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewSharedContextProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewSharedContextSummaryResponse(
+            total,
+            ativos,
+            planejados,
+            emAndamento,
+            concluidos,
+            cancelados,
+            arquivados,
+            porProfissionalResponsavel,
+            "O resumo apresenta somente agregações documentais dos contextos profissionais compartilhados. Não representa score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("shared-context/search")]
     public async Task<ActionResult<ProfessionalReviewSharedContextFiltersResponse>> FiltrarSharedContexts(
         Guid pacienteId,

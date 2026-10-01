@@ -3984,3 +3984,25 @@ Adicionar filtros profissionais por status, profissional responsável, horizonte
 ### v0.42.5 — Professional Review Shared Context Summary
 Adicionar resumo estrutural dos contextos profissionais compartilhados com contagem por status e distribuição por profissional responsável, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.42.5 — Professional Review Shared Context Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewSharedContextSummaryResponse`;
+- `ProfessionalReviewSharedContextProfissionalResumoResponse`;
+- total de registros;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- agrupamento por profissional responsável;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.42.6 — Professional Review Shared Context Closure
+Fechar o ciclo 0.42.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do contexto profissional compartilhado.
+
