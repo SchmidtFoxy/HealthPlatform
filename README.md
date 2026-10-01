@@ -2831,3 +2831,43 @@ A fundação organiza passagem documental de contexto entre profissionais. Não 
 
 **Próxima etapa:** `v0.37.1 — Professional Review Handoff Persistence`.
 
+---
+
+## v0.37.1 — Professional Review Handoff Persistence
+
+Adiciona persistência auditada para handoffs profissionais.
+
+### CRUD
+- listar handoffs;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Delegation relacionada opcional;
+- Assignment relacionada opcional;
+- profissional de origem;
+- profissional de destino;
+- contexto transferido;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_HANDOFF_CREATED`
+- `PROFESSIONAL_REVIEW_HANDOFF_UPDATED`
+- `PROFESSIONAL_REVIEW_HANDOFF_ARCHIVED`
+
+### Vínculos
+Quando informadas, Delegation e Assignment precisam pertencer à mesma organização e paciente e não podem estar arquivadas.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar handoffs**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra passagem documental de contexto. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco ou prioridade clínica.
+
+**Próxima etapa:** `v0.37.2 — Professional Review Handoff Status`.
+

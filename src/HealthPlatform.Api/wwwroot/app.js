@@ -4901,6 +4901,7 @@ const HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364='v0.36.4';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365='v0.36.5';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366='v0.36.6';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0';
+const HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1';
 
 
 
@@ -5211,7 +5212,124 @@ function hpRenderProfessionalReviewHandoffFoundationV0370(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza passagem documental de contexto entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-handoff-open-v0371="${HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371}">Gerenciar handoffs</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewHandoffV0371(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/handoff`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-handoff-persistence-v0371="${HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371}">
+    <div class="row-between">
+      <div>
+        <h3>Handoffs profissionais</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewHandoffV0371">Fechar</button>
+    </div>
+    <form id="professionalReviewHandoffFormV0371" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional de origem<input name="profissionalOrigem" maxlength="160" required></label>
+      <label>Profissional de destino<input name="profissionalDestino" maxlength="160" required></label>
+      <label>Delegation relacionada<input name="delegationRelacionadaId" placeholder="ID opcional da delegação"></label>
+      <label>Assignment relacionada<input name="assignmentRelacionadaId" placeholder="ID opcional da atribuição"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto transferido<textarea name="contextoTransferido" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar handoff</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewHandoffV0371">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewHandoffListV0371" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewHandoffFormV0371');
+  const listHost=$('#professionalReviewHandoffListV0371');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalOrigem||'Origem')} → ${esc(x.profissionalDestino||'Destino')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
+      ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
+      ${x.contextoTransferido?`<p>${esc(x.contextoTransferido)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-handoff-edit-v0371="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-handoff-archive-v0371="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum handoff profissional registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-handoff-edit-v0371]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.handoffEditV0371);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalOrigem.value=item.profissionalOrigem||'';
+      form.elements.profissionalDestino.value=item.profissionalDestino||'';
+      form.elements.delegationRelacionadaId.value=item.delegationRelacionadaId||'';
+      form.elements.assignmentRelacionadaId.value=item.assignmentRelacionadaId||'';
+      form.elements.contextoTransferido.value=item.contextoTransferido||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalOrigem.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-handoff-archive-v0371]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/handoff/${btn.dataset.handoffArchiveV0371}`,{method:'DELETE'});
+      toast('Handoff profissional arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalOrigem:String(fd.get('profissionalOrigem')||'').trim(),
+      profissionalDestino:String(fd.get('profissionalDestino')||'').trim(),
+      delegationRelacionadaId:String(fd.get('delegationRelacionadaId')||'').trim()||null,
+      assignmentRelacionadaId:String(fd.get('assignmentRelacionadaId')||'').trim()||null,
+      contextoTransferido:String(fd.get('contextoTransferido')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/handoff${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Handoff profissional atualizado.':'Handoff profissional registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewHandoffV0371').onclick=clear;
+  $('#closeProfessionalReviewHandoffV0371').onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewDelegationClosureV0366(patientId){
@@ -5339,7 +5457,11 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
 
   const handoffFoundationHostV0370=$('#professionalReviewHandoffFoundationV0370');
   hpLoadProfessionalReviewHandoffFoundationV0370(p.id)
-    .then(x=>hpRenderProfessionalReviewHandoffFoundationV0370(handoffFoundationHostV0370,x))
+    .then(x=>{
+      hpRenderProfessionalReviewHandoffFoundationV0370(handoffFoundationHostV0370,x);
+      const openHandoffV0371=handoffFoundationHostV0370?.querySelector('[data-handoff-open-v0371]');
+      if(openHandoffV0371) openHandoffV0371.onclick=()=>hpOpenProfessionalReviewHandoffV0371(p);
+    })
     .catch(()=>{ if(handoffFoundationHostV0370) handoffFoundationHostV0370.innerHTML=''; });
 
   const delegationClosureHostV0366=$('#professionalReviewDelegationClosureV0366');
@@ -12151,7 +12273,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.37.0';
+const HP_MVP_VERSION='0.37.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

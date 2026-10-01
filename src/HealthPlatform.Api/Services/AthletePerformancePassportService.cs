@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.37.0",
+            "v0.37.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Handoff Foundation abre a linha 0.37.x com uma fundação estrutural para passagem documental de contexto entre profissionais, relacionada a delegações e atribuições existentes, sem execução automática ou priorização clínica.")
+            "Professional Review Handoff Persistence adiciona persistência auditada aos handoffs profissionais, com vínculos opcionais à Delegation e Assignment e sem transformar passagem de contexto em execução, transferência automática de responsabilidade clínica ou prioridade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

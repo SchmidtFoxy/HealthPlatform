@@ -3236,3 +3236,23 @@ Criar a fundação estrutural para handoff profissional, permitindo documentar p
 ### v0.37.1 — Professional Review Handoff Persistence
 Adicionar persistência auditada dos handoffs profissionais, com vínculos opcionais à Delegation e Assignment e preservação explícita de autoria, responsabilidade documental e separação entre passagem de contexto, decisão clínica e execução.
 
+## ✅ v0.37.1 — Professional Review Handoff Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewHandoffPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewHandoff:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional à Delegation;
+- vínculo opcional à Assignment;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de handoffs profissionais;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.2 — Professional Review Handoff Status
+Adicionar estados documentais explícitos aos handoffs profissionais, com transições manuais e auditadas pela equipe.
+

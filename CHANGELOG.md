@@ -1,4 +1,20 @@
-﻿# v0.37.0 — Professional Review Handoff Foundation
+﻿# v0.37.1 — Professional Review Handoff Persistence
+
+- Adiciona persistência auditada de Handoff.
+- Adiciona `ProfessionalReviewHandoffPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewHandoff:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Delegation e Assignment do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar handoffs`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.37.2 — Professional Review Handoff Status.
+
+# v0.37.0 — Professional Review Handoff Foundation
 
 - Abre a linha funcional 0.37.x.
 - Adiciona `ProfessionalReviewHandoffFieldResponse`.
