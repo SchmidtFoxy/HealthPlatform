@@ -1,4 +1,24 @@
-﻿# v0.51.0 — Professional Review Team Knowledge Effect Review Foundation
+﻿# v0.51.1 — Professional Review Team Knowledge Effect Review Persistence
+
+- Adiciona persistência auditada de Team Knowledge Effect Review.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectReviewPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamKnowledgeEffectReview:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar revisões`.
+- Não transforma revisão documental em validação causal.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.51.2 — Professional Review Team Knowledge Effect Review Status.
+
+# v0.51.0 — Professional Review Team Knowledge Effect Review Foundation
 
 - Abre a linha funcional 0.51.x.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse`.

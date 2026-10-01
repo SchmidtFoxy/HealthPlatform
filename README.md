@@ -6135,3 +6135,59 @@ A fundação organiza revisão profissional dos efeitos observados. Não transfo
 
 **Próxima etapa:** `v0.51.1 — Professional Review Team Knowledge Effect Review Persistence`.
 
+---
+
+## v0.51.1 — Professional Review Team Knowledge Effect Review Persistence
+
+Adiciona persistência auditada para revisões profissionais dos efeitos observados do conhecimento da equipe.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Knowledge Effect relacionado opcional;
+- Team Knowledge Application relacionada opcional;
+- Team Knowledge relacionado opcional;
+- Team Insight relacionado opcional;
+- Team Learning relacionado opcional;
+- Team Outcome relacionado opcional;
+- Team Decision relacionada opcional;
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional revisor;
+- participantes;
+- revisão documentada;
+- contexto da revisão;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- conclusão documental;
+- necessidade de acompanhamento documentada;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar revisões**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra revisão profissional documental. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transforma revisão registrada em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.51.2 — Professional Review Team Knowledge Effect Review Status`.
+

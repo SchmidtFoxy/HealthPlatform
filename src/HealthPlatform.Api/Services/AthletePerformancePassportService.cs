@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.51.0",
+            "v0.51.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Effect Review Foundation abre a linha 0.51.x com uma fundação estrutural para revisão profissional dos efeitos observados do conhecimento da equipe, conectando Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem transformar revisão em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.")
+            "Professional Review Team Knowledge Effect Review Persistence adiciona persistência auditada às revisões profissionais dos efeitos observados do conhecimento da equipe, com vínculos opcionais a Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem transformar revisão documental em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou execução automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

@@ -4999,6 +4999,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504='v0.50.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_SUMMARY_V0505='v0.50.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CLOSURE_V0506='v0.50.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_V0510='v0.51.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_PERSISTENCE_V0511='v0.51.1';
 
 
 
@@ -6233,7 +6234,189 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510(host
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza revisão profissional dos efeitos observados. Não valida causalidade, não valida evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática e não executa conduta ou prescrição.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-knowledge-effect-review-open-v0511="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_PERSISTENCE_V0511}">Gerenciar revisões</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamKnowledgeEffectReviewV0511(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-review`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-review-persistence-v0511="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_PERSISTENCE_V0511}">
+    <div class="row-between">
+      <div>
+        <h3>Revisões profissionais dos efeitos observados</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectReviewV0511">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamKnowledgeEffectReviewFormV0511" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
+      <label>Team Knowledge Effect relacionado<input name="teamKnowledgeEffectRelacionadoId" placeholder="ID opcional do efeito"></label>
+      <label>Team Knowledge Application relacionada<input name="teamKnowledgeApplicationRelacionadaId" placeholder="ID opcional da aplicação"></label>
+      <label>Team Knowledge relacionado<input name="teamKnowledgeRelacionadoId" placeholder="ID opcional do conhecimento"></label>
+      <label>Team Insight relacionado<input name="teamInsightRelacionadoId" placeholder="ID opcional do insight"></label>
+      <label>Team Learning relacionado<input name="teamLearningRelacionadoId" placeholder="ID opcional do aprendizado"></label>
+      <label>Team Outcome relacionado<input name="teamOutcomeRelacionadoId" placeholder="ID opcional do resultado"></label>
+      <label>Team Decision relacionada<input name="teamDecisionRelacionadaId" placeholder="ID opcional da decisão"></label>
+      <label>Team Alignment relacionado<input name="teamAlignmentRelacionadoId" placeholder="ID opcional do alinhamento"></label>
+      <label>Shared Context relacionado<input name="sharedContextRelacionadoId" placeholder="ID opcional do contexto compartilhado"></label>
+      <label>Collaboration relacionada<input name="collaborationRelacionadaId" placeholder="ID opcional da colaboração"></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000" placeholder="Profissionais participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Revisão documentada<textarea name="revisaoDocumentada" maxlength="3000" rows="4" required></textarea></label>
+      <label class="span-2">Contexto da revisão<textarea name="contextoRevisao" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Base observacional / evidência de suporte<textarea name="baseObservacionalEvidenciaSuporte" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Interpretação profissional<textarea name="interpretacaoProfissional" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Conclusão documental<textarea name="conclusaoDocumental" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Necessidade de acompanhamento documentada<textarea name="necessidadeAcompanhamentoDocumentada" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar revisão</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectReviewV0511">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamKnowledgeEffectReviewListV0511" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não valida causalidade, não valida evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não representa conduta executada ou prescrição automática e não transfere automaticamente responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTeamKnowledgeEffectReviewFormV0511');
+  const listHost=$('#professionalReviewTeamKnowledgeEffectReviewListV0511');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalRevisor||'Revisor')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.teamKnowledgeEffectRelacionadoId?`<small class="muted-line">Team Knowledge Effect: ${esc(x.teamKnowledgeEffectRelacionadoId)}</small>`:''}
+      ${x.teamKnowledgeApplicationRelacionadaId?`<small class="muted-line">Team Knowledge Application: ${esc(x.teamKnowledgeApplicationRelacionadaId)}</small>`:''}
+      ${x.teamKnowledgeRelacionadoId?`<small class="muted-line">Team Knowledge: ${esc(x.teamKnowledgeRelacionadoId)}</small>`:''}
+      ${x.teamInsightRelacionadoId?`<small class="muted-line">Team Insight: ${esc(x.teamInsightRelacionadoId)}</small>`:''}
+      ${x.teamLearningRelacionadoId?`<small class="muted-line">Team Learning: ${esc(x.teamLearningRelacionadoId)}</small>`:''}
+      ${x.teamOutcomeRelacionadoId?`<small class="muted-line">Team Outcome: ${esc(x.teamOutcomeRelacionadoId)}</small>`:''}
+      ${x.teamDecisionRelacionadaId?`<small class="muted-line">Team Decision: ${esc(x.teamDecisionRelacionadaId)}</small>`:''}
+      ${x.teamAlignmentRelacionadoId?`<small class="muted-line">Team Alignment: ${esc(x.teamAlignmentRelacionadoId)}</small>`:''}
+      ${x.sharedContextRelacionadoId?`<small class="muted-line">Shared Context: ${esc(x.sharedContextRelacionadoId)}</small>`:''}
+      ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      <p><b>Revisão:</b> ${esc(x.revisaoDocumentada||'')}</p>
+      ${x.contextoRevisao?`<p><b>Contexto:</b> ${esc(x.contextoRevisao)}</p>`:''}
+      ${x.baseObservacionalEvidenciaSuporte?`<p><b>Base observacional:</b> ${esc(x.baseObservacionalEvidenciaSuporte)}</p>`:''}
+      ${x.interpretacaoProfissional?`<p><b>Interpretação profissional:</b> ${esc(x.interpretacaoProfissional)}</p>`:''}
+      ${x.conclusaoDocumental?`<p><b>Conclusão documental:</b> ${esc(x.conclusaoDocumental)}</p>`:''}
+      ${x.necessidadeAcompanhamentoDocumentada?`<p><b>Necessidade de acompanhamento:</b> ${esc(x.necessidadeAcompanhamentoDocumentada)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-team-knowledge-effect-review-edit-v0511="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-team-knowledge-effect-review-archive-v0511="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma revisão profissional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-review-edit-v0511]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamKnowledgeEffectReviewEditV0511);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalRevisor.value=item.profissionalRevisor||'';
+      form.elements.teamKnowledgeEffectRelacionadoId.value=item.teamKnowledgeEffectRelacionadoId||'';
+      form.elements.teamKnowledgeApplicationRelacionadaId.value=item.teamKnowledgeApplicationRelacionadaId||'';
+      form.elements.teamKnowledgeRelacionadoId.value=item.teamKnowledgeRelacionadoId||'';
+      form.elements.teamInsightRelacionadoId.value=item.teamInsightRelacionadoId||'';
+      form.elements.teamLearningRelacionadoId.value=item.teamLearningRelacionadoId||'';
+      form.elements.teamOutcomeRelacionadoId.value=item.teamOutcomeRelacionadoId||'';
+      form.elements.teamDecisionRelacionadaId.value=item.teamDecisionRelacionadaId||'';
+      form.elements.teamAlignmentRelacionadoId.value=item.teamAlignmentRelacionadoId||'';
+      form.elements.sharedContextRelacionadoId.value=item.sharedContextRelacionadoId||'';
+      form.elements.collaborationRelacionadaId.value=item.collaborationRelacionadaId||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.participantes.value=item.participantes||'';
+      form.elements.revisaoDocumentada.value=item.revisaoDocumentada||'';
+      form.elements.contextoRevisao.value=item.contextoRevisao||'';
+      form.elements.baseObservacionalEvidenciaSuporte.value=item.baseObservacionalEvidenciaSuporte||'';
+      form.elements.interpretacaoProfissional.value=item.interpretacaoProfissional||'';
+      form.elements.conclusaoDocumental.value=item.conclusaoDocumental||'';
+      form.elements.necessidadeAcompanhamentoDocumentada.value=item.necessidadeAcompanhamentoDocumentada||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalRevisor.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-review-archive-v0511]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-review/${btn.dataset.teamKnowledgeEffectReviewArchiveV0511}`,{method:'DELETE'});
+      toast('Revisão profissional arquivada.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalRevisor:String(fd.get('profissionalRevisor')||'').trim(),
+      revisaoDocumentada:String(fd.get('revisaoDocumentada')||'').trim(),
+      teamKnowledgeEffectRelacionadoId:String(fd.get('teamKnowledgeEffectRelacionadoId')||'').trim()||null,
+      teamKnowledgeApplicationRelacionadaId:String(fd.get('teamKnowledgeApplicationRelacionadaId')||'').trim()||null,
+      teamKnowledgeRelacionadoId:String(fd.get('teamKnowledgeRelacionadoId')||'').trim()||null,
+      teamInsightRelacionadoId:String(fd.get('teamInsightRelacionadoId')||'').trim()||null,
+      teamLearningRelacionadoId:String(fd.get('teamLearningRelacionadoId')||'').trim()||null,
+      teamOutcomeRelacionadoId:String(fd.get('teamOutcomeRelacionadoId')||'').trim()||null,
+      teamDecisionRelacionadaId:String(fd.get('teamDecisionRelacionadaId')||'').trim()||null,
+      teamAlignmentRelacionadoId:String(fd.get('teamAlignmentRelacionadoId')||'').trim()||null,
+      sharedContextRelacionadoId:String(fd.get('sharedContextRelacionadoId')||'').trim()||null,
+      collaborationRelacionadaId:String(fd.get('collaborationRelacionadaId')||'').trim()||null,
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      contextoRevisao:String(fd.get('contextoRevisao')||'').trim()||null,
+      baseObservacionalEvidenciaSuporte:String(fd.get('baseObservacionalEvidenciaSuporte')||'').trim()||null,
+      interpretacaoProfissional:String(fd.get('interpretacaoProfissional')||'').trim()||null,
+      conclusaoDocumental:String(fd.get('conclusaoDocumental')||'').trim()||null,
+      necessidadeAcompanhamentoDocumentada:String(fd.get('necessidadeAcompanhamentoDocumentada')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-review${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Revisão profissional atualizada.':'Revisão profissional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTeamKnowledgeEffectReviewV0511').onclick=clear;
+  $('#closeProfessionalReviewTeamKnowledgeEffectReviewV0511').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewTeamKnowledgeEffectClosureV0506(patientId){
@@ -6371,7 +6554,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
 
   const teamKnowledgeEffectReviewFoundationHostV0510=$('#professionalReviewTeamKnowledgeEffectReviewFoundationV0510');
   hpLoadProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510(teamKnowledgeEffectReviewFoundationHostV0510,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510(teamKnowledgeEffectReviewFoundationHostV0510,x);
+      const openTeamKnowledgeEffectReviewV0511=teamKnowledgeEffectReviewFoundationHostV0510?.querySelector('[data-team-knowledge-effect-review-open-v0511]');
+      if(openTeamKnowledgeEffectReviewV0511) openTeamKnowledgeEffectReviewV0511.onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectReviewV0511(p);
+    })
     .catch(()=>{ if(teamKnowledgeEffectReviewFoundationHostV0510) teamKnowledgeEffectReviewFoundationHostV0510.innerHTML=''; });
 
   const teamKnowledgeEffectClosureHostV0506=$('#professionalReviewTeamKnowledgeEffectClosureV0506');
@@ -17270,7 +17457,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.51.0';
+const HP_MVP_VERSION='0.51.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
