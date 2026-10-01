@@ -1,4 +1,19 @@
-﻿# v0.34.6 — Professional Review Task Coordination Closure
+﻿# v0.35.0 — Professional Review Assignment Foundation
+
+- Abre a linha funcional 0.35.x.
+- Adiciona `ProfessionalReviewAssignmentFieldResponse`.
+- Adiciona `ProfessionalReviewAssignmentFoundationResponse`.
+- Adiciona `GET .../assignment/foundation`.
+- Define tarefa operacional relacionada, responsável principal, apoio/participante, contexto, horizonte e observação profissional.
+- Define `FundacaoAssignmentDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Atribuições profissionais` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.35.1 — Professional Review Assignment Persistence.
+
+# v0.34.6 — Professional Review Task Coordination Closure
 
 - Adiciona `ProfessionalReviewTaskCoordinationClosureResponse`.
 - Adiciona endpoint `GET .../task-coordination/closure`.

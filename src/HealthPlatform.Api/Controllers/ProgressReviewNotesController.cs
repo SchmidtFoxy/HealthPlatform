@@ -322,6 +322,57 @@ public class ProgressReviewNotesController(
             "A fundação organiza tarefas acompanháveis pela equipe profissional e, a partir da v0.34.1, possui persistência auditada. Não executa condutas, não atribui prioridade clínica e não substitui decisão profissional."));
     }
 
+    [HttpGet("assignment/foundation")]
+    public ActionResult<ProfessionalReviewAssignmentFoundationResponse> AssignmentFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewAssignmentFieldResponse(
+                "task-coordination-relacionada",
+                "Tarefa operacional relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a atribuição a uma tarefa operacional já documentada."),
+            new ProfessionalReviewAssignmentFieldResponse(
+                "responsavel-principal",
+                "Responsável principal",
+                true,
+                "texto",
+                "Identifica quem assume a responsabilidade documental principal pela atribuição."),
+            new ProfessionalReviewAssignmentFieldResponse(
+                "apoio-participante",
+                "Apoio ou participante",
+                false,
+                "texto",
+                "Registra apoio adicional ou participante envolvido na atribuição."),
+            new ProfessionalReviewAssignmentFieldResponse(
+                "contexto-atribuicao",
+                "Contexto da atribuição",
+                false,
+                "texto-longo",
+                "Documenta o contexto operacional da atribuição sem caracterizar decisão clínica."),
+            new ProfessionalReviewAssignmentFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewAssignmentFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes para a equipe.")
+        };
+
+        return Ok(new ProfessionalReviewAssignmentFoundationResponse(
+            "FundacaoAssignmentDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza atribuições documentais da equipe profissional. Não executa condutas, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("task-coordination/closure")]
     public ActionResult<ProfessionalReviewTaskCoordinationClosureResponse> FechamentoTaskCoordination()
     {

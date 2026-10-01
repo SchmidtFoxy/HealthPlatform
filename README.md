@@ -2357,3 +2357,33 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.35.0 — Professional Review Assignment Foundation`.
 
+---
+
+## v0.35.0 — Professional Review Assignment Foundation
+
+Abre a linha 0.35.x com a fundação estrutural para atribuições profissionais relacionadas à coordenação operacional.
+
+### Campos da fundação
+- tarefa operacional relacionada;
+- responsável principal;
+- apoio ou participante;
+- contexto da atribuição;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../assignment/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoAssignmentDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Atribuições profissionais**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza responsabilidades documentais da equipe. Não executa condutas, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.35.1 — Professional Review Assignment Persistence`.
+

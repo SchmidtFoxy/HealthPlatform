@@ -2953,3 +2953,21 @@ Fechar o ciclo 0.34.x consolidando fundação, persistência, status, histórico
 ### v0.35.0 — Professional Review Assignment Foundation
 Criar a fundação estrutural para atribuições profissionais relacionadas às tarefas operacionais, com organização de responsáveis e contexto documental, mantendo separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.35.0 — Professional Review Assignment Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewAssignmentFieldResponse`;
+- `ProfessionalReviewAssignmentFoundationResponse`;
+- endpoint `assignment/foundation`;
+- seis campos estruturais;
+- estado `FundacaoAssignmentDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.1 — Professional Review Assignment Persistence
+Adicionar persistência auditada das atribuições profissionais, com vínculo opcional à Task Coordination e preservação da separação entre documentação, decisão clínica e execução.
+

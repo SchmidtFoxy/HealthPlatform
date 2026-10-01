@@ -4886,6 +4886,7 @@ const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344='v0.34.4';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_SUMMARY_V0345='v0.34.5';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_CLOSURE_V0346='v0.34.6';
+const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0';
 
 
 
@@ -5039,6 +5040,34 @@ async function hpOpenProfessionalReviewTaskCoordinationHistoryV0343(p,task){
 
 
 
+
+async function hpLoadProfessionalReviewAssignmentFoundationV0350(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/assignment/foundation`);
+}
+
+function hpRenderProfessionalReviewAssignmentFoundationV0350(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-assignment-v0350="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350}">
+    <div class="row-between">
+      <div>
+        <b>Atribuições profissionais</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza responsabilidades documentais da equipe. Não executa condutas nem define prioridade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewTaskCoordinationClosureV0346(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/task-coordination/closure`);
@@ -5110,6 +5139,7 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTaskCoordinationV0341">Fechar</button>
     </div>
+    <div id="professionalReviewAssignmentFoundationV0350"></div>
     <div id="professionalReviewTaskCoordinationClosureV0346"></div>
     <div id="professionalReviewTaskCoordinationSummaryV0345"></div>
     <form id="professionalReviewTaskCoordinationFiltersV0344" class="form-grid" data-professional-review-task-coordination-filters-v0344="${HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344}">
@@ -5151,6 +5181,11 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const assignmentFoundationHostV0350=$('#professionalReviewAssignmentFoundationV0350');
+  hpLoadProfessionalReviewAssignmentFoundationV0350(p.id)
+    .then(x=>hpRenderProfessionalReviewAssignmentFoundationV0350(assignmentFoundationHostV0350,x))
+    .catch(()=>{ if(assignmentFoundationHostV0350) assignmentFoundationHostV0350.innerHTML=''; });
 
   const taskCoordinationClosureHostV0346=$('#professionalReviewTaskCoordinationClosureV0346');
   hpLoadProfessionalReviewTaskCoordinationClosureV0346(p.id)
@@ -11431,7 +11466,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.34.6';
+const HP_MVP_VERSION='0.35.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
