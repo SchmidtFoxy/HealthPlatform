@@ -4927,6 +4927,7 @@ const HP_PROFESSIONAL_REVIEW_COORDINATION_STATUS_V0402='v0.40.2';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_HISTORY_V0403='v0.40.3';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_FILTERS_V0404='v0.40.4';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_SUMMARY_V0405='v0.40.5';
+const HP_PROFESSIONAL_REVIEW_COORDINATION_CLOSURE_V0406='v0.40.6';
 
 
 
@@ -5475,6 +5476,24 @@ async function hpOpenProfessionalReviewCoordinationHistoryV0403(p,coordination){
 }
 
 
+
+async function hpLoadProfessionalReviewCoordinationClosureV0406(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/coordination/closure`);
+}
+
+function hpRenderProfessionalReviewCoordinationClosureV0406(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaCoordinationCompleta';
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-coordination-closure-v0406="${HP_PROFESSIONAL_REVIEW_COORDINATION_CLOSURE_V0406}">
+    <div><b>${complete?'Estrutura de coordenação profissional completa':'Estrutura de coordenação profissional parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewCoordinationSummaryV0405(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/coordination/summary`);
@@ -5530,6 +5549,7 @@ async function hpOpenProfessionalReviewCoordinationV0401(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewCoordinationV0401">Fechar</button>
     </div>
+    <div id="professionalReviewCoordinationClosureV0406"></div>
     <div id="professionalReviewCoordinationSummaryV0405"></div>
     <form id="professionalReviewCoordinationFiltersV0404" class="form-grid" data-professional-review-coordination-filters-v0404="${HP_PROFESSIONAL_REVIEW_COORDINATION_FILTERS_V0404}">
       <label>Status<select name="status">
@@ -5574,6 +5594,11 @@ async function hpOpenProfessionalReviewCoordinationV0401(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const coordinationClosureHostV0406=$('#professionalReviewCoordinationClosureV0406');
+  hpLoadProfessionalReviewCoordinationClosureV0406(p.id)
+    .then(x=>hpRenderProfessionalReviewCoordinationClosureV0406(coordinationClosureHostV0406,x))
+    .catch(()=>{ if(coordinationClosureHostV0406) coordinationClosureHostV0406.innerHTML=''; });
 
   const coordinationSummaryHostV0405=$('#professionalReviewCoordinationSummaryV0405');
   hpLoadProfessionalReviewCoordinationSummaryV0405(p.id)
@@ -13489,7 +13514,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.40.5';
+const HP_MVP_VERSION='0.40.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

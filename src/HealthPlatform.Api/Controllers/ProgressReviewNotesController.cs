@@ -794,6 +794,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza coordenação documental integrada entre Assignment, Delegation, Handoff, Continuity e Escalation e, a partir da v0.40.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("coordination/closure")]
+    public ActionResult<ProfessionalReviewCoordinationClosureResponse> FechamentoCoordinations()
+    {
+        var componentes = new[]
+        {
+            "CoordinationFoundation",
+            "CoordinationPersistence",
+            "CoordinationStatus",
+            "CoordinationHistory",
+            "CoordinationFilters",
+            "CoordinationSummary"
+        };
+
+        return Ok(new ProfessionalReviewCoordinationClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaCoordinationCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural da coordenação profissional integrada. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("coordination/summary")]
     public async Task<ActionResult<ProfessionalReviewCoordinationSummaryResponse>> ResumoCoordinations(
         Guid pacienteId,

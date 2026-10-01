@@ -3667,3 +3667,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.40.6 — Professional Review Coordination Closure`.
 
+---
+
+## v0.40.6 — Professional Review Coordination Closure
+
+Fecha a linha 0.40.x consolidando todas as capacidades estruturais de coordenação profissional integrada.
+
+### Componentes consolidados
+- Coordination Foundation;
+- Coordination Persistence;
+- Coordination Status;
+- Coordination History;
+- Coordination Filters;
+- Coordination Summary.
+
+### Estado
+O endpoint `coordination/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaCoordinationCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.41.0 — Professional Review Collaboration Foundation`.
+
