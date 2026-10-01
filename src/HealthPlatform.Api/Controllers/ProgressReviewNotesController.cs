@@ -1606,6 +1606,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza insights documentados da equipe usando Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.47.1, possui persistência auditada. Não transforma insight em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-insight/closure")]
+    public ActionResult<ProfessionalReviewTeamInsightClosureResponse> FechamentoTeamInsights()
+    {
+        var componentes = new[]
+        {
+            "TeamInsightFoundation",
+            "TeamInsightPersistence",
+            "TeamInsightStatus",
+            "TeamInsightHistory",
+            "TeamInsightFilters",
+            "TeamInsightSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamInsightClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamInsightCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos insights documentados da equipe. Não transforma insight em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-insight/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamInsightSummaryResponse>> ResumoTeamInsights(
         Guid pacienteId,

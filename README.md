@@ -5298,3 +5298,34 @@ As contagens são agregações documentais. Não transformam insight em evidênc
 
 **Próxima etapa:** `v0.47.6 — Professional Review Team Insight Closure`.
 
+---
+
+## v0.47.6 — Professional Review Team Insight Closure
+
+Fecha a linha 0.47.x consolidando todas as capacidades estruturais dos insights documentados da equipe.
+
+### Componentes consolidados
+- Team Insight Foundation;
+- Team Insight Persistence;
+- Team Insight Status;
+- Team Insight History;
+- Team Insight Filters;
+- Team Insight Summary.
+
+### Estado
+O endpoint `team-insight/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamInsightCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não transforma insight em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.48.0 — Professional Review Team Knowledge Foundation`.
+

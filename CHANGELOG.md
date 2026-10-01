@@ -1,4 +1,21 @@
-﻿# v0.47.5 — Professional Review Team Insight Summary
+﻿# v0.47.6 — Professional Review Team Insight Closure
+
+- Adiciona `ProfessionalReviewTeamInsightClosureResponse`.
+- Adiciona endpoint `GET .../team-insight/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamInsightCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_CLOSURE_V0476`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não transforma insight em evidência clínica validada.
+- Não infere causalidade, prognóstico ou recomendação.
+- Não cria decisão terapêutica, score clínico, risco, urgência ou prioridade automática.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.47.x.
+- Próxima etapa: v0.48.0 — Professional Review Team Knowledge Foundation.
+
+# v0.47.5 — Professional Review Team Insight Summary
 
 - Adiciona `ProfessionalReviewTeamInsightProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamInsightSummaryResponse`.
