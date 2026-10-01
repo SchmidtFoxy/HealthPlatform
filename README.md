@@ -6869,3 +6869,29 @@ A fundação v0.54.0 passa a anunciar persistência disponível e permite abrir 
 Persistir um resultado não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição automaticamente.
 
 **Próxima etapa:** `v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status`.
+
+---
+
+## v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status
+
+Adiciona estados documentais auditados aos resultados das revisões profissionais.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Endpoint
+`PATCH .../team-knowledge-effect-decision-review-outcome/{id}/status`
+
+### Auditoria
+Mudanças de estado registram `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_STATUS_CHANGED`.
+
+### UI
+Cada resultado passa a oferecer ações **Reabrir registro**, **Revisar**, **Consolidar** e **Descartar**.
+
+### Guardrail
+O status é estritamente documental. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
+
+**Próxima etapa:** `v0.54.3 — Professional Review Team Knowledge Effect Decision Review Outcome History`.

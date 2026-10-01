@@ -252,6 +252,9 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeStatusRequest(
+    string Status);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomePersistedResponse(
     Guid Id,
     Guid? TeamKnowledgeEffectDecisionReviewRelacionadaId,

@@ -5578,3 +5578,18 @@ Adicionar persistência auditada para os resultados documentados das revisões p
 
 ### v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status
 Adicionar estados documentais e transição auditada.
+
+## ✅ v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status — CONCLUÍDA
+
+**Entregue:**
+- estados `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- endpoint PATCH de status;
+- timestamp de atualização de status;
+- auditoria `STATUS_CHANGED`;
+- ações de status na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.54.3 — Professional Review Team Knowledge Effect Decision Review Outcome History
+Adicionar histórico auditado dos resultados documentados.

@@ -5021,6 +5021,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_SUMMARY_V0535
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_CLOSURE_V0536='v0.53.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_V0540='v0.54.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541='v0.54.1';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_STATUS_V0542='v0.54.2';
 
 
 
@@ -6502,8 +6503,12 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
       <div class="row-between"><b>${esc(x.profissionalResponsavel||'Profissional')}</b><span class="pill Info">${esc(x.status||'Registrado')}</span></div>
       <p>${esc(x.resultadoDocumentado||'')}</p>
       ${x.impactoDocumentado?`<small class="muted-line">${esc(x.impactoDocumentado)}</small>`:''}
-      <div class="form-actions">
+      <div class="form-actions" data-professional-review-team-knowledge-effect-decision-review-outcome-status-v0542="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_STATUS_V0542}">
         <button type="button" class="secondary" data-edit-outcome-v0541="${x.id}">Editar</button>
+        <button type="button" class="ghost" data-status-outcome-v0542="Registrado" data-outcome-id-v0542="${x.id}">Reabrir registro</button>
+        <button type="button" class="ghost" data-status-outcome-v0542="EmRevisao" data-outcome-id-v0542="${x.id}">Revisar</button>
+        <button type="button" class="ghost" data-status-outcome-v0542="Consolidado" data-outcome-id-v0542="${x.id}">Consolidar</button>
+        <button type="button" class="ghost" data-status-outcome-v0542="Descartado" data-outcome-id-v0542="${x.id}">Descartar</button>
         <button type="button" class="ghost" data-archive-outcome-v0541="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum resultado documentado.</p>';
@@ -6512,6 +6517,18 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
       const x=items.find(i=>i.id===btn.dataset.editOutcomeV0541); if(!x) return;
       Object.keys(x).forEach(k=>{ if(form.elements[k] && x[k]!=null) form.elements[k].value=x[k]; });
     });
+    listHost.querySelectorAll('[data-status-outcome-v0542]').forEach(btn=>btn.onclick=async()=>{
+      const id=btn.dataset.outcomeIdV0542;
+      const status=btn.dataset.statusOutcomeV0542;
+      if(!id || !status) return;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome/${id}/status`,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({status})
+      });
+      await render();
+    });
+
     listHost.querySelectorAll('[data-archive-outcome-v0541]').forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome/${btn.dataset.archiveOutcomeV0541}`,{method:'DELETE'});
       await render();
@@ -18527,7 +18544,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.54.1';
+const HP_MVP_VERSION='0.54.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

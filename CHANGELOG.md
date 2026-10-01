@@ -1,4 +1,16 @@
-﻿# v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence
+﻿# v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status
+
+- Adiciona estados Registrado, EmRevisao, Consolidado e Descartado.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeStatusRequest`.
+- Adiciona PATCH `team-knowledge-effect-decision-review-outcome/{id}/status`.
+- Preserva `StatusAtualizadoEmUtc`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_STATUS_CHANGED`.
+- Adiciona ações Reabrir registro, Revisar, Consolidar e Descartar.
+- Status permanece documental e não executa decisão clínica automaticamente.
+- Sem migration nova.
+- Próxima etapa: v0.54.3 — Professional Review Team Knowledge Effect Decision Review Outcome History.
+
+# v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence
 
 - Habilita persistência auditada para Outcome.
 - Reutiliza `NotaInternaProfissional`.
