@@ -1,4 +1,23 @@
-﻿# v0.46.0 — Professional Review Team Learning Foundation
+﻿# v0.46.1 — Professional Review Team Learning Persistence
+
+- Adiciona persistência auditada de Team Learning.
+- Adiciona `ProfessionalReviewTeamLearningPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamLearning:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar aprendizados`.
+- Não transforma aprendizado em evidência clínica validada.
+- Não infere causalidade, prognóstico ou recomendação automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.46.2 — Professional Review Team Learning Status.
+
+# v0.46.0 — Professional Review Team Learning Foundation
 
 - Abre a linha funcional 0.46.x.
 - Adiciona `ProfessionalReviewTeamLearningFieldResponse`.

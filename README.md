@@ -4883,3 +4883,51 @@ A fundação organiza aprendizados documentados. Não infere causalidade, não t
 
 **Próxima etapa:** `v0.46.1 — Professional Review Team Learning Persistence`.
 
+---
+
+## v0.46.1 — Professional Review Team Learning Persistence
+
+Adiciona persistência auditada para aprendizados documentados da equipe profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Outcome relacionado opcional;
+- Team Decision relacionada opcional;
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- aprendizado documentado;
+- evidência / base observacional;
+- aplicabilidade;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_LEARNING_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_LEARNING_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_LEARNING_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar aprendizados**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra aprendizados documentados da equipe. Não transforma aprendizado em evidência clínica validada, não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transforma aprendizado registrado em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.46.2 — Professional Review Team Learning Status`.
+

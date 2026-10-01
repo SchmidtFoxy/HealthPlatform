@@ -4964,6 +4964,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_FILTERS_V0454='v0.45.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_SUMMARY_V0455='v0.45.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_CLOSURE_V0456='v0.45.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461='v0.46.1';
 
 
 
@@ -5868,7 +5869,157 @@ function hpRenderProfessionalReviewTeamLearningFoundationV0460(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza aprendizados documentados da equipe. Não infere causalidade, não valida evidência clínica, não produz prognóstico ou recomendação automática e não executa conduta ou prescrição.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-learning-open-v0461="${HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461}">Gerenciar aprendizados</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamLearningV0461(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-learning`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-learning-persistence-v0461="${HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461}">
+    <div class="row-between">
+      <div>
+        <h3>Aprendizados documentados da equipe</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamLearningV0461">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamLearningFormV0461" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Team Outcome relacionado<input name="teamOutcomeRelacionadoId" placeholder="ID opcional do resultado"></label>
+      <label>Team Decision relacionada<input name="teamDecisionRelacionadaId" placeholder="ID opcional da decisão"></label>
+      <label>Team Alignment relacionado<input name="teamAlignmentRelacionadoId" placeholder="ID opcional do alinhamento"></label>
+      <label>Shared Context relacionado<input name="sharedContextRelacionadoId" placeholder="ID opcional do contexto compartilhado"></label>
+      <label>Collaboration relacionada<input name="collaborationRelacionadaId" placeholder="ID opcional da colaboração"></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000" placeholder="Profissionais participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Aprendizado documentado<textarea name="aprendizadoDocumentado" maxlength="3000" rows="4" required></textarea></label>
+      <label class="span-2">Evidência / base observacional<textarea name="evidenciaBaseObservacional" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Aplicabilidade<textarea name="aplicabilidade" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar aprendizado</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamLearningV0461">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamLearningListV0461" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não valida evidência clínica, não infere causalidade, prognóstico ou recomendação, não representa conduta executada ou prescrição automática e não transfere automaticamente responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTeamLearningFormV0461');
+  const listHost=$('#professionalReviewTeamLearningListV0461');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.teamOutcomeRelacionadoId?`<small class="muted-line">Team Outcome: ${esc(x.teamOutcomeRelacionadoId)}</small>`:''}
+      ${x.teamDecisionRelacionadaId?`<small class="muted-line">Team Decision: ${esc(x.teamDecisionRelacionadaId)}</small>`:''}
+      ${x.teamAlignmentRelacionadoId?`<small class="muted-line">Team Alignment: ${esc(x.teamAlignmentRelacionadoId)}</small>`:''}
+      ${x.sharedContextRelacionadoId?`<small class="muted-line">Shared Context: ${esc(x.sharedContextRelacionadoId)}</small>`:''}
+      ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      <p><b>Aprendizado:</b> ${esc(x.aprendizadoDocumentado||'')}</p>
+      ${x.evidenciaBaseObservacional?`<p><b>Base observacional:</b> ${esc(x.evidenciaBaseObservacional)}</p>`:''}
+      ${x.aplicabilidade?`<p><b>Aplicabilidade:</b> ${esc(x.aplicabilidade)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-team-learning-edit-v0461="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-team-learning-archive-v0461="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum aprendizado de equipe registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-team-learning-edit-v0461]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamLearningEditV0461);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalResponsavel.value=item.profissionalResponsavel||'';
+      form.elements.teamOutcomeRelacionadoId.value=item.teamOutcomeRelacionadoId||'';
+      form.elements.teamDecisionRelacionadaId.value=item.teamDecisionRelacionadaId||'';
+      form.elements.teamAlignmentRelacionadoId.value=item.teamAlignmentRelacionadoId||'';
+      form.elements.sharedContextRelacionadoId.value=item.sharedContextRelacionadoId||'';
+      form.elements.collaborationRelacionadaId.value=item.collaborationRelacionadaId||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.participantes.value=item.participantes||'';
+      form.elements.aprendizadoDocumentado.value=item.aprendizadoDocumentado||'';
+      form.elements.evidenciaBaseObservacional.value=item.evidenciaBaseObservacional||'';
+      form.elements.aplicabilidade.value=item.aplicabilidade||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-learning-archive-v0461]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-learning/${btn.dataset.teamLearningArchiveV0461}`,{method:'DELETE'});
+      toast('Aprendizado de equipe arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      aprendizadoDocumentado:String(fd.get('aprendizadoDocumentado')||'').trim(),
+      teamOutcomeRelacionadoId:String(fd.get('teamOutcomeRelacionadoId')||'').trim()||null,
+      teamDecisionRelacionadaId:String(fd.get('teamDecisionRelacionadaId')||'').trim()||null,
+      teamAlignmentRelacionadoId:String(fd.get('teamAlignmentRelacionadoId')||'').trim()||null,
+      sharedContextRelacionadoId:String(fd.get('sharedContextRelacionadoId')||'').trim()||null,
+      collaborationRelacionadaId:String(fd.get('collaborationRelacionadaId')||'').trim()||null,
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      evidenciaBaseObservacional:String(fd.get('evidenciaBaseObservacional')||'').trim()||null,
+      aplicabilidade:String(fd.get('aplicabilidade')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-learning${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Aprendizado de equipe atualizado.':'Aprendizado de equipe registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTeamLearningV0461').onclick=clear;
+  $('#closeProfessionalReviewTeamLearningV0461').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewTeamOutcomeClosureV0456(patientId){
@@ -5996,7 +6147,11 @@ async function hpOpenProfessionalReviewTeamOutcomeV0451(p){
 
   const teamLearningFoundationHostV0460=$('#professionalReviewTeamLearningFoundationV0460');
   hpLoadProfessionalReviewTeamLearningFoundationV0460(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamLearningFoundationV0460(teamLearningFoundationHostV0460,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTeamLearningFoundationV0460(teamLearningFoundationHostV0460,x);
+      const openTeamLearningV0461=teamLearningFoundationHostV0460?.querySelector('[data-team-learning-open-v0461]');
+      if(openTeamLearningV0461) openTeamLearningV0461.onclick=()=>hpOpenProfessionalReviewTeamLearningV0461(p);
+    })
     .catch(()=>{ if(teamLearningFoundationHostV0460) teamLearningFoundationHostV0460.innerHTML=''; });
 
   const teamOutcomeClosureHostV0456=$('#professionalReviewTeamOutcomeClosureV0456');
@@ -15327,7 +15482,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.46.0';
+const HP_MVP_VERSION='0.46.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -4449,3 +4449,29 @@ Criar a fundação estrutural para aprendizados documentados da equipe profissio
 ### v0.46.1 — Professional Review Team Learning Persistence
 Adicionar persistência auditada dos aprendizados documentados da equipe profissional, com vínculos opcionais a Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre aprendizado registrado, evidência, causalidade, prognóstico, recomendação, conduta e execução.
 
+## ✅ v0.46.1 — Professional Review Team Learning Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamLearningPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamLearning:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Team Outcome;
+- vínculo opcional a Team Decision;
+- vínculo opcional a Team Alignment;
+- vínculo opcional a Shared Context;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de aprendizados de equipe;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.46.2 — Professional Review Team Learning Status
+Adicionar estados documentais explícitos aos aprendizados registrados da equipe, com transições manuais e auditadas sem transformar aprendizado em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, conduta ou prescrição.
+
