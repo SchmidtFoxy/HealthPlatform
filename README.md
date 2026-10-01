@@ -5800,3 +5800,34 @@ As contagens são agregações documentais. Não transformam aplicação em evid
 
 **Próxima etapa:** `v0.49.6 — Professional Review Team Knowledge Application Closure`.
 
+---
+
+## v0.49.6 — Professional Review Team Knowledge Application Closure
+
+Fecha a linha 0.49.x consolidando todas as capacidades estruturais da aplicação documentada do conhecimento da equipe.
+
+### Componentes consolidados
+- Team Knowledge Application Foundation;
+- Team Knowledge Application Persistence;
+- Team Knowledge Application Status;
+- Team Knowledge Application History;
+- Team Knowledge Application Filters;
+- Team Knowledge Application Summary.
+
+### Estado
+O endpoint `team-knowledge-application/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamKnowledgeApplicationCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não transforma aplicação em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.50.0 — Professional Review Team Knowledge Effect Foundation`.
+

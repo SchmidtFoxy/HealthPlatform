@@ -1958,6 +1958,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza aplicação documentada do conhecimento da equipe usando Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.49.1, possui persistência auditada. Não transforma aplicação registrada em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-application/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeApplicationClosureResponse> FechamentoTeamKnowledgeApplications()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeApplicationFoundation",
+            "TeamKnowledgeApplicationPersistence",
+            "TeamKnowledgeApplicationStatus",
+            "TeamKnowledgeApplicationHistory",
+            "TeamKnowledgeApplicationFilters",
+            "TeamKnowledgeApplicationSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeApplicationClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeApplicationCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural da aplicação documentada do conhecimento da equipe. Não transforma aplicação em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-application/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeApplicationSummaryResponse>> ResumoTeamKnowledgeApplications(
         Guid pacienteId,

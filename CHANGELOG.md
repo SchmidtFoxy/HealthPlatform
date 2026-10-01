@@ -1,4 +1,21 @@
-﻿# v0.49.5 — Professional Review Team Knowledge Application Summary
+﻿# v0.49.6 — Professional Review Team Knowledge Application Closure
+
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationClosureResponse`.
+- Adiciona endpoint `GET .../team-knowledge-application/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamKnowledgeApplicationCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_CLOSURE_V0496`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não transforma aplicação em evidência clínica validada.
+- Não infere causalidade, prognóstico ou recomendação.
+- Não cria decisão terapêutica, score clínico, risco, urgência ou prioridade automática.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.49.x.
+- Próxima etapa: v0.50.0 — Professional Review Team Knowledge Effect Foundation.
+
+# v0.49.5 — Professional Review Team Knowledge Application Summary
 
 - Adiciona `ProfessionalReviewTeamKnowledgeApplicationProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamKnowledgeApplicationSummaryResponse`.
