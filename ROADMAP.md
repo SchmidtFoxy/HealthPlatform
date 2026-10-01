@@ -4431,3 +4431,21 @@ Fechar o ciclo 0.45.x consolidando fundação, persistência, status, histórico
 ### v0.46.0 — Professional Review Team Learning Foundation
 Criar a fundação estrutural para aprendizados documentados da equipe profissional a partir de Team Outcome, Team Decision, Team Alignment e contextos colaborativos, preservando a separação entre aprendizado registrado, causalidade, evidência, prognóstico, recomendação, conduta e prescrição.
 
+## ✅ v0.46.0 — Professional Review Team Learning Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamLearningFieldResponse`;
+- `ProfessionalReviewTeamLearningFoundationResponse`;
+- endpoint `team-learning/foundation`;
+- quinze campos estruturais;
+- estado `FundacaoTeamLearningDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.46.1 — Professional Review Team Learning Persistence
+Adicionar persistência auditada dos aprendizados documentados da equipe profissional, com vínculos opcionais a Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre aprendizado registrado, evidência, causalidade, prognóstico, recomendação, conduta e execução.
+

@@ -4963,6 +4963,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_HISTORY_V0453='v0.45.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_FILTERS_V0454='v0.45.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_SUMMARY_V0455='v0.45.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_CLOSURE_V0456='v0.45.6';
+const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0';
 
 
 
@@ -5842,6 +5843,34 @@ async function hpOpenProfessionalReviewTeamOutcomeHistoryV0453(p,teamOutcome){
 
 
 
+
+async function hpLoadProfessionalReviewTeamLearningFoundationV0460(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-learning/foundation`);
+}
+
+function hpRenderProfessionalReviewTeamLearningFoundationV0460(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-learning-v0460="${HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460}">
+    <div class="row-between">
+      <div>
+        <b>Aprendizados documentados da equipe</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza aprendizados documentados da equipe. Não infere causalidade, não valida evidência clínica, não produz prognóstico ou recomendação automática e não executa conduta ou prescrição.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewTeamOutcomeClosureV0456(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-outcome/closure`);
@@ -5914,6 +5943,7 @@ async function hpOpenProfessionalReviewTeamOutcomeV0451(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamOutcomeV0451">Fechar</button>
     </div>
+    <div id="professionalReviewTeamLearningFoundationV0460"></div>
     <div id="professionalReviewTeamOutcomeClosureV0456"></div>
     <div id="professionalReviewTeamOutcomeSummaryV0455"></div>
     <form id="professionalReviewTeamOutcomeFiltersV0454" class="form-grid" data-professional-review-team-outcome-filters-v0454="${HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_FILTERS_V0454}">
@@ -5963,6 +5993,11 @@ async function hpOpenProfessionalReviewTeamOutcomeV0451(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamLearningFoundationHostV0460=$('#professionalReviewTeamLearningFoundationV0460');
+  hpLoadProfessionalReviewTeamLearningFoundationV0460(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamLearningFoundationV0460(teamLearningFoundationHostV0460,x))
+    .catch(()=>{ if(teamLearningFoundationHostV0460) teamLearningFoundationHostV0460.innerHTML=''; });
 
   const teamOutcomeClosureHostV0456=$('#professionalReviewTeamOutcomeClosureV0456');
   hpLoadProfessionalReviewTeamOutcomeClosureV0456(p.id)
@@ -15292,7 +15327,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.45.6';
+const HP_MVP_VERSION='0.46.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

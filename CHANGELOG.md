@@ -1,4 +1,23 @@
-﻿# v0.45.6 — Professional Review Team Outcome Closure
+﻿# v0.46.0 — Professional Review Team Learning Foundation
+
+- Abre a linha funcional 0.46.x.
+- Adiciona `ProfessionalReviewTeamLearningFieldResponse`.
+- Adiciona `ProfessionalReviewTeamLearningFoundationResponse`.
+- Adiciona `GET .../team-learning/foundation`.
+- Define vínculos opcionais com Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, aprendizado documentado, evidência/base observacional, aplicabilidade, horizonte e observação profissional.
+- Define `FundacaoTeamLearningDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Aprendizados documentados da equipe` ao gerenciador profissional.
+- Não infere causalidade nem valida evidência clínica automaticamente.
+- Não produz prognóstico ou recomendação automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.46.1 — Professional Review Team Learning Persistence.
+
+# v0.45.6 — Professional Review Team Outcome Closure
 
 - Adiciona `ProfessionalReviewTeamOutcomeClosureResponse`.
 - Adiciona endpoint `GET .../team-outcome/closure`.

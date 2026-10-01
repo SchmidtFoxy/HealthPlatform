@@ -4844,3 +4844,42 @@ O fechamento mede somente disponibilidade estrutural. Não infere causalidade, p
 
 **Próxima etapa:** `v0.46.0 — Professional Review Team Learning Foundation`.
 
+---
+
+## v0.46.0 — Professional Review Team Learning Foundation
+
+Abre a linha 0.46.x com a fundação estrutural para aprendizados documentados da equipe profissional.
+
+### Campos da fundação
+- Team Outcome relacionado;
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- aprendizado documentado;
+- evidência / base observacional;
+- aplicabilidade;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-learning/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamLearningDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Aprendizados documentados da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza aprendizados documentados. Não infere causalidade, não transforma aprendizado em evidência clínica validada, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.46.1 — Professional Review Team Learning Persistence`.
+

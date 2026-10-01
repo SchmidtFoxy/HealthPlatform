@@ -1310,6 +1310,111 @@ public class ProgressReviewNotesController(
             "A fundação organiza resultados documentados das decisões da equipe usando Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.45.1, possui persistência auditada. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-learning/foundation")]
+    public ActionResult<ProfessionalReviewTeamLearningFoundationResponse> TeamLearningFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "team-outcome-relacionado",
+                "Team Outcome relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a um resultado de equipe já documentado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "team-decision-relacionada",
+                "Team Decision relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a uma decisão de equipe já documentada."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "team-alignment-relacionado",
+                "Team Alignment relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a um alinhamento entre profissionais já documentado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "shared-context-relacionado",
+                "Shared Context relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a um contexto profissional compartilhado já documentado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a uma colaboração profissional já documentada."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a uma coordenação profissional já documentada."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a um escalonamento profissional já documentado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o aprendizado a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "profissional-responsavel",
+                "Profissional responsável",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo registro do aprendizado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes do aprendizado documentado."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "aprendizado-documentado",
+                "Aprendizado documentado",
+                true,
+                "texto-longo",
+                "Registra o aprendizado observado pela equipe sem transformá-lo automaticamente em evidência clínica validada."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "evidencia-base-observacional",
+                "Evidência / base observacional",
+                false,
+                "texto-longo",
+                "Permite registrar a base observacional sem inferir causalidade ou força de evidência."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "aplicabilidade",
+                "Aplicabilidade",
+                false,
+                "texto-longo",
+                "Permite documentar onde o aprendizado pode ser considerado sem gerar recomendação automática."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewTeamLearningFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações adicionais sobre o aprendizado documentado.")
+        };
+
+        return Ok(new ProfessionalReviewTeamLearningFoundationResponse(
+            "FundacaoTeamLearningDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza aprendizados documentados da equipe usando Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não infere causalidade, não transforma aprendizado em evidência clínica validada, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
     [HttpGet("team-outcome/closure")]
     public ActionResult<ProfessionalReviewTeamOutcomeClosureResponse> FechamentoTeamOutcomes()
     {
