@@ -3122,3 +3122,21 @@ Adicionar persistência auditada das delegações profissionais, com vínculo op
 ### v0.36.2 — Professional Review Delegation Status
 Adicionar estados documentais explícitos às delegações profissionais, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.36.2 — Professional Review Delegation Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejada`, `EmAndamento`, `Concluida` e `Cancelada`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.3 — Professional Review Delegation History
+Adicionar histórico consultável das delegações profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

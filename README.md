@@ -2647,3 +2647,35 @@ A persistência registra delegação documental. Não executa conduta, não cria
 
 **Próxima etapa:** `v0.36.2 — Professional Review Delegation Status`.
 
+---
+
+## v0.36.2 — Professional Review Delegation Status
+
+Adiciona estados documentais explícitos às delegações profissionais da equipe.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são manuais via `PATCH .../delegation/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da delegação;
+- gera auditoria `PROFESSIONAL_REVIEW_DELEGATION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela delegações automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.36.3 — Professional Review Delegation History`.
+

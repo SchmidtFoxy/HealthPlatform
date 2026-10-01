@@ -577,18 +577,75 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadDelegation(
+        var payloadAtual = LerPayloadDelegation(nota);
+        var payloadAtualizado = new DelegationPayload(
             delegante,
             delegado,
             request.AssignmentRelacionadaId,
-            request.ContextoDelegacao,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ContextoDelegacao, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_DELEGATION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearDelegation(nota));
+    }
+
+    [HttpPatch("delegation/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewDelegationPersistedResponse>> AtualizarStatusDelegation(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewDelegationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusDelegationValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoDelegation) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadDelegation(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_DELEGATION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearDelegation(nota));
     }
 
@@ -3048,7 +3105,9 @@ public class ProgressReviewNotesController(
         Guid? AssignmentRelacionadaId,
         string? ContextoDelegacao,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadDelegation(
         string profissionalDelegante,
@@ -3064,7 +3123,9 @@ public class ProgressReviewNotesController(
             assignmentRelacionadaId,
             NormalizarOpcional(contextoDelegacao, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -3090,12 +3151,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoDelegacao,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static DelegationPayload LerPayloadDelegation(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<DelegationPayload>(nota.Conteudo)
+                ?? new DelegationPayload(nota.Conteudo, string.Empty, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new DelegationPayload(nota.Conteudo, string.Empty, null, null, null, null);
+        }
+    }
+
+    private static bool StatusDelegationValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private sealed record AssignmentPayload(
         string ResponsavelPrincipal,

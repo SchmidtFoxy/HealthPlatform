@@ -4895,6 +4895,7 @@ const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355='v0.35.5';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356='v0.35.6';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1';
+const HP_PROFESSIONAL_REVIEW_DELEGATION_STATUS_V0362='v0.36.2';
 
 
 
@@ -5195,14 +5196,19 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalDelegante||'Delegante')} → ${esc(x.profissionalDelegado||'Delegado')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejada')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
       ${x.contextoDelegacao?`<p>${esc(x.contextoDelegacao)}</p>`:''}
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-delegation-edit-v0361="${x.id}">Editar</button>
+        ${x.status!=='Planejada'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="Planejada">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluida'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="Concluida">Concluir</button>`:''}
+        ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-delegation-status-v0362="${x.id}" data-status-v0362="Cancelada">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-delegation-archive-v0361="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma delegação profissional registrada.</p>';
@@ -5218,6 +5224,16 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalDelegante.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-delegation-status-v0362]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0362;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/delegation/${btn.dataset.delegationStatusV0362}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Delegação atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-delegation-archive-v0361]')].forEach(btn=>btn.onclick=async()=>{
@@ -11924,7 +11940,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.36.1';
+const HP_MVP_VERSION='0.36.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

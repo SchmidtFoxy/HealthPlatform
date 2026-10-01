@@ -1,4 +1,20 @@
-﻿# v0.36.1 — Professional Review Delegation Persistence
+﻿# v0.36.2 — Professional Review Delegation Status
+
+- Adiciona `Status` à Delegation persistida.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewDelegationStatusRequest`.
+- Adiciona endpoint `PATCH .../delegation/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_DELEGATION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.36.3 — Professional Review Delegation History.
+
+# v0.36.1 — Professional Review Delegation Persistence
 
 - Adiciona persistência auditada de Delegation.
 - Adiciona `ProfessionalReviewDelegationPersistedResponse`.

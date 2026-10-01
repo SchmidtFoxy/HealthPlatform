@@ -155,11 +155,16 @@ public sealed record ProfessionalReviewDelegationPersistedResponse(
     string? ContextoDelegacao,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewDelegationStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewDelegationFieldResponse(
     string Chave,
