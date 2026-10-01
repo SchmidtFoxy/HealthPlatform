@@ -371,18 +371,75 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadActionPlan(
+        var payloadAtual = LerPayloadActionPlan(nota);
+        var payloadAtualizado = new ActionPlanPayload(
             acao,
-            request.ObjetivoRelacionado,
-            request.Responsavel,
-            request.Horizonte,
+            NormalizarOpcional(request.ObjetivoRelacionado, 500),
+            NormalizarOpcional(request.Responsavel, 160),
+            NormalizarOpcional(request.Horizonte, 120),
             request.CarePlanRelacionadoId,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_ACTION_PLAN_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearActionPlan(nota));
+    }
+
+    [HttpPatch("action-plan/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewActionPlanPersistedResponse>> AtualizarStatusActionPlan(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewActionPlanStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusActionPlanValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoActionPlan) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadActionPlan(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearActionPlan(nota));
     }
 
@@ -1585,7 +1642,9 @@ public class ProgressReviewNotesController(
         string? Responsavel,
         string? Horizonte,
         Guid? CarePlanRelacionadoId,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadActionPlan(
         string acaoOperacional,
@@ -1601,7 +1660,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(responsavel, 160),
             NormalizarOpcional(horizonte, 120),
             carePlanRelacionadoId,
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -1627,12 +1688,30 @@ public class ProgressReviewNotesController(
             payload?.Horizonte,
             payload?.CarePlanRelacionadoId,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static ActionPlanPayload LerPayloadActionPlan(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<ActionPlanPayload>(nota.Conteudo)
+                ?? new ActionPlanPayload(nota.Conteudo, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new ActionPlanPayload(nota.Conteudo, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusActionPlanValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private async Task<bool> CarePlanPertencePacienteAsync(
         Guid pacienteId,

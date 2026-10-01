@@ -1,4 +1,19 @@
-﻿# v0.33.1 — Professional Review Action Plan Persistence
+﻿# v0.33.2 — Professional Review Action Plan Status
+
+- Adiciona `Status` ao Action Plan persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewActionPlanStatusRequest`.
+- Adiciona endpoint `PATCH .../action-plan/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.33.3 — Professional Review Action Plan History.
+
+# v0.33.1 — Professional Review Action Plan Persistence
 
 - Adiciona `ProfessionalReviewActionPlanPersistedResponse`.
 - Reutiliza `NotaInternaProfissional` com namespace `ProfessionalReviewActionPlan:`.

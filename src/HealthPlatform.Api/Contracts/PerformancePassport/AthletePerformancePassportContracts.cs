@@ -137,11 +137,16 @@ public sealed record ProfessionalReviewActionPlanPersistedResponse(
     string? Horizonte,
     Guid? CarePlanRelacionadoId,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewActionPlanStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewActionPlanFieldResponse(
     string Chave,

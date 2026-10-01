@@ -1991,3 +1991,35 @@ Persistir uma ação operacional registra documentalmente uma decisão do profis
 
 **Próxima etapa:** `v0.33.2 — Professional Review Action Plan Status`.
 
+---
+
+## v0.33.2 — Professional Review Action Plan Status
+
+Adiciona estados documentais explícitos às ações operacionais profissionais.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são feitas manualmente pelo profissional via `PATCH .../action-plan/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva o restante do payload;
+- gera auditoria `PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_CHANGED`.
+
+### UI
+O workspace profissional passa a mostrar badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela ações automaticamente e não converte estado em prioridade, risco ou recomendação clínica.
+
+**Próxima etapa:** `v0.33.3 — Professional Review Action Plan History`.
+

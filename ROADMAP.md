@@ -2728,3 +2728,21 @@ Adicionar persistência profissional auditada ao Action Plan, mantendo vínculo 
 ### v0.33.2 — Professional Review Action Plan Status
 Adicionar estados documentais explícitos ao Action Plan, com transições manuais realizadas pelo profissional e histórico auditável, sem execução automática.
 
+## ✅ v0.33.2 — Professional Review Action Plan Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejada`, `EmAndamento`, `Concluida` e `Cancelada`;
+- `StatusAtualizadoEmUtc`;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge no workspace;
+- ações Replanejar, Iniciar, Concluir e Cancelar;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.3 — Professional Review Action Plan History
+Adicionar histórico consultável de criação, edição, mudanças de status e arquivamento do Action Plan, com autoria e datas.
+
