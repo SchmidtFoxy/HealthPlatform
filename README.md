@@ -2426,3 +2426,35 @@ A persistência registra responsabilidade documental. Não executa conduta, não
 
 **Próxima etapa:** `v0.35.2 — Professional Review Assignment Status`.
 
+---
+
+## v0.35.2 — Professional Review Assignment Status
+
+Adiciona estados documentais explícitos às atribuições profissionais da equipe.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são manuais via `PATCH .../assignment/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da atribuição;
+- gera auditoria `PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela atribuições automaticamente e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.35.3 — Professional Review Assignment History`.
+

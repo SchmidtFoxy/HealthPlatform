@@ -1,4 +1,19 @@
-﻿# v0.35.1 — Professional Review Assignment Persistence
+﻿# v0.35.2 — Professional Review Assignment Status
+
+- Adiciona `Status` à Assignment persistida.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewAssignmentStatusRequest`.
+- Adiciona endpoint `PATCH .../assignment/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.35.3 — Professional Review Assignment History.
+
+# v0.35.1 — Professional Review Assignment Persistence
 
 - Adiciona persistência auditada de Assignment.
 - Adiciona `ProfessionalReviewAssignmentPersistedResponse`.

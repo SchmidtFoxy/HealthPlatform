@@ -2990,3 +2990,21 @@ Adicionar persistência auditada das atribuições profissionais, com vínculo o
 ### v0.35.2 — Professional Review Assignment Status
 Adicionar estados documentais explícitos às atribuições profissionais, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.35.2 — Professional Review Assignment Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejada`, `EmAndamento`, `Concluida` e `Cancelada`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.3 — Professional Review Assignment History
+Adicionar histórico consultável das atribuições profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

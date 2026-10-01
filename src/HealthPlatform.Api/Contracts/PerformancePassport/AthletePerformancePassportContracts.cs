@@ -149,11 +149,16 @@ public sealed record ProfessionalReviewAssignmentPersistedResponse(
     string? ContextoAtribuicao,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewAssignmentStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewAssignmentFieldResponse(
     string Chave,

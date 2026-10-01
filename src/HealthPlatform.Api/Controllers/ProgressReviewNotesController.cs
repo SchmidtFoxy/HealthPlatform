@@ -499,18 +499,75 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadAssignment(
+        var payloadAtual = LerPayloadAssignment(nota);
+        var payloadAtualizado = new AssignmentPayload(
             responsavelPrincipal,
             request.TaskCoordinationRelacionadaId,
-            request.ApoioParticipante,
-            request.ContextoAtribuicao,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ApoioParticipante, 160),
+            NormalizarOpcional(request.ContextoAtribuicao, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_ASSIGNMENT_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearAssignment(nota));
+    }
+
+    [HttpPatch("assignment/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewAssignmentPersistedResponse>> AtualizarStatusAssignment(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewAssignmentStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusAssignmentValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoAssignment) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadAssignment(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearAssignment(nota));
     }
 
@@ -2546,7 +2603,9 @@ public class ProgressReviewNotesController(
         string? ApoioParticipante,
         string? ContextoAtribuicao,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadAssignment(
         string responsavelPrincipal,
@@ -2562,7 +2621,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(apoioParticipante, 160),
             NormalizarOpcional(contextoAtribuicao, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -2588,12 +2649,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoAtribuicao,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static AssignmentPayload LerPayloadAssignment(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<AssignmentPayload>(nota.Conteudo)
+                ?? new AssignmentPayload(nota.Conteudo, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new AssignmentPayload(nota.Conteudo, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusAssignmentValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private sealed record TaskCoordinationPayload(
         string TarefaOperacional,
