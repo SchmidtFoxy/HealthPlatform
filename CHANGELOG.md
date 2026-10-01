@@ -1,4 +1,20 @@
-﻿# v0.42.3 — Professional Review Shared Context History
+﻿# v0.42.4 — Professional Review Shared Context Filters
+
+- Adiciona `ProfessionalReviewSharedContextFiltersResponse`.
+- Adiciona endpoint `GET .../shared-context/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.42.5 — Professional Review Shared Context Summary.
+
+# v0.42.3 — Professional Review Shared Context History
 
 - Adiciona `ProfessionalReviewSharedContextHistoryItemResponse`.
 - Adiciona `ProfessionalReviewSharedContextHistoryResponse`.

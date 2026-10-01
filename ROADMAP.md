@@ -3965,3 +3965,22 @@ Adicionar histórico consultável dos contextos profissionais compartilhados, co
 ### v0.42.4 — Professional Review Shared Context Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos contextos compartilhados.
 
+## ✅ v0.42.4 — Professional Review Shared Context Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewSharedContextFiltersResponse`;
+- endpoint `shared-context/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.42.5 — Professional Review Shared Context Summary
+Adicionar resumo estrutural dos contextos profissionais compartilhados com contagem por status e distribuição por profissional responsável, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+

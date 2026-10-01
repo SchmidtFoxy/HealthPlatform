@@ -184,6 +184,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewSharedContextFiltersResponse(
+    string? Status,
+    string? ProfissionalResponsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivados,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewSharedContextPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewSharedContextHistoryItemResponse(
     Guid Id,
     Guid SharedContextId,
