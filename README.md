@@ -4609,3 +4609,40 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.45.0 — Professional Review Team Outcome Foundation`.
 
+---
+
+## v0.45.0 — Professional Review Team Outcome Foundation
+
+Abre a linha 0.45.x com a fundação estrutural para resultados documentados das decisões da equipe profissional.
+
+### Campos da fundação
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- resultado documentado;
+- evidência / registro de suporte;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-outcome/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamOutcomeDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Resultados documentados da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza resultados documentados. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.45.1 — Professional Review Team Outcome Persistence`.
+

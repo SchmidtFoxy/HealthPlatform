@@ -1186,6 +1186,99 @@ public class ProgressReviewNotesController(
             "A fundação organiza decisões documentadas entre profissionais usando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.44.1, possui persistência auditada. Não executa condutas, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("team-outcome/foundation")]
+    public ActionResult<ProfessionalReviewTeamOutcomeFoundationResponse> TeamOutcomeFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "team-decision-relacionada",
+                "Team Decision relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a uma decisão de equipe já documentada."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "team-alignment-relacionado",
+                "Team Alignment relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a um alinhamento entre profissionais já documentado."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "shared-context-relacionado",
+                "Shared Context relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a um contexto profissional compartilhado já documentado."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a uma colaboração profissional já documentada."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a uma coordenação profissional já documentada."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a um escalonamento profissional já documentado."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o resultado a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "profissional-responsavel",
+                "Profissional responsável",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo registro do resultado."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes do acompanhamento do resultado."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "resultado-documentado",
+                "Resultado documentado",
+                true,
+                "texto-longo",
+                "Registra o resultado observado sem inferir automaticamente causalidade, prognóstico ou recomendação."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "evidencia-suporte",
+                "Evidência / registro de suporte",
+                false,
+                "texto-longo",
+                "Permite documentar evidências ou registros de suporte sem produzir interpretação clínica automática."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewTeamOutcomeFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações adicionais sobre o resultado documentado.")
+        };
+
+        return Ok(new ProfessionalReviewTeamOutcomeFoundationResponse(
+            "FundacaoTeamOutcomeDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza resultados documentados das decisões da equipe usando Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
     [HttpGet("team-decision/closure")]
     public ActionResult<ProfessionalReviewTeamDecisionClosureResponse> FechamentoTeamDecisions()
     {

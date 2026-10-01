@@ -1,4 +1,22 @@
-﻿# v0.44.6 — Professional Review Team Decision Closure
+﻿# v0.45.0 — Professional Review Team Outcome Foundation
+
+- Abre a linha funcional 0.45.x.
+- Adiciona `ProfessionalReviewTeamOutcomeFieldResponse`.
+- Adiciona `ProfessionalReviewTeamOutcomeFoundationResponse`.
+- Adiciona `GET .../team-outcome/foundation`.
+- Define vínculos opcionais com Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, resultado documentado, evidência/registro de suporte, horizonte e observação profissional.
+- Define `FundacaoTeamOutcomeDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Resultados documentados da equipe` ao gerenciador profissional.
+- Não infere causalidade, prognóstico ou recomendação automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.45.1 — Professional Review Team Outcome Persistence.
+
+# v0.44.6 — Professional Review Team Decision Closure
 
 - Adiciona `ProfessionalReviewTeamDecisionClosureResponse`.
 - Adiciona endpoint `GET .../team-decision/closure`.
