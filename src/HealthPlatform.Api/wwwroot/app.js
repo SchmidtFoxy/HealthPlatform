@@ -4880,6 +4880,7 @@ const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_FILTERS_V0334='v0.33.4';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_SUMMARY_V0335='v0.33.5';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_CLOSURE_V0336='v0.33.6';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0';
+const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1';
 
 
 
@@ -4993,7 +4994,117 @@ function hpRenderProfessionalReviewTaskCoordinationFoundationV0340(host,foundati
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza tarefas acompanháveis pela equipe. Não executa condutas nem define prioridade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-task-coordination-open-v0341="${HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341}">Gerenciar tarefas operacionais</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/task-coordination`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-task-coordination-persistence-v0341="${HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341}">
+    <div class="row-between">
+      <div>
+        <h3>Coordenação operacional</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTaskCoordinationV0341">Fechar</button>
+    </div>
+    <form id="professionalReviewTaskCoordinationFormV0341" class="form-grid">
+      <input type="hidden" name="id">
+      <label class="span-2">Tarefa operacional<textarea name="tarefaOperacional" maxlength="1000" rows="3" required></textarea></label>
+      <label>Action Plan relacionado<input name="actionPlanRelacionadoId" placeholder="ID opcional do Action Plan"></label>
+      <label>Responsável<input name="responsavel" maxlength="160"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar tarefa</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTaskCoordinationV0341">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTaskCoordinationListV0341" class="stack"></div>
+    <small class="muted-line">Registro operacional auditado. Não representa prescrição, prioridade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTaskCoordinationFormV0341');
+  const listHost=$('#professionalReviewTaskCoordinationListV0341');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.tarefaOperacional||'Tarefa operacional')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.responsavel?`<small class="muted-line">Responsável: ${esc(x.responsavel)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.actionPlanRelacionadoId?`<small class="muted-line">Action Plan: ${esc(x.actionPlanRelacionadoId)}</small>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-task-coordination-edit-v0341="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-task-coordination-archive-v0341="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma tarefa operacional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-task-coordination-edit-v0341]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.taskCoordinationEditV0341);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.tarefaOperacional.value=item.tarefaOperacional||'';
+      form.elements.actionPlanRelacionadoId.value=item.actionPlanRelacionadoId||'';
+      form.elements.responsavel.value=item.responsavel||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.tarefaOperacional.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-task-coordination-archive-v0341]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/task-coordination/${btn.dataset.taskCoordinationArchiveV0341}`,{method:'DELETE'});
+      toast('Tarefa operacional arquivada.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      tarefaOperacional:String(fd.get('tarefaOperacional')||'').trim(),
+      actionPlanRelacionadoId:String(fd.get('actionPlanRelacionadoId')||'').trim()||null,
+      responsavel:String(fd.get('responsavel')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/task-coordination${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Tarefa operacional atualizada.':'Tarefa operacional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTaskCoordinationV0341').onclick=clear;
+  $('#closeProfessionalReviewTaskCoordinationV0341').onclick=()=>hpOpenProfessionalReviewActionPlanV0331(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewActionPlanClosureV0336(patientId){
@@ -5146,7 +5257,11 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
 
   const taskCoordinationFoundationHostV0340=$('#professionalReviewTaskCoordinationFoundationV0340');
   hpLoadProfessionalReviewTaskCoordinationFoundationV0340(p.id)
-    .then(x=>hpRenderProfessionalReviewTaskCoordinationFoundationV0340(taskCoordinationFoundationHostV0340,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTaskCoordinationFoundationV0340(taskCoordinationFoundationHostV0340,x);
+      const openTaskCoordinationV0341=taskCoordinationFoundationHostV0340?.querySelector('[data-task-coordination-open-v0341]');
+      if(openTaskCoordinationV0341) openTaskCoordinationV0341.onclick=()=>hpOpenProfessionalReviewTaskCoordinationV0341(p);
+    })
     .catch(()=>{ if(taskCoordinationFoundationHostV0340) taskCoordinationFoundationHostV0340.innerHTML=''; });
 
   const actionPlanClosureHostV0336=$('#professionalReviewActionPlanClosureV0336');
@@ -11134,7 +11249,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.34.0';
+const HP_MVP_VERSION='0.34.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

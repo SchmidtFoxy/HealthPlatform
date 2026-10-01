@@ -2840,3 +2840,22 @@ Criar a fundação estrutural para coordenação operacional das ações profiss
 ### v0.34.1 — Professional Review Task Coordination Persistence
 Adicionar persistência auditada das tarefas operacionais profissionais, com vínculo opcional ao Action Plan e preservação da separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.34.1 — Professional Review Task Coordination Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTaskCoordinationPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTaskCoordination:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional ao Action Plan;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de tarefas operacionais;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.34.2 — Professional Review Task Coordination Status
+Adicionar estados documentais explícitos para as tarefas operacionais, com transições manuais e auditadas pela equipe profissional.
+

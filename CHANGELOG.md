@@ -1,4 +1,19 @@
-﻿# v0.34.0 — Professional Review Task Coordination Foundation
+﻿# v0.34.1 — Professional Review Task Coordination Persistence
+
+- Adiciona persistência auditada de Task Coordination.
+- Adiciona `ProfessionalReviewTaskCoordinationPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTaskCoordination:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculo opcional com Action Plan do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar tarefas operacionais`.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.34.2 — Professional Review Task Coordination Status.
+
+# v0.34.0 — Professional Review Task Coordination Foundation
 
 - Abre a linha funcional 0.34.x.
 - Adiciona `ProfessionalReviewTaskCoordinationFieldResponse`.

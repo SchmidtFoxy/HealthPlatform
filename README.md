@@ -2170,3 +2170,41 @@ A fundação organiza tarefas acompanháveis. Não executa condutas, não atribu
 
 **Próxima etapa:** `v0.34.1 — Professional Review Task Coordination Persistence`.
 
+---
+
+## v0.34.1 — Professional Review Task Coordination Persistence
+
+Adiciona persistência auditada para tarefas operacionais da equipe profissional.
+
+### CRUD
+- listar tarefas;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- tarefa operacional;
+- Action Plan relacionado opcional;
+- responsável;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TASK_COORDINATION_CREATED`
+- `PROFESSIONAL_REVIEW_TASK_COORDINATION_UPDATED`
+- `PROFESSIONAL_REVIEW_TASK_COORDINATION_ARCHIVED`
+
+### Vínculo com Action Plan
+Quando informado, o Action Plan relacionado precisa pertencer à mesma organização e paciente e não pode estar arquivado.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar tarefas operacionais**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra coordenação operacional. Não executa conduta, não cria prescrição e não atribui risco ou prioridade clínica.
+
+**Próxima etapa:** `v0.34.2 — Professional Review Task Coordination Status`.
+
