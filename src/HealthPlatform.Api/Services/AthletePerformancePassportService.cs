@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.33.0",
+            "v0.33.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Action Plan Foundation cria a fundação estrutural para organizar ações profissionais acompanháveis a partir do Care Plan, ainda sem persistência própria ou execução automática.")
+            "Professional Review Action Plan Persistence adiciona persistência profissional auditada às ações acompanháveis, preservando vínculo opcional com Care Plan e separação entre documentação, decisão clínica e execução.")
         {
             Recordes = recordes,
             Tempos = tempos,

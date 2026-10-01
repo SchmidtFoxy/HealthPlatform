@@ -1,4 +1,20 @@
-﻿# v0.33.0 — Professional Review Action Plan Foundation
+﻿# v0.33.1 — Professional Review Action Plan Persistence
+
+- Adiciona `ProfessionalReviewActionPlanPersistedResponse`.
+- Reutiliza `NotaInternaProfissional` com namespace `ProfessionalReviewActionPlan:`.
+- Adiciona CRUD profissional do Action Plan.
+- Adiciona arquivamento lógico.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_ACTION_PLAN_CREATED`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_ACTION_PLAN_UPDATED`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_ACTION_PLAN_ARCHIVED`.
+- Valida vínculo opcional com Care Plan do mesmo paciente.
+- Fundação v0.33.0 passa a anunciar `PersistenciaDisponivel = true`.
+- Adiciona workspace profissional do Action Plan.
+- Não cria endpoint de paciente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.33.2 — Professional Review Action Plan Status.
+
+# v0.33.0 — Professional Review Action Plan Foundation
 
 - Abre a linha funcional 0.33.x.
 - Adiciona `ProfessionalReviewActionPlanFieldResponse`.

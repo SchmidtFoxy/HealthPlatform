@@ -2706,3 +2706,25 @@ Criar a fundação estrutural para transformar o Care Plan em um plano operacion
 ### v0.33.1 — Professional Review Action Plan Persistence
 Adicionar persistência profissional auditada ao Action Plan, mantendo vínculo opcional com Care Plan e separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.33.1 — Professional Review Action Plan Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewActionPlanPersistedResponse`;
+- namespace `ProfessionalReviewActionPlan:`;
+- payload JSON estruturado;
+- listagem;
+- criação;
+- edição;
+- arquivamento lógico;
+- autoria;
+- auditoria;
+- vínculo opcional validado com Care Plan;
+- workspace profissional de gerenciamento;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.2 — Professional Review Action Plan Status
+Adicionar estados documentais explícitos ao Action Plan, com transições manuais realizadas pelo profissional e histórico auditável, sem execução automática.
+

@@ -1963,3 +1963,31 @@ A fundação não executa ações, não prescreve automaticamente e não cria pr
 
 **Próxima etapa:** `v0.33.1 — Professional Review Action Plan Persistence`.
 
+---
+
+## v0.33.1 — Professional Review Action Plan Persistence
+
+Adiciona persistência profissional auditada à fundação do Action Plan.
+
+### Persistência
+A implementação reutiliza `NotaInternaProfissional` com namespace `ProfessionalReviewActionPlan:` e payload JSON estruturado, sem criar tabela ou migration nesta etapa.
+
+### Operações
+- listar ações ativas;
+- criar;
+- editar;
+- arquivar logicamente;
+- autoria e timestamps;
+- auditoria de criação, alteração e arquivamento.
+
+### Vínculo com Care Plan
+O campo `CarePlanRelacionadoId` é opcional. Quando informado, o backend valida que o Care Plan pertence ao mesmo paciente e organização e que não está arquivado.
+
+### Privacidade
+Os endpoints permanecem no controller profissional protegido por função. Não foi criado endpoint equivalente no portal do paciente.
+
+### Guardrail
+Persistir uma ação operacional registra documentalmente uma decisão do profissional. Não executa a ação, não prescreve automaticamente e não cria prioridade, risco, diagnóstico, prognóstico ou recomendação automática.
+
+**Próxima etapa:** `v0.33.2 — Professional Review Action Plan Status`.
+

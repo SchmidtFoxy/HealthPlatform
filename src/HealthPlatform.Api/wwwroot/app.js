@@ -4873,6 +4873,7 @@ const HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4';
 const HP_PROGRESS_REVIEW_CARE_PLAN_SUMMARY_V0325='v0.32.5';
 const HP_PROGRESS_REVIEW_CARE_PLAN_CLOSURE_V0326='v0.32.6';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330='v0.33.0';
+const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331='v0.33.1';
 
 
 
@@ -4952,8 +4953,124 @@ function hpRenderProfessionalReviewActionPlanFoundationV0330(host,foundation){
       </div>
       <small class="muted-line">${esc(x.descricao||'')}</small>`).join('')}
     </div>
-    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência disponível.':'Nesta versão, o Action Plan ainda não possui persistência própria.'}</small>
+    <small class="muted-line">${foundation.persistenciaDisponivel?'Persistência profissional disponível.':'Nesta versão, o Action Plan ainda não possui persistência própria.'}</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-action-plan-open-v0331="${HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331}">Gerenciar plano operacional</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewActionPlanV0331(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/action-plan`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-action-plan-persistence-v0331="${HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331}">
+    <div class="row-between">
+      <div>
+        <h3>Plano operacional profissional</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewActionPlanV0331">Fechar</button>
+    </div>
+
+    <form id="professionalReviewActionPlanFormV0331" class="form-grid">
+      <input type="hidden" name="id">
+      <label class="span-2">Ação operacional<textarea name="acaoOperacional" maxlength="1000" rows="3" required></textarea></label>
+      <label class="span-2">Objetivo relacionado<textarea name="objetivoRelacionado" maxlength="500" rows="2"></textarea></label>
+      <label>Responsável<input name="responsavel" maxlength="160"></label>
+      <label>Prazo ou horizonte<input name="horizonte" maxlength="120"></label>
+      <label>Care Plan relacionado<input name="carePlanRelacionadoId" placeholder="ID opcional do Care Plan"></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="button" class="secondary" id="cancelProfessionalReviewActionPlanV0331">Limpar</button>
+        <button type="submit">Salvar ação</button>
+      </div>
+    </form>
+
+    <div class="internal-note-privacy-v0204">🔒 Privado da equipe profissional. Autoria, alterações e arquivamento ficam auditados.</div>
+    <div id="professionalReviewActionPlanListV0331" class="stack"></div>
+  </div>`;
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewActionPlanFormV0331');
+  const listHost=$('#professionalReviewActionPlanListV0331');
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.acaoOperacional||'Ação operacional')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.objetivoRelacionado?`<p>${esc(x.objetivoRelacionado)}</p>`:''}
+      ${x.responsavel?`<small class="muted-line">Responsável: ${esc(x.responsavel)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.carePlanRelacionadoId?`<small class="muted-line">Care Plan: ${esc(x.carePlanRelacionadoId)}</small>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional).replace(/\n/g,'<br>')}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-action-plan-edit-v0331="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-action-plan-archive-v0331="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma ação operacional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-action-plan-edit-v0331]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.actionPlanEditV0331);
+      if(!item) return;
+      form.elements.id.value=item.id;
+      form.elements.acaoOperacional.value=item.acaoOperacional||'';
+      form.elements.objetivoRelacionado.value=item.objetivoRelacionado||'';
+      form.elements.responsavel.value=item.responsavel||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.carePlanRelacionadoId.value=item.carePlanRelacionadoId||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.acaoOperacional.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-action-plan-archive-v0331]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/action-plan/${btn.dataset.actionPlanArchiveV0331}`,{method:'DELETE'});
+      toast('Ação operacional arquivada.');
+      await render();
+    });
+  };
+
+  $('#closeProfessionalReviewActionPlanV0331').onclick=()=>modal.classList.remove('open');
+  $('#cancelProfessionalReviewActionPlanV0331').onclick=()=>{
+    form.reset();
+    form.elements.id.value='';
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+
+    const carePlanRaw=(form.elements.carePlanRelacionadoId.value||'').trim();
+    const body={
+      acaoOperacional:form.elements.acaoOperacional.value,
+      objetivoRelacionado:form.elements.objetivoRelacionado.value||null,
+      responsavel:form.elements.responsavel.value||null,
+      horizonte:form.elements.horizonte.value||null,
+      carePlanRelacionadoId:carePlanRaw||null,
+      observacaoProfissional:form.elements.observacaoProfissional.value||null
+    };
+
+    const id=form.elements.id.value;
+    const url=id
+      ? `/api/pacientes/${p.id}/performance/progress-review-notes/action-plan/${id}`
+      : `/api/pacientes/${p.id}/performance/progress-review-notes/action-plan`;
+
+    await api(url,{method:id?'PUT':'POST',body:JSON.stringify(body)});
+    toast(id?'Ação operacional atualizada.':'Ação operacional registrada.');
+    form.reset();
+    form.elements.id.value='';
+    await render();
+  };
+
+  await render();
 }
 
 async function hpLoadProgressReviewCarePlanClosureV0326(patientId){
@@ -5106,7 +5223,11 @@ async function hpOpenProgressReviewCarePlanV0321(p){
 
   const actionPlanHostV0330=$('#professionalReviewActionPlanFoundationV0330');
   hpLoadProfessionalReviewActionPlanFoundationV0330(p.id)
-    .then(x=>hpRenderProfessionalReviewActionPlanFoundationV0330(actionPlanHostV0330,x))
+    .then(x=>{
+      hpRenderProfessionalReviewActionPlanFoundationV0330(actionPlanHostV0330,x);
+      const openActionPlan=$('[data-action-plan-open-v0331]');
+      if(openActionPlan) openActionPlan.onclick=()=>hpOpenProfessionalReviewActionPlanV0331(p);
+    })
     .catch(()=>{ if(actionPlanHostV0330) actionPlanHostV0330.innerHTML=''; });
 
   const carePlanClosureHostV0326=$('#progressReviewCarePlanClosureV0326');
@@ -10796,7 +10917,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.33.0';
+const HP_MVP_VERSION='0.33.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

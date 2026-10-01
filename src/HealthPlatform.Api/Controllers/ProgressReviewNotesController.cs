@@ -20,6 +20,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoCategoria = "ProgressReview:";
     private const string PrefixoFollowUp = "ProgressReviewFollowUp:";
     private const string PrefixoCarePlan = "ProgressReviewCarePlan:";
+    private const string PrefixoActionPlan = "ProfessionalReviewActionPlan:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -199,6 +200,22 @@ public class ProgressReviewNotesController(
             "A fundação do Care Plan organiza próximos cuidados de forma documental. A partir da v0.32.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    public sealed record CriarProfessionalReviewActionPlanRequest(
+        string AcaoOperacional,
+        string? ObjetivoRelacionado = null,
+        string? Responsavel = null,
+        string? Horizonte = null,
+        Guid? CarePlanRelacionadoId = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewActionPlanRequest(
+        string AcaoOperacional,
+        string? ObjetivoRelacionado = null,
+        string? Responsavel = null,
+        string? Horizonte = null,
+        Guid? CarePlanRelacionadoId = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("action-plan-foundation")]
     public ActionResult<ProfessionalReviewActionPlanFoundationResponse> ActionPlanFoundation()
     {
@@ -240,9 +257,163 @@ public class ProgressReviewNotesController(
             campos,
             campos.Length,
             "FundacaoActionPlanDisponivel",
-            false,
+            true,
             "EquipeProfissional",
-            "A fundação do Action Plan organiza ações profissionais de forma documental. Nesta versão não possui persistência própria, não executa ações e não cria prescrição, prioridade, risco, diagnóstico, prognóstico ou recomendação automática."));
+            "A fundação do Action Plan organiza ações profissionais de forma documental. A partir da v0.33.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, risco, diagnóstico, prognóstico ou recomendação automática."));
+    }
+
+    [HttpGet("action-plan")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewActionPlanPersistedResponse>>> ListarActionPlan(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivadas = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoActionPlan));
+
+        if (!incluirArquivadas)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearActionPlan).ToArray());
+    }
+
+    [HttpPost("action-plan")]
+    public async Task<ActionResult<ProfessionalReviewActionPlanPersistedResponse>> CriarActionPlan(
+        Guid pacienteId,
+        CriarProfessionalReviewActionPlanRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var acao = NormalizarObrigatorio(request.AcaoOperacional, 1000);
+        if (acao is null)
+            return BadRequest(new { message = "Informe a ação operacional." });
+
+        if (request.CarePlanRelacionadoId.HasValue &&
+            !await CarePlanPertencePacienteAsync(pacienteId, request.CarePlanRelacionadoId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Care Plan relacionado inválido para este paciente." });
+        }
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoActionPlan + "item",
+            Conteudo = MontarPayloadActionPlan(
+                acao,
+                request.ObjetivoRelacionado,
+                request.Responsavel,
+                request.Horizonte,
+                request.CarePlanRelacionadoId,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_ACTION_PLAN_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearActionPlan(nota));
+    }
+
+    [HttpPut("action-plan/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewActionPlanPersistedResponse>> AtualizarActionPlan(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewActionPlanRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoActionPlan),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var acao = NormalizarObrigatorio(request.AcaoOperacional, 1000);
+        if (acao is null)
+            return BadRequest(new { message = "Informe a ação operacional." });
+
+        if (request.CarePlanRelacionadoId.HasValue &&
+            !await CarePlanPertencePacienteAsync(pacienteId, request.CarePlanRelacionadoId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Care Plan relacionado inválido para este paciente." });
+        }
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadActionPlan(
+            acao,
+            request.ObjetivoRelacionado,
+            request.Responsavel,
+            request.Horizonte,
+            request.CarePlanRelacionadoId,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_ACTION_PLAN_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearActionPlan(nota));
+    }
+
+    [HttpDelete("action-plan/{id:guid}")]
+    public async Task<IActionResult> ArquivarActionPlan(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoActionPlan),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_ACTION_PLAN_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("care-plan/closure")]
@@ -1407,6 +1578,75 @@ public class ProgressReviewNotesController(
 
         return JsonSerializer.Serialize(payload);
     }
+
+    private sealed record ActionPlanPayload(
+        string AcaoOperacional,
+        string? ObjetivoRelacionado,
+        string? Responsavel,
+        string? Horizonte,
+        Guid? CarePlanRelacionadoId,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadActionPlan(
+        string acaoOperacional,
+        string? objetivoRelacionado,
+        string? responsavel,
+        string? horizonte,
+        Guid? carePlanRelacionadoId,
+        string? observacaoProfissional)
+    {
+        var payload = new ActionPlanPayload(
+            acaoOperacional,
+            NormalizarOpcional(objetivoRelacionado, 500),
+            NormalizarOpcional(responsavel, 160),
+            NormalizarOpcional(horizonte, 120),
+            carePlanRelacionadoId,
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewActionPlanPersistedResponse MapearActionPlan(NotaInternaProfissional nota)
+    {
+        ActionPlanPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<ActionPlanPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewActionPlanPersistedResponse(
+            nota.Id,
+            payload?.AcaoOperacional ?? nota.Conteudo,
+            payload?.ObjetivoRelacionado,
+            payload?.Responsavel,
+            payload?.Horizonte,
+            payload?.CarePlanRelacionadoId,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
+    private async Task<bool> CarePlanPertencePacienteAsync(
+        Guid pacienteId,
+        Guid carePlanId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == carePlanId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCarePlan) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private static ProgressReviewCarePlanPersistedResponse MapearCarePlan(NotaInternaProfissional nota)
     {
