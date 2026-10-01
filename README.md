@@ -6395,3 +6395,44 @@ A fundação organiza decisão profissional documental. Não transforma decisão
 
 **Próxima etapa:** `v0.52.1 — Professional Review Team Knowledge Effect Decision Persistence`.
 
+---
+
+## v0.52.1 — Professional Review Team Knowledge Effect Decision Persistence
+
+Adiciona persistência auditada para decisões profissionais documentadas relacionadas às revisões dos efeitos observados do conhecimento da equipe.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Vínculos opcionais
+- Team Knowledge Effect Review;
+- Team Knowledge Effect;
+- Team Knowledge Application;
+- Team Knowledge;
+- Team Insight;
+- Team Learning;
+- Team Outcome;
+- Team Decision;
+- Team Alignment;
+- Shared Context;
+- Collaboration;
+- Coordination;
+- Escalation;
+- Continuity.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_ARCHIVED`
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar decisões**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra decisão profissional documental. Não transforma decisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transforma decisão registrada em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.52.2 — Professional Review Team Knowledge Effect Decision Status`.
+

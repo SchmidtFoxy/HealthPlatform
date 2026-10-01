@@ -5292,3 +5292,22 @@ Abrir a próxima fundação estrutural profissional preservando a separação en
 ### v0.52.1 — Professional Review Team Knowledge Effect Decision Persistence
 Adicionar persistência auditada das decisões profissionais documentadas relacionadas às revisões dos efeitos observados do conhecimento da equipe, com vínculos opcionais a Team Knowledge Effect Review, Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity, preservando explicitamente a separação entre decisão documental, validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta e execução.
 
+## ✅ v0.52.1 — Professional Review Team Knowledge Effect Decision Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectDecisionPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamKnowledgeEffectDecision:`;
+- GET/POST/PUT/DELETE;
+- quatorze vínculos documentais opcionais;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de decisões profissionais;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.52.2 — Professional Review Team Knowledge Effect Decision Status
+Adicionar estados documentais explícitos às decisões profissionais registradas, com transições manuais e auditadas sem transformar estado em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.
+
