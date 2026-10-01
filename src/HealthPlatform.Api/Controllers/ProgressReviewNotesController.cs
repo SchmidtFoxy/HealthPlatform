@@ -610,6 +610,68 @@ public class ProgressReviewNotesController(
             "A fundação organiza continuidade documental entre profissionais e, a partir da v0.38.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("continuity/search")]
+    public async Task<ActionResult<ProfessionalReviewContinuityFiltersResponse>> FiltrarContinuities(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? profissionalSeguimento = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusContinuityValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var profissionalNormalizado = NormalizarOpcional(profissionalSeguimento, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoContinuity) &&
+                (incluirArquivadas || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearContinuity)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (profissionalNormalizado is null ||
+                    x.ProfissionalSeguimento.Contains(profissionalNormalizado, StringComparison.OrdinalIgnoreCase)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ProfissionalSeguimento.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ContextoContinuidade?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewContinuityFiltersResponse(
+            statusNormalizado,
+            profissionalNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivadas,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar registros documentais de continuidade profissional. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("continuity")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewContinuityPersistedResponse>>> ListarContinuities(
         Guid pacienteId,

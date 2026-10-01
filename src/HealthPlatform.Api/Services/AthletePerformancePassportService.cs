@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.38.3",
+            "v0.38.4",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Continuity History torna consultáveis os eventos auditados da continuidade profissional, incluindo criação, edição, status e arquivamento, sem inferência clínica automática ou transferência automática de responsabilidade clínica.")
+            "Professional Review Continuity Filters adiciona busca profissional por status, profissional de seguimento, horizonte, texto e arquivamento, sem converter filtros em urgência, risco, prioridade clínica, prognóstico ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

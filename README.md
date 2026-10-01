@@ -3159,3 +3159,31 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.38.4 — Professional Review Continuity Filters`.
 
+---
+
+## v0.38.4 — Professional Review Continuity Filters
+
+Adiciona filtros profissionais para localizar registros persistidos de continuidade profissional.
+
+### Filtros
+- status;
+- profissional de seguimento;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional de seguimento;
+- contexto de continuidade;
+- observação profissional.
+
+### UI
+O gerenciador de continuidade passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.38.5 — Professional Review Continuity Summary`.
+

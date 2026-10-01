@@ -3427,3 +3427,22 @@ Adicionar histórico consultável dos registros de continuidade profissional, co
 ### v0.38.4 — Professional Review Continuity Filters
 Adicionar filtros profissionais por status, profissional de seguimento, horizonte e texto, preservando a natureza documental da continuidade profissional.
 
+## ✅ v0.38.4 — Professional Review Continuity Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewContinuityFiltersResponse`;
+- endpoint `continuity/search`;
+- filtro por status;
+- filtro por profissional de seguimento;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.38.5 — Professional Review Continuity Summary
+Adicionar resumo estrutural dos registros de continuidade profissional com contagem por status e distribuição por profissional de seguimento, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+

@@ -160,6 +160,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewContinuityFiltersResponse(
+    string? Status,
+    string? ProfissionalSeguimento,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewContinuityPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewContinuityHistoryItemResponse(
     Guid Id,
     Guid ContinuityId,

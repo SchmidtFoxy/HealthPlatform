@@ -1,4 +1,20 @@
-﻿# v0.38.3 — Professional Review Continuity History
+﻿# v0.38.4 — Professional Review Continuity Filters
+
+- Adiciona `ProfessionalReviewContinuityFiltersResponse`.
+- Adiciona endpoint `GET .../continuity/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional de seguimento.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.38.5 — Professional Review Continuity Summary.
+
+# v0.38.3 — Professional Review Continuity History
 
 - Adiciona `ProfessionalReviewContinuityHistoryItemResponse`.
 - Adiciona `ProfessionalReviewContinuityHistoryResponse`.
