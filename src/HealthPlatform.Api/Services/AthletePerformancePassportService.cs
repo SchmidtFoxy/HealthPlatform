@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.39.1",
+            "v0.39.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Escalation Persistence adiciona persistência auditada ao escalonamento profissional, com vínculos opcionais a Continuity, Handoff, Delegation e Assignment e sem transformar contexto documentado em execução, prioridade clínica ou transferência automática de responsabilidade clínica.")
+            "Professional Review Escalation Status adiciona estados documentais explícitos aos escalonamentos profissionais, com transições manuais auditadas entre Planejado, EmAndamento, Concluido e Cancelado, sem execução automática ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

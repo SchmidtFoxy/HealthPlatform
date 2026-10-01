@@ -860,21 +860,78 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadEscalation(
+        var payloadAtual = LerPayloadEscalation(nota);
+        var payloadAtualizado = new EscalationPayload(
             profissionalOrigem,
             profissionalDestino,
             request.ContinuityRelacionadaId,
             request.HandoffRelacionadoId,
             request.DelegationRelacionadaId,
             request.AssignmentRelacionadaId,
-            request.ContextoEscalado,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ContextoEscalado, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_ESCALATION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearEscalation(nota));
+    }
+
+    [HttpPatch("escalation/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewEscalationPersistedResponse>> AtualizarStatusEscalation(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewEscalationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusEscalationValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejado, EmAndamento, Concluido ou Cancelado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoEscalation) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadEscalation(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_ESCALATION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearEscalation(nota));
     }
 
@@ -4685,7 +4742,9 @@ public class ProgressReviewNotesController(
         Guid? AssignmentRelacionadaId,
         string? ContextoEscalado,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadEscalation(
         string profissionalOrigem,
@@ -4707,7 +4766,9 @@ public class ProgressReviewNotesController(
             assignmentRelacionadaId,
             NormalizarOpcional(contextoEscalado, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -4736,12 +4797,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoEscalado,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static EscalationPayload LerPayloadEscalation(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<EscalationPayload>(nota.Conteudo)
+                ?? new EscalationPayload(nota.Conteudo, string.Empty, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new EscalationPayload(nota.Conteudo, string.Empty, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusEscalationValido(string? status) =>
+        status is "Planejado" or "EmAndamento" or "Concluido" or "Cancelado";
 
     private sealed record ContinuityPayload(
         string ProfissionalSeguimento,

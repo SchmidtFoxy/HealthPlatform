@@ -1,4 +1,20 @@
-﻿# v0.39.1 — Professional Review Escalation Persistence
+﻿# v0.39.2 — Professional Review Escalation Status
+
+- Adiciona `Status` ao Escalation persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewEscalationStatusRequest`.
+- Adiciona endpoint `PATCH .../escalation/{id}/status`.
+- Estados permitidos: `Planejado`, `EmAndamento`, `Concluido`, `Cancelado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_ESCALATION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.39.3 — Professional Review Escalation History.
+
+# v0.39.1 — Professional Review Escalation Persistence
 
 - Adiciona persistência auditada de Escalation.
 - Adiciona `ProfessionalReviewEscalationPersistedResponse`.

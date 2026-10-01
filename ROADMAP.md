@@ -3525,3 +3525,21 @@ Adicionar persistência auditada dos registros de escalonamento profissional, co
 ### v0.39.2 — Professional Review Escalation Status
 Adicionar estados documentais explícitos aos registros de escalonamento profissional, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.39.2 — Professional Review Escalation Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejado`, `EmAndamento`, `Concluido` e `Cancelado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.39.3 — Professional Review Escalation History
+Adicionar histórico consultável dos escalonamentos profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

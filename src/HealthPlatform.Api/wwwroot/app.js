@@ -4916,6 +4916,7 @@ const HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385='v0.38.5';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386='v0.38.6';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1';
+const HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2';
 
 
 
@@ -5417,8 +5418,9 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalOrigem||'Origem')} → ${esc(x.profissionalDestino||'Destino')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejado')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
       ${x.handoffRelacionadoId?`<small class="muted-line">Handoff: ${esc(x.handoffRelacionadoId)}</small>`:''}
@@ -5428,6 +5430,10 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-escalation-edit-v0391="${x.id}">Editar</button>
+        ${x.status!=='Planejado'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="Planejado">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluido'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="Concluido">Concluir</button>`:''}
+        ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="Cancelado">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-escalation-archive-v0391="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum escalonamento profissional registrado.</p>';
@@ -5446,6 +5452,16 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalOrigem.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-escalation-status-v0392]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0392;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation/${btn.dataset.escalationStatusV0392}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Escalonamento atualizado para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-escalation-archive-v0391]')].forEach(btn=>btn.onclick=async()=>{
@@ -12972,7 +12988,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.39.1';
+const HP_MVP_VERSION='0.39.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

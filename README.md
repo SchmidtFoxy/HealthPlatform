@@ -3320,3 +3320,35 @@ A persistência registra escalonamento documental. Não executa conduta, não cr
 
 **Próxima etapa:** `v0.39.2 — Professional Review Escalation Status`.
 
+---
+
+## v0.39.2 — Professional Review Escalation Status
+
+Adiciona estados documentais explícitos aos escalonamentos profissionais.
+
+### Estados
+- `Planejado`
+- `EmAndamento`
+- `Concluido`
+- `Cancelado`
+
+### Transições
+As mudanças são manuais via `PATCH .../escalation/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do escalonamento;
+- gera auditoria `PROFESSIONAL_REVIEW_ESCALATION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela escalonamentos automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.39.3 — Professional Review Escalation History`.
+

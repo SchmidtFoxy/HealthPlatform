@@ -176,11 +176,16 @@ public sealed record ProfessionalReviewEscalationPersistedResponse(
     string? ContextoEscalado,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewEscalationStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewEscalationFieldResponse(
     string Chave,
