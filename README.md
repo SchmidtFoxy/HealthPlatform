@@ -4646,3 +4646,49 @@ A fundação organiza resultados documentados. Não infere causalidade, não pro
 
 **Próxima etapa:** `v0.45.1 — Professional Review Team Outcome Persistence`.
 
+---
+
+## v0.45.1 — Professional Review Team Outcome Persistence
+
+Adiciona persistência auditada para resultados documentados da equipe profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Decision relacionada opcional;
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- resultado documentado;
+- evidência / registro de suporte;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_OUTCOME_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_OUTCOME_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_OUTCOME_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar resultados**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra resultados documentados da equipe. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transforma resultado registrado em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.45.2 — Professional Review Team Outcome Status`.
+

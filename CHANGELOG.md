@@ -1,4 +1,22 @@
-﻿# v0.45.0 — Professional Review Team Outcome Foundation
+﻿# v0.45.1 — Professional Review Team Outcome Persistence
+
+- Adiciona persistência auditada de Team Outcome.
+- Adiciona `ProfessionalReviewTeamOutcomePersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamOutcome:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar resultados`.
+- Não infere causalidade, prognóstico ou recomendação automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.45.2 — Professional Review Team Outcome Status.
+
+# v0.45.0 — Professional Review Team Outcome Foundation
 
 - Abre a linha funcional 0.45.x.
 - Adiciona `ProfessionalReviewTeamOutcomeFieldResponse`.

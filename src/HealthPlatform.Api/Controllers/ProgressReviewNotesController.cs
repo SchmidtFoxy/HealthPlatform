@@ -32,6 +32,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoSharedContext = "ProfessionalReviewSharedContext:";
     private const string PrefixoTeamAlignment = "ProfessionalReviewTeamAlignment:";
     private const string PrefixoTeamDecision = "ProfessionalReviewTeamDecision:";
+    private const string PrefixoTeamOutcome = "ProfessionalReviewTeamOutcome:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -1186,6 +1187,36 @@ public class ProgressReviewNotesController(
             "A fundação organiza decisões documentadas entre profissionais usando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.44.1, possui persistência auditada. Não executa condutas, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    public sealed record CriarProfessionalReviewTeamOutcomeRequest(
+        string ProfissionalResponsavel,
+        string ResultadoDocumentado,
+        Guid? TeamDecisionRelacionadaId = null,
+        Guid? TeamAlignmentRelacionadoId = null,
+        Guid? SharedContextRelacionadoId = null,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? EvidenciaSuporte = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewTeamOutcomeRequest(
+        string ProfissionalResponsavel,
+        string ResultadoDocumentado,
+        Guid? TeamDecisionRelacionadaId = null,
+        Guid? TeamAlignmentRelacionadoId = null,
+        Guid? SharedContextRelacionadoId = null,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? EvidenciaSuporte = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("team-outcome/foundation")]
     public ActionResult<ProfessionalReviewTeamOutcomeFoundationResponse> TeamOutcomeFoundation()
     {
@@ -1273,10 +1304,230 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewTeamOutcomeFoundationResponse(
             "FundacaoTeamOutcomeDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza resultados documentados das decisões da equipe usando Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+            "A fundação organiza resultados documentados das decisões da equipe usando Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.45.1, possui persistência auditada. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
+    [HttpGet("team-outcome")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamOutcomePersistedResponse>>> ListarTeamOutcomes(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivados = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamOutcome));
+
+        if (!incluirArquivados)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearTeamOutcome).ToArray());
+    }
+
+    [HttpPost("team-outcome")]
+    public async Task<ActionResult<ProfessionalReviewTeamOutcomePersistedResponse>> CriarTeamOutcome(
+        Guid pacienteId,
+        CriarProfessionalReviewTeamOutcomeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        var resultadoDocumentado = NormalizarObrigatorio(request.ResultadoDocumentado, 3000);
+        if (resultadoDocumentado is null)
+            return BadRequest(new { message = "Informe o resultado documentado." });
+
+        if (request.TeamDecisionRelacionadaId.HasValue &&
+            !await TeamDecisionPertencePacienteAsync(pacienteId, request.TeamDecisionRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Decision relacionada inválida para este paciente." });
+
+        if (request.TeamAlignmentRelacionadoId.HasValue &&
+            !await TeamAlignmentPertencePacienteAsync(pacienteId, request.TeamAlignmentRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Alignment relacionado inválido para este paciente." });
+
+        if (request.SharedContextRelacionadoId.HasValue &&
+            !await SharedContextPertencePacienteAsync(pacienteId, request.SharedContextRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Shared Context relacionado inválido para este paciente." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoTeamOutcome + "item",
+            Conteudo = MontarPayloadTeamOutcome(
+                profissionalResponsavel,
+                resultadoDocumentado,
+                request.TeamDecisionRelacionadaId,
+                request.TeamAlignmentRelacionadoId,
+                request.SharedContextRelacionadoId,
+                request.CollaborationRelacionadaId,
+                request.CoordinationRelacionadaId,
+                request.EscalationRelacionadaId,
+                request.ContinuityRelacionadaId,
+                request.Participantes,
+                request.EvidenciaSuporte,
+                request.Horizonte,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_TEAM_OUTCOME_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamOutcome(nota));
+    }
+
+    [HttpPut("team-outcome/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewTeamOutcomePersistedResponse>> AtualizarTeamOutcome(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewTeamOutcomeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamOutcome),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        var resultadoDocumentado = NormalizarObrigatorio(request.ResultadoDocumentado, 3000);
+        if (resultadoDocumentado is null)
+            return BadRequest(new { message = "Informe o resultado documentado." });
+
+        if (request.TeamDecisionRelacionadaId.HasValue &&
+            !await TeamDecisionPertencePacienteAsync(pacienteId, request.TeamDecisionRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Decision relacionada inválida para este paciente." });
+
+        if (request.TeamAlignmentRelacionadoId.HasValue &&
+            !await TeamAlignmentPertencePacienteAsync(pacienteId, request.TeamAlignmentRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Alignment relacionado inválido para este paciente." });
+
+        if (request.SharedContextRelacionadoId.HasValue &&
+            !await SharedContextPertencePacienteAsync(pacienteId, request.SharedContextRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Shared Context relacionado inválido para este paciente." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadTeamOutcome(
+            profissionalResponsavel,
+            resultadoDocumentado,
+            request.TeamDecisionRelacionadaId,
+            request.TeamAlignmentRelacionadoId,
+            request.SharedContextRelacionadoId,
+            request.CollaborationRelacionadaId,
+            request.CoordinationRelacionadaId,
+            request.EscalationRelacionadaId,
+            request.ContinuityRelacionadaId,
+            request.Participantes,
+            request.EvidenciaSuporte,
+            request.Horizonte,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_TEAM_OUTCOME_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamOutcome(nota));
+    }
+
+    [HttpDelete("team-outcome/{id:guid}")]
+    public async Task<IActionResult> ArquivarTeamOutcome(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamOutcome),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_TEAM_OUTCOME_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("team-decision/closure")]
@@ -7797,6 +8048,89 @@ public class ProgressReviewNotesController(
         return JsonSerializer.Serialize(payload);
     }
 
+    private sealed record TeamOutcomePayload(
+        string ProfissionalResponsavel,
+        string ResultadoDocumentado,
+        Guid? TeamDecisionRelacionadaId,
+        Guid? TeamAlignmentRelacionadoId,
+        Guid? SharedContextRelacionadoId,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string? Participantes,
+        string? EvidenciaSuporte,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadTeamOutcome(
+        string profissionalResponsavel,
+        string resultadoDocumentado,
+        Guid? teamDecisionRelacionadaId,
+        Guid? teamAlignmentRelacionadoId,
+        Guid? sharedContextRelacionadoId,
+        Guid? collaborationRelacionadaId,
+        Guid? coordinationRelacionadaId,
+        Guid? escalationRelacionadaId,
+        Guid? continuityRelacionadaId,
+        string? participantes,
+        string? evidenciaSuporte,
+        string? horizonte,
+        string? observacaoProfissional)
+    {
+        var payload = new TeamOutcomePayload(
+            profissionalResponsavel,
+            resultadoDocumentado,
+            teamDecisionRelacionadaId,
+            teamAlignmentRelacionadoId,
+            sharedContextRelacionadoId,
+            collaborationRelacionadaId,
+            coordinationRelacionadaId,
+            escalationRelacionadaId,
+            continuityRelacionadaId,
+            NormalizarOpcional(participantes, 1000),
+            NormalizarOpcional(evidenciaSuporte, 3000),
+            NormalizarOpcional(horizonte, 120),
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewTeamOutcomePersistedResponse MapearTeamOutcome(NotaInternaProfissional nota)
+    {
+        TeamOutcomePayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<TeamOutcomePayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewTeamOutcomePersistedResponse(
+            nota.Id,
+            payload?.TeamDecisionRelacionadaId,
+            payload?.TeamAlignmentRelacionadoId,
+            payload?.SharedContextRelacionadoId,
+            payload?.CollaborationRelacionadaId,
+            payload?.CoordinationRelacionadaId,
+            payload?.EscalationRelacionadaId,
+            payload?.ContinuityRelacionadaId,
+            payload?.ProfissionalResponsavel ?? "Profissional",
+            payload?.Participantes,
+            payload?.ResultadoDocumentado ?? nota.Conteudo,
+            payload?.EvidenciaSuporte,
+            payload?.Horizonte,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
     private sealed record TeamDecisionPayload(
         string ProfissionalResponsavel,
         string DecisaoDocumentada,
@@ -8928,6 +9262,20 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private async Task<bool> TeamDecisionPertencePacienteAsync(
+        Guid pacienteId,
+        Guid teamDecisionId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == teamDecisionId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamDecision) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private async Task<bool> TeamAlignmentPertencePacienteAsync(
         Guid pacienteId,
