@@ -1,4 +1,18 @@
-﻿# v0.38.4 — Professional Review Continuity Filters
+﻿# v0.38.5 — Professional Review Continuity Summary
+
+- Adiciona `ProfessionalReviewContinuityProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewContinuitySummaryResponse`.
+- Adiciona `GET .../continuity/summary`.
+- Consolida total, ativos, planejados, em andamento, concluídos, cancelados e arquivados.
+- Adiciona distribuição por profissional de seguimento.
+- Adiciona painel `Resumo da continuidade profissional`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.38.6 — Professional Review Continuity Closure.
+
+# v0.38.4 — Professional Review Continuity Filters
 
 - Adiciona `ProfessionalReviewContinuityFiltersResponse`.
 - Adiciona endpoint `GET .../continuity/search`.

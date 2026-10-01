@@ -3446,3 +3446,25 @@ Adicionar filtros profissionais por status, profissional de seguimento, horizont
 ### v0.38.5 — Professional Review Continuity Summary
 Adicionar resumo estrutural dos registros de continuidade profissional com contagem por status e distribuição por profissional de seguimento, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.38.5 — Professional Review Continuity Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewContinuitySummaryResponse`;
+- `ProfessionalReviewContinuityProfissionalResumoResponse`;
+- total de registros;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- agrupamento por profissional de seguimento;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.38.6 — Professional Review Continuity Closure
+Fechar o ciclo 0.38.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão da continuidade profissional.
+

@@ -4912,6 +4912,7 @@ const HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_STATUS_V0382='v0.38.2';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384='v0.38.4';
+const HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385='v0.38.5';
 
 
 
@@ -5327,6 +5328,35 @@ async function hpOpenProfessionalReviewContinuityHistoryV0383(p,continuity){
   $('#closeProfessionalReviewContinuityHistoryV0383').onclick=()=>hpOpenProfessionalReviewContinuityV0381(p);
 }
 
+
+async function hpLoadProfessionalReviewContinuitySummaryV0385(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/continuity/summary`);
+}
+
+function hpRenderProfessionalReviewContinuitySummaryV0385(host,summary){
+  if(!host || !summary) return;
+
+  const porProfissional=Array.isArray(summary.porProfissionalSeguimento)?summary.porProfissionalSeguimento:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-continuity-summary-v0385="${HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385}">
+    <div><b>Resumo da continuidade profissional</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejados</span><b>${esc(String(summary.planejados??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídos</span><b>${esc(String(summary.concluidos??0))}</b></div>
+      <div class="row-between"><span>Cancelados</span><b>${esc(String(summary.cancelados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porProfissional.length?`<div class="stack">
+      <small class="muted-line">Por profissional de seguimento</small>
+      ${porProfissional.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewContinuityV0381(p){
   if(!p?.id) return;
 
@@ -5354,6 +5384,7 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewContinuityV0381">Fechar</button>
     </div>
+    <div id="professionalReviewContinuitySummaryV0385"></div>
     <form id="professionalReviewContinuityFiltersV0384" class="form-grid" data-professional-review-continuity-filters-v0384="${HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5395,6 +5426,11 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const continuitySummaryHostV0385=$('#professionalReviewContinuitySummaryV0385');
+  hpLoadProfessionalReviewContinuitySummaryV0385(p.id)
+    .then(x=>hpRenderProfessionalReviewContinuitySummaryV0385(continuitySummaryHostV0385,x))
+    .catch(()=>{ if(continuitySummaryHostV0385) continuitySummaryHostV0385.innerHTML=''; });
 
   const form=$('#professionalReviewContinuityFormV0381');
   const listHost=$('#professionalReviewContinuityListV0381');
@@ -5467,12 +5503,18 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
       });
       toast(`Continuidade atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewContinuitySummaryV0385(p.id)
+        .then(x=>hpRenderProfessionalReviewContinuitySummaryV0385(continuitySummaryHostV0385,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-continuity-archive-v0381]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/continuity/${btn.dataset.continuityArchiveV0381}`,{method:'DELETE'});
       toast('Registro de continuidade arquivado.');
       await render();
+      hpLoadProfessionalReviewContinuitySummaryV0385(p.id)
+        .then(x=>hpRenderProfessionalReviewContinuitySummaryV0385(continuitySummaryHostV0385,x))
+        .catch(()=>{});
     });
   };
 
@@ -5498,6 +5540,9 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
     toast(id?'Continuidade profissional atualizada.':'Continuidade profissional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewContinuitySummaryV0385(p.id)
+      .then(x=>hpRenderProfessionalReviewContinuitySummaryV0385(continuitySummaryHostV0385,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -12737,7 +12782,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.38.4';
+const HP_MVP_VERSION='0.38.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
