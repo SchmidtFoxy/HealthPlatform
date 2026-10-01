@@ -1,4 +1,18 @@
-﻿# v0.43.5 — Professional Review Team Alignment Summary
+﻿# v0.43.6 — Professional Review Team Alignment Closure
+
+- Adiciona `ProfessionalReviewTeamAlignmentClosureResponse`.
+- Adiciona endpoint `GET .../team-alignment/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamAlignmentCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_CLOSURE_V0436`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.43.x.
+- Próxima etapa: v0.44.0 — Professional Review Team Decision Foundation.
+
+# v0.43.5 — Professional Review Team Alignment Summary
 
 - Adiciona `ProfessionalReviewTeamAlignmentProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamAlignmentSummaryResponse`.

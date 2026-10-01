@@ -1070,6 +1070,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza alinhamento documental entre profissionais usando Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.43.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("team-alignment/closure")]
+    public ActionResult<ProfessionalReviewTeamAlignmentClosureResponse> FechamentoTeamAlignments()
+    {
+        var componentes = new[]
+        {
+            "TeamAlignmentFoundation",
+            "TeamAlignmentPersistence",
+            "TeamAlignmentStatus",
+            "TeamAlignmentHistory",
+            "TeamAlignmentFilters",
+            "TeamAlignmentSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamAlignmentClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamAlignmentCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural do alinhamento entre profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-alignment/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamAlignmentSummaryResponse>> ResumoTeamAlignments(
         Guid pacienteId,

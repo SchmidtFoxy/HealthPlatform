@@ -4345,3 +4345,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.43.6 — Professional Review Team Alignment Closure`.
 
+---
+
+## v0.43.6 — Professional Review Team Alignment Closure
+
+Fecha a linha 0.43.x consolidando todas as capacidades estruturais de alinhamento entre profissionais.
+
+### Componentes consolidados
+- Team Alignment Foundation;
+- Team Alignment Persistence;
+- Team Alignment Status;
+- Team Alignment History;
+- Team Alignment Filters;
+- Team Alignment Summary.
+
+### Estado
+O endpoint `team-alignment/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamAlignmentCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.44.0 — Professional Review Team Decision Foundation`.
+
