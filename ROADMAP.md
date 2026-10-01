@@ -3178,3 +3178,26 @@ Adicionar filtros profissionais por status, profissional delegante, profissional
 ### v0.36.5 — Professional Review Delegation Summary
 Adicionar resumo estrutural das delegações profissionais com contagem por status e distribuição por profissional delegante e delegado, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.36.5 — Professional Review Delegation Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewDelegationSummaryResponse`;
+- `ProfessionalReviewDelegationProfissionalResumoResponse`;
+- total de delegações;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- agrupamento por profissional delegante;
+- agrupamento por profissional delegado;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.6 — Professional Review Delegation Closure
+Fechar o ciclo 0.36.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das delegações profissionais.
+

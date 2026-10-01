@@ -2741,3 +2741,31 @@ Os filtros apenas localizam registros documentais. Não classificam urgência, r
 
 **Próxima etapa:** `v0.36.5 — Professional Review Delegation Summary`.
 
+---
+
+## v0.36.5 — Professional Review Delegation Summary
+
+Adiciona resumo estrutural das delegações profissionais.
+
+### Indicadores
+- total;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- distribuição por profissional delegante;
+- distribuição por profissional delegado.
+
+### Endpoint
+`GET .../delegation/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo das delegações profissionais** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.36.6 — Professional Review Delegation Closure`.
+

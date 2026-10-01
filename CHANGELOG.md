@@ -1,4 +1,19 @@
-﻿# v0.36.4 — Professional Review Delegation Filters
+﻿# v0.36.5 — Professional Review Delegation Summary
+
+- Adiciona `ProfessionalReviewDelegationProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewDelegationSummaryResponse`.
+- Adiciona `GET .../delegation/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por profissional delegante.
+- Adiciona distribuição por profissional delegado.
+- Adiciona painel `Resumo das delegações profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.36.6 — Professional Review Delegation Closure.
+
+# v0.36.4 — Professional Review Delegation Filters
 
 - Adiciona `ProfessionalReviewDelegationFiltersResponse`.
 - Adiciona endpoint `GET .../delegation/search`.

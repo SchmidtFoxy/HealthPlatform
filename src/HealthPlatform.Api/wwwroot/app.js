@@ -4898,6 +4898,7 @@ const HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_STATUS_V0362='v0.36.2';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364='v0.36.4';
+const HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365='v0.36.5';
 
 
 
@@ -5181,6 +5182,40 @@ async function hpOpenProfessionalReviewDelegationHistoryV0363(p,delegation){
   $('#closeProfessionalReviewDelegationHistoryV0363').onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
 }
 
+
+async function hpLoadProfessionalReviewDelegationSummaryV0365(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/delegation/summary`);
+}
+
+function hpRenderProfessionalReviewDelegationSummaryV0365(host,summary){
+  if(!host || !summary) return;
+
+  const porDelegante=Array.isArray(summary.porDelegante)?summary.porDelegante:[];
+  const porDelegado=Array.isArray(summary.porDelegado)?summary.porDelegado:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-delegation-summary-v0365="${HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365}">
+    <div><b>Resumo das delegações profissionais</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativas??0))}</b></div>
+      <div class="row-between"><span>Planejadas</span><b>${esc(String(summary.planejadas??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídas</span><b>${esc(String(summary.concluidas??0))}</b></div>
+      <div class="row-between"><span>Canceladas</span><b>${esc(String(summary.canceladas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porDelegante.length?`<div class="stack">
+      <small class="muted-line">Por profissional delegante</small>
+      ${porDelegante.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    ${porDelegado.length?`<div class="stack">
+      <small class="muted-line">Por profissional delegado</small>
+      ${porDelegado.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewDelegationV0361(p){
   if(!p?.id) return;
 
@@ -5209,6 +5244,7 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewDelegationV0361">Fechar</button>
     </div>
+    <div id="professionalReviewDelegationSummaryV0365"></div>
     <form id="professionalReviewDelegationFiltersV0364" class="form-grid" data-professional-review-delegation-filters-v0364="${HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5250,6 +5286,11 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const delegationSummaryHostV0365=$('#professionalReviewDelegationSummaryV0365');
+  hpLoadProfessionalReviewDelegationSummaryV0365(p.id)
+    .then(x=>hpRenderProfessionalReviewDelegationSummaryV0365(delegationSummaryHostV0365,x))
+    .catch(()=>{ if(delegationSummaryHostV0365) delegationSummaryHostV0365.innerHTML=''; });
 
   const form=$('#professionalReviewDelegationFormV0361');
   const listHost=$('#professionalReviewDelegationListV0361');
@@ -5320,12 +5361,18 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
       });
       toast(`Delegação atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewDelegationSummaryV0365(p.id)
+        .then(x=>hpRenderProfessionalReviewDelegationSummaryV0365(delegationSummaryHostV0365,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-delegation-archive-v0361]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/delegation/${btn.dataset.delegationArchiveV0361}`,{method:'DELETE'});
       toast('Delegação profissional arquivada.');
       await render();
+      hpLoadProfessionalReviewDelegationSummaryV0365(p.id)
+        .then(x=>hpRenderProfessionalReviewDelegationSummaryV0365(delegationSummaryHostV0365,x))
+        .catch(()=>{});
     });
   };
 
@@ -5350,6 +5397,9 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
     toast(id?'Delegação profissional atualizada.':'Delegação profissional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewDelegationSummaryV0365(p.id)
+      .then(x=>hpRenderProfessionalReviewDelegationSummaryV0365(delegationSummaryHostV0365,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -12041,7 +12091,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.36.4';
+const HP_MVP_VERSION='0.36.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

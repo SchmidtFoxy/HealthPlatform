@@ -149,6 +149,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewDelegationProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewDelegationSummaryResponse(
+    int Total,
+    int Ativas,
+    int Planejadas,
+    int EmAndamento,
+    int Concluidas,
+    int Canceladas,
+    int Arquivadas,
+    IReadOnlyCollection<ProfessionalReviewDelegationProfissionalResumoResponse> PorDelegante,
+    IReadOnlyCollection<ProfessionalReviewDelegationProfissionalResumoResponse> PorDelegado,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewDelegationFiltersResponse(
     string? Status,
     string? ProfissionalDelegante,

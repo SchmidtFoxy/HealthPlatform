@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.36.4",
+            "v0.36.5",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Delegation Filters adiciona busca profissional por status, profissional delegante, profissional delegado, horizonte, texto e arquivamento, sem converter filtros em urgência, risco, prioridade clínica ou transferência automática de responsabilidade clínica.")
+            "Professional Review Delegation Summary consolida contagens documentais por status, profissional delegante e profissional delegado, sem transformar agregações em score clínico, risco, urgência, prioridade automática ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,
