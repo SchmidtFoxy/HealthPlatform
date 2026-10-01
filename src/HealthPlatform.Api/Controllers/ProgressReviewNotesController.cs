@@ -390,6 +390,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza atribuições documentais da equipe profissional e, a partir da v0.35.1, possui persistência auditada. Não executa condutas, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("assignment/summary")]
+    public async Task<ActionResult<ProfessionalReviewAssignmentSummaryResponse>> ResumoAssignments(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoAssignment))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearAssignment).ToArray();
+
+        var total = itens.Length;
+        var arquivadas = itens.Count(x => x.Arquivada);
+        var ativas = itens.Count(x => !x.Arquivada);
+        var planejadas = itens.Count(x => !x.Arquivada && x.Status == "Planejada");
+        var emAndamento = itens.Count(x => !x.Arquivada && x.Status == "EmAndamento");
+        var concluidas = itens.Count(x => !x.Arquivada && x.Status == "Concluida");
+        var canceladas = itens.Count(x => !x.Arquivada && x.Status == "Cancelada");
+
+        var porResponsavelPrincipal = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ResponsavelPrincipal))
+            .GroupBy(x => x.ResponsavelPrincipal.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewAssignmentResponsavelResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.ResponsavelPrincipal)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewAssignmentSummaryResponse(
+            total,
+            ativas,
+            planejadas,
+            emAndamento,
+            concluidas,
+            canceladas,
+            arquivadas,
+            porResponsavelPrincipal,
+            "O resumo apresenta somente agregações documentais das atribuições profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico ou recomendação."));
+    }
+
     [HttpGet("assignment/search")]
     public async Task<ActionResult<ProfessionalReviewAssignmentFiltersResponse>> FiltrarAssignments(
         Guid pacienteId,

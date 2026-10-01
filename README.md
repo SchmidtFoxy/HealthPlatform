@@ -2520,3 +2520,30 @@ Os filtros apenas localizam registros documentais. Não classificam urgência, r
 
 **Próxima etapa:** `v0.35.5 — Professional Review Assignment Summary`.
 
+---
+
+## v0.35.5 — Professional Review Assignment Summary
+
+Adiciona resumo estrutural das atribuições profissionais.
+
+### Indicadores
+- total;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- distribuição por responsável principal.
+
+### Endpoint
+`GET .../assignment/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo das atribuições profissionais** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.35.6 — Professional Review Assignment Closure`.
+

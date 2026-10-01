@@ -3046,3 +3046,25 @@ Adicionar filtros profissionais por status, responsável principal, apoio/partic
 ### v0.35.5 — Professional Review Assignment Summary
 Adicionar resumo estrutural das atribuições profissionais com contagem por status e distribuição por responsável principal, sem gerar score clínico ou prioridade automática.
 
+## ✅ v0.35.5 — Professional Review Assignment Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewAssignmentSummaryResponse`;
+- `ProfessionalReviewAssignmentResponsavelResumoResponse`;
+- total de atribuições;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- agrupamento por responsável principal;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.6 — Professional Review Assignment Closure
+Fechar o ciclo 0.35.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das atribuições profissionais.
+

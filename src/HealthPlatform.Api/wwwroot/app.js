@@ -4891,6 +4891,7 @@ const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351='v0.35.1';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_V0352='v0.35.2';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4';
+const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355='v0.35.5';
 
 
 
@@ -5108,6 +5109,34 @@ async function hpOpenProfessionalReviewAssignmentHistoryV0353(p,assignment){
   $('#closeProfessionalReviewAssignmentHistoryV0353').onclick=()=>hpOpenProfessionalReviewAssignmentV0351(p);
 }
 
+
+async function hpLoadProfessionalReviewAssignmentSummaryV0355(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/assignment/summary`);
+}
+
+function hpRenderProfessionalReviewAssignmentSummaryV0355(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porResponsavelPrincipal)?summary.porResponsavelPrincipal:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-assignment-summary-v0355="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355}">
+    <div><b>Resumo das atribuições profissionais</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativas??0))}</b></div>
+      <div class="row-between"><span>Planejadas</span><b>${esc(String(summary.planejadas??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídas</span><b>${esc(String(summary.concluidas??0))}</b></div>
+      <div class="row-between"><span>Canceladas</span><b>${esc(String(summary.canceladas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por responsável principal</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.responsavelPrincipal||'Sem responsável')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência ou prioridade.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewAssignmentV0351(p){
   if(!p?.id) return;
 
@@ -5136,6 +5165,7 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewAssignmentV0351">Fechar</button>
     </div>
+    <div id="professionalReviewAssignmentSummaryV0355"></div>
     <form id="professionalReviewAssignmentFiltersV0354" class="form-grid" data-professional-review-assignment-filters-v0354="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5177,6 +5207,11 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const assignmentSummaryHostV0355=$('#professionalReviewAssignmentSummaryV0355');
+  hpLoadProfessionalReviewAssignmentSummaryV0355(p.id)
+    .then(x=>hpRenderProfessionalReviewAssignmentSummaryV0355(assignmentSummaryHostV0355,x))
+    .catch(()=>{ if(assignmentSummaryHostV0355) assignmentSummaryHostV0355.innerHTML=''; });
 
   const form=$('#professionalReviewAssignmentFormV0351');
   const listHost=$('#professionalReviewAssignmentListV0351');
@@ -5248,12 +5283,18 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
       });
       toast(`Atribuição atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewAssignmentSummaryV0355(p.id)
+        .then(x=>hpRenderProfessionalReviewAssignmentSummaryV0355(assignmentSummaryHostV0355,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-assignment-archive-v0351]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/assignment/${btn.dataset.assignmentArchiveV0351}`,{method:'DELETE'});
       toast('Atribuição profissional arquivada.');
       await render();
+      hpLoadProfessionalReviewAssignmentSummaryV0355(p.id)
+        .then(x=>hpRenderProfessionalReviewAssignmentSummaryV0355(assignmentSummaryHostV0355,x))
+        .catch(()=>{});
     });
   };
 
@@ -5278,6 +5319,9 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
     toast(id?'Atribuição profissional atualizada.':'Atribuição profissional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewAssignmentSummaryV0355(p.id)
+      .then(x=>hpRenderProfessionalReviewAssignmentSummaryV0355(assignmentSummaryHostV0355,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -11702,7 +11746,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.35.4';
+const HP_MVP_VERSION='0.35.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

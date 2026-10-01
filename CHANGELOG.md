@@ -1,4 +1,17 @@
-﻿# v0.35.4 — Professional Review Assignment Filters
+﻿# v0.35.5 — Professional Review Assignment Summary
+
+- Adiciona `ProfessionalReviewAssignmentResponsavelResumoResponse`.
+- Adiciona `ProfessionalReviewAssignmentSummaryResponse`.
+- Adiciona `GET .../assignment/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por responsável principal.
+- Adiciona painel `Resumo das atribuições profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.35.6 — Professional Review Assignment Closure.
+
+# v0.35.4 — Professional Review Assignment Filters
 
 - Adiciona `ProfessionalReviewAssignmentFiltersResponse`.
 - Adiciona endpoint `GET .../assignment/search`.
