@@ -5125,3 +5125,53 @@ A fundação organiza insights documentados. Não transforma insight em evidênc
 
 **Próxima etapa:** `v0.47.1 — Professional Review Team Insight Persistence`.
 
+---
+
+## v0.47.1 — Professional Review Team Insight Persistence
+
+Adiciona persistência auditada para insights documentados da equipe profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Learning relacionado opcional;
+- Team Outcome relacionado opcional;
+- Team Decision relacionada opcional;
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- insight documentado;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- aplicabilidade;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_INSIGHT_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_INSIGHT_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_INSIGHT_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar insights**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra insights documentados da equipe. Não transforma insight em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transforma insight registrado em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.47.2 — Professional Review Team Insight Status`.
+

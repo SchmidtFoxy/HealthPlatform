@@ -116,7 +116,7 @@ public static class WorkoutIntelligenceService
             comparacoes.Count(x => x.ExecucoesNoPeriodo > 0), comparacoes.Count(x => x.Estado == "DiferencasRegistradas"));
 
         return new WorkoutIntelligenceResponse(
-            "v0.47.0", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
+            "v0.47.1", dias, plano?.Id, plano?.Nome, plano?.Status, plano?.Sessoes.Count ?? 0, itensPlano.Count, execucoes.Count, itensExecucao.Count,
             resumo, dimensoes, comparacoes, sinaisProgressaoRegressao, periodizacao,
             new[] { "Athlete Performance Passport v0.28.0 entregue; próxima camada: resultados estruturados de tempos, provas, testes, habilidades e marcos." },
             "Periodization 3.0 organiza microciclo, mesociclo, bloco e deload a partir do planejamento já registrado. Não cria periodização, deload ou alteração de prescrição automaticamente.");

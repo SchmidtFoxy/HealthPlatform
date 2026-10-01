@@ -1,4 +1,23 @@
-﻿# v0.47.0 — Professional Review Team Insight Foundation
+﻿# v0.47.1 — Professional Review Team Insight Persistence
+
+- Adiciona persistência auditada de Team Insight.
+- Adiciona `ProfessionalReviewTeamInsightPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamInsight:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar insights`.
+- Não transforma insight em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.47.2 — Professional Review Team Insight Status.
+
+# v0.47.0 — Professional Review Team Insight Foundation
 
 - Abre a linha funcional 0.47.x.
 - Adiciona `ProfessionalReviewTeamInsightFieldResponse`.

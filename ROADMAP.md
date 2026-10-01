@@ -4587,3 +4587,30 @@ Criar a fundação estrutural para insights documentados da equipe profissional 
 ### v0.47.1 — Professional Review Team Insight Persistence
 Adicionar persistência auditada dos insights documentados da equipe profissional, com vínculos opcionais a Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre insight registrado, evidência, causalidade, prognóstico, recomendação, decisão terapêutica, conduta e execução.
 
+## ✅ v0.47.1 — Professional Review Team Insight Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamInsightPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamInsight:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Team Learning;
+- vínculo opcional a Team Outcome;
+- vínculo opcional a Team Decision;
+- vínculo opcional a Team Alignment;
+- vínculo opcional a Shared Context;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de insights de equipe;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.47.2 — Professional Review Team Insight Status
+Adicionar estados documentais explícitos aos insights registrados da equipe, com transições manuais e auditadas sem transformar insight em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.
+

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.47.0",
+            "v0.47.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Insight Foundation abre a linha 0.47.x com uma fundação estrutural para insights documentados da equipe profissional, conectando Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem transformar insight em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
+            "Professional Review Team Insight Persistence adiciona persistência auditada aos insights documentados da equipe profissional, com vínculos opcionais a Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e sem transformar insight registrado em evidência clínica validada, causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou execução automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

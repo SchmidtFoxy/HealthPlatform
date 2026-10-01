@@ -34,6 +34,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoTeamDecision = "ProfessionalReviewTeamDecision:";
     private const string PrefixoTeamOutcome = "ProfessionalReviewTeamOutcome:";
     private const string PrefixoTeamLearning = "ProfessionalReviewTeamLearning:";
+    private const string PrefixoTeamInsight = "ProfessionalReviewTeamInsight:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -1450,6 +1451,44 @@ public class ProgressReviewNotesController(
             "A fundação organiza aprendizados documentados da equipe usando Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.46.1, possui persistência auditada. Não infere causalidade, não transforma aprendizado em evidência clínica validada, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    public sealed record CriarProfessionalReviewTeamInsightRequest(
+        string ProfissionalResponsavel,
+        string InsightDocumentado,
+        Guid? TeamLearningRelacionadoId = null,
+        Guid? TeamOutcomeRelacionadoId = null,
+        Guid? TeamDecisionRelacionadaId = null,
+        Guid? TeamAlignmentRelacionadoId = null,
+        Guid? SharedContextRelacionadoId = null,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? BaseObservacionalEvidenciaSuporte = null,
+        string? InterpretacaoProfissional = null,
+        string? Aplicabilidade = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewTeamInsightRequest(
+        string ProfissionalResponsavel,
+        string InsightDocumentado,
+        Guid? TeamLearningRelacionadoId = null,
+        Guid? TeamOutcomeRelacionadoId = null,
+        Guid? TeamDecisionRelacionadaId = null,
+        Guid? TeamAlignmentRelacionadoId = null,
+        Guid? SharedContextRelacionadoId = null,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? BaseObservacionalEvidenciaSuporte = null,
+        string? InterpretacaoProfissional = null,
+        string? Aplicabilidade = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("team-insight/foundation")]
     public ActionResult<ProfessionalReviewTeamInsightFoundationResponse> TeamInsightFoundation()
     {
@@ -1561,10 +1600,254 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewTeamInsightFoundationResponse(
             "FundacaoTeamInsightDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza insights documentados da equipe usando Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não transforma insight em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+            "A fundação organiza insights documentados da equipe usando Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.47.1, possui persistência auditada. Não transforma insight em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
+    [HttpGet("team-insight")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamInsightPersistedResponse>>> ListarTeamInsights(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivados = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamInsight));
+
+        if (!incluirArquivados)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearTeamInsight).ToArray());
+    }
+
+    [HttpPost("team-insight")]
+    public async Task<ActionResult<ProfessionalReviewTeamInsightPersistedResponse>> CriarTeamInsight(
+        Guid pacienteId,
+        CriarProfessionalReviewTeamInsightRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        var insightDocumentado = NormalizarObrigatorio(request.InsightDocumentado, 3000);
+        if (insightDocumentado is null)
+            return BadRequest(new { message = "Informe o insight documentado." });
+
+        if (request.TeamLearningRelacionadoId.HasValue &&
+            !await TeamLearningPertencePacienteAsync(pacienteId, request.TeamLearningRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Learning relacionado inválido para este paciente." });
+
+        if (request.TeamOutcomeRelacionadoId.HasValue &&
+            !await TeamOutcomePertencePacienteAsync(pacienteId, request.TeamOutcomeRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Outcome relacionado inválido para este paciente." });
+
+        if (request.TeamDecisionRelacionadaId.HasValue &&
+            !await TeamDecisionPertencePacienteAsync(pacienteId, request.TeamDecisionRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Decision relacionada inválida para este paciente." });
+
+        if (request.TeamAlignmentRelacionadoId.HasValue &&
+            !await TeamAlignmentPertencePacienteAsync(pacienteId, request.TeamAlignmentRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Alignment relacionado inválido para este paciente." });
+
+        if (request.SharedContextRelacionadoId.HasValue &&
+            !await SharedContextPertencePacienteAsync(pacienteId, request.SharedContextRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Shared Context relacionado inválido para este paciente." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoTeamInsight + "item",
+            Conteudo = MontarPayloadTeamInsight(
+                profissionalResponsavel,
+                insightDocumentado,
+                request.TeamLearningRelacionadoId,
+                request.TeamOutcomeRelacionadoId,
+                request.TeamDecisionRelacionadaId,
+                request.TeamAlignmentRelacionadoId,
+                request.SharedContextRelacionadoId,
+                request.CollaborationRelacionadaId,
+                request.CoordinationRelacionadaId,
+                request.EscalationRelacionadaId,
+                request.ContinuityRelacionadaId,
+                request.Participantes,
+                request.BaseObservacionalEvidenciaSuporte,
+                request.InterpretacaoProfissional,
+                request.Aplicabilidade,
+                request.Horizonte,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_TEAM_INSIGHT_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamInsight(nota));
+    }
+
+    [HttpPut("team-insight/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewTeamInsightPersistedResponse>> AtualizarTeamInsight(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewTeamInsightRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamInsight),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        var insightDocumentado = NormalizarObrigatorio(request.InsightDocumentado, 3000);
+        if (insightDocumentado is null)
+            return BadRequest(new { message = "Informe o insight documentado." });
+
+        if (request.TeamLearningRelacionadoId.HasValue &&
+            !await TeamLearningPertencePacienteAsync(pacienteId, request.TeamLearningRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Learning relacionado inválido para este paciente." });
+
+        if (request.TeamOutcomeRelacionadoId.HasValue &&
+            !await TeamOutcomePertencePacienteAsync(pacienteId, request.TeamOutcomeRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Outcome relacionado inválido para este paciente." });
+
+        if (request.TeamDecisionRelacionadaId.HasValue &&
+            !await TeamDecisionPertencePacienteAsync(pacienteId, request.TeamDecisionRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Decision relacionada inválida para este paciente." });
+
+        if (request.TeamAlignmentRelacionadoId.HasValue &&
+            !await TeamAlignmentPertencePacienteAsync(pacienteId, request.TeamAlignmentRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Alignment relacionado inválido para este paciente." });
+
+        if (request.SharedContextRelacionadoId.HasValue &&
+            !await SharedContextPertencePacienteAsync(pacienteId, request.SharedContextRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Shared Context relacionado inválido para este paciente." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadTeamInsight(
+            profissionalResponsavel,
+            insightDocumentado,
+            request.TeamLearningRelacionadoId,
+            request.TeamOutcomeRelacionadoId,
+            request.TeamDecisionRelacionadaId,
+            request.TeamAlignmentRelacionadoId,
+            request.SharedContextRelacionadoId,
+            request.CollaborationRelacionadaId,
+            request.CoordinationRelacionadaId,
+            request.EscalationRelacionadaId,
+            request.ContinuityRelacionadaId,
+            request.Participantes,
+            request.BaseObservacionalEvidenciaSuporte,
+            request.InterpretacaoProfissional,
+            request.Aplicabilidade,
+            request.Horizonte,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_TEAM_INSIGHT_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamInsight(nota));
+    }
+
+    [HttpDelete("team-insight/{id:guid}")]
+    public async Task<IActionResult> ArquivarTeamInsight(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamInsight),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_TEAM_INSIGHT_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("team-learning/closure")]
@@ -9070,6 +9353,105 @@ public class ProgressReviewNotesController(
         return JsonSerializer.Serialize(payload);
     }
 
+    private sealed record TeamInsightPayload(
+        string ProfissionalResponsavel,
+        string InsightDocumentado,
+        Guid? TeamLearningRelacionadoId,
+        Guid? TeamOutcomeRelacionadoId,
+        Guid? TeamDecisionRelacionadaId,
+        Guid? TeamAlignmentRelacionadoId,
+        Guid? SharedContextRelacionadoId,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string? Participantes,
+        string? BaseObservacionalEvidenciaSuporte,
+        string? InterpretacaoProfissional,
+        string? Aplicabilidade,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadTeamInsight(
+        string profissionalResponsavel,
+        string insightDocumentado,
+        Guid? teamLearningRelacionadoId,
+        Guid? teamOutcomeRelacionadoId,
+        Guid? teamDecisionRelacionadaId,
+        Guid? teamAlignmentRelacionadoId,
+        Guid? sharedContextRelacionadoId,
+        Guid? collaborationRelacionadaId,
+        Guid? coordinationRelacionadaId,
+        Guid? escalationRelacionadaId,
+        Guid? continuityRelacionadaId,
+        string? participantes,
+        string? baseObservacionalEvidenciaSuporte,
+        string? interpretacaoProfissional,
+        string? aplicabilidade,
+        string? horizonte,
+        string? observacaoProfissional)
+    {
+        var payload = new TeamInsightPayload(
+            profissionalResponsavel,
+            insightDocumentado,
+            teamLearningRelacionadoId,
+            teamOutcomeRelacionadoId,
+            teamDecisionRelacionadaId,
+            teamAlignmentRelacionadoId,
+            sharedContextRelacionadoId,
+            collaborationRelacionadaId,
+            coordinationRelacionadaId,
+            escalationRelacionadaId,
+            continuityRelacionadaId,
+            NormalizarOpcional(participantes, 1000),
+            NormalizarOpcional(baseObservacionalEvidenciaSuporte, 3000),
+            NormalizarOpcional(interpretacaoProfissional, 3000),
+            NormalizarOpcional(aplicabilidade, 3000),
+            NormalizarOpcional(horizonte, 120),
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewTeamInsightPersistedResponse MapearTeamInsight(NotaInternaProfissional nota)
+    {
+        TeamInsightPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<TeamInsightPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewTeamInsightPersistedResponse(
+            nota.Id,
+            payload?.TeamLearningRelacionadoId,
+            payload?.TeamOutcomeRelacionadoId,
+            payload?.TeamDecisionRelacionadaId,
+            payload?.TeamAlignmentRelacionadoId,
+            payload?.SharedContextRelacionadoId,
+            payload?.CollaborationRelacionadaId,
+            payload?.CoordinationRelacionadaId,
+            payload?.EscalationRelacionadaId,
+            payload?.ContinuityRelacionadaId,
+            payload?.ProfissionalResponsavel ?? "Profissional",
+            payload?.Participantes,
+            payload?.InsightDocumentado ?? nota.Conteudo,
+            payload?.BaseObservacionalEvidenciaSuporte,
+            payload?.InterpretacaoProfissional,
+            payload?.Aplicabilidade,
+            payload?.Horizonte,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
     private sealed record TeamLearningPayload(
         string ProfissionalResponsavel,
         string AprendizadoDocumentado,
@@ -10439,6 +10821,20 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private async Task<bool> TeamLearningPertencePacienteAsync(
+        Guid pacienteId,
+        Guid teamLearningId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == teamLearningId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamLearning) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private async Task<bool> TeamOutcomePertencePacienteAsync(
         Guid pacienteId,

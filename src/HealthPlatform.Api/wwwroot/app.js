@@ -4971,6 +4971,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_FILTERS_V0464='v0.46.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_SUMMARY_V0465='v0.46.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466='v0.46.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_V0470='v0.47.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471='v0.47.1';
 
 
 
@@ -5941,7 +5942,165 @@ function hpRenderProfessionalReviewTeamInsightFoundationV0470(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza insights documentados da equipe. Não valida evidência clínica, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática e não executa conduta ou prescrição.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-insight-open-v0471="${HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471}">Gerenciar insights</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamInsightV0471(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-insight`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-insight-persistence-v0471="${HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471}">
+    <div class="row-between">
+      <div>
+        <h3>Insights documentados da equipe</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamInsightV0471">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamInsightFormV0471" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Team Learning relacionado<input name="teamLearningRelacionadoId" placeholder="ID opcional do aprendizado"></label>
+      <label>Team Outcome relacionado<input name="teamOutcomeRelacionadoId" placeholder="ID opcional do resultado"></label>
+      <label>Team Decision relacionada<input name="teamDecisionRelacionadaId" placeholder="ID opcional da decisão"></label>
+      <label>Team Alignment relacionado<input name="teamAlignmentRelacionadoId" placeholder="ID opcional do alinhamento"></label>
+      <label>Shared Context relacionado<input name="sharedContextRelacionadoId" placeholder="ID opcional do contexto compartilhado"></label>
+      <label>Collaboration relacionada<input name="collaborationRelacionadaId" placeholder="ID opcional da colaboração"></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000" placeholder="Profissionais participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Insight documentado<textarea name="insightDocumentado" maxlength="3000" rows="4" required></textarea></label>
+      <label class="span-2">Base observacional / evidência de suporte<textarea name="baseObservacionalEvidenciaSuporte" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Interpretação profissional<textarea name="interpretacaoProfissional" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Aplicabilidade<textarea name="aplicabilidade" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar insight</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamInsightV0471">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamInsightListV0471" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não valida evidência clínica, não infere causalidade, prognóstico, recomendação ou decisão terapêutica, não representa conduta executada ou prescrição automática e não transfere automaticamente responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTeamInsightFormV0471');
+  const listHost=$('#professionalReviewTeamInsightListV0471');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.teamLearningRelacionadoId?`<small class="muted-line">Team Learning: ${esc(x.teamLearningRelacionadoId)}</small>`:''}
+      ${x.teamOutcomeRelacionadoId?`<small class="muted-line">Team Outcome: ${esc(x.teamOutcomeRelacionadoId)}</small>`:''}
+      ${x.teamDecisionRelacionadaId?`<small class="muted-line">Team Decision: ${esc(x.teamDecisionRelacionadaId)}</small>`:''}
+      ${x.teamAlignmentRelacionadoId?`<small class="muted-line">Team Alignment: ${esc(x.teamAlignmentRelacionadoId)}</small>`:''}
+      ${x.sharedContextRelacionadoId?`<small class="muted-line">Shared Context: ${esc(x.sharedContextRelacionadoId)}</small>`:''}
+      ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      <p><b>Insight:</b> ${esc(x.insightDocumentado||'')}</p>
+      ${x.baseObservacionalEvidenciaSuporte?`<p><b>Base observacional:</b> ${esc(x.baseObservacionalEvidenciaSuporte)}</p>`:''}
+      ${x.interpretacaoProfissional?`<p><b>Interpretação profissional:</b> ${esc(x.interpretacaoProfissional)}</p>`:''}
+      ${x.aplicabilidade?`<p><b>Aplicabilidade:</b> ${esc(x.aplicabilidade)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-team-insight-edit-v0471="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-team-insight-archive-v0471="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum insight de equipe registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-team-insight-edit-v0471]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamInsightEditV0471);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalResponsavel.value=item.profissionalResponsavel||'';
+      form.elements.teamLearningRelacionadoId.value=item.teamLearningRelacionadoId||'';
+      form.elements.teamOutcomeRelacionadoId.value=item.teamOutcomeRelacionadoId||'';
+      form.elements.teamDecisionRelacionadaId.value=item.teamDecisionRelacionadaId||'';
+      form.elements.teamAlignmentRelacionadoId.value=item.teamAlignmentRelacionadoId||'';
+      form.elements.sharedContextRelacionadoId.value=item.sharedContextRelacionadoId||'';
+      form.elements.collaborationRelacionadaId.value=item.collaborationRelacionadaId||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.participantes.value=item.participantes||'';
+      form.elements.insightDocumentado.value=item.insightDocumentado||'';
+      form.elements.baseObservacionalEvidenciaSuporte.value=item.baseObservacionalEvidenciaSuporte||'';
+      form.elements.interpretacaoProfissional.value=item.interpretacaoProfissional||'';
+      form.elements.aplicabilidade.value=item.aplicabilidade||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-insight-archive-v0471]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-insight/${btn.dataset.teamInsightArchiveV0471}`,{method:'DELETE'});
+      toast('Insight de equipe arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      insightDocumentado:String(fd.get('insightDocumentado')||'').trim(),
+      teamLearningRelacionadoId:String(fd.get('teamLearningRelacionadoId')||'').trim()||null,
+      teamOutcomeRelacionadoId:String(fd.get('teamOutcomeRelacionadoId')||'').trim()||null,
+      teamDecisionRelacionadaId:String(fd.get('teamDecisionRelacionadaId')||'').trim()||null,
+      teamAlignmentRelacionadoId:String(fd.get('teamAlignmentRelacionadoId')||'').trim()||null,
+      sharedContextRelacionadoId:String(fd.get('sharedContextRelacionadoId')||'').trim()||null,
+      collaborationRelacionadaId:String(fd.get('collaborationRelacionadaId')||'').trim()||null,
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      baseObservacionalEvidenciaSuporte:String(fd.get('baseObservacionalEvidenciaSuporte')||'').trim()||null,
+      interpretacaoProfissional:String(fd.get('interpretacaoProfissional')||'').trim()||null,
+      aplicabilidade:String(fd.get('aplicabilidade')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-insight${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Insight de equipe atualizado.':'Insight de equipe registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTeamInsightV0471').onclick=clear;
+  $('#closeProfessionalReviewTeamInsightV0471').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewTeamLearningClosureV0466(patientId){
@@ -6071,7 +6230,11 @@ async function hpOpenProfessionalReviewTeamLearningV0461(p){
 
   const teamInsightFoundationHostV0470=$('#professionalReviewTeamInsightFoundationV0470');
   hpLoadProfessionalReviewTeamInsightFoundationV0470(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamInsightFoundationV0470(teamInsightFoundationHostV0470,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTeamInsightFoundationV0470(teamInsightFoundationHostV0470,x);
+      const openTeamInsightV0471=teamInsightFoundationHostV0470?.querySelector('[data-team-insight-open-v0471]');
+      if(openTeamInsightV0471) openTeamInsightV0471.onclick=()=>hpOpenProfessionalReviewTeamInsightV0471(p);
+    })
     .catch(()=>{ if(teamInsightFoundationHostV0470) teamInsightFoundationHostV0470.innerHTML=''; });
 
   const teamLearningClosureHostV0466=$('#professionalReviewTeamLearningClosureV0466');
@@ -15701,7 +15864,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.47.0';
+const HP_MVP_VERSION='0.47.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
