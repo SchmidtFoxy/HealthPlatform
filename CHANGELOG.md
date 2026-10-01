@@ -1,4 +1,25 @@
-﻿# v0.49.6 — Professional Review Team Knowledge Application Closure
+﻿# v0.50.0 — Professional Review Team Knowledge Effect Foundation
+
+- Abre a linha funcional 0.50.x.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectFieldResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectFoundationResponse`.
+- Adiciona `GET .../team-knowledge-effect/foundation`.
+- Define vínculo opcional com Team Knowledge Application.
+- Define vínculos opcionais com Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, efeito observado documentado, contexto da observação, base observacional/evidência de suporte, interpretação profissional, resultado observado documentado, impacto percebido documentado, horizonte e observação profissional.
+- Define `FundacaoTeamKnowledgeEffectDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Efeitos observados do conhecimento da equipe` ao gerenciador profissional.
+- Não transforma efeito registrado em causalidade comprovada.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.50.1 — Professional Review Team Knowledge Effect Persistence.
+
+# v0.49.6 — Professional Review Team Knowledge Application Closure
 
 - Adiciona `ProfessionalReviewTeamKnowledgeApplicationClosureResponse`.
 - Adiciona endpoint `GET .../team-knowledge-application/closure`.

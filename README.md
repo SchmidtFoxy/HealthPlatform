@@ -5831,3 +5831,49 @@ O fechamento mede somente disponibilidade estrutural. Não transforma aplicaçã
 
 **Próxima etapa:** `v0.50.0 — Professional Review Team Knowledge Effect Foundation`.
 
+---
+
+## v0.50.0 — Professional Review Team Knowledge Effect Foundation
+
+Abre a linha 0.50.x com a fundação estrutural para documentar efeitos observados após aplicações do conhecimento da equipe.
+
+### Campos da fundação
+- Team Knowledge Application relacionada;
+- Team Knowledge relacionado;
+- Team Insight relacionado;
+- Team Learning relacionado;
+- Team Outcome relacionado;
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- efeito observado documentado;
+- contexto da observação;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- resultado observado documentado;
+- impacto percebido documentado;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-knowledge-effect/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamKnowledgeEffectDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Efeitos observados do conhecimento da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza efeitos observados após aplicações do conhecimento. Não transforma efeito registrado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.50.1 — Professional Review Team Knowledge Effect Persistence`.
+
