@@ -5349,3 +5349,23 @@ Adicionar histórico consultável das decisões profissionais registradas, cobri
 ### v0.52.4 — Professional Review Team Knowledge Effect Decision Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental das decisões e sem promover o registro a validação causal ou evidência clínica validada.
 
+## ✅ v0.52.4 — Professional Review Team Knowledge Effect Decision Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectDecisionFiltersResponse`;
+- endpoint `team-knowledge-effect-decision/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- hotfix aprovado v0.52.1-r1 preservado cumulativamente;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.52.5 — Professional Review Team Knowledge Effect Decision Summary
+Adicionar resumo estrutural das decisões profissionais documentadas dos efeitos observados do conhecimento da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
+

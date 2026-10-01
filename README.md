@@ -6500,3 +6500,37 @@ O histórico mostra somente eventos registrados. Não transforma decisão regist
 
 **Próxima etapa:** `v0.52.4 — Professional Review Team Knowledge Effect Decision Filters`.
 
+---
+
+## v0.52.4 — Professional Review Team Knowledge Effect Decision Filters
+
+Adiciona filtros profissionais para localizar decisões documentadas sobre os efeitos observados do conhecimento da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- decisão documentada;
+- contexto da decisão;
+- base observacional / evidência de suporte;
+- justificativa profissional;
+- resultado esperado documentado;
+- necessidade de acompanhamento documentada;
+- observação profissional.
+
+### UI
+O gerenciador de decisões passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam decisão registrada em validação causal ou evidência clínica validada, não produzem prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.52.5 — Professional Review Team Knowledge Effect Decision Summary`.
+
