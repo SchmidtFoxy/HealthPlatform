@@ -6436,3 +6436,35 @@ A persistência registra decisão profissional documental. Não transforma decis
 
 **Próxima etapa:** `v0.52.2 — Professional Review Team Knowledge Effect Decision Status`.
 
+---
+
+## v0.52.2 — Professional Review Team Knowledge Effect Decision Status
+
+Adiciona estados documentais explícitos às decisões profissionais registradas.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-knowledge-effect-decision/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da decisão;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir registro;
+- Revisar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não transforma estado em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.52.3 — Professional Review Team Knowledge Effect Decision History`.
+

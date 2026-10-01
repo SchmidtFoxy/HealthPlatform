@@ -5007,6 +5007,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_SUMMARY_V0515='v0.51.5
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_CLOSURE_V0516='v0.51.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_V0520='v0.52.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_PERSISTENCE_V0521='v0.52.1';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_STATUS_V0522='v0.52.2';
 
 
 
@@ -6381,8 +6382,9 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Profissional')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Registrado')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       <p><b>Decisão:</b> ${esc(x.decisaoDocumentada||'')}</p>
@@ -6394,6 +6396,10 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-team-knowledge-effect-decision-edit-v0521="${x.id}">Editar</button>
+        ${x.status!=='Registrado'?`<button type="button" class="ghost" data-team-knowledge-effect-decision-status-v0522="${x.id}" data-status-v0522="Registrado">Reabrir registro</button>`:''}
+        ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-knowledge-effect-decision-status-v0522="${x.id}" data-status-v0522="EmRevisao">Revisar</button>`:''}
+        ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-knowledge-effect-decision-status-v0522="${x.id}" data-status-v0522="Consolidado">Consolidar</button>`:''}
+        ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-knowledge-effect-decision-status-v0522="${x.id}" data-status-v0522="Descartado">Descartar</button>`:''}
         <button type="button" class="ghost danger" data-team-knowledge-effect-decision-archive-v0521="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma decisão profissional registrada.</p>';
@@ -6405,6 +6411,16 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
         if(form.elements[key]) form.elements[key].value=value??'';
       }
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-decision-status-v0522]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0522;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision/${btn.dataset.teamKnowledgeEffectDecisionStatusV0522}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Decisão profissional atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-effect-decision-archive-v0521]')].forEach(btn=>btn.onclick=async()=>{
@@ -17833,7 +17849,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.52.1';
+const HP_MVP_VERSION='0.52.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

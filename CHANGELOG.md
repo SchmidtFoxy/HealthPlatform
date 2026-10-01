@@ -1,4 +1,24 @@
-﻿# v0.52.1 — Professional Review Team Knowledge Effect Decision Persistence
+﻿# v0.52.2 — Professional Review Team Knowledge Effect Decision Status
+
+- Adiciona `Status` ao Team Knowledge Effect Decision persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionStatusRequest`.
+- Adiciona endpoint `PATCH .../team-knowledge-effect-decision/{id}/status`.
+- Estados permitidos: `Registrado`, `EmRevisao`, `Consolidado`, `Descartado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir registro, Revisar, Consolidar e Descartar.
+- Preserva cumulativamente o hotfix v0.52.1-r1 do gate runtime Workout Intelligence.
+- Não transforma estado em validação causal.
+- Não promove decisão a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.52.3 — Professional Review Team Knowledge Effect Decision History.
+
+# v0.52.1 — Professional Review Team Knowledge Effect Decision Persistence
 
 - Adiciona persistência auditada de Team Knowledge Effect Decision.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionPersistedResponse`.
