@@ -3201,3 +3201,20 @@ Adicionar resumo estrutural das delegações profissionais com contagem por stat
 ### v0.36.6 — Professional Review Delegation Closure
 Fechar o ciclo 0.36.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das delegações profissionais.
 
+## ✅ v0.36.6 — Professional Review Delegation Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewDelegationClosureResponse`;
+- endpoint `delegation/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaDelegationCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no gerenciador profissional;
+- encerramento da linha 0.36.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.0 — Professional Review Handoff Foundation
+Criar a fundação estrutural para handoff profissional, permitindo documentar passagem de contexto entre profissionais a partir de delegações e atribuições existentes, preservando autoria, responsabilidade e contexto sem automatizar decisão clínica ou execução.
+

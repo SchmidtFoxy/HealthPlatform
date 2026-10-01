@@ -1,4 +1,18 @@
-﻿# v0.36.5 — Professional Review Delegation Summary
+﻿# v0.36.6 — Professional Review Delegation Closure
+
+- Adiciona `ProfessionalReviewDelegationClosureResponse`.
+- Adiciona endpoint `GET .../delegation/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaDelegationCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.36.x.
+- Próxima etapa: v0.37.0 — Professional Review Handoff Foundation.
+
+# v0.36.5 — Professional Review Delegation Summary
 
 - Adiciona `ProfessionalReviewDelegationProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewDelegationSummaryResponse`.

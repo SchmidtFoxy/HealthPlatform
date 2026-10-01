@@ -458,6 +458,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza delegações documentais da equipe profissional e, a partir da v0.36.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("delegation/closure")]
+    public ActionResult<ProfessionalReviewDelegationClosureResponse> FechamentoDelegations()
+    {
+        var componentes = new[]
+        {
+            "DelegationFoundation",
+            "DelegationPersistence",
+            "DelegationStatus",
+            "DelegationHistory",
+            "DelegationFilters",
+            "DelegationSummary"
+        };
+
+        return Ok(new ProfessionalReviewDelegationClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaDelegationCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural das delegações profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("delegation/summary")]
     public async Task<ActionResult<ProfessionalReviewDelegationSummaryResponse>> ResumoDelegations(
         Guid pacienteId,

@@ -2769,3 +2769,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.36.6 — Professional Review Delegation Closure`.
 
+---
+
+## v0.36.6 — Professional Review Delegation Closure
+
+Fecha a linha 0.36.x consolidando todas as capacidades estruturais de Delegation profissional.
+
+### Componentes consolidados
+- Delegation Foundation;
+- Delegation Persistence;
+- Delegation Status;
+- Delegation History;
+- Delegation Filters;
+- Delegation Summary.
+
+### Estado
+O endpoint `delegation/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaDelegationCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.37.0 — Professional Review Handoff Foundation`.
+
