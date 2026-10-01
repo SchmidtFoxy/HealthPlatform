@@ -4117,3 +4117,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.42.6 — Professional Review Shared Context Closure`.
 
+---
+
+## v0.42.6 — Professional Review Shared Context Closure
+
+Fecha a linha 0.42.x consolidando todas as capacidades estruturais de contexto profissional compartilhado.
+
+### Componentes consolidados
+- Shared Context Foundation;
+- Shared Context Persistence;
+- Shared Context Status;
+- Shared Context History;
+- Shared Context Filters;
+- Shared Context Summary.
+
+### Estado
+O endpoint `shared-context/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaSharedContextCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.43.0 — Professional Review Team Alignment Foundation`.
+

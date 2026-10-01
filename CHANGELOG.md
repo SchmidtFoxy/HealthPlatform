@@ -1,4 +1,18 @@
-﻿# v0.42.5 — Professional Review Shared Context Summary
+﻿# v0.42.6 — Professional Review Shared Context Closure
+
+- Adiciona `ProfessionalReviewSharedContextClosureResponse`.
+- Adiciona endpoint `GET .../shared-context/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaSharedContextCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.42.x.
+- Próxima etapa: v0.43.0 — Professional Review Team Alignment Foundation.
+
+# v0.42.5 — Professional Review Shared Context Summary
 
 - Adiciona `ProfessionalReviewSharedContextProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewSharedContextSummaryResponse`.

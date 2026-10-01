@@ -970,6 +970,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza contexto profissional compartilhado entre Collaboration, Coordination, Escalation e Continuity e, a partir da v0.42.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("shared-context/closure")]
+    public ActionResult<ProfessionalReviewSharedContextClosureResponse> FechamentoSharedContexts()
+    {
+        var componentes = new[]
+        {
+            "SharedContextFoundation",
+            "SharedContextPersistence",
+            "SharedContextStatus",
+            "SharedContextHistory",
+            "SharedContextFilters",
+            "SharedContextSummary"
+        };
+
+        return Ok(new ProfessionalReviewSharedContextClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaSharedContextCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural do contexto profissional compartilhado. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("shared-context/summary")]
     public async Task<ActionResult<ProfessionalReviewSharedContextSummaryResponse>> ResumoSharedContexts(
         Guid pacienteId,

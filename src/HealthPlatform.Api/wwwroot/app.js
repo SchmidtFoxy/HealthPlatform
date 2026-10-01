@@ -4941,6 +4941,7 @@ const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424='v0.42.4';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425='v0.42.5';
+const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426='v0.42.6';
 
 
 
@@ -5621,6 +5622,24 @@ async function hpOpenProfessionalReviewSharedContextHistoryV0423(p,sharedContext
 }
 
 
+
+async function hpLoadProfessionalReviewSharedContextClosureV0426(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/shared-context/closure`);
+}
+
+function hpRenderProfessionalReviewSharedContextClosureV0426(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaSharedContextCompleta';
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-shared-context-closure-v0426="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426}">
+    <div><b>${complete?'Estrutura de contexto profissional compartilhado completa':'Estrutura de contexto profissional compartilhado parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewSharedContextSummaryV0425(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/shared-context/summary`);
@@ -5676,6 +5695,7 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewSharedContextV0421">Fechar</button>
     </div>
+    <div id="professionalReviewSharedContextClosureV0426"></div>
     <div id="professionalReviewSharedContextSummaryV0425"></div>
     <form id="professionalReviewSharedContextFiltersV0424" class="form-grid" data-professional-review-shared-context-filters-v0424="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424}">
       <label>Status<select name="status">
@@ -5720,6 +5740,11 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const sharedContextClosureHostV0426=$('#professionalReviewSharedContextClosureV0426');
+  hpLoadProfessionalReviewSharedContextClosureV0426(p.id)
+    .then(x=>hpRenderProfessionalReviewSharedContextClosureV0426(sharedContextClosureHostV0426,x))
+    .catch(()=>{ if(sharedContextClosureHostV0426) sharedContextClosureHostV0426.innerHTML=''; });
 
   const sharedContextSummaryHostV0425=$('#professionalReviewSharedContextSummaryV0425');
   hpLoadProfessionalReviewSharedContextSummaryV0425(p.id)
@@ -14185,7 +14210,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.42.5';
+const HP_MVP_VERSION='0.42.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
