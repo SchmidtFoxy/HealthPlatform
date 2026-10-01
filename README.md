@@ -6030,3 +6030,30 @@ Os filtros apenas localizam registros documentais. Não transformam efeito obser
 
 **Próxima etapa:** `v0.50.5 — Professional Review Team Knowledge Effect Summary`.
 
+---
+
+## v0.50.5 — Professional Review Team Knowledge Effect Summary
+
+Adiciona resumo estrutural dos efeitos observados documentados do conhecimento da equipe.
+
+### Indicadores
+- total;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-knowledge-effect/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo dos efeitos observados do conhecimento da equipe** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não transformam efeito observado em causalidade comprovada ou evidência clínica validada, não produzem prognóstico, recomendação ou decisão terapêutica, não representam score clínico, risco, urgência ou prioridade, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.50.6 — Professional Review Team Knowledge Effect Closure`.
+
