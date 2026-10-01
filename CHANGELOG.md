@@ -1,4 +1,23 @@
-﻿# v0.52.5 — Professional Review Team Knowledge Effect Decision Summary
+﻿# v0.52.6 — Professional Review Team Knowledge Effect Decision Closure
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionClosureResponse`.
+- Adiciona endpoint `GET .../team-knowledge-effect-decision/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamKnowledgeEffectDecisionCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_CLOSURE_V0526`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Preserva cumulativamente o hotfix v0.52.1-r1.
+- Não transforma decisão em validação causal.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico ou recomendação automática.
+- Não cria decisão terapêutica, score clínico, risco, urgência ou prioridade automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.52.x.
+- Próxima etapa: v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation.
+
+# v0.52.5 — Professional Review Team Knowledge Effect Decision Summary
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionSummaryResponse`.

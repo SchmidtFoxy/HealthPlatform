@@ -6561,3 +6561,34 @@ As contagens são agregações documentais. Não transformam decisão em valida�
 
 **Próxima etapa:** `v0.52.6 — Professional Review Team Knowledge Effect Decision Closure`.
 
+---
+
+## v0.52.6 — Professional Review Team Knowledge Effect Decision Closure
+
+Fecha a linha 0.52.x consolidando todas as capacidades estruturais das decisões profissionais documentadas sobre os efeitos observados do conhecimento da equipe.
+
+### Componentes consolidados
+- Team Knowledge Effect Decision Foundation;
+- Team Knowledge Effect Decision Persistence;
+- Team Knowledge Effect Decision Status;
+- Team Knowledge Effect Decision History;
+- Team Knowledge Effect Decision Filters;
+- Team Knowledge Effect Decision Summary.
+
+### Estado
+O endpoint `team-knowledge-effect-decision/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamKnowledgeEffectDecisionCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não transforma decisão em validação causal ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation`.
+

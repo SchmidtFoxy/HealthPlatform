@@ -5011,6 +5011,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_STATUS_V0522='v0.52.
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_HISTORY_V0523='v0.52.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_FILTERS_V0524='v0.52.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_SUMMARY_V0525='v0.52.5';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_CLOSURE_V0526='v0.52.6';
 
 
 
@@ -6351,6 +6352,25 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionHistoryV0523(p
 }
 
 
+
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionClosureV0526(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision/closure`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionClosureV0526(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaTeamKnowledgeEffectDecisionCompleta';
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-closure-v0526="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_CLOSURE_V0526}">
+    <div><b>${complete?'Estrutura de decisões sobre os efeitos observados completa':'Estrutura de decisões sobre os efeitos observados parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não valida causalidade, não valida evidência clínica e não representa prognóstico, recomendação, decisão terapêutica, score clínico, risco, urgência, prioridade, conduta executada ou prescrição automática.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision/summary`);
@@ -6407,6 +6427,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionV0521">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionClosureV0526"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionSummaryV0525"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionFiltersV0524" class="form-grid" data-professional-review-team-knowledge-effect-decision-filters-v0524="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_FILTERS_V0524}">
       <label>Status<select name="status">
@@ -6466,6 +6487,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamKnowledgeEffectDecisionClosureHostV0526=$('#professionalReviewTeamKnowledgeEffectDecisionClosureV0526');
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionClosureV0526(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionClosureV0526(teamKnowledgeEffectDecisionClosureHostV0526,x))
+    .catch(()=>{ if(teamKnowledgeEffectDecisionClosureHostV0526) teamKnowledgeEffectDecisionClosureHostV0526.innerHTML=''; });
 
   const teamKnowledgeEffectDecisionSummaryHostV0525=$('#professionalReviewTeamKnowledgeEffectDecisionSummaryV0525');
   hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(p.id)
@@ -17993,7 +18019,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.52.5';
+const HP_MVP_VERSION='0.52.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

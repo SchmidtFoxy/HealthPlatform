@@ -5392,3 +5392,21 @@ Adicionar resumo estrutural das decisões profissionais documentadas dos efeitos
 ### v0.52.6 — Professional Review Team Knowledge Effect Decision Closure
 Fechar o ciclo 0.52.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das decisões profissionais documentadas sobre os efeitos observados do conhecimento da equipe.
 
+## ✅ v0.52.6 — Professional Review Team Knowledge Effect Decision Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectDecisionClosureResponse`;
+- endpoint `team-knowledge-effect-decision/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaTeamKnowledgeEffectDecisionCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no gerenciador profissional;
+- encerramento da linha 0.52.x;
+- hotfix aprovado v0.52.1-r1 preservado cumulativamente;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation
+Abrir a próxima fundação estrutural profissional preservando a separação entre registro documental, validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta e prescrição automática.
+

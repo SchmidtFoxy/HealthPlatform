@@ -2570,6 +2570,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza decisões profissionais documentadas relacionadas às revisões dos efeitos observados do conhecimento da equipe usando Team Knowledge Effect Review, Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.52.1, possui persistência auditada. Não transforma decisão documentada em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-effect-decision/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionClosureResponse> FechamentoTeamKnowledgeEffectDecisions()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeEffectDecisionFoundation",
+            "TeamKnowledgeEffectDecisionPersistence",
+            "TeamKnowledgeEffectDecisionStatus",
+            "TeamKnowledgeEffectDecisionHistory",
+            "TeamKnowledgeEffectDecisionFilters",
+            "TeamKnowledgeEffectDecisionSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeEffectDecisionCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural das decisões profissionais documentadas sobre os efeitos observados do conhecimento da equipe. Não transforma decisão em validação causal ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionSummaryResponse>> ResumoTeamKnowledgeEffectDecisions(
         Guid pacienteId,
