@@ -878,6 +878,75 @@ public class ProgressReviewNotesController(
             "A fundação organiza colaboração documental compartilhada entre Coordination, Escalation e Continuity e, a partir da v0.41.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("shared-context/foundation")]
+    public ActionResult<ProfessionalReviewSharedContextFoundationResponse> SharedContextFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewSharedContextFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o contexto compartilhado a uma colaboração profissional já documentada."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o contexto compartilhado a uma coordenação profissional já documentada."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o contexto compartilhado a um escalonamento profissional já documentado."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o contexto compartilhado a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "profissional-responsavel",
+                "Profissional responsável",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo contexto compartilhado."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes do contexto compartilhado."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "contexto-compartilhado",
+                "Contexto compartilhado",
+                false,
+                "texto-longo",
+                "Documenta o contexto compartilhado entre profissionais sem definir prioridade clínica."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewSharedContextFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes ao contexto compartilhado.")
+        };
+
+        return Ok(new ProfessionalReviewSharedContextFoundationResponse(
+            "FundacaoSharedContextDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza contexto profissional compartilhado entre Collaboration, Coordination, Escalation e Continuity. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("collaboration/closure")]
     public ActionResult<ProfessionalReviewCollaborationClosureResponse> FechamentoCollaborations()
     {

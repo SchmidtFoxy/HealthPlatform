@@ -4935,6 +4935,7 @@ const HP_PROFESSIONAL_REVIEW_COLLABORATION_HISTORY_V0413='v0.41.3';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414='v0.41.4';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415='v0.41.5';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416='v0.41.6';
+const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0';
 
 
 
@@ -5550,6 +5551,34 @@ async function hpOpenProfessionalReviewCollaborationHistoryV0413(p,collaboration
 
 
 
+
+async function hpLoadProfessionalReviewSharedContextFoundationV0420(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/shared-context/foundation`);
+}
+
+function hpRenderProfessionalReviewSharedContextFoundationV0420(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-shared-context-v0420="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420}">
+    <div class="row-between">
+      <div>
+        <b>Contexto profissional compartilhado</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza contexto documental compartilhado entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewCollaborationClosureV0416(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/collaboration/closure`);
@@ -5622,6 +5651,7 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewCollaborationV0411">Fechar</button>
     </div>
+    <div id="professionalReviewSharedContextFoundationV0420"></div>
     <div id="professionalReviewCollaborationClosureV0416"></div>
     <div id="professionalReviewCollaborationSummaryV0415"></div>
     <form id="professionalReviewCollaborationFiltersV0414" class="form-grid" data-professional-review-collaboration-filters-v0414="${HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414}">
@@ -5666,6 +5696,11 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const sharedContextFoundationHostV0420=$('#professionalReviewSharedContextFoundationV0420');
+  hpLoadProfessionalReviewSharedContextFoundationV0420(p.id)
+    .then(x=>hpRenderProfessionalReviewSharedContextFoundationV0420(sharedContextFoundationHostV0420,x))
+    .catch(()=>{ if(sharedContextFoundationHostV0420) sharedContextFoundationHostV0420.innerHTML=''; });
 
   const collaborationClosureHostV0416=$('#professionalReviewCollaborationClosureV0416');
   hpLoadProfessionalReviewCollaborationClosureV0416(p.id)
@@ -13860,7 +13895,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.41.6';
+const HP_MVP_VERSION='0.42.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

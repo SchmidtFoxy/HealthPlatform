@@ -3922,3 +3922,36 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.42.0 — Professional Review Shared Context Foundation`.
 
+---
+
+## v0.42.0 — Professional Review Shared Context Foundation
+
+Abre a linha 0.42.x com a fundação estrutural de contexto profissional compartilhado, conectando Collaboration, Coordination, Escalation e Continuity em uma única camada documental.
+
+### Campos da fundação
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- contexto compartilhado;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../shared-context/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoSharedContextDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Contexto profissional compartilhado**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza contexto documental compartilhado entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.42.1 — Professional Review Shared Context Persistence`.
+

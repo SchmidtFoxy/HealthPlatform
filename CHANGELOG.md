@@ -1,4 +1,21 @@
-﻿# v0.41.6 — Professional Review Collaboration Closure
+﻿# v0.42.0 — Professional Review Shared Context Foundation
+
+- Abre a linha funcional 0.42.x.
+- Adiciona `ProfessionalReviewSharedContextFieldResponse`.
+- Adiciona `ProfessionalReviewSharedContextFoundationResponse`.
+- Adiciona `GET .../shared-context/foundation`.
+- Define vínculos opcionais com Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, contexto compartilhado, horizonte e observação profissional.
+- Define `FundacaoSharedContextDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Contexto profissional compartilhado` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.42.1 — Professional Review Shared Context Persistence.
+
+# v0.41.6 — Professional Review Collaboration Closure
 
 - Adiciona `ProfessionalReviewCollaborationClosureResponse`.
 - Adiciona endpoint `GET .../collaboration/closure`.
