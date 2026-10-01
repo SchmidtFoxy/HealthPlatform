@@ -5371,3 +5371,54 @@ A fundação organiza conhecimento documentado. Não transforma conhecimento em 
 
 **Próxima etapa:** `v0.48.1 — Professional Review Team Knowledge Persistence`.
 
+---
+
+## v0.48.1 — Professional Review Team Knowledge Persistence
+
+Adiciona persistência auditada para conhecimento documentado da equipe profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Insight relacionado opcional;
+- Team Learning relacionado opcional;
+- Team Outcome relacionado opcional;
+- Team Decision relacionada opcional;
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- conhecimento documentado;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- aplicabilidade;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar conhecimento**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra conhecimento documentado da equipe. Não transforma conhecimento em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transforma conhecimento registrado em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.48.2 — Professional Review Team Knowledge Status`.
+

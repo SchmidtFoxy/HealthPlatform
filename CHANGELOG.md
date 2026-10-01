@@ -1,4 +1,23 @@
-﻿# v0.48.0 — Professional Review Team Knowledge Foundation
+﻿# v0.48.1 — Professional Review Team Knowledge Persistence
+
+- Adiciona persistência auditada de Team Knowledge.
+- Adiciona `ProfessionalReviewTeamKnowledgePersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamKnowledge:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar conhecimento`.
+- Não transforma conhecimento em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.48.2 — Professional Review Team Knowledge Status.
+
+# v0.48.0 — Professional Review Team Knowledge Foundation
 
 - Abre a linha funcional 0.48.x.
 - Adiciona `ProfessionalReviewTeamKnowledgeFieldResponse`.

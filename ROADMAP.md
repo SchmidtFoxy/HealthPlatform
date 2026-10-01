@@ -4726,3 +4726,31 @@ Criar a fundação estrutural para conhecimento documentado da equipe profission
 ### v0.48.1 — Professional Review Team Knowledge Persistence
 Adicionar persistência auditada do conhecimento documentado da equipe profissional, com vínculos opcionais a Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre conhecimento registrado, evidência, causalidade, prognóstico, recomendação, decisão terapêutica, conduta e execução.
 
+## ✅ v0.48.1 — Professional Review Team Knowledge Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgePersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamKnowledge:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Team Insight;
+- vínculo opcional a Team Learning;
+- vínculo opcional a Team Outcome;
+- vínculo opcional a Team Decision;
+- vínculo opcional a Team Alignment;
+- vínculo opcional a Shared Context;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de conhecimento de equipe;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.48.2 — Professional Review Team Knowledge Status
+Adicionar estados documentais explícitos ao conhecimento registrado da equipe, com transições manuais e auditadas sem transformar conhecimento em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.
+

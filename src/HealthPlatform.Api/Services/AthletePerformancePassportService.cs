@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.48.0",
+            "v0.48.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Foundation abre a linha 0.48.x com uma fundação estrutural para conhecimento documentado da equipe profissional, conectando Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem transformar conhecimento em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
+            "Professional Review Team Knowledge Persistence adiciona persistência auditada ao conhecimento documentado da equipe profissional, com vínculos opcionais a Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e sem transformar conhecimento registrado em evidência clínica validada, causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou execução automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
