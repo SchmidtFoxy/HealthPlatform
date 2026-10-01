@@ -5518,3 +5518,30 @@ Os filtros apenas localizam registros documentais. Não transformam conhecimento
 
 **Próxima etapa:** `v0.48.5 — Professional Review Team Knowledge Summary`.
 
+---
+
+## v0.48.5 — Professional Review Team Knowledge Summary
+
+Adiciona resumo estrutural do conhecimento documentado da equipe.
+
+### Indicadores
+- total;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-knowledge/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo do conhecimento documentado da equipe** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não transformam conhecimento em evidência clínica validada, não inferem causalidade, prognóstico, recomendação ou decisão terapêutica, não representam score clínico, risco, urgência ou prioridade, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.48.6 — Professional Review Team Knowledge Closure`.
+

@@ -1,4 +1,21 @@
-﻿# v0.48.4 — Professional Review Team Knowledge Filters
+﻿# v0.48.5 — Professional Review Team Knowledge Summary
+
+- Adiciona `ProfessionalReviewTeamKnowledgeProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeSummaryResponse`.
+- Adiciona `GET .../team-knowledge/summary`.
+- Consolida total, ativos, registrados, em revisão, consolidados, descartados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo do conhecimento documentado da equipe`.
+- Atualiza o resumo após alterações.
+- Não transforma conhecimento em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.48.6 — Professional Review Team Knowledge Closure.
+
+# v0.48.4 — Professional Review Team Knowledge Filters
 
 - Adiciona `ProfessionalReviewTeamKnowledgeFiltersResponse`.
 - Adiciona endpoint `GET .../team-knowledge/search`.

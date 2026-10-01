@@ -1770,6 +1770,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza conhecimento documentado da equipe usando Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.48.1, possui persistência auditada. Não transforma conhecimento em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge/summary")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeSummaryResponse>> ResumoTeamKnowledges(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledge))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearTeamKnowledge).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var registrados = itens.Count(x => !x.Arquivada && x.Status == "Registrado");
+        var emRevisao = itens.Count(x => !x.Arquivada && x.Status == "EmRevisao");
+        var consolidados = itens.Count(x => !x.Arquivada && x.Status == "Consolidado");
+        var descartados = itens.Count(x => !x.Arquivada && x.Status == "Descartado");
+
+        var porProfissionalResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalResponsavel))
+            .GroupBy(x => x.ProfissionalResponsavel.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewTeamKnowledgeProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeSummaryResponse(
+            total,
+            ativos,
+            registrados,
+            emRevisao,
+            consolidados,
+            descartados,
+            arquivados,
+            porProfissionalResponsavel,
+            "O resumo apresenta somente agregações documentais do conhecimento registrado da equipe. Não transforma conhecimento em evidência clínica validada, não infere causalidade, prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge/search")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeFiltersResponse>> FiltrarTeamKnowledges(
         Guid pacienteId,
