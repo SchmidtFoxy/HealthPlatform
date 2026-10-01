@@ -2746,3 +2746,21 @@ Adicionar estados documentais explícitos ao Action Plan, com transições manua
 ### v0.33.3 — Professional Review Action Plan History
 Adicionar histórico consultável de criação, edição, mudanças de status e arquivamento do Action Plan, com autoria e datas.
 
+## ✅ v0.33.3 — Professional Review Action Plan History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewActionPlanHistoryItemResponse`;
+- `ProfessionalReviewActionPlanHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por ação operacional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.4 — Professional Review Action Plan Filters
+Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental do Action Plan.
+

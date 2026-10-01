@@ -4875,6 +4875,7 @@ const HP_PROGRESS_REVIEW_CARE_PLAN_CLOSURE_V0326='v0.32.6';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330='v0.33.0';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331='v0.33.1';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_V0332='v0.33.2';
+const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_HISTORY_V0333='v0.33.3';
 
 
 
@@ -4960,6 +4961,39 @@ function hpRenderProfessionalReviewActionPlanFoundationV0330(host,foundation){
 }
 
 
+
+async function hpOpenProfessionalReviewActionPlanHistoryV0333(p,actionPlan){
+  if(!p?.id || !actionPlan?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/action-plan/${actionPlan.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-action-plan-history-v0333="${HP_PROFESSIONAL_REVIEW_ACTION_PLAN_HISTORY_V0333}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico da ação operacional</h3>
+        <p class="muted-line">${esc(actionPlan.acaoOperacional||'Ação operacional')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewActionPlanHistoryV0333">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica.</small>
+  </div>`;
+  modal.classList.add('open');
+  $('#closeProfessionalReviewActionPlanHistoryV0333').onclick=()=>hpOpenProfessionalReviewActionPlanV0331(p);
+}
+
 async function hpOpenProfessionalReviewActionPlanV0331(p){
   if(!p?.id) return;
 
@@ -5021,6 +5055,7 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-action-plan-status-v0332="${x.id}" data-status-v0332="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluida'?`<button type="button" class="ghost" data-action-plan-status-v0332="${x.id}" data-status-v0332="Concluida">Concluir</button>`:''}
         ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-action-plan-status-v0332="${x.id}" data-status-v0332="Cancelada">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-action-plan-history-v0333="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-action-plan-archive-v0331="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma ação operacional registrada.</p>';
@@ -5036,6 +5071,11 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
       form.elements.carePlanRelacionadoId.value=item.carePlanRelacionadoId||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.acaoOperacional.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-action-plan-history-v0333]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.actionPlanHistoryV0333);
+      if(item) await hpOpenProfessionalReviewActionPlanHistoryV0333(p,item);
     });
 
     [...listHost.querySelectorAll('[data-action-plan-status-v0332]')].forEach(btn=>btn.onclick=async()=>{
@@ -10933,7 +10973,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.33.2';
+const HP_MVP_VERSION='0.33.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

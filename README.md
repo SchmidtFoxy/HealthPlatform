@@ -2023,3 +2023,35 @@ O status é documental. O sistema não inicia, conclui ou cancela ações automa
 
 **Próxima etapa:** `v0.33.3 — Professional Review Action Plan History`.
 
+---
+
+## v0.33.3 — Professional Review Action Plan History
+
+Adiciona histórico consultável dos eventos auditados do Action Plan.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../action-plan/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada ação operacional passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, prioridade, risco ou resultado.
+
+**Próxima etapa:** `v0.33.4 — Professional Review Action Plan Filters`.
+

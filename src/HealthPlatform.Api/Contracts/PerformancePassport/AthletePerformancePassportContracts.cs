@@ -129,6 +129,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewActionPlanHistoryItemResponse(
+    Guid Id,
+    Guid ActionPlanId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewActionPlanHistoryResponse(
+    Guid ActionPlanId,
+    IReadOnlyCollection<ProfessionalReviewActionPlanHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewActionPlanPersistedResponse(
     Guid Id,
     string AcaoOperacional,

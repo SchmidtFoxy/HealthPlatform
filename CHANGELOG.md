@@ -1,4 +1,18 @@
-﻿# v0.33.2 — Professional Review Action Plan Status
+﻿# v0.33.3 — Professional Review Action Plan History
+
+- Adiciona `ProfessionalReviewActionPlanHistoryItemResponse`.
+- Adiciona `ProfessionalReviewActionPlanHistoryResponse`.
+- Adiciona `GET .../action-plan/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no workspace profissional.
+- Não interpreta evolução clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.33.4 — Professional Review Action Plan Filters.
+
+# v0.33.2 — Professional Review Action Plan Status
 
 - Adiciona `Status` ao Action Plan persistido.
 - Adiciona `StatusAtualizadoEmUtc`.
