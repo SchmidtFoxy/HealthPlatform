@@ -2711,3 +2711,33 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.36.4 — Professional Review Delegation Filters`.
 
+---
+
+## v0.36.4 — Professional Review Delegation Filters
+
+Adiciona filtros profissionais para localizar delegações persistidas.
+
+### Filtros
+- status;
+- profissional delegante;
+- profissional delegado;
+- horizonte;
+- texto livre;
+- incluir arquivadas;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional delegante;
+- profissional delegado;
+- contexto da delegação;
+- observação profissional.
+
+### UI
+O gerenciador de delegações passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.36.5 — Professional Review Delegation Summary`.
+

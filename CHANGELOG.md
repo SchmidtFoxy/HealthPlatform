@@ -1,4 +1,21 @@
-﻿# v0.36.3 — Professional Review Delegation History
+﻿# v0.36.4 — Professional Review Delegation Filters
+
+- Adiciona `ProfessionalReviewDelegationFiltersResponse`.
+- Adiciona endpoint `GET .../delegation/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional delegante.
+- Adiciona filtro por profissional delegado.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivadas.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.36.5 — Professional Review Delegation Summary.
+
+# v0.36.3 — Professional Review Delegation History
 
 - Adiciona `ProfessionalReviewDelegationHistoryItemResponse`.
 - Adiciona `ProfessionalReviewDelegationHistoryResponse`.

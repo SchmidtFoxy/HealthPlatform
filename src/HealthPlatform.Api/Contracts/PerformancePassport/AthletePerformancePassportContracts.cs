@@ -148,6 +148,19 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewDelegationFiltersResponse(
+    string? Status,
+    string? ProfissionalDelegante,
+    string? ProfissionalDelegado,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewDelegationPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewDelegationHistoryItemResponse(
     Guid Id,
     Guid DelegationId,

@@ -3158,3 +3158,23 @@ Adicionar histórico consultável das delegações profissionais, cobrindo cria�
 ### v0.36.4 — Professional Review Delegation Filters
 Adicionar filtros profissionais por status, profissional delegante, profissional delegado, horizonte e texto, preservando a natureza documental das delegações.
 
+## ✅ v0.36.4 — Professional Review Delegation Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewDelegationFiltersResponse`;
+- endpoint `delegation/search`;
+- filtro por status;
+- filtro por profissional delegante;
+- filtro por profissional delegado;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivadas;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.5 — Professional Review Delegation Summary
+Adicionar resumo estrutural das delegações profissionais com contagem por status e distribuição por profissional delegante e delegado, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+
