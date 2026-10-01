@@ -4551,3 +4551,30 @@ Os filtros apenas localizam registros documentais. Não classificam urgência, r
 
 **Próxima etapa:** `v0.44.5 — Professional Review Team Decision Summary`.
 
+---
+
+## v0.44.5 — Professional Review Team Decision Summary
+
+Adiciona resumo estrutural das decisões documentadas da equipe.
+
+### Indicadores
+- total;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-decision/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo das decisões documentadas da equipe** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.44.6 — Professional Review Team Decision Closure`.
+

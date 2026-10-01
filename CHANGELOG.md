@@ -1,4 +1,19 @@
-﻿# v0.44.4 — Professional Review Team Decision Filters
+﻿# v0.44.5 — Professional Review Team Decision Summary
+
+- Adiciona `ProfessionalReviewTeamDecisionProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamDecisionSummaryResponse`.
+- Adiciona `GET .../team-decision/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo das decisões documentadas da equipe`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.44.6 — Professional Review Team Decision Closure.
+
+# v0.44.4 — Professional Review Team Decision Filters
 
 - Adiciona `ProfessionalReviewTeamDecisionFiltersResponse`.
 - Adiciona endpoint `GET .../team-decision/search`.
