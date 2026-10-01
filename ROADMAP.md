@@ -4082,3 +4082,21 @@ Adicionar estados documentais explícitos aos registros de alinhamento entre pro
 ### v0.43.3 — Professional Review Team Alignment History
 Adicionar histórico consultável dos alinhamentos entre profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.43.3 — Professional Review Team Alignment History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamAlignmentHistoryItemResponse`;
+- `ProfessionalReviewTeamAlignmentHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por alinhamento;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.43.4 — Professional Review Team Alignment Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos alinhamentos entre profissionais.
+

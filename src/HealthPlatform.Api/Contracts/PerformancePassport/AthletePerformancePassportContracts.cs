@@ -189,6 +189,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamAlignmentHistoryItemResponse(
+    Guid Id,
+    Guid TeamAlignmentId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewTeamAlignmentHistoryResponse(
+    Guid TeamAlignmentId,
+    IReadOnlyCollection<ProfessionalReviewTeamAlignmentHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamAlignmentPersistedResponse(
     Guid Id,
     Guid? SharedContextRelacionadoId,

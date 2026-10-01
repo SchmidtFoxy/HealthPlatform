@@ -1235,6 +1235,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearTeamAlignment(nota));
     }
 
+    [HttpGet("team-alignment/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewTeamAlignmentHistoryResponse>> HistoricoTeamAlignment(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var teamAlignmentExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamAlignment),
+                cancellationToken);
+
+        if (!teamAlignmentExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewTeamAlignmentHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoTeamAlignment(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewTeamAlignmentHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais de alinhamento entre profissionais. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("team-alignment/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewTeamAlignmentPersistedResponse>> AtualizarStatusTeamAlignment(
         Guid pacienteId,
@@ -6980,6 +7055,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoTeamAlignment(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static TeamAlignmentPayload LerPayloadTeamAlignment(NotaInternaProfissional nota)
     {

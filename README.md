@@ -4257,3 +4257,35 @@ O status é documental. O sistema não inicia, conclui ou cancela alinhamentos a
 
 **Próxima etapa:** `v0.43.3 — Professional Review Team Alignment History`.
 
+---
+
+## v0.43.3 — Professional Review Team Alignment History
+
+Adiciona histórico consultável dos eventos auditados dos alinhamentos entre profissionais.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-alignment/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada alinhamento passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.43.4 — Professional Review Team Alignment Filters`.
+

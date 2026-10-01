@@ -1,4 +1,19 @@
-﻿# v0.43.2 — Professional Review Team Alignment Status
+﻿# v0.43.3 — Professional Review Team Alignment History
+
+- Adiciona `ProfessionalReviewTeamAlignmentHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamAlignmentHistoryResponse`.
+- Adiciona `GET .../team-alignment/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.43.4 — Professional Review Team Alignment Filters.
+
+# v0.43.2 — Professional Review Team Alignment Status
 
 - Adiciona `Status` ao Team Alignment persistido.
 - Adiciona `StatusAtualizadoEmUtc`.
