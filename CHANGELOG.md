@@ -1,4 +1,20 @@
-﻿# v0.36.0 — Professional Review Delegation Foundation
+﻿# v0.36.1 — Professional Review Delegation Persistence
+
+- Adiciona persistência auditada de Delegation.
+- Adiciona `ProfessionalReviewDelegationPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewDelegation:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculo opcional com Assignment do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar delegações`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.36.2 — Professional Review Delegation Status.
+
+# v0.36.0 — Professional Review Delegation Foundation
 
 - Abre a linha funcional 0.36.x.
 - Adiciona `ProfessionalReviewDelegationFieldResponse`.

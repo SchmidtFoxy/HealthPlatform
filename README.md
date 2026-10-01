@@ -2608,3 +2608,42 @@ A fundação organiza delegações documentais da equipe. Não executa condutas,
 
 **Próxima etapa:** `v0.36.1 — Professional Review Delegation Persistence`.
 
+---
+
+## v0.36.1 — Professional Review Delegation Persistence
+
+Adiciona persistência auditada para delegações profissionais da equipe.
+
+### CRUD
+- listar delegações;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Assignment relacionada opcional;
+- profissional delegante;
+- profissional delegado;
+- contexto da delegação;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_DELEGATION_CREATED`
+- `PROFESSIONAL_REVIEW_DELEGATION_UPDATED`
+- `PROFESSIONAL_REVIEW_DELEGATION_ARCHIVED`
+
+### Vínculo com Assignment
+Quando informada, a Assignment relacionada precisa pertencer à mesma organização e paciente e não pode estar arquivada.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar delegações**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra delegação documental. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco ou prioridade clínica.
+
+**Próxima etapa:** `v0.36.2 — Professional Review Delegation Status`.
+

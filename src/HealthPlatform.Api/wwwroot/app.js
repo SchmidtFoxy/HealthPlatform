@@ -4894,6 +4894,7 @@ const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355='v0.35.5';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356='v0.35.6';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0';
+const HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1';
 
 
 
@@ -5138,7 +5139,120 @@ function hpRenderProfessionalReviewDelegationFoundationV0360(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza delegações documentais da equipe. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-delegation-open-v0361="${HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361}">Gerenciar delegações</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewDelegationV0361(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/delegation`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-delegation-persistence-v0361="${HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361}">
+    <div class="row-between">
+      <div>
+        <h3>Delegações profissionais</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewDelegationV0361">Fechar</button>
+    </div>
+    <form id="professionalReviewDelegationFormV0361" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional delegante<input name="profissionalDelegante" maxlength="160" required></label>
+      <label>Profissional delegado<input name="profissionalDelegado" maxlength="160" required></label>
+      <label>Assignment relacionada<input name="assignmentRelacionadaId" placeholder="ID opcional da atribuição"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto da delegação<textarea name="contextoDelegacao" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar delegação</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewDelegationV0361">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewDelegationListV0361" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewDelegationFormV0361');
+  const listHost=$('#professionalReviewDelegationListV0361');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalDelegante||'Delegante')} → ${esc(x.profissionalDelegado||'Delegado')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
+      ${x.contextoDelegacao?`<p>${esc(x.contextoDelegacao)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-delegation-edit-v0361="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-delegation-archive-v0361="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma delegação profissional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-delegation-edit-v0361]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.delegationEditV0361);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalDelegante.value=item.profissionalDelegante||'';
+      form.elements.profissionalDelegado.value=item.profissionalDelegado||'';
+      form.elements.assignmentRelacionadaId.value=item.assignmentRelacionadaId||'';
+      form.elements.contextoDelegacao.value=item.contextoDelegacao||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalDelegante.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-delegation-archive-v0361]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/delegation/${btn.dataset.delegationArchiveV0361}`,{method:'DELETE'});
+      toast('Delegação profissional arquivada.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalDelegante:String(fd.get('profissionalDelegante')||'').trim(),
+      profissionalDelegado:String(fd.get('profissionalDelegado')||'').trim(),
+      assignmentRelacionadaId:String(fd.get('assignmentRelacionadaId')||'').trim()||null,
+      contextoDelegacao:String(fd.get('contextoDelegacao')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/delegation${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Delegação profissional atualizada.':'Delegação profissional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewDelegationV0361').onclick=clear;
+  $('#closeProfessionalReviewDelegationV0361').onclick=()=>hpOpenProfessionalReviewTaskCoordinationV0341(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewAssignmentClosureV0356(patientId){
@@ -5260,7 +5374,11 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
 
   const delegationFoundationHostV0360=$('#professionalReviewDelegationFoundationV0360');
   hpLoadProfessionalReviewDelegationFoundationV0360(p.id)
-    .then(x=>hpRenderProfessionalReviewDelegationFoundationV0360(delegationFoundationHostV0360,x))
+    .then(x=>{
+      hpRenderProfessionalReviewDelegationFoundationV0360(delegationFoundationHostV0360,x);
+      const openDelegationV0361=delegationFoundationHostV0360?.querySelector('[data-delegation-open-v0361]');
+      if(openDelegationV0361) openDelegationV0361.onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
+    })
     .catch(()=>{ if(delegationFoundationHostV0360) delegationFoundationHostV0360.innerHTML=''; });
 
   const assignmentClosureHostV0356=$('#professionalReviewAssignmentClosureV0356');
@@ -11806,7 +11924,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.36.0';
+const HP_MVP_VERSION='0.36.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

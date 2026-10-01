@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.36.0",
+            "v0.36.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Delegation Foundation abre a linha 0.36.x com uma fundação estrutural para delegações profissionais relacionadas às atribuições existentes, sem execução automática ou priorização clínica.")
+            "Professional Review Delegation Persistence adiciona persistência profissional auditada às delegações, com vínculo opcional à Assignment e sem transformar documentação em execução, transferência automática de responsabilidade clínica ou prioridade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

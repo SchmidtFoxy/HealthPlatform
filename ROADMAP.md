@@ -3103,3 +3103,22 @@ Criar a fundação estrutural para delegação profissional relacionada às atri
 ### v0.36.1 — Professional Review Delegation Persistence
 Adicionar persistência auditada das delegações profissionais, com vínculo opcional à Assignment e preservação explícita de autoria, responsabilidade documental e separação entre delegação, decisão clínica e execução.
 
+## ✅ v0.36.1 — Professional Review Delegation Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewDelegationPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewDelegation:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional à Assignment;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de delegações profissionais;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.2 — Professional Review Delegation Status
+Adicionar estados documentais explícitos às delegações profissionais, com transições manuais e auditadas pela equipe.
+
