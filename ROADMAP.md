@@ -5007,3 +5007,33 @@ Criar a fundação estrutural para documentar efeitos observados após aplicaç�
 ### v0.50.1 — Professional Review Team Knowledge Effect Persistence
 Adicionar persistência auditada dos efeitos observados após aplicações do conhecimento da equipe profissional, com vínculos opcionais a Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity, preservando explicitamente a separação entre efeito observado, causalidade, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta e execução.
 
+## ✅ v0.50.1 — Professional Review Team Knowledge Effect Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamKnowledgeEffect:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Team Knowledge Application;
+- vínculo opcional a Team Knowledge;
+- vínculo opcional a Team Insight;
+- vínculo opcional a Team Learning;
+- vínculo opcional a Team Outcome;
+- vínculo opcional a Team Decision;
+- vínculo opcional a Team Alignment;
+- vínculo opcional a Shared Context;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de efeitos observados;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.50.2 — Professional Review Team Knowledge Effect Status
+Adicionar estados documentais explícitos aos efeitos observados registrados, com transições manuais e auditadas sem transformar estado em causalidade comprovada, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.
+

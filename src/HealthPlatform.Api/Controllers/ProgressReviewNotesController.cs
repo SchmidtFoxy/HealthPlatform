@@ -37,6 +37,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoTeamInsight = "ProfessionalReviewTeamInsight:";
     private const string PrefixoTeamKnowledge = "ProfessionalReviewTeamKnowledge:";
     private const string PrefixoTeamKnowledgeApplication = "ProfessionalReviewTeamKnowledgeApplication:";
+    private const string PrefixoTeamKnowledgeEffect = "ProfessionalReviewTeamKnowledgeEffect:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -1958,6 +1959,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza aplicação documentada do conhecimento da equipe usando Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.49.1, possui persistência auditada. Não transforma aplicação registrada em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    public sealed record CriarProfessionalReviewTeamKnowledgeEffectRequest(
+        string ProfissionalResponsavel,
+        string EfeitoObservadoDocumentado,
+        Guid? TeamKnowledgeApplicationRelacionadaId = null,
+        Guid? TeamKnowledgeRelacionadoId = null,
+        Guid? TeamInsightRelacionadoId = null,
+        Guid? TeamLearningRelacionadoId = null,
+        Guid? TeamOutcomeRelacionadoId = null,
+        Guid? TeamDecisionRelacionadaId = null,
+        Guid? TeamAlignmentRelacionadoId = null,
+        Guid? SharedContextRelacionadoId = null,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? ContextoObservacao = null,
+        string? BaseObservacionalEvidenciaSuporte = null,
+        string? InterpretacaoProfissional = null,
+        string? ResultadoObservadoDocumentado = null,
+        string? ImpactoPercebidoDocumentado = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewTeamKnowledgeEffectRequest(
+        string ProfissionalResponsavel,
+        string EfeitoObservadoDocumentado,
+        Guid? TeamKnowledgeApplicationRelacionadaId = null,
+        Guid? TeamKnowledgeRelacionadoId = null,
+        Guid? TeamInsightRelacionadoId = null,
+        Guid? TeamLearningRelacionadoId = null,
+        Guid? TeamOutcomeRelacionadoId = null,
+        Guid? TeamDecisionRelacionadaId = null,
+        Guid? TeamAlignmentRelacionadoId = null,
+        Guid? SharedContextRelacionadoId = null,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? ContextoObservacao = null,
+        string? BaseObservacionalEvidenciaSuporte = null,
+        string? InterpretacaoProfissional = null,
+        string? ResultadoObservadoDocumentado = null,
+        string? ImpactoPercebidoDocumentado = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("team-knowledge-effect/foundation")]
     public ActionResult<ProfessionalReviewTeamKnowledgeEffectFoundationResponse> TeamKnowledgeEffectFoundation()
     {
@@ -2099,10 +2148,288 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewTeamKnowledgeEffectFoundationResponse(
             "FundacaoTeamKnowledgeEffectDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza efeitos observados após aplicações do conhecimento da equipe usando Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não transforma efeito registrado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+            "A fundação organiza efeitos observados após aplicações do conhecimento da equipe usando Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.50.1, possui persistência auditada. Não transforma efeito registrado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
+    [HttpGet("team-knowledge-effect")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectPersistedResponse>>> ListarTeamKnowledgeEffects(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivados = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffect));
+
+        if (!incluirArquivados)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearTeamKnowledgeEffect).ToArray());
+    }
+
+    [HttpPost("team-knowledge-effect")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectPersistedResponse>> CriarTeamKnowledgeEffect(
+        Guid pacienteId,
+        CriarProfessionalReviewTeamKnowledgeEffectRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        var efeitoObservadoDocumentado = NormalizarObrigatorio(request.EfeitoObservadoDocumentado, 3000);
+        if (efeitoObservadoDocumentado is null)
+            return BadRequest(new { message = "Informe o efeito observado documentado." });
+
+        if (request.TeamKnowledgeApplicationRelacionadaId.HasValue &&
+            !await TeamKnowledgeApplicationPertencePacienteAsync(pacienteId, request.TeamKnowledgeApplicationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Knowledge Application relacionada inválida para este paciente." });
+
+        if (request.TeamKnowledgeRelacionadoId.HasValue &&
+            !await TeamKnowledgePertencePacienteAsync(pacienteId, request.TeamKnowledgeRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Knowledge relacionado inválido para este paciente." });
+
+        if (request.TeamInsightRelacionadoId.HasValue &&
+            !await TeamInsightPertencePacienteAsync(pacienteId, request.TeamInsightRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Insight relacionado inválido para este paciente." });
+
+        if (request.TeamLearningRelacionadoId.HasValue &&
+            !await TeamLearningPertencePacienteAsync(pacienteId, request.TeamLearningRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Learning relacionado inválido para este paciente." });
+
+        if (request.TeamOutcomeRelacionadoId.HasValue &&
+            !await TeamOutcomePertencePacienteAsync(pacienteId, request.TeamOutcomeRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Outcome relacionado inválido para este paciente." });
+
+        if (request.TeamDecisionRelacionadaId.HasValue &&
+            !await TeamDecisionPertencePacienteAsync(pacienteId, request.TeamDecisionRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Decision relacionada inválida para este paciente." });
+
+        if (request.TeamAlignmentRelacionadoId.HasValue &&
+            !await TeamAlignmentPertencePacienteAsync(pacienteId, request.TeamAlignmentRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Alignment relacionado inválido para este paciente." });
+
+        if (request.SharedContextRelacionadoId.HasValue &&
+            !await SharedContextPertencePacienteAsync(pacienteId, request.SharedContextRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Shared Context relacionado inválido para este paciente." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoTeamKnowledgeEffect + "item",
+            Conteudo = MontarPayloadTeamKnowledgeEffect(
+                profissionalResponsavel,
+                efeitoObservadoDocumentado,
+                request.TeamKnowledgeApplicationRelacionadaId,
+                request.TeamKnowledgeRelacionadoId,
+                request.TeamInsightRelacionadoId,
+                request.TeamLearningRelacionadoId,
+                request.TeamOutcomeRelacionadoId,
+                request.TeamDecisionRelacionadaId,
+                request.TeamAlignmentRelacionadoId,
+                request.SharedContextRelacionadoId,
+                request.CollaborationRelacionadaId,
+                request.CoordinationRelacionadaId,
+                request.EscalationRelacionadaId,
+                request.ContinuityRelacionadaId,
+                request.Participantes,
+                request.ContextoObservacao,
+                request.BaseObservacionalEvidenciaSuporte,
+                request.InterpretacaoProfissional,
+                request.ResultadoObservadoDocumentado,
+                request.ImpactoPercebidoDocumentado,
+                request.Horizonte,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamKnowledgeEffect(nota));
+    }
+
+    [HttpPut("team-knowledge-effect/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectPersistedResponse>> AtualizarTeamKnowledgeEffect(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewTeamKnowledgeEffectRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffect),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        var efeitoObservadoDocumentado = NormalizarObrigatorio(request.EfeitoObservadoDocumentado, 3000);
+        if (efeitoObservadoDocumentado is null)
+            return BadRequest(new { message = "Informe o efeito observado documentado." });
+
+        if (request.TeamKnowledgeApplicationRelacionadaId.HasValue &&
+            !await TeamKnowledgeApplicationPertencePacienteAsync(pacienteId, request.TeamKnowledgeApplicationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Knowledge Application relacionada inválida para este paciente." });
+
+        if (request.TeamKnowledgeRelacionadoId.HasValue &&
+            !await TeamKnowledgePertencePacienteAsync(pacienteId, request.TeamKnowledgeRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Knowledge relacionado inválido para este paciente." });
+
+        if (request.TeamInsightRelacionadoId.HasValue &&
+            !await TeamInsightPertencePacienteAsync(pacienteId, request.TeamInsightRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Insight relacionado inválido para este paciente." });
+
+        if (request.TeamLearningRelacionadoId.HasValue &&
+            !await TeamLearningPertencePacienteAsync(pacienteId, request.TeamLearningRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Learning relacionado inválido para este paciente." });
+
+        if (request.TeamOutcomeRelacionadoId.HasValue &&
+            !await TeamOutcomePertencePacienteAsync(pacienteId, request.TeamOutcomeRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Outcome relacionado inválido para este paciente." });
+
+        if (request.TeamDecisionRelacionadaId.HasValue &&
+            !await TeamDecisionPertencePacienteAsync(pacienteId, request.TeamDecisionRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Decision relacionada inválida para este paciente." });
+
+        if (request.TeamAlignmentRelacionadoId.HasValue &&
+            !await TeamAlignmentPertencePacienteAsync(pacienteId, request.TeamAlignmentRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Team Alignment relacionado inválido para este paciente." });
+
+        if (request.SharedContextRelacionadoId.HasValue &&
+            !await SharedContextPertencePacienteAsync(pacienteId, request.SharedContextRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Shared Context relacionado inválido para este paciente." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadTeamKnowledgeEffect(
+            profissionalResponsavel,
+            efeitoObservadoDocumentado,
+            request.TeamKnowledgeApplicationRelacionadaId,
+            request.TeamKnowledgeRelacionadoId,
+            request.TeamInsightRelacionadoId,
+            request.TeamLearningRelacionadoId,
+            request.TeamOutcomeRelacionadoId,
+            request.TeamDecisionRelacionadaId,
+            request.TeamAlignmentRelacionadoId,
+            request.SharedContextRelacionadoId,
+            request.CollaborationRelacionadaId,
+            request.CoordinationRelacionadaId,
+            request.EscalationRelacionadaId,
+            request.ContinuityRelacionadaId,
+            request.Participantes,
+            request.ContextoObservacao,
+            request.BaseObservacionalEvidenciaSuporte,
+            request.InterpretacaoProfissional,
+            request.ResultadoObservadoDocumentado,
+            request.ImpactoPercebidoDocumentado,
+            request.Horizonte,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamKnowledgeEffect(nota));
+    }
+
+    [HttpDelete("team-knowledge-effect/{id:guid}")]
+    public async Task<IActionResult> ArquivarTeamKnowledgeEffect(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffect),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("team-knowledge-application/closure")]
@@ -11180,6 +11507,125 @@ public class ProgressReviewNotesController(
         return JsonSerializer.Serialize(payload);
     }
 
+    private sealed record TeamKnowledgeEffectPayload(
+        string ProfissionalResponsavel,
+        string EfeitoObservadoDocumentado,
+        Guid? TeamKnowledgeApplicationRelacionadaId,
+        Guid? TeamKnowledgeRelacionadoId,
+        Guid? TeamInsightRelacionadoId,
+        Guid? TeamLearningRelacionadoId,
+        Guid? TeamOutcomeRelacionadoId,
+        Guid? TeamDecisionRelacionadaId,
+        Guid? TeamAlignmentRelacionadoId,
+        Guid? SharedContextRelacionadoId,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string? Participantes,
+        string? ContextoObservacao,
+        string? BaseObservacionalEvidenciaSuporte,
+        string? InterpretacaoProfissional,
+        string? ResultadoObservadoDocumentado,
+        string? ImpactoPercebidoDocumentado,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadTeamKnowledgeEffect(
+        string profissionalResponsavel,
+        string efeitoObservadoDocumentado,
+        Guid? teamKnowledgeApplicationRelacionadaId,
+        Guid? teamKnowledgeRelacionadoId,
+        Guid? teamInsightRelacionadoId,
+        Guid? teamLearningRelacionadoId,
+        Guid? teamOutcomeRelacionadoId,
+        Guid? teamDecisionRelacionadaId,
+        Guid? teamAlignmentRelacionadoId,
+        Guid? sharedContextRelacionadoId,
+        Guid? collaborationRelacionadaId,
+        Guid? coordinationRelacionadaId,
+        Guid? escalationRelacionadaId,
+        Guid? continuityRelacionadaId,
+        string? participantes,
+        string? contextoObservacao,
+        string? baseObservacionalEvidenciaSuporte,
+        string? interpretacaoProfissional,
+        string? resultadoObservadoDocumentado,
+        string? impactoPercebidoDocumentado,
+        string? horizonte,
+        string? observacaoProfissional)
+    {
+        var payload = new TeamKnowledgeEffectPayload(
+            profissionalResponsavel,
+            efeitoObservadoDocumentado,
+            teamKnowledgeApplicationRelacionadaId,
+            teamKnowledgeRelacionadoId,
+            teamInsightRelacionadoId,
+            teamLearningRelacionadoId,
+            teamOutcomeRelacionadoId,
+            teamDecisionRelacionadaId,
+            teamAlignmentRelacionadoId,
+            sharedContextRelacionadoId,
+            collaborationRelacionadaId,
+            coordinationRelacionadaId,
+            escalationRelacionadaId,
+            continuityRelacionadaId,
+            NormalizarOpcional(participantes, 1000),
+            NormalizarOpcional(contextoObservacao, 3000),
+            NormalizarOpcional(baseObservacionalEvidenciaSuporte, 3000),
+            NormalizarOpcional(interpretacaoProfissional, 3000),
+            NormalizarOpcional(resultadoObservadoDocumentado, 3000),
+            NormalizarOpcional(impactoPercebidoDocumentado, 3000),
+            NormalizarOpcional(horizonte, 120),
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewTeamKnowledgeEffectPersistedResponse MapearTeamKnowledgeEffect(NotaInternaProfissional nota)
+    {
+        TeamKnowledgeEffectPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<TeamKnowledgeEffectPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewTeamKnowledgeEffectPersistedResponse(
+            nota.Id,
+            payload?.TeamKnowledgeApplicationRelacionadaId,
+            payload?.TeamKnowledgeRelacionadoId,
+            payload?.TeamInsightRelacionadoId,
+            payload?.TeamLearningRelacionadoId,
+            payload?.TeamOutcomeRelacionadoId,
+            payload?.TeamDecisionRelacionadaId,
+            payload?.TeamAlignmentRelacionadoId,
+            payload?.SharedContextRelacionadoId,
+            payload?.CollaborationRelacionadaId,
+            payload?.CoordinationRelacionadaId,
+            payload?.EscalationRelacionadaId,
+            payload?.ContinuityRelacionadaId,
+            payload?.ProfissionalResponsavel ?? "Profissional",
+            payload?.Participantes,
+            payload?.EfeitoObservadoDocumentado ?? nota.Conteudo,
+            payload?.ContextoObservacao,
+            payload?.BaseObservacionalEvidenciaSuporte,
+            payload?.InterpretacaoProfissional,
+            payload?.ResultadoObservadoDocumentado,
+            payload?.ImpactoPercebidoDocumentado,
+            payload?.Horizonte,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
     private sealed record TeamKnowledgeApplicationPayload(
         string ProfissionalResponsavel,
         string AplicacaoDocumentada,
@@ -12962,6 +13408,20 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private async Task<bool> TeamKnowledgeApplicationPertencePacienteAsync(
+        Guid pacienteId,
+        Guid teamKnowledgeApplicationId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == teamKnowledgeApplicationId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeApplication) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private async Task<bool> TeamKnowledgePertencePacienteAsync(
         Guid pacienteId,

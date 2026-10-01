@@ -5877,3 +5877,58 @@ A fundação organiza efeitos observados após aplicações do conhecimento. Nã
 
 **Próxima etapa:** `v0.50.1 — Professional Review Team Knowledge Effect Persistence`.
 
+---
+
+## v0.50.1 — Professional Review Team Knowledge Effect Persistence
+
+Adiciona persistência auditada para efeitos observados após aplicações do conhecimento da equipe profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Knowledge Application relacionada opcional;
+- Team Knowledge relacionado opcional;
+- Team Insight relacionado opcional;
+- Team Learning relacionado opcional;
+- Team Outcome relacionado opcional;
+- Team Decision relacionada opcional;
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- efeito observado documentado;
+- contexto da observação;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- resultado observado documentado;
+- impacto percebido documentado;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar efeitos**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra efeitos observados do conhecimento da equipe. Não transforma efeito observado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transforma efeito registrado em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.50.2 — Professional Review Team Knowledge Effect Status`.
+

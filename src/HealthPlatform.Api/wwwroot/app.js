@@ -4992,6 +4992,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_FILTERS_V0494='v0.49.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_SUMMARY_V0495='v0.49.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_CLOSURE_V0496='v0.49.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1';
 
 
 
@@ -6160,7 +6161,185 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectFoundationV0500(host,found
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza efeitos observados após aplicações do conhecimento da equipe. Não comprova causalidade, não valida evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática e não executa conduta ou prescrição.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-knowledge-effect-open-v0501="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501}">Gerenciar efeitos</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-persistence-v0501="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501}">
+    <div class="row-between">
+      <div>
+        <h3>Efeitos observados do conhecimento da equipe</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectV0501">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamKnowledgeEffectFormV0501" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Team Knowledge Application relacionada<input name="teamKnowledgeApplicationRelacionadaId" placeholder="ID opcional da aplicação"></label>
+      <label>Team Knowledge relacionado<input name="teamKnowledgeRelacionadoId" placeholder="ID opcional do conhecimento"></label>
+      <label>Team Insight relacionado<input name="teamInsightRelacionadoId" placeholder="ID opcional do insight"></label>
+      <label>Team Learning relacionado<input name="teamLearningRelacionadoId" placeholder="ID opcional do aprendizado"></label>
+      <label>Team Outcome relacionado<input name="teamOutcomeRelacionadoId" placeholder="ID opcional do resultado"></label>
+      <label>Team Decision relacionada<input name="teamDecisionRelacionadaId" placeholder="ID opcional da decisão"></label>
+      <label>Team Alignment relacionado<input name="teamAlignmentRelacionadoId" placeholder="ID opcional do alinhamento"></label>
+      <label>Shared Context relacionado<input name="sharedContextRelacionadoId" placeholder="ID opcional do contexto compartilhado"></label>
+      <label>Collaboration relacionada<input name="collaborationRelacionadaId" placeholder="ID opcional da colaboração"></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000" placeholder="Profissionais participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Efeito observado documentado<textarea name="efeitoObservadoDocumentado" maxlength="3000" rows="4" required></textarea></label>
+      <label class="span-2">Contexto da observação<textarea name="contextoObservacao" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Base observacional / evidência de suporte<textarea name="baseObservacionalEvidenciaSuporte" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Interpretação profissional<textarea name="interpretacaoProfissional" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Resultado observado documentado<textarea name="resultadoObservadoDocumentado" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Impacto percebido documentado<textarea name="impactoPercebidoDocumentado" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar efeito</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectV0501">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamKnowledgeEffectListV0501" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não comprova causalidade, não valida evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não representa conduta executada ou prescrição automática e não transfere automaticamente responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTeamKnowledgeEffectFormV0501');
+  const listHost=$('#professionalReviewTeamKnowledgeEffectListV0501');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.teamKnowledgeApplicationRelacionadaId?`<small class="muted-line">Team Knowledge Application: ${esc(x.teamKnowledgeApplicationRelacionadaId)}</small>`:''}
+      ${x.teamKnowledgeRelacionadoId?`<small class="muted-line">Team Knowledge: ${esc(x.teamKnowledgeRelacionadoId)}</small>`:''}
+      ${x.teamInsightRelacionadoId?`<small class="muted-line">Team Insight: ${esc(x.teamInsightRelacionadoId)}</small>`:''}
+      ${x.teamLearningRelacionadoId?`<small class="muted-line">Team Learning: ${esc(x.teamLearningRelacionadoId)}</small>`:''}
+      ${x.teamOutcomeRelacionadoId?`<small class="muted-line">Team Outcome: ${esc(x.teamOutcomeRelacionadoId)}</small>`:''}
+      ${x.teamDecisionRelacionadaId?`<small class="muted-line">Team Decision: ${esc(x.teamDecisionRelacionadaId)}</small>`:''}
+      ${x.teamAlignmentRelacionadoId?`<small class="muted-line">Team Alignment: ${esc(x.teamAlignmentRelacionadoId)}</small>`:''}
+      ${x.sharedContextRelacionadoId?`<small class="muted-line">Shared Context: ${esc(x.sharedContextRelacionadoId)}</small>`:''}
+      ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      <p><b>Efeito observado:</b> ${esc(x.efeitoObservadoDocumentado||'')}</p>
+      ${x.contextoObservacao?`<p><b>Contexto:</b> ${esc(x.contextoObservacao)}</p>`:''}
+      ${x.baseObservacionalEvidenciaSuporte?`<p><b>Base observacional:</b> ${esc(x.baseObservacionalEvidenciaSuporte)}</p>`:''}
+      ${x.interpretacaoProfissional?`<p><b>Interpretação profissional:</b> ${esc(x.interpretacaoProfissional)}</p>`:''}
+      ${x.resultadoObservadoDocumentado?`<p><b>Resultado observado:</b> ${esc(x.resultadoObservadoDocumentado)}</p>`:''}
+      ${x.impactoPercebidoDocumentado?`<p><b>Impacto percebido:</b> ${esc(x.impactoPercebidoDocumentado)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-team-knowledge-effect-edit-v0501="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-team-knowledge-effect-archive-v0501="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum efeito observado registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-edit-v0501]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamKnowledgeEffectEditV0501);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalResponsavel.value=item.profissionalResponsavel||'';
+      form.elements.teamKnowledgeApplicationRelacionadaId.value=item.teamKnowledgeApplicationRelacionadaId||'';
+      form.elements.teamKnowledgeRelacionadoId.value=item.teamKnowledgeRelacionadoId||'';
+      form.elements.teamInsightRelacionadoId.value=item.teamInsightRelacionadoId||'';
+      form.elements.teamLearningRelacionadoId.value=item.teamLearningRelacionadoId||'';
+      form.elements.teamOutcomeRelacionadoId.value=item.teamOutcomeRelacionadoId||'';
+      form.elements.teamDecisionRelacionadaId.value=item.teamDecisionRelacionadaId||'';
+      form.elements.teamAlignmentRelacionadoId.value=item.teamAlignmentRelacionadoId||'';
+      form.elements.sharedContextRelacionadoId.value=item.sharedContextRelacionadoId||'';
+      form.elements.collaborationRelacionadaId.value=item.collaborationRelacionadaId||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.participantes.value=item.participantes||'';
+      form.elements.efeitoObservadoDocumentado.value=item.efeitoObservadoDocumentado||'';
+      form.elements.contextoObservacao.value=item.contextoObservacao||'';
+      form.elements.baseObservacionalEvidenciaSuporte.value=item.baseObservacionalEvidenciaSuporte||'';
+      form.elements.interpretacaoProfissional.value=item.interpretacaoProfissional||'';
+      form.elements.resultadoObservadoDocumentado.value=item.resultadoObservadoDocumentado||'';
+      form.elements.impactoPercebidoDocumentado.value=item.impactoPercebidoDocumentado||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-archive-v0501]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect/${btn.dataset.teamKnowledgeEffectArchiveV0501}`,{method:'DELETE'});
+      toast('Efeito observado arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      efeitoObservadoDocumentado:String(fd.get('efeitoObservadoDocumentado')||'').trim(),
+      teamKnowledgeApplicationRelacionadaId:String(fd.get('teamKnowledgeApplicationRelacionadaId')||'').trim()||null,
+      teamKnowledgeRelacionadoId:String(fd.get('teamKnowledgeRelacionadoId')||'').trim()||null,
+      teamInsightRelacionadoId:String(fd.get('teamInsightRelacionadoId')||'').trim()||null,
+      teamLearningRelacionadoId:String(fd.get('teamLearningRelacionadoId')||'').trim()||null,
+      teamOutcomeRelacionadoId:String(fd.get('teamOutcomeRelacionadoId')||'').trim()||null,
+      teamDecisionRelacionadaId:String(fd.get('teamDecisionRelacionadaId')||'').trim()||null,
+      teamAlignmentRelacionadoId:String(fd.get('teamAlignmentRelacionadoId')||'').trim()||null,
+      sharedContextRelacionadoId:String(fd.get('sharedContextRelacionadoId')||'').trim()||null,
+      collaborationRelacionadaId:String(fd.get('collaborationRelacionadaId')||'').trim()||null,
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      contextoObservacao:String(fd.get('contextoObservacao')||'').trim()||null,
+      baseObservacionalEvidenciaSuporte:String(fd.get('baseObservacionalEvidenciaSuporte')||'').trim()||null,
+      interpretacaoProfissional:String(fd.get('interpretacaoProfissional')||'').trim()||null,
+      resultadoObservadoDocumentado:String(fd.get('resultadoObservadoDocumentado')||'').trim()||null,
+      impactoPercebidoDocumentado:String(fd.get('impactoPercebidoDocumentado')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Efeito observado atualizado.':'Efeito observado registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTeamKnowledgeEffectV0501').onclick=clear;
+  $('#closeProfessionalReviewTeamKnowledgeEffectV0501').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewTeamKnowledgeApplicationClosureV0496(patientId){
@@ -6296,7 +6475,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
 
   const teamKnowledgeEffectFoundationHostV0500=$('#professionalReviewTeamKnowledgeEffectFoundationV0500');
   hpLoadProfessionalReviewTeamKnowledgeEffectFoundationV0500(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectFoundationV0500(teamKnowledgeEffectFoundationHostV0500,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTeamKnowledgeEffectFoundationV0500(teamKnowledgeEffectFoundationHostV0500,x);
+      const openTeamKnowledgeEffectV0501=teamKnowledgeEffectFoundationHostV0500?.querySelector('[data-team-knowledge-effect-open-v0501]');
+      if(openTeamKnowledgeEffectV0501) openTeamKnowledgeEffectV0501.onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p);
+    })
     .catch(()=>{ if(teamKnowledgeEffectFoundationHostV0500) teamKnowledgeEffectFoundationHostV0500.innerHTML=''; });
 
   const teamKnowledgeApplicationClosureHostV0496=$('#professionalReviewTeamKnowledgeApplicationClosureV0496');
@@ -16867,7 +17050,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.50.0';
+const HP_MVP_VERSION='0.50.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
