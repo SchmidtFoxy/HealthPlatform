@@ -3864,3 +3864,30 @@ Os filtros apenas localizam registros documentais. Não classificam urgência, r
 
 **Próxima etapa:** `v0.41.5 — Professional Review Collaboration Summary`.
 
+---
+
+## v0.41.5 — Professional Review Collaboration Summary
+
+Adiciona resumo estrutural das colaborações profissionais.
+
+### Indicadores
+- total;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../collaboration/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo das colaborações profissionais** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.41.6 — Professional Review Collaboration Closure`.
+

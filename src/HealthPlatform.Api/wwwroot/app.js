@@ -4933,6 +4933,7 @@ const HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411='v0.41.1';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_STATUS_V0412='v0.41.2';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_HISTORY_V0413='v0.41.3';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414='v0.41.4';
+const HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415='v0.41.5';
 
 
 
@@ -5546,6 +5547,35 @@ async function hpOpenProfessionalReviewCollaborationHistoryV0413(p,collaboration
   $('#closeProfessionalReviewCollaborationHistoryV0413').onclick=()=>hpOpenProfessionalReviewCollaborationV0411(p);
 }
 
+
+async function hpLoadProfessionalReviewCollaborationSummaryV0415(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/collaboration/summary`);
+}
+
+function hpRenderProfessionalReviewCollaborationSummaryV0415(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porProfissionalResponsavel)?summary.porProfissionalResponsavel:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-collaboration-summary-v0415="${HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415}">
+    <div><b>Resumo das colaborações profissionais</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativas??0))}</b></div>
+      <div class="row-between"><span>Planejadas</span><b>${esc(String(summary.planejadas??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídas</span><b>${esc(String(summary.concluidas??0))}</b></div>
+      <div class="row-between"><span>Canceladas</span><b>${esc(String(summary.canceladas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por profissional responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewCollaborationV0411(p){
   if(!p?.id) return;
 
@@ -5573,6 +5603,7 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewCollaborationV0411">Fechar</button>
     </div>
+    <div id="professionalReviewCollaborationSummaryV0415"></div>
     <form id="professionalReviewCollaborationFiltersV0414" class="form-grid" data-professional-review-collaboration-filters-v0414="${HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5615,6 +5646,11 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const collaborationSummaryHostV0415=$('#professionalReviewCollaborationSummaryV0415');
+  hpLoadProfessionalReviewCollaborationSummaryV0415(p.id)
+    .then(x=>hpRenderProfessionalReviewCollaborationSummaryV0415(collaborationSummaryHostV0415,x))
+    .catch(()=>{ if(collaborationSummaryHostV0415) collaborationSummaryHostV0415.innerHTML=''; });
 
   const form=$('#professionalReviewCollaborationFormV0411');
   const listHost=$('#professionalReviewCollaborationListV0411');
@@ -5689,12 +5725,18 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
       });
       toast(`Colaboração atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewCollaborationSummaryV0415(p.id)
+        .then(x=>hpRenderProfessionalReviewCollaborationSummaryV0415(collaborationSummaryHostV0415,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-collaboration-archive-v0411]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/collaboration/${btn.dataset.collaborationArchiveV0411}`,{method:'DELETE'});
       toast('Colaboração profissional arquivada.');
       await render();
+      hpLoadProfessionalReviewCollaborationSummaryV0415(p.id)
+        .then(x=>hpRenderProfessionalReviewCollaborationSummaryV0415(collaborationSummaryHostV0415,x))
+        .catch(()=>{});
     });
   };
 
@@ -5721,6 +5763,9 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
     toast(id?'Colaboração profissional atualizada.':'Colaboração profissional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewCollaborationSummaryV0415(p.id)
+      .then(x=>hpRenderProfessionalReviewCollaborationSummaryV0415(collaborationSummaryHostV0415,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -13790,7 +13835,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.41.4';
+const HP_MVP_VERSION='0.41.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

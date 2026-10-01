@@ -1,4 +1,18 @@
-﻿# v0.41.4 — Professional Review Collaboration Filters
+﻿# v0.41.5 — Professional Review Collaboration Summary
+
+- Adiciona `ProfessionalReviewCollaborationProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewCollaborationSummaryResponse`.
+- Adiciona `GET .../collaboration/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo das colaborações profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.41.6 — Professional Review Collaboration Closure.
+
+# v0.41.4 — Professional Review Collaboration Filters
 
 - Adiciona `ProfessionalReviewCollaborationFiltersResponse`.
 - Adiciona endpoint `GET .../collaboration/search`.

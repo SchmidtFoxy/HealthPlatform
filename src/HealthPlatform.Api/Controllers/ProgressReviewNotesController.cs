@@ -878,6 +878,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza colaboração documental compartilhada entre Coordination, Escalation e Continuity e, a partir da v0.41.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("collaboration/summary")]
+    public async Task<ActionResult<ProfessionalReviewCollaborationSummaryResponse>> ResumoCollaborations(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCollaboration))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearCollaboration).ToArray();
+
+        var total = itens.Length;
+        var arquivadas = itens.Count(x => x.Arquivada);
+        var ativas = itens.Count(x => !x.Arquivada);
+        var planejadas = itens.Count(x => !x.Arquivada && x.Status == "Planejada");
+        var emAndamento = itens.Count(x => !x.Arquivada && x.Status == "EmAndamento");
+        var concluidas = itens.Count(x => !x.Arquivada && x.Status == "Concluida");
+        var canceladas = itens.Count(x => !x.Arquivada && x.Status == "Cancelada");
+
+        var porProfissionalResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalResponsavel))
+            .GroupBy(x => x.ProfissionalResponsavel.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewCollaborationProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewCollaborationSummaryResponse(
+            total,
+            ativas,
+            planejadas,
+            emAndamento,
+            concluidas,
+            canceladas,
+            arquivadas,
+            porProfissionalResponsavel,
+            "O resumo apresenta somente agregações documentais das colaborações profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("collaboration/search")]
     public async Task<ActionResult<ProfessionalReviewCollaborationFiltersResponse>> FiltrarCollaborations(
         Guid pacienteId,

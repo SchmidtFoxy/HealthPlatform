@@ -3850,3 +3850,25 @@ Adicionar filtros profissionais por status, profissional responsável, horizonte
 ### v0.41.5 — Professional Review Collaboration Summary
 Adicionar resumo estrutural das colaborações profissionais com contagem por status e distribuição por profissional responsável, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.41.5 — Professional Review Collaboration Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCollaborationSummaryResponse`;
+- `ProfessionalReviewCollaborationProfissionalResumoResponse`;
+- total de registros;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- agrupamento por profissional responsável;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.41.6 — Professional Review Collaboration Closure
+Fechar o ciclo 0.41.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão da colaboração profissional.
+
