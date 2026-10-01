@@ -5739,3 +5739,37 @@ O histórico mostra somente eventos registrados. Não transforma aplicação em 
 
 **Próxima etapa:** `v0.49.4 — Professional Review Team Knowledge Application Filters`.
 
+---
+
+## v0.49.4 — Professional Review Team Knowledge Application Filters
+
+Adiciona filtros profissionais para localizar aplicações documentadas do conhecimento da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- aplicação documentada;
+- objetivo da aplicação;
+- contexto de aplicação;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- resultado esperado documentado;
+- observação profissional.
+
+### UI
+O gerenciador de aplicações passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam aplicação em evidência clínica validada, não inferem causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.49.5 — Professional Review Team Knowledge Application Summary`.
+

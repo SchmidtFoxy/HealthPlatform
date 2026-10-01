@@ -4931,3 +4931,22 @@ Adicionar histórico consultável da aplicação registrada do conhecimento da e
 ### v0.49.4 — Professional Review Team Knowledge Application Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental da aplicação registrada do conhecimento da equipe e sem promover o registro a evidência clínica validada.
 
+## ✅ v0.49.4 — Professional Review Team Knowledge Application Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeApplicationFiltersResponse`;
+- endpoint `team-knowledge-application/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.49.5 — Professional Review Team Knowledge Application Summary
+Adicionar resumo estrutural da aplicação documentada do conhecimento da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada nem gerar inferência automática de causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
+
