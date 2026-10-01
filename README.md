@@ -5576,3 +5576,48 @@ O fechamento mede somente disponibilidade estrutural. Não transforma conhecimen
 
 **Próxima etapa:** `v0.49.0 — Professional Review Team Knowledge Application Foundation`.
 
+---
+
+## v0.49.0 — Professional Review Team Knowledge Application Foundation
+
+Abre a linha 0.49.x com a fundação estrutural para aplicação documentada do conhecimento da equipe profissional.
+
+### Campos da fundação
+- Team Knowledge relacionado;
+- Team Insight relacionado;
+- Team Learning relacionado;
+- Team Outcome relacionado;
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- aplicação documentada;
+- objetivo da aplicação;
+- contexto de aplicação;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- resultado esperado documentado;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-knowledge-application/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamKnowledgeApplicationDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Aplicação documentada do conhecimento da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza aplicação documentada do conhecimento. Não transforma aplicação registrada em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.49.1 — Professional Review Team Knowledge Application Persistence`.
+
