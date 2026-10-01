@@ -194,6 +194,27 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamDecisionPersistedResponse(
+    Guid Id,
+    Guid? TeamAlignmentRelacionadoId,
+    Guid? SharedContextRelacionadoId,
+    Guid? CollaborationRelacionadaId,
+    Guid? CoordinationRelacionadaId,
+    Guid? EscalationRelacionadaId,
+    Guid? ContinuityRelacionadaId,
+    string ProfissionalResponsavel,
+    string? Participantes,
+    string DecisaoDocumentada,
+    string? RacionalJustificativa,
+    string? Horizonte,
+    string? ObservacaoProfissional,
+    Guid AutorUsuarioId,
+    string AutorNome,
+    DateTime CriadoEmUtc,
+    DateTime? AtualizadoEmUtc,
+    bool Arquivada);
+
 public sealed record ProfessionalReviewTeamDecisionFieldResponse(
     string Chave,
     string Rotulo,

@@ -1,4 +1,21 @@
-﻿# v0.44.0 — Professional Review Team Decision Foundation
+﻿# v0.44.1 — Professional Review Team Decision Persistence
+
+- Adiciona persistência auditada de Team Decision.
+- Adiciona `ProfessionalReviewTeamDecisionPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamDecision:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar decisões`.
+- Não cria prescrição ou execução automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.44.2 — Professional Review Team Decision Status.
+
+# v0.44.0 — Professional Review Team Decision Foundation
 
 - Abre a linha funcional 0.44.x.
 - Adiciona `ProfessionalReviewTeamDecisionFieldResponse`.

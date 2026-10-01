@@ -4176,3 +4176,27 @@ Criar a fundação estrutural para decisões documentadas de equipe profissional
 ### v0.44.1 — Professional Review Team Decision Persistence
 Adicionar persistência auditada das decisões documentadas da equipe profissional, com vínculos opcionais a Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre decisão registrada, prescrição, conduta e execução.
 
+## ✅ v0.44.1 — Professional Review Team Decision Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamDecisionPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamDecision:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Team Alignment;
+- vínculo opcional a Shared Context;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de decisões de equipe;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.44.2 — Professional Review Team Decision Status
+Adicionar estados documentais explícitos às decisões registradas da equipe, com transições manuais e auditadas sem executar automaticamente conduta ou prescrição.
+

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.44.0",
+            "v0.44.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Decision Foundation abre a linha 0.44.x com uma fundação estrutural para decisões documentadas de equipe profissional, conectando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem execução, prescrição ou priorização automática.")
+            "Professional Review Team Decision Persistence adiciona persistência auditada às decisões documentadas de equipe profissional, com vínculos opcionais a Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e sem transformar decisão registrada em prescrição, conduta ou execução automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

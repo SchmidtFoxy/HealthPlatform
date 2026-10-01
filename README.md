@@ -4412,3 +4412,48 @@ A fundação organiza decisões documentadas entre profissionais. Não executa c
 
 **Próxima etapa:** `v0.44.1 — Professional Review Team Decision Persistence`.
 
+---
+
+## v0.44.1 — Professional Review Team Decision Persistence
+
+Adiciona persistência auditada para decisões documentadas de equipe profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Team Alignment relacionado opcional;
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- decisão documentada;
+- racional / justificativa;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_DECISION_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_DECISION_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_DECISION_ARCHIVED`
+
+### Vínculos
+Quando informados, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar decisões**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra decisões documentadas da equipe. Não executa conduta, não cria prescrição automática, não transforma decisão registrada em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.44.2 — Professional Review Team Decision Status`.
+
