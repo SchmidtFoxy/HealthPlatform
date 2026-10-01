@@ -534,6 +534,63 @@ public class ProgressReviewNotesController(
             "A fundação organiza handoffs documentais entre profissionais e, a partir da v0.37.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("continuity/foundation")]
+    public ActionResult<ProfessionalReviewContinuityFoundationResponse> ContinuityFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewContinuityFieldResponse(
+                "handoff-relacionado",
+                "Handoff relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a continuidade a um handoff profissional já documentado."),
+            new ProfessionalReviewContinuityFieldResponse(
+                "delegation-relacionada",
+                "Delegation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a continuidade a uma delegação profissional já documentada."),
+            new ProfessionalReviewContinuityFieldResponse(
+                "assignment-relacionada",
+                "Assignment relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a continuidade a uma atribuição profissional já documentada."),
+            new ProfessionalReviewContinuityFieldResponse(
+                "profissional-seguimento",
+                "Profissional de seguimento",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo acompanhamento de continuidade."),
+            new ProfessionalReviewContinuityFieldResponse(
+                "contexto-continuidade",
+                "Contexto de continuidade",
+                false,
+                "texto-longo",
+                "Documenta o contexto compartilhado necessário para continuidade operacional da equipe."),
+            new ProfessionalReviewContinuityFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewContinuityFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes para a continuidade.")
+        };
+
+        return Ok(new ProfessionalReviewContinuityFoundationResponse(
+            "FundacaoContinuityDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza continuidade documental entre profissionais a partir de handoffs, delegações e atribuições existentes. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("handoff/closure")]
     public ActionResult<ProfessionalReviewHandoffClosureResponse> FechamentoHandoffs()
     {

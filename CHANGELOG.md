@@ -1,4 +1,20 @@
-﻿# v0.37.6 — Professional Review Handoff Closure
+﻿# v0.38.0 — Professional Review Continuity Foundation
+
+- Abre a linha funcional 0.38.x.
+- Adiciona `ProfessionalReviewContinuityFieldResponse`.
+- Adiciona `ProfessionalReviewContinuityFoundationResponse`.
+- Adiciona `GET .../continuity/foundation`.
+- Define Handoff relacionado, Delegation relacionada, Assignment relacionada, profissional de seguimento, contexto de continuidade, horizonte e observação profissional.
+- Define `FundacaoContinuityDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Continuidade profissional` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.38.1 — Professional Review Continuity Persistence.
+
+# v0.37.6 — Professional Review Handoff Closure
 
 - Adiciona `ProfessionalReviewHandoffClosureResponse`.
 - Adiciona endpoint `GET .../handoff/closure`.

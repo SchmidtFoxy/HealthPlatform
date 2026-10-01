@@ -157,6 +157,21 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewContinuityFieldResponse(
+    string Chave,
+    string Rotulo,
+    bool Obrigatorio,
+    string Tipo,
+    string? Ajuda);
+
+public sealed record ProfessionalReviewContinuityFoundationResponse(
+    string EstadoPreparacao,
+    bool PersistenciaDisponivel,
+    string Escopo,
+    IReadOnlyCollection<ProfessionalReviewContinuityFieldResponse> Campos,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewHandoffClosureResponse(
     int ComponentesEsperados,
     int ComponentesDisponiveis,

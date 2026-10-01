@@ -3024,3 +3024,34 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.38.0 — Professional Review Continuity Foundation`.
 
+---
+
+## v0.38.0 — Professional Review Continuity Foundation
+
+Abre a linha 0.38.x com a fundação estrutural de continuidade profissional, conectando handoffs, delegações e atribuições já documentadas.
+
+### Campos da fundação
+- Handoff relacionado;
+- Delegation relacionada;
+- Assignment relacionada;
+- profissional de seguimento;
+- contexto de continuidade;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../continuity/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoContinuityDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Continuidade profissional**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza continuidade documental entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.38.1 — Professional Review Continuity Persistence`.
+

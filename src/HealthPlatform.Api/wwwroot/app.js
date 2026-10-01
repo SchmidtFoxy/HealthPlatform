@@ -4907,6 +4907,7 @@ const HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6';
+const HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0';
 
 
 
@@ -5258,6 +5259,34 @@ async function hpOpenProfessionalReviewHandoffHistoryV0373(p,handoff){
 
 
 
+
+async function hpLoadProfessionalReviewContinuityFoundationV0380(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/continuity/foundation`);
+}
+
+function hpRenderProfessionalReviewContinuityFoundationV0380(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-continuity-v0380="${HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380}">
+    <div class="row-between">
+      <div>
+        <b>Continuidade profissional</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza continuidade documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewHandoffClosureV0376(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/handoff/closure`);
@@ -5336,6 +5365,7 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewHandoffV0371">Fechar</button>
     </div>
+    <div id="professionalReviewContinuityFoundationV0380"></div>
     <div id="professionalReviewHandoffClosureV0376"></div>
     <div id="professionalReviewHandoffSummaryV0375"></div>
     <form id="professionalReviewHandoffFiltersV0374" class="form-grid" data-professional-review-handoff-filters-v0374="${HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374}">
@@ -5380,6 +5410,11 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const continuityFoundationHostV0380=$('#professionalReviewContinuityFoundationV0380');
+  hpLoadProfessionalReviewContinuityFoundationV0380(p.id)
+    .then(x=>hpRenderProfessionalReviewContinuityFoundationV0380(continuityFoundationHostV0380,x))
+    .catch(()=>{ if(continuityFoundationHostV0380) continuityFoundationHostV0380.innerHTML=''; });
 
   const handoffClosureHostV0376=$('#professionalReviewHandoffClosureV0376');
   hpLoadProfessionalReviewHandoffClosureV0376(p.id)
@@ -12465,7 +12500,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.37.6';
+const HP_MVP_VERSION='0.38.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

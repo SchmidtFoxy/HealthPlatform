@@ -3352,3 +3352,21 @@ Fechar o ciclo 0.37.x consolidando fundação, persistência, status, histórico
 ### v0.38.0 — Professional Review Continuity Foundation
 Criar a fundação estrutural de continuidade profissional, conectando handoffs, delegações e atribuições já documentadas em uma visão de acompanhamento entre profissionais sem automatizar conduta, prioridade clínica, risco ou transferência de responsabilidade.
 
+## ✅ v0.38.0 — Professional Review Continuity Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewContinuityFieldResponse`;
+- `ProfessionalReviewContinuityFoundationResponse`;
+- endpoint `continuity/foundation`;
+- sete campos estruturais;
+- estado `FundacaoContinuityDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.38.1 — Professional Review Continuity Persistence
+Adicionar persistência auditada dos registros de continuidade profissional, com vínculos opcionais a Handoff, Delegation e Assignment e preservação explícita de autoria, responsabilidade documental e separação entre continuidade, decisão clínica e execução.
+
