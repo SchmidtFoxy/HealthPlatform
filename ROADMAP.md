@@ -3274,3 +3274,21 @@ Adicionar estados documentais explícitos aos handoffs profissionais, com transi
 ### v0.37.3 — Professional Review Handoff History
 Adicionar histórico consultável dos handoffs profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.37.3 — Professional Review Handoff History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewHandoffHistoryItemResponse`;
+- `ProfessionalReviewHandoffHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por handoff;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.4 — Professional Review Handoff Filters
+Adicionar filtros profissionais por status, profissional de origem, profissional de destino, horizonte e texto, preservando a natureza documental dos handoffs.
+

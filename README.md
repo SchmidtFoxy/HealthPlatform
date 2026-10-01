@@ -2903,3 +2903,35 @@ O status é documental. O sistema não inicia, conclui ou cancela handoffs autom
 
 **Próxima etapa:** `v0.37.3 — Professional Review Handoff History`.
 
+---
+
+## v0.37.3 — Professional Review Handoff History
+
+Adiciona histórico consultável dos eventos auditados dos handoffs profissionais.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../handoff/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada handoff passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.37.4 — Professional Review Handoff Filters`.
+

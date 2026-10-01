@@ -4903,6 +4903,7 @@ const HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366='v0.36.6';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2';
+const HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3';
 
 
 
@@ -5218,6 +5219,40 @@ function hpRenderProfessionalReviewHandoffFoundationV0370(host,foundation){
 }
 
 
+
+async function hpOpenProfessionalReviewHandoffHistoryV0373(p,handoff){
+  if(!p?.id || !handoff?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/handoff/${handoff.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-handoff-history-v0373="${HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do handoff profissional</h3>
+        <p class="muted-line">${esc(handoff.profissionalOrigem||'Origem')} → ${esc(handoff.profissionalDestino||'Destino')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewHandoffHistoryV0373">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica ou transferência automática de responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewHandoffHistoryV0373').onclick=()=>hpOpenProfessionalReviewHandoffV0371(p);
+}
+
 async function hpOpenProfessionalReviewHandoffV0371(p){
   if(!p?.id) return;
 
@@ -5284,6 +5319,7 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluido'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="Concluido">Concluir</button>`:''}
         ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="Cancelado">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-handoff-history-v0373="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-handoff-archive-v0371="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum handoff profissional registrado.</p>';
@@ -5300,6 +5336,11 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalOrigem.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-handoff-history-v0373]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.handoffHistoryV0373);
+      if(item) await hpOpenProfessionalReviewHandoffHistoryV0373(p,item);
     });
 
     [...listHost.querySelectorAll('[data-handoff-status-v0372]')].forEach(btn=>btn.onclick=async()=>{
@@ -12289,7 +12330,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.37.2';
+const HP_MVP_VERSION='0.37.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

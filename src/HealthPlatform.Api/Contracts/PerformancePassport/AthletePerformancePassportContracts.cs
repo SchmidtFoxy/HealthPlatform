@@ -153,6 +153,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewHandoffHistoryItemResponse(
+    Guid Id,
+    Guid HandoffId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewHandoffHistoryResponse(
+    Guid HandoffId,
+    IReadOnlyCollection<ProfessionalReviewHandoffHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewHandoffPersistedResponse(
     Guid Id,
     Guid? DelegationRelacionadaId,

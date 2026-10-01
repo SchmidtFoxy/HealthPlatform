@@ -1,4 +1,19 @@
-﻿# v0.37.2 — Professional Review Handoff Status
+﻿# v0.37.3 — Professional Review Handoff History
+
+- Adiciona `ProfessionalReviewHandoffHistoryItemResponse`.
+- Adiciona `ProfessionalReviewHandoffHistoryResponse`.
+- Adiciona `GET .../handoff/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.37.4 — Professional Review Handoff Filters.
+
+# v0.37.2 — Professional Review Handoff Status
 
 - Adiciona `Status` ao Handoff persistido.
 - Adiciona `StatusAtualizadoEmUtc`.
