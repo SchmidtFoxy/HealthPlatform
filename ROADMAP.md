@@ -4064,3 +4064,21 @@ Adicionar persistência auditada dos registros de alinhamento entre profissionai
 ### v0.43.2 — Professional Review Team Alignment Status
 Adicionar estados documentais explícitos aos registros de alinhamento entre profissionais, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.43.2 — Professional Review Team Alignment Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejado`, `EmAndamento`, `Concluido` e `Cancelado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.43.3 — Professional Review Team Alignment History
+Adicionar histórico consultável dos alinhamentos entre profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

@@ -201,11 +201,16 @@ public sealed record ProfessionalReviewTeamAlignmentPersistedResponse(
     string? ObjetivoAlinhamento,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamAlignmentStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamAlignmentFieldResponse(
     string Chave,

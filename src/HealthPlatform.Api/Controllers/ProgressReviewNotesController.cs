@@ -1211,22 +1211,79 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadTeamAlignment(
+        var payloadAtual = LerPayloadTeamAlignment(nota);
+        var payloadAtualizado = new TeamAlignmentPayload(
             profissionalResponsavel,
             request.SharedContextRelacionadoId,
             request.CollaborationRelacionadaId,
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.Participantes,
-            request.ObjetivoAlinhamento,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Participantes, 1000),
+            NormalizarOpcional(request.ObjetivoAlinhamento, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamAlignment(nota));
+    }
+
+    [HttpPatch("team-alignment/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTeamAlignmentPersistedResponse>> AtualizarStatusTeamAlignment(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTeamAlignmentStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusTeamAlignmentValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejado, EmAndamento, Concluido ou Cancelado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamAlignment) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTeamAlignment(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearTeamAlignment(nota));
     }
 
@@ -6857,7 +6914,9 @@ public class ProgressReviewNotesController(
         string? Participantes,
         string? ObjetivoAlinhamento,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadTeamAlignment(
         string profissionalResponsavel,
@@ -6881,7 +6940,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(participantes, 1000),
             NormalizarOpcional(objetivoAlinhamento, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -6911,12 +6972,30 @@ public class ProgressReviewNotesController(
             payload?.ObjetivoAlinhamento,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static TeamAlignmentPayload LerPayloadTeamAlignment(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamAlignmentPayload>(nota.Conteudo)
+                ?? new TeamAlignmentPayload(nota.Conteudo, null, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new TeamAlignmentPayload(nota.Conteudo, null, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusTeamAlignmentValido(string? status) =>
+        status is "Planejado" or "EmAndamento" or "Concluido" or "Cancelado";
 
     private sealed record SharedContextPayload(
         string ProfissionalResponsavel,

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.43.1",
+            "v0.43.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Alignment Persistence adiciona persistência auditada ao alinhamento entre profissionais, com vínculos opcionais a Shared Context, Collaboration, Coordination, Escalation e Continuity e sem transformar alinhamento documentado em execução, prioridade clínica ou transferência automática de responsabilidade clínica.")
+            "Professional Review Team Alignment Status adiciona estados documentais explícitos ao alinhamento entre profissionais, com transições manuais auditadas entre Planejado, EmAndamento, Concluido e Cancelado, sem execução automática ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

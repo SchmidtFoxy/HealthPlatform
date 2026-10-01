@@ -1,4 +1,20 @@
-﻿# v0.43.1 — Professional Review Team Alignment Persistence
+﻿# v0.43.2 — Professional Review Team Alignment Status
+
+- Adiciona `Status` ao Team Alignment persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamAlignmentStatusRequest`.
+- Adiciona endpoint `PATCH .../team-alignment/{id}/status`.
+- Estados permitidos: `Planejado`, `EmAndamento`, `Concluido`, `Cancelado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.43.3 — Professional Review Team Alignment History.
+
+# v0.43.1 — Professional Review Team Alignment Persistence
 
 - Adiciona persistência auditada de Team Alignment.
 - Adiciona `ProfessionalReviewTeamAlignmentPersistedResponse`.

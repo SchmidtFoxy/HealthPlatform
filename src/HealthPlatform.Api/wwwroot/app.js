@@ -4944,6 +4944,7 @@ const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425='v0.42.5';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426='v0.42.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_V0430='v0.43.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431='v0.43.1';
+const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_V0432='v0.43.2';
 
 
 
@@ -5710,8 +5711,9 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejado')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.sharedContextRelacionadoId?`<small class="muted-line">Shared Context: ${esc(x.sharedContextRelacionadoId)}</small>`:''}
@@ -5723,6 +5725,10 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-team-alignment-edit-v0431="${x.id}">Editar</button>
+        ${x.status!=='Planejado'?`<button type="button" class="ghost" data-team-alignment-status-v0432="${x.id}" data-status-v0432="Planejado">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-team-alignment-status-v0432="${x.id}" data-status-v0432="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluido'?`<button type="button" class="ghost" data-team-alignment-status-v0432="${x.id}" data-status-v0432="Concluido">Concluir</button>`:''}
+        ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-team-alignment-status-v0432="${x.id}" data-status-v0432="Cancelado">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-team-alignment-archive-v0431="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum alinhamento entre profissionais registrado.</p>';
@@ -5742,6 +5748,16 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-alignment-status-v0432]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0432;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-alignment/${btn.dataset.teamAlignmentStatusV0432}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Alinhamento atualizado para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-team-alignment-archive-v0431]')].forEach(btn=>btn.onclick=async()=>{
@@ -14380,7 +14396,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.43.1';
+const HP_MVP_VERSION='0.43.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
