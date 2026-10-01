@@ -5180,3 +5180,21 @@ Adicionar persistência auditada das revisões profissionais dos efeitos observa
 ### v0.51.2 — Professional Review Team Knowledge Effect Review Status
 Adicionar estados documentais explícitos às revisões profissionais registradas, com transições manuais e auditadas sem transformar estado em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.
 
+## ✅ v0.51.2 — Professional Review Team Knowledge Effect Review Status — CONCLUÍDA
+
+**Entregue:**
+- status `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.51.3 — Professional Review Team Knowledge Effect Review History
+Adicionar histórico consultável das revisões profissionais registradas, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

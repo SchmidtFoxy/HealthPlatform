@@ -262,11 +262,16 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectReviewPersistedRespons
     string? NecessidadeAcompanhamentoDocumentada,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectReviewStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
     string Chave,
