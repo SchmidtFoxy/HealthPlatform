@@ -3698,3 +3698,22 @@ Adicionar histórico consultável das coordenações profissionais, cobrindo cri
 ### v0.40.4 — Professional Review Coordination Filters
 Adicionar filtros profissionais por status, profissional coordenador, horizonte e texto, preservando a natureza documental das coordenações.
 
+## ✅ v0.40.4 — Professional Review Coordination Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCoordinationFiltersResponse`;
+- endpoint `coordination/search`;
+- filtro por status;
+- filtro por profissional coordenador;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivadas;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.40.5 — Professional Review Coordination Summary
+Adicionar resumo estrutural das coordenações profissionais com contagem por status e distribuição por profissional coordenador, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+

@@ -3612,3 +3612,31 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.40.4 — Professional Review Coordination Filters`.
 
+---
+
+## v0.40.4 — Professional Review Coordination Filters
+
+Adiciona filtros profissionais para localizar coordenações persistidas.
+
+### Filtros
+- status;
+- profissional coordenador;
+- horizonte;
+- texto livre;
+- incluir arquivadas;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional coordenador;
+- contexto de coordenação;
+- observação profissional.
+
+### UI
+O gerenciador de coordenações passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.40.5 — Professional Review Coordination Summary`.
+

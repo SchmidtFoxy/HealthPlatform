@@ -172,6 +172,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewCoordinationFiltersResponse(
+    string? Status,
+    string? ProfissionalCoordenador,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewCoordinationPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewCoordinationHistoryItemResponse(
     Guid Id,
     Guid CoordinationId,
