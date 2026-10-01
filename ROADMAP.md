@@ -4950,3 +4950,25 @@ Adicionar filtros profissionais por status, profissional responsável, horizonte
 ### v0.49.5 — Professional Review Team Knowledge Application Summary
 Adicionar resumo estrutural da aplicação documentada do conhecimento da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada nem gerar inferência automática de causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
 
+## ✅ v0.49.5 — Professional Review Team Knowledge Application Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeApplicationSummaryResponse`;
+- `ProfessionalReviewTeamKnowledgeApplicationProfissionalResumoResponse`;
+- total de registros;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- agrupamento por profissional responsável;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.49.6 — Professional Review Team Knowledge Application Closure
+Fechar o ciclo 0.49.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão da aplicação documentada do conhecimento da equipe.
+

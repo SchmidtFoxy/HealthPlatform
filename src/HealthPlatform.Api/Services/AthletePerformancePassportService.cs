@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.49.4",
+            "v0.49.5",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Application Filters adiciona busca profissional por status, profissional responsável, horizonte, texto e arquivamento, sem transformar filtros em evidência clínica validada, causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição automática.")
+            "Professional Review Team Knowledge Application Summary consolida contagens documentais por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada, causalidade, prognóstico, recomendação, decisão terapêutica, score clínico, risco, urgência, prioridade, conduta ou prescrição automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

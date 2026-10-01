@@ -4989,6 +4989,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_PERSISTENCE_V0491='v0.49
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_V0492='v0.49.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493='v0.49.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_FILTERS_V0494='v0.49.4';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_SUMMARY_V0495='v0.49.5';
 
 
 
@@ -6130,6 +6131,35 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationHistoryV0493(p,te
   $('#closeProfessionalReviewTeamKnowledgeApplicationHistoryV0493').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p);
 }
 
+
+async function hpLoadProfessionalReviewTeamKnowledgeApplicationSummaryV0495(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-application/summary`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeApplicationSummaryV0495(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porProfissionalResponsavel)?summary.porProfissionalResponsavel:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-application-summary-v0495="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_SUMMARY_V0495}">
+    <div><b>Resumo das aplicações documentadas do conhecimento da equipe</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Registrados</span><b>${esc(String(summary.registrados??0))}</b></div>
+      <div class="row-between"><span>Em revisão</span><b>${esc(String(summary.emRevisao??0))}</b></div>
+      <div class="row-between"><span>Consolidados</span><b>${esc(String(summary.consolidados??0))}</b></div>
+      <div class="row-between"><span>Descartados</span><b>${esc(String(summary.descartados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por profissional responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não valida evidência clínica, não representa causalidade, prognóstico, recomendação, decisão terapêutica, score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição automática.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
   if(!p?.id) return;
 
@@ -6157,6 +6187,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeApplicationV0491">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeApplicationSummaryV0495"></div>
     <form id="professionalReviewTeamKnowledgeApplicationFiltersV0494" class="form-grid" data-professional-review-team-knowledge-application-filters-v0494="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_FILTERS_V0494}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -6212,6 +6243,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamKnowledgeApplicationSummaryHostV0495=$('#professionalReviewTeamKnowledgeApplicationSummaryV0495');
+  hpLoadProfessionalReviewTeamKnowledgeApplicationSummaryV0495(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeApplicationSummaryV0495(teamKnowledgeApplicationSummaryHostV0495,x))
+    .catch(()=>{ if(teamKnowledgeApplicationSummaryHostV0495) teamKnowledgeApplicationSummaryHostV0495.innerHTML=''; });
 
   const form=$('#professionalReviewTeamKnowledgeApplicationFormV0491');
   const listHost=$('#professionalReviewTeamKnowledgeApplicationListV0491');
@@ -6312,12 +6348,18 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
       });
       toast(`Aplicação atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewTeamKnowledgeApplicationSummaryV0495(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamKnowledgeApplicationSummaryV0495(teamKnowledgeApplicationSummaryHostV0495,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-application-archive-v0491]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-application/${btn.dataset.teamKnowledgeApplicationArchiveV0491}`,{method:'DELETE'});
       toast('Aplicação de conhecimento arquivada.');
       await render();
+      hpLoadProfessionalReviewTeamKnowledgeApplicationSummaryV0495(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamKnowledgeApplicationSummaryV0495(teamKnowledgeApplicationSummaryHostV0495,x))
+        .catch(()=>{});
     });
   };
 
@@ -6357,6 +6399,9 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
     toast(id?'Aplicação de conhecimento atualizada.':'Aplicação de conhecimento registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewTeamKnowledgeApplicationSummaryV0495(p.id)
+      .then(x=>hpRenderProfessionalReviewTeamKnowledgeApplicationSummaryV0495(teamKnowledgeApplicationSummaryHostV0495,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -16762,7 +16807,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.49.4';
+const HP_MVP_VERSION='0.49.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

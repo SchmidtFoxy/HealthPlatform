@@ -1,4 +1,21 @@
-﻿# v0.49.4 — Professional Review Team Knowledge Application Filters
+﻿# v0.49.5 — Professional Review Team Knowledge Application Summary
+
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationSummaryResponse`.
+- Adiciona `GET .../team-knowledge-application/summary`.
+- Consolida total, ativos, registrados, em revisão, consolidados, descartados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo das aplicações documentadas do conhecimento da equipe`.
+- Atualiza o resumo após alterações.
+- Não transforma aplicação em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.49.6 — Professional Review Team Knowledge Application Closure.
+
+# v0.49.4 — Professional Review Team Knowledge Application Filters
 
 - Adiciona `ProfessionalReviewTeamKnowledgeApplicationFiltersResponse`.
 - Adiciona endpoint `GET .../team-knowledge-application/search`.

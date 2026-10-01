@@ -5773,3 +5773,30 @@ Os filtros apenas localizam registros documentais. Não transformam aplicação 
 
 **Próxima etapa:** `v0.49.5 — Professional Review Team Knowledge Application Summary`.
 
+---
+
+## v0.49.5 — Professional Review Team Knowledge Application Summary
+
+Adiciona resumo estrutural das aplicações documentadas do conhecimento da equipe.
+
+### Indicadores
+- total;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-knowledge-application/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo das aplicações documentadas do conhecimento da equipe** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não transformam aplicação em evidência clínica validada, não inferem causalidade, prognóstico, recomendação ou decisão terapêutica, não representam score clínico, risco, urgência ou prioridade, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.49.6 — Professional Review Team Knowledge Application Closure`.
+
