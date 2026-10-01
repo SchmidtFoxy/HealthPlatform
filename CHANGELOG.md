@@ -1,4 +1,19 @@
-﻿# v0.44.5 — Professional Review Team Decision Summary
+﻿# v0.44.6 — Professional Review Team Decision Closure
+
+- Adiciona `ProfessionalReviewTeamDecisionClosureResponse`.
+- Adiciona endpoint `GET .../team-decision/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamDecisionCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_DECISION_CLOSURE_V0446`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.44.x.
+- Próxima etapa: v0.45.0 — Professional Review Team Outcome Foundation.
+
+# v0.44.5 — Professional Review Team Decision Summary
 
 - Adiciona `ProfessionalReviewTeamDecisionProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamDecisionSummaryResponse`.

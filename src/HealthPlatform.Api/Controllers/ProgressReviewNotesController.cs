@@ -1186,6 +1186,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza decisões documentadas entre profissionais usando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.44.1, possui persistência auditada. Não executa condutas, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("team-decision/closure")]
+    public ActionResult<ProfessionalReviewTeamDecisionClosureResponse> FechamentoTeamDecisions()
+    {
+        var componentes = new[]
+        {
+            "TeamDecisionFoundation",
+            "TeamDecisionPersistence",
+            "TeamDecisionStatus",
+            "TeamDecisionHistory",
+            "TeamDecisionFilters",
+            "TeamDecisionSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamDecisionClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamDecisionCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural das decisões documentadas da equipe. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-decision/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamDecisionSummaryResponse>> ResumoTeamDecisions(
         Guid pacienteId,

@@ -4578,3 +4578,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.44.6 — Professional Review Team Decision Closure`.
 
+---
+
+## v0.44.6 — Professional Review Team Decision Closure
+
+Fecha a linha 0.44.x consolidando todas as capacidades estruturais das decisões documentadas da equipe.
+
+### Componentes consolidados
+- Team Decision Foundation;
+- Team Decision Persistence;
+- Team Decision Status;
+- Team Decision History;
+- Team Decision Filters;
+- Team Decision Summary.
+
+### Estado
+O endpoint `team-decision/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamDecisionCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.45.0 — Professional Review Team Outcome Foundation`.
+
