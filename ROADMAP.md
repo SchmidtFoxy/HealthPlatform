@@ -5563,3 +5563,18 @@ Abrir a próxima fundação estrutural profissional.
 
 ### v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence
 Adicionar persistência auditada para os resultados documentados das revisões profissionais.
+
+## ✅ v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence — CONCLUÍDA
+
+**Entregue:**
+- persistência auditada;
+- CRUD de resultados documentados;
+- reutilização de `NotaInternaProfissional`;
+- UI de gerenciamento;
+- `PersistenciaDisponivel=true`;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status
+Adicionar estados documentais e transição auditada.

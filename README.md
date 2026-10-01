@@ -6846,3 +6846,26 @@ A área de revisões profissionais passa a exibir a nova fundação de **Resulta
 A fundação organiza documentação profissional. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
 
 **Próxima etapa:** `v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence`.
+
+---
+
+## v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence
+
+Habilita persistência auditada para os resultados documentados das revisões profissionais.
+
+### Persistência
+- reutiliza `NotaInternaProfissional`;
+- prefixo `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcome:`;
+- criação, listagem, edição e arquivamento;
+- vínculo opcional com `Team Knowledge Effect Decision Review`;
+- `ProfissionalResponsavel` e `ResultadoDocumentado` obrigatórios;
+- auditoria `CREATED`, `UPDATED` e `ARCHIVED`;
+- sem migration nova.
+
+### UI
+A fundação v0.54.0 passa a anunciar persistência disponível e permite abrir o gerenciador de resultados documentados.
+
+### Guardrail
+Persistir um resultado não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição automaticamente.
+
+**Próxima etapa:** `v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status`.

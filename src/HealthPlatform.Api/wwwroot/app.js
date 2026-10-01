@@ -5020,6 +5020,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_FILTERS_V0534
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_SUMMARY_V0535='v0.53.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_CLOSURE_V0536='v0.53.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_V0540='v0.54.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541='v0.54.1';
 
 
 
@@ -6450,7 +6451,99 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFound
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza resultados documentados das revisões profissionais. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-knowledge-effect-decision-review-outcome-open-v0541="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541}">Gerenciar resultados</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541(p){
+  if(!p?.id) return;
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome`);
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-persistence-v0541="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541}">
+    <div class="row-between">
+      <div><h3>Resultados documentados das revisões profissionais</h3><p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p></div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFormV0541" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Revisão relacionada<input name="teamKnowledgeEffectDecisionReviewRelacionadaId" placeholder="ID opcional da revisão"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Resultado documentado<textarea name="resultadoDocumentado" maxlength="3000" rows="4" required></textarea></label>
+      <label class="span-2">Contexto do resultado<textarea name="contextoResultado" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Base observacional / evidência de suporte<textarea name="baseObservacionalEvidenciaSuporte" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Interpretação profissional<textarea name="interpretacaoProfissional" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Impacto documentado<textarea name="impactoDocumentado" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Necessidade de acompanhamento documentada<textarea name="necessidadeAcompanhamentoDocumentada" maxlength="3000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar resultado</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeListV0541" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFormV0541');
+  const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeListV0541');
+
+  const clear=()=>{ form?.reset(); if(form?.elements.id) form.elements.id.value=''; };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between"><b>${esc(x.profissionalResponsavel||'Profissional')}</b><span class="pill Info">${esc(x.status||'Registrado')}</span></div>
+      <p>${esc(x.resultadoDocumentado||'')}</p>
+      ${x.impactoDocumentado?`<small class="muted-line">${esc(x.impactoDocumentado)}</small>`:''}
+      <div class="form-actions">
+        <button type="button" class="secondary" data-edit-outcome-v0541="${x.id}">Editar</button>
+        <button type="button" class="ghost" data-archive-outcome-v0541="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum resultado documentado.</p>';
+
+    listHost.querySelectorAll('[data-edit-outcome-v0541]').forEach(btn=>btn.onclick=()=>{
+      const x=items.find(i=>i.id===btn.dataset.editOutcomeV0541); if(!x) return;
+      Object.keys(x).forEach(k=>{ if(form.elements[k] && x[k]!=null) form.elements[k].value=x[k]; });
+    });
+    listHost.querySelectorAll('[data-archive-outcome-v0541]').forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome/${btn.dataset.archiveOutcomeV0541}`,{method:'DELETE'});
+      await render();
+    });
+  };
+
+  form.onsubmit=async ev=>{
+    ev.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      resultadoDocumentado:String(fd.get('resultadoDocumentado')||'').trim(),
+      teamKnowledgeEffectDecisionReviewRelacionadaId:String(fd.get('teamKnowledgeEffectDecisionReviewRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      contextoResultado:String(fd.get('contextoResultado')||'').trim()||null,
+      baseObservacionalEvidenciaSuporte:String(fd.get('baseObservacionalEvidenciaSuporte')||'').trim()||null,
+      interpretacaoProfissional:String(fd.get('interpretacaoProfissional')||'').trim()||null,
+      impactoDocumentado:String(fd.get('impactoDocumentado')||'').trim()||null,
+      necessidadeAcompanhamentoDocumentada:String(fd.get('necessidadeAcompanhamentoDocumentada')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+    });
+    clear(); await render();
+  };
+
+  $('#clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541').onclick=clear;
+  $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p);
+  await render();
 }
 
 
@@ -6591,7 +6684,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p)
 
   const teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540');
   hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFoundationV0540(teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540,x);
+      const openOutcomeV0541=teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540?.querySelector('[data-team-knowledge-effect-decision-review-outcome-open-v0541]');
+      if(openOutcomeV0541) openOutcomeV0541.onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541(p);
+    })
     .catch(()=>{ if(teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540) teamKnowledgeEffectDecisionReviewOutcomeFoundationHostV0540.innerHTML=''; });
 
   const teamKnowledgeEffectDecisionReviewClosureHostV0536=$('#professionalReviewTeamKnowledgeEffectDecisionReviewClosureV0536');
@@ -18430,7 +18527,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.54.0';
+const HP_MVP_VERSION='0.54.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

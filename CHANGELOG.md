@@ -1,4 +1,17 @@
-﻿# v0.54.0 — Professional Review Team Knowledge Effect Decision Review Outcome Foundation
+﻿# v0.54.1 — Professional Review Team Knowledge Effect Decision Review Outcome Persistence
+
+- Habilita persistência auditada para Outcome.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona GET/POST/PUT/DELETE em `team-knowledge-effect-decision-review-outcome`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomePersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a `PersistenciaDisponivel=true`.
+- Adiciona gerenciador de resultados documentados.
+- Sem migration nova.
+- Próxima etapa: v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status.
+
+# v0.54.0 — Professional Review Team Knowledge Effect Decision Review Outcome Foundation
 
 - Abre a linha funcional 0.54.x.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFieldResponse`.
