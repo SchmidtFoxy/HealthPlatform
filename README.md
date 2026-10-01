@@ -5932,3 +5932,35 @@ A persistência registra efeitos observados do conhecimento da equipe. Não tran
 
 **Próxima etapa:** `v0.50.2 — Professional Review Team Knowledge Effect Status`.
 
+---
+
+## v0.50.2 — Professional Review Team Knowledge Effect Status
+
+Adiciona estados documentais explícitos aos efeitos observados registrados.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-knowledge-effect/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do efeito observado;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir registro;
+- Revisar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não transforma estado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.50.3 — Professional Review Team Knowledge Effect History`.
+

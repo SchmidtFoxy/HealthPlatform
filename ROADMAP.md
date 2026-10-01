@@ -5037,3 +5037,21 @@ Adicionar persistência auditada dos efeitos observados após aplicações do co
 ### v0.50.2 — Professional Review Team Knowledge Effect Status
 Adicionar estados documentais explícitos aos efeitos observados registrados, com transições manuais e auditadas sem transformar estado em causalidade comprovada, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.
 
+## ✅ v0.50.2 — Professional Review Team Knowledge Effect Status — CONCLUÍDA
+
+**Entregue:**
+- status `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.50.3 — Professional Review Team Knowledge Effect History
+Adicionar histórico consultável dos efeitos observados registrados, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

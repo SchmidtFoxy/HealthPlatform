@@ -1,4 +1,23 @@
-﻿# v0.50.1 — Professional Review Team Knowledge Effect Persistence
+﻿# v0.50.2 — Professional Review Team Knowledge Effect Status
+
+- Adiciona `Status` ao Team Knowledge Effect persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectStatusRequest`.
+- Adiciona endpoint `PATCH .../team-knowledge-effect/{id}/status`.
+- Estados permitidos: `Registrado`, `EmRevisao`, `Consolidado`, `Descartado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir registro, Revisar, Consolidar e Descartar.
+- Não transforma estado em causalidade comprovada.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.50.3 — Professional Review Team Knowledge Effect History.
+
+# v0.50.1 — Professional Review Team Knowledge Effect Persistence
 
 - Adiciona persistência auditada de Team Knowledge Effect.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectPersistedResponse`.

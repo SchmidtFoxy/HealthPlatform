@@ -255,11 +255,16 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectPersistedResponse(
     string? ImpactoPercebidoDocumentado,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamKnowledgeEffectFieldResponse(
     string Chave,
