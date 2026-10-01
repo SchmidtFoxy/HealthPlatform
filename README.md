@@ -3955,3 +3955,45 @@ A fundação organiza contexto documental compartilhado entre profissionais. Nã
 
 **Próxima etapa:** `v0.42.1 — Professional Review Shared Context Persistence`.
 
+---
+
+## v0.42.1 — Professional Review Shared Context Persistence
+
+Adiciona persistência auditada para registros de contexto profissional compartilhado.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- contexto compartilhado;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_SHARED_CONTEXT_CREATED`
+- `PROFESSIONAL_REVIEW_SHARED_CONTEXT_UPDATED`
+- `PROFESSIONAL_REVIEW_SHARED_CONTEXT_ARCHIVED`
+
+### Vínculos
+Quando informados, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar contextos compartilhados**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra contexto documental compartilhado. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco, urgência ou prioridade clínica.
+
+**Próxima etapa:** `v0.42.2 — Professional Review Shared Context Status`.
+

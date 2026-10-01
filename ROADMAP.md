@@ -3907,3 +3907,25 @@ Criar a fundação estrutural de contexto profissional compartilhado, conectando
 ### v0.42.1 — Professional Review Shared Context Persistence
 Adicionar persistência auditada dos registros de contexto profissional compartilhado, com vínculos opcionais a Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
 
+## ✅ v0.42.1 — Professional Review Shared Context Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewSharedContextPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewSharedContext:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de contexto compartilhado;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.42.2 — Professional Review Shared Context Status
+Adicionar estados documentais explícitos aos registros de contexto profissional compartilhado, com transições manuais e auditadas pela equipe.
+

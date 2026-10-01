@@ -4936,6 +4936,7 @@ const HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414='v0.41.4';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415='v0.41.5';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416='v0.41.6';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0';
+const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1';
 
 
 
@@ -5576,7 +5577,133 @@ function hpRenderProfessionalReviewSharedContextFoundationV0420(host,foundation)
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza contexto documental compartilhado entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-shared-context-open-v0421="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421}">Gerenciar contextos compartilhados</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewSharedContextV0421(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/shared-context`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-shared-context-persistence-v0421="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421}">
+    <div class="row-between">
+      <div>
+        <h3>Contexto profissional compartilhado</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewSharedContextV0421">Fechar</button>
+    </div>
+    <form id="professionalReviewSharedContextFormV0421" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Collaboration relacionada<input name="collaborationRelacionadaId" placeholder="ID opcional da colaboração"></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000" placeholder="Profissionais participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto compartilhado<textarea name="contextoCompartilhado" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar contexto</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewSharedContextV0421">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewSharedContextListV0421" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewSharedContextFormV0421');
+  const listHost=$('#professionalReviewSharedContextListV0421');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      ${x.contextoCompartilhado?`<p>${esc(x.contextoCompartilhado)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-shared-context-edit-v0421="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-shared-context-archive-v0421="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum contexto profissional compartilhado registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-shared-context-edit-v0421]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.sharedContextEditV0421);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalResponsavel.value=item.profissionalResponsavel||'';
+      form.elements.collaborationRelacionadaId.value=item.collaborationRelacionadaId||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.participantes.value=item.participantes||'';
+      form.elements.contextoCompartilhado.value=item.contextoCompartilhado||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-shared-context-archive-v0421]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/shared-context/${btn.dataset.sharedContextArchiveV0421}`,{method:'DELETE'});
+      toast('Contexto profissional compartilhado arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      collaborationRelacionadaId:String(fd.get('collaborationRelacionadaId')||'').trim()||null,
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      contextoCompartilhado:String(fd.get('contextoCompartilhado')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/shared-context${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Contexto profissional compartilhado atualizado.':'Contexto profissional compartilhado registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewSharedContextV0421').onclick=clear;
+  $('#closeProfessionalReviewSharedContextV0421').onclick=()=>hpOpenProfessionalReviewCollaborationV0411(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewCollaborationClosureV0416(patientId){
@@ -5699,7 +5826,11 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
 
   const sharedContextFoundationHostV0420=$('#professionalReviewSharedContextFoundationV0420');
   hpLoadProfessionalReviewSharedContextFoundationV0420(p.id)
-    .then(x=>hpRenderProfessionalReviewSharedContextFoundationV0420(sharedContextFoundationHostV0420,x))
+    .then(x=>{
+      hpRenderProfessionalReviewSharedContextFoundationV0420(sharedContextFoundationHostV0420,x);
+      const openSharedContextV0421=sharedContextFoundationHostV0420?.querySelector('[data-shared-context-open-v0421]');
+      if(openSharedContextV0421) openSharedContextV0421.onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
+    })
     .catch(()=>{ if(sharedContextFoundationHostV0420) sharedContextFoundationHostV0420.innerHTML=''; });
 
   const collaborationClosureHostV0416=$('#professionalReviewCollaborationClosureV0416');
@@ -13895,7 +14026,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.42.0';
+const HP_MVP_VERSION='0.42.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,4 +1,20 @@
-﻿# v0.42.0 — Professional Review Shared Context Foundation
+﻿# v0.42.1 — Professional Review Shared Context Persistence
+
+- Adiciona persistência auditada de Shared Context.
+- Adiciona `ProfessionalReviewSharedContextPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewSharedContext:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar contextos compartilhados`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.42.2 — Professional Review Shared Context Status.
+
+# v0.42.0 — Professional Review Shared Context Foundation
 
 - Abre a linha funcional 0.42.x.
 - Adiciona `ProfessionalReviewSharedContextFieldResponse`.

@@ -29,6 +29,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoEscalation = "ProfessionalReviewEscalation:";
     private const string PrefixoCoordination = "ProfessionalReviewCoordination:";
     private const string PrefixoCollaboration = "ProfessionalReviewCollaboration:";
+    private const string PrefixoSharedContext = "ProfessionalReviewSharedContext:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -878,6 +879,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza colaboração documental compartilhada entre Coordination, Escalation e Continuity e, a partir da v0.41.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    public sealed record CriarProfessionalReviewSharedContextRequest(
+        string ProfissionalResponsavel,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? ContextoCompartilhado = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewSharedContextRequest(
+        string ProfissionalResponsavel,
+        Guid? CollaborationRelacionadaId = null,
+        Guid? CoordinationRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        Guid? ContinuityRelacionadaId = null,
+        string? Participantes = null,
+        string? ContextoCompartilhado = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("shared-context/foundation")]
     public ActionResult<ProfessionalReviewSharedContextFoundationResponse> SharedContextFoundation()
     {
@@ -941,10 +964,190 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewSharedContextFoundationResponse(
             "FundacaoSharedContextDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza contexto profissional compartilhado entre Collaboration, Coordination, Escalation e Continuity. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+            "A fundação organiza contexto profissional compartilhado entre Collaboration, Coordination, Escalation e Continuity e, a partir da v0.42.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
+    [HttpGet("shared-context")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewSharedContextPersistedResponse>>> ListarSharedContexts(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivadas = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoSharedContext));
+
+        if (!incluirArquivadas)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearSharedContext).ToArray());
+    }
+
+    [HttpPost("shared-context")]
+    public async Task<ActionResult<ProfessionalReviewSharedContextPersistedResponse>> CriarSharedContext(
+        Guid pacienteId,
+        CriarProfessionalReviewSharedContextRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoSharedContext + "item",
+            Conteudo = MontarPayloadSharedContext(
+                profissionalResponsavel,
+                request.CollaborationRelacionadaId,
+                request.CoordinationRelacionadaId,
+                request.EscalationRelacionadaId,
+                request.ContinuityRelacionadaId,
+                request.Participantes,
+                request.ContextoCompartilhado,
+                request.Horizonte,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_SHARED_CONTEXT_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearSharedContext(nota));
+    }
+
+    [HttpPut("shared-context/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewSharedContextPersistedResponse>> AtualizarSharedContext(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewSharedContextRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoSharedContext),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var profissionalResponsavel = NormalizarObrigatorio(request.ProfissionalResponsavel, 160);
+        if (profissionalResponsavel is null)
+            return BadRequest(new { message = "Informe o profissional responsável." });
+
+        if (request.CollaborationRelacionadaId.HasValue &&
+            !await CollaborationPertencePacienteAsync(pacienteId, request.CollaborationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Collaboration relacionada inválida para este paciente." });
+
+        if (request.CoordinationRelacionadaId.HasValue &&
+            !await CoordinationPertencePacienteAsync(pacienteId, request.CoordinationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Coordination relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadSharedContext(
+            profissionalResponsavel,
+            request.CollaborationRelacionadaId,
+            request.CoordinationRelacionadaId,
+            request.EscalationRelacionadaId,
+            request.ContinuityRelacionadaId,
+            request.Participantes,
+            request.ContextoCompartilhado,
+            request.Horizonte,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_SHARED_CONTEXT_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearSharedContext(nota));
+    }
+
+    [HttpDelete("shared-context/{id:guid}")]
+    public async Task<IActionResult> ArquivarSharedContext(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoSharedContext),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_SHARED_CONTEXT_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("collaboration/closure")]
@@ -6089,6 +6292,73 @@ public class ProgressReviewNotesController(
         return JsonSerializer.Serialize(payload);
     }
 
+    private sealed record SharedContextPayload(
+        string ProfissionalResponsavel,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string? Participantes,
+        string? ContextoCompartilhado,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadSharedContext(
+        string profissionalResponsavel,
+        Guid? collaborationRelacionadaId,
+        Guid? coordinationRelacionadaId,
+        Guid? escalationRelacionadaId,
+        Guid? continuityRelacionadaId,
+        string? participantes,
+        string? contextoCompartilhado,
+        string? horizonte,
+        string? observacaoProfissional)
+    {
+        var payload = new SharedContextPayload(
+            profissionalResponsavel,
+            collaborationRelacionadaId,
+            coordinationRelacionadaId,
+            escalationRelacionadaId,
+            continuityRelacionadaId,
+            NormalizarOpcional(participantes, 1000),
+            NormalizarOpcional(contextoCompartilhado, 2000),
+            NormalizarOpcional(horizonte, 120),
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewSharedContextPersistedResponse MapearSharedContext(NotaInternaProfissional nota)
+    {
+        SharedContextPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<SharedContextPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewSharedContextPersistedResponse(
+            nota.Id,
+            payload?.CollaborationRelacionadaId,
+            payload?.CoordinationRelacionadaId,
+            payload?.EscalationRelacionadaId,
+            payload?.ContinuityRelacionadaId,
+            payload?.ProfissionalResponsavel ?? nota.Conteudo,
+            payload?.Participantes,
+            payload?.ContextoCompartilhado,
+            payload?.Horizonte,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
     private sealed record CollaborationPayload(
         string ProfissionalResponsavel,
         Guid? CoordinationRelacionadaId,
@@ -6907,6 +7177,20 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private async Task<bool> CollaborationPertencePacienteAsync(
+        Guid pacienteId,
+        Guid collaborationId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == collaborationId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCollaboration) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private async Task<bool> CoordinationPertencePacienteAsync(
         Guid pacienteId,
