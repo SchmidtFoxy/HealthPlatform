@@ -1,4 +1,19 @@
-﻿# v0.39.4 — Professional Review Escalation Filters
+﻿# v0.39.5 — Professional Review Escalation Summary
+
+- Adiciona `ProfessionalReviewEscalationProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewEscalationSummaryResponse`.
+- Adiciona `GET .../escalation/summary`.
+- Consolida total, ativos, planejados, em andamento, concluídos, cancelados e arquivados.
+- Adiciona distribuição por profissional de origem.
+- Adiciona distribuição por profissional de destino.
+- Adiciona painel `Resumo dos escalonamentos profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.39.6 — Professional Review Escalation Closure.
+
+# v0.39.4 — Professional Review Escalation Filters
 
 - Adiciona `ProfessionalReviewEscalationFiltersResponse`.
 - Adiciona endpoint `GET .../escalation/search`.

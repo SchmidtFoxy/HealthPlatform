@@ -702,6 +702,65 @@ public class ProgressReviewNotesController(
             "A fundação organiza escalonamento documental entre profissionais e, a partir da v0.39.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("escalation/summary")]
+    public async Task<ActionResult<ProfessionalReviewEscalationSummaryResponse>> ResumoEscalations(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoEscalation))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearEscalation).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var planejados = itens.Count(x => !x.Arquivada && x.Status == "Planejado");
+        var emAndamento = itens.Count(x => !x.Arquivada && x.Status == "EmAndamento");
+        var concluidos = itens.Count(x => !x.Arquivada && x.Status == "Concluido");
+        var cancelados = itens.Count(x => !x.Arquivada && x.Status == "Cancelado");
+
+        var porOrigem = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalOrigem))
+            .GroupBy(x => x.ProfissionalOrigem.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewEscalationProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        var porDestino = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalDestino))
+            .GroupBy(x => x.ProfissionalDestino.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewEscalationProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewEscalationSummaryResponse(
+            total,
+            ativos,
+            planejados,
+            emAndamento,
+            concluidos,
+            cancelados,
+            arquivados,
+            porOrigem,
+            porDestino,
+            "O resumo apresenta somente agregações documentais dos escalonamentos profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("escalation/search")]
     public async Task<ActionResult<ProfessionalReviewEscalationFiltersResponse>> FiltrarEscalations(
         Guid pacienteId,

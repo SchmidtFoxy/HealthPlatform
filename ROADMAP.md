@@ -3581,3 +3581,26 @@ Adicionar filtros profissionais por status, profissional de origem, profissional
 ### v0.39.5 — Professional Review Escalation Summary
 Adicionar resumo estrutural dos escalonamentos profissionais com contagem por status e distribuição por profissional de origem e destino, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.39.5 — Professional Review Escalation Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewEscalationSummaryResponse`;
+- `ProfessionalReviewEscalationProfissionalResumoResponse`;
+- total de registros;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- agrupamento por profissional de origem;
+- agrupamento por profissional de destino;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.39.6 — Professional Review Escalation Closure
+Fechar o ciclo 0.39.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão dos escalonamentos profissionais.
+

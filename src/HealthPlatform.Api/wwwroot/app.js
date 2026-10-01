@@ -4919,6 +4919,7 @@ const HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394='v0.39.4';
+const HP_PROFESSIONAL_REVIEW_ESCALATION_SUMMARY_V0395='v0.39.5';
 
 
 
@@ -5400,6 +5401,40 @@ async function hpOpenProfessionalReviewEscalationHistoryV0393(p,escalation){
   $('#closeProfessionalReviewEscalationHistoryV0393').onclick=()=>hpOpenProfessionalReviewEscalationV0391(p);
 }
 
+
+async function hpLoadProfessionalReviewEscalationSummaryV0395(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/escalation/summary`);
+}
+
+function hpRenderProfessionalReviewEscalationSummaryV0395(host,summary){
+  if(!host || !summary) return;
+
+  const porOrigem=Array.isArray(summary.porOrigem)?summary.porOrigem:[];
+  const porDestino=Array.isArray(summary.porDestino)?summary.porDestino:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-escalation-summary-v0395="${HP_PROFESSIONAL_REVIEW_ESCALATION_SUMMARY_V0395}">
+    <div><b>Resumo dos escalonamentos profissionais</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejados</span><b>${esc(String(summary.planejados??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídos</span><b>${esc(String(summary.concluidos??0))}</b></div>
+      <div class="row-between"><span>Cancelados</span><b>${esc(String(summary.cancelados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porOrigem.length?`<div class="stack">
+      <small class="muted-line">Por profissional de origem</small>
+      ${porOrigem.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    ${porDestino.length?`<div class="stack">
+      <small class="muted-line">Por profissional de destino</small>
+      ${porDestino.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewEscalationV0391(p){
   if(!p?.id) return;
 
@@ -5428,6 +5463,7 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewEscalationV0391">Fechar</button>
     </div>
+    <div id="professionalReviewEscalationSummaryV0395"></div>
     <form id="professionalReviewEscalationFiltersV0394" class="form-grid" data-professional-review-escalation-filters-v0394="${HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5472,6 +5508,11 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const escalationSummaryHostV0395=$('#professionalReviewEscalationSummaryV0395');
+  hpLoadProfessionalReviewEscalationSummaryV0395(p.id)
+    .then(x=>hpRenderProfessionalReviewEscalationSummaryV0395(escalationSummaryHostV0395,x))
+    .catch(()=>{ if(escalationSummaryHostV0395) escalationSummaryHostV0395.innerHTML=''; });
 
   const form=$('#professionalReviewEscalationFormV0391');
   const listHost=$('#professionalReviewEscalationListV0391');
@@ -5548,12 +5589,18 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
       });
       toast(`Escalonamento atualizado para ${status}.`);
       await render();
+      hpLoadProfessionalReviewEscalationSummaryV0395(p.id)
+        .then(x=>hpRenderProfessionalReviewEscalationSummaryV0395(escalationSummaryHostV0395,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-escalation-archive-v0391]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation/${btn.dataset.escalationArchiveV0391}`,{method:'DELETE'});
       toast('Escalonamento profissional arquivado.');
       await render();
+      hpLoadProfessionalReviewEscalationSummaryV0395(p.id)
+        .then(x=>hpRenderProfessionalReviewEscalationSummaryV0395(escalationSummaryHostV0395,x))
+        .catch(()=>{});
     });
   };
 
@@ -5581,6 +5628,9 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
     toast(id?'Escalonamento profissional atualizado.':'Escalonamento profissional registrado.');
     clear();
     await render();
+    hpLoadProfessionalReviewEscalationSummaryV0395(p.id)
+      .then(x=>hpRenderProfessionalReviewEscalationSummaryV0395(escalationSummaryHostV0395,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -13089,7 +13139,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.39.4';
+const HP_MVP_VERSION='0.39.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -167,6 +167,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewEscalationProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewEscalationSummaryResponse(
+    int Total,
+    int Ativos,
+    int Planejados,
+    int EmAndamento,
+    int Concluidos,
+    int Cancelados,
+    int Arquivados,
+    IReadOnlyCollection<ProfessionalReviewEscalationProfissionalResumoResponse> PorOrigem,
+    IReadOnlyCollection<ProfessionalReviewEscalationProfissionalResumoResponse> PorDestino,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewEscalationFiltersResponse(
     string? Status,
     string? ProfissionalOrigem,
