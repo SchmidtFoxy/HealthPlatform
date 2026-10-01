@@ -6592,3 +6592,52 @@ O fechamento mede somente disponibilidade estrutural. Não transforma decisão e
 
 **Próxima etapa:** `v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation`.
 
+---
+
+## v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation
+
+Abre a linha 0.53.x com a fundação estrutural para revisões profissionais das decisões documentadas sobre os efeitos observados do conhecimento da equipe.
+
+### Campos da fundação
+- Team Knowledge Effect Decision relacionada;
+- Team Knowledge Effect Review relacionada;
+- Team Knowledge Effect relacionado;
+- Team Knowledge Application relacionada;
+- Team Knowledge relacionado;
+- Team Insight relacionado;
+- Team Learning relacionado;
+- Team Outcome relacionado;
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional revisor;
+- participantes;
+- revisão documentada;
+- contexto da revisão;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- conclusão documental;
+- necessidade de acompanhamento documentada;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamKnowledgeEffectDecisionReviewDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Revisão profissional das decisões sobre os efeitos observados**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza revisão profissional documental. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.53.1 — Professional Review Team Knowledge Effect Decision Review Persistence`.
+

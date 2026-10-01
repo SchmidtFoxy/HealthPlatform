@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.52.6",
+            "v0.53.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Effect Decision Closure fecha a linha 0.52.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das decisões profissionais documentadas sobre os efeitos observados do conhecimento da equipe.")
+            "Professional Review Team Knowledge Effect Decision Review Foundation abre a linha 0.53.x com uma fundação estrutural para revisões profissionais das decisões documentadas sobre os efeitos observados do conhecimento da equipe, conectando Team Knowledge Effect Decision, Team Knowledge Effect Review, Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem transformar revisão em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

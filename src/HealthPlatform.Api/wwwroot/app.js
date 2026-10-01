@@ -5012,6 +5012,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_HISTORY_V0523='v0.52
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_FILTERS_V0524='v0.52.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_SUMMARY_V0525='v0.52.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_CLOSURE_V0526='v0.52.6';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_V0530='v0.53.0';
 
 
 
@@ -6353,6 +6354,34 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionHistoryV0523(p
 
 
 
+
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewFoundationV0530(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review/foundation`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewFoundationV0530(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-review-v0530="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_V0530}">
+    <div class="row-between">
+      <div>
+        <b>Revisão profissional das decisões sobre os efeitos observados</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza revisões profissionais documentadas. Não valida causalidade, não valida evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática e não executa conduta ou prescrição.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionClosureV0526(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision/closure`);
@@ -6427,6 +6456,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionV0521">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewFoundationV0530"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionClosureV0526"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionSummaryV0525"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionFiltersV0524" class="form-grid" data-professional-review-team-knowledge-effect-decision-filters-v0524="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_FILTERS_V0524}">
@@ -6487,6 +6517,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamKnowledgeEffectDecisionReviewFoundationHostV0530=$('#professionalReviewTeamKnowledgeEffectDecisionReviewFoundationV0530');
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewFoundationV0530(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewFoundationV0530(teamKnowledgeEffectDecisionReviewFoundationHostV0530,x))
+    .catch(()=>{ if(teamKnowledgeEffectDecisionReviewFoundationHostV0530) teamKnowledgeEffectDecisionReviewFoundationHostV0530.innerHTML=''; });
 
   const teamKnowledgeEffectDecisionClosureHostV0526=$('#professionalReviewTeamKnowledgeEffectDecisionClosureV0526');
   hpLoadProfessionalReviewTeamKnowledgeEffectDecisionClosureV0526(p.id)
@@ -18019,7 +18054,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.52.6';
+const HP_MVP_VERSION='0.53.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
