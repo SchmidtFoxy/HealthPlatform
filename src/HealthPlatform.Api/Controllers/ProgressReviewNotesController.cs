@@ -25,6 +25,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoAssignment = "ProfessionalReviewAssignment:";
     private const string PrefixoDelegation = "ProfessionalReviewDelegation:";
     private const string PrefixoHandoff = "ProfessionalReviewHandoff:";
+    private const string PrefixoContinuity = "ProfessionalReviewContinuity:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -534,6 +535,24 @@ public class ProgressReviewNotesController(
             "A fundação organiza handoffs documentais entre profissionais e, a partir da v0.37.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    public sealed record CriarProfessionalReviewContinuityRequest(
+        string ProfissionalSeguimento,
+        Guid? HandoffRelacionadoId = null,
+        Guid? DelegationRelacionadaId = null,
+        Guid? AssignmentRelacionadaId = null,
+        string? ContextoContinuidade = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewContinuityRequest(
+        string ProfissionalSeguimento,
+        Guid? HandoffRelacionadoId = null,
+        Guid? DelegationRelacionadaId = null,
+        Guid? AssignmentRelacionadaId = null,
+        string? ContextoContinuidade = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("continuity/foundation")]
     public ActionResult<ProfessionalReviewContinuityFoundationResponse> ContinuityFoundation()
     {
@@ -585,10 +604,190 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewContinuityFoundationResponse(
             "FundacaoContinuityDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza continuidade documental entre profissionais a partir de handoffs, delegações e atribuições existentes. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+            "A fundação organiza continuidade documental entre profissionais e, a partir da v0.38.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
+    [HttpGet("continuity")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewContinuityPersistedResponse>>> ListarContinuities(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivadas = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoContinuity));
+
+        if (!incluirArquivadas)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearContinuity).ToArray());
+    }
+
+    [HttpPost("continuity")]
+    public async Task<ActionResult<ProfessionalReviewContinuityPersistedResponse>> CriarContinuity(
+        Guid pacienteId,
+        CriarProfessionalReviewContinuityRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalSeguimento = NormalizarObrigatorio(request.ProfissionalSeguimento, 160);
+        if (profissionalSeguimento is null)
+            return BadRequest(new { message = "Informe o profissional de seguimento." });
+
+        if (request.HandoffRelacionadoId.HasValue &&
+            !await HandoffPertencePacienteAsync(pacienteId, request.HandoffRelacionadoId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Handoff relacionado inválido para este paciente." });
+        }
+
+        if (request.DelegationRelacionadaId.HasValue &&
+            !await DelegationPertencePacienteAsync(pacienteId, request.DelegationRelacionadaId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Delegation relacionada inválida para este paciente." });
+        }
+
+        if (request.AssignmentRelacionadaId.HasValue &&
+            !await AssignmentPertencePacienteAsync(pacienteId, request.AssignmentRelacionadaId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Assignment relacionada inválida para este paciente." });
+        }
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoContinuity + "item",
+            Conteudo = MontarPayloadContinuity(
+                profissionalSeguimento,
+                request.HandoffRelacionadoId,
+                request.DelegationRelacionadaId,
+                request.AssignmentRelacionadaId,
+                request.ContextoContinuidade,
+                request.Horizonte,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_CONTINUITY_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearContinuity(nota));
+    }
+
+    [HttpPut("continuity/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewContinuityPersistedResponse>> AtualizarContinuity(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewContinuityRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoContinuity),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var profissionalSeguimento = NormalizarObrigatorio(request.ProfissionalSeguimento, 160);
+        if (profissionalSeguimento is null)
+            return BadRequest(new { message = "Informe o profissional de seguimento." });
+
+        if (request.HandoffRelacionadoId.HasValue &&
+            !await HandoffPertencePacienteAsync(pacienteId, request.HandoffRelacionadoId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Handoff relacionado inválido para este paciente." });
+        }
+
+        if (request.DelegationRelacionadaId.HasValue &&
+            !await DelegationPertencePacienteAsync(pacienteId, request.DelegationRelacionadaId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Delegation relacionada inválida para este paciente." });
+        }
+
+        if (request.AssignmentRelacionadaId.HasValue &&
+            !await AssignmentPertencePacienteAsync(pacienteId, request.AssignmentRelacionadaId.Value, cancellationToken))
+        {
+            return BadRequest(new { message = "Assignment relacionada inválida para este paciente." });
+        }
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadContinuity(
+            profissionalSeguimento,
+            request.HandoffRelacionadoId,
+            request.DelegationRelacionadaId,
+            request.AssignmentRelacionadaId,
+            request.ContextoContinuidade,
+            request.Horizonte,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_CONTINUITY_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearContinuity(nota));
+    }
+
+    [HttpDelete("continuity/{id:guid}")]
+    public async Task<IActionResult> ArquivarContinuity(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoContinuity),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_CONTINUITY_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("handoff/closure")]
@@ -3915,6 +4114,65 @@ public class ProgressReviewNotesController(
         return JsonSerializer.Serialize(payload);
     }
 
+    private sealed record ContinuityPayload(
+        string ProfissionalSeguimento,
+        Guid? HandoffRelacionadoId,
+        Guid? DelegationRelacionadaId,
+        Guid? AssignmentRelacionadaId,
+        string? ContextoContinuidade,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadContinuity(
+        string profissionalSeguimento,
+        Guid? handoffRelacionadoId,
+        Guid? delegationRelacionadaId,
+        Guid? assignmentRelacionadaId,
+        string? contextoContinuidade,
+        string? horizonte,
+        string? observacaoProfissional)
+    {
+        var payload = new ContinuityPayload(
+            profissionalSeguimento,
+            handoffRelacionadoId,
+            delegationRelacionadaId,
+            assignmentRelacionadaId,
+            NormalizarOpcional(contextoContinuidade, 2000),
+            NormalizarOpcional(horizonte, 120),
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewContinuityPersistedResponse MapearContinuity(NotaInternaProfissional nota)
+    {
+        ContinuityPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<ContinuityPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewContinuityPersistedResponse(
+            nota.Id,
+            payload?.HandoffRelacionadoId,
+            payload?.DelegationRelacionadaId,
+            payload?.AssignmentRelacionadaId,
+            payload?.ProfissionalSeguimento ?? nota.Conteudo,
+            payload?.ContextoContinuidade,
+            payload?.Horizonte,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
     private sealed record HandoffPayload(
         string ProfissionalOrigem,
         string ProfissionalDestino,
@@ -4349,6 +4607,20 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private async Task<bool> HandoffPertencePacienteAsync(
+        Guid pacienteId,
+        Guid handoffId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == handoffId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoHandoff) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private async Task<bool> DelegationPertencePacienteAsync(
         Guid pacienteId,

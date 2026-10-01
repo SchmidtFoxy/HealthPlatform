@@ -3370,3 +3370,24 @@ Criar a fundação estrutural de continuidade profissional, conectando handoffs,
 ### v0.38.1 — Professional Review Continuity Persistence
 Adicionar persistência auditada dos registros de continuidade profissional, com vínculos opcionais a Handoff, Delegation e Assignment e preservação explícita de autoria, responsabilidade documental e separação entre continuidade, decisão clínica e execução.
 
+## ✅ v0.38.1 — Professional Review Continuity Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewContinuityPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewContinuity:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Handoff;
+- vínculo opcional à Delegation;
+- vínculo opcional à Assignment;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de continuidade profissional;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.38.2 — Professional Review Continuity Status
+Adicionar estados documentais explícitos aos registros de continuidade profissional, com transições manuais e auditadas pela equipe.
+

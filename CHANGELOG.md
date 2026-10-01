@@ -1,4 +1,20 @@
-﻿# v0.38.0 — Professional Review Continuity Foundation
+﻿# v0.38.1 — Professional Review Continuity Persistence
+
+- Adiciona persistência auditada de Continuity.
+- Adiciona `ProfessionalReviewContinuityPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewContinuity:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Handoff, Delegation e Assignment do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar continuidade`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.38.2 — Professional Review Continuity Status.
+
+# v0.38.0 — Professional Review Continuity Foundation
 
 - Abre a linha funcional 0.38.x.
 - Adiciona `ProfessionalReviewContinuityFieldResponse`.

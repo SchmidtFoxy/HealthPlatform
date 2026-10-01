@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.38.0",
+            "v0.38.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Continuity Foundation abre a linha 0.38.x com uma fundação estrutural para continuidade documental entre profissionais, conectando handoffs, delegações e atribuições existentes sem execução automática ou priorização clínica.")
+            "Professional Review Continuity Persistence adiciona persistência auditada à continuidade profissional, com vínculos opcionais a Handoff, Delegation e Assignment e sem transformar continuidade documental em execução, prioridade clínica ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

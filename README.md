@@ -3055,3 +3055,43 @@ A fundação organiza continuidade documental entre profissionais. Não executa 
 
 **Próxima etapa:** `v0.38.1 — Professional Review Continuity Persistence`.
 
+---
+
+## v0.38.1 — Professional Review Continuity Persistence
+
+Adiciona persistência auditada para registros de continuidade profissional.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Handoff relacionado opcional;
+- Delegation relacionada opcional;
+- Assignment relacionada opcional;
+- profissional de seguimento;
+- contexto de continuidade;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_CONTINUITY_CREATED`
+- `PROFESSIONAL_REVIEW_CONTINUITY_UPDATED`
+- `PROFESSIONAL_REVIEW_CONTINUITY_ARCHIVED`
+
+### Vínculos
+Quando informados, Handoff, Delegation e Assignment precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar continuidade**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra continuidade documental. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco, urgência ou prioridade clínica.
+
+**Próxima etapa:** `v0.38.2 — Professional Review Continuity Status`.
+

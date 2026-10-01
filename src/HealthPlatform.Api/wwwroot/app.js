@@ -4908,6 +4908,7 @@ const HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0';
+const HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1';
 
 
 
@@ -5284,7 +5285,125 @@ function hpRenderProfessionalReviewContinuityFoundationV0380(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza continuidade documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-continuity-open-v0381="${HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381}">Gerenciar continuidade</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewContinuityV0381(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/continuity`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-continuity-persistence-v0381="${HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381}">
+    <div class="row-between">
+      <div>
+        <h3>Continuidade profissional</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewContinuityV0381">Fechar</button>
+    </div>
+    <form id="professionalReviewContinuityFormV0381" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional de seguimento<input name="profissionalSeguimento" maxlength="160" required></label>
+      <label>Handoff relacionado<input name="handoffRelacionadoId" placeholder="ID opcional do handoff"></label>
+      <label>Delegation relacionada<input name="delegationRelacionadaId" placeholder="ID opcional da delegação"></label>
+      <label>Assignment relacionada<input name="assignmentRelacionadaId" placeholder="ID opcional da atribuição"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto de continuidade<textarea name="contextoContinuidade" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar continuidade</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewContinuityV0381">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewContinuityListV0381" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewContinuityFormV0381');
+  const listHost=$('#professionalReviewContinuityListV0381');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalSeguimento||'Profissional de seguimento')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.handoffRelacionadoId?`<small class="muted-line">Handoff: ${esc(x.handoffRelacionadoId)}</small>`:''}
+      ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
+      ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
+      ${x.contextoContinuidade?`<p>${esc(x.contextoContinuidade)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-continuity-edit-v0381="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-continuity-archive-v0381="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum registro de continuidade profissional.</p>';
+
+    [...listHost.querySelectorAll('[data-continuity-edit-v0381]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.continuityEditV0381);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalSeguimento.value=item.profissionalSeguimento||'';
+      form.elements.handoffRelacionadoId.value=item.handoffRelacionadoId||'';
+      form.elements.delegationRelacionadaId.value=item.delegationRelacionadaId||'';
+      form.elements.assignmentRelacionadaId.value=item.assignmentRelacionadaId||'';
+      form.elements.contextoContinuidade.value=item.contextoContinuidade||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalSeguimento.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-continuity-archive-v0381]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/continuity/${btn.dataset.continuityArchiveV0381}`,{method:'DELETE'});
+      toast('Registro de continuidade arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalSeguimento:String(fd.get('profissionalSeguimento')||'').trim(),
+      handoffRelacionadoId:String(fd.get('handoffRelacionadoId')||'').trim()||null,
+      delegationRelacionadaId:String(fd.get('delegationRelacionadaId')||'').trim()||null,
+      assignmentRelacionadaId:String(fd.get('assignmentRelacionadaId')||'').trim()||null,
+      contextoContinuidade:String(fd.get('contextoContinuidade')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/continuity${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Continuidade profissional atualizada.':'Continuidade profissional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewContinuityV0381').onclick=clear;
+  $('#closeProfessionalReviewContinuityV0381').onclick=()=>hpOpenProfessionalReviewDelegationV0361(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewHandoffClosureV0376(patientId){
@@ -5413,7 +5532,11 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
 
   const continuityFoundationHostV0380=$('#professionalReviewContinuityFoundationV0380');
   hpLoadProfessionalReviewContinuityFoundationV0380(p.id)
-    .then(x=>hpRenderProfessionalReviewContinuityFoundationV0380(continuityFoundationHostV0380,x))
+    .then(x=>{
+      hpRenderProfessionalReviewContinuityFoundationV0380(continuityFoundationHostV0380,x);
+      const openContinuityV0381=continuityFoundationHostV0380?.querySelector('[data-continuity-open-v0381]');
+      if(openContinuityV0381) openContinuityV0381.onclick=()=>hpOpenProfessionalReviewContinuityV0381(p);
+    })
     .catch(()=>{ if(continuityFoundationHostV0380) continuityFoundationHostV0380.innerHTML=''; });
 
   const handoffClosureHostV0376=$('#professionalReviewHandoffClosureV0376');
@@ -12500,7 +12623,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.38.0';
+const HP_MVP_VERSION='0.38.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
