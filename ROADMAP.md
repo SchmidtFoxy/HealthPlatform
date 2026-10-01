@@ -5073,3 +5073,22 @@ Adicionar histórico consultável dos efeitos observados registrados, cobrindo c
 ### v0.50.4 — Professional Review Team Knowledge Effect Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos efeitos observados e sem promover o registro a causalidade comprovada ou evidência clínica validada.
 
+## ✅ v0.50.4 — Professional Review Team Knowledge Effect Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectFiltersResponse`;
+- endpoint `team-knowledge-effect/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.50.5 — Professional Review Team Knowledge Effect Summary
+Adicionar resumo estrutural dos efeitos observados documentados do conhecimento da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em causalidade comprovada, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
+

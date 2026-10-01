@@ -5996,3 +5996,37 @@ O histórico mostra somente eventos registrados. Não transforma efeito observad
 
 **Próxima etapa:** `v0.50.4 — Professional Review Team Knowledge Effect Filters`.
 
+---
+
+## v0.50.4 — Professional Review Team Knowledge Effect Filters
+
+Adiciona filtros profissionais para localizar efeitos observados documentados do conhecimento da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- efeito observado documentado;
+- contexto da observação;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- resultado observado documentado;
+- impacto percebido documentado;
+- observação profissional.
+
+### UI
+O gerenciador de efeitos passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam efeito observado em causalidade comprovada ou evidência clínica validada, não produzem prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.50.5 — Professional Review Team Knowledge Effect Summary`.
+

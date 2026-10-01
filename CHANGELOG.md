@@ -1,4 +1,24 @@
-﻿# v0.50.3 — Professional Review Team Knowledge Effect History
+﻿# v0.50.4 — Professional Review Team Knowledge Effect Filters
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectFiltersResponse`.
+- Adiciona endpoint `GET .../team-knowledge-effect/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não transforma efeito observado em causalidade comprovada.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica.
+- Não cria urgência, risco ou prioridade clínica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.50.5 — Professional Review Team Knowledge Effect Summary.
+
+# v0.50.3 — Professional Review Team Knowledge Effect History
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectHistoryItemResponse`.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectHistoryResponse`.

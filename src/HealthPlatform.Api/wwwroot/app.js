@@ -4995,6 +4995,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_V0502='v0.50.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504='v0.50.4';
 
 
 
@@ -6208,9 +6209,17 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
   const modal=$('#clinicalActionModal');
   if(!modal) return;
 
-  const load=async()=>{
-    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect`);
-    return Array.isArray(items)?items:[];
+  const load=async(filters={})=>{
+    const params=new URLSearchParams();
+    if(filters.status) params.set('status',filters.status);
+    if(filters.profissionalResponsavel) params.set('profissionalResponsavel',filters.profissionalResponsavel);
+    if(filters.horizonte) params.set('horizonte',filters.horizonte);
+    if(filters.texto) params.set('texto',filters.texto);
+    if(filters.incluirArquivados) params.set('incluirArquivados','true');
+    params.set('ordenacao',filters.ordenacao||'desc');
+
+    const result=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect/search?${params.toString()}`);
+    return Array.isArray(result?.itens)?result.itens:[];
   };
 
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-persistence-v0501="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501}">
@@ -6221,6 +6230,28 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectV0501">Fechar</button>
     </div>
+    <form id="professionalReviewTeamKnowledgeEffectFiltersV0504" class="form-grid" data-professional-review-team-knowledge-effect-filters-v0504="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504}">
+      <label>Status<select name="status">
+        <option value="">Todos</option>
+        <option value="Registrado">Registrado</option>
+        <option value="EmRevisao">Em revisão</option>
+        <option value="Consolidado">Consolidado</option>
+        <option value="Descartado">Descartado</option>
+      </select></label>
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" placeholder="Filtrar por responsável"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120" placeholder="Ex.: esta semana"></label>
+      <label class="span-2">Texto<input name="texto" maxlength="240" placeholder="Buscar responsável, participantes, efeito, contexto, base observacional, interpretação, resultado, impacto ou observação"></label>
+      <label><input type="checkbox" name="incluirArquivados"> Incluir arquivados</label>
+      <label>Ordenação<select name="ordenacao">
+        <option value="desc">Mais recentes</option>
+        <option value="asc">Mais antigos</option>
+      </select></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="secondary">Aplicar filtros</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectFiltersV0504">Limpar filtros</button>
+      </div>
+    </form>
+
     <form id="professionalReviewTeamKnowledgeEffectFormV0501" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
@@ -6264,8 +6295,19 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
     if(form?.elements.id) form.elements.id.value='';
   };
 
+  const filtersForm=$('#professionalReviewTeamKnowledgeEffectFiltersV0504');
+
+  const readFilters=()=>({
+    status:filtersForm?.elements.status?.value||'',
+    profissionalResponsavel:filtersForm?.elements.profissionalResponsavel?.value||'',
+    horizonte:filtersForm?.elements.horizonte?.value||'',
+    texto:filtersForm?.elements.texto?.value||'',
+    incluirArquivados:!!filtersForm?.elements.incluirArquivados?.checked,
+    ordenacao:filtersForm?.elements.ordenacao?.value||'desc'
+  });
+
   const render=async()=>{
-    const items=await load();
+    const items=await load(readFilters());
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
@@ -6393,6 +6435,21 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
     clear();
     await render();
   };
+
+  if(filtersForm){
+    filtersForm.onsubmit=async e=>{
+      e.preventDefault();
+      await render();
+    };
+  }
+
+  const clearFiltersV0504=$('#clearProfessionalReviewTeamKnowledgeEffectFiltersV0504');
+  if(clearFiltersV0504){
+    clearFiltersV0504.onclick=async()=>{
+      filtersForm?.reset();
+      await render();
+    };
+  }
 
   $('#clearProfessionalReviewTeamKnowledgeEffectV0501').onclick=clear;
   $('#closeProfessionalReviewTeamKnowledgeEffectV0501').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
@@ -17107,7 +17164,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.50.3';
+const HP_MVP_VERSION='0.50.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
