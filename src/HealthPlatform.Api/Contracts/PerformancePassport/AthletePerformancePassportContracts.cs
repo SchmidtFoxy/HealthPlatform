@@ -239,6 +239,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectReviewProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectReviewSummaryResponse(
+    int Total,
+    int Ativas,
+    int Registradas,
+    int EmRevisao,
+    int Consolidadas,
+    int Descartadas,
+    int Arquivadas,
+    IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectReviewProfissionalResumoResponse> PorProfissionalRevisor,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectReviewFiltersResponse(
     string? Status,
     string? ProfissionalRevisor,

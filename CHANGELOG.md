@@ -1,4 +1,22 @@
-﻿# v0.51.4 — Professional Review Team Knowledge Effect Review Filters
+﻿# v0.51.5 — Professional Review Team Knowledge Effect Review Summary
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectReviewProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectReviewSummaryResponse`.
+- Adiciona `GET .../team-knowledge-effect-review/summary`.
+- Consolida total, ativas, registradas, em revisão, consolidadas, descartadas e arquivadas.
+- Adiciona distribuição por profissional revisor.
+- Adiciona painel `Resumo das revisões profissionais dos efeitos observados`.
+- Atualiza o resumo após alterações.
+- Não transforma revisão em validação causal.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.51.6 — Professional Review Team Knowledge Effect Review Closure.
+
+# v0.51.4 — Professional Review Team Knowledge Effect Review Filters
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectReviewFiltersResponse`.
 - Adiciona endpoint `GET .../team-knowledge-effect-review/search`.

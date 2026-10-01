@@ -5235,3 +5235,25 @@ Adicionar filtros profissionais por status, profissional revisor, horizonte e te
 ### v0.51.5 — Professional Review Team Knowledge Effect Review Summary
 Adicionar resumo estrutural das revisões profissionais documentadas dos efeitos observados do conhecimento da equipe com contagem por status e distribuição por profissional revisor, sem transformar agregações em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
 
+## ✅ v0.51.5 — Professional Review Team Knowledge Effect Review Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectReviewSummaryResponse`;
+- `ProfessionalReviewTeamKnowledgeEffectReviewProfissionalResumoResponse`;
+- total de registros;
+- ativas;
+- registradas;
+- em revisão;
+- consolidadas;
+- descartadas;
+- arquivadas;
+- agrupamento por profissional revisor;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.51.6 — Professional Review Team Knowledge Effect Review Closure
+Fechar o ciclo 0.51.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das revisões profissionais documentadas dos efeitos observados do conhecimento da equipe.
+
