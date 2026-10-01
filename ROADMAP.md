@@ -3639,3 +3639,26 @@ Criar a fundação estrutural de coordenação profissional integrada, conectand
 ### v0.40.1 — Professional Review Coordination Persistence
 Adicionar persistência auditada dos registros de coordenação profissional integrada, com vínculos opcionais a Assignment, Delegation, Handoff, Continuity e Escalation e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
 
+## ✅ v0.40.1 — Professional Review Coordination Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCoordinationPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewCoordination:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Assignment;
+- vínculo opcional à Delegation;
+- vínculo opcional a Handoff;
+- vínculo opcional a Continuity;
+- vínculo opcional a Escalation;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de coordenação profissional;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.40.2 — Professional Review Coordination Status
+Adicionar estados documentais explícitos aos registros de coordenação profissional integrada, com transições manuais e auditadas pela equipe.
+

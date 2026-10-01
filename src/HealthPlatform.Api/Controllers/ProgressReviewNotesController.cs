@@ -27,6 +27,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoHandoff = "ProfessionalReviewHandoff:";
     private const string PrefixoContinuity = "ProfessionalReviewContinuity:";
     private const string PrefixoEscalation = "ProfessionalReviewEscalation:";
+    private const string PrefixoCoordination = "ProfessionalReviewCoordination:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -702,6 +703,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza escalonamento documental entre profissionais e, a partir da v0.39.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    public sealed record CriarProfessionalReviewCoordinationRequest(
+        string ProfissionalCoordenador,
+        Guid? AssignmentRelacionadaId = null,
+        Guid? DelegationRelacionadaId = null,
+        Guid? HandoffRelacionadoId = null,
+        Guid? ContinuityRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        string? ContextoCoordenacao = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
+    public sealed record AtualizarProfessionalReviewCoordinationRequest(
+        string ProfissionalCoordenador,
+        Guid? AssignmentRelacionadaId = null,
+        Guid? DelegationRelacionadaId = null,
+        Guid? HandoffRelacionadoId = null,
+        Guid? ContinuityRelacionadaId = null,
+        Guid? EscalationRelacionadaId = null,
+        string? ContextoCoordenacao = null,
+        string? Horizonte = null,
+        string? ObservacaoProfissional = null);
+
     [HttpGet("coordination/foundation")]
     public ActionResult<ProfessionalReviewCoordinationFoundationResponse> CoordinationFoundation()
     {
@@ -765,10 +788,198 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewCoordinationFoundationResponse(
             "FundacaoCoordinationDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza coordenação documental integrada entre Assignment, Delegation, Handoff, Continuity e Escalation. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+            "A fundação organiza coordenação documental integrada entre Assignment, Delegation, Handoff, Continuity e Escalation e, a partir da v0.40.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
+    [HttpGet("coordination")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewCoordinationPersistedResponse>>> ListarCoordinations(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivadas = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCoordination));
+
+        if (!incluirArquivadas)
+            query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearCoordination).ToArray());
+    }
+
+    [HttpPost("coordination")]
+    public async Task<ActionResult<ProfessionalReviewCoordinationPersistedResponse>> CriarCoordination(
+        Guid pacienteId,
+        CriarProfessionalReviewCoordinationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalCoordenador = NormalizarObrigatorio(request.ProfissionalCoordenador, 160);
+        if (profissionalCoordenador is null)
+            return BadRequest(new { message = "Informe o profissional coordenador." });
+
+        if (request.AssignmentRelacionadaId.HasValue &&
+            !await AssignmentPertencePacienteAsync(pacienteId, request.AssignmentRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Assignment relacionada inválida para este paciente." });
+
+        if (request.DelegationRelacionadaId.HasValue &&
+            !await DelegationPertencePacienteAsync(pacienteId, request.DelegationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Delegation relacionada inválida para este paciente." });
+
+        if (request.HandoffRelacionadoId.HasValue &&
+            !await HandoffPertencePacienteAsync(pacienteId, request.HandoffRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Handoff relacionado inválido para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.Id == currentUser.UserId &&
+                x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            Categoria = PrefixoCoordination + "item",
+            Conteudo = MontarPayloadCoordination(
+                profissionalCoordenador,
+                request.AssignmentRelacionadaId,
+                request.DelegationRelacionadaId,
+                request.HandoffRelacionadoId,
+                request.ContinuityRelacionadaId,
+                request.EscalationRelacionadaId,
+                request.ContextoCoordenacao,
+                request.Horizonte,
+                request.ObservacaoProfissional),
+            Arquivada = false,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_COORDINATION_CREATED", nota, null, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearCoordination(nota));
+    }
+
+    [HttpPut("coordination/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewCoordinationPersistedResponse>> AtualizarCoordination(
+        Guid pacienteId,
+        Guid id,
+        AtualizarProfessionalReviewCoordinationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCoordination),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var profissionalCoordenador = NormalizarObrigatorio(request.ProfissionalCoordenador, 160);
+        if (profissionalCoordenador is null)
+            return BadRequest(new { message = "Informe o profissional coordenador." });
+
+        if (request.AssignmentRelacionadaId.HasValue &&
+            !await AssignmentPertencePacienteAsync(pacienteId, request.AssignmentRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Assignment relacionada inválida para este paciente." });
+
+        if (request.DelegationRelacionadaId.HasValue &&
+            !await DelegationPertencePacienteAsync(pacienteId, request.DelegationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Delegation relacionada inválida para este paciente." });
+
+        if (request.HandoffRelacionadoId.HasValue &&
+            !await HandoffPertencePacienteAsync(pacienteId, request.HandoffRelacionadoId.Value, cancellationToken))
+            return BadRequest(new { message = "Handoff relacionado inválido para este paciente." });
+
+        if (request.ContinuityRelacionadaId.HasValue &&
+            !await ContinuityPertencePacienteAsync(pacienteId, request.ContinuityRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Continuity relacionada inválida para este paciente." });
+
+        if (request.EscalationRelacionadaId.HasValue &&
+            !await EscalationPertencePacienteAsync(pacienteId, request.EscalationRelacionadaId.Value, cancellationToken))
+            return BadRequest(new { message = "Escalation relacionada inválida para este paciente." });
+
+        var antes = Snapshot(nota);
+
+        nota.Conteudo = MontarPayloadCoordination(
+            profissionalCoordenador,
+            request.AssignmentRelacionadaId,
+            request.DelegationRelacionadaId,
+            request.HandoffRelacionadoId,
+            request.ContinuityRelacionadaId,
+            request.EscalationRelacionadaId,
+            request.ContextoCoordenacao,
+            request.Horizonte,
+            request.ObservacaoProfissional);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("PROFESSIONAL_REVIEW_COORDINATION_UPDATED", nota, antes, Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearCoordination(nota));
+    }
+
+    [HttpDelete("coordination/{id:guid}")]
+    public async Task<IActionResult> ArquivarCoordination(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCoordination),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+        {
+            var antes = Snapshot(nota);
+            nota.Arquivada = true;
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar("PROFESSIONAL_REVIEW_COORDINATION_ARCHIVED", nota, antes, Snapshot(nota));
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpGet("escalation/closure")]
@@ -5026,6 +5237,73 @@ public class ProgressReviewNotesController(
         return JsonSerializer.Serialize(payload);
     }
 
+    private sealed record CoordinationPayload(
+        string ProfissionalCoordenador,
+        Guid? AssignmentRelacionadaId,
+        Guid? DelegationRelacionadaId,
+        Guid? HandoffRelacionadoId,
+        Guid? ContinuityRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        string? ContextoCoordenacao,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static string MontarPayloadCoordination(
+        string profissionalCoordenador,
+        Guid? assignmentRelacionadaId,
+        Guid? delegationRelacionadaId,
+        Guid? handoffRelacionadoId,
+        Guid? continuityRelacionadaId,
+        Guid? escalationRelacionadaId,
+        string? contextoCoordenacao,
+        string? horizonte,
+        string? observacaoProfissional)
+    {
+        var payload = new CoordinationPayload(
+            profissionalCoordenador,
+            assignmentRelacionadaId,
+            delegationRelacionadaId,
+            handoffRelacionadoId,
+            continuityRelacionadaId,
+            escalationRelacionadaId,
+            NormalizarOpcional(contextoCoordenacao, 2000),
+            NormalizarOpcional(horizonte, 120),
+            NormalizarOpcional(observacaoProfissional, 2000));
+
+        return JsonSerializer.Serialize(payload);
+    }
+
+    private static ProfessionalReviewCoordinationPersistedResponse MapearCoordination(NotaInternaProfissional nota)
+    {
+        CoordinationPayload? payload = null;
+
+        try
+        {
+            payload = JsonSerializer.Deserialize<CoordinationPayload>(nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            // Compatibilidade defensiva: conteúdo legado não deve quebrar a listagem.
+        }
+
+        return new ProfessionalReviewCoordinationPersistedResponse(
+            nota.Id,
+            payload?.AssignmentRelacionadaId,
+            payload?.DelegationRelacionadaId,
+            payload?.HandoffRelacionadoId,
+            payload?.ContinuityRelacionadaId,
+            payload?.EscalationRelacionadaId,
+            payload?.ProfissionalCoordenador ?? nota.Conteudo,
+            payload?.ContextoCoordenacao,
+            payload?.Horizonte,
+            payload?.ObservacaoProfissional,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc,
+            nota.UpdatedAtUtc,
+            nota.Arquivada);
+    }
+
     private sealed record EscalationPayload(
         string ProfissionalOrigem,
         string ProfissionalDestino,
@@ -5650,6 +5928,20 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private async Task<bool> EscalationPertencePacienteAsync(
+        Guid pacienteId,
+        Guid escalationId,
+        CancellationToken cancellationToken) =>
+        await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == escalationId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoEscalation) &&
+                !x.Arquivada,
+                cancellationToken);
 
     private async Task<bool> ContinuityPertencePacienteAsync(
         Guid pacienteId,

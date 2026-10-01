@@ -170,6 +170,24 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewCoordinationPersistedResponse(
+    Guid Id,
+    Guid? AssignmentRelacionadaId,
+    Guid? DelegationRelacionadaId,
+    Guid? HandoffRelacionadoId,
+    Guid? ContinuityRelacionadaId,
+    Guid? EscalationRelacionadaId,
+    string ProfissionalCoordenador,
+    string? ContextoCoordenacao,
+    string? Horizonte,
+    string? ObservacaoProfissional,
+    Guid AutorUsuarioId,
+    string AutorNome,
+    DateTime CriadoEmUtc,
+    DateTime? AtualizadoEmUtc,
+    bool Arquivada);
+
 public sealed record ProfessionalReviewCoordinationFieldResponse(
     string Chave,
     string Rotulo,

@@ -3506,3 +3506,45 @@ A fundação organiza coordenação documental entre profissionais. Não executa
 
 **Próxima etapa:** `v0.40.1 — Professional Review Coordination Persistence`.
 
+---
+
+## v0.40.1 — Professional Review Coordination Persistence
+
+Adiciona persistência auditada para registros de coordenação profissional integrada.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Assignment relacionada opcional;
+- Delegation relacionada opcional;
+- Handoff relacionado opcional;
+- Continuity relacionada opcional;
+- Escalation relacionada opcional;
+- profissional coordenador;
+- contexto de coordenação;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_COORDINATION_CREATED`
+- `PROFESSIONAL_REVIEW_COORDINATION_UPDATED`
+- `PROFESSIONAL_REVIEW_COORDINATION_ARCHIVED`
+
+### Vínculos
+Quando informados, Assignment, Delegation, Handoff, Continuity e Escalation precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar coordenações**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra coordenação documental. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco, urgência ou prioridade clínica.
+
+**Próxima etapa:** `v0.40.2 — Professional Review Coordination Status`.
+

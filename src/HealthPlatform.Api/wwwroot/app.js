@@ -4922,6 +4922,7 @@ const HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394='v0.39.4';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_SUMMARY_V0395='v0.39.5';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_CLOSURE_V0396='v0.39.6';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_V0400='v0.40.0';
+const HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401='v0.40.1';
 
 
 
@@ -5430,7 +5431,133 @@ function hpRenderProfessionalReviewCoordinationFoundationV0400(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Integra a coordenação documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-coordination-open-v0401="${HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401}">Gerenciar coordenações</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewCoordinationV0401(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/coordination`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-coordination-persistence-v0401="${HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401}">
+    <div class="row-between">
+      <div>
+        <h3>Coordenação profissional integrada</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewCoordinationV0401">Fechar</button>
+    </div>
+    <form id="professionalReviewCoordinationFormV0401" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional coordenador<input name="profissionalCoordenador" maxlength="160" required></label>
+      <label>Assignment relacionada<input name="assignmentRelacionadaId" placeholder="ID opcional da atribuição"></label>
+      <label>Delegation relacionada<input name="delegationRelacionadaId" placeholder="ID opcional da delegação"></label>
+      <label>Handoff relacionado<input name="handoffRelacionadoId" placeholder="ID opcional do handoff"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto de coordenação<textarea name="contextoCoordenacao" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar coordenação</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewCoordinationV0401">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewCoordinationListV0401" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewCoordinationFormV0401');
+  const listHost=$('#professionalReviewCoordinationListV0401');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalCoordenador||'Coordenador')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
+      ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
+      ${x.handoffRelacionadoId?`<small class="muted-line">Handoff: ${esc(x.handoffRelacionadoId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.contextoCoordenacao?`<p>${esc(x.contextoCoordenacao)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-coordination-edit-v0401="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-coordination-archive-v0401="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma coordenação profissional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-coordination-edit-v0401]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.coordinationEditV0401);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalCoordenador.value=item.profissionalCoordenador||'';
+      form.elements.assignmentRelacionadaId.value=item.assignmentRelacionadaId||'';
+      form.elements.delegationRelacionadaId.value=item.delegationRelacionadaId||'';
+      form.elements.handoffRelacionadoId.value=item.handoffRelacionadoId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.contextoCoordenacao.value=item.contextoCoordenacao||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalCoordenador.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-coordination-archive-v0401]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/coordination/${btn.dataset.coordinationArchiveV0401}`,{method:'DELETE'});
+      toast('Coordenação profissional arquivada.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalCoordenador:String(fd.get('profissionalCoordenador')||'').trim(),
+      assignmentRelacionadaId:String(fd.get('assignmentRelacionadaId')||'').trim()||null,
+      delegationRelacionadaId:String(fd.get('delegationRelacionadaId')||'').trim()||null,
+      handoffRelacionadoId:String(fd.get('handoffRelacionadoId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      contextoCoordenacao:String(fd.get('contextoCoordenacao')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/coordination${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Coordenação profissional atualizada.':'Coordenação profissional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewCoordinationV0401').onclick=clear;
+  $('#closeProfessionalReviewCoordinationV0401').onclick=()=>hpOpenProfessionalReviewEscalationV0391(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewEscalationClosureV0396(patientId){
@@ -5561,7 +5688,11 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
 
   const coordinationFoundationHostV0400=$('#professionalReviewCoordinationFoundationV0400');
   hpLoadProfessionalReviewCoordinationFoundationV0400(p.id)
-    .then(x=>hpRenderProfessionalReviewCoordinationFoundationV0400(coordinationFoundationHostV0400,x))
+    .then(x=>{
+      hpRenderProfessionalReviewCoordinationFoundationV0400(coordinationFoundationHostV0400,x);
+      const openCoordinationV0401=coordinationFoundationHostV0400?.querySelector('[data-coordination-open-v0401]');
+      if(openCoordinationV0401) openCoordinationV0401.onclick=()=>hpOpenProfessionalReviewCoordinationV0401(p);
+    })
     .catch(()=>{ if(coordinationFoundationHostV0400) coordinationFoundationHostV0400.innerHTML=''; });
 
   const escalationClosureHostV0396=$('#professionalReviewEscalationClosureV0396');
@@ -13199,7 +13330,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.40.0';
+const HP_MVP_VERSION='0.40.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

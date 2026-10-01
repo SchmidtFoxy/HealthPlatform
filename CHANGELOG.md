@@ -1,4 +1,20 @@
-﻿# v0.40.0 — Professional Review Coordination Foundation
+﻿# v0.40.1 — Professional Review Coordination Persistence
+
+- Adiciona persistência auditada de Coordination.
+- Adiciona `ProfessionalReviewCoordinationPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewCoordination:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Assignment, Delegation, Handoff, Continuity e Escalation do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar coordenações`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.40.2 — Professional Review Coordination Status.
+
+# v0.40.0 — Professional Review Coordination Foundation
 
 - Abre a linha funcional 0.40.x.
 - Adiciona `ProfessionalReviewCoordinationFieldResponse`.
