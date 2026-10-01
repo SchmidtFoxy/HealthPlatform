@@ -4511,3 +4511,22 @@ Adicionar histórico consultável dos aprendizados registrados da equipe, cobrin
 ### v0.46.4 — Professional Review Team Learning Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos aprendizados registrados da equipe e sem promover o registro a evidência clínica validada.
 
+## ✅ v0.46.4 — Professional Review Team Learning Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamLearningFiltersResponse`;
+- endpoint `team-learning/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.46.5 — Professional Review Team Learning Summary
+Adicionar resumo estrutural dos aprendizados documentados da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada nem gerar inferência automática de causalidade, prognóstico, recomendação, urgência, risco, prioridade clínica, conduta ou prescrição.
+

@@ -208,6 +208,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamLearningFiltersResponse(
+    string? Status,
+    string? ProfissionalResponsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivados,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewTeamLearningPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamLearningHistoryItemResponse(
     Guid Id,
     Guid TeamLearningId,

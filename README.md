@@ -4995,3 +4995,34 @@ O histórico mostra somente eventos registrados. Não transforma aprendizado em 
 
 **Próxima etapa:** `v0.46.4 — Professional Review Team Learning Filters`.
 
+---
+
+## v0.46.4 — Professional Review Team Learning Filters
+
+Adiciona filtros profissionais para localizar aprendizados documentados da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- aprendizado documentado;
+- evidência / base observacional;
+- aplicabilidade;
+- observação profissional.
+
+### UI
+O gerenciador de aprendizados passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam aprendizado em evidência clínica validada, não inferem causalidade, prognóstico, recomendação, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.46.5 — Professional Review Team Learning Summary`.
+
