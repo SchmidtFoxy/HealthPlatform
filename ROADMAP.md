@@ -2877,3 +2877,21 @@ Adicionar estados documentais explícitos para as tarefas operacionais, com tran
 ### v0.34.3 — Professional Review Task Coordination History
 Adicionar histórico consultável das tarefas operacionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.34.3 — Professional Review Task Coordination History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTaskCoordinationHistoryItemResponse`;
+- `ProfessionalReviewTaskCoordinationHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por tarefa operacional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.34.4 — Professional Review Task Coordination Filters
+Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental da Task Coordination.
+

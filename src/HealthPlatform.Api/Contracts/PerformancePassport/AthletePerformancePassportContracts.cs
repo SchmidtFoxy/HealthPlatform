@@ -135,6 +135,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTaskCoordinationHistoryItemResponse(
+    Guid Id,
+    Guid TaskCoordinationId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewTaskCoordinationHistoryResponse(
+    Guid TaskCoordinationId,
+    IReadOnlyCollection<ProfessionalReviewTaskCoordinationHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTaskCoordinationPersistedResponse(
     Guid Id,
     string TarefaOperacional,

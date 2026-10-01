@@ -1,4 +1,18 @@
-﻿# v0.34.2 — Professional Review Task Coordination Status
+﻿# v0.34.3 — Professional Review Task Coordination History
+
+- Adiciona `ProfessionalReviewTaskCoordinationHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTaskCoordinationHistoryResponse`.
+- Adiciona `GET .../task-coordination/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no workspace profissional.
+- Não interpreta evolução clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.34.4 — Professional Review Task Coordination Filters.
+
+# v0.34.2 — Professional Review Task Coordination Status
 
 - Adiciona `Status` à Task Coordination persistida.
 - Adiciona `StatusAtualizadoEmUtc`.

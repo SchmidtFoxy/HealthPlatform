@@ -4882,6 +4882,7 @@ const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_CLOSURE_V0336='v0.33.6';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_V0342='v0.34.2';
+const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3';
 
 
 
@@ -5000,6 +5001,39 @@ function hpRenderProfessionalReviewTaskCoordinationFoundationV0340(host,foundati
 }
 
 
+
+async function hpOpenProfessionalReviewTaskCoordinationHistoryV0343(p,task){
+  if(!p?.id || !task?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/task-coordination/${task.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-task-coordination-history-v0343="${HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico da tarefa operacional</h3>
+        <p class="muted-line">${esc(task.tarefaOperacional||'Tarefa operacional')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTaskCoordinationHistoryV0343">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica.</small>
+  </div>`;
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTaskCoordinationHistoryV0343').onclick=()=>hpOpenProfessionalReviewTaskCoordinationV0341(p);
+}
+
 async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
   if(!p?.id) return;
 
@@ -5063,6 +5097,7 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluida'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="Concluida">Concluir</button>`:''}
         ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="Cancelada">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-task-coordination-history-v0343="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-task-coordination-archive-v0341="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma tarefa operacional registrada.</p>';
@@ -5077,6 +5112,11 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.tarefaOperacional.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-task-coordination-history-v0343]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.taskCoordinationHistoryV0343);
+      if(item) await hpOpenProfessionalReviewTaskCoordinationHistoryV0343(p,item);
     });
 
     [...listHost.querySelectorAll('[data-task-coordination-status-v0342]')].forEach(btn=>btn.onclick=async()=>{
@@ -11265,7 +11305,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.34.2';
+const HP_MVP_VERSION='0.34.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

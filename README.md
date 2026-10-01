@@ -2240,3 +2240,35 @@ O status é documental. O sistema não inicia, conclui ou cancela tarefas automa
 
 **Próxima etapa:** `v0.34.3 — Professional Review Task Coordination History`.
 
+---
+
+## v0.34.3 — Professional Review Task Coordination History
+
+Adiciona histórico consultável dos eventos auditados das tarefas operacionais.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../task-coordination/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada tarefa operacional passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado.
+
+**Próxima etapa:** `v0.34.4 — Professional Review Task Coordination Filters`.
+

@@ -449,6 +449,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearTaskCoordination(nota));
     }
 
+    [HttpGet("task-coordination/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewTaskCoordinationHistoryResponse>> HistoricoTaskCoordination(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var tarefaExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTaskCoordination),
+                cancellationToken);
+
+        if (!tarefaExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_TASK_COORDINATION_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewTaskCoordinationHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoTaskCoordination(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewTaskCoordinationHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais da Task Coordination. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado."));
+    }
+
     [HttpPatch("task-coordination/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewTaskCoordinationPersistedResponse>> AtualizarStatusTaskCoordination(
         Guid pacienteId,
@@ -2255,6 +2330,16 @@ public class ProgressReviewNotesController(
 
     private static bool StatusActionPlanValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private static string MapearEventoTaskCoordination(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_TASK_COORDINATION_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_TASK_COORDINATION_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_TASK_COORDINATION_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static TaskCoordinationPayload LerPayloadTaskCoordination(NotaInternaProfissional nota)
     {
