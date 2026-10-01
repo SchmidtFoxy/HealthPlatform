@@ -6747,3 +6747,37 @@ O histórico mostra somente eventos registrados. Não transforma revisão regist
 
 **Próxima etapa:** `v0.53.4 — Professional Review Team Knowledge Effect Decision Review Filters`.
 
+---
+
+## v0.53.4 — Professional Review Team Knowledge Effect Decision Review Filters
+
+Adiciona filtros profissionais para localizar revisões documentadas das decisões sobre os efeitos observados do conhecimento da equipe.
+
+### Filtros
+- status;
+- profissional revisor;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional revisor;
+- participantes;
+- revisão documentada;
+- contexto da revisão;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- conclusão documental;
+- necessidade de acompanhamento documentada;
+- observação profissional.
+
+### UI
+O gerenciador de revisões passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam revisão registrada em validação causal ou evidência clínica validada, não produzem prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.53.5 — Professional Review Team Knowledge Effect Decision Review Summary`.
+
