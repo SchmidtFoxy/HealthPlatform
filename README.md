@@ -6808,3 +6808,16 @@ As contagens são agregações documentais. Não transformam revisão em valida�
 
 **Próxima etapa:** `v0.53.6 — Professional Review Team Knowledge Effect Decision Review Closure`.
 
+---
+
+## v0.53.6 — Professional Review Team Knowledge Effect Decision Review Closure
+
+**Encerra a linha funcional 0.53.x.**
+
+Fecha a linha 0.53.x consolidando Foundation, Persistence, Status, History, Filters e Summary.
+
+Estado estrutural: `EstruturaTeamKnowledgeEffectDecisionReviewCompleta`.
+
+O fechamento mede somente disponibilidade estrutural. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.54.0 — Professional Review Team Knowledge Effect Decision Review Outcome Foundation`.
