@@ -1,4 +1,20 @@
-﻿# v0.42.1 — Professional Review Shared Context Persistence
+﻿# v0.42.2 — Professional Review Shared Context Status
+
+- Adiciona `Status` ao Shared Context persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewSharedContextStatusRequest`.
+- Adiciona endpoint `PATCH .../shared-context/{id}/status`.
+- Estados permitidos: `Planejado`, `EmAndamento`, `Concluido`, `Cancelado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.42.3 — Professional Review Shared Context History.
+
+# v0.42.1 — Professional Review Shared Context Persistence
 
 - Adiciona persistência auditada de Shared Context.
 - Adiciona `ProfessionalReviewSharedContextPersistedResponse`.

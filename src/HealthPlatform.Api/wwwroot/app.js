@@ -4937,6 +4937,7 @@ const HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415='v0.41.5';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416='v0.41.6';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1';
+const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2';
 
 
 
@@ -5636,8 +5637,9 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejado')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
@@ -5648,6 +5650,10 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-shared-context-edit-v0421="${x.id}">Editar</button>
+        ${x.status!=='Planejado'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="Planejado">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluido'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="Concluido">Concluir</button>`:''}
+        ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="Cancelado">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-shared-context-archive-v0421="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum contexto profissional compartilhado registrado.</p>';
@@ -5666,6 +5672,16 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-shared-context-status-v0422]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0422;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/shared-context/${btn.dataset.sharedContextStatusV0422}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Contexto compartilhado atualizado para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-shared-context-archive-v0421]')].forEach(btn=>btn.onclick=async()=>{
@@ -14026,7 +14042,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.42.1';
+const HP_MVP_VERSION='0.42.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

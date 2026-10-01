@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.42.1",
+            "v0.42.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Shared Context Persistence adiciona persistência auditada ao contexto profissional compartilhado, com vínculos opcionais a Collaboration, Coordination, Escalation e Continuity e sem transformar contexto documentado em execução, prioridade clínica ou transferência automática de responsabilidade clínica.")
+            "Professional Review Shared Context Status adiciona estados documentais explícitos ao contexto profissional compartilhado, com transições manuais auditadas entre Planejado, EmAndamento, Concluido e Cancelado, sem execução automática ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

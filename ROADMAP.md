@@ -3929,3 +3929,21 @@ Adicionar persistência auditada dos registros de contexto profissional comparti
 ### v0.42.2 — Professional Review Shared Context Status
 Adicionar estados documentais explícitos aos registros de contexto profissional compartilhado, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.42.2 — Professional Review Shared Context Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejado`, `EmAndamento`, `Concluido` e `Cancelado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.42.3 — Professional Review Shared Context History
+Adicionar histórico consultável dos contextos profissionais compartilhados, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

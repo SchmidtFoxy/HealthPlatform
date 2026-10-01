@@ -194,11 +194,16 @@ public sealed record ProfessionalReviewSharedContextPersistedResponse(
     string? ContextoCompartilhado,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewSharedContextStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewSharedContextFieldResponse(
     string Chave,

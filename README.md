@@ -3997,3 +3997,35 @@ A persistência registra contexto documental compartilhado. Não executa conduta
 
 **Próxima etapa:** `v0.42.2 — Professional Review Shared Context Status`.
 
+---
+
+## v0.42.2 — Professional Review Shared Context Status
+
+Adiciona estados documentais explícitos aos registros de contexto profissional compartilhado.
+
+### Estados
+- `Planejado`
+- `EmAndamento`
+- `Concluido`
+- `Cancelado`
+
+### Transições
+As mudanças são manuais via `PATCH .../shared-context/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do contexto;
+- gera auditoria `PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela contextos automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.42.3 — Professional Review Shared Context History`.
+

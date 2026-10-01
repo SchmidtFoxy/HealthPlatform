@@ -1102,21 +1102,78 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadSharedContext(
+        var payloadAtual = LerPayloadSharedContext(nota);
+        var payloadAtualizado = new SharedContextPayload(
             profissionalResponsavel,
             request.CollaborationRelacionadaId,
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.Participantes,
-            request.ContextoCompartilhado,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Participantes, 1000),
+            NormalizarOpcional(request.ContextoCompartilhado, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_SHARED_CONTEXT_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearSharedContext(nota));
+    }
+
+    [HttpPatch("shared-context/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewSharedContextPersistedResponse>> AtualizarStatusSharedContext(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewSharedContextStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusSharedContextValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejado, EmAndamento, Concluido ou Cancelado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoSharedContext) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadSharedContext(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearSharedContext(nota));
     }
 
@@ -6301,7 +6358,9 @@ public class ProgressReviewNotesController(
         string? Participantes,
         string? ContextoCompartilhado,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadSharedContext(
         string profissionalResponsavel,
@@ -6323,7 +6382,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(participantes, 1000),
             NormalizarOpcional(contextoCompartilhado, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -6352,12 +6413,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoCompartilhado,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static SharedContextPayload LerPayloadSharedContext(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<SharedContextPayload>(nota.Conteudo)
+                ?? new SharedContextPayload(nota.Conteudo, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new SharedContextPayload(nota.Conteudo, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusSharedContextValido(string? status) =>
+        status is "Planejado" or "EmAndamento" or "Concluido" or "Cancelado";
 
     private sealed record CollaborationPayload(
         string ProfissionalResponsavel,
