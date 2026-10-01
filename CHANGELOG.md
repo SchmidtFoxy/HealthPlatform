@@ -1,4 +1,20 @@
-﻿# v0.35.6 — Professional Review Assignment Closure
+﻿# v0.36.0 — Professional Review Delegation Foundation
+
+- Abre a linha funcional 0.36.x.
+- Adiciona `ProfessionalReviewDelegationFieldResponse`.
+- Adiciona `ProfessionalReviewDelegationFoundationResponse`.
+- Adiciona `GET .../delegation/foundation`.
+- Define Assignment relacionada, profissional delegante, profissional delegado, contexto, horizonte e observação profissional.
+- Define `FundacaoDelegationDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Delegações profissionais` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.36.1 — Professional Review Delegation Persistence.
+
+# v0.35.6 — Professional Review Assignment Closure
 
 - Adiciona `ProfessionalReviewAssignmentClosureResponse`.
 - Adiciona endpoint `GET .../assignment/closure`.

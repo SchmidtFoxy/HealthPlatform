@@ -3085,3 +3085,21 @@ Fechar o ciclo 0.35.x consolidando fundação, persistência, status, histórico
 ### v0.36.0 — Professional Review Delegation Foundation
 Criar a fundação estrutural para delegação profissional relacionada às atribuições existentes, preservando autoria, responsabilidade e contexto documental sem automatizar decisão clínica ou execução.
 
+## ✅ v0.36.0 — Professional Review Delegation Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewDelegationFieldResponse`;
+- `ProfessionalReviewDelegationFoundationResponse`;
+- endpoint `delegation/foundation`;
+- seis campos estruturais;
+- estado `FundacaoDelegationDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.1 — Professional Review Delegation Persistence
+Adicionar persistência auditada das delegações profissionais, com vínculo opcional à Assignment e preservação explícita de autoria, responsabilidade documental e separação entre delegação, decisão clínica e execução.
+

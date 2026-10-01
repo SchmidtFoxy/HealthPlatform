@@ -390,6 +390,57 @@ public class ProgressReviewNotesController(
             "A fundação organiza atribuições documentais da equipe profissional e, a partir da v0.35.1, possui persistência auditada. Não executa condutas, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("delegation/foundation")]
+    public ActionResult<ProfessionalReviewDelegationFoundationResponse> DelegationFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewDelegationFieldResponse(
+                "assignment-relacionada",
+                "Assignment relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a delegação a uma atribuição profissional já documentada."),
+            new ProfessionalReviewDelegationFieldResponse(
+                "profissional-delegante",
+                "Profissional delegante",
+                true,
+                "texto",
+                "Identifica documentalmente quem realiza a delegação."),
+            new ProfessionalReviewDelegationFieldResponse(
+                "profissional-delegado",
+                "Profissional delegado",
+                true,
+                "texto",
+                "Identifica documentalmente quem recebe a delegação."),
+            new ProfessionalReviewDelegationFieldResponse(
+                "contexto-delegacao",
+                "Contexto da delegação",
+                false,
+                "texto-longo",
+                "Documenta o contexto operacional da delegação sem caracterizar decisão clínica automática."),
+            new ProfessionalReviewDelegationFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewDelegationFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes para a equipe.")
+        };
+
+        return Ok(new ProfessionalReviewDelegationFoundationResponse(
+            "FundacaoDelegationDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza delegações documentais da equipe profissional. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("assignment/closure")]
     public ActionResult<ProfessionalReviewAssignmentClosureResponse> FechamentoAssignments()
     {

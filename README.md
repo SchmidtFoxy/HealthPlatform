@@ -2578,3 +2578,33 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.36.0 — Professional Review Delegation Foundation`.
 
+---
+
+## v0.36.0 — Professional Review Delegation Foundation
+
+Abre a linha 0.36.x com a fundação estrutural para delegações profissionais relacionadas às atribuições existentes.
+
+### Campos da fundação
+- Assignment relacionada;
+- profissional delegante;
+- profissional delegado;
+- contexto da delegação;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../delegation/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoDelegationDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Delegações profissionais**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza delegações documentais da equipe. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.36.1 — Professional Review Delegation Persistence`.
+
