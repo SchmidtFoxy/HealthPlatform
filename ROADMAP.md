@@ -3774,3 +3774,24 @@ Criar a fundação estrutural de colaboração profissional, conectando coordena
 ### v0.41.1 — Professional Review Collaboration Persistence
 Adicionar persistência auditada dos registros de colaboração profissional compartilhada, com vínculos opcionais a Coordination, Escalation e Continuity e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
 
+## ✅ v0.41.1 — Professional Review Collaboration Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCollaborationPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewCollaboration:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de colaboração profissional;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.41.2 — Professional Review Collaboration Status
+Adicionar estados documentais explícitos aos registros de colaboração profissional, com transições manuais e auditadas pela equipe.
+

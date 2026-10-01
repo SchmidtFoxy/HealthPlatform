@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.41.0",
+            "v0.41.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Collaboration Foundation abre a linha 0.41.x com uma fundação estrutural de colaboração profissional compartilhada, conectando Coordination, Escalation e Continuity sem execução automática ou priorização clínica.")
+            "Professional Review Collaboration Persistence adiciona persistência auditada à colaboração profissional compartilhada, com vínculos opcionais a Coordination, Escalation e Continuity e sem transformar contexto documentado em execução, prioridade clínica ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

@@ -4929,6 +4929,7 @@ const HP_PROFESSIONAL_REVIEW_COORDINATION_FILTERS_V0404='v0.40.4';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_SUMMARY_V0405='v0.40.5';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_CLOSURE_V0406='v0.40.6';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_V0410='v0.41.0';
+const HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411='v0.41.1';
 
 
 
@@ -5503,7 +5504,129 @@ function hpRenderProfessionalReviewCollaborationFoundationV0410(host,foundation)
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza colaboração documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-collaboration-open-v0411="${HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411}">Gerenciar colaborações</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewCollaborationV0411(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/collaboration`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-collaboration-persistence-v0411="${HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411}">
+    <div class="row-between">
+      <div>
+        <h3>Colaboração profissional</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewCollaborationV0411">Fechar</button>
+    </div>
+    <form id="professionalReviewCollaborationFormV0411" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Profissionais participantes<input name="profissionaisParticipantes" maxlength="1000" placeholder="Nomes ou contexto documental dos participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto de colaboração<textarea name="contextoColaboracao" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar colaboração</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewCollaborationV0411">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewCollaborationListV0411" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewCollaborationFormV0411');
+  const listHost=$('#professionalReviewCollaborationListV0411');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.profissionaisParticipantes?`<small class="muted-line">Participantes: ${esc(x.profissionaisParticipantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      ${x.contextoColaboracao?`<p>${esc(x.contextoColaboracao)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-collaboration-edit-v0411="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-collaboration-archive-v0411="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma colaboração profissional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-collaboration-edit-v0411]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.collaborationEditV0411);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalResponsavel.value=item.profissionalResponsavel||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.profissionaisParticipantes.value=item.profissionaisParticipantes||'';
+      form.elements.contextoColaboracao.value=item.contextoColaboracao||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-collaboration-archive-v0411]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/collaboration/${btn.dataset.collaborationArchiveV0411}`,{method:'DELETE'});
+      toast('Colaboração profissional arquivada.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      profissionaisParticipantes:String(fd.get('profissionaisParticipantes')||'').trim()||null,
+      contextoColaboracao:String(fd.get('contextoColaboracao')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/collaboration${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Colaboração profissional atualizada.':'Colaboração profissional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewCollaborationV0411').onclick=clear;
+  $('#closeProfessionalReviewCollaborationV0411').onclick=()=>hpOpenProfessionalReviewEscalationV0391(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewCoordinationClosureV0406(patientId){
@@ -5627,7 +5750,11 @@ async function hpOpenProfessionalReviewCoordinationV0401(p){
 
   const collaborationFoundationHostV0410=$('#professionalReviewCollaborationFoundationV0410');
   hpLoadProfessionalReviewCollaborationFoundationV0410(p.id)
-    .then(x=>hpRenderProfessionalReviewCollaborationFoundationV0410(collaborationFoundationHostV0410,x))
+    .then(x=>{
+      hpRenderProfessionalReviewCollaborationFoundationV0410(collaborationFoundationHostV0410,x);
+      const openCollaborationV0411=collaborationFoundationHostV0410?.querySelector('[data-collaboration-open-v0411]');
+      if(openCollaborationV0411) openCollaborationV0411.onclick=()=>hpOpenProfessionalReviewCollaborationV0411(p);
+    })
     .catch(()=>{ if(collaborationFoundationHostV0410) collaborationFoundationHostV0410.innerHTML=''; });
 
   const coordinationClosureHostV0406=$('#professionalReviewCoordinationClosureV0406');
@@ -13549,7 +13676,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.41.0';
+const HP_MVP_VERSION='0.41.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

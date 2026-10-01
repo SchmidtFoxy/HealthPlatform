@@ -3730,3 +3730,44 @@ A fundação organiza colaboração documental entre profissionais. Não executa
 
 **Próxima etapa:** `v0.41.1 — Professional Review Collaboration Persistence`.
 
+---
+
+## v0.41.1 — Professional Review Collaboration Persistence
+
+Adiciona persistência auditada para registros de colaboração profissional compartilhada.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- profissionais participantes;
+- contexto de colaboração;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_COLLABORATION_CREATED`
+- `PROFESSIONAL_REVIEW_COLLABORATION_UPDATED`
+- `PROFESSIONAL_REVIEW_COLLABORATION_ARCHIVED`
+
+### Vínculos
+Quando informados, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar colaborações**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra colaboração documental. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco, urgência ou prioridade clínica.
+
+**Próxima etapa:** `v0.41.2 — Professional Review Collaboration Status`.
+

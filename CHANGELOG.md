@@ -1,4 +1,20 @@
-﻿# v0.41.0 — Professional Review Collaboration Foundation
+﻿# v0.41.1 — Professional Review Collaboration Persistence
+
+- Adiciona persistência auditada de Collaboration.
+- Adiciona `ProfessionalReviewCollaborationPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewCollaboration:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar colaborações`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.41.2 — Professional Review Collaboration Status.
+
+# v0.41.0 — Professional Review Collaboration Foundation
 
 - Abre a linha funcional 0.41.x.
 - Adiciona `ProfessionalReviewCollaborationFieldResponse`.
