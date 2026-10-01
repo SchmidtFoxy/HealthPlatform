@@ -6057,3 +6057,34 @@ As contagens são agregações documentais. Não transformam efeito observado em
 
 **Próxima etapa:** `v0.50.6 — Professional Review Team Knowledge Effect Closure`.
 
+---
+
+## v0.50.6 — Professional Review Team Knowledge Effect Closure
+
+Fecha a linha 0.50.x consolidando todas as capacidades estruturais dos efeitos observados documentados do conhecimento da equipe.
+
+### Componentes consolidados
+- Team Knowledge Effect Foundation;
+- Team Knowledge Effect Persistence;
+- Team Knowledge Effect Status;
+- Team Knowledge Effect History;
+- Team Knowledge Effect Filters;
+- Team Knowledge Effect Summary.
+
+### Estado
+O endpoint `team-knowledge-effect/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamKnowledgeEffectCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não transforma efeito observado em causalidade comprovada ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.51.0 — Professional Review Team Knowledge Effect Review Foundation`.
+

@@ -2154,6 +2154,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza efeitos observados após aplicações do conhecimento da equipe usando Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.50.1, possui persistência auditada. Não transforma efeito registrado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-effect/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectClosureResponse> FechamentoTeamKnowledgeEffects()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeEffectFoundation",
+            "TeamKnowledgeEffectPersistence",
+            "TeamKnowledgeEffectStatus",
+            "TeamKnowledgeEffectHistory",
+            "TeamKnowledgeEffectFilters",
+            "TeamKnowledgeEffectSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeEffectCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos efeitos observados documentados do conhecimento da equipe. Não transforma efeito observado em causalidade comprovada ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectSummaryResponse>> ResumoTeamKnowledgeEffects(
         Guid pacienteId,

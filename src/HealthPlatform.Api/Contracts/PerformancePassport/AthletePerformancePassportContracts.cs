@@ -234,6 +234,15 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectClosureResponse(
+    int ComponentesEsperados,
+    int ComponentesDisponiveis,
+    IReadOnlyCollection<string> ComponentesPresentes,
+    IReadOnlyCollection<string> ComponentesAusentes,
+    string EstadoEstrutural,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectProfissionalResumoResponse(
     string Profissional,
     int Total);
