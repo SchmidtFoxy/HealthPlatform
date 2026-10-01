@@ -1,4 +1,21 @@
-﻿# v0.46.5 — Professional Review Team Learning Summary
+﻿# v0.46.6 — Professional Review Team Learning Closure
+
+- Adiciona `ProfessionalReviewTeamLearningClosureResponse`.
+- Adiciona endpoint `GET .../team-learning/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamLearningCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não transforma aprendizado em evidência clínica validada.
+- Não infere causalidade, prognóstico ou recomendação.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.46.x.
+- Próxima etapa: v0.47.0 — Professional Review Team Insight Foundation.
+
+# v0.46.5 — Professional Review Team Learning Summary
 
 - Adiciona `ProfessionalReviewTeamLearningProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewTeamLearningSummaryResponse`.

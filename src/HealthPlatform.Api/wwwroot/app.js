@@ -4969,6 +4969,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_V0462='v0.46.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463='v0.46.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_FILTERS_V0464='v0.46.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_SUMMARY_V0465='v0.46.5';
+const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466='v0.46.6';
 
 
 
@@ -5913,6 +5914,24 @@ async function hpOpenProfessionalReviewTeamLearningHistoryV0463(p,teamLearning){
 }
 
 
+
+async function hpLoadProfessionalReviewTeamLearningClosureV0466(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-learning/closure`);
+}
+
+function hpRenderProfessionalReviewTeamLearningClosureV0466(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaTeamLearningCompleta';
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-learning-closure-v0466="${HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466}">
+    <div><b>${complete?'Estrutura de aprendizados da equipe completa':'Estrutura de aprendizados da equipe parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não valida evidência clínica e não representa causalidade, prognóstico, recomendação, score clínico, risco, urgência, prioridade, conduta executada ou prescrição automática.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewTeamLearningSummaryV0465(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-learning/summary`);
@@ -5968,6 +5987,7 @@ async function hpOpenProfessionalReviewTeamLearningV0461(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamLearningV0461">Fechar</button>
     </div>
+    <div id="professionalReviewTeamLearningClosureV0466"></div>
     <div id="professionalReviewTeamLearningSummaryV0465"></div>
     <form id="professionalReviewTeamLearningFiltersV0464" class="form-grid" data-professional-review-team-learning-filters-v0464="${HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_FILTERS_V0464}">
       <label>Status<select name="status">
@@ -6018,6 +6038,11 @@ async function hpOpenProfessionalReviewTeamLearningV0461(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamLearningClosureHostV0466=$('#professionalReviewTeamLearningClosureV0466');
+  hpLoadProfessionalReviewTeamLearningClosureV0466(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamLearningClosureV0466(teamLearningClosureHostV0466,x))
+    .catch(()=>{ if(teamLearningClosureHostV0466) teamLearningClosureHostV0466.innerHTML=''; });
 
   const teamLearningSummaryHostV0465=$('#professionalReviewTeamLearningSummaryV0465');
   hpLoadProfessionalReviewTeamLearningSummaryV0465(p.id)
@@ -15641,7 +15666,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.46.5';
+const HP_MVP_VERSION='0.46.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

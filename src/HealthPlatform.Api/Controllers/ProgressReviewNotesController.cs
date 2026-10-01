@@ -1450,6 +1450,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza aprendizados documentados da equipe usando Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.46.1, possui persistência auditada. Não infere causalidade, não transforma aprendizado em evidência clínica validada, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-learning/closure")]
+    public ActionResult<ProfessionalReviewTeamLearningClosureResponse> FechamentoTeamLearnings()
+    {
+        var componentes = new[]
+        {
+            "TeamLearningFoundation",
+            "TeamLearningPersistence",
+            "TeamLearningStatus",
+            "TeamLearningHistory",
+            "TeamLearningFilters",
+            "TeamLearningSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamLearningClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamLearningCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos aprendizados documentados da equipe. Não transforma aprendizado em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-learning/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamLearningSummaryResponse>> ResumoTeamLearnings(
         Guid pacienteId,

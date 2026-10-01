@@ -5053,3 +5053,34 @@ As contagens são agregações documentais. Não transformam aprendizado em evid
 
 **Próxima etapa:** `v0.46.6 — Professional Review Team Learning Closure`.
 
+---
+
+## v0.46.6 — Professional Review Team Learning Closure
+
+Fecha a linha 0.46.x consolidando todas as capacidades estruturais dos aprendizados documentados da equipe.
+
+### Componentes consolidados
+- Team Learning Foundation;
+- Team Learning Persistence;
+- Team Learning Status;
+- Team Learning History;
+- Team Learning Filters;
+- Team Learning Summary.
+
+### Estado
+O endpoint `team-learning/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamLearningCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não transforma aprendizado em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.47.0 — Professional Review Team Insight Foundation`.
+
