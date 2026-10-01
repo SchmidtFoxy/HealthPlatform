@@ -4790,3 +4790,22 @@ Adicionar histórico consultável do conhecimento registrado da equipe, cobrindo
 ### v0.48.4 — Professional Review Team Knowledge Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental do conhecimento registrado da equipe e sem promover o registro a evidência clínica validada.
 
+## ✅ v0.48.4 — Professional Review Team Knowledge Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeFiltersResponse`;
+- endpoint `team-knowledge/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.48.5 — Professional Review Team Knowledge Summary
+Adicionar resumo estrutural do conhecimento documentado da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada nem gerar inferência automática de causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
+

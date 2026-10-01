@@ -5486,3 +5486,35 @@ O histórico mostra somente eventos registrados. Não transforma conhecimento em
 
 **Próxima etapa:** `v0.48.4 — Professional Review Team Knowledge Filters`.
 
+---
+
+## v0.48.4 — Professional Review Team Knowledge Filters
+
+Adiciona filtros profissionais para localizar conhecimento documentado da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- conhecimento documentado;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- aplicabilidade;
+- observação profissional.
+
+### UI
+O gerenciador de conhecimento passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam conhecimento em evidência clínica validada, não inferem causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.48.5 — Professional Review Team Knowledge Summary`.
+

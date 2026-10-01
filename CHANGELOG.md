@@ -1,4 +1,23 @@
-﻿# v0.48.3 — Professional Review Team Knowledge History
+﻿# v0.48.4 — Professional Review Team Knowledge Filters
+
+- Adiciona `ProfessionalReviewTeamKnowledgeFiltersResponse`.
+- Adiciona endpoint `GET .../team-knowledge/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não transforma conhecimento em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica.
+- Não cria urgência, risco ou prioridade clínica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.48.5 — Professional Review Team Knowledge Summary.
+
+# v0.48.3 — Professional Review Team Knowledge History
 
 - Adiciona `ProfessionalReviewTeamKnowledgeHistoryItemResponse`.
 - Adiciona `ProfessionalReviewTeamKnowledgeHistoryResponse`.
