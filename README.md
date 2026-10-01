@@ -4148,3 +4148,37 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.43.0 — Professional Review Team Alignment Foundation`.
 
+---
+
+## v0.43.0 — Professional Review Team Alignment Foundation
+
+Abre a linha 0.43.x com a fundação estrutural de alinhamento entre profissionais, conectando Shared Context, Collaboration, Coordination, Escalation e Continuity em uma única camada documental de alinhamento de equipe.
+
+### Campos da fundação
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- objetivo de alinhamento;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-alignment/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamAlignmentDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Alinhamento entre profissionais**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza alinhamento documental entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.43.1 — Professional Review Team Alignment Persistence`.
+

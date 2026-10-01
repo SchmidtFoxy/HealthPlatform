@@ -4023,3 +4023,21 @@ Fechar o ciclo 0.42.x consolidando fundação, persistência, status, histórico
 ### v0.43.0 — Professional Review Team Alignment Foundation
 Criar a fundação estrutural de alinhamento entre profissionais, conectando Shared Context, Collaboration, Coordination, Escalation e Continuity em uma camada documental de alinhamento de equipe, sem automatizar conduta, prioridade clínica, risco, urgência ou transferência de responsabilidade.
 
+## ✅ v0.43.0 — Professional Review Team Alignment Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamAlignmentFieldResponse`;
+- `ProfessionalReviewTeamAlignmentFoundationResponse`;
+- endpoint `team-alignment/foundation`;
+- dez campos estruturais;
+- estado `FundacaoTeamAlignmentDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.43.1 — Professional Review Team Alignment Persistence
+Adicionar persistência auditada dos registros de alinhamento entre profissionais, com vínculos opcionais a Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre alinhamento documentado, decisão clínica e execução.
+

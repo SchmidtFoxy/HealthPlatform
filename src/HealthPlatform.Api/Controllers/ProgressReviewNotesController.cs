@@ -970,6 +970,81 @@ public class ProgressReviewNotesController(
             "A fundação organiza contexto profissional compartilhado entre Collaboration, Coordination, Escalation e Continuity e, a partir da v0.42.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("team-alignment/foundation")]
+    public ActionResult<ProfessionalReviewTeamAlignmentFoundationResponse> TeamAlignmentFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "shared-context-relacionado",
+                "Shared Context relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o alinhamento a um contexto profissional compartilhado já documentado."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o alinhamento a uma colaboração profissional já documentada."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o alinhamento a uma coordenação profissional já documentada."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o alinhamento a um escalonamento profissional já documentado."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o alinhamento a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "profissional-responsavel",
+                "Profissional responsável",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo alinhamento de equipe."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes do alinhamento."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "objetivo-alinhamento",
+                "Objetivo de alinhamento",
+                false,
+                "texto-longo",
+                "Documenta o objetivo operacional do alinhamento entre profissionais sem definir prioridade clínica."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewTeamAlignmentFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes ao alinhamento da equipe.")
+        };
+
+        return Ok(new ProfessionalReviewTeamAlignmentFoundationResponse(
+            "FundacaoTeamAlignmentDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza alinhamento documental entre profissionais usando Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("shared-context/closure")]
     public ActionResult<ProfessionalReviewSharedContextClosureResponse> FechamentoSharedContexts()
     {

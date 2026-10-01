@@ -1,4 +1,21 @@
-﻿# v0.42.6 — Professional Review Shared Context Closure
+﻿# v0.43.0 — Professional Review Team Alignment Foundation
+
+- Abre a linha funcional 0.43.x.
+- Adiciona `ProfessionalReviewTeamAlignmentFieldResponse`.
+- Adiciona `ProfessionalReviewTeamAlignmentFoundationResponse`.
+- Adiciona `GET .../team-alignment/foundation`.
+- Define vínculos opcionais com Shared Context, Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, objetivo de alinhamento, horizonte e observação profissional.
+- Define `FundacaoTeamAlignmentDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Alinhamento entre profissionais` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.43.1 — Professional Review Team Alignment Persistence.
+
+# v0.42.6 — Professional Review Shared Context Closure
 
 - Adiciona `ProfessionalReviewSharedContextClosureResponse`.
 - Adiciona endpoint `GET .../shared-context/closure`.
