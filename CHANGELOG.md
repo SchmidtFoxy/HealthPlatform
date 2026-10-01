@@ -1,4 +1,22 @@
-﻿# v0.46.2 — Professional Review Team Learning Status
+﻿# v0.46.3 — Professional Review Team Learning History
+
+- Adiciona `ProfessionalReviewTeamLearningHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamLearningHistoryResponse`.
+- Adiciona `GET .../team-learning/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não transforma aprendizado em evidência clínica validada.
+- Não interpreta causalidade ou evolução clínica.
+- Não produz prognóstico ou recomendação automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.46.4 — Professional Review Team Learning Filters.
+
+# v0.46.2 — Professional Review Team Learning Status
 
 - Adiciona `Status` ao Team Learning persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

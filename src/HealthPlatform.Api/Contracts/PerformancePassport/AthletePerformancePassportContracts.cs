@@ -207,6 +207,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamLearningHistoryItemResponse(
+    Guid Id,
+    Guid TeamLearningId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewTeamLearningHistoryResponse(
+    Guid TeamLearningId,
+    IReadOnlyCollection<ProfessionalReviewTeamLearningHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamLearningPersistedResponse(
     Guid Id,
     Guid? TeamOutcomeRelacionadoId,

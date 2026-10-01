@@ -4963,3 +4963,35 @@ O status é documental. O sistema não transforma aprendizado em evidência clí
 
 **Próxima etapa:** `v0.46.3 — Professional Review Team Learning History`.
 
+---
+
+## v0.46.3 — Professional Review Team Learning History
+
+Adiciona histórico consultável dos eventos auditados dos aprendizados documentados da equipe profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-learning/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada aprendizado passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não transforma aprendizado em evidência clínica validada, não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco ou resultado clínico, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.46.4 — Professional Review Team Learning Filters`.
+

@@ -4493,3 +4493,21 @@ Adicionar estados documentais explícitos aos aprendizados registrados da equipe
 ### v0.46.3 — Professional Review Team Learning History
 Adicionar histórico consultável dos aprendizados registrados da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.46.3 — Professional Review Team Learning History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamLearningHistoryItemResponse`;
+- `ProfessionalReviewTeamLearningHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por aprendizado documentado;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.46.4 — Professional Review Team Learning Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos aprendizados registrados da equipe e sem promover o registro a evidência clínica validada.
+

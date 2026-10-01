@@ -4966,6 +4966,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_CLOSURE_V0456='v0.45.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461='v0.46.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_V0462='v0.46.2';
+const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463='v0.46.3';
 
 
 
@@ -5875,6 +5876,40 @@ function hpRenderProfessionalReviewTeamLearningFoundationV0460(host,foundation){
 }
 
 
+
+async function hpOpenProfessionalReviewTeamLearningHistoryV0463(p,teamLearning){
+  if(!p?.id || !teamLearning?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-learning/${teamLearning.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-learning-history-v0463="${HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do aprendizado documentado da equipe</h3>
+        <p class="muted-line">${esc(teamLearning.profissionalResponsavel||'Responsável')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamLearningHistoryV0463">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não valida evidência clínica, não representa causalidade, prognóstico, recomendação, conduta executada ou prescrição automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTeamLearningHistoryV0463').onclick=()=>hpOpenProfessionalReviewTeamLearningV0461(p);
+}
+
 async function hpOpenProfessionalReviewTeamLearningV0461(p){
   if(!p?.id) return;
 
@@ -5958,6 +5993,7 @@ async function hpOpenProfessionalReviewTeamLearningV0461(p){
         ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-learning-status-v0462="${x.id}" data-status-v0462="EmRevisao">Revisar</button>`:''}
         ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-learning-status-v0462="${x.id}" data-status-v0462="Consolidado">Consolidar</button>`:''}
         ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-learning-status-v0462="${x.id}" data-status-v0462="Descartado">Descartar</button>`:''}
+        <button type="button" class="ghost" data-team-learning-history-v0463="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-team-learning-archive-v0461="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum aprendizado de equipe registrado.</p>';
@@ -5982,6 +6018,11 @@ async function hpOpenProfessionalReviewTeamLearningV0461(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-learning-history-v0463]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamLearningHistoryV0463);
+      if(item) await hpOpenProfessionalReviewTeamLearningHistoryV0463(p,item);
     });
 
     [...listHost.querySelectorAll('[data-team-learning-status-v0462]')].forEach(btn=>btn.onclick=async()=>{
@@ -15498,7 +15539,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.46.2';
+const HP_MVP_VERSION='0.46.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
