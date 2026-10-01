@@ -5330,3 +5330,22 @@ Adicionar estados documentais explícitos às decisões profissionais registrada
 ### v0.52.3 — Professional Review Team Knowledge Effect Decision History
 Adicionar histórico consultável das decisões profissionais registradas, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.52.3 — Professional Review Team Knowledge Effect Decision History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectDecisionHistoryItemResponse`;
+- `ProfessionalReviewTeamKnowledgeEffectDecisionHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por decisão profissional;
+- hotfix aprovado v0.52.1-r1 preservado cumulativamente;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.52.4 — Professional Review Team Knowledge Effect Decision Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental das decisões e sem promover o registro a validação causal ou evidência clínica validada.
+

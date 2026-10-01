@@ -1,4 +1,23 @@
-﻿# v0.52.2 — Professional Review Team Knowledge Effect Decision Status
+﻿# v0.52.3 — Professional Review Team Knowledge Effect Decision History
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionHistoryResponse`.
+- Adiciona `GET .../team-knowledge-effect-decision/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Preserva cumulativamente o hotfix v0.52.1-r1.
+- Não transforma decisão em validação causal ou evidência clínica validada.
+- Não interpreta evolução clínica.
+- Não produz prognóstico, recomendação ou decisão terapêutica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.52.4 — Professional Review Team Knowledge Effect Decision Filters.
+
+# v0.52.2 — Professional Review Team Knowledge Effect Decision Status
 
 - Adiciona `Status` ao Team Knowledge Effect Decision persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

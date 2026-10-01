@@ -243,6 +243,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionHistoryItemResponse(
+    Guid Id,
+    Guid TeamKnowledgeEffectDecisionId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionHistoryResponse(
+    Guid TeamKnowledgeEffectDecisionId,
+    IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionPersistedResponse(
     Guid Id,
     Guid? TeamKnowledgeEffectReviewRelacionadaId,
