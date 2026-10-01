@@ -1,4 +1,20 @@
-﻿# v0.43.0 — Professional Review Team Alignment Foundation
+﻿# v0.43.1 — Professional Review Team Alignment Persistence
+
+- Adiciona persistência auditada de Team Alignment.
+- Adiciona `ProfessionalReviewTeamAlignmentPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamAlignment:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculos opcionais com Shared Context, Collaboration, Coordination, Escalation e Continuity do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar alinhamentos`.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.43.2 — Professional Review Team Alignment Status.
+
+# v0.43.0 — Professional Review Team Alignment Foundation
 
 - Abre a linha funcional 0.43.x.
 - Adiciona `ProfessionalReviewTeamAlignmentFieldResponse`.

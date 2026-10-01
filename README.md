@@ -4182,3 +4182,46 @@ A fundação organiza alinhamento documental entre profissionais. Não executa c
 
 **Próxima etapa:** `v0.43.1 — Professional Review Team Alignment Persistence`.
 
+---
+
+## v0.43.1 — Professional Review Team Alignment Persistence
+
+Adiciona persistência auditada para registros de alinhamento entre profissionais.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Shared Context relacionado opcional;
+- Collaboration relacionada opcional;
+- Coordination relacionada opcional;
+- Escalation relacionada opcional;
+- Continuity relacionada opcional;
+- profissional responsável;
+- participantes;
+- objetivo de alinhamento;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_ARCHIVED`
+
+### Vínculos
+Quando informados, Shared Context, Collaboration, Coordination, Escalation e Continuity precisam pertencer à mesma organização e paciente e não podem estar arquivados.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar alinhamentos**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra alinhamento documental entre profissionais. Não executa conduta, não cria prescrição, não transfere automaticamente responsabilidade clínica e não atribui risco, urgência ou prioridade clínica.
+
+**Próxima etapa:** `v0.43.2 — Professional Review Team Alignment Status`.
+

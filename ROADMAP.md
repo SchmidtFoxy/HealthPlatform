@@ -4041,3 +4041,26 @@ Criar a fundação estrutural de alinhamento entre profissionais, conectando Sha
 ### v0.43.1 — Professional Review Team Alignment Persistence
 Adicionar persistência auditada dos registros de alinhamento entre profissionais, com vínculos opcionais a Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre alinhamento documentado, decisão clínica e execução.
 
+## ✅ v0.43.1 — Professional Review Team Alignment Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamAlignmentPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamAlignment:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional a Shared Context;
+- vínculo opcional a Collaboration;
+- vínculo opcional a Coordination;
+- vínculo opcional a Escalation;
+- vínculo opcional a Continuity;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de alinhamento de equipe;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.43.2 — Professional Review Team Alignment Status
+Adicionar estados documentais explícitos aos registros de alinhamento entre profissionais, com transições manuais e auditadas pela equipe.
+

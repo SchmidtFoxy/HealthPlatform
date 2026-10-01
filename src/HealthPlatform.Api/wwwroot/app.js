@@ -4943,6 +4943,7 @@ const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424='v0.42.4';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425='v0.42.5';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426='v0.42.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_V0430='v0.43.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431='v0.43.1';
 
 
 
@@ -5649,7 +5650,137 @@ function hpRenderProfessionalReviewTeamAlignmentFoundationV0430(host,foundation)
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza alinhamento documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-alignment-open-v0431="${HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431}">Gerenciar alinhamentos</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-alignment`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-alignment-persistence-v0431="${HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431}">
+    <div class="row-between">
+      <div>
+        <h3>Alinhamento entre profissionais</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamAlignmentV0431">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamAlignmentFormV0431" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Shared Context relacionado<input name="sharedContextRelacionadoId" placeholder="ID opcional do contexto compartilhado"></label>
+      <label>Collaboration relacionada<input name="collaborationRelacionadaId" placeholder="ID opcional da colaboração"></label>
+      <label>Coordination relacionada<input name="coordinationRelacionadaId" placeholder="ID opcional da coordenação"></label>
+      <label>Escalation relacionada<input name="escalationRelacionadaId" placeholder="ID opcional do escalonamento"></label>
+      <label>Continuity relacionada<input name="continuityRelacionadaId" placeholder="ID opcional da continuidade"></label>
+      <label class="span-2">Participantes<input name="participantes" maxlength="1000" placeholder="Profissionais participantes"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Objetivo de alinhamento<textarea name="objetivoAlinhamento" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar alinhamento</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamAlignmentV0431">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamAlignmentListV0431" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica, transferência automática de responsabilidade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTeamAlignmentFormV0431');
+  const listHost=$('#professionalReviewTeamAlignmentListV0431');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.sharedContextRelacionadoId?`<small class="muted-line">Shared Context: ${esc(x.sharedContextRelacionadoId)}</small>`:''}
+      ${x.collaborationRelacionadaId?`<small class="muted-line">Collaboration: ${esc(x.collaborationRelacionadaId)}</small>`:''}
+      ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
+      ${x.escalationRelacionadaId?`<small class="muted-line">Escalation: ${esc(x.escalationRelacionadaId)}</small>`:''}
+      ${x.continuityRelacionadaId?`<small class="muted-line">Continuity: ${esc(x.continuityRelacionadaId)}</small>`:''}
+      ${x.objetivoAlinhamento?`<p>${esc(x.objetivoAlinhamento)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-team-alignment-edit-v0431="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-team-alignment-archive-v0431="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum alinhamento entre profissionais registrado.</p>';
+
+    [...listHost.querySelectorAll('[data-team-alignment-edit-v0431]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamAlignmentEditV0431);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.profissionalResponsavel.value=item.profissionalResponsavel||'';
+      form.elements.sharedContextRelacionadoId.value=item.sharedContextRelacionadoId||'';
+      form.elements.collaborationRelacionadaId.value=item.collaborationRelacionadaId||'';
+      form.elements.coordinationRelacionadaId.value=item.coordinationRelacionadaId||'';
+      form.elements.escalationRelacionadaId.value=item.escalationRelacionadaId||'';
+      form.elements.continuityRelacionadaId.value=item.continuityRelacionadaId||'';
+      form.elements.participantes.value=item.participantes||'';
+      form.elements.objetivoAlinhamento.value=item.objetivoAlinhamento||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-alignment-archive-v0431]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-alignment/${btn.dataset.teamAlignmentArchiveV0431}`,{method:'DELETE'});
+      toast('Alinhamento entre profissionais arquivado.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(fd.get('profissionalResponsavel')||'').trim(),
+      sharedContextRelacionadoId:String(fd.get('sharedContextRelacionadoId')||'').trim()||null,
+      collaborationRelacionadaId:String(fd.get('collaborationRelacionadaId')||'').trim()||null,
+      coordinationRelacionadaId:String(fd.get('coordinationRelacionadaId')||'').trim()||null,
+      escalationRelacionadaId:String(fd.get('escalationRelacionadaId')||'').trim()||null,
+      continuityRelacionadaId:String(fd.get('continuityRelacionadaId')||'').trim()||null,
+      participantes:String(fd.get('participantes')||'').trim()||null,
+      objetivoAlinhamento:String(fd.get('objetivoAlinhamento')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-alignment${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Alinhamento entre profissionais atualizado.':'Alinhamento entre profissionais registrado.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTeamAlignmentV0431').onclick=clear;
+  $('#closeProfessionalReviewTeamAlignmentV0431').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewSharedContextClosureV0426(patientId){
@@ -5773,7 +5904,11 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
 
   const teamAlignmentFoundationHostV0430=$('#professionalReviewTeamAlignmentFoundationV0430');
   hpLoadProfessionalReviewTeamAlignmentFoundationV0430(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamAlignmentFoundationV0430(teamAlignmentFoundationHostV0430,x))
+    .then(x=>{
+      hpRenderProfessionalReviewTeamAlignmentFoundationV0430(teamAlignmentFoundationHostV0430,x);
+      const openTeamAlignmentV0431=teamAlignmentFoundationHostV0430?.querySelector('[data-team-alignment-open-v0431]');
+      if(openTeamAlignmentV0431) openTeamAlignmentV0431.onclick=()=>hpOpenProfessionalReviewTeamAlignmentV0431(p);
+    })
     .catch(()=>{ if(teamAlignmentFoundationHostV0430) teamAlignmentFoundationHostV0430.innerHTML=''; });
 
   const sharedContextClosureHostV0426=$('#professionalReviewSharedContextClosureV0426');
@@ -14245,7 +14380,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.43.0';
+const HP_MVP_VERSION='0.43.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
