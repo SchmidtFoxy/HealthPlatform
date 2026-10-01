@@ -4100,3 +4100,22 @@ Adicionar histórico consultável dos alinhamentos entre profissionais, cobrindo
 ### v0.43.4 — Professional Review Team Alignment Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos alinhamentos entre profissionais.
 
+## ✅ v0.43.4 — Professional Review Team Alignment Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamAlignmentFiltersResponse`;
+- endpoint `team-alignment/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.43.5 — Professional Review Team Alignment Summary
+Adicionar resumo estrutural dos alinhamentos entre profissionais com contagem por status e distribuição por profissional responsável, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+

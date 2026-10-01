@@ -1,4 +1,20 @@
-﻿# v0.43.3 — Professional Review Team Alignment History
+﻿# v0.43.4 — Professional Review Team Alignment Filters
+
+- Adiciona `ProfessionalReviewTeamAlignmentFiltersResponse`.
+- Adiciona endpoint `GET .../team-alignment/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.43.5 — Professional Review Team Alignment Summary.
+
+# v0.43.3 — Professional Review Team Alignment History
 
 - Adiciona `ProfessionalReviewTeamAlignmentHistoryItemResponse`.
 - Adiciona `ProfessionalReviewTeamAlignmentHistoryResponse`.
