@@ -4877,6 +4877,7 @@ const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331='v0.33.1';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_V0332='v0.33.2';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_HISTORY_V0333='v0.33.3';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_FILTERS_V0334='v0.33.4';
+const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_SUMMARY_V0335='v0.33.5';
 
 
 
@@ -4963,6 +4964,34 @@ function hpRenderProfessionalReviewActionPlanFoundationV0330(host,foundation){
 
 
 
+
+async function hpLoadProfessionalReviewActionPlanSummaryV0335(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/action-plan/summary`);
+}
+
+function hpRenderProfessionalReviewActionPlanSummaryV0335(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porResponsavel)?summary.porResponsavel:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-action-plan-summary-v0335="${HP_PROFESSIONAL_REVIEW_ACTION_PLAN_SUMMARY_V0335}">
+    <div><b>Resumo do plano operacional</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejadas</span><b>${esc(String(summary.planejadas??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídas</span><b>${esc(String(summary.concluidas??0))}</b></div>
+      <div class="row-between"><span>Canceladas</span><b>${esc(String(summary.canceladas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.responsavel||'Sem responsável')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência ou prioridade.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewActionPlanHistoryV0333(p,actionPlan){
   if(!p?.id || !actionPlan?.id) return;
 
@@ -5023,6 +5052,7 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
       <button type="button" class="ghost" id="closeProfessionalReviewActionPlanV0331">Fechar</button>
     </div>
 
+    <div id="professionalReviewActionPlanSummaryV0335"></div>
     <form id="professionalReviewActionPlanFiltersV0334" class="form-grid" data-professional-review-action-plan-filters-v0334="${HP_PROFESSIONAL_REVIEW_ACTION_PLAN_FILTERS_V0334}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5063,6 +5093,11 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
     <div id="professionalReviewActionPlanListV0331" class="stack"></div>
   </div>`;
   modal.classList.add('open');
+
+  const actionPlanSummaryHostV0335=$('#professionalReviewActionPlanSummaryV0335');
+  hpLoadProfessionalReviewActionPlanSummaryV0335(p.id)
+    .then(x=>hpRenderProfessionalReviewActionPlanSummaryV0335(actionPlanSummaryHostV0335,x))
+    .catch(()=>{ if(actionPlanSummaryHostV0335) actionPlanSummaryHostV0335.innerHTML=''; });
 
   const form=$('#professionalReviewActionPlanFormV0331');
   const listHost=$('#professionalReviewActionPlanListV0331');
@@ -5128,12 +5163,18 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
       });
       toast(`Ação operacional atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewActionPlanSummaryV0335(p.id)
+        .then(x=>hpRenderProfessionalReviewActionPlanSummaryV0335(actionPlanSummaryHostV0335,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-action-plan-archive-v0331]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/action-plan/${btn.dataset.actionPlanArchiveV0331}`,{method:'DELETE'});
       toast('Ação operacional arquivada.');
       await render();
+      hpLoadProfessionalReviewActionPlanSummaryV0335(p.id)
+        .then(x=>hpRenderProfessionalReviewActionPlanSummaryV0335(actionPlanSummaryHostV0335,x))
+        .catch(()=>{});
     });
   };
 
@@ -5181,6 +5222,9 @@ async function hpOpenProfessionalReviewActionPlanV0331(p){
     form.reset();
     form.elements.id.value='';
     await render();
+    hpLoadProfessionalReviewActionPlanSummaryV0335(p.id)
+      .then(x=>hpRenderProfessionalReviewActionPlanSummaryV0335(actionPlanSummaryHostV0335,x))
+      .catch(()=>{});
   };
 
   await render();
@@ -11030,7 +11074,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.33.4';
+const HP_MVP_VERSION='0.33.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,4 +1,17 @@
-﻿# v0.33.4 — Professional Review Action Plan Filters
+﻿# v0.33.5 — Professional Review Action Plan Summary
+
+- Adiciona `ProfessionalReviewActionPlanResponsavelResumoResponse`.
+- Adiciona `ProfessionalReviewActionPlanSummaryResponse`.
+- Adiciona `GET .../action-plan/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por responsável.
+- Adiciona painel `Resumo do plano operacional`.
+- Atualiza o resumo após alterações no Action Plan.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.33.6 — Professional Review Action Plan Closure.
+
+# v0.33.4 — Professional Review Action Plan Filters
 
 - Adiciona `ProfessionalReviewActionPlanFiltersResponse`.
 - Adiciona endpoint `GET .../action-plan/search`.

@@ -2783,3 +2783,25 @@ Adicionar filtros profissionais por status, responsável, horizonte e texto, pre
 ### v0.33.5 — Professional Review Action Plan Summary
 Adicionar resumo estrutural do Action Plan com contagem por status e distribuição por responsável, sem gerar score clínico ou prioridade automática.
 
+## ✅ v0.33.5 — Professional Review Action Plan Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewActionPlanSummaryResponse`;
+- `ProfessionalReviewActionPlanResponsavelResumoResponse`;
+- total de ações;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- agrupamento por responsável;
+- painel de resumo no workspace profissional;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.6 — Professional Review Action Plan Closure
+Fechar o ciclo 0.33.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do Action Plan.
+

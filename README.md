@@ -2083,3 +2083,30 @@ Os filtros apenas localizam registros. Não classificam urgência, risco, priori
 
 **Próxima etapa:** `v0.33.5 — Professional Review Action Plan Summary`.
 
+---
+
+## v0.33.5 — Professional Review Action Plan Summary
+
+Adiciona resumo estrutural das ações operacionais profissionais.
+
+### Indicadores
+- total;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- distribuição por responsável.
+
+### Endpoint
+`GET .../action-plan/summary`
+
+### UI
+O workspace profissional passa a exibir **Resumo do plano operacional** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação.
+
+**Próxima etapa:** `v0.33.6 — Professional Review Action Plan Closure`.
+
