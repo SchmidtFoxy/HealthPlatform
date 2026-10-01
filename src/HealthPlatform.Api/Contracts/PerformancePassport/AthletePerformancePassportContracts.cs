@@ -142,11 +142,16 @@ public sealed record ProfessionalReviewTaskCoordinationPersistedResponse(
     string? Responsavel,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTaskCoordinationStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTaskCoordinationFieldResponse(
     string Chave,

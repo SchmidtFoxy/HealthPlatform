@@ -4881,6 +4881,7 @@ const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_SUMMARY_V0335='v0.33.5';
 const HP_PROFESSIONAL_REVIEW_ACTION_PLAN_CLOSURE_V0336='v0.33.6';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1';
+const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_V0342='v0.34.2';
 
 
 
@@ -5049,14 +5050,19 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.tarefaOperacional||'Tarefa operacional')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejada')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.responsavel?`<small class="muted-line">Responsável: ${esc(x.responsavel)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.actionPlanRelacionadoId?`<small class="muted-line">Action Plan: ${esc(x.actionPlanRelacionadoId)}</small>`:''}
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-task-coordination-edit-v0341="${x.id}">Editar</button>
+        ${x.status!=='Planejada'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="Planejada">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluida'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="Concluida">Concluir</button>`:''}
+        ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-task-coordination-status-v0342="${x.id}" data-status-v0342="Cancelada">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-task-coordination-archive-v0341="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma tarefa operacional registrada.</p>';
@@ -5071,6 +5077,16 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.tarefaOperacional.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-task-coordination-status-v0342]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0342;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/task-coordination/${btn.dataset.taskCoordinationStatusV0342}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Tarefa operacional atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-task-coordination-archive-v0341]')].forEach(btn=>btn.onclick=async()=>{
@@ -11249,7 +11265,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.34.1';
+const HP_MVP_VERSION='0.34.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

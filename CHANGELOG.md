@@ -1,4 +1,19 @@
-﻿# v0.34.1 — Professional Review Task Coordination Persistence
+﻿# v0.34.2 — Professional Review Task Coordination Status
+
+- Adiciona `Status` à Task Coordination persistida.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTaskCoordinationStatusRequest`.
+- Adiciona endpoint `PATCH .../task-coordination/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.34.3 — Professional Review Task Coordination History.
+
+# v0.34.1 — Professional Review Task Coordination Persistence
 
 - Adiciona persistência auditada de Task Coordination.
 - Adiciona `ProfessionalReviewTaskCoordinationPersistedResponse`.

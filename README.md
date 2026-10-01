@@ -2208,3 +2208,35 @@ A persistência registra coordenação operacional. Não executa conduta, não c
 
 **Próxima etapa:** `v0.34.2 — Professional Review Task Coordination Status`.
 
+---
+
+## v0.34.2 — Professional Review Task Coordination Status
+
+Adiciona estados documentais explícitos às tarefas operacionais da equipe profissional.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são manuais via `PATCH .../task-coordination/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da tarefa;
+- gera auditoria `PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela tarefas automaticamente e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.34.3 — Professional Review Task Coordination History`.
+

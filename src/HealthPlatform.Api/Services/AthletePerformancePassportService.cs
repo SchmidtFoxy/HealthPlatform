@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.34.1",
+            "v0.34.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Task Coordination Persistence adiciona persistência profissional auditada às tarefas operacionais, com vínculo opcional ao Action Plan e sem transformar documentação em execução ou prioridade clínica.")
+            "Professional Review Task Coordination Status adiciona estados documentais explícitos às tarefas operacionais, com transições manuais auditadas entre Planejada, EmAndamento, Concluida e Cancelada, sem execução automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

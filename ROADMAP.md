@@ -2859,3 +2859,21 @@ Adicionar persistência auditada das tarefas operacionais profissionais, com ví
 ### v0.34.2 — Professional Review Task Coordination Status
 Adicionar estados documentais explícitos para as tarefas operacionais, com transições manuais e auditadas pela equipe profissional.
 
+## ✅ v0.34.2 — Professional Review Task Coordination Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejada`, `EmAndamento`, `Concluida` e `Cancelada`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.34.3 — Professional Review Task Coordination History
+Adicionar histórico consultável das tarefas operacionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

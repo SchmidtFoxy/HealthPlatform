@@ -430,17 +430,74 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadTaskCoordination(
+        var payloadAtual = LerPayloadTaskCoordination(nota);
+        var payloadAtualizado = new TaskCoordinationPayload(
             tarefa,
             request.ActionPlanRelacionadoId,
-            request.Responsavel,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Responsavel, 160),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_TASK_COORDINATION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTaskCoordination(nota));
+    }
+
+    [HttpPatch("task-coordination/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTaskCoordinationPersistedResponse>> AtualizarStatusTaskCoordination(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTaskCoordinationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusTaskCoordinationValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTaskCoordination) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTaskCoordination(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearTaskCoordination(nota));
     }
 
@@ -2060,7 +2117,9 @@ public class ProgressReviewNotesController(
         Guid? ActionPlanRelacionadoId,
         string? Responsavel,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadTaskCoordination(
         string tarefaOperacional,
@@ -2074,7 +2133,9 @@ public class ProgressReviewNotesController(
             actionPlanRelacionadoId,
             NormalizarOpcional(responsavel, 160),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -2099,6 +2160,8 @@ public class ProgressReviewNotesController(
             payload?.Responsavel,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
@@ -2191,6 +2254,22 @@ public class ProgressReviewNotesController(
     }
 
     private static bool StatusActionPlanValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
+
+    private static TaskCoordinationPayload LerPayloadTaskCoordination(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TaskCoordinationPayload>(nota.Conteudo)
+                ?? new TaskCoordinationPayload(nota.Conteudo, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new TaskCoordinationPayload(nota.Conteudo, null, null, null, null);
+        }
+    }
+
+    private static bool StatusTaskCoordinationValido(string? status) =>
         status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private async Task<bool> ActionPlanPertencePacienteAsync(
