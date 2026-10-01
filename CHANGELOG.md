@@ -1,4 +1,19 @@
-﻿# v0.39.2 — Professional Review Escalation Status
+﻿# v0.39.3 — Professional Review Escalation History
+
+- Adiciona `ProfessionalReviewEscalationHistoryItemResponse`.
+- Adiciona `ProfessionalReviewEscalationHistoryResponse`.
+- Adiciona `GET .../escalation/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.39.4 — Professional Review Escalation Filters.
+
+# v0.39.2 — Professional Review Escalation Status
 
 - Adiciona `Status` ao Escalation persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

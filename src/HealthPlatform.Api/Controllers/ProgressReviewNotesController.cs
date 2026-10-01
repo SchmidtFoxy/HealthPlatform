@@ -883,6 +883,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearEscalation(nota));
     }
 
+    [HttpGet("escalation/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewEscalationHistoryResponse>> HistoricoEscalation(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var escalationExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoEscalation),
+                cancellationToken);
+
+        if (!escalationExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_ESCALATION_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewEscalationHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoEscalation(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewEscalationHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais de escalonamento profissional. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("escalation/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewEscalationPersistedResponse>> AtualizarStatusEscalation(
         Guid pacienteId,
@@ -4805,6 +4880,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoEscalation(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_ESCALATION_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_ESCALATION_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_ESCALATION_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_ESCALATION_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static EscalationPayload LerPayloadEscalation(NotaInternaProfissional nota)
     {

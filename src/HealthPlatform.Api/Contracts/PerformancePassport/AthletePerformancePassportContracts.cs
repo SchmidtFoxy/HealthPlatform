@@ -165,6 +165,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewEscalationHistoryItemResponse(
+    Guid Id,
+    Guid EscalationId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewEscalationHistoryResponse(
+    Guid EscalationId,
+    IReadOnlyCollection<ProfessionalReviewEscalationHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewEscalationPersistedResponse(
     Guid Id,
     Guid? ContinuityRelacionadaId,

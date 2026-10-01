@@ -3352,3 +3352,35 @@ O status é documental. O sistema não inicia, conclui ou cancela escalonamentos
 
 **Próxima etapa:** `v0.39.3 — Professional Review Escalation History`.
 
+---
+
+## v0.39.3 — Professional Review Escalation History
+
+Adiciona histórico consultável dos eventos auditados dos escalonamentos profissionais.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../escalation/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada escalonamento passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.39.4 — Professional Review Escalation Filters`.
+

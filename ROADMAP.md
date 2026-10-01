@@ -3543,3 +3543,21 @@ Adicionar estados documentais explícitos aos registros de escalonamento profiss
 ### v0.39.3 — Professional Review Escalation History
 Adicionar histórico consultável dos escalonamentos profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.39.3 — Professional Review Escalation History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewEscalationHistoryItemResponse`;
+- `ProfessionalReviewEscalationHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por escalonamento;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.39.4 — Professional Review Escalation Filters
+Adicionar filtros profissionais por status, profissional de origem, profissional de destino, horizonte e texto, preservando a natureza documental dos escalonamentos.
+

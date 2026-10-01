@@ -4917,6 +4917,7 @@ const HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386='v0.38.6';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1';
 const HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2';
+const HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3';
 
 
 
@@ -5364,6 +5365,40 @@ function hpRenderProfessionalReviewEscalationFoundationV0390(host,foundation){
 }
 
 
+
+async function hpOpenProfessionalReviewEscalationHistoryV0393(p,escalation){
+  if(!p?.id || !escalation?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/escalation/${escalation.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-escalation-history-v0393="${HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do escalonamento profissional</h3>
+        <p class="muted-line">${esc(escalation.profissionalOrigem||'Origem')} → ${esc(escalation.profissionalDestino||'Destino')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewEscalationHistoryV0393">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica ou transferência automática de responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewEscalationHistoryV0393').onclick=()=>hpOpenProfessionalReviewEscalationV0391(p);
+}
+
 async function hpOpenProfessionalReviewEscalationV0391(p){
   if(!p?.id) return;
 
@@ -5434,6 +5469,7 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluido'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="Concluido">Concluir</button>`:''}
         ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-escalation-status-v0392="${x.id}" data-status-v0392="Cancelado">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-escalation-history-v0393="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-escalation-archive-v0391="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum escalonamento profissional registrado.</p>';
@@ -5452,6 +5488,11 @@ async function hpOpenProfessionalReviewEscalationV0391(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalOrigem.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-escalation-history-v0393]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.escalationHistoryV0393);
+      if(item) await hpOpenProfessionalReviewEscalationHistoryV0393(p,item);
     });
 
     [...listHost.querySelectorAll('[data-escalation-status-v0392]')].forEach(btn=>btn.onclick=async()=>{
@@ -12988,7 +13029,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.39.2';
+const HP_MVP_VERSION='0.39.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
