@@ -3292,3 +3292,23 @@ Adicionar histórico consultável dos handoffs profissionais, cobrindo criação
 ### v0.37.4 — Professional Review Handoff Filters
 Adicionar filtros profissionais por status, profissional de origem, profissional de destino, horizonte e texto, preservando a natureza documental dos handoffs.
 
+## ✅ v0.37.4 — Professional Review Handoff Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewHandoffFiltersResponse`;
+- endpoint `handoff/search`;
+- filtro por status;
+- filtro por profissional de origem;
+- filtro por profissional de destino;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.5 — Professional Review Handoff Summary
+Adicionar resumo estrutural dos handoffs profissionais com contagem por status e distribuição por profissional de origem e destino, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+

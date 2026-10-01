@@ -1,4 +1,21 @@
-﻿# v0.37.3 — Professional Review Handoff History
+﻿# v0.37.4 — Professional Review Handoff Filters
+
+- Adiciona `ProfessionalReviewHandoffFiltersResponse`.
+- Adiciona endpoint `GET .../handoff/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional de origem.
+- Adiciona filtro por profissional de destino.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.37.5 — Professional Review Handoff Summary.
+
+# v0.37.3 — Professional Review Handoff History
 
 - Adiciona `ProfessionalReviewHandoffHistoryItemResponse`.
 - Adiciona `ProfessionalReviewHandoffHistoryResponse`.

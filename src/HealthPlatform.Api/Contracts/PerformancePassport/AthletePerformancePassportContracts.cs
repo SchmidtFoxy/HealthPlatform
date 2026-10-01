@@ -154,6 +154,19 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewHandoffFiltersResponse(
+    string? Status,
+    string? ProfissionalOrigem,
+    string? ProfissionalDestino,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewHandoffPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewHandoffHistoryItemResponse(
     Guid Id,
     Guid HandoffId,

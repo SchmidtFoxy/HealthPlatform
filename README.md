@@ -2935,3 +2935,33 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.37.4 — Professional Review Handoff Filters`.
 
+---
+
+## v0.37.4 — Professional Review Handoff Filters
+
+Adiciona filtros profissionais para localizar handoffs persistidos.
+
+### Filtros
+- status;
+- profissional de origem;
+- profissional de destino;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional de origem;
+- profissional de destino;
+- contexto transferido;
+- observação profissional.
+
+### UI
+O gerenciador de handoffs passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.37.5 — Professional Review Handoff Summary`.
+

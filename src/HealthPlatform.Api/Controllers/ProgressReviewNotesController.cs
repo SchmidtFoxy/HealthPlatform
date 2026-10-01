@@ -534,6 +534,74 @@ public class ProgressReviewNotesController(
             "A fundação organiza handoffs documentais entre profissionais e, a partir da v0.37.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("handoff/search")]
+    public async Task<ActionResult<ProfessionalReviewHandoffFiltersResponse>> FiltrarHandoffs(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? profissionalOrigem = null,
+        [FromQuery] string? profissionalDestino = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusHandoffValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Planejado, EmAndamento, Concluido ou Cancelado." });
+
+        var origemNormalizada = NormalizarOpcional(profissionalOrigem, 160);
+        var destinoNormalizado = NormalizarOpcional(profissionalDestino, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoHandoff) &&
+                (incluirArquivadas || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearHandoff)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (origemNormalizada is null ||
+                    x.ProfissionalOrigem.Contains(origemNormalizada, StringComparison.OrdinalIgnoreCase)) &&
+                (destinoNormalizado is null ||
+                    x.ProfissionalDestino.Contains(destinoNormalizado, StringComparison.OrdinalIgnoreCase)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ProfissionalOrigem.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    x.ProfissionalDestino.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ContextoTransferido?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewHandoffFiltersResponse(
+            statusNormalizado,
+            origemNormalizada,
+            destinoNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivadas,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar handoffs profissionais documentados. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("handoff")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewHandoffPersistedResponse>>> ListarHandoffs(
         Guid pacienteId,
