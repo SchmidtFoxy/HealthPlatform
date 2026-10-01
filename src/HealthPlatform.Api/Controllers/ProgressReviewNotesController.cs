@@ -878,6 +878,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza colaboração documental compartilhada entre Coordination, Escalation e Continuity e, a partir da v0.41.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("collaboration/closure")]
+    public ActionResult<ProfessionalReviewCollaborationClosureResponse> FechamentoCollaborations()
+    {
+        var componentes = new[]
+        {
+            "CollaborationFoundation",
+            "CollaborationPersistence",
+            "CollaborationStatus",
+            "CollaborationHistory",
+            "CollaborationFilters",
+            "CollaborationSummary"
+        };
+
+        return Ok(new ProfessionalReviewCollaborationClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaCollaborationCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural da colaboração profissional. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("collaboration/summary")]
     public async Task<ActionResult<ProfessionalReviewCollaborationSummaryResponse>> ResumoCollaborations(
         Guid pacienteId,

@@ -1,4 +1,18 @@
-﻿# v0.41.5 — Professional Review Collaboration Summary
+﻿# v0.41.6 — Professional Review Collaboration Closure
+
+- Adiciona `ProfessionalReviewCollaborationClosureResponse`.
+- Adiciona endpoint `GET .../collaboration/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaCollaborationCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.41.x.
+- Próxima etapa: v0.42.0 — Professional Review Shared Context Foundation.
+
+# v0.41.5 — Professional Review Collaboration Summary
 
 - Adiciona `ProfessionalReviewCollaborationProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewCollaborationSummaryResponse`.

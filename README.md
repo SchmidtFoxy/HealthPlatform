@@ -3891,3 +3891,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.41.6 — Professional Review Collaboration Closure`.
 
+---
+
+## v0.41.6 — Professional Review Collaboration Closure
+
+Fecha a linha 0.41.x consolidando todas as capacidades estruturais de colaboração profissional.
+
+### Componentes consolidados
+- Collaboration Foundation;
+- Collaboration Persistence;
+- Collaboration Status;
+- Collaboration History;
+- Collaboration Filters;
+- Collaboration Summary.
+
+### Estado
+O endpoint `collaboration/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaCollaborationCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.42.0 — Professional Review Shared Context Foundation`.
+
