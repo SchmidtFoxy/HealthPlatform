@@ -162,11 +162,16 @@ public sealed record ProfessionalReviewHandoffPersistedResponse(
     string? ContextoTransferido,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewHandoffStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewHandoffFieldResponse(
     string Chave,

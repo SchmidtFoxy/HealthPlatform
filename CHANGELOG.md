@@ -1,4 +1,20 @@
-﻿# v0.37.1 — Professional Review Handoff Persistence
+﻿# v0.37.2 — Professional Review Handoff Status
+
+- Adiciona `Status` ao Handoff persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewHandoffStatusRequest`.
+- Adiciona endpoint `PATCH .../handoff/{id}/status`.
+- Estados permitidos: `Planejado`, `EmAndamento`, `Concluido`, `Cancelado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_HANDOFF_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.37.3 — Professional Review Handoff History.
+
+# v0.37.1 — Professional Review Handoff Persistence
 
 - Adiciona persistência auditada de Handoff.
 - Adiciona `ProfessionalReviewHandoffPersistedResponse`.

@@ -2871,3 +2871,35 @@ A persistência registra passagem documental de contexto. Não executa conduta, 
 
 **Próxima etapa:** `v0.37.2 — Professional Review Handoff Status`.
 
+---
+
+## v0.37.2 — Professional Review Handoff Status
+
+Adiciona estados documentais explícitos aos handoffs profissionais.
+
+### Estados
+- `Planejado`
+- `EmAndamento`
+- `Concluido`
+- `Cancelado`
+
+### Transições
+As mudanças são manuais via `PATCH .../handoff/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do handoff;
+- gera auditoria `PROFESSIONAL_REVIEW_HANDOFF_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela handoffs automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.37.3 — Professional Review Handoff History`.
+

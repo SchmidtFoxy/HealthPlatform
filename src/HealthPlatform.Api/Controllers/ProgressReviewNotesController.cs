@@ -666,19 +666,76 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadHandoff(
+        var payloadAtual = LerPayloadHandoff(nota);
+        var payloadAtualizado = new HandoffPayload(
             origem,
             destino,
             request.DelegationRelacionadaId,
             request.AssignmentRelacionadaId,
-            request.ContextoTransferido,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ContextoTransferido, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_HANDOFF_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearHandoff(nota));
+    }
+
+    [HttpPatch("handoff/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewHandoffPersistedResponse>> AtualizarStatusHandoff(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewHandoffStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusHandoffValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejado, EmAndamento, Concluido ou Cancelado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoHandoff) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadHandoff(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_HANDOFF_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearHandoff(nota));
     }
 
@@ -3584,7 +3641,9 @@ public class ProgressReviewNotesController(
         Guid? AssignmentRelacionadaId,
         string? ContextoTransferido,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadHandoff(
         string profissionalOrigem,
@@ -3602,7 +3661,9 @@ public class ProgressReviewNotesController(
             assignmentRelacionadaId,
             NormalizarOpcional(contextoTransferido, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -3629,12 +3690,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoTransferido,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static HandoffPayload LerPayloadHandoff(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<HandoffPayload>(nota.Conteudo)
+                ?? new HandoffPayload(nota.Conteudo, string.Empty, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new HandoffPayload(nota.Conteudo, string.Empty, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusHandoffValido(string? status) =>
+        status is "Planejado" or "EmAndamento" or "Concluido" or "Cancelado";
 
     private sealed record DelegationPayload(
         string ProfissionalDelegante,

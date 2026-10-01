@@ -4902,6 +4902,7 @@ const HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365='v0.36.5';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366='v0.36.6';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1';
+const HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2';
 
 
 
@@ -5269,8 +5270,9 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalOrigem||'Origem')} → ${esc(x.profissionalDestino||'Destino')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejado')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.delegationRelacionadaId?`<small class="muted-line">Delegation: ${esc(x.delegationRelacionadaId)}</small>`:''}
       ${x.assignmentRelacionadaId?`<small class="muted-line">Assignment: ${esc(x.assignmentRelacionadaId)}</small>`:''}
@@ -5278,6 +5280,10 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-handoff-edit-v0371="${x.id}">Editar</button>
+        ${x.status!=='Planejado'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="Planejado">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluido'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="Concluido">Concluir</button>`:''}
+        ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-handoff-status-v0372="${x.id}" data-status-v0372="Cancelado">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-handoff-archive-v0371="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum handoff profissional registrado.</p>';
@@ -5294,6 +5300,16 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalOrigem.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-handoff-status-v0372]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0372;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/handoff/${btn.dataset.handoffStatusV0372}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Handoff atualizado para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-handoff-archive-v0371]')].forEach(btn=>btn.onclick=async()=>{
@@ -12273,7 +12289,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.37.1';
+const HP_MVP_VERSION='0.37.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

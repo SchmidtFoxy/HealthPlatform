@@ -3256,3 +3256,21 @@ Adicionar persistência auditada dos handoffs profissionais, com vínculos opcio
 ### v0.37.2 — Professional Review Handoff Status
 Adicionar estados documentais explícitos aos handoffs profissionais, com transições manuais e auditadas pela equipe.
 
+## ✅ v0.37.2 — Professional Review Handoff Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejado`, `EmAndamento`, `Concluido` e `Cancelado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.3 — Professional Review Handoff History
+Adicionar histórico consultável dos handoffs profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+
