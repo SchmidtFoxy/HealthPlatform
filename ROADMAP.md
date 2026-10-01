@@ -5055,3 +5055,21 @@ Adicionar estados documentais explícitos aos efeitos observados registrados, co
 ### v0.50.3 — Professional Review Team Knowledge Effect History
 Adicionar histórico consultável dos efeitos observados registrados, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.50.3 — Professional Review Team Knowledge Effect History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectHistoryItemResponse`;
+- `ProfessionalReviewTeamKnowledgeEffectHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por efeito observado;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.50.4 — Professional Review Team Knowledge Effect Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos efeitos observados e sem promover o registro a causalidade comprovada ou evidência clínica validada.
+

@@ -4994,6 +4994,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_CLOSURE_V0496='v0.49.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_V0502='v0.50.2';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3';
 
 
 
@@ -6167,6 +6168,40 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectFoundationV0500(host,found
 }
 
 
+
+async function hpOpenProfessionalReviewTeamKnowledgeEffectHistoryV0503(p,teamKnowledgeEffect){
+  if(!p?.id || !teamKnowledgeEffect?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect/${teamKnowledgeEffect.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-history-v0503="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico dos efeitos observados do conhecimento da equipe</h3>
+        <p class="muted-line">${esc(teamKnowledgeEffect.profissionalResponsavel||'Responsável')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectHistoryV0503">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não comprova causalidade, não valida evidência clínica, não representa prognóstico, recomendação, decisão terapêutica, conduta executada ou prescrição automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTeamKnowledgeEffectHistoryV0503').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p);
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
   if(!p?.id) return;
 
@@ -6264,6 +6299,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
         ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-knowledge-effect-status-v0502="${x.id}" data-status-v0502="EmRevisao">Revisar</button>`:''}
         ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-knowledge-effect-status-v0502="${x.id}" data-status-v0502="Consolidado">Consolidar</button>`:''}
         ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-knowledge-effect-status-v0502="${x.id}" data-status-v0502="Descartado">Descartar</button>`:''}
+        <button type="button" class="ghost" data-team-knowledge-effect-history-v0503="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-team-knowledge-effect-archive-v0501="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum efeito observado registrado.</p>';
@@ -6295,6 +6331,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectV0501(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-effect-history-v0503]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamKnowledgeEffectHistoryV0503);
+      if(item) await hpOpenProfessionalReviewTeamKnowledgeEffectHistoryV0503(p,item);
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-effect-status-v0502]')].forEach(btn=>btn.onclick=async()=>{
@@ -17066,7 +17107,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.50.2';
+const HP_MVP_VERSION='0.50.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

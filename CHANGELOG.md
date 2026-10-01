@@ -1,4 +1,22 @@
-﻿# v0.50.2 — Professional Review Team Knowledge Effect Status
+﻿# v0.50.3 — Professional Review Team Knowledge Effect History
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectHistoryResponse`.
+- Adiciona `GET .../team-knowledge-effect/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não transforma efeito observado em causalidade comprovada ou evidência clínica validada.
+- Não interpreta evolução clínica.
+- Não produz prognóstico, recomendação ou decisão terapêutica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.50.4 — Professional Review Team Knowledge Effect Filters.
+
+# v0.50.2 — Professional Review Team Knowledge Effect Status
 
 - Adiciona `Status` ao Team Knowledge Effect persistido.
 - Adiciona `StatusAtualizadoEmUtc`.
