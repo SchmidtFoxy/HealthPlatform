@@ -4786,3 +4786,30 @@ Os filtros apenas localizam registros documentais. Não inferem causalidade, pro
 
 **Próxima etapa:** `v0.45.5 — Professional Review Team Outcome Summary`.
 
+---
+
+## v0.45.5 — Professional Review Team Outcome Summary
+
+Adiciona resumo estrutural dos resultados documentados da equipe.
+
+### Indicadores
+- total;
+- ativos;
+- observados;
+- em acompanhamento;
+- consolidados;
+- descartados;
+- arquivados;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-outcome/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo dos resultados documentados da equipe** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não inferem causalidade, prognóstico ou recomendação, não representam score clínico, risco, urgência ou prioridade, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.45.6 — Professional Review Team Outcome Closure`.
+

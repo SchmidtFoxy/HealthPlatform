@@ -1310,6 +1310,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza resultados documentados das decisões da equipe usando Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.45.1, possui persistência auditada. Não infere causalidade, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-outcome/summary")]
+    public async Task<ActionResult<ProfessionalReviewTeamOutcomeSummaryResponse>> ResumoTeamOutcomes(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamOutcome))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearTeamOutcome).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var observados = itens.Count(x => !x.Arquivada && x.Status == "Observado");
+        var emAcompanhamento = itens.Count(x => !x.Arquivada && x.Status == "EmAcompanhamento");
+        var consolidados = itens.Count(x => !x.Arquivada && x.Status == "Consolidado");
+        var descartados = itens.Count(x => !x.Arquivada && x.Status == "Descartado");
+
+        var porProfissionalResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalResponsavel))
+            .GroupBy(x => x.ProfissionalResponsavel.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewTeamOutcomeProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewTeamOutcomeSummaryResponse(
+            total,
+            ativos,
+            observados,
+            emAcompanhamento,
+            consolidados,
+            descartados,
+            arquivados,
+            porProfissionalResponsavel,
+            "O resumo apresenta somente agregações documentais dos resultados registrados da equipe. Não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-outcome/search")]
     public async Task<ActionResult<ProfessionalReviewTeamOutcomeFiltersResponse>> FiltrarTeamOutcomes(
         Guid pacienteId,

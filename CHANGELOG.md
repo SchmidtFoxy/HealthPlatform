@@ -1,4 +1,20 @@
-﻿# v0.45.4 — Professional Review Team Outcome Filters
+﻿# v0.45.5 — Professional Review Team Outcome Summary
+
+- Adiciona `ProfessionalReviewTeamOutcomeProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamOutcomeSummaryResponse`.
+- Adiciona `GET .../team-outcome/summary`.
+- Consolida total, ativos, observados, em acompanhamento, consolidados, descartados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo dos resultados documentados da equipe`.
+- Atualiza o resumo após alterações.
+- Não infere causalidade, prognóstico ou recomendação.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.45.6 — Professional Review Team Outcome Closure.
+
+# v0.45.4 — Professional Review Team Outcome Filters
 
 - Adiciona `ProfessionalReviewTeamOutcomeFiltersResponse`.
 - Adiciona endpoint `GET .../team-outcome/search`.
