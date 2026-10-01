@@ -1,4 +1,18 @@
-﻿# v0.40.4 — Professional Review Coordination Filters
+﻿# v0.40.5 — Professional Review Coordination Summary
+
+- Adiciona `ProfessionalReviewCoordinationProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewCoordinationSummaryResponse`.
+- Adiciona `GET .../coordination/summary`.
+- Consolida total, ativas, planejadas, em andamento, concluídas, canceladas e arquivadas.
+- Adiciona distribuição por profissional coordenador.
+- Adiciona painel `Resumo das coordenações profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.40.6 — Professional Review Coordination Closure.
+
+# v0.40.4 — Professional Review Coordination Filters
 
 - Adiciona `ProfessionalReviewCoordinationFiltersResponse`.
 - Adiciona endpoint `GET .../coordination/search`.

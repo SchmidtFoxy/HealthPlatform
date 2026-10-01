@@ -3717,3 +3717,25 @@ Adicionar filtros profissionais por status, profissional coordenador, horizonte 
 ### v0.40.5 — Professional Review Coordination Summary
 Adicionar resumo estrutural das coordenações profissionais com contagem por status e distribuição por profissional coordenador, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
 
+## ✅ v0.40.5 — Professional Review Coordination Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCoordinationSummaryResponse`;
+- `ProfessionalReviewCoordinationProfissionalResumoResponse`;
+- total de registros;
+- ativas;
+- planejadas;
+- em andamento;
+- concluídas;
+- canceladas;
+- arquivadas;
+- agrupamento por profissional coordenador;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.40.6 — Professional Review Coordination Closure
+Fechar o ciclo 0.40.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão da coordenação profissional integrada.
+
