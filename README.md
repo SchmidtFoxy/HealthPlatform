@@ -2993,3 +2993,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.37.6 — Professional Review Handoff Closure`.
 
+---
+
+## v0.37.6 — Professional Review Handoff Closure
+
+Fecha a linha 0.37.x consolidando todas as capacidades estruturais de Handoff profissional.
+
+### Componentes consolidados
+- Handoff Foundation;
+- Handoff Persistence;
+- Handoff Status;
+- Handoff History;
+- Handoff Filters;
+- Handoff Summary.
+
+### Estado
+O endpoint `handoff/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaHandoffCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.38.0 — Professional Review Continuity Foundation`.
+

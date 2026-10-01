@@ -534,6 +534,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza handoffs documentais entre profissionais e, a partir da v0.37.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("handoff/closure")]
+    public ActionResult<ProfessionalReviewHandoffClosureResponse> FechamentoHandoffs()
+    {
+        var componentes = new[]
+        {
+            "HandoffFoundation",
+            "HandoffPersistence",
+            "HandoffStatus",
+            "HandoffHistory",
+            "HandoffFilters",
+            "HandoffSummary"
+        };
+
+        return Ok(new ProfessionalReviewHandoffClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaHandoffCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos handoffs profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("handoff/summary")]
     public async Task<ActionResult<ProfessionalReviewHandoffSummaryResponse>> ResumoHandoffs(
         Guid pacienteId,

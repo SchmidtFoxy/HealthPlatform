@@ -3335,3 +3335,20 @@ Adicionar resumo estrutural dos handoffs profissionais com contagem por status e
 ### v0.37.6 — Professional Review Handoff Closure
 Fechar o ciclo 0.37.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão dos handoffs profissionais.
 
+## ✅ v0.37.6 — Professional Review Handoff Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewHandoffClosureResponse`;
+- endpoint `handoff/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaHandoffCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no gerenciador profissional;
+- encerramento da linha 0.37.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.38.0 — Professional Review Continuity Foundation
+Criar a fundação estrutural de continuidade profissional, conectando handoffs, delegações e atribuições já documentadas em uma visão de acompanhamento entre profissionais sem automatizar conduta, prioridade clínica, risco ou transferência de responsabilidade.
+

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.37.5",
+            "v0.37.6",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Handoff Summary consolida contagens documentais por status, profissional de origem e profissional de destino, sem transformar agregações em score clínico, risco, urgência, prioridade automática ou transferência automática de responsabilidade clínica.")
+            "Professional Review Handoff Closure fecha a linha 0.37.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão dos handoffs profissionais.")
         {
             Recordes = recordes,
             Tempos = tempos,

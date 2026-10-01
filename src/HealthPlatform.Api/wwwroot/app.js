@@ -4906,6 +4906,7 @@ const HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4';
 const HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5';
+const HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6';
 
 
 
@@ -5256,6 +5257,24 @@ async function hpOpenProfessionalReviewHandoffHistoryV0373(p,handoff){
 }
 
 
+
+async function hpLoadProfessionalReviewHandoffClosureV0376(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/handoff/closure`);
+}
+
+function hpRenderProfessionalReviewHandoffClosureV0376(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaHandoffCompleta';
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-handoff-closure-v0376="${HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376}">
+    <div><b>${complete?'Estrutura de handoffs profissionais completa':'Estrutura de handoffs profissionais parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não representa score clínico, risco, urgência, prioridade ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewHandoffSummaryV0375(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/handoff/summary`);
@@ -5317,6 +5336,7 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewHandoffV0371">Fechar</button>
     </div>
+    <div id="professionalReviewHandoffClosureV0376"></div>
     <div id="professionalReviewHandoffSummaryV0375"></div>
     <form id="professionalReviewHandoffFiltersV0374" class="form-grid" data-professional-review-handoff-filters-v0374="${HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374}">
       <label>Status<select name="status">
@@ -5360,6 +5380,11 @@ async function hpOpenProfessionalReviewHandoffV0371(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const handoffClosureHostV0376=$('#professionalReviewHandoffClosureV0376');
+  hpLoadProfessionalReviewHandoffClosureV0376(p.id)
+    .then(x=>hpRenderProfessionalReviewHandoffClosureV0376(handoffClosureHostV0376,x))
+    .catch(()=>{ if(handoffClosureHostV0376) handoffClosureHostV0376.innerHTML=''; });
 
   const handoffSummaryHostV0375=$('#professionalReviewHandoffSummaryV0375');
   hpLoadProfessionalReviewHandoffSummaryV0375(p.id)
@@ -12440,7 +12465,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.37.5';
+const HP_MVP_VERSION='0.37.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,4 +1,18 @@
-﻿# v0.37.5 — Professional Review Handoff Summary
+﻿# v0.37.6 — Professional Review Handoff Closure
+
+- Adiciona `ProfessionalReviewHandoffClosureResponse`.
+- Adiciona endpoint `GET .../handoff/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaHandoffCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.37.x.
+- Próxima etapa: v0.38.0 — Professional Review Continuity Foundation.
+
+# v0.37.5 — Professional Review Handoff Summary
 
 - Adiciona `ProfessionalReviewHandoffProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewHandoffSummaryResponse`.
