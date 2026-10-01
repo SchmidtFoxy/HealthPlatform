@@ -1,4 +1,18 @@
-﻿# v0.35.2 — Professional Review Assignment Status
+﻿# v0.35.3 — Professional Review Assignment History
+
+- Adiciona `ProfessionalReviewAssignmentHistoryItemResponse`.
+- Adiciona `ProfessionalReviewAssignmentHistoryResponse`.
+- Adiciona `GET .../assignment/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.35.4 — Professional Review Assignment Filters.
+
+# v0.35.2 — Professional Review Assignment Status
 
 - Adiciona `Status` à Assignment persistida.
 - Adiciona `StatusAtualizadoEmUtc`.

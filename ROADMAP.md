@@ -3008,3 +3008,21 @@ Adicionar estados documentais explícitos às atribuições profissionais, com t
 ### v0.35.3 — Professional Review Assignment History
 Adicionar histórico consultável das atribuições profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.35.3 — Professional Review Assignment History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewAssignmentHistoryItemResponse`;
+- `ProfessionalReviewAssignmentHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por atribuição;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.4 — Professional Review Assignment Filters
+Adicionar filtros profissionais por status, responsável principal, apoio/participante, horizonte e texto, preservando a natureza documental das atribuições.
+

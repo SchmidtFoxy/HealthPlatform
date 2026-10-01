@@ -2458,3 +2458,35 @@ O status é documental. O sistema não inicia, conclui ou cancela atribuições 
 
 **Próxima etapa:** `v0.35.3 — Professional Review Assignment History`.
 
+---
+
+## v0.35.3 — Professional Review Assignment History
+
+Adiciona histórico consultável dos eventos auditados das atribuições profissionais.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../assignment/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada atribuição passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado.
+
+**Próxima etapa:** `v0.35.4 — Professional Review Assignment Filters`.
+
