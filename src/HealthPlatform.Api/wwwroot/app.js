@@ -4947,6 +4947,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431='v0.43.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_V0432='v0.43.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_HISTORY_V0433='v0.43.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_FILTERS_V0434='v0.43.4';
+const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_SUMMARY_V0435='v0.43.5';
 
 
 
@@ -5692,6 +5693,35 @@ async function hpOpenProfessionalReviewTeamAlignmentHistoryV0433(p,teamAlignment
   $('#closeProfessionalReviewTeamAlignmentHistoryV0433').onclick=()=>hpOpenProfessionalReviewTeamAlignmentV0431(p);
 }
 
+
+async function hpLoadProfessionalReviewTeamAlignmentSummaryV0435(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-alignment/summary`);
+}
+
+function hpRenderProfessionalReviewTeamAlignmentSummaryV0435(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porProfissionalResponsavel)?summary.porProfissionalResponsavel:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-alignment-summary-v0435="${HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_SUMMARY_V0435}">
+    <div><b>Resumo dos alinhamentos entre profissionais</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Ativos</span><b>${esc(String(summary.ativos??0))}</b></div>
+      <div class="row-between"><span>Planejados</span><b>${esc(String(summary.planejados??0))}</b></div>
+      <div class="row-between"><span>Em andamento</span><b>${esc(String(summary.emAndamento??0))}</b></div>
+      <div class="row-between"><span>Concluídos</span><b>${esc(String(summary.concluidos??0))}</b></div>
+      <div class="row-between"><span>Cancelados</span><b>${esc(String(summary.cancelados??0))}</b></div>
+      <div class="row-between"><span>Arquivados</span><b>${esc(String(summary.arquivados??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por profissional responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não representa score clínico, risco, urgência, prioridade, prognóstico ou transferência automática de responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
   if(!p?.id) return;
 
@@ -5719,6 +5749,7 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamAlignmentV0431">Fechar</button>
     </div>
+    <div id="professionalReviewTeamAlignmentSummaryV0435"></div>
     <form id="professionalReviewTeamAlignmentFiltersV0434" class="form-grid" data-professional-review-team-alignment-filters-v0434="${HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_FILTERS_V0434}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -5763,6 +5794,11 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamAlignmentSummaryHostV0435=$('#professionalReviewTeamAlignmentSummaryV0435');
+  hpLoadProfessionalReviewTeamAlignmentSummaryV0435(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamAlignmentSummaryV0435(teamAlignmentSummaryHostV0435,x))
+    .catch(()=>{ if(teamAlignmentSummaryHostV0435) teamAlignmentSummaryHostV0435.innerHTML=''; });
 
   const form=$('#professionalReviewTeamAlignmentFormV0431');
   const listHost=$('#professionalReviewTeamAlignmentListV0431');
@@ -5841,12 +5877,18 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
       });
       toast(`Alinhamento atualizado para ${status}.`);
       await render();
+      hpLoadProfessionalReviewTeamAlignmentSummaryV0435(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamAlignmentSummaryV0435(teamAlignmentSummaryHostV0435,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-team-alignment-archive-v0431]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-alignment/${btn.dataset.teamAlignmentArchiveV0431}`,{method:'DELETE'});
       toast('Alinhamento entre profissionais arquivado.');
       await render();
+      hpLoadProfessionalReviewTeamAlignmentSummaryV0435(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamAlignmentSummaryV0435(teamAlignmentSummaryHostV0435,x))
+        .catch(()=>{});
     });
   };
 
@@ -5875,6 +5917,9 @@ async function hpOpenProfessionalReviewTeamAlignmentV0431(p){
     toast(id?'Alinhamento entre profissionais atualizado.':'Alinhamento entre profissionais registrado.');
     clear();
     await render();
+    hpLoadProfessionalReviewTeamAlignmentSummaryV0435(p.id)
+      .then(x=>hpRenderProfessionalReviewTeamAlignmentSummaryV0435(teamAlignmentSummaryHostV0435,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -14494,7 +14539,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.43.4';
+const HP_MVP_VERSION='0.43.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

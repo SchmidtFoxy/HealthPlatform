@@ -191,6 +191,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamAlignmentProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewTeamAlignmentSummaryResponse(
+    int Total,
+    int Ativos,
+    int Planejados,
+    int EmAndamento,
+    int Concluidos,
+    int Cancelados,
+    int Arquivados,
+    IReadOnlyCollection<ProfessionalReviewTeamAlignmentProfissionalResumoResponse> PorProfissionalResponsavel,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamAlignmentFiltersResponse(
     string? Status,
     string? ProfissionalResponsavel,

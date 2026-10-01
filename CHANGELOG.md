@@ -1,4 +1,18 @@
-﻿# v0.43.4 — Professional Review Team Alignment Filters
+﻿# v0.43.5 — Professional Review Team Alignment Summary
+
+- Adiciona `ProfessionalReviewTeamAlignmentProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamAlignmentSummaryResponse`.
+- Adiciona `GET .../team-alignment/summary`.
+- Consolida total, ativos, planejados, em andamento, concluídos, cancelados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo dos alinhamentos entre profissionais`.
+- Atualiza o resumo após alterações.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.43.6 — Professional Review Team Alignment Closure.
+
+# v0.43.4 — Professional Review Team Alignment Filters
 
 - Adiciona `ProfessionalReviewTeamAlignmentFiltersResponse`.
 - Adiciona endpoint `GET .../team-alignment/search`.

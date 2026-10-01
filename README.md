@@ -4318,3 +4318,30 @@ Os filtros apenas localizam registros documentais. Não classificam urgência, r
 
 **Próxima etapa:** `v0.43.5 — Professional Review Team Alignment Summary`.
 
+---
+
+## v0.43.5 — Professional Review Team Alignment Summary
+
+Adiciona resumo estrutural dos alinhamentos entre profissionais.
+
+### Indicadores
+- total;
+- ativos;
+- planejados;
+- em andamento;
+- concluídos;
+- cancelados;
+- arquivados;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-alignment/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo dos alinhamentos entre profissionais** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não representam score clínico, risco, urgência, prioridade, prognóstico ou recomendação e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.43.6 — Professional Review Team Alignment Closure`.
+
