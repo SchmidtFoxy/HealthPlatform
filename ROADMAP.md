@@ -3947,3 +3947,21 @@ Adicionar estados documentais explícitos aos registros de contexto profissional
 ### v0.42.3 — Professional Review Shared Context History
 Adicionar histórico consultável dos contextos profissionais compartilhados, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.42.3 — Professional Review Shared Context History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewSharedContextHistoryItemResponse`;
+- `ProfessionalReviewSharedContextHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por contexto compartilhado;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.42.4 — Professional Review Shared Context Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos contextos compartilhados.
+

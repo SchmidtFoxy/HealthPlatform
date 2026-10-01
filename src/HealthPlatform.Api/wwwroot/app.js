@@ -4938,6 +4938,7 @@ const HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416='v0.41.6';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1';
 const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2';
+const HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3';
 
 
 
@@ -5583,6 +5584,40 @@ function hpRenderProfessionalReviewSharedContextFoundationV0420(host,foundation)
 }
 
 
+
+async function hpOpenProfessionalReviewSharedContextHistoryV0423(p,sharedContext){
+  if(!p?.id || !sharedContext?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/shared-context/${sharedContext.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-shared-context-history-v0423="${HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do contexto profissional compartilhado</h3>
+        <p class="muted-line">${esc(sharedContext.profissionalResponsavel||'Responsável')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewSharedContextHistoryV0423">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não representa interpretação de evolução clínica ou transferência automática de responsabilidade clínica.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewSharedContextHistoryV0423').onclick=()=>hpOpenProfessionalReviewSharedContextV0421(p);
+}
+
 async function hpOpenProfessionalReviewSharedContextV0421(p){
   if(!p?.id) return;
 
@@ -5654,6 +5689,7 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
         ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="EmAndamento">Iniciar</button>`:''}
         ${x.status!=='Concluido'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="Concluido">Concluir</button>`:''}
         ${x.status!=='Cancelado'?`<button type="button" class="ghost" data-shared-context-status-v0422="${x.id}" data-status-v0422="Cancelado">Cancelar</button>`:''}
+        <button type="button" class="ghost" data-shared-context-history-v0423="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-shared-context-archive-v0421="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum contexto profissional compartilhado registrado.</p>';
@@ -5672,6 +5708,11 @@ async function hpOpenProfessionalReviewSharedContextV0421(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-shared-context-history-v0423]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.sharedContextHistoryV0423);
+      if(item) await hpOpenProfessionalReviewSharedContextHistoryV0423(p,item);
     });
 
     [...listHost.querySelectorAll('[data-shared-context-status-v0422]')].forEach(btn=>btn.onclick=async()=>{
@@ -14042,7 +14083,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.42.2';
+const HP_MVP_VERSION='0.42.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

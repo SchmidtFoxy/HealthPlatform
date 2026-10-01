@@ -4029,3 +4029,35 @@ O status é documental. O sistema não inicia, conclui ou cancela contextos auto
 
 **Próxima etapa:** `v0.42.3 — Professional Review Shared Context History`.
 
+---
+
+## v0.42.3 — Professional Review Shared Context History
+
+Adiciona histórico consultável dos eventos auditados dos contextos profissionais compartilhados.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../shared-context/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada contexto compartilhado passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.42.4 — Professional Review Shared Context Filters`.
+

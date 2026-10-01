@@ -183,6 +183,23 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewSharedContextHistoryItemResponse(
+    Guid Id,
+    Guid SharedContextId,
+    string Evento,
+    string AutorNome,
+    Guid? AutorUsuarioId,
+    DateTime OcorridoEmUtc,
+    string? Detalhes);
+
+public sealed record ProfessionalReviewSharedContextHistoryResponse(
+    Guid SharedContextId,
+    IReadOnlyCollection<ProfessionalReviewSharedContextHistoryItemResponse> Itens,
+    int Total,
+    string Ordenacao,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewSharedContextPersistedResponse(
     Guid Id,
     Guid? CollaborationRelacionadaId,
