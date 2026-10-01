@@ -4756,3 +4756,33 @@ O histórico mostra somente eventos registrados. Não interpreta causalidade, ev
 
 **Próxima etapa:** `v0.45.4 — Professional Review Team Outcome Filters`.
 
+---
+
+## v0.45.4 — Professional Review Team Outcome Filters
+
+Adiciona filtros profissionais para localizar resultados documentados da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- resultado documentado;
+- evidência / registro de suporte;
+- observação profissional.
+
+### UI
+O gerenciador de resultados passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não inferem causalidade, prognóstico, recomendação, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.45.5 — Professional Review Team Outcome Summary`.
+

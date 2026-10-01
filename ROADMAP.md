@@ -4373,3 +4373,22 @@ Adicionar histórico consultável dos resultados registrados da equipe, cobrindo
 ### v0.45.4 — Professional Review Team Outcome Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos resultados registrados da equipe.
 
+## ✅ v0.45.4 — Professional Review Team Outcome Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamOutcomeFiltersResponse`;
+- endpoint `team-outcome/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.45.5 — Professional Review Team Outcome Summary
+Adicionar resumo estrutural dos resultados documentados da equipe com contagem por status e distribuição por profissional responsável, sem gerar inferência automática de causalidade, prognóstico, recomendação, urgência, risco, prioridade clínica, conduta ou prescrição.
+
