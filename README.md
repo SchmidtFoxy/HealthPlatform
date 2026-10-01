@@ -5707,3 +5707,35 @@ O status é documental. O sistema não transforma aplicação em evidência clí
 
 **Próxima etapa:** `v0.49.3 — Professional Review Team Knowledge Application History`.
 
+---
+
+## v0.49.3 — Professional Review Team Knowledge Application History
+
+Adiciona histórico consultável dos eventos auditados da aplicação documentada do conhecimento da equipe profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-knowledge-application/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada aplicação documentada passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não transforma aplicação em evidência clínica validada, não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.49.4 — Professional Review Team Knowledge Application Filters`.
+

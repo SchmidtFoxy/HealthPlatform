@@ -1,4 +1,22 @@
-﻿# v0.49.2 — Professional Review Team Knowledge Application Status
+﻿# v0.49.3 — Professional Review Team Knowledge Application History
+
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeApplicationHistoryResponse`.
+- Adiciona `GET .../team-knowledge-application/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não transforma aplicação em evidência clínica validada.
+- Não interpreta causalidade ou evolução clínica.
+- Não produz prognóstico, recomendação ou decisão terapêutica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.49.4 — Professional Review Team Knowledge Application Filters.
+
+# v0.49.2 — Professional Review Team Knowledge Application Status
 
 - Adiciona `Status` ao Team Knowledge Application persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

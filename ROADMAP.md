@@ -4913,3 +4913,21 @@ Adicionar estados documentais explícitos à aplicação registrada do conhecime
 ### v0.49.3 — Professional Review Team Knowledge Application History
 Adicionar histórico consultável da aplicação registrada do conhecimento da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.49.3 — Professional Review Team Knowledge Application History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeApplicationHistoryItemResponse`;
+- `ProfessionalReviewTeamKnowledgeApplicationHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por aplicação documentada;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.49.4 — Professional Review Team Knowledge Application Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental da aplicação registrada do conhecimento da equipe e sem promover o registro a evidência clínica validada.
+

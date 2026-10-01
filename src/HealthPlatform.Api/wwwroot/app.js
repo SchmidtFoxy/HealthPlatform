@@ -4987,6 +4987,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_CLOSURE_V0486='v0.48.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_V0490='v0.49.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_PERSISTENCE_V0491='v0.49.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_V0492='v0.49.2';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493='v0.49.3';
 
 
 
@@ -6094,6 +6095,40 @@ function hpRenderProfessionalReviewTeamKnowledgeApplicationFoundationV0490(host,
 }
 
 
+
+async function hpOpenProfessionalReviewTeamKnowledgeApplicationHistoryV0493(p,teamKnowledgeApplication){
+  if(!p?.id || !teamKnowledgeApplication?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-application/${teamKnowledgeApplication.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-application-history-v0493="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico da aplicação documentada do conhecimento da equipe</h3>
+        <p class="muted-line">${esc(teamKnowledgeApplication.profissionalResponsavel||'Responsável')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeApplicationHistoryV0493">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não valida evidência clínica, não representa causalidade, prognóstico, recomendação, decisão terapêutica, conduta executada ou prescrição automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTeamKnowledgeApplicationHistoryV0493').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p);
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
   if(!p?.id) return;
 
@@ -6189,6 +6224,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
         ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-knowledge-application-status-v0492="${x.id}" data-status-v0492="EmRevisao">Revisar</button>`:''}
         ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-knowledge-application-status-v0492="${x.id}" data-status-v0492="Consolidado">Consolidar</button>`:''}
         ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-knowledge-application-status-v0492="${x.id}" data-status-v0492="Descartado">Descartar</button>`:''}
+        <button type="button" class="ghost" data-team-knowledge-application-history-v0493="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-team-knowledge-application-archive-v0491="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma aplicação de conhecimento registrada.</p>';
@@ -6219,6 +6255,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeApplicationV0491(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-application-history-v0493]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamKnowledgeApplicationHistoryV0493);
+      if(item) await hpOpenProfessionalReviewTeamKnowledgeApplicationHistoryV0493(p,item);
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-application-status-v0492]')].forEach(btn=>btn.onclick=async()=>{
@@ -16664,7 +16705,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.49.2';
+const HP_MVP_VERSION='0.49.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
