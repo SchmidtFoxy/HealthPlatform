@@ -3803,3 +3803,35 @@ O status é documental. O sistema não inicia, conclui ou cancela colaborações
 
 **Próxima etapa:** `v0.41.3 — Professional Review Collaboration History`.
 
+---
+
+## v0.41.3 — Professional Review Collaboration History
+
+Adiciona histórico consultável dos eventos auditados das colaborações profissionais compartilhadas.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../collaboration/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada colaboração passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.41.4 — Professional Review Collaboration Filters`.
+

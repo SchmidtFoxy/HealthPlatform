@@ -1,4 +1,19 @@
-﻿# v0.41.2 — Professional Review Collaboration Status
+﻿# v0.41.3 — Professional Review Collaboration History
+
+- Adiciona `ProfessionalReviewCollaborationHistoryItemResponse`.
+- Adiciona `ProfessionalReviewCollaborationHistoryResponse`.
+- Adiciona `GET .../collaboration/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.41.4 — Professional Review Collaboration Filters.
+
+# v0.41.2 — Professional Review Collaboration Status
 
 - Adiciona `Status` à Collaboration persistida.
 - Adiciona `StatusAtualizadoEmUtc`.

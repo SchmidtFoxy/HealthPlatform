@@ -3813,3 +3813,21 @@ Adicionar estados documentais explícitos aos registros de colaboração profiss
 ### v0.41.3 — Professional Review Collaboration History
 Adicionar histórico consultável das colaborações profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.41.3 — Professional Review Collaboration History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCollaborationHistoryItemResponse`;
+- `ProfessionalReviewCollaborationHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por colaboração;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.41.4 — Professional Review Collaboration Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental das colaborações.
+

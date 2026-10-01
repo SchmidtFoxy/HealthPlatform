@@ -1023,6 +1023,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearCollaboration(nota));
     }
 
+    [HttpGet("collaboration/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewCollaborationHistoryResponse>> HistoricoCollaboration(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var collaborationExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCollaboration),
+                cancellationToken);
+
+        if (!collaborationExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_COLLABORATION_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewCollaborationHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoCollaboration(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewCollaborationHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra eventos documentais de colaboração profissional. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("collaboration/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewCollaborationPersistedResponse>> AtualizarStatusCollaboration(
         Guid pacienteId,
@@ -5880,6 +5955,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoCollaboration(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_COLLABORATION_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_COLLABORATION_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_COLLABORATION_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_COLLABORATION_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static CollaborationPayload LerPayloadCollaboration(NotaInternaProfissional nota)
     {
