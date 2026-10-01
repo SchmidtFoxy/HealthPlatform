@@ -130,6 +130,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewActionPlanFiltersResponse(
+    string? Status,
+    string? Responsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewActionPlanPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewActionPlanHistoryItemResponse(
     Guid Id,
     Guid ActionPlanId,

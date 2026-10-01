@@ -2055,3 +2055,31 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.33.4 — Professional Review Action Plan Filters`.
 
+---
+
+## v0.33.4 — Professional Review Action Plan Filters
+
+Adiciona filtros profissionais para localizar ações operacionais persistidas.
+
+### Filtros
+- status;
+- responsável;
+- horizonte;
+- texto livre;
+- incluir arquivadas;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- ação operacional;
+- objetivo relacionado;
+- observação profissional.
+
+### UI
+O workspace profissional passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção.
+
+**Próxima etapa:** `v0.33.5 — Professional Review Action Plan Summary`.
+

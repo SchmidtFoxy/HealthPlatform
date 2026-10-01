@@ -1,4 +1,19 @@
-﻿# v0.33.3 — Professional Review Action Plan History
+﻿# v0.33.4 — Professional Review Action Plan Filters
+
+- Adiciona `ProfessionalReviewActionPlanFiltersResponse`.
+- Adiciona endpoint `GET .../action-plan/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivadas.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros ao workspace profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.33.5 — Professional Review Action Plan Summary.
+
+# v0.33.3 — Professional Review Action Plan History
 
 - Adiciona `ProfessionalReviewActionPlanHistoryItemResponse`.
 - Adiciona `ProfessionalReviewActionPlanHistoryResponse`.

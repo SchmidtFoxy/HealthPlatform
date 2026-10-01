@@ -262,6 +262,68 @@ public class ProgressReviewNotesController(
             "A fundação do Action Plan organiza ações profissionais de forma documental. A partir da v0.33.1 possui persistência profissional auditada, sem executar ações e sem criar prescrição, prioridade, risco, diagnóstico, prognóstico ou recomendação automática."));
     }
 
+    [HttpGet("action-plan/search")]
+    public async Task<ActionResult<ProfessionalReviewActionPlanFiltersResponse>> FiltrarActionPlan(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? responsavel = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusActionPlanValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var responsavelNormalizado = NormalizarOpcional(responsavel, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoActionPlan) &&
+                (incluirArquivadas || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearActionPlan)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (responsavelNormalizado is null ||
+                    (x.Responsavel?.Contains(responsavelNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.AcaoOperacional.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ObjetivoRelacionado?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewActionPlanFiltersResponse(
+            statusNormalizado,
+            responsavelNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivadas,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar registros do Action Plan. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção."));
+    }
+
     [HttpGet("action-plan")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewActionPlanPersistedResponse>>> ListarActionPlan(
         Guid pacienteId,

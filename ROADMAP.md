@@ -2764,3 +2764,22 @@ Adicionar histórico consultável de criação, edição, mudanças de status e 
 ### v0.33.4 — Professional Review Action Plan Filters
 Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental do Action Plan.
 
+## ✅ v0.33.4 — Professional Review Action Plan Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewActionPlanFiltersResponse`;
+- endpoint `action-plan/search`;
+- filtro por status;
+- filtro por responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivadas;
+- ordenação asc/desc;
+- formulário de filtros no workspace;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.33.5 — Professional Review Action Plan Summary
+Adicionar resumo estrutural do Action Plan com contagem por status e distribuição por responsável, sem gerar score clínico ou prioridade automática.
+
