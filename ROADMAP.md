@@ -3218,3 +3218,21 @@ Fechar o ciclo 0.36.x consolidando fundação, persistência, status, histórico
 ### v0.37.0 — Professional Review Handoff Foundation
 Criar a fundação estrutural para handoff profissional, permitindo documentar passagem de contexto entre profissionais a partir de delegações e atribuições existentes, preservando autoria, responsabilidade e contexto sem automatizar decisão clínica ou execução.
 
+## ✅ v0.37.0 — Professional Review Handoff Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewHandoffFieldResponse`;
+- `ProfessionalReviewHandoffFoundationResponse`;
+- endpoint `handoff/foundation`;
+- sete campos estruturais;
+- estado `FundacaoHandoffDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.37.1 — Professional Review Handoff Persistence
+Adicionar persistência auditada dos handoffs profissionais, com vínculos opcionais à Delegation e Assignment e preservação explícita de autoria, responsabilidade documental e separação entre passagem de contexto, decisão clínica e execução.
+

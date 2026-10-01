@@ -458,6 +458,63 @@ public class ProgressReviewNotesController(
             "A fundação organiza delegações documentais da equipe profissional e, a partir da v0.36.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("handoff/foundation")]
+    public ActionResult<ProfessionalReviewHandoffFoundationResponse> HandoffFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewHandoffFieldResponse(
+                "delegation-relacionada",
+                "Delegation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o handoff a uma delegação profissional já documentada."),
+            new ProfessionalReviewHandoffFieldResponse(
+                "assignment-relacionada",
+                "Assignment relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o handoff a uma atribuição profissional já documentada."),
+            new ProfessionalReviewHandoffFieldResponse(
+                "profissional-origem",
+                "Profissional de origem",
+                true,
+                "texto",
+                "Identifica documentalmente quem realiza a passagem de contexto."),
+            new ProfessionalReviewHandoffFieldResponse(
+                "profissional-destino",
+                "Profissional de destino",
+                true,
+                "texto",
+                "Identifica documentalmente quem recebe o contexto do handoff."),
+            new ProfessionalReviewHandoffFieldResponse(
+                "contexto-transferido",
+                "Contexto transferido",
+                false,
+                "texto-longo",
+                "Documenta o contexto operacional compartilhado sem caracterizar decisão clínica automática."),
+            new ProfessionalReviewHandoffFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewHandoffFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes para a equipe.")
+        };
+
+        return Ok(new ProfessionalReviewHandoffFoundationResponse(
+            "FundacaoHandoffDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza handoffs documentais entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("delegation/closure")]
     public ActionResult<ProfessionalReviewDelegationClosureResponse> FechamentoDelegations()
     {

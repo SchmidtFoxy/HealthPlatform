@@ -1,4 +1,20 @@
-﻿# v0.36.6 — Professional Review Delegation Closure
+﻿# v0.37.0 — Professional Review Handoff Foundation
+
+- Abre a linha funcional 0.37.x.
+- Adiciona `ProfessionalReviewHandoffFieldResponse`.
+- Adiciona `ProfessionalReviewHandoffFoundationResponse`.
+- Adiciona `GET .../handoff/foundation`.
+- Define Delegation relacionada, Assignment relacionada, profissional de origem, profissional de destino, contexto transferido, horizonte e observação profissional.
+- Define `FundacaoHandoffDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Handoff profissional` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.37.1 — Professional Review Handoff Persistence.
+
+# v0.36.6 — Professional Review Delegation Closure
 
 - Adiciona `ProfessionalReviewDelegationClosureResponse`.
 - Adiciona endpoint `GET .../delegation/closure`.

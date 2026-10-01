@@ -4900,6 +4900,7 @@ const HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364='v0.36.4';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365='v0.36.5';
 const HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366='v0.36.6';
+const HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0';
 
 
 
@@ -5185,6 +5186,34 @@ async function hpOpenProfessionalReviewDelegationHistoryV0363(p,delegation){
 
 
 
+
+async function hpLoadProfessionalReviewHandoffFoundationV0370(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/handoff/foundation`);
+}
+
+function hpRenderProfessionalReviewHandoffFoundationV0370(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-handoff-v0370="${HP_PROFESSIONAL_REVIEW_HANDOFF_V0370}">
+    <div class="row-between">
+      <div>
+        <b>Handoff profissional</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza passagem documental de contexto entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewDelegationClosureV0366(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/delegation/closure`);
@@ -5263,6 +5292,7 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewDelegationV0361">Fechar</button>
     </div>
+    <div id="professionalReviewHandoffFoundationV0370"></div>
     <div id="professionalReviewDelegationClosureV0366"></div>
     <div id="professionalReviewDelegationSummaryV0365"></div>
     <form id="professionalReviewDelegationFiltersV0364" class="form-grid" data-professional-review-delegation-filters-v0364="${HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364}">
@@ -5306,6 +5336,11 @@ async function hpOpenProfessionalReviewDelegationV0361(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const handoffFoundationHostV0370=$('#professionalReviewHandoffFoundationV0370');
+  hpLoadProfessionalReviewHandoffFoundationV0370(p.id)
+    .then(x=>hpRenderProfessionalReviewHandoffFoundationV0370(handoffFoundationHostV0370,x))
+    .catch(()=>{ if(handoffFoundationHostV0370) handoffFoundationHostV0370.innerHTML=''; });
 
   const delegationClosureHostV0366=$('#professionalReviewDelegationClosureV0366');
   hpLoadProfessionalReviewDelegationClosureV0366(p.id)
@@ -12116,7 +12151,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.36.6';
+const HP_MVP_VERSION='0.37.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

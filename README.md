@@ -2800,3 +2800,34 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.37.0 — Professional Review Handoff Foundation`.
 
+---
+
+## v0.37.0 — Professional Review Handoff Foundation
+
+Abre a linha 0.37.x com a fundação estrutural para handoff profissional, permitindo documentar passagem de contexto entre profissionais a partir de delegações e atribuições existentes.
+
+### Campos da fundação
+- Delegation relacionada;
+- Assignment relacionada;
+- profissional de origem;
+- profissional de destino;
+- contexto transferido;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../handoff/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoHandoffDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Handoff profissional**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza passagem documental de contexto entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.37.1 — Professional Review Handoff Persistence`.
+

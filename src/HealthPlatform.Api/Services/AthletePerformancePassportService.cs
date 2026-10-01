@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.36.6",
+            "v0.37.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Delegation Closure fecha a linha 0.36.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das delegações profissionais.")
+            "Professional Review Handoff Foundation abre a linha 0.37.x com uma fundação estrutural para passagem documental de contexto entre profissionais, relacionada a delegações e atribuições existentes, sem execução automática ou priorização clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,
