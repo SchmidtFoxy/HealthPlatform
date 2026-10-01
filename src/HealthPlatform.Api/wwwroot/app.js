@@ -4887,6 +4887,7 @@ const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344='v0.34.4';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_SUMMARY_V0345='v0.34.5';
 const HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_CLOSURE_V0346='v0.34.6';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0';
+const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351='v0.35.1';
 
 
 
@@ -5065,7 +5066,121 @@ function hpRenderProfessionalReviewAssignmentFoundationV0350(host,foundation){
       </div>`).join('')}
     </div>
     <small class="muted-line">Organiza responsabilidades documentais da equipe. Não executa condutas nem define prioridade clínica.</small>
+    ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-assignment-open-v0351="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351}">Gerenciar atribuições</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewAssignmentV0351(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const load=async()=>{
+    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/assignment`);
+    return Array.isArray(items)?items:[];
+  };
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-assignment-persistence-v0351="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351}">
+    <div class="row-between">
+      <div>
+        <h3>Atribuições profissionais</h3>
+        <p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewAssignmentV0351">Fechar</button>
+    </div>
+    <form id="professionalReviewAssignmentFormV0351" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Responsável principal<input name="responsavelPrincipal" maxlength="160" required></label>
+      <label>Task Coordination relacionada<input name="taskCoordinationRelacionadaId" placeholder="ID opcional da tarefa operacional"></label>
+      <label>Apoio ou participante<input name="apoioParticipante" maxlength="160"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Contexto da atribuição<textarea name="contextoAtribuicao" maxlength="2000" rows="3"></textarea></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="2000" rows="3"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar atribuição</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewAssignmentV0351">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewAssignmentListV0351" class="stack"></div>
+    <small class="muted-line">Registro documental auditado. Não representa prescrição, prioridade clínica ou execução automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewAssignmentFormV0351');
+  const listHost=$('#professionalReviewAssignmentListV0351');
+
+  const clear=()=>{
+    form?.reset();
+    if(form?.elements.id) form.elements.id.value='';
+  };
+
+  const render=async()=>{
+    const items=await load();
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between">
+        <b>${esc(x.responsavelPrincipal||'Responsável')}</b>
+        <small>${esc(x.autorNome||'Profissional')}</small>
+      </div>
+      ${x.apoioParticipante?`<small class="muted-line">Apoio: ${esc(x.apoioParticipante)}</small>`:''}
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      ${x.taskCoordinationRelacionadaId?`<small class="muted-line">Task Coordination: ${esc(x.taskCoordinationRelacionadaId)}</small>`:''}
+      ${x.contextoAtribuicao?`<p>${esc(x.contextoAtribuicao)}</p>`:''}
+      ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
+      <div class="internal-note-actions-v0204">
+        <button type="button" class="ghost" data-assignment-edit-v0351="${x.id}">Editar</button>
+        <button type="button" class="ghost danger" data-assignment-archive-v0351="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhuma atribuição profissional registrada.</p>';
+
+    [...listHost.querySelectorAll('[data-assignment-edit-v0351]')].forEach(btn=>btn.onclick=()=>{
+      const item=items.find(x=>x.id===btn.dataset.assignmentEditV0351);
+      if(!item) return;
+      form.elements.id.value=item.id||'';
+      form.elements.responsavelPrincipal.value=item.responsavelPrincipal||'';
+      form.elements.taskCoordinationRelacionadaId.value=item.taskCoordinationRelacionadaId||'';
+      form.elements.apoioParticipante.value=item.apoioParticipante||'';
+      form.elements.contextoAtribuicao.value=item.contextoAtribuicao||'';
+      form.elements.horizonte.value=item.horizonte||'';
+      form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
+      form.elements.responsavelPrincipal.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-assignment-archive-v0351]')].forEach(btn=>btn.onclick=async()=>{
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/assignment/${btn.dataset.assignmentArchiveV0351}`,{method:'DELETE'});
+      toast('Atribuição profissional arquivada.');
+      await render();
+    });
+  };
+
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const fd=new FormData(form);
+    const id=String(fd.get('id')||'').trim();
+    const payload={
+      responsavelPrincipal:String(fd.get('responsavelPrincipal')||'').trim(),
+      taskCoordinationRelacionadaId:String(fd.get('taskCoordinationRelacionadaId')||'').trim()||null,
+      apoioParticipante:String(fd.get('apoioParticipante')||'').trim()||null,
+      contextoAtribuicao:String(fd.get('contextoAtribuicao')||'').trim()||null,
+      horizonte:String(fd.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(fd.get('observacaoProfissional')||'').trim()||null
+    };
+
+    await api(`/api/pacientes/${p.id}/performance/progress-review-notes/assignment${id?`/${id}`:''}`,{
+      method:id?'PUT':'POST',
+      body:JSON.stringify(payload)
+    });
+
+    toast(id?'Atribuição profissional atualizada.':'Atribuição profissional registrada.');
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewAssignmentV0351').onclick=clear;
+  $('#closeProfessionalReviewAssignmentV0351').onclick=()=>hpOpenProfessionalReviewTaskCoordinationV0341(p);
+  await render();
 }
 
 async function hpLoadProfessionalReviewTaskCoordinationClosureV0346(patientId){
@@ -5184,7 +5299,11 @@ async function hpOpenProfessionalReviewTaskCoordinationV0341(p){
 
   const assignmentFoundationHostV0350=$('#professionalReviewAssignmentFoundationV0350');
   hpLoadProfessionalReviewAssignmentFoundationV0350(p.id)
-    .then(x=>hpRenderProfessionalReviewAssignmentFoundationV0350(assignmentFoundationHostV0350,x))
+    .then(x=>{
+      hpRenderProfessionalReviewAssignmentFoundationV0350(assignmentFoundationHostV0350,x);
+      const openAssignmentV0351=assignmentFoundationHostV0350?.querySelector('[data-assignment-open-v0351]');
+      if(openAssignmentV0351) openAssignmentV0351.onclick=()=>hpOpenProfessionalReviewAssignmentV0351(p);
+    })
     .catch(()=>{ if(assignmentFoundationHostV0350) assignmentFoundationHostV0350.innerHTML=''; });
 
   const taskCoordinationClosureHostV0346=$('#professionalReviewTaskCoordinationClosureV0346');
@@ -11466,7 +11585,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.35.0';
+const HP_MVP_VERSION='0.35.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

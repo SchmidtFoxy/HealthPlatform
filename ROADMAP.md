@@ -2971,3 +2971,22 @@ Criar a fundação estrutural para atribuições profissionais relacionadas às 
 ### v0.35.1 — Professional Review Assignment Persistence
 Adicionar persistência auditada das atribuições profissionais, com vínculo opcional à Task Coordination e preservação da separação entre documentação, decisão clínica e execução.
 
+## ✅ v0.35.1 — Professional Review Assignment Persistence — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewAssignmentPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewAssignment:`;
+- GET/POST/PUT/DELETE;
+- vínculo opcional à Task Coordination;
+- validação organização/paciente/arquivamento;
+- auditoria de criação, edição e arquivamento;
+- UI CRUD de atribuições profissionais;
+- fundação passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.2 — Professional Review Assignment Status
+Adicionar estados documentais explícitos às atribuições profissionais, com transições manuais e auditadas pela equipe.
+

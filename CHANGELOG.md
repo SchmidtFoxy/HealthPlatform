@@ -1,4 +1,19 @@
-﻿# v0.35.0 — Professional Review Assignment Foundation
+﻿# v0.35.1 — Professional Review Assignment Persistence
+
+- Adiciona persistência auditada de Assignment.
+- Adiciona `ProfessionalReviewAssignmentPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewAssignment:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida vínculo opcional com Task Coordination do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar atribuições`.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.35.2 — Professional Review Assignment Status.
+
+# v0.35.0 — Professional Review Assignment Foundation
 
 - Abre a linha funcional 0.35.x.
 - Adiciona `ProfessionalReviewAssignmentFieldResponse`.

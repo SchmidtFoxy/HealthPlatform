@@ -2387,3 +2387,42 @@ A fundação organiza responsabilidades documentais da equipe. Não executa cond
 
 **Próxima etapa:** `v0.35.1 — Professional Review Assignment Persistence`.
 
+---
+
+## v0.35.1 — Professional Review Assignment Persistence
+
+Adiciona persistência auditada para atribuições profissionais da equipe.
+
+### CRUD
+- listar atribuições;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Campos persistidos
+- Task Coordination relacionada opcional;
+- responsável principal;
+- apoio ou participante;
+- contexto da atribuição;
+- horizonte;
+- observação profissional;
+- autoria;
+- datas;
+- arquivamento.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_ASSIGNMENT_CREATED`
+- `PROFESSIONAL_REVIEW_ASSIGNMENT_UPDATED`
+- `PROFESSIONAL_REVIEW_ASSIGNMENT_ARCHIVED`
+
+### Vínculo com Task Coordination
+Quando informada, a Task Coordination relacionada precisa pertencer à mesma organização e paciente e não pode estar arquivada.
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar atribuições**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra responsabilidade documental. Não executa conduta, não cria prescrição e não atribui risco ou prioridade clínica.
+
+**Próxima etapa:** `v0.35.2 — Professional Review Assignment Status`.
+
