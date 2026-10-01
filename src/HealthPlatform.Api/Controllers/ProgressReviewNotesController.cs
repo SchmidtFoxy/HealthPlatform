@@ -2907,7 +2907,8 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadTeamKnowledgeEffectDecisionReview(
+        var payloadAtual = LerPayloadTeamKnowledgeEffectDecisionReview(nota);
+        var payloadAtualizado = new TeamKnowledgeEffectDecisionReviewPayload(
             profissionalRevisor,
             revisaoDocumentada,
             request.TeamKnowledgeEffectDecisionRelacionadaId,
@@ -2925,18 +2926,72 @@ public class ProgressReviewNotesController(
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.Participantes,
-            request.ContextoRevisao,
-            request.BaseObservacionalEvidenciaSuporte,
-            request.InterpretacaoProfissional,
-            request.ConclusaoDocumental,
-            request.NecessidadeAcompanhamentoDocumentada,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Participantes, 1000),
+            NormalizarOpcional(request.ContextoRevisao, 3000),
+            NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000),
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000),
+            NormalizarOpcional(request.ConclusaoDocumental, 3000),
+            NormalizarOpcional(request.NecessidadeAcompanhamentoDocumentada, 3000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_UPDATED", nota, antes, Snapshot(nota));
         await db.SaveChangesAsync(cancellationToken);
+
+        return Ok(MapearTeamKnowledgeEffectDecisionReview(nota));
+    }
+
+    [HttpPatch("team-knowledge-effect-decision-review/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewPersistedResponse>> AtualizarStatusTeamKnowledgeEffectDecisionReview(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTeamKnowledgeEffectDecisionReviewStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status) ? null : request.Status.Trim();
+
+        if (!StatusTeamKnowledgeEffectDecisionReviewValido(status))
+            return BadRequest(new { message = "Status inválido. Use Registrado, EmRevisao, Consolidado ou Descartado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReview) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTeamKnowledgeEffectDecisionReview(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
 
         return Ok(MapearTeamKnowledgeEffectDecisionReview(nota));
     }
@@ -13739,7 +13794,9 @@ public class ProgressReviewNotesController(
         string? ConclusaoDocumental,
         string? NecessidadeAcompanhamentoDocumentada,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Registrado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadTeamKnowledgeEffectDecisionReview(
         string profissionalRevisor,
@@ -13793,7 +13850,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(conclusaoDocumental, 3000),
             NormalizarOpcional(necessidadeAcompanhamentoDocumentada, 3000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Registrado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -13838,12 +13897,30 @@ public class ProgressReviewNotesController(
             payload?.NecessidadeAcompanhamentoDocumentada,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Registrado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static TeamKnowledgeEffectDecisionReviewPayload LerPayloadTeamKnowledgeEffectDecisionReview(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamKnowledgeEffectDecisionReviewPayload>(nota.Conteudo)
+                ?? new TeamKnowledgeEffectDecisionReviewPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new TeamKnowledgeEffectDecisionReviewPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusTeamKnowledgeEffectDecisionReviewValido(string? status) =>
+        status is "Registrado" or "EmRevisao" or "Consolidado" or "Descartado";
 
     private sealed record TeamKnowledgeEffectDecisionPayload(
         string ProfissionalResponsavel,
