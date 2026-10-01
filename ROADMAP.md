@@ -4632,3 +4632,21 @@ Adicionar estados documentais explícitos aos insights registrados da equipe, co
 ### v0.47.3 — Professional Review Team Insight History
 Adicionar histórico consultável dos insights registrados da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.47.3 — Professional Review Team Insight History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamInsightHistoryItemResponse`;
+- `ProfessionalReviewTeamInsightHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por insight documentado;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.47.4 — Professional Review Team Insight Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos insights registrados da equipe e sem promover o registro a evidência clínica validada.
+

@@ -5207,3 +5207,35 @@ O status é documental. O sistema não transforma insight em evidência clínica
 
 **Próxima etapa:** `v0.47.3 — Professional Review Team Insight History`.
 
+---
+
+## v0.47.3 — Professional Review Team Insight History
+
+Adiciona histórico consultável dos eventos auditados dos insights documentados da equipe profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-insight/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada insight passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não transforma insight em evidência clínica validada, não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.47.4 — Professional Review Team Insight Filters`.
+

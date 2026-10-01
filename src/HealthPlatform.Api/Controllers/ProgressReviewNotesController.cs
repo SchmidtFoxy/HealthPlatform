@@ -1825,6 +1825,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearTeamInsight(nota));
     }
 
+    [HttpGet("team-insight/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewTeamInsightHistoryResponse>> HistoricoTeamInsight(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var teamInsightExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamInsight),
+                cancellationToken);
+
+        if (!teamInsightExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_TEAM_INSIGHT_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewTeamInsightHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoTeamInsight(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewTeamInsightHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra apenas eventos documentais dos insights da equipe. Não transforma insight em evidência clínica validada, não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("team-insight/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewTeamInsightPersistedResponse>> AtualizarStatusTeamInsight(
         Guid pacienteId,
@@ -9514,6 +9589,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoTeamInsight(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_TEAM_INSIGHT_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_TEAM_INSIGHT_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_TEAM_INSIGHT_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static TeamInsightPayload LerPayloadTeamInsight(NotaInternaProfissional nota)
     {

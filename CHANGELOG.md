@@ -1,4 +1,22 @@
-﻿# v0.47.2 — Professional Review Team Insight Status
+﻿# v0.47.3 — Professional Review Team Insight History
+
+- Adiciona `ProfessionalReviewTeamInsightHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamInsightHistoryResponse`.
+- Adiciona `GET .../team-insight/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não transforma insight em evidência clínica validada.
+- Não interpreta causalidade ou evolução clínica.
+- Não produz prognóstico, recomendação ou decisão terapêutica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.47.4 — Professional Review Team Insight Filters.
+
+# v0.47.2 — Professional Review Team Insight Status
 
 - Adiciona `Status` ao Team Insight persistido.
 - Adiciona `StatusAtualizadoEmUtc`.
