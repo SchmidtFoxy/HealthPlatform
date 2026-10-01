@@ -4669,3 +4669,25 @@ Adicionar filtros profissionais por status, profissional responsável, horizonte
 ### v0.47.5 — Professional Review Team Insight Summary
 Adicionar resumo estrutural dos insights documentados da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada nem gerar inferência automática de causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
 
+## ✅ v0.47.5 — Professional Review Team Insight Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamInsightSummaryResponse`;
+- `ProfessionalReviewTeamInsightProfissionalResumoResponse`;
+- total de registros;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- agrupamento por profissional responsável;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.47.6 — Professional Review Team Insight Closure
+Fechar o ciclo 0.47.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão dos insights documentados da equipe.
+

@@ -1,4 +1,21 @@
-﻿# v0.47.4 — Professional Review Team Insight Filters
+﻿# v0.47.5 — Professional Review Team Insight Summary
+
+- Adiciona `ProfessionalReviewTeamInsightProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamInsightSummaryResponse`.
+- Adiciona `GET .../team-insight/summary`.
+- Consolida total, ativos, registrados, em revisão, consolidados, descartados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo dos insights documentados da equipe`.
+- Atualiza o resumo após alterações.
+- Não transforma insight em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.47.6 — Professional Review Team Insight Closure.
+
+# v0.47.4 — Professional Review Team Insight Filters
 
 - Adiciona `ProfessionalReviewTeamInsightFiltersResponse`.
 - Adiciona endpoint `GET .../team-insight/search`.
