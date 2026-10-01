@@ -32,7 +32,7 @@ $senha = $settings.Seed.AdminPassword
 
 Write-Host "[1/600] Healthcheck..." -ForegroundColor Cyan
 $health = Invoke-RestMethod -Uri "$base/api/health" -Method Get
-if ($health.version -ne '0.50.6') { throw "Versao inesperada da API: $($health.version)" }
+if ($health.version -ne '0.51.0') { throw "Versao inesperada da API: $($health.version)" }
 Write-Host "    API $($health.version) / banco $($health.database)" -ForegroundColor Green
 
 Write-Host "[2/600] Login..." -ForegroundColor Cyan
@@ -502,7 +502,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[70/600] Validando compatibilidade de schema na v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not (Test-Path .\scripts\sql\v0.3.1_execucoes_treino.sql)) {
     throw "Historico de upgrade v0.3.1 ausente."
 }
@@ -574,7 +574,7 @@ if ($css.Content -notmatch "insight-summary" -or
     throw "Estilos de insights incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    Insights responsivos / schema existente compativel: OK."
 
 
@@ -654,7 +654,7 @@ if ($css.Content -notmatch "pending-card" -or
     throw "Auditoria/estilos de pendencias incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    Auditoria + UI responsiva + v0.3.27: OK."
 
 
@@ -743,7 +743,7 @@ if ($css.Content -notmatch "notification-panel" -or
     throw "Estilos de notificacoes incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    UI responsiva + upgrade v0.3.27: OK."
 
 
@@ -785,7 +785,7 @@ Write-Host "    PREPARAR preserva dados do usuario e nao depende de seed demo le
 
 Write-Host "[104/600] Validando versao v0.3.27 e upgrade do schema..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if ($setupSource -notmatch "\[37/37\]") { throw "PREPARAR atual deveria possuir 36 etapas." }
 Write-Host "    v0.3.27 preservada / PREPARAR atual 38/38 / upgrade SOAP: OK."
 
@@ -857,7 +857,7 @@ if ($css.Content -notmatch "portfolio-patient-card" -or
     throw "Estilos da carteira incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    Carteira responsiva / v0.3.27: OK."
 
 
@@ -939,7 +939,7 @@ if ($css.Content -notmatch "followup-history-list" -or
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / follow-up responsivo / upgrade OK."
 
 
@@ -1009,7 +1009,7 @@ if ($css.Content -notmatch "follow-queue-card" -or
     throw "Estilos de follow-up incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    fila responsiva + versao v0.19.25: OK."
 
 
@@ -1083,7 +1083,7 @@ if ($css.Content -notmatch "management-grid" -or
     throw "Estilos de gestao incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    Gestao responsiva / v0.3.27: OK."
 
 
@@ -1158,7 +1158,7 @@ if ($css.Content -notmatch "management-head-actions") {
     throw "Estilos de exportacao gerencial ausentes."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / exportacao gerencial / setup rapido: OK."
 
 
@@ -1234,7 +1234,7 @@ Write-Host "    Copy de schema atualizada."
 
 Write-Host "[154/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / estabilizacao + qualidade: OK."
 
 
@@ -1301,7 +1301,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[162/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / busca global + central de acoes: OK."
 
 
@@ -1373,7 +1373,7 @@ if ($css.Content -notmatch "central-day-grid" -or
     throw "Estilos da Central do Dia incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Central do Dia responsiva: OK."
 
 
@@ -1480,7 +1480,7 @@ if (-not $soapCssSource.Contains("soap-grid") -or
     throw "Estilos SOAP incompletos."
 }
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / evolucao clinica SOAP: OK."
 
 
@@ -1549,7 +1549,7 @@ Write-Host "    Atualizacao manual + desktop/mobile: assets OK."
 
 Write-Host "[188/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / resumo clinico consolidado: OK."
 
 
@@ -1612,7 +1612,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[196/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / handoff clinico + impressao: OK."
 
 
@@ -1698,7 +1698,7 @@ Write-Host "    Admin-only + desktop/mobile: assets OK."
 
 Write-Host "[206/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe + gestao de profissionais: OK."
 
 
@@ -1768,7 +1768,7 @@ Write-Host "    Filtros + acoes desktop/mobile: OK."
 
 Write-Host "[214/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / equipe v2 + seguranca de acesso: OK."
 
 
@@ -1835,7 +1835,7 @@ Write-Host "    Desktop + mobile: estilos OK."
 
 Write-Host "[222/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / Minha Conta + troca de senha: OK."
 
 
@@ -1938,7 +1938,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[234/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao do plano alimentar: OK."
 
 
@@ -2041,7 +2041,7 @@ Write-Host "    SQL idempotente + PREPARAR 19/19: OK."
 
 Write-Host "[246/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / progressao de treino + ciclo versionado: OK."
 
 
@@ -2144,7 +2144,7 @@ Write-Host "    SQL idempotente + PREPARAR 20/20: OK."
 
 Write-Host "[258/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de plano alimentar: OK."
 
 
@@ -2250,7 +2250,7 @@ Write-Host "    SQL idempotente + UI responsiva + PREPARAR 21/21: OK."
 
 Write-Host "[270/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / templates de treino + criacao rapida: OK."
 
 
@@ -2374,7 +2374,7 @@ Write-Host "    SQL idempotente + PREPARAR 22/22: OK."
 
 Write-Host "[284/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / metas nutricionais + distribuicao: OK."
 
 
@@ -2478,7 +2478,7 @@ Write-Host "    SQL idempotente + PREPARAR 23/23: OK."
 
 Write-Host "[296/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de refeicoes + insercao rapida: OK."
 
 
@@ -2584,7 +2584,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[308/600] Validando versao v0.3.27..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.27 / biblioteca de sessoes + insercao rapida: OK."
 
 
@@ -2687,7 +2687,7 @@ Write-Host "    Sem schema novo / PREPARAR atual 38/38: OK."
 
 Write-Host "[320/600] Validando versao v0.3.28..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.28 / evolucao de habitos + graficos de anamnese: OK."
 
 
@@ -2843,7 +2843,7 @@ Write-Host "    SQL idempotente + PREPARAR 25/25: OK."
 
 Write-Host "[334/600] Validando versao v0.3.29..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.29 / metas por refeicao + distribuicao planejada: OK."
 
 
@@ -2965,7 +2965,7 @@ Write-Host "    SQL idempotente + PREPARAR 26/26: OK."
 
 Write-Host "[348/600] Validando versao v0.3.30..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.30 / fases nutricionais + planejamento de ciclo: OK."
 
 
@@ -3086,7 +3086,7 @@ Write-Host "    SQL idempotente + PREPARAR 27/27: OK."
 
 Write-Host "[362/600] Validando versao v0.3.31..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.31 / ciclos de treino + periodizacao: OK."
 
 
@@ -3224,7 +3224,7 @@ Write-Host "    Fases nutricionais + treino preservadas."
 
 Write-Host "[378/600] Validando versao v0.3.32..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.32 / check-ins de evolucao + adesao por fase: OK."
 
 
@@ -3326,7 +3326,7 @@ Write-Host "    UI responsiva / sem schema novo / PREPARAR 28/28: OK."
 
 Write-Host "[390/600] Validando versao v0.3.33..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.33 / analise de fases + comparativo de resposta: OK."
 
 Write-Host "[391/600] Validando metas das fases..."
@@ -3400,7 +3400,7 @@ Write-Host "    SQL idempotente + PREPARAR 29/29 + historico preservado."
 
 Write-Host "[406/600] Validando versao v0.3.34..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.34 / metas de fase + criterios de transicao: OK."
 
 
@@ -3528,7 +3528,7 @@ Write-Host "    SQL idempotente + PREPARAR 38/38 + v0.3.34 preservada."
 
 Write-Host "[420/600] Validando versao v0.3.35..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.35 / revisao de fase + transicao assistida: OK."
 
 
@@ -3662,7 +3662,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[434/600] Validando versao v0.3.36..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.36 / volume de treino + distribuicao muscular: OK."
 
 
@@ -3789,7 +3789,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[448/600] Validando versao v0.3.37..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.37 / progressao por exercicio + recordes de carga: OK."
 
 
@@ -3920,7 +3920,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[462/600] Validando versao v0.3.38..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.38 / estagnacao + fadiga + sinais de progressao: OK."
 
 
@@ -4050,7 +4050,7 @@ Write-Host "    Sem schema novo / PREPARAR permanece 38/38."
 
 Write-Host "[476/600] Validando versao v0.3.39..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.3.39 / base historica de interface: OK."
 
 
@@ -4181,7 +4181,7 @@ Write-Host "    Contexto Docker enxuto: OK."
 
 Write-Host "[492/600] Validando versao base do deploy..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    Base de container/VPS preservada: OK."
 
 
@@ -4352,7 +4352,7 @@ Write-Host "    Upgrade de solicitacoes integrado ao setup."
 
 Write-Host "[518/600] Validando versao v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 Write-Host "    v0.6.0 / Solicitacoes Clinicas + Connected Care: OK."
 
 Write-Host "[519/600] Validando notificacoes de solicitacoes no backend..."
@@ -4386,7 +4386,7 @@ Write-Host "    Solicitacoes identificadas no drawer: OK."
 
 Write-Host "[526/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $notificationSource.Contains('SolicitacaoClinica')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Notificacoes Contextuais + Connected Care: OK."
 
@@ -4428,7 +4428,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[535/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $requestController.Contains('FilaProfissional')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Central de Solicitacoes + Connected Care: OK."
 
@@ -4474,7 +4474,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[545/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $centralSource.Contains('SolicitacoesParaRevisao') -or -not $appJsSource.Contains('patient-today-requests')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Solicitacoes no Hoje + Connected Care: OK."
 
@@ -4511,7 +4511,7 @@ Write-Host "    Resumo visual + responsividade: assets OK."
 
 Write-Host "[553/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $resumoSource.Contains('ResumoDesdeUltimaConsultaResponse') -or -not $appJsSource.Contains('data-clinical-period-summary')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Desde a ultima consulta + Connected Care: OK."
 
@@ -4549,7 +4549,7 @@ Write-Host "    Timeline desktop + mobile: estilos OK."
 
 Write-Host "[561/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $portalController.Contains('MinhaJornada') -or -not $appJsSource.Contains('loadPatientJourney')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Jornada do Paciente + Connected Care: OK."
 
@@ -4591,7 +4591,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[570/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $monitorSource.Contains('TiposMonitorados') -or -not $appJsSource.Contains('hpMonitoringCard')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Monitoramento guiado + Connected Care: OK."
 
@@ -4642,7 +4642,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[580/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('MeuProtocolo') -or -not $appJsSource.Contains('openProtocolManager')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Protocolos de Acompanhamento + Connected Care: OK."
 
@@ -4679,7 +4679,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[588/600] Validando versao funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $protocolSource.Contains('CalcularAderencia') -or -not $appJsSource.Contains('protocol-today-status')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Aderencia aos Protocolos + Connected Care: OK."
 
@@ -4738,7 +4738,7 @@ Write-Host "    Desktop + tablet + mobile: estilos OK."
 
 Write-Host "[600/696] Validando compatibilidade funcional v0.6.0..."
 $version = Get-Content .\VERSION.txt -Encoding UTF8 -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado." }
 if (-not $medSource.Contains('RegistrarTomada') -or -not $appJsSource.Contains('loadPatientMedications')) { throw "Feature v0.6.0 ausente." }
 Write-Host "    v0.6.0 / Medicamentos + Adesao ao Tratamento preservado: OK."
 
@@ -10018,7 +10018,7 @@ foreach ($token in @('Remover exercício','SEU PLANO COMPLETO','Treinos da seman
 Write-Host "    v0.19.1 / Workout Builder Delete + Weekly Patient Plan: OK." -ForegroundColor Green
 
 Write-Host "[1719/1728] Validando AESYN Identity & Patient Navigation Foundation..." -ForegroundColor Cyan
-foreach ($token in @("HP_MVP_VERSION='0.50.6'",'HP_THEME_KEY','hpInstallThemeUi','loadPatientHealth','patient-health-hub-v0190')) { if (-not ($appJsSource.Contains($token) -or $cssSource.Contains($token))) { throw "Foundation v0.19.1 incompleta: $token" } }
+foreach ($token in @("HP_MVP_VERSION='0.51.0'",'HP_THEME_KEY','hpInstallThemeUi','loadPatientHealth','patient-health-hub-v0190')) { if (-not ($appJsSource.Contains($token) -or $cssSource.Contains($token))) { throw "Foundation v0.19.1 incompleta: $token" } }
 Write-Host "    Marcadores funcionais v0.19.1: OK."
 
 Write-Host "[1720/1728] Validando nova identidade AESYN..." -ForegroundColor Cyan
@@ -10157,7 +10157,7 @@ foreach ($token in @("patient-workout-access-hub", "patient-workout-access-card"
 }
 Write-Host "[1747/1749] Validando versao publica atual (gate v0.19.3)..."
 $version0193 = Get-Content (Join-Path $root "VERSION.txt") -Raw
-if ($version0193.Trim() -ne '0.50.6') { throw "VERSION.txt inesperado para a versao atual v0.28.0." }
+if ($version0193.Trim() -ne '0.51.0') { throw "VERSION.txt inesperado para a versao atual v0.28.0." }
 Write-Host "[1748/1749] Validando health atual (gate v0.19.3)..."
 $healthSource0193 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw
 Write-Host "[1749/1749] Validando funcionalidade v0.19.3..."
@@ -10355,7 +10355,7 @@ foreach ($token in @('.meal-manager-toolbar','.portion-quick-tools','.meal-scale
 Write-Host "    Refeicoes, porcoes e medidas inteligentes: OK." -ForegroundColor Green
 Write-Host "[1815/1815] Validando versao funcional v0.19.12..." -ForegroundColor Cyan
 $version01912 = (Get-Content (Join-Path $root "VERSION.txt") -Raw).Trim()
-if ($version01912 -ne '0.50.6') { throw "VERSION.txt inesperado na v0.19.12." }
+if ($version01912 -ne '0.51.0') { throw "VERSION.txt inesperado na v0.19.12." }
 $health01912 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw -Encoding UTF8
 Write-Host "    v0.19.12 / Meal & Portion Manager 2.0: OK." -ForegroundColor Green
 
@@ -10376,7 +10376,7 @@ Write-Host "[1821/1823] Validando tema claro e escuro das equivalencias..." -For
 foreach ($token in @('.smart-food-equivalence-panel', '.smart-equivalence-grid', 'html[data-theme="dark"] .smart-food-equivalence-panel', '.smart-equivalence-card')) { if (-not $appCss01913.Contains($token)) { throw "CSS Smart Food Equivalences incompleto: $token" } }
 Write-Host "[1822/1823] Validando versao publica v0.19.13..." -ForegroundColor Cyan
 $version01913 = (Get-Content (Join-Path $root "VERSION.txt") -Raw).Trim()
-if ($version01913 -ne '0.50.6') { throw "VERSION.txt inesperado na v0.19.13." }
+if ($version01913 -ne '0.51.0') { throw "VERSION.txt inesperado na v0.19.13." }
 $health01913 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw -Encoding UTF8
 Write-Host "[1823/1823] Validando versao funcional v0.19.13..." -ForegroundColor Cyan
 Write-Host "    v0.19.13 / Smart Food Equivalences: OK." -ForegroundColor Green
@@ -10409,7 +10409,7 @@ foreach ($token in @('.nutrition-calendar-shell','.nutrition-calendar-grid','.nu
 Write-Host "[1831/1831] Validando versao funcional v0.19.14..." -ForegroundColor Cyan
 $version01914 = (Get-Content (Join-Path $root "VERSION.txt") -Raw).Trim()
 $health01914 = Get-Content (Join-Path $root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw -Encoding UTF8
-if ($version01914 -ne '0.50.6') { throw "VERSION.txt inesperado na v0.19.14." }
+if ($version01914 -ne '0.51.0') { throw "VERSION.txt inesperado na v0.19.14." }
 Write-Host "    v0.19.14 / Nutrition Calendar: OK." -ForegroundColor Green
 
 
@@ -10425,7 +10425,7 @@ Write-Host "    Alternativas prescritas + registro de adaptação + cache bustin
 
 Write-Host "[1833/1833] Validando versao funcional v0.19.15..." -ForegroundColor Cyan
 $version = Get-Content -Raw -Encoding UTF8 (Join-Path $root "VERSION.txt")
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt corrente inesperado durante gate historico v0.19.15." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt corrente inesperado durante gate historico v0.19.15." }
 Write-Host "    v0.19.15 / Smart Meal Swap: OK." -ForegroundColor Green
 
 Write-Host "[1834/1841] Validando Workout Progression Engine..." -ForegroundColor Cyan
@@ -10597,9 +10597,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -10677,7 +10677,7 @@ Write-Host "    UI responsiva + dark mode: OK."
 Write-Host "[1887/1888] Validando versao publica v0.19.22..."
 $version = Get-Content (Join-Path $Root "VERSION.txt") -Raw
 $healthSource = Get-Content (Join-Path $Root "src/HealthPlatform.Api/Controllers/HealthController.cs") -Raw
-if ($version.Trim() -ne '0.50.6') { throw "VERSION.txt corrente nao anuncia v0.28.0 durante gate historico v0.19.22." }
+if ($version.Trim() -ne '0.51.0') { throw "VERSION.txt corrente nao anuncia v0.28.0 durante gate historico v0.19.22." }
 Write-Host "    Versao publica: OK."
 
 Write-Host "[1888/1888] Validando versao funcional v0.19.22..."
@@ -10774,9 +10774,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -10866,9 +10866,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -10991,9 +10991,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11105,9 +11105,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11231,9 +11231,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11391,9 +11391,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11503,9 +11503,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11615,9 +11615,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11741,9 +11741,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11859,9 +11859,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -11986,9 +11986,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12115,9 +12115,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12248,9 +12248,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12375,9 +12375,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12507,9 +12507,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12654,9 +12654,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12779,9 +12779,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -12904,9 +12904,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -13032,9 +13032,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -13184,9 +13184,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -13351,9 +13351,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -13459,9 +13459,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -14671,12 +14671,12 @@ if (-not $changelog0264.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    Sem migration/tabela nova: OK." -ForegroundColor Green
 
 Write-Host "[2350/2364] Validando identidade/PWA v0.26.4..." -ForegroundColor Cyan
-if ($version0264 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.0; atual: $version0264" }
-if (([regex]::Matches($health0264, 'version = "0.50.6"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
-if (-not $program0264.Contains('Version = "v0.50.6"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
-if (-not $appJs0264.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
-if (-not $index0264.Contains('/app.css?v=0.50.6') -or -not $index0264.Contains('/app.js?v=0.50.6')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
-if (-not $sw0264.Contains('aesyn-static-v0.50.6')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
+if ($version0264 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.0; atual: $version0264" }
+if (([regex]::Matches($health0264, 'version = "0.51.0"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
+if (-not $program0264.Contains('Version = "v0.51.0"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
+if (-not $appJs0264.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
+if (-not $index0264.Contains('/app.css?v=0.51.0') -or -not $index0264.Contains('/app.js?v=0.51.0')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
+if (-not $sw0264.Contains('aesyn-static-v0.51.0')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
 Write-Host "    API + Swagger + frontend + PWA: OK." -ForegroundColor Green
 
 Write-Host "[2351/2364] Validando preservacao funcional Sports Expansion II..." -ForegroundColor Cyan
@@ -14760,12 +14760,12 @@ if (-not $changelog0265.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    Sem migration/tabela nova: OK." -ForegroundColor Green
 
 Write-Host "[2362/2364] Validando identidade/PWA v0.26.5..." -ForegroundColor Cyan
-if ($version0265 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.0; atual: $version0265" }
-if (([regex]::Matches($health0265, 'version = "0.50.6"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
-if (-not $program0265.Contains('Version = "v0.50.6"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
-if (-not $appJs0265.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
-if (-not $index0265.Contains('/app.css?v=0.50.6') -or -not $index0265.Contains('/app.js?v=0.50.6')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
-if (-not $sw0265.Contains('aesyn-static-v0.50.6')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
+if ($version0265 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.0; atual: $version0265" }
+if (([regex]::Matches($health0265, 'version = "0.51.0"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
+if (-not $program0265.Contains('Version = "v0.51.0"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
+if (-not $appJs0265.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
+if (-not $index0265.Contains('/app.css?v=0.51.0') -or -not $index0265.Contains('/app.js?v=0.51.0')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
+if (-not $sw0265.Contains('aesyn-static-v0.51.0')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
 Write-Host "    API + Swagger + frontend + PWA: OK." -ForegroundColor Green
 
 Write-Host "[2363/2364] Validando preservacao funcional Sports Expansion II..." -ForegroundColor Cyan
@@ -14851,12 +14851,12 @@ if (-not $changelog0266.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    Sem migration/tabela nova: OK." -ForegroundColor Green
 
 Write-Host "[2374/2376] Validando identidade/PWA v0.26.6..." -ForegroundColor Cyan
-if ($version0266 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.0; atual: $version0266" }
-if (([regex]::Matches($health0266, 'version = "0.50.6"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
-if (-not $program0266.Contains('Version = "v0.50.6"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
-if (-not $appJs0266.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
-if (-not $index0266.Contains('/app.css?v=0.50.6') -or -not $index0266.Contains('/app.js?v=0.50.6')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
-if (-not $sw0266.Contains('aesyn-static-v0.50.6')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
+if ($version0266 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.0; atual: $version0266" }
+if (([regex]::Matches($health0266, 'version = "0.51.0"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
+if (-not $program0266.Contains('Version = "v0.51.0"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
+if (-not $appJs0266.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
+if (-not $index0266.Contains('/app.css?v=0.51.0') -or -not $index0266.Contains('/app.js?v=0.51.0')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
+if (-not $sw0266.Contains('aesyn-static-v0.51.0')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
 Write-Host "    API + Swagger + frontend + PWA: OK." -ForegroundColor Green
 
 Write-Host "[2375/2376] Validando preservacao funcional Sports Expansion II..." -ForegroundColor Cyan
@@ -14923,7 +14923,7 @@ Write-Host "[2382/2388] Validando runtime Workout Intelligence..." -ForegroundCo
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $pacienteWi = $lista.itens | Select-Object -First 1
     $wiRuntime = Invoke-RestMethod -Uri "$base/api/pacientes/$($pacienteWi.id)/treinos/inteligencia?dias=28" -Headers $headers -Method Get
-    if ($wiRuntime.versao -ne 'v0.50.6' -or $null -eq $wiRuntime.dimensoes -or $wiRuntime.dimensoes.Count -lt 8) { throw 'Endpoint Workout Intelligence retornou estrutura invalida.' }
+    if ($wiRuntime.versao -ne 'v0.51.0' -or $null -eq $wiRuntime.dimensoes -or $wiRuntime.dimensoes.Count -lt 8) { throw 'Endpoint Workout Intelligence retornou estrutura invalida.' }
     Write-Host "    GET profissional: runtime OK." -ForegroundColor Green
 } else {
     Write-Host "    Sem pacientes: smoke runtime ignorado." -ForegroundColor DarkGreen
@@ -14947,16 +14947,16 @@ if (-not $changelog0270.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    Sem migration/tabela nova: OK." -ForegroundColor Green
 
 Write-Host "[2386/2388] Validando identidade/PWA v0.27.0..." -ForegroundColor Cyan
-if ($version0270 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0270" }
-if (([regex]::Matches($health0270, 'version = "0.50.6"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
-if (-not $program0270.Contains('Version = "v0.50.6"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
-if (-not $appJs0270.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
-if (-not $index0270.Contains('/app.css?v=0.50.6') -or -not $index0270.Contains('/app.js?v=0.50.6')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
-if (-not $sw0270.Contains('aesyn-static-v0.50.6')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
+if ($version0270 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0270" }
+if (([regex]::Matches($health0270, 'version = "0.51.0"')).Count -lt 2) { throw 'Health nao anuncia a versao corrente v0.27.4.' }
+if (-not $program0270.Contains('Version = "v0.51.0"')) { throw 'Swagger nao anuncia a versao corrente v0.27.4.' }
+if (-not $appJs0270.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia a versao corrente v0.27.4.' }
+if (-not $index0270.Contains('/app.css?v=0.51.0') -or -not $index0270.Contains('/app.js?v=0.51.0')) { throw 'Cache busting da versao corrente v0.27.4 ausente.' }
+if (-not $sw0270.Contains('aesyn-static-v0.51.0')) { throw 'Service Worker nao anuncia cache da versao corrente v0.27.4.' }
 Write-Host "    API + Swagger + frontend + PWA: OK." -ForegroundColor Green
 
 Write-Host "[2387/2388] Validando sincronizacao global da versao atual..." -ForegroundColor Cyan
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da versao esperada: $($health.version)" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da versao esperada: $($health.version)" }
 if (-not $readme0270.Contains('v0.27.0 — Workout Intelligence 3.0 Foundation')) { throw 'README nao anuncia v0.27.0.' }
 Write-Host "    Gates de versao atual: OK." -ForegroundColor Green
 
@@ -15018,9 +15018,9 @@ foreach ($token in @('v0.27.1 — Prescription Variables 3.0','RIR-alvo','Cadên
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2396/2398] Validando versao publica v0.27.1..." -ForegroundColor Cyan
-if ($version0271 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.1: $($health.version)" }
-if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.1.' }
+if ($version0271 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.1; atual: $version0271" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.1: $($health.version)" }
+if (-not $appJs0271.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.1.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2397/2398] Validando preservacao da foundation v0.27.0..." -ForegroundColor Cyan
@@ -15063,9 +15063,9 @@ foreach ($token in @('v0.27.2 — Prescribed vs Performed 3.0','Séries','Repeti
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2404/2406] Validando versao publica v0.27.2..." -ForegroundColor Cyan
-if ($version0272 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.2; atual: $version0272" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.2: $($health.version)" }
-if (-not $appJs0272.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.2.' }
+if ($version0272 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.2; atual: $version0272" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.2: $($health.version)" }
+if (-not $appJs0272.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.2.' }
 Write-Host "    VERSION + runtime + frontend: OK." -ForegroundColor Green
 
 Write-Host "[2405/2406] Validando preservacao de Prescription Variables v0.27.1..." -ForegroundColor Cyan
@@ -15128,9 +15128,9 @@ if (-not $appJs0273.Contains("HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1'")) { thr
 Write-Host "    Documentacao + historico: OK." -ForegroundColor Green
 
 Write-Host "[2415/2415] Validando versao funcional v0.27.3..." -ForegroundColor Cyan
-if ($version0273 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.4; atual: $version0273" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da versao corrente v0.50.6: $($health.version)" }
-if (-not $appJs0273.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.4.' }
+if ($version0273 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.4; atual: $version0273" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da versao corrente v0.51.0: $($health.version)" }
+if (-not $appJs0273.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.4.' }
 Write-Host "    v0.27.3 / Advanced Techniques 3.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.27.4 / Progression & Regression 3.0" -ForegroundColor DarkCyan
 Write-Host ""
@@ -15165,7 +15165,7 @@ Write-Host "[2420/2423] Validando runtime v0.27.4..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0274 = $lista.itens | Select-Object -First 1
     $wi0274Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0274.id)/treinos/inteligencia?dias=28" -Headers $headers -Method Get
-    if ($wi0274Runtime.versao -ne 'v0.50.6' -or $null -eq $wi0274Runtime.sinaisProgressaoRegressao) { throw 'Endpoint Progression & Regression v0.27.4 retornou estrutura invalida na versao corrente v0.50.6.' }
+    if ($wi0274Runtime.versao -ne 'v0.51.0' -or $null -eq $wi0274Runtime.sinaisProgressaoRegressao) { throw 'Endpoint Progression & Regression v0.27.4 retornou estrutura invalida na versao corrente v0.51.0.' }
 }
 Write-Host "    Runtime: OK." -ForegroundColor Green
 
@@ -15179,9 +15179,9 @@ foreach ($token in @("HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0'","HP_PRESCRIPTION_
 Write-Host "    v0.27.0 ate v0.27.3 preservadas: OK." -ForegroundColor Green
 
 Write-Host "[2423/2423] Validando versao funcional v0.27.4..." -ForegroundColor Cyan
-if ($version0274 -ne '0.50.6') { throw "VERSION.txt corrente esperado 0.50.6; atual: $version0274" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.4: $($health.version)" }
-if (-not $appJs0274.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia a versao corrente v0.50.6.' }
+if ($version0274 -ne '0.51.0') { throw "VERSION.txt corrente esperado 0.51.0; atual: $version0274" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.4: $($health.version)" }
+if (-not $appJs0274.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia a versao corrente v0.51.0.' }
 Write-Host "    v0.27.4 / Progression & Regression 3.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.27.5 / Periodization 3.0" -ForegroundColor DarkCyan
 Write-Host ""
@@ -15216,7 +15216,7 @@ Write-Host "[2428/2431] Validando runtime v0.27.5..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0275 = $lista.itens | Select-Object -First 1
     $wi0275Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0275.id)/treinos/inteligencia?dias=28" -Headers $headers -Method Get
-    if ($wi0275Runtime.versao -ne 'v0.50.6' -or $null -eq $wi0275Runtime.periodizacao -or $null -eq $wi0275Runtime.periodizacao.fases) { throw 'Endpoint Periodization v0.27.5 retornou estrutura invalida na versao corrente v0.50.6.' }
+    if ($wi0275Runtime.versao -ne 'v0.51.0' -or $null -eq $wi0275Runtime.periodizacao -or $null -eq $wi0275Runtime.periodizacao.fases) { throw 'Endpoint Periodization v0.27.5 retornou estrutura invalida na versao corrente v0.51.0.' }
 }
 Write-Host "    Runtime: OK." -ForegroundColor Green
 
@@ -15230,9 +15230,9 @@ foreach ($token in @("HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0'","HP_PRESCRIPTION_
 Write-Host "    v0.27.0 ate v0.27.4 preservadas: OK." -ForegroundColor Green
 
 Write-Host "[2431/2431] Validando versao funcional v0.27.5..." -ForegroundColor Cyan
-if ($version0275 -ne '0.50.6') { throw "VERSION.txt esperado 0.27.5; atual: $version0275" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.27.5: $($health.version)" }
-if (-not $appJs0275.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.27.5.' }
+if ($version0275 -ne '0.51.0') { throw "VERSION.txt esperado 0.27.5; atual: $version0275" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.27.5: $($health.version)" }
+if (-not $appJs0275.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.27.5.' }
 Write-Host "    v0.27.5 / Periodization 3.0: OK." -ForegroundColor Green
 Write-Host "    Proxima fase: v0.28.0 / Athlete Performance Passport Foundation" -ForegroundColor DarkCyan
 Write-Host ""
@@ -15269,7 +15269,7 @@ Write-Host "[2436/2439] Validando runtime v0.28.0..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0280 = $lista.itens | Select-Object -First 1
     $passport0280Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0280.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0280Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0280Runtime.dominios -or $null -eq $passport0280Runtime.melhoresMarcas) { throw 'Endpoint Athlete Performance Passport v0.28.0 retornou estrutura invalida.' }
+    if ($passport0280Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0280Runtime.dominios -or $null -eq $passport0280Runtime.melhoresMarcas) { throw 'Endpoint Athlete Performance Passport v0.28.0 retornou estrutura invalida.' }
 }
 Write-Host "    Runtime: OK." -ForegroundColor Green
 
@@ -15283,9 +15283,9 @@ if (-not $changelog0280.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2439/2439] Validando versao funcional v0.28.0..." -ForegroundColor Cyan
-if ($version0280 -ne '0.50.6') { throw "VERSION.txt esperado 0.28.0; atual: $version0280" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.28.0: $($health.version)" }
-if (-not $appJs0280.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.28.0.' }
+if ($version0280 -ne '0.51.0') { throw "VERSION.txt esperado 0.28.0; atual: $version0280" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.28.0: $($health.version)" }
+if (-not $appJs0280.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.28.0.' }
 foreach ($token in @("HP_WORKOUT_INTELLIGENCE_V0270='v0.27.0'","HP_PRESCRIPTION_VARIABLES_V0271='v0.27.1'","HP_PRESCRIBED_PERFORMED_V0272='v0.27.2'","HP_ADVANCED_TECHNIQUES_V0273='v0.27.3'","HP_PROGRESSION_REGRESSION_V0274='v0.27.4'","HP_PERIODIZATION_V0275='v0.27.5'")) { if (-not $appJs0280.Contains($token)) { throw "Marcador historico ausente na v0.28.0: $token" } }
 Write-Host "    v0.28.0 / Athlete Performance Passport Foundation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.28.1 / Performance Records 2.0" -ForegroundColor DarkCyan
@@ -15323,7 +15323,7 @@ Write-Host "[2444/2447] Validando runtime records v0.28.1..." -ForegroundColor C
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0281 = $lista.itens | Select-Object -First 1
     $passport0281Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0281.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0281Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0281Runtime.recordes) { throw 'Athlete Performance Passport v0.28.1 retornou records invalidos.' }
+    if ($passport0281Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0281Runtime.recordes) { throw 'Athlete Performance Passport v0.28.1 retornou records invalidos.' }
     $records0281Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0281.id)/performance/passaporte/recordes" -Headers $headers -Method Get
     if ($null -eq $records0281Runtime) { throw 'Endpoint dedicado de Performance Records v0.28.1 retornou estrutura invalida.' }
 }
@@ -15339,9 +15339,9 @@ if (-not $changelog0281.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2447/2447] Validando versao funcional v0.28.1..." -ForegroundColor Cyan
-if ($version0281 -ne '0.50.6') { throw "VERSION.txt esperado 0.28.1; atual: $version0281" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.28.1: $($health.version)" }
-if (-not $appJs0281.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.28.1.' }
+if ($version0281 -ne '0.51.0') { throw "VERSION.txt esperado 0.28.1; atual: $version0281" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.28.1: $($health.version)" }
+if (-not $appJs0281.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.28.1.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERIODIZATION_V0275='v0.27.5'")) { if (-not $appJs0281.Contains($token)) { throw "Marcador historico ausente na v0.28.1: $token" } }
 Write-Host "    v0.28.1 / Performance Records 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.28.2 / Timed Performance 2.0" -ForegroundColor DarkCyan
@@ -15379,7 +15379,7 @@ Write-Host "[2452/2455] Validando runtime v0.28.2..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0282 = $lista.itens | Select-Object -First 1
     $passport0282Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0282.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0282Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0282Runtime.tempos -or $null -eq $passport0282Runtime.recordes) { throw 'Athlete Performance Passport v0.28.2 retornou estrutura temporal invalida.' }
+    if ($passport0282Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0282Runtime.tempos -or $null -eq $passport0282Runtime.recordes) { throw 'Athlete Performance Passport v0.28.2 retornou estrutura temporal invalida.' }
     $tempos0282Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0282.id)/performance/passaporte/tempos" -Headers $headers -Method Get
     if ($null -eq $tempos0282Runtime) { throw 'Endpoint dedicado Timed Performance v0.28.2 retornou estrutura invalida.' }
 }
@@ -15395,9 +15395,9 @@ if (-not $changelog0282.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2455/2455] Validando versao funcional v0.28.2..." -ForegroundColor Cyan
-if ($version0282 -ne '0.50.6') { throw "VERSION.txt esperado 0.28.2; atual: $version0282" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.28.2: $($health.version)" }
-if (-not $appJs0282.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.28.2.' }
+if ($version0282 -ne '0.51.0') { throw "VERSION.txt esperado 0.28.2; atual: $version0282" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.28.2: $($health.version)" }
+if (-not $appJs0282.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.28.2.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_PERIODIZATION_V0275='v0.27.5'")) { if (-not $appJs0282.Contains($token)) { throw "Marcador historico ausente na v0.28.2: $token" } }
 Write-Host "    v0.28.2 / Timed Performance 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.28.3 / Competition & Test Results 2.0" -ForegroundColor DarkCyan
@@ -15435,7 +15435,7 @@ Write-Host "[2460/2463] Validando runtime v0.28.3..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0283 = $lista.itens | Select-Object -First 1
     $passport0283Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0283.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0283Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0283Runtime.resultados -or $null -eq $passport0283Runtime.tempos -or $null -eq $passport0283Runtime.recordes) { throw 'Athlete Performance Passport v0.28.3 retornou estrutura de resultados invalida.' }
+    if ($passport0283Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0283Runtime.resultados -or $null -eq $passport0283Runtime.tempos -or $null -eq $passport0283Runtime.recordes) { throw 'Athlete Performance Passport v0.28.3 retornou estrutura de resultados invalida.' }
     $resultados0283Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0283.id)/performance/passaporte/resultados" -Headers $headers -Method Get
     if ($null -eq $resultados0283Runtime) { throw 'Endpoint dedicado Competition & Test Results v0.28.3 retornou estrutura invalida.' }
 }
@@ -15451,9 +15451,9 @@ if (-not $changelog0283.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2463/2463] Validando versao funcional v0.28.3..." -ForegroundColor Cyan
-if ($version0283 -ne '0.50.6') { throw "VERSION.txt esperado 0.28.3; atual: $version0283" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.28.3: $($health.version)" }
-if (-not $appJs0283.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.28.3.' }
+if ($version0283 -ne '0.51.0') { throw "VERSION.txt esperado 0.28.3; atual: $version0283" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.28.3: $($health.version)" }
+if (-not $appJs0283.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.28.3.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'")) { if (-not $appJs0283.Contains($token)) { throw "Marcador historico ausente na v0.28.3: $token" } }
 Write-Host "    v0.28.3 / Competition & Test Results 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.28.4 / Skills & Milestones 2.0" -ForegroundColor DarkCyan
@@ -15491,7 +15491,7 @@ Write-Host "[2468/2471] Validando runtime v0.28.4..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0284 = $lista.itens | Select-Object -First 1
     $passport0284Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0284.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0284Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0284Runtime.habilidadesMarcos -or $null -eq $passport0284Runtime.resultados -or $null -eq $passport0284Runtime.tempos -or $null -eq $passport0284Runtime.recordes) { throw 'Athlete Performance Passport v0.28.4 retornou estrutura de habilidades/marcos invalida.' }
+    if ($passport0284Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0284Runtime.habilidadesMarcos -or $null -eq $passport0284Runtime.resultados -or $null -eq $passport0284Runtime.tempos -or $null -eq $passport0284Runtime.recordes) { throw 'Athlete Performance Passport v0.28.4 retornou estrutura de habilidades/marcos invalida.' }
     $skills0284Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0284.id)/performance/passaporte/habilidades-marcos" -Headers $headers -Method Get
     if ($null -eq $skills0284Runtime) { throw 'Endpoint dedicado Skills & Milestones v0.28.4 retornou estrutura invalida.' }
 }
@@ -15507,9 +15507,9 @@ if (-not $changelog0284.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2471/2471] Validando versao funcional v0.28.4..." -ForegroundColor Cyan
-if ($version0284 -ne '0.50.6') { throw "VERSION.txt esperado 0.28.4; atual: $version0284" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.28.4: $($health.version)" }
-if (-not $appJs0284.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.28.4.' }
+if ($version0284 -ne '0.51.0') { throw "VERSION.txt esperado 0.28.4; atual: $version0284" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.28.4: $($health.version)" }
+if (-not $appJs0284.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.28.4.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'")) { if (-not $appJs0284.Contains($token)) { throw "Marcador historico ausente na v0.28.4: $token" } }
 Write-Host "    v0.28.4 / Skills & Milestones 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.28.5 / Performance Evolution 2.0" -ForegroundColor DarkCyan
@@ -15547,7 +15547,7 @@ Write-Host "[2476/2479] Validando runtime v0.28.5..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0285 = $lista.itens | Select-Object -First 1
     $passport0285Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0285.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0285Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0285Runtime.evolucao -or $null -eq $passport0285Runtime.evolucao.pontos) { throw 'Athlete Performance Passport v0.28.5 retornou evolucao invalida.' }
+    if ($passport0285Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0285Runtime.evolucao -or $null -eq $passport0285Runtime.evolucao.pontos) { throw 'Athlete Performance Passport v0.28.5 retornou evolucao invalida.' }
     $evolucao0285Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0285.id)/performance/passaporte/evolucao" -Headers $headers -Method Get
     if ($null -eq $evolucao0285Runtime -or $null -eq $evolucao0285Runtime.pontos) { throw 'Endpoint dedicado Performance Evolution v0.28.5 retornou estrutura invalida.' }
 }
@@ -15563,9 +15563,9 @@ if (-not $changelog0285.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2479/2479] Validando versao funcional v0.28.5..." -ForegroundColor Cyan
-if ($version0285 -ne '0.50.6') { throw "VERSION.txt esperado 0.28.5; atual: $version0285" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.28.5: $($health.version)" }
-if (-not $appJs0285.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.28.5.' }
+if ($version0285 -ne '0.51.0') { throw "VERSION.txt esperado 0.28.5; atual: $version0285" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.28.5: $($health.version)" }
+if (-not $appJs0285.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.28.5.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'")) { if (-not $appJs0285.Contains($token)) { throw "Marcador historico ausente na v0.28.5: $token" } }
 Write-Host "    v0.28.5 / Performance Evolution 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima fase: v0.29.0 / Progress Intelligence Foundation" -ForegroundColor DarkCyan
@@ -15603,7 +15603,7 @@ Write-Host "[2484/2487] Validando runtime v0.29.0..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0290 = $lista.itens | Select-Object -First 1
     $passport0290Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0290.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0290Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0290Runtime.inteligenciaProgresso -or $null -eq $passport0290Runtime.inteligenciaProgresso.sinais) { throw 'Athlete Performance Passport v0.29.0 retornou inteligencia de progresso invalida.' }
+    if ($passport0290Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0290Runtime.inteligenciaProgresso -or $null -eq $passport0290Runtime.inteligenciaProgresso.sinais) { throw 'Athlete Performance Passport v0.29.0 retornou inteligencia de progresso invalida.' }
     $progress0290Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0290.id)/performance/progress-intelligence" -Headers $headers -Method Get
     if ($null -eq $progress0290Runtime -or $null -eq $progress0290Runtime.sinais) { throw 'Endpoint Progress Intelligence v0.29.0 retornou estrutura invalida.' }
 }
@@ -15619,9 +15619,9 @@ if (-not $changelog0290.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2487/2487] Validando versao funcional v0.29.0..." -ForegroundColor Cyan
-if ($version0290 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.0; atual: $version0290" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.0: $($health.version)" }
-if (-not $appJs0290.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.0.' }
+if ($version0290 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.0; atual: $version0290" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.0: $($health.version)" }
+if (-not $appJs0290.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.0.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'")) { if (-not $appJs0290.Contains($token)) { throw "Marcador historico ausente na v0.29.0: $token" } }
 Write-Host "    v0.29.0 / Progress Intelligence Foundation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.29.1 / Progress Signal Context 2.0" -ForegroundColor DarkCyan
@@ -15659,7 +15659,7 @@ Write-Host "[2492/2495] Validando runtime de contexto..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0291 = $lista.itens | Select-Object -First 1
     $passport0291Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0291.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0291Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0291Runtime.contextoSinaisProgresso -or $null -eq $passport0291Runtime.contextoSinaisProgresso.contextos) { throw 'Athlete Performance Passport v0.29.1 retornou contexto invalido.' }
+    if ($passport0291Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0291Runtime.contextoSinaisProgresso -or $null -eq $passport0291Runtime.contextoSinaisProgresso.contextos) { throw 'Athlete Performance Passport v0.29.1 retornou contexto invalido.' }
     $context0291Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0291.id)/performance/progress-intelligence/context" -Headers $headers -Method Get
     if ($null -eq $context0291Runtime -or $null -eq $context0291Runtime.contextos) { throw 'Endpoint Progress Signal Context v0.29.1 retornou estrutura invalida.' }
 }
@@ -15675,9 +15675,9 @@ if (-not $changelog0291.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2495/2495] Validando versao funcional v0.29.1..." -ForegroundColor Cyan
-if ($version0291 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.1; atual: $version0291" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.1: $($health.version)" }
-if (-not $appJs0291.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.1.' }
+if ($version0291 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.1; atual: $version0291" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.1: $($health.version)" }
+if (-not $appJs0291.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.1.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'")) { if (-not $appJs0291.Contains($token)) { throw "Marcador historico ausente na v0.29.1: $token" } }
 Write-Host "    v0.29.1 / Progress Signal Context 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.29.2 / Multi-Signal Timeline 2.0" -ForegroundColor DarkCyan
@@ -15715,7 +15715,7 @@ Write-Host "[2500/2503] Validando runtime da timeline..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0292 = $lista.itens | Select-Object -First 1
     $passport0292Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0292.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0292Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0292Runtime.timelineMultissinal -or $null -eq $passport0292Runtime.timelineMultissinal.eventos) { throw 'Athlete Performance Passport v0.29.2 retornou timeline invalida.' }
+    if ($passport0292Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0292Runtime.timelineMultissinal -or $null -eq $passport0292Runtime.timelineMultissinal.eventos) { throw 'Athlete Performance Passport v0.29.2 retornou timeline invalida.' }
     $timeline0292Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0292.id)/performance/progress-intelligence/timeline" -Headers $headers -Method Get
     if ($null -eq $timeline0292Runtime -or $null -eq $timeline0292Runtime.eventos) { throw 'Endpoint Multi-Signal Timeline v0.29.2 retornou estrutura invalida.' }
 }
@@ -15731,9 +15731,9 @@ if (-not $changelog0292.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2503/2503] Validando versao funcional v0.29.2..." -ForegroundColor Cyan
-if ($version0292 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.2; atual: $version0292" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.2: $($health.version)" }
-if (-not $appJs0292.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.2.' }
+if ($version0292 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.2; atual: $version0292" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.2: $($health.version)" }
+if (-not $appJs0292.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.2.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'")) { if (-not $appJs0292.Contains($token)) { throw "Marcador historico ausente na v0.29.2: $token" } }
 Write-Host "    v0.29.2 / Multi-Signal Timeline 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.29.3 / Progress Evidence Windows 2.0" -ForegroundColor DarkCyan
@@ -15771,7 +15771,7 @@ Write-Host "[2508/2511] Validando runtime de janelas..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0293 = $lista.itens | Select-Object -First 1
     $passport0293Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0293.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0293Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0293Runtime.janelasEvidenciaProgresso -or $null -eq $passport0293Runtime.janelasEvidenciaProgresso.janelas) { throw 'Athlete Performance Passport v0.29.3 retornou janelas invalidas.' }
+    if ($passport0293Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0293Runtime.janelasEvidenciaProgresso -or $null -eq $passport0293Runtime.janelasEvidenciaProgresso.janelas) { throw 'Athlete Performance Passport v0.29.3 retornou janelas invalidas.' }
     $windows0293Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0293.id)/performance/progress-intelligence/windows" -Headers $headers -Method Get
     if ($null -eq $windows0293Runtime -or $null -eq $windows0293Runtime.janelas -or $windows0293Runtime.janelas.Count -ne 3) { throw 'Endpoint Progress Evidence Windows v0.29.3 retornou estrutura invalida.' }
 }
@@ -15787,9 +15787,9 @@ if (-not $changelog0293.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2511/2511] Validando versao funcional v0.29.3..." -ForegroundColor Cyan
-if ($version0293 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.3; atual: $version0293" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.3: $($health.version)" }
-if (-not $appJs0293.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.3.' }
+if ($version0293 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.3; atual: $version0293" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.3: $($health.version)" }
+if (-not $appJs0293.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.3.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'")) { if (-not $appJs0293.Contains($token)) { throw "Marcador historico ausente na v0.29.3: $token" } }
 Write-Host "    v0.29.3 / Progress Evidence Windows 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.29.4 / Cross-Signal Observation Map 2.0" -ForegroundColor DarkCyan
@@ -15827,7 +15827,7 @@ Write-Host "[2516/2519] Validando runtime observation map..." -ForegroundColor C
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0294 = $lista.itens | Select-Object -First 1
     $passport0294Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0294.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0294Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0294Runtime.mapaObservacaoCruzada -or $null -eq $passport0294Runtime.mapaObservacaoCruzada.dias) { throw 'Athlete Performance Passport v0.29.4 retornou mapa invalido.' }
+    if ($passport0294Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0294Runtime.mapaObservacaoCruzada -or $null -eq $passport0294Runtime.mapaObservacaoCruzada.dias) { throw 'Athlete Performance Passport v0.29.4 retornou mapa invalido.' }
     $map0294Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0294.id)/performance/progress-intelligence/observation-map" -Headers $headers -Method Get
     if ($null -eq $map0294Runtime -or $null -eq $map0294Runtime.dias) { throw 'Endpoint Cross-Signal Observation Map v0.29.4 retornou estrutura invalida.' }
 }
@@ -15843,9 +15843,9 @@ if (-not $changelog0294.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2519/2519] Validando versao funcional v0.29.4..." -ForegroundColor Cyan
-if ($version0294 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.4; atual: $version0294" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.4: $($health.version)" }
-if (-not $appJs0294.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.4.' }
+if ($version0294 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.4; atual: $version0294" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.4: $($health.version)" }
+if (-not $appJs0294.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.4.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'","HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3'")) { if (-not $appJs0294.Contains($token)) { throw "Marcador historico ausente na v0.29.4: $token" } }
 Write-Host "    v0.29.4 / Cross-Signal Observation Map 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.29.5 / Progress Observation Summary 2.0" -ForegroundColor DarkCyan
@@ -15883,7 +15883,7 @@ Write-Host "[2524/2527] Validando runtime summary..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0295 = $lista.itens | Select-Object -First 1
     $passport0295Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0295.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0295Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0295Runtime.resumoObservacionalProgresso) { throw 'Athlete Performance Passport v0.29.5 retornou resumo invalido.' }
+    if ($passport0295Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0295Runtime.resumoObservacionalProgresso) { throw 'Athlete Performance Passport v0.29.5 retornou resumo invalido.' }
     $summary0295Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0295.id)/performance/progress-intelligence/summary" -Headers $headers -Method Get
     if ($null -eq $summary0295Runtime -or [string]::IsNullOrWhiteSpace($summary0295Runtime.coberturaGeral)) { throw 'Endpoint Progress Observation Summary v0.29.5 retornou estrutura invalida.' }
 }
@@ -15899,9 +15899,9 @@ if (-not $changelog0295.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2527/2527] Validando versao funcional v0.29.5..." -ForegroundColor Cyan
-if ($version0295 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.5; atual: $version0295" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.5: $($health.version)" }
-if (-not $appJs0295.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.5.' }
+if ($version0295 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.5; atual: $version0295" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.5: $($health.version)" }
+if (-not $appJs0295.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.5.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'","HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3'","HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4'")) { if (-not $appJs0295.Contains($token)) { throw "Marcador historico ausente na v0.29.5: $token" } }
 Write-Host "    v0.29.5 / Progress Observation Summary 2.0: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.29.6 / Progress Intelligence Closure 2.0" -ForegroundColor DarkCyan
@@ -15939,7 +15939,7 @@ Write-Host "[2532/2535] Validando runtime closure..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0296 = $lista.itens | Select-Object -First 1
     $passport0296Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0296.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0296Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0296Runtime.fechamentoInteligenciaProgresso) { throw 'Athlete Performance Passport v0.29.6 retornou fechamento invalido.' }
+    if ($passport0296Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0296Runtime.fechamentoInteligenciaProgresso) { throw 'Athlete Performance Passport v0.29.6 retornou fechamento invalido.' }
     $closure0296Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0296.id)/performance/progress-intelligence/closure" -Headers $headers -Method Get
     if ($null -eq $closure0296Runtime -or [string]::IsNullOrWhiteSpace($closure0296Runtime.estadoEstrutural)) { throw 'Endpoint Progress Intelligence Closure v0.29.6 retornou estrutura invalida.' }
 }
@@ -15955,9 +15955,9 @@ if (-not $changelog0296.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2535/2535] Validando versao funcional v0.29.6..." -ForegroundColor Cyan
-if ($version0296 -ne '0.50.6') { throw "VERSION.txt esperado 0.29.6; atual: $version0296" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.29.6: $($health.version)" }
-if (-not $appJs0296.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.29.6.' }
+if ($version0296 -ne '0.51.0') { throw "VERSION.txt esperado 0.29.6; atual: $version0296" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.29.6: $($health.version)" }
+if (-not $appJs0296.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.29.6.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'","HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3'","HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4'","HP_PROGRESS_OBSERVATION_SUMMARY_V0295='v0.29.5'")) { if (-not $appJs0296.Contains($token)) { throw "Marcador historico ausente na v0.29.6: $token" } }
 Write-Host "    v0.29.6 / Progress Intelligence Closure 2.0: OK." -ForegroundColor Green
 Write-Host "    Linha 0.29.x encerrada. Proxima etapa: v0.30.0" -ForegroundColor DarkCyan
@@ -15995,7 +15995,7 @@ Write-Host "[2540/2543] Validando runtime workspace..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0300 = $lista.itens | Select-Object -First 1
     $passport0300Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0300.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0300Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0300Runtime.workspaceRevisaoProgresso) { throw 'Athlete Performance Passport v0.30.0 retornou workspace invalido.' }
+    if ($passport0300Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0300Runtime.workspaceRevisaoProgresso) { throw 'Athlete Performance Passport v0.30.0 retornou workspace invalido.' }
     $workspace0300Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0300.id)/performance/progress-review-workspace" -Headers $headers -Method Get
     if ($null -eq $workspace0300Runtime -or $null -eq $workspace0300Runtime.secoes -or $workspace0300Runtime.secoes.Count -ne 6) { throw 'Endpoint Progress Review Workspace v0.30.0 retornou estrutura invalida.' }
 }
@@ -16011,9 +16011,9 @@ if (-not $changelog0300.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2543/2543] Validando versao funcional v0.30.0..." -ForegroundColor Cyan
-if ($version0300 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.0; atual: $version0300" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.0: $($health.version)" }
-if (-not $appJs0300.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.0.' }
+if ($version0300 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.0; atual: $version0300" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.0: $($health.version)" }
+if (-not $appJs0300.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.0.' }
 foreach ($token in @("HP_ATHLETE_PERFORMANCE_PASSPORT_V0280='v0.28.0'","HP_PERFORMANCE_RECORDS_V0281='v0.28.1'","HP_TIMED_PERFORMANCE_V0282='v0.28.2'","HP_COMPETITION_TEST_RESULTS_V0283='v0.28.3'","HP_SKILLS_MILESTONES_V0284='v0.28.4'","HP_PERFORMANCE_EVOLUTION_V0285='v0.28.5'","HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'","HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3'","HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4'","HP_PROGRESS_OBSERVATION_SUMMARY_V0295='v0.29.5'","HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296='v0.29.6'")) { if (-not $appJs0300.Contains($token)) { throw "Marcador historico ausente na v0.30.0: $token" } }
 Write-Host "    v0.30.0 / Progress Review Workspace Foundation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.1 / Progress Review Notes Foundation" -ForegroundColor DarkCyan
@@ -16051,7 +16051,7 @@ Write-Host "[2548/2551] Validando runtime notes foundation..." -ForegroundColor 
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0301 = $lista.itens | Select-Object -First 1
     $passport0301Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0301.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0301Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0301Runtime.fundacaoNotasRevisaoProgresso) { throw 'Athlete Performance Passport v0.30.1 retornou fundacao de notas invalida.' }
+    if ($passport0301Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0301Runtime.fundacaoNotasRevisaoProgresso) { throw 'Athlete Performance Passport v0.30.1 retornou fundacao de notas invalida.' }
     $notes0301Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0301.id)/performance/progress-review-notes-foundation" -Headers $headers -Method Get
     if ($null -eq $notes0301Runtime -or $null -eq $notes0301Runtime.campos -or $notes0301Runtime.campos.Count -ne 5) { throw 'Endpoint Progress Review Notes Foundation v0.30.1 retornou estrutura invalida.' }
     if ($health.version -eq '0.30.1' -and $notes0301Runtime.persistenciaDisponivel -ne $false) { throw 'Endpoint Progress Review Notes Foundation v0.30.1 deveria anunciar persistencia desabilitada.' }
@@ -16071,9 +16071,9 @@ if (-not $changelog0301.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2551/2551] Validando versao funcional v0.30.1..." -ForegroundColor Cyan
-if ($version0301 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.1; atual: $version0301" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.1: $($health.version)" }
-if (-not $appJs0301.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.1.' }
+if ($version0301 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.1; atual: $version0301" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.1: $($health.version)" }
+if (-not $appJs0301.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.1.' }
 foreach ($token in @("HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'","HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3'","HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4'","HP_PROGRESS_OBSERVATION_SUMMARY_V0295='v0.29.5'","HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296='v0.29.6'","HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'")) { if (-not $appJs0301.Contains($token)) { throw "Marcador historico ausente na v0.30.1: $token" } }
 Write-Host "    v0.30.1 / Progress Review Notes Foundation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.2 / Progress Review Notes Persistence" -ForegroundColor DarkCyan
@@ -16116,7 +16116,7 @@ Write-Host "[2557/2560] Validando runtime read-only..." -ForegroundColor Cyan
 if ($lista.total -gt 0 -and $lista.itens.Count -gt 0) {
     $paciente0302 = $lista.itens | Select-Object -First 1
     $passport0302Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0302.id)/performance/passaporte" -Headers $headers -Method Get
-    if ($passport0302Runtime.versao -ne 'v0.50.6' -or $null -eq $passport0302Runtime.fundacaoNotasRevisaoProgresso -or $passport0302Runtime.fundacaoNotasRevisaoProgresso.persistenciaDisponivel -ne $true) { throw 'Athlete Performance Passport v0.30.2 nao anuncia persistencia habilitada.' }
+    if ($passport0302Runtime.versao -ne 'v0.51.0' -or $null -eq $passport0302Runtime.fundacaoNotasRevisaoProgresso -or $passport0302Runtime.fundacaoNotasRevisaoProgresso.persistenciaDisponivel -ne $true) { throw 'Athlete Performance Passport v0.30.2 nao anuncia persistencia habilitada.' }
     $notes0302Runtime = Invoke-RestMethod -Uri "$base/api/pacientes/$($paciente0302.id)/performance/progress-review-notes" -Headers $headers -Method Get
     if ($null -eq $notes0302Runtime) { throw 'Endpoint Progress Review Notes v0.30.2 retornou estrutura invalida.' }
 }
@@ -16132,9 +16132,9 @@ foreach ($token in @('v0.30.2 — Progress Review Notes Persistence','PROGRESS_R
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2560/2560] Validando versao funcional v0.30.2..." -ForegroundColor Cyan
-if ($version0302 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.2; atual: $version0302" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.2: $($health.version)" }
-if (-not $appJs0302.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.2.' }
+if ($version0302 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.2; atual: $version0302" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.2: $($health.version)" }
+if (-not $appJs0302.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.2.' }
 foreach ($token in @("HP_PROGRESS_INTELLIGENCE_V0290='v0.29.0'","HP_PROGRESS_SIGNAL_CONTEXT_V0291='v0.29.1'","HP_MULTI_SIGNAL_TIMELINE_V0292='v0.29.2'","HP_PROGRESS_EVIDENCE_WINDOWS_V0293='v0.29.3'","HP_CROSS_SIGNAL_OBSERVATION_MAP_V0294='v0.29.4'","HP_PROGRESS_OBSERVATION_SUMMARY_V0295='v0.29.5'","HP_PROGRESS_INTELLIGENCE_CLOSURE_V0296='v0.29.6'","HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'")) { if (-not $appJs0302.Contains($token)) { throw "Marcador historico ausente na v0.30.2: $token" } }
 Write-Host "    v0.30.2 / Progress Review Notes Persistence: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.3 / Progress Review History & Filters" -ForegroundColor DarkCyan
@@ -16191,9 +16191,9 @@ if (-not $changelog0303.Contains('Não cria migration ou tabela nova.')) { throw
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2569/2569] Validando versao funcional v0.30.3..." -ForegroundColor Cyan
-if ($version0303 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.3; atual: $version0303" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.3: $($health.version)" }
-if (-not $appJs0303.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.3.' }
+if ($version0303 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.3; atual: $version0303" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.3: $($health.version)" }
+if (-not $appJs0303.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.3.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'")) { if (-not $appJs0303.Contains($token)) { throw "Marcador historico ausente na v0.30.3: $token" } }
 Write-Host "    v0.30.3 / Progress Review History & Filters: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.4 / Progress Review Context Links" -ForegroundColor DarkCyan
@@ -16249,9 +16249,9 @@ foreach ($token in @('v0.30.4 — Progress Review Context Links','referência do
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2578/2578] Validando versao funcional v0.30.4..." -ForegroundColor Cyan
-if ($version0304 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.4; atual: $version0304" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.4: $($health.version)" }
-if (-not $appJs0304.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.4.' }
+if ($version0304 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.4; atual: $version0304" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.4: $($health.version)" }
+if (-not $appJs0304.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.4.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'","HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3'")) { if (-not $appJs0304.Contains($token)) { throw "Marcador historico ausente na v0.30.4: $token" } }
 Write-Host "    v0.30.4 / Progress Review Context Links: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.5 / Progress Review Context Navigation" -ForegroundColor DarkCyan
@@ -16309,9 +16309,9 @@ foreach ($token in @('v0.30.5 — Progress Review Context Navigation','Abrir con
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2587/2587] Validando versao funcional v0.30.5..." -ForegroundColor Cyan
-if ($version0305 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.5; atual: $version0305" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.5: $($health.version)" }
-if (-not $appJs0305.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.5.' }
+if ($version0305 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.5; atual: $version0305" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.5: $($health.version)" }
+if (-not $appJs0305.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.5.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'","HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3'","HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4'")) { if (-not $appJs0305.Contains($token)) { throw "Marcador historico ausente na v0.30.5: $token" } }
 Write-Host "    v0.30.5 / Progress Review Context Navigation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.6 / Progress Review Context Focus" -ForegroundColor DarkCyan
@@ -16362,9 +16362,9 @@ foreach ($token in @('v0.30.6 — Progress Review Context Focus','correspondênc
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2596/2596] Validando versao funcional v0.30.6..." -ForegroundColor Cyan
-if ($version0306 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.6; atual: $version0306" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.6: $($health.version)" }
-if (-not $appJs0306.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.6.' }
+if ($version0306 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.6; atual: $version0306" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.6: $($health.version)" }
+if (-not $appJs0306.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.6.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'","HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3'","HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4'","HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5'")) { if (-not $appJs0306.Contains($token)) { throw "Marcador historico ausente na v0.30.6: $token" } }
 Write-Host "    v0.30.6 / Progress Review Context Focus: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.7 / Progress Review Context Capture" -ForegroundColor DarkCyan
@@ -16417,9 +16417,9 @@ foreach ($token in @('v0.30.7 — Progress Review Context Capture','Criar nota d
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2605/2605] Validando versao funcional v0.30.7..." -ForegroundColor Cyan
-if ($version0307 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.7; atual: $version0307" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.7: $($health.version)" }
-if (-not $appJs0307.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.7.' }
+if ($version0307 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.7; atual: $version0307" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.7: $($health.version)" }
+if (-not $appJs0307.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.7.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'","HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3'","HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4'","HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5'","HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6'")) { if (-not $appJs0307.Contains($token)) { throw "Marcador historico ausente na v0.30.7: $token" } }
 Write-Host "    v0.30.7 / Progress Review Context Capture: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.8 / Progress Review Context Capture Confirmation" -ForegroundColor DarkCyan
@@ -16469,9 +16469,9 @@ foreach ($token in @('v0.30.8 — Progress Review Context Capture Confirmation',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2614/2614] Validando versao funcional v0.30.8..." -ForegroundColor Cyan
-if ($version0308 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.8; atual: $version0308" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.8: $($health.version)" }
-if (-not $appJs0308.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.8.' }
+if ($version0308 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.8; atual: $version0308" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.8: $($health.version)" }
+if (-not $appJs0308.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.8.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'","HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3'","HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4'","HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5'","HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6'","HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7'")) { if (-not $appJs0308.Contains($token)) { throw "Marcador historico ausente na v0.30.8: $token" } }
 Write-Host "    v0.30.8 / Progress Review Context Capture Confirmation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.9 / Progress Review Context Integrity" -ForegroundColor DarkCyan
@@ -16527,9 +16527,9 @@ foreach ($token in @('v0.30.9 — Progress Review Context Integrity','context-in
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2623/2623] Validando versao funcional v0.30.9..." -ForegroundColor Cyan
-if ($version0309 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.9; atual: $version0309" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.9: $($health.version)" }
-if (-not $appJs0309.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.9.' }
+if ($version0309 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.9; atual: $version0309" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.9: $($health.version)" }
+if (-not $appJs0309.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.9.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_WORKSPACE_V0300='v0.30.0'","HP_PROGRESS_REVIEW_NOTES_V0301='v0.30.1'","HP_PROGRESS_REVIEW_NOTES_PERSISTENCE_V0302='v0.30.2'","HP_PROGRESS_REVIEW_HISTORY_FILTERS_V0303='v0.30.3'","HP_PROGRESS_REVIEW_CONTEXT_LINKS_V0304='v0.30.4'","HP_PROGRESS_REVIEW_CONTEXT_NAVIGATION_V0305='v0.30.5'","HP_PROGRESS_REVIEW_CONTEXT_FOCUS_V0306='v0.30.6'","HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7'","HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8'")) { if (-not $appJs0309.Contains($token)) { throw "Marcador historico ausente na v0.30.9: $token" } }
 Write-Host "    v0.30.9 / Progress Review Context Integrity: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.10 / Progress Review Context Integrity UX" -ForegroundColor DarkCyan
@@ -16579,9 +16579,9 @@ foreach ($token in @('v0.30.10 — Progress Review Context Integrity UX','Corrig
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2632/2632] Validando versao funcional v0.30.10..." -ForegroundColor Cyan
-if ($version03010 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.10; atual: $version03010" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.10: $($health.version)" }
-if (-not $appJs03010.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.10.' }
+if ($version03010 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.10; atual: $version03010" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.10: $($health.version)" }
+if (-not $appJs03010.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.10.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8'","HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9'")) { if (-not $appJs03010.Contains($token)) { throw "Marcador historico ausente na v0.30.10: $token" } }
 Write-Host "    v0.30.10 / Progress Review Context Integrity UX: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.11 / Progress Review Context Integrity Accessibility" -ForegroundColor DarkCyan
@@ -16639,9 +16639,9 @@ foreach ($token in @('v0.30.11 — Progress Review Context Integrity Accessibili
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2641/2641] Validando versao funcional v0.30.11..." -ForegroundColor Cyan
-if ($version03011 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.11; atual: $version03011" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.11: $($health.version)" }
-if (-not $appJs03011.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.11.' }
+if ($version03011 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.11; atual: $version03011" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.11: $($health.version)" }
+if (-not $appJs03011.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.11.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9'","HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010='v0.30.10'")) { if (-not $appJs03011.Contains($token)) { throw "Marcador historico ausente na v0.30.11: $token" } }
 Write-Host "    v0.30.11 / Progress Review Context Integrity Accessibility: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.30.12 / Progress Review Context Integrity Closure" -ForegroundColor DarkCyan
@@ -16697,9 +16697,9 @@ foreach ($token in @('v0.30.12 — Progress Review Context Integrity Closure','E
 Write-Host "    Linha 0.30.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[2650/2650] Validando versao funcional v0.30.12..." -ForegroundColor Cyan
-if ($version03012 -ne '0.50.6') { throw "VERSION.txt esperado 0.30.12; atual: $version03012" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.30.12: $($health.version)" }
-if (-not $appJs03012.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.30.12.' }
+if ($version03012 -ne '0.51.0') { throw "VERSION.txt esperado 0.30.12; atual: $version03012" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.30.12: $($health.version)" }
+if (-not $appJs03012.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.30.12.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CONTEXT_CAPTURE_V0307='v0.30.7'","HP_PROGRESS_REVIEW_CONTEXT_CONFIRMATION_V0308='v0.30.8'","HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_V0309='v0.30.9'","HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_UX_V03010='v0.30.10'","HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011='v0.30.11'")) { if (-not $appJs03012.Contains($token)) { throw "Marcador historico ausente na v0.30.12: $token" } }
 Write-Host "    v0.30.12 / Progress Review Context Integrity Closure: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.0 / Progress Review Follow-up Foundation" -ForegroundColor DarkCyan
@@ -16762,9 +16762,9 @@ foreach ($token in @('v0.31.0 — Progress Review Follow-up Foundation','v0.31.1
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2659/2659] Validando versao funcional v0.31.0..." -ForegroundColor Cyan
-if ($version0310 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.0; atual: $version0310" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.0: $($health.version)" }
-if (-not $appJs0310.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.0.' }
+if ($version0310 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.0; atual: $version0310" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.0: $($health.version)" }
+if (-not $appJs0310.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.0.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012='v0.30.12'","HP_PROGRESS_REVIEW_CONTEXT_INTEGRITY_A11Y_V03011='v0.30.11'")) { if (-not $appJs0310.Contains($token)) { throw "Marcador historico ausente na v0.31.0: $token" } }
 Write-Host "    v0.31.0 / Progress Review Follow-up Foundation: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.1 / Progress Review Follow-up Persistence" -ForegroundColor DarkCyan
@@ -16825,9 +16825,9 @@ foreach ($token in @('v0.31.1 — Progress Review Follow-up Persistence','Progre
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2669/2669] Validando versao funcional v0.31.1..." -ForegroundColor Cyan
-if ($version0311 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.1; atual: $version0311" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.1: $($health.version)" }
-if (-not $appJs0311.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.1.' }
+if ($version0311 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.1; atual: $version0311" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.1: $($health.version)" }
+if (-not $appJs0311.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.1.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_V0310='v0.31.0'","HP_PROGRESS_REVIEW_CONTEXT_CLOSURE_V03012='v0.30.12'")) { if (-not $appJs0311.Contains($token)) { throw "Marcador historico ausente na v0.31.1: $token" } }
 Write-Host "    v0.31.1 / Progress Review Follow-up Persistence: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.2 / Progress Review Follow-up Status" -ForegroundColor DarkCyan
@@ -16883,9 +16883,9 @@ foreach ($token in @('v0.31.2 — Progress Review Follow-up Status','PROGRESS_RE
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2678/2678] Validando versao funcional v0.31.2..." -ForegroundColor Cyan
-if ($version0312 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.2; atual: $version0312" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.2: $($health.version)" }
-if (-not $appJs0312.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.2.' }
+if ($version0312 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.2; atual: $version0312" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.2: $($health.version)" }
+if (-not $appJs0312.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.2.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_V0310='v0.31.0'","HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311='v0.31.1'")) { if (-not $appJs0312.Contains($token)) { throw "Marcador historico ausente na v0.31.2: $token" } }
 Write-Host "    v0.31.2 / Progress Review Follow-up Status: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.3 / Progress Review Follow-up History" -ForegroundColor DarkCyan
@@ -16940,9 +16940,9 @@ foreach ($token in @('v0.31.3 — Progress Review Follow-up History','follow-up/
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2687/2687] Validando versao funcional v0.31.3..." -ForegroundColor Cyan
-if ($version0313 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.3; atual: $version0313" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.3: $($health.version)" }
-if (-not $appJs0313.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.3.' }
+if ($version0313 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.3; atual: $version0313" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.3: $($health.version)" }
+if (-not $appJs0313.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.3.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_PERSISTENCE_V0311='v0.31.1'","HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312='v0.31.2'")) { if (-not $appJs0313.Contains($token)) { throw "Marcador historico ausente na v0.31.3: $token" } }
 Write-Host "    v0.31.3 / Progress Review Follow-up History: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.4 / Progress Review Follow-up Filters" -ForegroundColor DarkCyan
@@ -16997,9 +16997,9 @@ foreach ($token in @('v0.31.4 — Progress Review Follow-up Filters','follow-up/
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2696/2696] Validando versao funcional v0.31.4..." -ForegroundColor Cyan
-if ($version0314 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.4; atual: $version0314" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.4: $($health.version)" }
-if (-not $appJs0314.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.4.' }
+if ($version0314 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.4; atual: $version0314" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.4: $($health.version)" }
+if (-not $appJs0314.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.4.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_STATUS_V0312='v0.31.2'","HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3'")) { if (-not $appJs0314.Contains($token)) { throw "Marcador historico ausente na v0.31.4: $token" } }
 Write-Host "    v0.31.4 / Progress Review Follow-up Filters: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.5 / Progress Review Follow-up Summary" -ForegroundColor DarkCyan
@@ -17056,9 +17056,9 @@ foreach ($token in @('v0.31.5 — Progress Review Follow-up Summary','follow-up/
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2705/2705] Validando versao funcional v0.31.5..." -ForegroundColor Cyan
-if ($version0315 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.5; atual: $version0315" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.5: $($health.version)" }
-if (-not $appJs0315.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.5.' }
+if ($version0315 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.5; atual: $version0315" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.5: $($health.version)" }
+if (-not $appJs0315.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.5.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314='v0.31.4'","HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3'")) { if (-not $appJs0315.Contains($token)) { throw "Marcador historico ausente na v0.31.5: $token" } }
 Write-Host "    v0.31.5 / Progress Review Follow-up Summary: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.31.6 / Progress Review Follow-up Closure" -ForegroundColor DarkCyan
@@ -17117,9 +17117,9 @@ foreach ($token in @('v0.31.6 — Progress Review Follow-up Closure','Encerra a 
 Write-Host "    Linha 0.31.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[2714/2714] Validando versao funcional v0.31.6..." -ForegroundColor Cyan
-if ($version0316 -ne '0.50.6') { throw "VERSION.txt esperado 0.31.6; atual: $version0316" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.31.6: $($health.version)" }
-if (-not $appJs0316.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.31.6.' }
+if ($version0316 -ne '0.51.0') { throw "VERSION.txt esperado 0.31.6; atual: $version0316" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.31.6: $($health.version)" }
+if (-not $appJs0316.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.31.6.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3'","HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314='v0.31.4'","HP_PROGRESS_REVIEW_FOLLOW_UP_SUMMARY_V0315='v0.31.5'")) { if (-not $appJs0316.Contains($token)) { throw "Marcador historico ausente na v0.31.6: $token" } }
 Write-Host "    v0.31.6 / Progress Review Follow-up Closure: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.32.0 / Progress Review Care Plan Foundation" -ForegroundColor DarkCyan
@@ -17207,9 +17207,9 @@ foreach ($token in @('v0.32.0 — Progress Review Care Plan Foundation','v0.32.1
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2723/2723] Validando versao funcional v0.32.0..." -ForegroundColor Cyan
-if ($version0320 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.0; atual: $version0320" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.0: $($health.version)" }
-if (-not $appJs0320.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.0.' }
+if ($version0320 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.0; atual: $version0320" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.0: $($health.version)" }
+if (-not $appJs0320.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.0.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_FOLLOW_UP_HISTORY_V0313='v0.31.3'","HP_PROGRESS_REVIEW_FOLLOW_UP_FILTERS_V0314='v0.31.4'","HP_PROGRESS_REVIEW_FOLLOW_UP_SUMMARY_V0315='v0.31.5'","HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316='v0.31.6'")) {
     if (-not $appJs0320.Contains($token)) { throw "Marcador historico ausente na v0.32.0: $token" }
 }
@@ -17290,9 +17290,9 @@ foreach ($token in @('v0.32.1 — Progress Review Care Plan Persistence','Progre
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2733/2733] Validando versao funcional v0.32.1..." -ForegroundColor Cyan
-if ($version0321 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.1; atual: $version0321" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.1: $($health.version)" }
-if (-not $appJs0321.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.1.' }
+if ($version0321 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.1; atual: $version0321" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.1: $($health.version)" }
+if (-not $appJs0321.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.1.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_V0320='v0.32.0'","HP_PROGRESS_REVIEW_FOLLOW_UP_CLOSURE_V0316='v0.31.6'")) {
     if (-not $appJs0321.Contains($token)) { throw "Marcador historico ausente na v0.32.1: $token" }
 }
@@ -17366,9 +17366,9 @@ foreach ($token in @('v0.32.2 — Progress Review Care Plan Status','PROGRESS_RE
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2742/2742] Validando versao funcional v0.32.2..." -ForegroundColor Cyan
-if ($version0322 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.2; atual: $version0322" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.2: $($health.version)" }
-if (-not $appJs0322.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.2.' }
+if ($version0322 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.2; atual: $version0322" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.2: $($health.version)" }
+if (-not $appJs0322.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.2.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_V0320='v0.32.0'","HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321='v0.32.1'")) {
     if (-not $appJs0322.Contains($token)) { throw "Marcador historico ausente na v0.32.2: $token" }
 }
@@ -17440,9 +17440,9 @@ foreach ($token in @('v0.32.3 — Progress Review Care Plan History','care-plan/
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2751/2751] Validando versao funcional v0.32.3..." -ForegroundColor Cyan
-if ($version0323 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.3; atual: $version0323" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.3: $($health.version)" }
-if (-not $appJs0323.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.3.' }
+if ($version0323 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.3; atual: $version0323" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.3: $($health.version)" }
+if (-not $appJs0323.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.3.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_V0320='v0.32.0'","HP_PROGRESS_REVIEW_CARE_PLAN_PERSISTENCE_V0321='v0.32.1'","HP_PROGRESS_REVIEW_CARE_PLAN_STATUS_V0322='v0.32.2'")) {
     if (-not $appJs0323.Contains($token)) { throw "Marcador historico ausente na v0.32.3: $token" }
 }
@@ -17513,9 +17513,9 @@ foreach ($token in @('v0.32.4 — Progress Review Care Plan Filters','care-plan/
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2760/2760] Validando versao funcional v0.32.4..." -ForegroundColor Cyan
-if ($version0324 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.4; atual: $version0324" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.4: $($health.version)" }
-if (-not $appJs0324.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.4.' }
+if ($version0324 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.4; atual: $version0324" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.4: $($health.version)" }
+if (-not $appJs0324.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.4.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_STATUS_V0322='v0.32.2'","HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3'")) {
     if (-not $appJs0324.Contains($token)) { throw "Marcador historico ausente na v0.32.4: $token" }
 }
@@ -17588,9 +17588,9 @@ foreach ($token in @('v0.32.5 — Progress Review Care Plan Summary','care-plan/
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2769/2769] Validando versao funcional v0.32.5..." -ForegroundColor Cyan
-if ($version0325 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.5; atual: $version0325" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.5: $($health.version)" }
-if (-not $appJs0325.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.5.' }
+if ($version0325 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.5; atual: $version0325" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.5: $($health.version)" }
+if (-not $appJs0325.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.5.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3'","HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4'")) {
     if (-not $appJs0325.Contains($token)) { throw "Marcador historico ausente na v0.32.5: $token" }
 }
@@ -17665,9 +17665,9 @@ foreach ($token in @('v0.32.6 — Progress Review Care Plan Closure','Encerra a 
 Write-Host "    Linha 0.32.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[2778/2778] Validando versao funcional v0.32.6..." -ForegroundColor Cyan
-if ($version0326 -ne '0.50.6') { throw "VERSION.txt esperado 0.32.6; atual: $version0326" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.32.6: $($health.version)" }
-if (-not $appJs0326.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.32.6.' }
+if ($version0326 -ne '0.51.0') { throw "VERSION.txt esperado 0.32.6; atual: $version0326" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.32.6: $($health.version)" }
+if (-not $appJs0326.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.32.6.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3'","HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4'","HP_PROGRESS_REVIEW_CARE_PLAN_SUMMARY_V0325='v0.32.5'")) {
     if (-not $appJs0326.Contains($token)) { throw "Marcador historico ausente na v0.32.6: $token" }
 }
@@ -17757,9 +17757,9 @@ foreach ($token in @('v0.33.0 — Professional Review Action Plan Foundation','v
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2787/2787] Validando versao funcional v0.33.0..." -ForegroundColor Cyan
-if ($version0330 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.0; atual: $version0330" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.0: $($health.version)" }
-if (-not $appJs0330.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.0.' }
+if ($version0330 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.0; atual: $version0330" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.0: $($health.version)" }
+if (-not $appJs0330.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.0.' }
 foreach ($token in @("HP_PROGRESS_REVIEW_CARE_PLAN_HISTORY_V0323='v0.32.3'","HP_PROGRESS_REVIEW_CARE_PLAN_FILTERS_V0324='v0.32.4'","HP_PROGRESS_REVIEW_CARE_PLAN_SUMMARY_V0325='v0.32.5'","HP_PROGRESS_REVIEW_CARE_PLAN_CLOSURE_V0326='v0.32.6'")) {
     if (-not $appJs0330.Contains($token)) { throw "Marcador historico ausente na v0.33.0: $token" }
 }
@@ -17840,9 +17840,9 @@ foreach ($token in @('v0.33.1 — Professional Review Action Plan Persistence','
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2797/2797] Validando versao funcional v0.33.1..." -ForegroundColor Cyan
-if ($version0331 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.1; atual: $version0331" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.1: $($health.version)" }
-if (-not $appJs0331.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.1.' }
+if ($version0331 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.1; atual: $version0331" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.1: $($health.version)" }
+if (-not $appJs0331.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330='v0.33.0'","HP_PROGRESS_REVIEW_CARE_PLAN_CLOSURE_V0326='v0.32.6'")) {
     if (-not $appJs0331.Contains($token)) { throw "Marcador historico ausente na v0.33.1: $token" }
 }
@@ -17913,9 +17913,9 @@ foreach ($token in @('v0.33.2 — Professional Review Action Plan Status','PROFE
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2806/2806] Validando versao funcional v0.33.2..." -ForegroundColor Cyan
-if ($version0332 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.2; atual: $version0332" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.2: $($health.version)" }
-if (-not $appJs0332.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.2.' }
+if ($version0332 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.2; atual: $version0332" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.2: $($health.version)" }
+if (-not $appJs0332.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330='v0.33.0'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331='v0.33.1'")) {
     if (-not $appJs0332.Contains($token)) { throw "Marcador historico ausente na v0.33.2: $token" }
 }
@@ -17987,9 +17987,9 @@ foreach ($token in @('v0.33.3 — Professional Review Action Plan History','acti
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2815/2815] Validando versao funcional v0.33.3..." -ForegroundColor Cyan
-if ($version0333 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.3; atual: $version0333" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.3: $($health.version)" }
-if (-not $appJs0333.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.3.' }
+if ($version0333 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.3; atual: $version0333" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.3: $($health.version)" }
+if (-not $appJs0333.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_V0330='v0.33.0'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_PERSISTENCE_V0331='v0.33.1'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_V0332='v0.33.2'")) {
     if (-not $appJs0333.Contains($token)) { throw "Marcador historico ausente na v0.33.3: $token" }
 }
@@ -18060,9 +18060,9 @@ foreach ($token in @('v0.33.4 — Professional Review Action Plan Filters','acti
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2824/2824] Validando versao funcional v0.33.4..." -ForegroundColor Cyan
-if ($version0334 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.4; atual: $version0334" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.4: $($health.version)" }
-if (-not $appJs0334.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.4.' }
+if ($version0334 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.4; atual: $version0334" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.4: $($health.version)" }
+if (-not $appJs0334.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_STATUS_V0332='v0.33.2'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_HISTORY_V0333='v0.33.3'")) {
     if (-not $appJs0334.Contains($token)) { throw "Marcador historico ausente na v0.33.4: $token" }
 }
@@ -18135,9 +18135,9 @@ foreach ($token in @('v0.33.5 — Professional Review Action Plan Summary','acti
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2833/2833] Validando versao funcional v0.33.5..." -ForegroundColor Cyan
-if ($version0335 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.5; atual: $version0335" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.5: $($health.version)" }
-if (-not $appJs0335.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.5.' }
+if ($version0335 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.5; atual: $version0335" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.5: $($health.version)" }
+if (-not $appJs0335.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_HISTORY_V0333='v0.33.3'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_FILTERS_V0334='v0.33.4'")) {
     if (-not $appJs0335.Contains($token)) { throw "Marcador historico ausente na v0.33.5: $token" }
 }
@@ -18212,9 +18212,9 @@ foreach ($token in @('v0.33.6 — Professional Review Action Plan Closure','Ence
 Write-Host "    Linha 0.33.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[2842/2842] Validando versao funcional v0.33.6..." -ForegroundColor Cyan
-if ($version0336 -ne '0.50.6') { throw "VERSION.txt esperado 0.33.6; atual: $version0336" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.33.6: $($health.version)" }
-if (-not $appJs0336.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.33.6.' }
+if ($version0336 -ne '0.51.0') { throw "VERSION.txt esperado 0.33.6; atual: $version0336" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.33.6: $($health.version)" }
+if (-not $appJs0336.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.33.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_HISTORY_V0333='v0.33.3'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_FILTERS_V0334='v0.33.4'","HP_PROFESSIONAL_REVIEW_ACTION_PLAN_SUMMARY_V0335='v0.33.5'")) {
     if (-not $appJs0336.Contains($token)) { throw "Marcador historico ausente na v0.33.6: $token" }
 }
@@ -18294,9 +18294,9 @@ foreach ($token in @('v0.34.0 — Professional Review Task Coordination Foundati
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2851/2851] Validando versao funcional v0.34.0..." -ForegroundColor Cyan
-if ($version0340 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.0; atual: $version0340" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.0: $($health.version)" }
-if (-not $appJs0340.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.0.' }
+if ($version0340 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.0; atual: $version0340" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.0: $($health.version)" }
+if (-not $appJs0340.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ACTION_PLAN_CLOSURE_V0336='v0.33.6'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0'")) {
     if (-not $appJs0340.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.0: $token" }
 }
@@ -18377,9 +18377,9 @@ foreach ($token in @('v0.34.1 — Professional Review Task Coordination Persiste
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2861/2861] Validando versao funcional v0.34.1..." -ForegroundColor Cyan
-if ($version0341 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.1; atual: $version0341" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.1: $($health.version)" }
-if (-not $appJs0341.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.1.' }
+if ($version0341 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.1; atual: $version0341" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.1: $($health.version)" }
+if (-not $appJs0341.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1'")) {
     if (-not $appJs0341.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.1: $token" }
 }
@@ -18450,9 +18450,9 @@ foreach ($token in @('v0.34.2 — Professional Review Task Coordination Status',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2870/2870] Validando versao funcional v0.34.2..." -ForegroundColor Cyan
-if ($version0342 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.2; atual: $version0342" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.2: $($health.version)" }
-if (-not $appJs0342.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.2.' }
+if ($version0342 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.2; atual: $version0342" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.2: $($health.version)" }
+if (-not $appJs0342.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_V0342='v0.34.2'")) {
     if (-not $appJs0342.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.2: $token" }
 }
@@ -18524,9 +18524,9 @@ foreach ($token in @('v0.34.3 — Professional Review Task Coordination History'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2879/2879] Validando versao funcional v0.34.3..." -ForegroundColor Cyan
-if ($version0343 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.3; atual: $version0343" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.3: $($health.version)" }
-if (-not $appJs0343.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.3.' }
+if ($version0343 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.3; atual: $version0343" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.3: $($health.version)" }
+if (-not $appJs0343.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_V0340='v0.34.0'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_PERSISTENCE_V0341='v0.34.1'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_V0342='v0.34.2'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3'")) {
     if (-not $appJs0343.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.3: $token" }
 }
@@ -18597,9 +18597,9 @@ foreach ($token in @('v0.34.4 — Professional Review Task Coordination Filters'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2888/2888] Validando versao funcional v0.34.4..." -ForegroundColor Cyan
-if ($version0344 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.4; atual: $version0344" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.4: $($health.version)" }
-if (-not $appJs0344.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.4.' }
+if ($version0344 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.4; atual: $version0344" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.4: $($health.version)" }
+if (-not $appJs0344.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_STATUS_V0342='v0.34.2'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344='v0.34.4'")) {
     if (-not $appJs0344.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.4: $token" }
 }
@@ -18672,9 +18672,9 @@ foreach ($token in @('v0.34.5 — Professional Review Task Coordination Summary'
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2897/2897] Validando versao funcional v0.34.5..." -ForegroundColor Cyan
-if ($version0345 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.5; atual: $version0345" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.5: $($health.version)" }
-if (-not $appJs0345.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.5.' }
+if ($version0345 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.5; atual: $version0345" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.5: $($health.version)" }
+if (-not $appJs0345.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344='v0.34.4'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_SUMMARY_V0345='v0.34.5'")) {
     if (-not $appJs0345.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.5: $token" }
 }
@@ -18749,9 +18749,9 @@ foreach ($token in @('v0.34.6 — Professional Review Task Coordination Closure'
 Write-Host "    Linha 0.34.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[2906/2906] Validando versao funcional v0.34.6..." -ForegroundColor Cyan
-if ($version0346 -ne '0.50.6') { throw "VERSION.txt esperado 0.34.6; atual: $version0346" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.34.6: $($health.version)" }
-if (-not $appJs0346.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.34.6.' }
+if ($version0346 -ne '0.51.0') { throw "VERSION.txt esperado 0.34.6; atual: $version0346" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.34.6: $($health.version)" }
+if (-not $appJs0346.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.34.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_HISTORY_V0343='v0.34.3'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_FILTERS_V0344='v0.34.4'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_SUMMARY_V0345='v0.34.5'","HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_CLOSURE_V0346='v0.34.6'")) {
     if (-not $appJs0346.Contains($token)) { throw "Marcador historico/atual ausente na v0.34.6: $token" }
 }
@@ -18830,9 +18830,9 @@ foreach ($token in @('v0.35.0 — Professional Review Assignment Foundation','Fu
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2915/2915] Validando versao funcional v0.35.0..." -ForegroundColor Cyan
-if ($version0350 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.0; atual: $version0350" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.0: $($health.version)" }
-if (-not $appJs0350.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.0.' }
+if ($version0350 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.0; atual: $version0350" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.0: $($health.version)" }
+if (-not $appJs0350.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_CLOSURE_V0346='v0.34.6'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0'")) {
     if (-not $appJs0350.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.0: $token" }
 }
@@ -18913,9 +18913,9 @@ foreach ($token in @('v0.35.1 — Professional Review Assignment Persistence','P
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2925/2925] Validando versao funcional v0.35.1..." -ForegroundColor Cyan
-if ($version0351 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.1; atual: $version0351" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.1: $($health.version)" }
-if (-not $appJs0351.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.1.' }
+if ($version0351 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.1; atual: $version0351" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.1: $($health.version)" }
+if (-not $appJs0351.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351='v0.35.1'")) {
     if (-not $appJs0351.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.1: $token" }
 }
@@ -18986,9 +18986,9 @@ foreach ($token in @('v0.35.2 — Professional Review Assignment Status','PROFES
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2934/2934] Validando versao funcional v0.35.2..." -ForegroundColor Cyan
-if ($version0352 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.2; atual: $version0352" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.2: $($health.version)" }
-if (-not $appJs0352.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.2.' }
+if ($version0352 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.2; atual: $version0352" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.2: $($health.version)" }
+if (-not $appJs0352.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351='v0.35.1'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_V0352='v0.35.2'")) {
     if (-not $appJs0352.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.2: $token" }
 }
@@ -19060,9 +19060,9 @@ foreach ($token in @('v0.35.3 — Professional Review Assignment History','assig
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2943/2943] Validando versao funcional v0.35.3..." -ForegroundColor Cyan
-if ($version0353 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.3; atual: $version0353" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.3: $($health.version)" }
-if (-not $appJs0353.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.3.' }
+if ($version0353 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.3; atual: $version0353" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.3: $($health.version)" }
+if (-not $appJs0353.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351='v0.35.1'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_V0352='v0.35.2'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3'")) {
     if (-not $appJs0353.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.3: $token" }
 }
@@ -19133,9 +19133,9 @@ foreach ($token in @('v0.35.4 — Professional Review Assignment Filters','assig
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2952/2952] Validando versao funcional v0.35.4..." -ForegroundColor Cyan
-if ($version0354 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.4; atual: $version0354" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.4: $($health.version)" }
-if (-not $appJs0354.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.4.' }
+if ($version0354 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.4; atual: $version0354" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.4: $($health.version)" }
+if (-not $appJs0354.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_V0352='v0.35.2'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4'")) {
     if (-not $appJs0354.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.4: $token" }
 }
@@ -19208,9 +19208,9 @@ foreach ($token in @('v0.35.5 — Professional Review Assignment Summary','assig
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[2961/2961] Validando versao funcional v0.35.5..." -ForegroundColor Cyan
-if ($version0355 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.5; atual: $version0355" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.5: $($health.version)" }
-if (-not $appJs0355.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.5.' }
+if ($version0355 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.5; atual: $version0355" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.5: $($health.version)" }
+if (-not $appJs0355.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355='v0.35.5'")) {
     if (-not $appJs0355.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.5: $token" }
 }
@@ -19285,9 +19285,9 @@ foreach ($token in @('v0.35.6 — Professional Review Assignment Closure','Encer
 Write-Host "    Linha 0.35.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[2970/2970] Validando versao funcional v0.35.6..." -ForegroundColor Cyan
-if ($version0356 -ne '0.50.6') { throw "VERSION.txt esperado 0.35.6; atual: $version0356" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.35.6: $($health.version)" }
-if (-not $appJs0356.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.35.6.' }
+if ($version0356 -ne '0.51.0') { throw "VERSION.txt esperado 0.35.6; atual: $version0356" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.35.6: $($health.version)" }
+if (-not $appJs0356.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.35.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355='v0.35.5'","HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356='v0.35.6'")) {
     if (-not $appJs0356.Contains($token)) { throw "Marcador historico/atual ausente na v0.35.6: $token" }
 }
@@ -19366,9 +19366,9 @@ foreach ($token in @('v0.36.0 — Professional Review Delegation Foundation','Fu
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2979/2979] Validando versao funcional v0.36.0..." -ForegroundColor Cyan
-if ($version0360 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.0; atual: $version0360" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.0: $($health.version)" }
-if (-not $appJs0360.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.0.' }
+if ($version0360 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.0; atual: $version0360" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.0: $($health.version)" }
+if (-not $appJs0360.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356='v0.35.6'","HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0'")) {
     if (-not $appJs0360.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.0: $token" }
 }
@@ -19449,9 +19449,9 @@ foreach ($token in @('v0.36.1 — Professional Review Delegation Persistence','P
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2989/2989] Validando versao funcional v0.36.1..." -ForegroundColor Cyan
-if ($version0361 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.1; atual: $version0361" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.1: $($health.version)" }
-if (-not $appJs0361.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.1.' }
+if ($version0361 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.1; atual: $version0361" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.1: $($health.version)" }
+if (-not $appJs0361.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0'","HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1'")) {
     if (-not $appJs0361.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.1: $token" }
 }
@@ -19522,9 +19522,9 @@ foreach ($token in @('v0.36.2 — Professional Review Delegation Status','PROFES
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[2998/2998] Validando versao funcional v0.36.2..." -ForegroundColor Cyan
-if ($version0362 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.2; atual: $version0362" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.2: $($health.version)" }
-if (-not $appJs0362.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.2.' }
+if ($version0362 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.2; atual: $version0362" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.2: $($health.version)" }
+if (-not $appJs0362.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0'","HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1'","HP_PROFESSIONAL_REVIEW_DELEGATION_STATUS_V0362='v0.36.2'")) {
     if (-not $appJs0362.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.2: $token" }
 }
@@ -19596,9 +19596,9 @@ foreach ($token in @('v0.36.3 — Professional Review Delegation History','deleg
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3007/3007] Validando versao funcional v0.36.3..." -ForegroundColor Cyan
-if ($version0363 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.3; atual: $version0363" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.3: $($health.version)" }
-if (-not $appJs0363.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.3.' }
+if ($version0363 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.3; atual: $version0363" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.3: $($health.version)" }
+if (-not $appJs0363.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_V0360='v0.36.0'","HP_PROFESSIONAL_REVIEW_DELEGATION_PERSISTENCE_V0361='v0.36.1'","HP_PROFESSIONAL_REVIEW_DELEGATION_STATUS_V0362='v0.36.2'","HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3'")) {
     if (-not $appJs0363.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.3: $token" }
 }
@@ -19669,9 +19669,9 @@ foreach ($token in @('v0.36.4 — Professional Review Delegation Filters','deleg
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3016/3016] Validando versao funcional v0.36.4..." -ForegroundColor Cyan
-if ($version0364 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.4; atual: $version0364" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.4: $($health.version)" }
-if (-not $appJs0364.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.4.' }
+if ($version0364 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.4; atual: $version0364" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.4: $($health.version)" }
+if (-not $appJs0364.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_STATUS_V0362='v0.36.2'","HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3'","HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364='v0.36.4'")) {
     if (-not $appJs0364.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.4: $token" }
 }
@@ -19744,9 +19744,9 @@ foreach ($token in @('v0.36.5 — Professional Review Delegation Summary','deleg
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3025/3025] Validando versao funcional v0.36.5..." -ForegroundColor Cyan
-if ($version0365 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.5; atual: $version0365" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.5: $($health.version)" }
-if (-not $appJs0365.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.5.' }
+if ($version0365 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.5; atual: $version0365" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.5: $($health.version)" }
+if (-not $appJs0365.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3'","HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364='v0.36.4'","HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365='v0.36.5'")) {
     if (-not $appJs0365.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.5: $token" }
 }
@@ -19821,9 +19821,9 @@ foreach ($token in @('v0.36.6 — Professional Review Delegation Closure','Encer
 Write-Host "    Linha 0.36.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3034/3034] Validando versao funcional v0.36.6..." -ForegroundColor Cyan
-if ($version0366 -ne '0.50.6') { throw "VERSION.txt esperado 0.36.6; atual: $version0366" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.36.6: $($health.version)" }
-if (-not $appJs0366.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.36.6.' }
+if ($version0366 -ne '0.51.0') { throw "VERSION.txt esperado 0.36.6; atual: $version0366" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.36.6: $($health.version)" }
+if (-not $appJs0366.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.36.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_HISTORY_V0363='v0.36.3'","HP_PROFESSIONAL_REVIEW_DELEGATION_FILTERS_V0364='v0.36.4'","HP_PROFESSIONAL_REVIEW_DELEGATION_SUMMARY_V0365='v0.36.5'","HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366='v0.36.6'")) {
     if (-not $appJs0366.Contains($token)) { throw "Marcador historico/atual ausente na v0.36.6: $token" }
 }
@@ -19902,9 +19902,9 @@ foreach ($token in @('v0.37.0 — Professional Review Handoff Foundation','Funda
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3043/3043] Validando versao funcional v0.37.0..." -ForegroundColor Cyan
-if ($version0370 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.0; atual: $version0370" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.0: $($health.version)" }
-if (-not $appJs0370.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.0.' }
+if ($version0370 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.0; atual: $version0370" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.0: $($health.version)" }
+if (-not $appJs0370.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_DELEGATION_CLOSURE_V0366='v0.36.6'","HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0'")) {
     if (-not $appJs0370.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.0: $token" }
 }
@@ -19985,9 +19985,9 @@ foreach ($token in @('v0.37.1 — Professional Review Handoff Persistence','PROF
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3053/3053] Validando versao funcional v0.37.1..." -ForegroundColor Cyan
-if ($version0371 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.1; atual: $version0371" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.1: $($health.version)" }
-if (-not $appJs0371.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.1.' }
+if ($version0371 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.1; atual: $version0371" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.1: $($health.version)" }
+if (-not $appJs0371.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0'","HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1'")) {
     if (-not $appJs0371.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.1: $token" }
 }
@@ -20058,9 +20058,9 @@ foreach ($token in @('v0.37.2 — Professional Review Handoff Status','PROFESSIO
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3062/3062] Validando versao funcional v0.37.2..." -ForegroundColor Cyan
-if ($version0372 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.2; atual: $version0372" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.2: $($health.version)" }
-if (-not $appJs0372.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.2.' }
+if ($version0372 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.2; atual: $version0372" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.2: $($health.version)" }
+if (-not $appJs0372.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0'","HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1'","HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2'")) {
     if (-not $appJs0372.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.2: $token" }
 }
@@ -20132,9 +20132,9 @@ foreach ($token in @('v0.37.3 — Professional Review Handoff History','handoff/
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3071/3071] Validando versao funcional v0.37.3..." -ForegroundColor Cyan
-if ($version0373 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.3; atual: $version0373" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.3: $($health.version)" }
-if (-not $appJs0373.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.3.' }
+if ($version0373 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.3; atual: $version0373" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.3: $($health.version)" }
+if (-not $appJs0373.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_V0370='v0.37.0'","HP_PROFESSIONAL_REVIEW_HANDOFF_PERSISTENCE_V0371='v0.37.1'","HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2'","HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3'")) {
     if (-not $appJs0373.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.3: $token" }
 }
@@ -20205,9 +20205,9 @@ foreach ($token in @('v0.37.4 — Professional Review Handoff Filters','handoff/
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3080/3080] Validando versao funcional v0.37.4..." -ForegroundColor Cyan
-if ($version0374 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.4; atual: $version0374" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.4: $($health.version)" }
-if (-not $appJs0374.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.4.' }
+if ($version0374 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.4; atual: $version0374" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.4: $($health.version)" }
+if (-not $appJs0374.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_STATUS_V0372='v0.37.2'","HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3'","HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4'")) {
     if (-not $appJs0374.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.4: $token" }
 }
@@ -20280,9 +20280,9 @@ foreach ($token in @('v0.37.5 — Professional Review Handoff Summary','handoff/
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3089/3089] Validando versao funcional v0.37.5..." -ForegroundColor Cyan
-if ($version0375 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.5; atual: $version0375" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.5: $($health.version)" }
-if (-not $appJs0375.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.5.' }
+if ($version0375 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.5; atual: $version0375" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.5: $($health.version)" }
+if (-not $appJs0375.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3'","HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4'","HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5'")) {
     if (-not $appJs0375.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.5: $token" }
 }
@@ -20357,9 +20357,9 @@ foreach ($token in @('v0.37.6 — Professional Review Handoff Closure','Encerra 
 Write-Host "    Linha 0.37.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3098/3098] Validando versao funcional v0.37.6..." -ForegroundColor Cyan
-if ($version0376 -ne '0.50.6') { throw "VERSION.txt esperado 0.37.6; atual: $version0376" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.37.6: $($health.version)" }
-if (-not $appJs0376.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.37.6.' }
+if ($version0376 -ne '0.51.0') { throw "VERSION.txt esperado 0.37.6; atual: $version0376" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.37.6: $($health.version)" }
+if (-not $appJs0376.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.37.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_HISTORY_V0373='v0.37.3'","HP_PROFESSIONAL_REVIEW_HANDOFF_FILTERS_V0374='v0.37.4'","HP_PROFESSIONAL_REVIEW_HANDOFF_SUMMARY_V0375='v0.37.5'","HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6'")) {
     if (-not $appJs0376.Contains($token)) { throw "Marcador historico/atual ausente na v0.37.6: $token" }
 }
@@ -20438,9 +20438,9 @@ foreach ($token in @('v0.38.0 — Professional Review Continuity Foundation','Fu
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3107/3107] Validando versao funcional v0.38.0..." -ForegroundColor Cyan
-if ($version0380 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.0; atual: $version0380" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.0: $($health.version)" }
-if (-not $appJs0380.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.0.' }
+if ($version0380 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.0; atual: $version0380" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.0: $($health.version)" }
+if (-not $appJs0380.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_HANDOFF_CLOSURE_V0376='v0.37.6'","HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0'")) {
     if (-not $appJs0380.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.0: $token" }
 }
@@ -20521,9 +20521,9 @@ foreach ($token in @('v0.38.1 — Professional Review Continuity Persistence','P
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3117/3117] Validando versao funcional v0.38.1..." -ForegroundColor Cyan
-if ($version0381 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.1; atual: $version0381" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.1: $($health.version)" }
-if (-not $appJs0381.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.1.' }
+if ($version0381 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.1; atual: $version0381" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.1: $($health.version)" }
+if (-not $appJs0381.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0'","HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1'")) {
     if (-not $appJs0381.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.1: $token" }
 }
@@ -20594,9 +20594,9 @@ foreach ($token in @('v0.38.2 — Professional Review Continuity Status','PROFES
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3126/3126] Validando versao funcional v0.38.2..." -ForegroundColor Cyan
-if ($version0382 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.2; atual: $version0382" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.2: $($health.version)" }
-if (-not $appJs0382.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.2.' }
+if ($version0382 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.2; atual: $version0382" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.2: $($health.version)" }
+if (-not $appJs0382.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0'","HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1'","HP_PROFESSIONAL_REVIEW_CONTINUITY_STATUS_V0382='v0.38.2'")) {
     if (-not $appJs0382.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.2: $token" }
 }
@@ -20668,9 +20668,9 @@ foreach ($token in @('v0.38.3 — Professional Review Continuity History','conti
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3135/3135] Validando versao funcional v0.38.3..." -ForegroundColor Cyan
-if ($version0383 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.3; atual: $version0383" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.3: $($health.version)" }
-if (-not $appJs0383.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.3.' }
+if ($version0383 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.3; atual: $version0383" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.3: $($health.version)" }
+if (-not $appJs0383.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_V0380='v0.38.0'","HP_PROFESSIONAL_REVIEW_CONTINUITY_PERSISTENCE_V0381='v0.38.1'","HP_PROFESSIONAL_REVIEW_CONTINUITY_STATUS_V0382='v0.38.2'","HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3'")) {
     if (-not $appJs0383.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.3: $token" }
 }
@@ -20741,9 +20741,9 @@ foreach ($token in @('v0.38.4 — Professional Review Continuity Filters','conti
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3144/3144] Validando versao funcional v0.38.4..." -ForegroundColor Cyan
-if ($version0384 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.4; atual: $version0384" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.4: $($health.version)" }
-if (-not $appJs0384.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.4.' }
+if ($version0384 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.4; atual: $version0384" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.4: $($health.version)" }
+if (-not $appJs0384.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_STATUS_V0382='v0.38.2'","HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3'","HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384='v0.38.4'")) {
     if (-not $appJs0384.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.4: $token" }
 }
@@ -20816,9 +20816,9 @@ foreach ($token in @('v0.38.5 — Professional Review Continuity Summary','conti
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3153/3153] Validando versao funcional v0.38.5..." -ForegroundColor Cyan
-if ($version0385 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.5; atual: $version0385" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.5: $($health.version)" }
-if (-not $appJs0385.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.5.' }
+if ($version0385 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.5; atual: $version0385" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.5: $($health.version)" }
+if (-not $appJs0385.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3'","HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384='v0.38.4'","HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385='v0.38.5'")) {
     if (-not $appJs0385.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.5: $token" }
 }
@@ -20893,9 +20893,9 @@ foreach ($token in @('v0.38.6 — Professional Review Continuity Closure','Encer
 Write-Host "    Linha 0.38.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3162/3162] Validando versao funcional v0.38.6..." -ForegroundColor Cyan
-if ($version0386 -ne '0.50.6') { throw "VERSION.txt esperado 0.38.6; atual: $version0386" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.38.6: $($health.version)" }
-if (-not $appJs0386.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.38.6.' }
+if ($version0386 -ne '0.51.0') { throw "VERSION.txt esperado 0.38.6; atual: $version0386" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.38.6: $($health.version)" }
+if (-not $appJs0386.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.38.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3'","HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384='v0.38.4'","HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385='v0.38.5'","HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386='v0.38.6'")) {
     if (-not $appJs0386.Contains($token)) { throw "Marcador historico/atual ausente na v0.38.6: $token" }
 }
@@ -20974,9 +20974,9 @@ foreach ($token in @('v0.39.0 — Professional Review Escalation Foundation','Fu
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3171/3171] Validando versao funcional v0.39.0..." -ForegroundColor Cyan
-if ($version0390 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.0; atual: $version0390" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.0: $($health.version)" }
-if (-not $appJs0390.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.0.' }
+if ($version0390 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.0; atual: $version0390" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.0: $($health.version)" }
+if (-not $appJs0390.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386='v0.38.6'","HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0'")) {
     if (-not $appJs0390.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.0: $token" }
 }
@@ -21057,9 +21057,9 @@ foreach ($token in @('v0.39.1 — Professional Review Escalation Persistence','P
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3181/3181] Validando versao funcional v0.39.1..." -ForegroundColor Cyan
-if ($version0391 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.1; atual: $version0391" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.1: $($health.version)" }
-if (-not $appJs0391.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.1.' }
+if ($version0391 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.1; atual: $version0391" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.1: $($health.version)" }
+if (-not $appJs0391.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0'","HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1'")) {
     if (-not $appJs0391.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.1: $token" }
 }
@@ -21130,9 +21130,9 @@ foreach ($token in @('v0.39.2 — Professional Review Escalation Status','PROFES
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3190/3190] Validando versao funcional v0.39.2..." -ForegroundColor Cyan
-if ($version0392 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.2; atual: $version0392" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.2: $($health.version)" }
-if (-not $appJs0392.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.2.' }
+if ($version0392 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.2; atual: $version0392" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.2: $($health.version)" }
+if (-not $appJs0392.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0'","HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1'","HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2'")) {
     if (-not $appJs0392.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.2: $token" }
 }
@@ -21204,9 +21204,9 @@ foreach ($token in @('v0.39.3 — Professional Review Escalation History','escal
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3199/3199] Validando versao funcional v0.39.3..." -ForegroundColor Cyan
-if ($version0393 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.3; atual: $version0393" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.3: $($health.version)" }
-if (-not $appJs0393.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.3.' }
+if ($version0393 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.3; atual: $version0393" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.3: $($health.version)" }
+if (-not $appJs0393.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0'","HP_PROFESSIONAL_REVIEW_ESCALATION_PERSISTENCE_V0391='v0.39.1'","HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2'","HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3'")) {
     if (-not $appJs0393.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.3: $token" }
 }
@@ -21277,9 +21277,9 @@ foreach ($token in @('v0.39.4 — Professional Review Escalation Filters','escal
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3208/3208] Validando versao funcional v0.39.4..." -ForegroundColor Cyan
-if ($version0394 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.4; atual: $version0394" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.4: $($health.version)" }
-if (-not $appJs0394.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.4.' }
+if ($version0394 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.4; atual: $version0394" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.4: $($health.version)" }
+if (-not $appJs0394.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_STATUS_V0392='v0.39.2'","HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3'","HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394='v0.39.4'")) {
     if (-not $appJs0394.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.4: $token" }
 }
@@ -21352,9 +21352,9 @@ foreach ($token in @('v0.39.5 — Professional Review Escalation Summary','escal
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3217/3217] Validando versao funcional v0.39.5..." -ForegroundColor Cyan
-if ($version0395 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.5; atual: $version0395" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.5: $($health.version)" }
-if (-not $appJs0395.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.5.' }
+if ($version0395 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.5; atual: $version0395" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.5: $($health.version)" }
+if (-not $appJs0395.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3'","HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394='v0.39.4'","HP_PROFESSIONAL_REVIEW_ESCALATION_SUMMARY_V0395='v0.39.5'")) {
     if (-not $appJs0395.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.5: $token" }
 }
@@ -21429,9 +21429,9 @@ foreach ($token in @('v0.39.6 — Professional Review Escalation Closure','Encer
 Write-Host "    Linha 0.39.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3226/3226] Validando versao funcional v0.39.6..." -ForegroundColor Cyan
-if ($version0396 -ne '0.50.6') { throw "VERSION.txt esperado 0.39.6; atual: $version0396" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.39.6: $($health.version)" }
-if (-not $appJs0396.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.39.6.' }
+if ($version0396 -ne '0.51.0') { throw "VERSION.txt esperado 0.39.6; atual: $version0396" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.39.6: $($health.version)" }
+if (-not $appJs0396.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.39.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_HISTORY_V0393='v0.39.3'","HP_PROFESSIONAL_REVIEW_ESCALATION_FILTERS_V0394='v0.39.4'","HP_PROFESSIONAL_REVIEW_ESCALATION_SUMMARY_V0395='v0.39.5'","HP_PROFESSIONAL_REVIEW_ESCALATION_CLOSURE_V0396='v0.39.6'")) {
     if (-not $appJs0396.Contains($token)) { throw "Marcador historico/atual ausente na v0.39.6: $token" }
 }
@@ -21510,9 +21510,9 @@ foreach ($token in @('v0.40.0 — Professional Review Coordination Foundation','
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3235/3235] Validando versao funcional v0.40.0..." -ForegroundColor Cyan
-if ($version0400 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.0; atual: $version0400" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.0: $($health.version)" }
-if (-not $appJs0400.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.0.' }
+if ($version0400 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.0; atual: $version0400" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.0: $($health.version)" }
+if (-not $appJs0400.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_ESCALATION_CLOSURE_V0396='v0.39.6'","HP_PROFESSIONAL_REVIEW_COORDINATION_V0400='v0.40.0'")) {
     if (-not $appJs0400.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.0: $token" }
 }
@@ -21593,9 +21593,9 @@ foreach ($token in @('v0.40.1 — Professional Review Coordination Persistence',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3245/3245] Validando versao funcional v0.40.1..." -ForegroundColor Cyan
-if ($version0401 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.1; atual: $version0401" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.1: $($health.version)" }
-if (-not $appJs0401.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.1.' }
+if ($version0401 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.1; atual: $version0401" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.1: $($health.version)" }
+if (-not $appJs0401.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_V0400='v0.40.0'","HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401='v0.40.1'")) {
     if (-not $appJs0401.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.1: $token" }
 }
@@ -21666,9 +21666,9 @@ foreach ($token in @('v0.40.2 — Professional Review Coordination Status','PROF
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3254/3254] Validando versao funcional v0.40.2..." -ForegroundColor Cyan
-if ($version0402 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.2; atual: $version0402" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.2: $($health.version)" }
-if (-not $appJs0402.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.2.' }
+if ($version0402 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.2; atual: $version0402" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.2: $($health.version)" }
+if (-not $appJs0402.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_V0400='v0.40.0'","HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401='v0.40.1'","HP_PROFESSIONAL_REVIEW_COORDINATION_STATUS_V0402='v0.40.2'")) {
     if (-not $appJs0402.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.2: $token" }
 }
@@ -21740,9 +21740,9 @@ foreach ($token in @('v0.40.3 — Professional Review Coordination History','coo
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3263/3263] Validando versao funcional v0.40.3..." -ForegroundColor Cyan
-if ($version0403 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.3; atual: $version0403" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.3: $($health.version)" }
-if (-not $appJs0403.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.3.' }
+if ($version0403 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.3; atual: $version0403" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.3: $($health.version)" }
+if (-not $appJs0403.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_V0400='v0.40.0'","HP_PROFESSIONAL_REVIEW_COORDINATION_PERSISTENCE_V0401='v0.40.1'","HP_PROFESSIONAL_REVIEW_COORDINATION_STATUS_V0402='v0.40.2'","HP_PROFESSIONAL_REVIEW_COORDINATION_HISTORY_V0403='v0.40.3'")) {
     if (-not $appJs0403.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.3: $token" }
 }
@@ -21813,9 +21813,9 @@ foreach ($token in @('v0.40.4 — Professional Review Coordination Filters','coo
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3272/3272] Validando versao funcional v0.40.4..." -ForegroundColor Cyan
-if ($version0404 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.4; atual: $version0404" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.4: $($health.version)" }
-if (-not $appJs0404.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.4.' }
+if ($version0404 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.4; atual: $version0404" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.4: $($health.version)" }
+if (-not $appJs0404.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_STATUS_V0402='v0.40.2'","HP_PROFESSIONAL_REVIEW_COORDINATION_HISTORY_V0403='v0.40.3'","HP_PROFESSIONAL_REVIEW_COORDINATION_FILTERS_V0404='v0.40.4'")) {
     if (-not $appJs0404.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.4: $token" }
 }
@@ -21888,9 +21888,9 @@ foreach ($token in @('v0.40.5 — Professional Review Coordination Summary','coo
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3281/3281] Validando versao funcional v0.40.5..." -ForegroundColor Cyan
-if ($version0405 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.5; atual: $version0405" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.5: $($health.version)" }
-if (-not $appJs0405.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.5.' }
+if ($version0405 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.5; atual: $version0405" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.5: $($health.version)" }
+if (-not $appJs0405.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_HISTORY_V0403='v0.40.3'","HP_PROFESSIONAL_REVIEW_COORDINATION_FILTERS_V0404='v0.40.4'","HP_PROFESSIONAL_REVIEW_COORDINATION_SUMMARY_V0405='v0.40.5'")) {
     if (-not $appJs0405.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.5: $token" }
 }
@@ -21965,9 +21965,9 @@ foreach ($token in @('v0.40.6 — Professional Review Coordination Closure','Enc
 Write-Host "    Linha 0.40.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3290/3290] Validando versao funcional v0.40.6..." -ForegroundColor Cyan
-if ($version0406 -ne '0.50.6') { throw "VERSION.txt esperado 0.40.6; atual: $version0406" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.40.6: $($health.version)" }
-if (-not $appJs0406.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.40.6.' }
+if ($version0406 -ne '0.51.0') { throw "VERSION.txt esperado 0.40.6; atual: $version0406" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.40.6: $($health.version)" }
+if (-not $appJs0406.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.40.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_HISTORY_V0403='v0.40.3'","HP_PROFESSIONAL_REVIEW_COORDINATION_FILTERS_V0404='v0.40.4'","HP_PROFESSIONAL_REVIEW_COORDINATION_SUMMARY_V0405='v0.40.5'","HP_PROFESSIONAL_REVIEW_COORDINATION_CLOSURE_V0406='v0.40.6'")) {
     if (-not $appJs0406.Contains($token)) { throw "Marcador historico/atual ausente na v0.40.6: $token" }
 }
@@ -22046,9 +22046,9 @@ foreach ($token in @('v0.41.0 — Professional Review Collaboration Foundation',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3299/3299] Validando versao funcional v0.41.0..." -ForegroundColor Cyan
-if ($version0410 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.0; atual: $version0410" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.0: $($health.version)" }
-if (-not $appJs0410.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.0.' }
+if ($version0410 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.0; atual: $version0410" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.0: $($health.version)" }
+if (-not $appJs0410.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COORDINATION_CLOSURE_V0406='v0.40.6'","HP_PROFESSIONAL_REVIEW_COLLABORATION_V0410='v0.41.0'")) {
     if (-not $appJs0410.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.0: $token" }
 }
@@ -22129,9 +22129,9 @@ foreach ($token in @('v0.41.1 — Professional Review Collaboration Persistence'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3309/3309] Validando versao funcional v0.41.1..." -ForegroundColor Cyan
-if ($version0411 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.1; atual: $version0411" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.1: $($health.version)" }
-if (-not $appJs0411.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.1.' }
+if ($version0411 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.1; atual: $version0411" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.1: $($health.version)" }
+if (-not $appJs0411.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_V0410='v0.41.0'","HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411='v0.41.1'")) {
     if (-not $appJs0411.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.1: $token" }
 }
@@ -22202,9 +22202,9 @@ foreach ($token in @('v0.41.2 — Professional Review Collaboration Status','PRO
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3318/3318] Validando versao funcional v0.41.2..." -ForegroundColor Cyan
-if ($version0412 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.2; atual: $version0412" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.2: $($health.version)" }
-if (-not $appJs0412.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.2.' }
+if ($version0412 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.2; atual: $version0412" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.2: $($health.version)" }
+if (-not $appJs0412.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_V0410='v0.41.0'","HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411='v0.41.1'","HP_PROFESSIONAL_REVIEW_COLLABORATION_STATUS_V0412='v0.41.2'")) {
     if (-not $appJs0412.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.2: $token" }
 }
@@ -22276,9 +22276,9 @@ foreach ($token in @('v0.41.3 — Professional Review Collaboration History','co
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3327/3327] Validando versao funcional v0.41.3..." -ForegroundColor Cyan
-if ($version0413 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.3; atual: $version0413" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.3: $($health.version)" }
-if (-not $appJs0413.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.3.' }
+if ($version0413 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.3; atual: $version0413" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.3: $($health.version)" }
+if (-not $appJs0413.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_V0410='v0.41.0'","HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411='v0.41.1'","HP_PROFESSIONAL_REVIEW_COLLABORATION_STATUS_V0412='v0.41.2'","HP_PROFESSIONAL_REVIEW_COLLABORATION_HISTORY_V0413='v0.41.3'")) {
     if (-not $appJs0413.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.3: $token" }
 }
@@ -22349,9 +22349,9 @@ foreach ($token in @('v0.41.4 — Professional Review Collaboration Filters','co
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3336/3336] Validando versao funcional v0.41.4..." -ForegroundColor Cyan
-if ($version0414 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.4; atual: $version0414" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.4: $($health.version)" }
-if (-not $appJs0414.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.4.' }
+if ($version0414 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.4; atual: $version0414" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.4: $($health.version)" }
+if (-not $appJs0414.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_STATUS_V0412='v0.41.2'","HP_PROFESSIONAL_REVIEW_COLLABORATION_HISTORY_V0413='v0.41.3'","HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414='v0.41.4'")) {
     if (-not $appJs0414.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.4: $token" }
 }
@@ -22424,9 +22424,9 @@ foreach ($token in @('v0.41.5 — Professional Review Collaboration Summary','co
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3345/3345] Validando versao funcional v0.41.5..." -ForegroundColor Cyan
-if ($version0415 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.5; atual: $version0415" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.5: $($health.version)" }
-if (-not $appJs0415.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.5.' }
+if ($version0415 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.5; atual: $version0415" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.5: $($health.version)" }
+if (-not $appJs0415.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_HISTORY_V0413='v0.41.3'","HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414='v0.41.4'","HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415='v0.41.5'")) {
     if (-not $appJs0415.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.5: $token" }
 }
@@ -22501,9 +22501,9 @@ foreach ($token in @('v0.41.6 — Professional Review Collaboration Closure','En
 Write-Host "    Linha 0.41.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3354/3354] Validando versao funcional v0.41.6..." -ForegroundColor Cyan
-if ($version0416 -ne '0.50.6') { throw "VERSION.txt esperado 0.41.6; atual: $version0416" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.41.6: $($health.version)" }
-if (-not $appJs0416.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.41.6.' }
+if ($version0416 -ne '0.51.0') { throw "VERSION.txt esperado 0.41.6; atual: $version0416" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.41.6: $($health.version)" }
+if (-not $appJs0416.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.41.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_HISTORY_V0413='v0.41.3'","HP_PROFESSIONAL_REVIEW_COLLABORATION_FILTERS_V0414='v0.41.4'","HP_PROFESSIONAL_REVIEW_COLLABORATION_SUMMARY_V0415='v0.41.5'","HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416='v0.41.6'")) {
     if (-not $appJs0416.Contains($token)) { throw "Marcador historico/atual ausente na v0.41.6: $token" }
 }
@@ -22582,9 +22582,9 @@ foreach ($token in @('v0.42.0 — Professional Review Shared Context Foundation'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3363/3363] Validando versao funcional v0.42.0..." -ForegroundColor Cyan
-if ($version0420 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.0; atual: $version0420" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.0: $($health.version)" }
-if (-not $appJs0420.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.0.' }
+if ($version0420 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.0; atual: $version0420" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.0: $($health.version)" }
+if (-not $appJs0420.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_COLLABORATION_CLOSURE_V0416='v0.41.6'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0'")) {
     if (-not $appJs0420.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.0: $token" }
 }
@@ -22665,9 +22665,9 @@ foreach ($token in @('v0.42.1 — Professional Review Shared Context Persistence
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3373/3373] Validando versao funcional v0.42.1..." -ForegroundColor Cyan
-if ($version0421 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.1; atual: $version0421" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.1: $($health.version)" }
-if (-not $appJs0421.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.1.' }
+if ($version0421 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.1; atual: $version0421" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.1: $($health.version)" }
+if (-not $appJs0421.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1'")) {
     if (-not $appJs0421.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.1: $token" }
 }
@@ -22738,9 +22738,9 @@ foreach ($token in @('v0.42.2 — Professional Review Shared Context Status','PR
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3382/3382] Validando versao funcional v0.42.2..." -ForegroundColor Cyan
-if ($version0422 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.2; atual: $version0422" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.2: $($health.version)" }
-if (-not $appJs0422.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.2.' }
+if ($version0422 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.2; atual: $version0422" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.2: $($health.version)" }
+if (-not $appJs0422.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2'")) {
     if (-not $appJs0422.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.2: $token" }
 }
@@ -22812,9 +22812,9 @@ foreach ($token in @('v0.42.3 — Professional Review Shared Context History','s
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3391/3391] Validando versao funcional v0.42.3..." -ForegroundColor Cyan
-if ($version0423 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.3; atual: $version0423" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.3: $($health.version)" }
-if (-not $appJs0423.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.3.' }
+if ($version0423 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.3; atual: $version0423" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.3: $($health.version)" }
+if (-not $appJs0423.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_V0420='v0.42.0'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_PERSISTENCE_V0421='v0.42.1'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3'")) {
     if (-not $appJs0423.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.3: $token" }
 }
@@ -22885,9 +22885,9 @@ foreach ($token in @('v0.42.4 — Professional Review Shared Context Filters','s
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3400/3400] Validando versao funcional v0.42.4..." -ForegroundColor Cyan
-if ($version0424 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.4; atual: $version0424" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.4: $($health.version)" }
-if (-not $appJs0424.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.4.' }
+if ($version0424 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.4; atual: $version0424" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.4: $($health.version)" }
+if (-not $appJs0424.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_STATUS_V0422='v0.42.2'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424='v0.42.4'")) {
     if (-not $appJs0424.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.4: $token" }
 }
@@ -22960,9 +22960,9 @@ foreach ($token in @('v0.42.5 — Professional Review Shared Context Summary','s
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3409/3409] Validando versao funcional v0.42.5..." -ForegroundColor Cyan
-if ($version0425 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.5; atual: $version0425" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.5: $($health.version)" }
-if (-not $appJs0425.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.5.' }
+if ($version0425 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.5; atual: $version0425" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.5: $($health.version)" }
+if (-not $appJs0425.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424='v0.42.4'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425='v0.42.5'")) {
     if (-not $appJs0425.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.5: $token" }
 }
@@ -23037,9 +23037,9 @@ foreach ($token in @('v0.42.6 — Professional Review Shared Context Closure','E
 Write-Host "    Linha 0.42.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3418/3418] Validando versao funcional v0.42.6..." -ForegroundColor Cyan
-if ($version0426 -ne '0.50.6') { throw "VERSION.txt esperado 0.42.6; atual: $version0426" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.42.6: $($health.version)" }
-if (-not $appJs0426.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.42.6.' }
+if ($version0426 -ne '0.51.0') { throw "VERSION.txt esperado 0.42.6; atual: $version0426" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.42.6: $($health.version)" }
+if (-not $appJs0426.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.42.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_HISTORY_V0423='v0.42.3'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_FILTERS_V0424='v0.42.4'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_SUMMARY_V0425='v0.42.5'","HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426='v0.42.6'")) {
     if (-not $appJs0426.Contains($token)) { throw "Marcador historico/atual ausente na v0.42.6: $token" }
 }
@@ -23118,9 +23118,9 @@ foreach ($token in @('v0.43.0 — Professional Review Team Alignment Foundation'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3427/3427] Validando versao funcional v0.43.0..." -ForegroundColor Cyan
-if ($version0430 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.0; atual: $version0430" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.0: $($health.version)" }
-if (-not $appJs0430.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.0.' }
+if ($version0430 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.0; atual: $version0430" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.0: $($health.version)" }
+if (-not $appJs0430.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_SHARED_CONTEXT_CLOSURE_V0426='v0.42.6'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_V0430='v0.43.0'")) {
     if (-not $appJs0430.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.0: $token" }
 }
@@ -23201,9 +23201,9 @@ foreach ($token in @('v0.43.1 — Professional Review Team Alignment Persistence
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3437/3437] Validando versao funcional v0.43.1..." -ForegroundColor Cyan
-if ($version0431 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.1; atual: $version0431" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.1: $($health.version)" }
-if (-not $appJs0431.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.1.' }
+if ($version0431 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.1; atual: $version0431" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.1: $($health.version)" }
+if (-not $appJs0431.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_V0430='v0.43.0'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431='v0.43.1'")) {
     if (-not $appJs0431.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.1: $token" }
 }
@@ -23274,9 +23274,9 @@ foreach ($token in @('v0.43.2 — Professional Review Team Alignment Status','PR
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3446/3446] Validando versao funcional v0.43.2..." -ForegroundColor Cyan
-if ($version0432 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.2; atual: $version0432" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.2: $($health.version)" }
-if (-not $appJs0432.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.2.' }
+if ($version0432 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.2; atual: $version0432" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.2: $($health.version)" }
+if (-not $appJs0432.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_V0430='v0.43.0'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431='v0.43.1'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_V0432='v0.43.2'")) {
     if (-not $appJs0432.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.2: $token" }
 }
@@ -23348,9 +23348,9 @@ foreach ($token in @('v0.43.3 — Professional Review Team Alignment History','t
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3455/3455] Validando versao funcional v0.43.3..." -ForegroundColor Cyan
-if ($version0433 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.3; atual: $version0433" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.3: $($health.version)" }
-if (-not $appJs0433.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.3.' }
+if ($version0433 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.3; atual: $version0433" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.3: $($health.version)" }
+if (-not $appJs0433.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_V0430='v0.43.0'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_PERSISTENCE_V0431='v0.43.1'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_V0432='v0.43.2'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_HISTORY_V0433='v0.43.3'")) {
     if (-not $appJs0433.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.3: $token" }
 }
@@ -23421,9 +23421,9 @@ foreach ($token in @('v0.43.4 — Professional Review Team Alignment Filters','t
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3464/3464] Validando versao funcional v0.43.4..." -ForegroundColor Cyan
-if ($version0434 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.4; atual: $version0434" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.4: $($health.version)" }
-if (-not $appJs0434.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.4.' }
+if ($version0434 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.4; atual: $version0434" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.4: $($health.version)" }
+if (-not $appJs0434.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_STATUS_V0432='v0.43.2'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_HISTORY_V0433='v0.43.3'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_FILTERS_V0434='v0.43.4'")) {
     if (-not $appJs0434.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.4: $token" }
 }
@@ -23496,9 +23496,9 @@ foreach ($token in @('v0.43.5 — Professional Review Team Alignment Summary','t
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3473/3473] Validando versao funcional v0.43.5..." -ForegroundColor Cyan
-if ($version0435 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.5; atual: $version0435" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.5: $($health.version)" }
-if (-not $appJs0435.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.5.' }
+if ($version0435 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.5; atual: $version0435" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.5: $($health.version)" }
+if (-not $appJs0435.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_HISTORY_V0433='v0.43.3'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_FILTERS_V0434='v0.43.4'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_SUMMARY_V0435='v0.43.5'")) {
     if (-not $appJs0435.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.5: $token" }
 }
@@ -23573,9 +23573,9 @@ foreach ($token in @('v0.43.6 — Professional Review Team Alignment Closure','E
 Write-Host "    Linha 0.43.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3482/3482] Validando versao funcional v0.43.6..." -ForegroundColor Cyan
-if ($version0436 -ne '0.50.6') { throw "VERSION.txt esperado 0.43.6; atual: $version0436" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.43.6: $($health.version)" }
-if (-not $appJs0436.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.43.6.' }
+if ($version0436 -ne '0.51.0') { throw "VERSION.txt esperado 0.43.6; atual: $version0436" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.43.6: $($health.version)" }
+if (-not $appJs0436.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.43.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_HISTORY_V0433='v0.43.3'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_FILTERS_V0434='v0.43.4'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_SUMMARY_V0435='v0.43.5'","HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_CLOSURE_V0436='v0.43.6'")) {
     if (-not $appJs0436.Contains($token)) { throw "Marcador historico/atual ausente na v0.43.6: $token" }
 }
@@ -23654,9 +23654,9 @@ foreach ($token in @('v0.44.0 — Professional Review Team Decision Foundation',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3491/3491] Validando versao funcional v0.44.0..." -ForegroundColor Cyan
-if ($version0440 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.0; atual: $version0440" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.0: $($health.version)" }
-if (-not $appJs0440.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.0.' }
+if ($version0440 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.0; atual: $version0440" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.0: $($health.version)" }
+if (-not $appJs0440.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_CLOSURE_V0436='v0.43.6'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_V0440='v0.44.0'")) {
     if (-not $appJs0440.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.0: $token" }
 }
@@ -23737,9 +23737,9 @@ foreach ($token in @('v0.44.1 — Professional Review Team Decision Persistence'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3501/3501] Validando versao funcional v0.44.1..." -ForegroundColor Cyan
-if ($version0441 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.1; atual: $version0441" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.1: $($health.version)" }
-if (-not $appJs0441.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.1.' }
+if ($version0441 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.1; atual: $version0441" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.1: $($health.version)" }
+if (-not $appJs0441.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_V0440='v0.44.0'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_PERSISTENCE_V0441='v0.44.1'")) {
     if (-not $appJs0441.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.1: $token" }
 }
@@ -23810,9 +23810,9 @@ foreach ($token in @('v0.44.2 — Professional Review Team Decision Status','PRO
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3510/3510] Validando versao funcional v0.44.2..." -ForegroundColor Cyan
-if ($version0442 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.2; atual: $version0442" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.2: $($health.version)" }
-if (-not $appJs0442.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.2.' }
+if ($version0442 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.2; atual: $version0442" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.2: $($health.version)" }
+if (-not $appJs0442.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_V0440='v0.44.0'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_PERSISTENCE_V0441='v0.44.1'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_V0442='v0.44.2'")) {
     if (-not $appJs0442.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.2: $token" }
 }
@@ -23884,9 +23884,9 @@ foreach ($token in @('v0.44.3 — Professional Review Team Decision History','te
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3519/3519] Validando versao funcional v0.44.3..." -ForegroundColor Cyan
-if ($version0443 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.3; atual: $version0443" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.3: $($health.version)" }
-if (-not $appJs0443.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.3.' }
+if ($version0443 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.3; atual: $version0443" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.3: $($health.version)" }
+if (-not $appJs0443.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_V0440='v0.44.0'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_PERSISTENCE_V0441='v0.44.1'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_V0442='v0.44.2'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_HISTORY_V0443='v0.44.3'")) {
     if (-not $appJs0443.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.3: $token" }
 }
@@ -23957,9 +23957,9 @@ foreach ($token in @('v0.44.4 — Professional Review Team Decision Filters','te
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3528/3528] Validando versao funcional v0.44.4..." -ForegroundColor Cyan
-if ($version0444 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.4; atual: $version0444" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.4: $($health.version)" }
-if (-not $appJs0444.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.4.' }
+if ($version0444 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.4; atual: $version0444" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.4: $($health.version)" }
+if (-not $appJs0444.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_V0442='v0.44.2'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_HISTORY_V0443='v0.44.3'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_FILTERS_V0444='v0.44.4'")) {
     if (-not $appJs0444.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.4: $token" }
 }
@@ -24032,9 +24032,9 @@ foreach ($token in @('v0.44.5 — Professional Review Team Decision Summary','te
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3537/3537] Validando versao funcional v0.44.5..." -ForegroundColor Cyan
-if ($version0445 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.5; atual: $version0445" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.5: $($health.version)" }
-if (-not $appJs0445.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.5.' }
+if ($version0445 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.5; atual: $version0445" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.5: $($health.version)" }
+if (-not $appJs0445.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_HISTORY_V0443='v0.44.3'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_FILTERS_V0444='v0.44.4'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_SUMMARY_V0445='v0.44.5'")) {
     if (-not $appJs0445.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.5: $token" }
 }
@@ -24109,9 +24109,9 @@ foreach ($token in @('v0.44.6 — Professional Review Team Decision Closure','En
 Write-Host "    Linha 0.44.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3546/3546] Validando versao funcional v0.44.6..." -ForegroundColor Cyan
-if ($version0446 -ne '0.50.6') { throw "VERSION.txt esperado 0.44.6; atual: $version0446" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.44.6: $($health.version)" }
-if (-not $appJs0446.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.44.6.' }
+if ($version0446 -ne '0.51.0') { throw "VERSION.txt esperado 0.44.6; atual: $version0446" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.44.6: $($health.version)" }
+if (-not $appJs0446.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.44.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_HISTORY_V0443='v0.44.3'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_FILTERS_V0444='v0.44.4'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_SUMMARY_V0445='v0.44.5'","HP_PROFESSIONAL_REVIEW_TEAM_DECISION_CLOSURE_V0446='v0.44.6'")) {
     if (-not $appJs0446.Contains($token)) { throw "Marcador historico/atual ausente na v0.44.6: $token" }
 }
@@ -24190,9 +24190,9 @@ foreach ($token in @('v0.45.0 — Professional Review Team Outcome Foundation','
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3555/3555] Validando versao funcional v0.45.0..." -ForegroundColor Cyan
-if ($version0450 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.0; atual: $version0450" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.0: $($health.version)" }
-if (-not $appJs0450.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.0.' }
+if ($version0450 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.0; atual: $version0450" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.0: $($health.version)" }
+if (-not $appJs0450.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_DECISION_CLOSURE_V0446='v0.44.6'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_V0450='v0.45.0'")) {
     if (-not $appJs0450.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.0: $token" }
 }
@@ -24273,9 +24273,9 @@ foreach ($token in @('v0.45.1 — Professional Review Team Outcome Persistence',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3565/3565] Validando versao funcional v0.45.1..." -ForegroundColor Cyan
-if ($version0451 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.1; atual: $version0451" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.1: $($health.version)" }
-if (-not $appJs0451.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.1.' }
+if ($version0451 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.1; atual: $version0451" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.1: $($health.version)" }
+if (-not $appJs0451.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_V0450='v0.45.0'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_PERSISTENCE_V0451='v0.45.1'")) {
     if (-not $appJs0451.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.1: $token" }
 }
@@ -24346,9 +24346,9 @@ foreach ($token in @('v0.45.2 — Professional Review Team Outcome Status','PROF
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3574/3574] Validando versao funcional v0.45.2..." -ForegroundColor Cyan
-if ($version0452 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.2; atual: $version0452" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.2: $($health.version)" }
-if (-not $appJs0452.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.2.' }
+if ($version0452 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.2; atual: $version0452" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.2: $($health.version)" }
+if (-not $appJs0452.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_V0450='v0.45.0'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_PERSISTENCE_V0451='v0.45.1'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_STATUS_V0452='v0.45.2'")) {
     if (-not $appJs0452.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.2: $token" }
 }
@@ -24420,9 +24420,9 @@ foreach ($token in @('v0.45.3 — Professional Review Team Outcome History','tea
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3583/3583] Validando versao funcional v0.45.3..." -ForegroundColor Cyan
-if ($version0453 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.3; atual: $version0453" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.3: $($health.version)" }
-if (-not $appJs0453.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.3.' }
+if ($version0453 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.3; atual: $version0453" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.3: $($health.version)" }
+if (-not $appJs0453.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_V0450='v0.45.0'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_PERSISTENCE_V0451='v0.45.1'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_STATUS_V0452='v0.45.2'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_HISTORY_V0453='v0.45.3'")) {
     if (-not $appJs0453.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.3: $token" }
 }
@@ -24493,9 +24493,9 @@ foreach ($token in @('v0.45.4 — Professional Review Team Outcome Filters','tea
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3592/3592] Validando versao funcional v0.45.4..." -ForegroundColor Cyan
-if ($version0454 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.4; atual: $version0454" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.4: $($health.version)" }
-if (-not $appJs0454.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.4.' }
+if ($version0454 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.4; atual: $version0454" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.4: $($health.version)" }
+if (-not $appJs0454.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_STATUS_V0452='v0.45.2'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_HISTORY_V0453='v0.45.3'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_FILTERS_V0454='v0.45.4'")) {
     if (-not $appJs0454.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.4: $token" }
 }
@@ -24568,9 +24568,9 @@ foreach ($token in @('v0.45.5 — Professional Review Team Outcome Summary','tea
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3601/3601] Validando versao funcional v0.45.5..." -ForegroundColor Cyan
-if ($version0455 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.5; atual: $version0455" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.5: $($health.version)" }
-if (-not $appJs0455.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.5.' }
+if ($version0455 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.5; atual: $version0455" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.5: $($health.version)" }
+if (-not $appJs0455.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_HISTORY_V0453='v0.45.3'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_FILTERS_V0454='v0.45.4'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_SUMMARY_V0455='v0.45.5'")) {
     if (-not $appJs0455.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.5: $token" }
 }
@@ -24645,9 +24645,9 @@ foreach ($token in @('v0.45.6 — Professional Review Team Outcome Closure','Enc
 Write-Host "    Linha 0.45.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3610/3610] Validando versao funcional v0.45.6..." -ForegroundColor Cyan
-if ($version0456 -ne '0.50.6') { throw "VERSION.txt esperado 0.45.6; atual: $version0456" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.45.6: $($health.version)" }
-if (-not $appJs0456.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.45.6.' }
+if ($version0456 -ne '0.51.0') { throw "VERSION.txt esperado 0.45.6; atual: $version0456" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.45.6: $($health.version)" }
+if (-not $appJs0456.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.45.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_HISTORY_V0453='v0.45.3'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_FILTERS_V0454='v0.45.4'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_SUMMARY_V0455='v0.45.5'","HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_CLOSURE_V0456='v0.45.6'")) {
     if (-not $appJs0456.Contains($token)) { throw "Marcador historico/atual ausente na v0.45.6: $token" }
 }
@@ -24726,9 +24726,9 @@ foreach ($token in @('v0.46.0 — Professional Review Team Learning Foundation',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3619/3619] Validando versao funcional v0.46.0..." -ForegroundColor Cyan
-if ($version0460 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.0; atual: $version0460" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.0: $($health.version)" }
-if (-not $appJs0460.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.0.' }
+if ($version0460 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.0; atual: $version0460" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.0: $($health.version)" }
+if (-not $appJs0460.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_OUTCOME_CLOSURE_V0456='v0.45.6'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0'")) {
     if (-not $appJs0460.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.0: $token" }
 }
@@ -24809,9 +24809,9 @@ foreach ($token in @('v0.46.1 — Professional Review Team Learning Persistence'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3629/3629] Validando versao funcional v0.46.1..." -ForegroundColor Cyan
-if ($version0461 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.1; atual: $version0461" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.1: $($health.version)" }
-if (-not $appJs0461.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.1.' }
+if ($version0461 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.1; atual: $version0461" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.1: $($health.version)" }
+if (-not $appJs0461.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461='v0.46.1'")) {
     if (-not $appJs0461.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.1: $token" }
 }
@@ -24882,9 +24882,9 @@ foreach ($token in @('v0.46.2 — Professional Review Team Learning Status','PRO
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3638/3638] Validando versao funcional v0.46.2..." -ForegroundColor Cyan
-if ($version0462 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.2; atual: $version0462" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.2: $($health.version)" }
-if (-not $appJs0462.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.2.' }
+if ($version0462 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.2; atual: $version0462" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.2: $($health.version)" }
+if (-not $appJs0462.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461='v0.46.1'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_V0462='v0.46.2'")) {
     if (-not $appJs0462.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.2: $token" }
 }
@@ -24956,9 +24956,9 @@ foreach ($token in @('v0.46.3 — Professional Review Team Learning History','te
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3647/3647] Validando versao funcional v0.46.3..." -ForegroundColor Cyan
-if ($version0463 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.3; atual: $version0463" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.3: $($health.version)" }
-if (-not $appJs0463.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.3.' }
+if ($version0463 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.3; atual: $version0463" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.3: $($health.version)" }
+if (-not $appJs0463.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_V0460='v0.46.0'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_PERSISTENCE_V0461='v0.46.1'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_V0462='v0.46.2'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463='v0.46.3'")) {
     if (-not $appJs0463.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.3: $token" }
 }
@@ -25029,9 +25029,9 @@ foreach ($token in @('v0.46.4 — Professional Review Team Learning Filters','te
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3656/3656] Validando versao funcional v0.46.4..." -ForegroundColor Cyan
-if ($version0464 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.4; atual: $version0464" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.4: $($health.version)" }
-if (-not $appJs0464.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.4.' }
+if ($version0464 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.4; atual: $version0464" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.4: $($health.version)" }
+if (-not $appJs0464.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_STATUS_V0462='v0.46.2'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463='v0.46.3'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_FILTERS_V0464='v0.46.4'")) {
     if (-not $appJs0464.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.4: $token" }
 }
@@ -25104,9 +25104,9 @@ foreach ($token in @('v0.46.5 — Professional Review Team Learning Summary','te
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3665/3665] Validando versao funcional v0.46.5..." -ForegroundColor Cyan
-if ($version0465 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.5; atual: $version0465" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.5: $($health.version)" }
-if (-not $appJs0465.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.5.' }
+if ($version0465 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.5; atual: $version0465" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.5: $($health.version)" }
+if (-not $appJs0465.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463='v0.46.3'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_FILTERS_V0464='v0.46.4'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_SUMMARY_V0465='v0.46.5'")) {
     if (-not $appJs0465.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.5: $token" }
 }
@@ -25181,9 +25181,9 @@ foreach ($token in @('v0.46.6 — Professional Review Team Learning Closure','En
 Write-Host "    Linha 0.46.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3674/3674] Validando versao funcional v0.46.6..." -ForegroundColor Cyan
-if ($version0466 -ne '0.50.6') { throw "VERSION.txt esperado 0.46.6; atual: $version0466" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.46.6: $($health.version)" }
-if (-not $appJs0466.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.46.6.' }
+if ($version0466 -ne '0.51.0') { throw "VERSION.txt esperado 0.46.6; atual: $version0466" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.46.6: $($health.version)" }
+if (-not $appJs0466.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.46.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_HISTORY_V0463='v0.46.3'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_FILTERS_V0464='v0.46.4'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_SUMMARY_V0465='v0.46.5'","HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466='v0.46.6'")) {
     if (-not $appJs0466.Contains($token)) { throw "Marcador historico/atual ausente na v0.46.6: $token" }
 }
@@ -25262,9 +25262,9 @@ foreach ($token in @('v0.47.0 — Professional Review Team Insight Foundation','
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3683/3683] Validando versao funcional v0.47.0..." -ForegroundColor Cyan
-if ($version0470 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.0; atual: $version0470" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.0: $($health.version)" }
-if (-not $appJs0470.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.0.' }
+if ($version0470 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.0; atual: $version0470" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.0: $($health.version)" }
+if (-not $appJs0470.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466='v0.46.6'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_V0470='v0.47.0'")) {
     if (-not $appJs0470.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.0: $token" }
 }
@@ -25345,9 +25345,9 @@ foreach ($token in @('v0.47.1 — Professional Review Team Insight Persistence',
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3693/3693] Validando versao funcional v0.47.1..." -ForegroundColor Cyan
-if ($version0471 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.1; atual: $version0471" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.1: $($health.version)" }
-if (-not $appJs0471.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.1.' }
+if ($version0471 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.1; atual: $version0471" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.1: $($health.version)" }
+if (-not $appJs0471.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_V0470='v0.47.0'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471='v0.47.1'")) {
     if (-not $appJs0471.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.1: $token" }
 }
@@ -25418,9 +25418,9 @@ foreach ($token in @('v0.47.2 — Professional Review Team Insight Status','PROF
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3702/3702] Validando versao funcional v0.47.2..." -ForegroundColor Cyan
-if ($version0472 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.2; atual: $version0472" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.2: $($health.version)" }
-if (-not $appJs0472.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.2.' }
+if ($version0472 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.2; atual: $version0472" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.2: $($health.version)" }
+if (-not $appJs0472.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_V0470='v0.47.0'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471='v0.47.1'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_V0472='v0.47.2'")) {
     if (-not $appJs0472.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.2: $token" }
 }
@@ -25492,9 +25492,9 @@ foreach ($token in @('v0.47.3 — Professional Review Team Insight History','tea
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3711/3711] Validando versao funcional v0.47.3..." -ForegroundColor Cyan
-if ($version0473 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.3; atual: $version0473" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.3: $($health.version)" }
-if (-not $appJs0473.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.3.' }
+if ($version0473 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.3; atual: $version0473" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.3: $($health.version)" }
+if (-not $appJs0473.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_V0470='v0.47.0'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471='v0.47.1'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_V0472='v0.47.2'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_HISTORY_V0473='v0.47.3'")) {
     if (-not $appJs0473.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.3: $token" }
 }
@@ -25565,9 +25565,9 @@ foreach ($token in @('v0.47.4 — Professional Review Team Insight Filters','tea
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3720/3720] Validando versao funcional v0.47.4..." -ForegroundColor Cyan
-if ($version0474 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.4; atual: $version0474" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.4: $($health.version)" }
-if (-not $appJs0474.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.4.' }
+if ($version0474 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.4; atual: $version0474" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.4: $($health.version)" }
+if (-not $appJs0474.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_V0472='v0.47.2'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_HISTORY_V0473='v0.47.3'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_FILTERS_V0474='v0.47.4'")) {
     if (-not $appJs0474.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.4: $token" }
 }
@@ -25640,9 +25640,9 @@ foreach ($token in @('v0.47.5 — Professional Review Team Insight Summary','tea
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3729/3729] Validando versao funcional v0.47.5..." -ForegroundColor Cyan
-if ($version0475 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.5; atual: $version0475" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.5: $($health.version)" }
-if (-not $appJs0475.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.5.' }
+if ($version0475 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.5; atual: $version0475" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.5: $($health.version)" }
+if (-not $appJs0475.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_HISTORY_V0473='v0.47.3'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_FILTERS_V0474='v0.47.4'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_SUMMARY_V0475='v0.47.5'")) {
     if (-not $appJs0475.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.5: $token" }
 }
@@ -25717,9 +25717,9 @@ foreach ($token in @('v0.47.6 — Professional Review Team Insight Closure','Enc
 Write-Host "    Linha 0.47.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3738/3738] Validando versao funcional v0.47.6..." -ForegroundColor Cyan
-if ($version0476 -ne '0.50.6') { throw "VERSION.txt esperado 0.47.6; atual: $version0476" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.47.6: $($health.version)" }
-if (-not $appJs0476.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.47.6.' }
+if ($version0476 -ne '0.51.0') { throw "VERSION.txt esperado 0.47.6; atual: $version0476" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.47.6: $($health.version)" }
+if (-not $appJs0476.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.47.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_HISTORY_V0473='v0.47.3'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_FILTERS_V0474='v0.47.4'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_SUMMARY_V0475='v0.47.5'","HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_CLOSURE_V0476='v0.47.6'")) {
     if (-not $appJs0476.Contains($token)) { throw "Marcador historico/atual ausente na v0.47.6: $token" }
 }
@@ -25798,9 +25798,9 @@ foreach ($token in @('v0.48.0 — Professional Review Team Knowledge Foundation'
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3747/3747] Validando versao funcional v0.48.0..." -ForegroundColor Cyan
-if ($version0480 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.0; atual: $version0480" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.0: $($health.version)" }
-if (-not $appJs0480.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.0.' }
+if ($version0480 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.0; atual: $version0480" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.0: $($health.version)" }
+if (-not $appJs0480.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_CLOSURE_V0476='v0.47.6'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_V0480='v0.48.0'")) {
     if (-not $appJs0480.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.0: $token" }
 }
@@ -25881,9 +25881,9 @@ foreach ($token in @('v0.48.1 — Professional Review Team Knowledge Persistence
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3757/3757] Validando versao funcional v0.48.1..." -ForegroundColor Cyan
-if ($version0481 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.1; atual: $version0481" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.1: $($health.version)" }
-if (-not $appJs0481.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.1.' }
+if ($version0481 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.1; atual: $version0481" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.1: $($health.version)" }
+if (-not $appJs0481.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_V0480='v0.48.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_PERSISTENCE_V0481='v0.48.1'")) {
     if (-not $appJs0481.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.1: $token" }
 }
@@ -25954,9 +25954,9 @@ foreach ($token in @('v0.48.2 — Professional Review Team Knowledge Status','PR
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3766/3766] Validando versao funcional v0.48.2..." -ForegroundColor Cyan
-if ($version0482 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.2; atual: $version0482" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.2: $($health.version)" }
-if (-not $appJs0482.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.2.' }
+if ($version0482 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.2; atual: $version0482" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.2: $($health.version)" }
+if (-not $appJs0482.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_V0480='v0.48.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_PERSISTENCE_V0481='v0.48.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_STATUS_V0482='v0.48.2'")) {
     if (-not $appJs0482.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.2: $token" }
 }
@@ -26028,9 +26028,9 @@ foreach ($token in @('v0.48.3 — Professional Review Team Knowledge History','t
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3775/3775] Validando versao funcional v0.48.3..." -ForegroundColor Cyan
-if ($version0483 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.3; atual: $version0483" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.3: $($health.version)" }
-if (-not $appJs0483.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.3.' }
+if ($version0483 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.3; atual: $version0483" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.3: $($health.version)" }
+if (-not $appJs0483.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_V0480='v0.48.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_PERSISTENCE_V0481='v0.48.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_STATUS_V0482='v0.48.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_HISTORY_V0483='v0.48.3'")) {
     if (-not $appJs0483.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.3: $token" }
 }
@@ -26101,9 +26101,9 @@ foreach ($token in @('v0.48.4 — Professional Review Team Knowledge Filters','t
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3784/3784] Validando versao funcional v0.48.4..." -ForegroundColor Cyan
-if ($version0484 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.4; atual: $version0484" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.4: $($health.version)" }
-if (-not $appJs0484.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.4.' }
+if ($version0484 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.4; atual: $version0484" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.4: $($health.version)" }
+if (-not $appJs0484.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_STATUS_V0482='v0.48.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_HISTORY_V0483='v0.48.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_FILTERS_V0484='v0.48.4'")) {
     if (-not $appJs0484.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.4: $token" }
 }
@@ -26176,9 +26176,9 @@ foreach ($token in @('v0.48.5 — Professional Review Team Knowledge Summary','t
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3793/3793] Validando versao funcional v0.48.5..." -ForegroundColor Cyan
-if ($version0485 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.5; atual: $version0485" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.5: $($health.version)" }
-if (-not $appJs0485.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.5.' }
+if ($version0485 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.5; atual: $version0485" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.5: $($health.version)" }
+if (-not $appJs0485.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_HISTORY_V0483='v0.48.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_FILTERS_V0484='v0.48.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_SUMMARY_V0485='v0.48.5'")) {
     if (-not $appJs0485.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.5: $token" }
 }
@@ -26253,9 +26253,9 @@ foreach ($token in @('v0.48.6 — Professional Review Team Knowledge Closure','E
 Write-Host "    Linha 0.48.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3802/3802] Validando versao funcional v0.48.6..." -ForegroundColor Cyan
-if ($version0486 -ne '0.50.6') { throw "VERSION.txt esperado 0.48.6; atual: $version0486" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.48.6: $($health.version)" }
-if (-not $appJs0486.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.48.6.' }
+if ($version0486 -ne '0.51.0') { throw "VERSION.txt esperado 0.48.6; atual: $version0486" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.48.6: $($health.version)" }
+if (-not $appJs0486.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.48.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_HISTORY_V0483='v0.48.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_FILTERS_V0484='v0.48.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_SUMMARY_V0485='v0.48.5'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_CLOSURE_V0486='v0.48.6'")) {
     if (-not $appJs0486.Contains($token)) { throw "Marcador historico/atual ausente na v0.48.6: $token" }
 }
@@ -26334,9 +26334,9 @@ foreach ($token in @('v0.49.0 — Professional Review Team Knowledge Application
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3811/3811] Validando versao funcional v0.49.0..." -ForegroundColor Cyan
-if ($version0490 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.0; atual: $version0490" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.0: $($health.version)" }
-if (-not $appJs0490.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.0.' }
+if ($version0490 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.0; atual: $version0490" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.0: $($health.version)" }
+if (-not $appJs0490.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_CLOSURE_V0486='v0.48.6'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_V0490='v0.49.0'")) {
     if (-not $appJs0490.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.0: $token" }
 }
@@ -26417,9 +26417,9 @@ foreach ($token in @('v0.49.1 — Professional Review Team Knowledge Application
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3821/3821] Validando versao funcional v0.49.1..." -ForegroundColor Cyan
-if ($version0491 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.1; atual: $version0491" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.1: $($health.version)" }
-if (-not $appJs0491.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.1.' }
+if ($version0491 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.1; atual: $version0491" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.1: $($health.version)" }
+if (-not $appJs0491.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_V0490='v0.49.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_PERSISTENCE_V0491='v0.49.1'")) {
     if (-not $appJs0491.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.1: $token" }
 }
@@ -26490,9 +26490,9 @@ foreach ($token in @('v0.49.2 — Professional Review Team Knowledge Application
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3830/3830] Validando versao funcional v0.49.2..." -ForegroundColor Cyan
-if ($version0492 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.2; atual: $version0492" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.2: $($health.version)" }
-if (-not $appJs0492.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.2.' }
+if ($version0492 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.2; atual: $version0492" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.2: $($health.version)" }
+if (-not $appJs0492.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_V0490='v0.49.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_PERSISTENCE_V0491='v0.49.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_V0492='v0.49.2'")) {
     if (-not $appJs0492.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.2: $token" }
 }
@@ -26564,9 +26564,9 @@ foreach ($token in @('v0.49.3 — Professional Review Team Knowledge Application
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3839/3839] Validando versao funcional v0.49.3..." -ForegroundColor Cyan
-if ($version0493 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.3; atual: $version0493" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.3: $($health.version)" }
-if (-not $appJs0493.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.3.' }
+if ($version0493 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.3; atual: $version0493" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.3: $($health.version)" }
+if (-not $appJs0493.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_V0490='v0.49.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_PERSISTENCE_V0491='v0.49.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_V0492='v0.49.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493='v0.49.3'")) {
     if (-not $appJs0493.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.3: $token" }
 }
@@ -26637,9 +26637,9 @@ foreach ($token in @('v0.49.4 — Professional Review Team Knowledge Application
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3848/3848] Validando versao funcional v0.49.4..." -ForegroundColor Cyan
-if ($version0494 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.4; atual: $version0494" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.4: $($health.version)" }
-if (-not $appJs0494.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.4.' }
+if ($version0494 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.4; atual: $version0494" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.4: $($health.version)" }
+if (-not $appJs0494.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_STATUS_V0492='v0.49.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493='v0.49.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_FILTERS_V0494='v0.49.4'")) {
     if (-not $appJs0494.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.4: $token" }
 }
@@ -26712,9 +26712,9 @@ foreach ($token in @('v0.49.5 — Professional Review Team Knowledge Application
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3857/3857] Validando versao funcional v0.49.5..." -ForegroundColor Cyan
-if ($version0495 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.5; atual: $version0495" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.5: $($health.version)" }
-if (-not $appJs0495.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.5.' }
+if ($version0495 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.5; atual: $version0495" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.5: $($health.version)" }
+if (-not $appJs0495.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493='v0.49.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_FILTERS_V0494='v0.49.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_SUMMARY_V0495='v0.49.5'")) {
     if (-not $appJs0495.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.5: $token" }
 }
@@ -26789,9 +26789,9 @@ foreach ($token in @('v0.49.6 — Professional Review Team Knowledge Application
 Write-Host "    Linha 0.49.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3866/3866] Validando versao funcional v0.49.6..." -ForegroundColor Cyan
-if ($version0496 -ne '0.50.6') { throw "VERSION.txt esperado 0.49.6; atual: $version0496" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.49.6: $($health.version)" }
-if (-not $appJs0496.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.49.6.' }
+if ($version0496 -ne '0.51.0') { throw "VERSION.txt esperado 0.49.6; atual: $version0496" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.49.6: $($health.version)" }
+if (-not $appJs0496.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.49.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_HISTORY_V0493='v0.49.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_FILTERS_V0494='v0.49.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_SUMMARY_V0495='v0.49.5'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_CLOSURE_V0496='v0.49.6'")) {
     if (-not $appJs0496.Contains($token)) { throw "Marcador historico/atual ausente na v0.49.6: $token" }
 }
@@ -26870,9 +26870,9 @@ foreach ($token in @('v0.50.0 — Professional Review Team Knowledge Effect Foun
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3875/3875] Validando versao funcional v0.50.0..." -ForegroundColor Cyan
-if ($version0500 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.0; atual: $version0500" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.0: $($health.version)" }
-if (-not $appJs0500.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.0.' }
+if ($version0500 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.0; atual: $version0500" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.0: $($health.version)" }
+if (-not $appJs0500.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.0.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_APPLICATION_CLOSURE_V0496='v0.49.6'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0'")) {
     if (-not $appJs0500.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.0: $token" }
 }
@@ -26953,9 +26953,9 @@ foreach ($token in @('v0.50.1 — Professional Review Team Knowledge Effect Pers
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3885/3885] Validando versao funcional v0.50.1..." -ForegroundColor Cyan
-if ($version0501 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.1; atual: $version0501" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.1: $($health.version)" }
-if (-not $appJs0501.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.1.' }
+if ($version0501 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.1; atual: $version0501" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.1: $($health.version)" }
+if (-not $appJs0501.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.1.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1'")) {
     if (-not $appJs0501.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.1: $token" }
 }
@@ -27026,9 +27026,9 @@ foreach ($token in @('v0.50.2 — Professional Review Team Knowledge Effect Stat
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3894/3894] Validando versao funcional v0.50.2..." -ForegroundColor Cyan
-if ($version0502 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.2; atual: $version0502" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.2: $($health.version)" }
-if (-not $appJs0502.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.2.' }
+if ($version0502 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.2; atual: $version0502" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.2: $($health.version)" }
+if (-not $appJs0502.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.2.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_V0502='v0.50.2'")) {
     if (-not $appJs0502.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.2: $token" }
 }
@@ -27100,9 +27100,9 @@ foreach ($token in @('v0.50.3 — Professional Review Team Knowledge Effect Hist
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3903/3903] Validando versao funcional v0.50.3..." -ForegroundColor Cyan
-if ($version0503 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.3; atual: $version0503" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.3: $($health.version)" }
-if (-not $appJs0503.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.3.' }
+if ($version0503 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.3; atual: $version0503" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.3: $($health.version)" }
+if (-not $appJs0503.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.3.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_V0502='v0.50.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3'")) {
     if (-not $appJs0503.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.3: $token" }
 }
@@ -27173,9 +27173,9 @@ foreach ($token in @('v0.50.4 — Professional Review Team Knowledge Effect Filt
 Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
 
 Write-Host "[3912/3912] Validando versao funcional v0.50.4..." -ForegroundColor Cyan
-if ($version0504 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.4; atual: $version0504" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.4: $($health.version)" }
-if (-not $appJs0504.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.4.' }
+if ($version0504 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.4; atual: $version0504" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.4: $($health.version)" }
+if (-not $appJs0504.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.4.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_V0502='v0.50.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504='v0.50.4'")) {
     if (-not $appJs0504.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.4: $token" }
 }
@@ -27248,9 +27248,9 @@ foreach ($token in @('v0.50.5 — Professional Review Team Knowledge Effect Summ
 Write-Host "    Baseline + docs: OK." -ForegroundColor Green
 
 Write-Host "[3921/3921] Validando versao funcional v0.50.5..." -ForegroundColor Cyan
-if ($version0505 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.5; atual: $version0505" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.5: $($health.version)" }
-if (-not $appJs0505.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.5.' }
+if ($version0505 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.5; atual: $version0505" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.5: $($health.version)" }
+if (-not $appJs0505.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.5.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504='v0.50.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_SUMMARY_V0505='v0.50.5'")) {
     if (-not $appJs0505.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.5: $token" }
 }
@@ -27325,14 +27325,95 @@ foreach ($token in @('v0.50.6 — Professional Review Team Knowledge Effect Clos
 Write-Host "    Linha 0.50.x fechada: OK." -ForegroundColor Green
 
 Write-Host "[3930/3930] Validando versao funcional v0.50.6..." -ForegroundColor Cyan
-if ($version0506 -ne '0.50.6') { throw "VERSION.txt esperado 0.50.6; atual: $version0506" }
-if ($health.version -ne '0.50.6') { throw "Health runtime fora da v0.50.6: $($health.version)" }
-if (-not $appJs0506.Contains("const HP_MVP_VERSION='0.50.6';")) { throw 'Interface nao anuncia v0.50.6.' }
+if ($version0506 -ne '0.51.0') { throw "VERSION.txt esperado 0.50.6; atual: $version0506" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.50.6: $($health.version)" }
+if (-not $appJs0506.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.50.6.' }
 foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504='v0.50.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_SUMMARY_V0505='v0.50.5'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CLOSURE_V0506='v0.50.6'")) {
     if (-not $appJs0506.Contains($token)) { throw "Marcador historico/atual ausente na v0.50.6: $token" }
 }
 Write-Host "    v0.50.6 / Professional Review Team Knowledge Effect Closure: OK." -ForegroundColor Green
 Write-Host "    Proxima etapa: v0.51.0 / Professional Review Team Knowledge Effect Review Foundation" -ForegroundColor DarkCyan
+Write-Host ""
+
+
+# ===== v0.51.0 - Professional Review Team Knowledge Effect Review Foundation =====
+$root0510 = Split-Path -Parent $MyInvocation.MyCommand.Path
+$version0510 = (Get-Content -Encoding UTF8 (Join-Path $root0510 'VERSION.txt') -Raw).Trim()
+$appJs0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
+$contracts0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs') -Raw
+$service0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'src/HealthPlatform.Api/Services/AthletePerformancePassportService.cs') -Raw
+$notes0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs') -Raw
+$readme0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'README.md') -Raw
+$roadmap0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'ROADMAP.md') -Raw
+$changelog0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'CHANGELOG.md') -Raw
+$testar0510 = Get-Content -Encoding UTF8 (Join-Path $root0510 'TESTAR.ps1') -Raw
+
+Write-Host "[3931/3939] Validando contratos Team Knowledge Effect Review Foundation..." -ForegroundColor Cyan
+foreach ($token in @('ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse','ProfessionalReviewTeamKnowledgeEffectReviewFoundationResponse','EstadoPreparacao','PersistenciaDisponivel','Escopo','Campos')) {
+    if (-not $contracts0510.Contains($token)) { throw "Contrato Team Knowledge Effect Review v0.51.0 incompleto: $token" }
+}
+Write-Host "    Contratos foundation: OK." -ForegroundColor Green
+
+Write-Host "[3932/3939] Validando campos estruturais..." -ForegroundColor Cyan
+foreach ($token in @('"team-knowledge-effect-relacionado"','"team-knowledge-application-relacionada"','"team-knowledge-relacionado"','"team-insight-relacionado"','"team-learning-relacionado"','"team-outcome-relacionado"','"team-decision-relacionada"','"team-alignment-relacionado"','"shared-context-relacionado"','"collaboration-relacionada"','"coordination-relacionada"','"escalation-relacionada"','"continuity-relacionada"','"profissional-revisor"','"participantes"','"revisao-documentada"','"contexto-revisao"','"base-observacional-evidencia-suporte"','"interpretacao-profissional"','"conclusao-documental"','"necessidade-acompanhamento-documentada"','"horizonte"','"observacao-profissional"')) {
+    if (-not $notes0510.Contains($token)) { throw "Campo Team Knowledge Effect Review v0.51.0 ausente: $token" }
+}
+Write-Host "    Vinte e tres campos: OK." -ForegroundColor Green
+
+Write-Host "[3933/3939] Validando endpoint foundation..." -ForegroundColor Cyan
+foreach ($token in @('[HttpGet("team-knowledge-effect-review/foundation")]','TeamKnowledgeEffectReviewFoundation','FundacaoTeamKnowledgeEffectReviewDisponivel','EquipeProfissional')) {
+    if (-not $notes0510.Contains($token)) { throw "Endpoint Team Knowledge Effect Review v0.51.0 incompleto: $token" }
+}
+Write-Host "    GET foundation: OK." -ForegroundColor Green
+
+Write-Host "[3934/3939] Validando persistencia inicial desabilitada..." -ForegroundColor Cyan
+$persistenciaTeamKnowledgeEffectReview0510FalsePattern = '"FundacaoTeamKnowledgeEffectReviewDisponivel"\s*,\s*false\s*,'
+$persistenciaTeamKnowledgeEffectReview0510TruePattern = '"FundacaoTeamKnowledgeEffectReviewDisponivel"\s*,\s*true\s*,'
+if ($version0510 -eq '0.51.0') {
+    if (-not [regex]::IsMatch($notes0510, $persistenciaTeamKnowledgeEffectReview0510FalsePattern, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+        throw 'Team Knowledge Effect Review v0.51.0 deve iniciar com PersistenciaDisponivel=false.'
+    }
+} else {
+    if (-not [regex]::IsMatch($notes0510, $persistenciaTeamKnowledgeEffectReview0510TruePattern, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+        throw 'Team Knowledge Effect Review em versao posterior a v0.51.0 deve anunciar PersistenciaDisponivel=true.'
+    }
+}
+Write-Host "    Persistencia foundation: OK." -ForegroundColor Green
+
+Write-Host "[3935/3939] Validando UI Team Knowledge Effect Review Foundation..." -ForegroundColor Cyan
+foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_V0510='v0.51.0'",'hpLoadProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510','hpRenderProfessionalReviewTeamKnowledgeEffectReviewFoundationV0510','professionalReviewTeamKnowledgeEffectReviewFoundationV0510','Revisão profissional dos efeitos observados')) {
+    if (-not $appJs0510.Contains($token)) { throw "UI Team Knowledge Effect Review v0.51.0 incompleta: $token" }
+}
+Write-Host "    Foundation UI: OK." -ForegroundColor Green
+
+Write-Host "[3936/3939] Validando guardrail estrutural..." -ForegroundColor Cyan
+$guardrailTexto0510 = ($readme0510 + $changelog0510 + $service0510 + $notes0510).ToLowerInvariant()
+foreach ($token in @('não transforma revisão em validação causal','evidência clínica validada','não produz prognóstico','recomendação','decisão terapêutica automática','não executa conduta','prescrição','não transfere automaticamente responsabilidade clínica','não substitui avaliação profissional')) {
+    if (-not $guardrailTexto0510.Contains($token.ToLowerInvariant())) { throw "Guardrail Team Knowledge Effect Review v0.51.0 ausente: $token" }
+}
+Write-Host "    Sem validacao causal/evidencia/prognostico/recomendacao automatica: OK." -ForegroundColor Green
+
+Write-Host "[3937/3939] Validando baseline 0.50.x..." -ForegroundColor Cyan
+foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CLOSURE_V0506='v0.50.6'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_SUMMARY_V0505='v0.50.5'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_FILTERS_V0504='v0.50.4'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_HISTORY_V0503='v0.50.3'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_STATUS_V0502='v0.50.2'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_PERSISTENCE_V0501='v0.50.1'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_V0500='v0.50.0'",'$persistenciaTeamKnowledgeEffect0500TruePattern','$persistenciaTeamKnowledgeApplication0490TruePattern','$persistenciaTeamKnowledge0480TruePattern','$persistenciaTeamInsight0470TruePattern','$persistenciaTeamLearning0460TruePattern','$persistenciaTeamOutcome0450TruePattern','$persistenciaTeamDecision0440TruePattern','$persistenciaTeamAlignment0430TruePattern','$persistenciaSharedContext0420TruePattern','$persistenciaCollaboration0410TruePattern','$guardrailTexto0311')) {
+    if (-not (($appJs0510 + $testar0510).Contains($token))) { throw "Baseline aprovado anterior ausente na v0.51.0: $token" }
+}
+Write-Host "    Linha 0.50.x preservada: OK." -ForegroundColor Green
+
+Write-Host "[3938/3939] Validando documentacao..." -ForegroundColor Cyan
+foreach ($token in @('v0.51.0 — Professional Review Team Knowledge Effect Review Foundation','FundacaoTeamKnowledgeEffectReviewDisponivel','v0.51.1 — Professional Review Team Knowledge Effect Review Persistence','Não cria migration ou tabela nova.')) {
+    if (-not (($readme0510 + $roadmap0510 + $changelog0510).Contains($token))) { throw "Documentacao v0.51.0 incompleta: $token" }
+}
+Write-Host "    README + ROADMAP + CHANGELOG: OK." -ForegroundColor Green
+
+Write-Host "[3939/3939] Validando versao funcional v0.51.0..." -ForegroundColor Cyan
+if ($version0510 -ne '0.51.0') { throw "VERSION.txt esperado 0.51.0; atual: $version0510" }
+if ($health.version -ne '0.51.0') { throw "Health runtime fora da v0.51.0: $($health.version)" }
+if (-not $appJs0510.Contains("const HP_MVP_VERSION='0.51.0';")) { throw 'Interface nao anuncia v0.51.0.' }
+foreach ($token in @("HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_CLOSURE_V0506='v0.50.6'","HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_REVIEW_V0510='v0.51.0'")) {
+    if (-not $appJs0510.Contains($token)) { throw "Marcador historico/atual ausente na v0.51.0: $token" }
+}
+Write-Host "    v0.51.0 / Professional Review Team Knowledge Effect Review Foundation: OK." -ForegroundColor Green
+Write-Host "    Proxima etapa: v0.51.1 / Professional Review Team Knowledge Effect Review Persistence" -ForegroundColor DarkCyan
 Write-Host ""
 
 Write-Host "TESTE DE FUMACA CONCLUIDO." -ForegroundColor Green

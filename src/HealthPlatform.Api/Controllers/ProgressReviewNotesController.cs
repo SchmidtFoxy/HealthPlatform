@@ -2154,6 +2154,159 @@ public class ProgressReviewNotesController(
             "A fundação organiza efeitos observados após aplicações do conhecimento da equipe usando Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.50.1, possui persistência auditada. Não transforma efeito registrado em causalidade comprovada ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-effect-review/foundation")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectReviewFoundationResponse> TeamKnowledgeEffectReviewFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-knowledge-effect-relacionado",
+                "Team Knowledge Effect relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um efeito observado já documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-knowledge-application-relacionada",
+                "Team Knowledge Application relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a revisão à aplicação do conhecimento previamente documentada."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-knowledge-relacionado",
+                "Team Knowledge relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão ao conhecimento de equipe documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-insight-relacionado",
+                "Team Insight relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um insight de equipe documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-learning-relacionado",
+                "Team Learning relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um aprendizado de equipe documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-outcome-relacionado",
+                "Team Outcome relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um resultado de equipe documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-decision-relacionada",
+                "Team Decision relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a uma decisão de equipe documentada."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "team-alignment-relacionado",
+                "Team Alignment relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um alinhamento profissional documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "shared-context-relacionado",
+                "Shared Context relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um contexto profissional compartilhado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a uma colaboração profissional documentada."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a uma coordenação profissional documentada."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um escalonamento profissional documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a revisão a um registro de continuidade profissional."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "profissional-revisor",
+                "Profissional revisor",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pela revisão."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes da revisão."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "revisao-documentada",
+                "Revisão documentada",
+                true,
+                "texto-longo",
+                "Registra a revisão profissional sem produzir conclusão clínica automática."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "contexto-revisao",
+                "Contexto da revisão",
+                false,
+                "texto-longo",
+                "Permite documentar o contexto em que a revisão foi realizada."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "base-observacional-evidencia-suporte",
+                "Base observacional / evidência de suporte",
+                false,
+                "texto-longo",
+                "Permite registrar observações e evidências de suporte sem inferir automaticamente causalidade ou força de evidência."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "interpretacao-profissional",
+                "Interpretação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar interpretação humana explícita sem transformá-la em decisão clínica automática."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "conclusao-documental",
+                "Conclusão documental",
+                false,
+                "texto-longo",
+                "Permite registrar uma conclusão documental sem convertê-la em diagnóstico, prognóstico ou decisão terapêutica automática."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "necessidade-acompanhamento-documentada",
+                "Necessidade de acompanhamento documentada",
+                false,
+                "texto-longo",
+                "Permite registrar necessidade percebida de acompanhamento sem criar urgência, prioridade ou conduta automática."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewTeamKnowledgeEffectReviewFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações adicionais da revisão.")
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectReviewFoundationResponse(
+            "FundacaoTeamKnowledgeEffectReviewDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza revisões profissionais de efeitos observados do conhecimento da equipe usando Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
     [HttpGet("team-knowledge-effect/closure")]
     public ActionResult<ProfessionalReviewTeamKnowledgeEffectClosureResponse> FechamentoTeamKnowledgeEffects()
     {
