@@ -209,11 +209,16 @@ public sealed record ProfessionalReviewTeamDecisionPersistedResponse(
     string? RacionalJustificativa,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamDecisionStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamDecisionFieldResponse(
     string Chave,

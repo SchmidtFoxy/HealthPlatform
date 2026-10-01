@@ -1345,7 +1345,8 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadTeamDecision(
+        var payloadAtual = LerPayloadTeamDecision(nota);
+        var payloadAtualizado = new TeamDecisionPayload(
             profissionalResponsavel,
             decisaoDocumentada,
             request.TeamAlignmentRelacionadoId,
@@ -1354,15 +1355,71 @@ public class ProgressReviewNotesController(
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.Participantes,
-            request.RacionalJustificativa,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Participantes, 1000),
+            NormalizarOpcional(request.RacionalJustificativa, 3000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_TEAM_DECISION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamDecision(nota));
+    }
+
+    [HttpPatch("team-decision/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTeamDecisionPersistedResponse>> AtualizarStatusTeamDecision(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTeamDecisionStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusTeamDecisionValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamDecision) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTeamDecision(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearTeamDecision(nota));
     }
 
@@ -7450,7 +7507,9 @@ public class ProgressReviewNotesController(
         string? Participantes,
         string? RacionalJustificativa,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadTeamDecision(
         string profissionalResponsavel,
@@ -7478,7 +7537,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(participantes, 1000),
             NormalizarOpcional(racionalJustificativa, 3000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -7510,12 +7571,30 @@ public class ProgressReviewNotesController(
             payload?.RacionalJustificativa,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static TeamDecisionPayload LerPayloadTeamDecision(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamDecisionPayload>(nota.Conteudo)
+                ?? new TeamDecisionPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new TeamDecisionPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusTeamDecisionValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private sealed record TeamAlignmentPayload(
         string ProfissionalResponsavel,

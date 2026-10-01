@@ -4457,3 +4457,35 @@ A persistência registra decisões documentadas da equipe. Não executa conduta,
 
 **Próxima etapa:** `v0.44.2 — Professional Review Team Decision Status`.
 
+---
+
+## v0.44.2 — Professional Review Team Decision Status
+
+Adiciona estados documentais explícitos às decisões registradas da equipe profissional.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-decision/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da decisão;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela decisões automaticamente, não executa conduta, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.44.3 — Professional Review Team Decision History`.
+

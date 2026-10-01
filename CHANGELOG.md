@@ -1,4 +1,20 @@
-﻿# v0.44.1 — Professional Review Team Decision Persistence
+﻿# v0.44.2 — Professional Review Team Decision Status
+
+- Adiciona `Status` à Team Decision persistida.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamDecisionStatusRequest`.
+- Adiciona endpoint `PATCH .../team-decision/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições, conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.44.3 — Professional Review Team Decision History.
+
+# v0.44.1 — Professional Review Team Decision Persistence
 
 - Adiciona persistência auditada de Team Decision.
 - Adiciona `ProfessionalReviewTeamDecisionPersistedResponse`.

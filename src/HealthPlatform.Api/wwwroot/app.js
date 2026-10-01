@@ -4951,6 +4951,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_SUMMARY_V0435='v0.43.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_ALIGNMENT_CLOSURE_V0436='v0.43.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_DECISION_V0440='v0.44.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_DECISION_PERSISTENCE_V0441='v0.44.1';
+const HP_PROFESSIONAL_REVIEW_TEAM_DECISION_STATUS_V0442='v0.44.2';
 
 
 
@@ -5785,8 +5786,9 @@ async function hpOpenProfessionalReviewTeamDecisionV0441(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejada')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.teamAlignmentRelacionadoId?`<small class="muted-line">Team Alignment: ${esc(x.teamAlignmentRelacionadoId)}</small>`:''}
@@ -5800,6 +5802,10 @@ async function hpOpenProfessionalReviewTeamDecisionV0441(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-team-decision-edit-v0441="${x.id}">Editar</button>
+        ${x.status!=='Planejada'?`<button type="button" class="ghost" data-team-decision-status-v0442="${x.id}" data-status-v0442="Planejada">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-team-decision-status-v0442="${x.id}" data-status-v0442="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluida'?`<button type="button" class="ghost" data-team-decision-status-v0442="${x.id}" data-status-v0442="Concluida">Concluir</button>`:''}
+        ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-team-decision-status-v0442="${x.id}" data-status-v0442="Cancelada">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-team-decision-archive-v0441="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma decisão de equipe registrada.</p>';
@@ -5821,6 +5827,16 @@ async function hpOpenProfessionalReviewTeamDecisionV0441(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-decision-status-v0442]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0442;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-decision/${btn.dataset.teamDecisionStatusV0442}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Decisão atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-team-decision-archive-v0441]')].forEach(btn=>btn.onclick=async()=>{
@@ -14742,7 +14758,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.44.1';
+const HP_MVP_VERSION='0.44.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

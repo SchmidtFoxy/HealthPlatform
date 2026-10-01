@@ -4200,3 +4200,21 @@ Adicionar persistência auditada das decisões documentadas da equipe profission
 ### v0.44.2 — Professional Review Team Decision Status
 Adicionar estados documentais explícitos às decisões registradas da equipe, com transições manuais e auditadas sem executar automaticamente conduta ou prescrição.
 
+## ✅ v0.44.2 — Professional Review Team Decision Status — CONCLUÍDA
+
+**Entregue:**
+- status `Planejada`, `EmAndamento`, `Concluida` e `Cancelada`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.44.3 — Professional Review Team Decision History
+Adicionar histórico consultável das decisões registradas da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+
