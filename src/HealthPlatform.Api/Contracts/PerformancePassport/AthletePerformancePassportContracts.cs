@@ -142,6 +142,19 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewAssignmentFiltersResponse(
+    string? Status,
+    string? ResponsavelPrincipal,
+    string? ApoioParticipante,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewAssignmentPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewAssignmentHistoryItemResponse(
     Guid Id,
     Guid AssignmentId,

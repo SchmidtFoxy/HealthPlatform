@@ -1,4 +1,20 @@
-﻿# v0.35.3 — Professional Review Assignment History
+﻿# v0.35.4 — Professional Review Assignment Filters
+
+- Adiciona `ProfessionalReviewAssignmentFiltersResponse`.
+- Adiciona endpoint `GET .../assignment/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por responsável principal.
+- Adiciona filtro por apoio/participante.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivadas.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.35.5 — Professional Review Assignment Summary.
+
+# v0.35.3 — Professional Review Assignment History
 
 - Adiciona `ProfessionalReviewAssignmentHistoryItemResponse`.
 - Adiciona `ProfessionalReviewAssignmentHistoryResponse`.

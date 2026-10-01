@@ -2490,3 +2490,33 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.35.4 — Professional Review Assignment Filters`.
 
+---
+
+## v0.35.4 — Professional Review Assignment Filters
+
+Adiciona filtros profissionais para localizar atribuições persistidas.
+
+### Filtros
+- status;
+- responsável principal;
+- apoio ou participante;
+- horizonte;
+- texto livre;
+- incluir arquivadas;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- responsável principal;
+- apoio/participante;
+- contexto da atribuição;
+- observação profissional.
+
+### UI
+O gerenciador de atribuições passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção.
+
+**Próxima etapa:** `v0.35.5 — Professional Review Assignment Summary`.
+

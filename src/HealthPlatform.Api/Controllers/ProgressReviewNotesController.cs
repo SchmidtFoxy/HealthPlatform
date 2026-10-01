@@ -390,6 +390,74 @@ public class ProgressReviewNotesController(
             "A fundação organiza atribuições documentais da equipe profissional e, a partir da v0.35.1, possui persistência auditada. Não executa condutas, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("assignment/search")]
+    public async Task<ActionResult<ProfessionalReviewAssignmentFiltersResponse>> FiltrarAssignments(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? responsavelPrincipal = null,
+        [FromQuery] string? apoioParticipante = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivadas = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusAssignmentValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var responsavelNormalizado = NormalizarOpcional(responsavelPrincipal, 160);
+        var apoioNormalizado = NormalizarOpcional(apoioParticipante, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoAssignment) &&
+                (incluirArquivadas || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearAssignment)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (responsavelNormalizado is null ||
+                    x.ResponsavelPrincipal.Contains(responsavelNormalizado, StringComparison.OrdinalIgnoreCase)) &&
+                (apoioNormalizado is null ||
+                    (x.ApoioParticipante?.Contains(apoioNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ResponsavelPrincipal.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ApoioParticipante?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ContextoAtribuicao?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewAssignmentFiltersResponse(
+            statusNormalizado,
+            responsavelNormalizado,
+            apoioNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivadas,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar atribuições profissionais. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção."));
+    }
+
     [HttpGet("assignment")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewAssignmentPersistedResponse>>> ListarAssignments(
         Guid pacienteId,

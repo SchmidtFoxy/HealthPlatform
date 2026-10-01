@@ -3026,3 +3026,23 @@ Adicionar histórico consultável das atribuições profissionais, cobrindo cria
 ### v0.35.4 — Professional Review Assignment Filters
 Adicionar filtros profissionais por status, responsável principal, apoio/participante, horizonte e texto, preservando a natureza documental das atribuições.
 
+## ✅ v0.35.4 — Professional Review Assignment Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewAssignmentFiltersResponse`;
+- endpoint `assignment/search`;
+- filtro por status;
+- filtro por responsável principal;
+- filtro por apoio/participante;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivadas;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.5 — Professional Review Assignment Summary
+Adicionar resumo estrutural das atribuições profissionais com contagem por status e distribuição por responsável principal, sem gerar score clínico ou prioridade automática.
+

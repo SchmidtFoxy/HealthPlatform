@@ -4890,6 +4890,7 @@ const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_V0350='v0.35.0';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351='v0.35.1';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_V0352='v0.35.2';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3';
+const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4';
 
 
 
@@ -5113,9 +5114,18 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
   const modal=$('#clinicalActionModal');
   if(!modal) return;
 
-  const load=async()=>{
-    const items=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/assignment`);
-    return Array.isArray(items)?items:[];
+  const load=async(filters={})=>{
+    const params=new URLSearchParams();
+    if(filters.status) params.set('status',filters.status);
+    if(filters.responsavelPrincipal) params.set('responsavelPrincipal',filters.responsavelPrincipal);
+    if(filters.apoioParticipante) params.set('apoioParticipante',filters.apoioParticipante);
+    if(filters.horizonte) params.set('horizonte',filters.horizonte);
+    if(filters.texto) params.set('texto',filters.texto);
+    if(filters.incluirArquivadas) params.set('incluirArquivadas','true');
+    params.set('ordenacao',filters.ordenacao||'desc');
+
+    const result=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/assignment/search?${params.toString()}`);
+    return Array.isArray(result?.itens)?result.itens:[];
   };
 
   modal.innerHTML=`<div class="modal-card large" data-professional-review-assignment-persistence-v0351="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_PERSISTENCE_V0351}">
@@ -5126,6 +5136,29 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewAssignmentV0351">Fechar</button>
     </div>
+    <form id="professionalReviewAssignmentFiltersV0354" class="form-grid" data-professional-review-assignment-filters-v0354="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354}">
+      <label>Status<select name="status">
+        <option value="">Todos</option>
+        <option value="Planejada">Planejada</option>
+        <option value="EmAndamento">Em andamento</option>
+        <option value="Concluida">Concluída</option>
+        <option value="Cancelada">Cancelada</option>
+      </select></label>
+      <label>Responsável principal<input name="responsavelPrincipal" maxlength="160" placeholder="Filtrar por responsável"></label>
+      <label>Apoio/participante<input name="apoioParticipante" maxlength="160" placeholder="Filtrar por apoio"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120" placeholder="Ex.: esta semana"></label>
+      <label class="span-2">Texto<input name="texto" maxlength="240" placeholder="Buscar responsável, apoio, contexto ou observação"></label>
+      <label><input type="checkbox" name="incluirArquivadas"> Incluir arquivadas</label>
+      <label>Ordenação<select name="ordenacao">
+        <option value="desc">Mais recentes</option>
+        <option value="asc">Mais antigas</option>
+      </select></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="secondary">Aplicar filtros</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewAssignmentFiltersV0354">Limpar filtros</button>
+      </div>
+    </form>
+
     <form id="professionalReviewAssignmentFormV0351" class="form-grid">
       <input type="hidden" name="id">
       <label>Responsável principal<input name="responsavelPrincipal" maxlength="160" required></label>
@@ -5153,8 +5186,20 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
     if(form?.elements.id) form.elements.id.value='';
   };
 
+  const filtersForm=$('#professionalReviewAssignmentFiltersV0354');
+
+  const readFilters=()=>({
+    status:filtersForm?.elements.status?.value||'',
+    responsavelPrincipal:filtersForm?.elements.responsavelPrincipal?.value||'',
+    apoioParticipante:filtersForm?.elements.apoioParticipante?.value||'',
+    horizonte:filtersForm?.elements.horizonte?.value||'',
+    texto:filtersForm?.elements.texto?.value||'',
+    incluirArquivadas:!!filtersForm?.elements.incluirArquivadas?.checked,
+    ordenacao:filtersForm?.elements.ordenacao?.value||'desc'
+  });
+
   const render=async()=>{
-    const items=await load();
+    const items=await load(readFilters());
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.responsavelPrincipal||'Responsável')}</b>
@@ -5234,6 +5279,21 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
     clear();
     await render();
   };
+
+  if(filtersForm){
+    filtersForm.onsubmit=async e=>{
+      e.preventDefault();
+      await render();
+    };
+  }
+
+  const clearFiltersV0354=$('#clearProfessionalReviewAssignmentFiltersV0354');
+  if(clearFiltersV0354){
+    clearFiltersV0354.onclick=async()=>{
+      filtersForm?.reset();
+      await render();
+    };
+  }
 
   $('#clearProfessionalReviewAssignmentV0351').onclick=clear;
   $('#closeProfessionalReviewAssignmentV0351').onclick=()=>hpOpenProfessionalReviewTaskCoordinationV0341(p);
@@ -11642,7 +11702,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.35.3';
+const HP_MVP_VERSION='0.35.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
