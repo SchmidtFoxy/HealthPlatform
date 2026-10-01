@@ -178,6 +178,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewCollaborationFiltersResponse(
+    string? Status,
+    string? ProfissionalResponsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewCollaborationPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewCollaborationHistoryItemResponse(
     Guid Id,
     Guid CollaborationId,

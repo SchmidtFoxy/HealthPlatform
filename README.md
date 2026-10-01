@@ -3835,3 +3835,32 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.41.4 — Professional Review Collaboration Filters`.
 
+---
+
+## v0.41.4 — Professional Review Collaboration Filters
+
+Adiciona filtros profissionais para localizar colaborações persistidas.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivadas;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- profissionais participantes;
+- contexto de colaboração;
+- observação profissional.
+
+### UI
+O gerenciador de colaborações passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não classificam urgência, risco, prioridade clínica, prognóstico ou necessidade de intervenção e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.41.5 — Professional Review Collaboration Summary`.
+

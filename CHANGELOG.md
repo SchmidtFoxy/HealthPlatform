@@ -1,4 +1,20 @@
-﻿# v0.41.3 — Professional Review Collaboration History
+﻿# v0.41.4 — Professional Review Collaboration Filters
+
+- Adiciona `ProfessionalReviewCollaborationFiltersResponse`.
+- Adiciona endpoint `GET .../collaboration/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivadas.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.41.5 — Professional Review Collaboration Summary.
+
+# v0.41.3 — Professional Review Collaboration History
 
 - Adiciona `ProfessionalReviewCollaborationHistoryItemResponse`.
 - Adiciona `ProfessionalReviewCollaborationHistoryResponse`.

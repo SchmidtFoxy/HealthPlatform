@@ -3831,3 +3831,22 @@ Adicionar histórico consultável das colaborações profissionais, cobrindo cri
 ### v0.41.4 — Professional Review Collaboration Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental das colaborações.
 
+## ✅ v0.41.4 — Professional Review Collaboration Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCollaborationFiltersResponse`;
+- endpoint `collaboration/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivadas;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.41.5 — Professional Review Collaboration Summary
+Adicionar resumo estrutural das colaborações profissionais com contagem por status e distribuição por profissional responsável, sem gerar score clínico, prioridade automática ou transferência automática de responsabilidade clínica.
+
