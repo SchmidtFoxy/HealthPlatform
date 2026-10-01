@@ -1770,6 +1770,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza conhecimento documentado da equipe usando Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.48.1, possui persistência auditada. Não transforma conhecimento em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeClosureResponse> FechamentoTeamKnowledges()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeFoundation",
+            "TeamKnowledgePersistence",
+            "TeamKnowledgeStatus",
+            "TeamKnowledgeHistory",
+            "TeamKnowledgeFilters",
+            "TeamKnowledgeSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural do conhecimento documentado da equipe. Não transforma conhecimento em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeSummaryResponse>> ResumoTeamKnowledges(
         Guid pacienteId,

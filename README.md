@@ -5545,3 +5545,34 @@ As contagens são agregações documentais. Não transformam conhecimento em evi
 
 **Próxima etapa:** `v0.48.6 — Professional Review Team Knowledge Closure`.
 
+---
+
+## v0.48.6 — Professional Review Team Knowledge Closure
+
+Fecha a linha 0.48.x consolidando todas as capacidades estruturais do conhecimento documentado da equipe.
+
+### Componentes consolidados
+- Team Knowledge Foundation;
+- Team Knowledge Persistence;
+- Team Knowledge Status;
+- Team Knowledge History;
+- Team Knowledge Filters;
+- Team Knowledge Summary.
+
+### Estado
+O endpoint `team-knowledge/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTeamKnowledgeCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não transforma conhecimento em evidência clínica validada, não infere causalidade, prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade, gravidade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.49.0 — Professional Review Team Knowledge Application Foundation`.
+
