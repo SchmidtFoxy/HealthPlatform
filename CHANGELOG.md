@@ -1,4 +1,21 @@
-﻿# v0.46.4 — Professional Review Team Learning Filters
+﻿# v0.46.5 — Professional Review Team Learning Summary
+
+- Adiciona `ProfessionalReviewTeamLearningProfissionalResumoResponse`.
+- Adiciona `ProfessionalReviewTeamLearningSummaryResponse`.
+- Adiciona `GET .../team-learning/summary`.
+- Consolida total, ativos, registrados, em revisão, consolidados, descartados e arquivados.
+- Adiciona distribuição por profissional responsável.
+- Adiciona painel `Resumo dos aprendizados documentados da equipe`.
+- Atualiza o resumo após alterações.
+- Não transforma aprendizado em evidência clínica validada.
+- Não infere causalidade, prognóstico ou recomendação.
+- Não cria score clínico, risco, urgência ou prioridade.
+- Não executa conduta ou prescrição automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.46.6 — Professional Review Team Learning Closure.
+
+# v0.46.4 — Professional Review Team Learning Filters
 
 - Adiciona `ProfessionalReviewTeamLearningFiltersResponse`.
 - Adiciona endpoint `GET .../team-learning/search`.

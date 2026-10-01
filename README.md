@@ -5026,3 +5026,30 @@ Os filtros apenas localizam registros documentais. Não transformam aprendizado 
 
 **Próxima etapa:** `v0.46.5 — Professional Review Team Learning Summary`.
 
+---
+
+## v0.46.5 — Professional Review Team Learning Summary
+
+Adiciona resumo estrutural dos aprendizados documentados da equipe.
+
+### Indicadores
+- total;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- distribuição por profissional responsável.
+
+### Endpoint
+`GET .../team-learning/summary`
+
+### UI
+O gerenciador passa a exibir **Resumo dos aprendizados documentados da equipe** acima dos filtros e atualiza as contagens após criação, edição, mudança de status e arquivamento.
+
+### Guardrail
+As contagens são agregações documentais. Não transformam aprendizado em evidência clínica validada, não inferem causalidade, prognóstico ou recomendação, não representam score clínico, risco, urgência ou prioridade, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.46.6 — Professional Review Team Learning Closure`.
+
