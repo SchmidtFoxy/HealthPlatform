@@ -6641,3 +6641,45 @@ A fundação organiza revisão profissional documental. Não transforma revisão
 
 **Próxima etapa:** `v0.53.1 — Professional Review Team Knowledge Effect Decision Review Persistence`.
 
+---
+
+## v0.53.1 — Professional Review Team Knowledge Effect Decision Review Persistence
+
+Adiciona persistência auditada para revisões profissionais das decisões documentadas sobre os efeitos observados do conhecimento da equipe.
+
+### CRUD
+- listar registros;
+- criar;
+- editar;
+- arquivar logicamente.
+
+### Vínculos opcionais
+- Team Knowledge Effect Decision;
+- Team Knowledge Effect Review;
+- Team Knowledge Effect;
+- Team Knowledge Application;
+- Team Knowledge;
+- Team Insight;
+- Team Learning;
+- Team Outcome;
+- Team Decision;
+- Team Alignment;
+- Shared Context;
+- Collaboration;
+- Coordination;
+- Escalation;
+- Continuity.
+
+### Auditoria
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_CREATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_UPDATED`
+- `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_ARCHIVED`
+
+### UI
+A fundação passa a anunciar persistência disponível e libera **Gerenciar revisões**, com criação, edição e arquivamento.
+
+### Guardrail
+A persistência registra revisão profissional documental. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transforma revisão registrada em execução e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.53.2 — Professional Review Team Knowledge Effect Decision Review Status`.
+

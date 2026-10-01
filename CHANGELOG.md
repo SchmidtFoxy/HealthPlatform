@@ -1,4 +1,25 @@
-﻿# v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation
+﻿# v0.53.1 — Professional Review Team Knowledge Effect Decision Review Persistence
+
+- Adiciona persistência auditada de Team Knowledge Effect Decision Review.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Reutiliza `NotaInternaProfissional`.
+- Adiciona namespace `ProfessionalReviewTeamKnowledgeEffectDecisionReview:`.
+- Adiciona GET, POST, PUT e DELETE lógico.
+- Valida 15 vínculos documentais opcionais do mesmo paciente.
+- Adiciona auditorias CREATED, UPDATED e ARCHIVED.
+- Fundação passa a retornar `PersistenciaDisponivel = true`.
+- Adiciona UI `Gerenciar revisões`.
+- Preserva cumulativamente o hotfix v0.52.1-r1.
+- Não transforma revisão documental em validação causal.
+- Não promove registro a evidência clínica validada.
+- Não produz prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.53.2 — Professional Review Team Knowledge Effect Decision Review Status.
+
+# v0.53.0 — Professional Review Team Knowledge Effect Decision Review Foundation
 
 - Abre a linha funcional 0.53.x.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewFieldResponse`.
