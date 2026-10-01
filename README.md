@@ -5084,3 +5084,44 @@ O fechamento mede somente disponibilidade estrutural. Não transforma aprendizad
 
 **Próxima etapa:** `v0.47.0 — Professional Review Team Insight Foundation`.
 
+---
+
+## v0.47.0 — Professional Review Team Insight Foundation
+
+Abre a linha 0.47.x com a fundação estrutural para insights documentados da equipe profissional.
+
+### Campos da fundação
+- Team Learning relacionado;
+- Team Outcome relacionado;
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- insight documentado;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- aplicabilidade;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-insight/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamInsightDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Insights documentados da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza insights documentados. Não transforma insight em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.47.1 — Professional Review Team Insight Persistence`.
+

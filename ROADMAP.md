@@ -4569,3 +4569,21 @@ Fechar o ciclo 0.46.x consolidando fundação, persistência, status, histórico
 ### v0.47.0 — Professional Review Team Insight Foundation
 Criar a fundação estrutural para insights documentados da equipe profissional derivados de registros de Team Learning, Team Outcome, Team Decision e contextos colaborativos, preservando a separação entre insight registrado, evidência, causalidade, prognóstico, recomendação, decisão terapêutica, conduta e prescrição.
 
+## ✅ v0.47.0 — Professional Review Team Insight Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamInsightFieldResponse`;
+- `ProfessionalReviewTeamInsightFoundationResponse`;
+- endpoint `team-insight/foundation`;
+- dezessete campos estruturais;
+- estado `FundacaoTeamInsightDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.47.1 — Professional Review Team Insight Persistence
+Adicionar persistência auditada dos insights documentados da equipe profissional, com vínculos opcionais a Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre insight registrado, evidência, causalidade, prognóstico, recomendação, decisão terapêutica, conduta e execução.
+

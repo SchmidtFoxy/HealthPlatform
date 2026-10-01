@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.46.6",
+            "v0.47.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Learning Closure fecha a linha 0.46.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão dos aprendizados documentados da equipe.")
+            "Professional Review Team Insight Foundation abre a linha 0.47.x com uma fundação estrutural para insights documentados da equipe profissional, conectando Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem transformar insight em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
         {
             Recordes = recordes,
             Tempos = tempos,

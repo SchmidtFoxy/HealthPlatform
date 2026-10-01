@@ -1450,6 +1450,123 @@ public class ProgressReviewNotesController(
             "A fundação organiza aprendizados documentados da equipe usando Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.46.1, possui persistência auditada. Não infere causalidade, não transforma aprendizado em evidência clínica validada, não produz prognóstico ou recomendação automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-insight/foundation")]
+    public ActionResult<ProfessionalReviewTeamInsightFoundationResponse> TeamInsightFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "team-learning-relacionado",
+                "Team Learning relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o insight a um aprendizado de equipe já documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "team-outcome-relacionado",
+                "Team Outcome relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o insight a um resultado de equipe já documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "team-decision-relacionada",
+                "Team Decision relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o insight a uma decisão de equipe já documentada."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "team-alignment-relacionado",
+                "Team Alignment relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o insight a um alinhamento entre profissionais já documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "shared-context-relacionado",
+                "Shared Context relacionado",
+                false,
+                "referencia",
+                "Permite relacionar o insight a um contexto profissional compartilhado já documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o insight a uma colaboração profissional já documentada."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o insight a uma coordenação profissional já documentada."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o insight a um escalonamento profissional já documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar o insight a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "profissional-responsavel",
+                "Profissional responsável",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo registro do insight."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes da construção do insight documentado."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "insight-documentado",
+                "Insight documentado",
+                true,
+                "texto-longo",
+                "Registra o insight profissional sem transformá-lo automaticamente em evidência clínica validada."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "base-observacional-evidencia-suporte",
+                "Base observacional / evidência de suporte",
+                false,
+                "texto-longo",
+                "Permite registrar observações ou evidências de suporte sem inferir causalidade ou força de evidência."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "interpretacao-profissional",
+                "Interpretação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar interpretação humana explícita sem transformá-la em conclusão clínica automática."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "aplicabilidade",
+                "Aplicabilidade",
+                false,
+                "texto-longo",
+                "Permite documentar onde o insight pode ser considerado sem gerar recomendação automática."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewTeamInsightFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações adicionais sobre o insight documentado.")
+        };
+
+        return Ok(new ProfessionalReviewTeamInsightFoundationResponse(
+            "FundacaoTeamInsightDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza insights documentados da equipe usando Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não transforma insight em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
+    }
+
     [HttpGet("team-learning/closure")]
     public ActionResult<ProfessionalReviewTeamLearningClosureResponse> FechamentoTeamLearnings()
     {
