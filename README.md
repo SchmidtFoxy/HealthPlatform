@@ -3442,3 +3442,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.39.6 — Professional Review Escalation Closure`.
 
+---
+
+## v0.39.6 — Professional Review Escalation Closure
+
+Fecha a linha 0.39.x consolidando todas as capacidades estruturais de escalonamento profissional.
+
+### Componentes consolidados
+- Escalation Foundation;
+- Escalation Persistence;
+- Escalation Status;
+- Escalation History;
+- Escalation Filters;
+- Escalation Summary.
+
+### Estado
+O endpoint `escalation/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaEscalationCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.40.0 — Professional Review Coordination Foundation`.
+

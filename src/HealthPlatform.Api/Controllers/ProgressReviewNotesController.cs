@@ -702,6 +702,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza escalonamento documental entre profissionais e, a partir da v0.39.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("escalation/closure")]
+    public ActionResult<ProfessionalReviewEscalationClosureResponse> FechamentoEscalations()
+    {
+        var componentes = new[]
+        {
+            "EscalationFoundation",
+            "EscalationPersistence",
+            "EscalationStatus",
+            "EscalationHistory",
+            "EscalationFilters",
+            "EscalationSummary"
+        };
+
+        return Ok(new ProfessionalReviewEscalationClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaEscalationCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos escalonamentos profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("escalation/summary")]
     public async Task<ActionResult<ProfessionalReviewEscalationSummaryResponse>> ResumoEscalations(
         Guid pacienteId,

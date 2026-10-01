@@ -168,6 +168,15 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewEscalationClosureResponse(
+    int ComponentesEsperados,
+    int ComponentesDisponiveis,
+    IReadOnlyCollection<string> ComponentesPresentes,
+    IReadOnlyCollection<string> ComponentesAusentes,
+    string EstadoEstrutural,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewEscalationProfissionalResumoResponse(
     string Profissional,
     int Total);

@@ -1,4 +1,18 @@
-﻿# v0.39.5 — Professional Review Escalation Summary
+﻿# v0.39.6 — Professional Review Escalation Closure
+
+- Adiciona `ProfessionalReviewEscalationClosureResponse`.
+- Adiciona endpoint `GET .../escalation/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaEscalationCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_ESCALATION_CLOSURE_V0396`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.39.x.
+- Próxima etapa: v0.40.0 — Professional Review Coordination Foundation.
+
+# v0.39.5 — Professional Review Escalation Summary
 
 - Adiciona `ProfessionalReviewEscalationProfissionalResumoResponse`.
 - Adiciona `ProfessionalReviewEscalationSummaryResponse`.
