@@ -1,4 +1,21 @@
-﻿# v0.45.2 — Professional Review Team Outcome Status
+﻿# v0.45.3 — Professional Review Team Outcome History
+
+- Adiciona `ProfessionalReviewTeamOutcomeHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamOutcomeHistoryResponse`.
+- Adiciona `GET .../team-outcome/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta causalidade ou evolução clínica.
+- Não produz prognóstico ou recomendação automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.45.4 — Professional Review Team Outcome Filters.
+
+# v0.45.2 — Professional Review Team Outcome Status
 
 - Adiciona `Status` ao Team Outcome persistido.
 - Adiciona `StatusAtualizadoEmUtc`.

@@ -4724,3 +4724,35 @@ O status é documental. O sistema não infere causalidade, prognóstico ou recom
 
 **Próxima etapa:** `v0.45.3 — Professional Review Team Outcome History`.
 
+---
+
+## v0.45.3 — Professional Review Team Outcome History
+
+Adiciona histórico consultável dos eventos auditados dos resultados documentados da equipe profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-outcome/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada resultado passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco ou resultado clínico, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.45.4 — Professional Review Team Outcome Filters`.
+
