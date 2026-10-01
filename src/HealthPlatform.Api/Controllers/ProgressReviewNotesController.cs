@@ -702,6 +702,75 @@ public class ProgressReviewNotesController(
             "A fundação organiza escalonamento documental entre profissionais e, a partir da v0.39.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("coordination/foundation")]
+    public ActionResult<ProfessionalReviewCoordinationFoundationResponse> CoordinationFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewCoordinationFieldResponse(
+                "assignment-relacionada",
+                "Assignment relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a coordenação a uma atribuição profissional já documentada."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "delegation-relacionada",
+                "Delegation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a coordenação a uma delegação profissional já documentada."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "handoff-relacionado",
+                "Handoff relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a coordenação a um handoff profissional já documentado."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a coordenação a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a coordenação a um escalonamento profissional já documentado."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "profissional-coordenador",
+                "Profissional coordenador",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pela coordenação operacional do acompanhamento."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "contexto-coordenacao",
+                "Contexto de coordenação",
+                false,
+                "texto-longo",
+                "Documenta o contexto compartilhado entre profissionais sem definir prioridade clínica."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewCoordinationFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações documentais relevantes à coordenação.")
+        };
+
+        return Ok(new ProfessionalReviewCoordinationFoundationResponse(
+            "FundacaoCoordinationDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza coordenação documental integrada entre Assignment, Delegation, Handoff, Continuity e Escalation. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("escalation/closure")]
     public ActionResult<ProfessionalReviewEscalationClosureResponse> FechamentoEscalations()
     {

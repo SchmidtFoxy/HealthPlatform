@@ -3621,3 +3621,21 @@ Fechar o ciclo 0.39.x consolidando fundação, persistência, status, histórico
 ### v0.40.0 — Professional Review Coordination Foundation
 Criar a fundação estrutural de coordenação profissional integrada, conectando Assignment, Delegation, Handoff, Continuity e Escalation em uma camada documental única de acompanhamento entre profissionais, sem automatizar conduta, risco, urgência, prioridade clínica ou transferência de responsabilidade.
 
+## ✅ v0.40.0 — Professional Review Coordination Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCoordinationFieldResponse`;
+- `ProfessionalReviewCoordinationFoundationResponse`;
+- endpoint `coordination/foundation`;
+- nove campos estruturais;
+- estado `FundacaoCoordinationDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.40.1 — Professional Review Coordination Persistence
+Adicionar persistência auditada dos registros de coordenação profissional integrada, com vínculos opcionais a Assignment, Delegation, Handoff, Continuity e Escalation e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
+

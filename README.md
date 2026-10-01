@@ -3473,3 +3473,36 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.40.0 — Professional Review Coordination Foundation`.
 
+---
+
+## v0.40.0 — Professional Review Coordination Foundation
+
+Abre a linha 0.40.x com a fundação estrutural de coordenação profissional integrada, conectando Assignment, Delegation, Handoff, Continuity e Escalation em uma única camada documental.
+
+### Campos da fundação
+- Assignment relacionada;
+- Delegation relacionada;
+- Handoff relacionado;
+- Continuity relacionada;
+- Escalation relacionada;
+- profissional coordenador;
+- contexto de coordenação;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../coordination/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoCoordinationDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Coordenação profissional integrada**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza coordenação documental entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.40.1 — Professional Review Coordination Persistence`.
+

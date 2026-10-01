@@ -1,4 +1,21 @@
-﻿# v0.39.6 — Professional Review Escalation Closure
+﻿# v0.40.0 — Professional Review Coordination Foundation
+
+- Abre a linha funcional 0.40.x.
+- Adiciona `ProfessionalReviewCoordinationFieldResponse`.
+- Adiciona `ProfessionalReviewCoordinationFoundationResponse`.
+- Adiciona `GET .../coordination/foundation`.
+- Define Assignment, Delegation, Handoff, Continuity e Escalation relacionados.
+- Define profissional coordenador, contexto de coordenação, horizonte e observação profissional.
+- Define `FundacaoCoordinationDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Coordenação profissional integrada` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.40.1 — Professional Review Coordination Persistence.
+
+# v0.39.6 — Professional Review Escalation Closure
 
 - Adiciona `ProfessionalReviewEscalationClosureResponse`.
 - Adiciona endpoint `GET .../escalation/closure`.
