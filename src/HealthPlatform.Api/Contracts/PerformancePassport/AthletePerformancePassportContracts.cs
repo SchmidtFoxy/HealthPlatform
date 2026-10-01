@@ -216,11 +216,16 @@ public sealed record ProfessionalReviewTeamOutcomePersistedResponse(
     string? EvidenciaSuporte,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamOutcomeStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamOutcomeFieldResponse(
     string Chave,

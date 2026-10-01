@@ -4337,3 +4337,21 @@ Adicionar persistência auditada dos resultados documentados da equipe profissio
 ### v0.45.2 — Professional Review Team Outcome Status
 Adicionar estados documentais explícitos aos resultados registrados da equipe, com transições manuais e auditadas sem inferir automaticamente causalidade, prognóstico, recomendação, conduta ou prescrição.
 
+## ✅ v0.45.2 — Professional Review Team Outcome Status — CONCLUÍDA
+
+**Entregue:**
+- status `Observado`, `EmAcompanhamento`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.45.3 — Professional Review Team Outcome History
+Adicionar histórico consultável dos resultados registrados da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

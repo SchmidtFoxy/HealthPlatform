@@ -4692,3 +4692,35 @@ A persistência registra resultados documentados da equipe. Não infere causalid
 
 **Próxima etapa:** `v0.45.2 — Professional Review Team Outcome Status`.
 
+---
+
+## v0.45.2 — Professional Review Team Outcome Status
+
+Adiciona estados documentais explícitos aos resultados registrados da equipe profissional.
+
+### Estados
+- `Observado`
+- `EmAcompanhamento`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-outcome/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do resultado;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_OUTCOME_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir observação;
+- Acompanhar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não infere causalidade, prognóstico ou recomendação a partir do estado, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.45.3 — Professional Review Team Outcome History`.
+

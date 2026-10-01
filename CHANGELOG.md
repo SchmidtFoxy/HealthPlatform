@@ -1,4 +1,21 @@
-﻿# v0.45.1 — Professional Review Team Outcome Persistence
+﻿# v0.45.2 — Professional Review Team Outcome Status
+
+- Adiciona `Status` ao Team Outcome persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamOutcomeStatusRequest`.
+- Adiciona endpoint `PATCH .../team-outcome/{id}/status`.
+- Estados permitidos: `Observado`, `EmAcompanhamento`, `Consolidado`, `Descartado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_OUTCOME_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir observação, Acompanhar, Consolidar e Descartar.
+- Não infere causalidade, prognóstico ou recomendação automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.45.3 — Professional Review Team Outcome History.
+
+# v0.45.1 — Professional Review Team Outcome Persistence
 
 - Adiciona persistência auditada de Team Outcome.
 - Adiciona `ProfessionalReviewTeamOutcomePersistedResponse`.
