@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.47.3",
+            "v0.47.4",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Insight History torna consultáveis os eventos auditados dos insights registrados da equipe, incluindo criação, edição, status e arquivamento, sem transformar insight em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
+            "Professional Review Team Insight Filters adiciona busca profissional por status, profissional responsável, horizonte, texto e arquivamento, sem transformar filtros em evidência clínica validada, causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

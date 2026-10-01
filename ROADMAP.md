@@ -4650,3 +4650,22 @@ Adicionar histórico consultável dos insights registrados da equipe, cobrindo c
 ### v0.47.4 — Professional Review Team Insight Filters
 Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental dos insights registrados da equipe e sem promover o registro a evidência clínica validada.
 
+## ✅ v0.47.4 — Professional Review Team Insight Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamInsightFiltersResponse`;
+- endpoint `team-insight/search`;
+- filtro por status;
+- filtro por profissional responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivados;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.47.5 — Professional Review Team Insight Summary
+Adicionar resumo estrutural dos insights documentados da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em evidência clínica validada nem gerar inferência automática de causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
+

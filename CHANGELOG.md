@@ -1,4 +1,23 @@
-﻿# v0.47.3 — Professional Review Team Insight History
+﻿# v0.47.4 — Professional Review Team Insight Filters
+
+- Adiciona `ProfessionalReviewTeamInsightFiltersResponse`.
+- Adiciona endpoint `GET .../team-insight/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por profissional responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não transforma insight em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica.
+- Não cria urgência, risco ou prioridade clínica automática.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.47.5 — Professional Review Team Insight Summary.
+
+# v0.47.3 — Professional Review Team Insight History
 
 - Adiciona `ProfessionalReviewTeamInsightHistoryItemResponse`.
 - Adiciona `ProfessionalReviewTeamInsightHistoryResponse`.

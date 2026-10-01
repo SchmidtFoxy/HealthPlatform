@@ -5239,3 +5239,35 @@ O histórico mostra somente eventos registrados. Não transforma insight em evid
 
 **Próxima etapa:** `v0.47.4 — Professional Review Team Insight Filters`.
 
+---
+
+## v0.47.4 — Professional Review Team Insight Filters
+
+Adiciona filtros profissionais para localizar insights documentados da equipe.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- texto livre;
+- incluir arquivados;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- profissional responsável;
+- participantes;
+- insight documentado;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- aplicabilidade;
+- observação profissional.
+
+### UI
+O gerenciador de insights passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não transformam insight em evidência clínica validada, não inferem causalidade, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica ou necessidade de intervenção, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.47.5 — Professional Review Team Insight Summary`.
+
