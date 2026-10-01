@@ -5175,3 +5175,35 @@ A persistência registra insights documentados da equipe. Não transforma insigh
 
 **Próxima etapa:** `v0.47.2 — Professional Review Team Insight Status`.
 
+---
+
+## v0.47.2 — Professional Review Team Insight Status
+
+Adiciona estados documentais explícitos aos insights registrados da equipe profissional.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Transições
+As mudanças são manuais via `PATCH .../team-insight/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados do insight;
+- gera auditoria `PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Reabrir registro;
+- Revisar;
+- Consolidar;
+- Descartar.
+
+### Guardrail
+O status é documental. O sistema não transforma insight em evidência clínica validada, não infere causalidade, prognóstico, recomendação ou decisão terapêutica a partir do estado, não executa conduta ou prescrição, não converte estado em urgência, risco ou prioridade clínica e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.47.3 — Professional Review Team Insight History`.
+

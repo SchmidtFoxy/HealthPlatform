@@ -4614,3 +4614,21 @@ Adicionar persistência auditada dos insights documentados da equipe profissiona
 ### v0.47.2 — Professional Review Team Insight Status
 Adicionar estados documentais explícitos aos insights registrados da equipe, com transições manuais e auditadas sem transformar insight em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.
 
+## ✅ v0.47.2 — Professional Review Team Insight Status — CONCLUÍDA
+
+**Entregue:**
+- status `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- `StatusAtualizadoEmUtc`;
+- request de alteração de status;
+- endpoint PATCH de status;
+- validação de estados permitidos;
+- auditoria de mudança de status;
+- edição textual preserva status;
+- badge e ações de transição na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.47.3 — Professional Review Team Insight History
+Adicionar histórico consultável dos insights registrados da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
+

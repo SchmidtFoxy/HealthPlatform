@@ -1,4 +1,22 @@
-﻿# v0.47.1 — Professional Review Team Insight Persistence
+﻿# v0.47.2 — Professional Review Team Insight Status
+
+- Adiciona `Status` ao Team Insight persistido.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewTeamInsightStatusRequest`.
+- Adiciona endpoint `PATCH .../team-insight/{id}/status`.
+- Estados permitidos: `Registrado`, `EmRevisao`, `Consolidado`, `Descartado`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Reabrir registro, Revisar, Consolidar e Descartar.
+- Não transforma insight em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.47.3 — Professional Review Team Insight History.
+
+# v0.47.1 — Professional Review Team Insight Persistence
 
 - Adiciona persistência auditada de Team Insight.
 - Adiciona `ProfessionalReviewTeamInsightPersistedResponse`.

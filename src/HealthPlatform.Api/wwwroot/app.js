@@ -4972,6 +4972,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_SUMMARY_V0465='v0.46.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_LEARNING_CLOSURE_V0466='v0.46.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_V0470='v0.47.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_PERSISTENCE_V0471='v0.47.1';
+const HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_V0472='v0.47.2';
 
 
 
@@ -6009,8 +6010,9 @@ async function hpOpenProfessionalReviewTeamInsightV0471(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Registrado')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.participantes?`<small class="muted-line">Participantes: ${esc(x.participantes)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.teamLearningRelacionadoId?`<small class="muted-line">Team Learning: ${esc(x.teamLearningRelacionadoId)}</small>`:''}
@@ -6029,6 +6031,10 @@ async function hpOpenProfessionalReviewTeamInsightV0471(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-team-insight-edit-v0471="${x.id}">Editar</button>
+        ${x.status!=='Registrado'?`<button type="button" class="ghost" data-team-insight-status-v0472="${x.id}" data-status-v0472="Registrado">Reabrir registro</button>`:''}
+        ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-insight-status-v0472="${x.id}" data-status-v0472="EmRevisao">Revisar</button>`:''}
+        ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-insight-status-v0472="${x.id}" data-status-v0472="Consolidado">Consolidar</button>`:''}
+        ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-insight-status-v0472="${x.id}" data-status-v0472="Descartado">Descartar</button>`:''}
         <button type="button" class="ghost danger" data-team-insight-archive-v0471="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum insight de equipe registrado.</p>';
@@ -6055,6 +6061,16 @@ async function hpOpenProfessionalReviewTeamInsightV0471(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-insight-status-v0472]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0472;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-insight/${btn.dataset.teamInsightStatusV0472}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Insight atualizado para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-team-insight-archive-v0471]')].forEach(btn=>btn.onclick=async()=>{
@@ -15864,7 +15880,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.47.1';
+const HP_MVP_VERSION='0.47.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

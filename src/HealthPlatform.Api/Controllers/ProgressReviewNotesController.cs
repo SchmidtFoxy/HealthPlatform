@@ -1794,7 +1794,8 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadTeamInsight(
+        var payloadAtual = LerPayloadTeamInsight(nota);
+        var payloadAtualizado = new TeamInsightPayload(
             profissionalResponsavel,
             insightDocumentado,
             request.TeamLearningRelacionadoId,
@@ -1806,17 +1807,73 @@ public class ProgressReviewNotesController(
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.Participantes,
-            request.BaseObservacionalEvidenciaSuporte,
-            request.InterpretacaoProfissional,
-            request.Aplicabilidade,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.Participantes, 1000),
+            NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000),
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000),
+            NormalizarOpcional(request.Aplicabilidade, 3000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_TEAM_INSIGHT_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamInsight(nota));
+    }
+
+    [HttpPatch("team-insight/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTeamInsightPersistedResponse>> AtualizarStatusTeamInsight(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTeamInsightStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusTeamInsightValido(status))
+            return BadRequest(new { message = "Status inválido. Use Registrado, EmRevisao, Consolidado ou Descartado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamInsight) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTeamInsight(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TEAM_INSIGHT_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearTeamInsight(nota));
     }
 
@@ -9370,7 +9427,9 @@ public class ProgressReviewNotesController(
         string? InterpretacaoProfissional,
         string? Aplicabilidade,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Registrado",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadTeamInsight(
         string profissionalResponsavel,
@@ -9408,7 +9467,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(interpretacaoProfissional, 3000),
             NormalizarOpcional(aplicabilidade, 3000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Registrado",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -9445,12 +9506,30 @@ public class ProgressReviewNotesController(
             payload?.Aplicabilidade,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Registrado",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static TeamInsightPayload LerPayloadTeamInsight(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamInsightPayload>(nota.Conteudo)
+                ?? new TeamInsightPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new TeamInsightPayload("Profissional", nota.Conteudo, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusTeamInsightValido(string? status) =>
+        status is "Registrado" or "EmRevisao" or "Consolidado" or "Descartado";
 
     private sealed record TeamLearningPayload(
         string ProfissionalResponsavel,

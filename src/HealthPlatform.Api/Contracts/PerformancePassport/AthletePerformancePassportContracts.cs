@@ -232,11 +232,16 @@ public sealed record ProfessionalReviewTeamInsightPersistedResponse(
     string? Aplicabilidade,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewTeamInsightStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewTeamInsightFieldResponse(
     string Chave,
