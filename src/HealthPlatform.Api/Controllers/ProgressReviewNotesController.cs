@@ -1001,20 +1001,77 @@ public class ProgressReviewNotesController(
 
         var antes = Snapshot(nota);
 
-        nota.Conteudo = MontarPayloadCollaboration(
+        var payloadAtual = LerPayloadCollaboration(nota);
+        var payloadAtualizado = new CollaborationPayload(
             profissionalResponsavel,
             request.CoordinationRelacionadaId,
             request.EscalationRelacionadaId,
             request.ContinuityRelacionadaId,
-            request.ProfissionaisParticipantes,
-            request.ContextoColaboracao,
-            request.Horizonte,
-            request.ObservacaoProfissional);
+            NormalizarOpcional(request.ProfissionaisParticipantes, 1000),
+            NormalizarOpcional(request.ContextoColaboracao, 2000),
+            NormalizarOpcional(request.Horizonte, 120),
+            NormalizarOpcional(request.ObservacaoProfissional, 2000),
+            payloadAtual.Status,
+            payloadAtual.StatusAtualizadoEmUtc);
+
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
         nota.UpdatedAtUtc = DateTime.UtcNow;
 
         Auditar("PROFESSIONAL_REVIEW_COLLABORATION_UPDATED", nota, antes, Snapshot(nota));
 
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearCollaboration(nota));
+    }
+
+    [HttpPatch("collaboration/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewCollaborationPersistedResponse>> AtualizarStatusCollaboration(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewCollaborationStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status)
+            ? null
+            : request.Status.Trim();
+
+        if (!StatusCollaborationValido(status))
+            return BadRequest(new { message = "Status inválido. Use Planejada, EmAndamento, Concluida ou Cancelada." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoCollaboration) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadCollaboration(nota);
+
+        if (payload.Status != status)
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_COLLABORATION_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearCollaboration(nota));
     }
 
@@ -5763,7 +5820,9 @@ public class ProgressReviewNotesController(
         string? ProfissionaisParticipantes,
         string? ContextoColaboracao,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status = "Planejada",
+        DateTime? StatusAtualizadoEmUtc = null);
 
     private static string MontarPayloadCollaboration(
         string profissionalResponsavel,
@@ -5783,7 +5842,9 @@ public class ProgressReviewNotesController(
             NormalizarOpcional(profissionaisParticipantes, 1000),
             NormalizarOpcional(contextoColaboracao, 2000),
             NormalizarOpcional(horizonte, 120),
-            NormalizarOpcional(observacaoProfissional, 2000));
+            NormalizarOpcional(observacaoProfissional, 2000),
+            "Planejada",
+            null);
 
         return JsonSerializer.Serialize(payload);
     }
@@ -5811,12 +5872,30 @@ public class ProgressReviewNotesController(
             payload?.ContextoColaboracao,
             payload?.Horizonte,
             payload?.ObservacaoProfissional,
+            payload?.Status ?? "Planejada",
+            payload?.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId,
             nota.AutorNome,
             nota.CreatedAtUtc,
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static CollaborationPayload LerPayloadCollaboration(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<CollaborationPayload>(nota.Conteudo)
+                ?? new CollaborationPayload(nota.Conteudo, null, null, null, null, null, null, null);
+        }
+        catch (JsonException)
+        {
+            return new CollaborationPayload(nota.Conteudo, null, null, null, null, null, null, null);
+        }
+    }
+
+    private static bool StatusCollaborationValido(string? status) =>
+        status is "Planejada" or "EmAndamento" or "Concluida" or "Cancelada";
 
     private sealed record CoordinationPayload(
         string ProfissionalCoordenador,

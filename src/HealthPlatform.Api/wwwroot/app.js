@@ -4930,6 +4930,7 @@ const HP_PROFESSIONAL_REVIEW_COORDINATION_SUMMARY_V0405='v0.40.5';
 const HP_PROFESSIONAL_REVIEW_COORDINATION_CLOSURE_V0406='v0.40.6';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_V0410='v0.41.0';
 const HP_PROFESSIONAL_REVIEW_COLLABORATION_PERSISTENCE_V0411='v0.41.1';
+const HP_PROFESSIONAL_REVIEW_COLLABORATION_STATUS_V0412='v0.41.2';
 
 
 
@@ -5562,8 +5563,9 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between">
         <b>${esc(x.profissionalResponsavel||'Responsável')}</b>
-        <small>${esc(x.autorNome||'Profissional')}</small>
+        <span class="pill Info">${esc(x.status||'Planejada')}</span>
       </div>
+      <small class="muted-line">${esc(x.autorNome||'Profissional')}</small>
       ${x.profissionaisParticipantes?`<small class="muted-line">Participantes: ${esc(x.profissionaisParticipantes)}</small>`:''}
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       ${x.coordinationRelacionadaId?`<small class="muted-line">Coordination: ${esc(x.coordinationRelacionadaId)}</small>`:''}
@@ -5573,6 +5575,10 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
       ${x.observacaoProfissional?`<p>${esc(x.observacaoProfissional)}</p>`:''}
       <div class="internal-note-actions-v0204">
         <button type="button" class="ghost" data-collaboration-edit-v0411="${x.id}">Editar</button>
+        ${x.status!=='Planejada'?`<button type="button" class="ghost" data-collaboration-status-v0412="${x.id}" data-status-v0412="Planejada">Replanejar</button>`:''}
+        ${x.status!=='EmAndamento'?`<button type="button" class="ghost" data-collaboration-status-v0412="${x.id}" data-status-v0412="EmAndamento">Iniciar</button>`:''}
+        ${x.status!=='Concluida'?`<button type="button" class="ghost" data-collaboration-status-v0412="${x.id}" data-status-v0412="Concluida">Concluir</button>`:''}
+        ${x.status!=='Cancelada'?`<button type="button" class="ghost" data-collaboration-status-v0412="${x.id}" data-status-v0412="Cancelada">Cancelar</button>`:''}
         <button type="button" class="ghost danger" data-collaboration-archive-v0411="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhuma colaboração profissional registrada.</p>';
@@ -5590,6 +5596,16 @@ async function hpOpenProfessionalReviewCollaborationV0411(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-collaboration-status-v0412]')].forEach(btn=>btn.onclick=async()=>{
+      const status=btn.dataset.statusV0412;
+      await api(`/api/pacientes/${p.id}/performance/progress-review-notes/collaboration/${btn.dataset.collaborationStatusV0412}/status`,{
+        method:'PATCH',
+        body:JSON.stringify({status})
+      });
+      toast(`Colaboração atualizada para ${status}.`);
+      await render();
     });
 
     [...listHost.querySelectorAll('[data-collaboration-archive-v0411]')].forEach(btn=>btn.onclick=async()=>{
@@ -13676,7 +13692,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.41.1';
+const HP_MVP_VERSION='0.41.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -187,11 +187,16 @@ public sealed record ProfessionalReviewCollaborationPersistedResponse(
     string? ContextoColaboracao,
     string? Horizonte,
     string? ObservacaoProfissional,
+    string Status,
+    DateTime? StatusAtualizadoEmUtc,
     Guid AutorUsuarioId,
     string AutorNome,
     DateTime CriadoEmUtc,
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
+
+public sealed record ProfessionalReviewCollaborationStatusRequest(
+    string Status);
 
 public sealed record ProfessionalReviewCollaborationFieldResponse(
     string Chave,

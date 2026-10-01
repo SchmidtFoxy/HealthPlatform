@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.41.1",
+            "v0.41.2",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Collaboration Persistence adiciona persistência auditada à colaboração profissional compartilhada, com vínculos opcionais a Coordination, Escalation e Continuity e sem transformar contexto documentado em execução, prioridade clínica ou transferência automática de responsabilidade clínica.")
+            "Professional Review Collaboration Status adiciona estados documentais explícitos à colaboração profissional compartilhada, com transições manuais auditadas entre Planejada, EmAndamento, Concluida e Cancelada, sem execução automática ou transferência automática de responsabilidade clínica.")
         {
             Recordes = recordes,
             Tempos = tempos,

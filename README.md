@@ -3771,3 +3771,35 @@ A persistência registra colaboração documental. Não executa conduta, não cr
 
 **Próxima etapa:** `v0.41.2 — Professional Review Collaboration Status`.
 
+---
+
+## v0.41.2 — Professional Review Collaboration Status
+
+Adiciona estados documentais explícitos aos registros de colaboração profissional compartilhada.
+
+### Estados
+- `Planejada`
+- `EmAndamento`
+- `Concluida`
+- `Cancelada`
+
+### Transições
+As mudanças são manuais via `PATCH .../collaboration/{id}/status`.
+
+Cada mudança:
+- registra `StatusAtualizadoEmUtc`;
+- preserva os demais dados da colaboração;
+- gera auditoria `PROFESSIONAL_REVIEW_COLLABORATION_STATUS_CHANGED`.
+
+### UI
+A lista passa a exibir badge de status e ações:
+- Replanejar;
+- Iniciar;
+- Concluir;
+- Cancelar.
+
+### Guardrail
+O status é documental. O sistema não inicia, conclui ou cancela colaborações automaticamente, não transfere automaticamente responsabilidade clínica e não converte estado em urgência, risco, prioridade clínica ou recomendação.
+
+**Próxima etapa:** `v0.41.3 — Professional Review Collaboration History`.
+

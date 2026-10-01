@@ -1,4 +1,20 @@
-﻿# v0.41.1 — Professional Review Collaboration Persistence
+﻿# v0.41.2 — Professional Review Collaboration Status
+
+- Adiciona `Status` à Collaboration persistida.
+- Adiciona `StatusAtualizadoEmUtc`.
+- Adiciona `ProfessionalReviewCollaborationStatusRequest`.
+- Adiciona endpoint `PATCH .../collaboration/{id}/status`.
+- Estados permitidos: `Planejada`, `EmAndamento`, `Concluida`, `Cancelada`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_COLLABORATION_STATUS_CHANGED`.
+- Edição textual preserva status atual.
+- UI passa a exibir badge de status.
+- Adiciona ações Replanejar, Iniciar, Concluir e Cancelar.
+- Não executa transições automaticamente.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.41.3 — Professional Review Collaboration History.
+
+# v0.41.1 — Professional Review Collaboration Persistence
 
 - Adiciona persistência auditada de Collaboration.
 - Adiciona `ProfessionalReviewCollaborationPersistedResponse`.
