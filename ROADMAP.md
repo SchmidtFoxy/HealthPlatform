@@ -4158,3 +4158,21 @@ Fechar o ciclo 0.43.x consolidando fundação, persistência, status, histórico
 ### v0.44.0 — Professional Review Team Decision Foundation
 Criar a fundação estrutural para decisões documentadas de equipe profissional, conectando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem automatizar conduta, prioridade clínica, risco, urgência, prescrição ou transferência de responsabilidade.
 
+## ✅ v0.44.0 — Professional Review Team Decision Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamDecisionFieldResponse`;
+- `ProfessionalReviewTeamDecisionFoundationResponse`;
+- endpoint `team-decision/foundation`;
+- doze campos estruturais;
+- estado `FundacaoTeamDecisionDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.44.1 — Professional Review Team Decision Persistence
+Adicionar persistência auditada das decisões documentadas da equipe profissional, com vínculos opcionais a Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity e preservação explícita da separação entre decisão registrada, prescrição, conduta e execução.
+

@@ -1,4 +1,21 @@
-﻿# v0.43.6 — Professional Review Team Alignment Closure
+﻿# v0.44.0 — Professional Review Team Decision Foundation
+
+- Abre a linha funcional 0.44.x.
+- Adiciona `ProfessionalReviewTeamDecisionFieldResponse`.
+- Adiciona `ProfessionalReviewTeamDecisionFoundationResponse`.
+- Adiciona `GET .../team-decision/foundation`.
+- Define vínculos opcionais com Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, decisão documentada, racional/justificativa, horizonte e observação profissional.
+- Define `FundacaoTeamDecisionDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Decisões documentadas da equipe` ao gerenciador profissional.
+- Não cria execução, prescrição, prioridade clínica ou classificação de risco automática.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.44.1 — Professional Review Team Decision Persistence.
+
+# v0.43.6 — Professional Review Team Alignment Closure
 
 - Adiciona `ProfessionalReviewTeamAlignmentClosureResponse`.
 - Adiciona endpoint `GET .../team-alignment/closure`.

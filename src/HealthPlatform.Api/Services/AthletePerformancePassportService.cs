@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.43.6",
+            "v0.44.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Alignment Closure fecha a linha 0.43.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão do alinhamento entre profissionais.")
+            "Professional Review Team Decision Foundation abre a linha 0.44.x com uma fundação estrutural para decisões documentadas de equipe profissional, conectando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity sem execução, prescrição ou priorização automática.")
         {
             Recordes = recordes,
             Tempos = tempos,

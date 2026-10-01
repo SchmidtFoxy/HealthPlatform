@@ -4376,3 +4376,39 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.44.0 — Professional Review Team Decision Foundation`.
 
+---
+
+## v0.44.0 — Professional Review Team Decision Foundation
+
+Abre a linha 0.44.x com a fundação estrutural para decisões documentadas de equipe profissional, conectando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity.
+
+### Campos da fundação
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- decisão documentada;
+- racional / justificativa;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-decision/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamDecisionDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Decisões documentadas da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza decisões documentadas entre profissionais. Não executa condutas, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.44.1 — Professional Review Team Decision Persistence`.
+

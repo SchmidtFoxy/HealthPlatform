@@ -1070,6 +1070,93 @@ public class ProgressReviewNotesController(
             "A fundação organiza alinhamento documental entre profissionais usando Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.43.1, possui persistência auditada. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("team-decision/foundation")]
+    public ActionResult<ProfessionalReviewTeamDecisionFoundationResponse> TeamDecisionFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "team-alignment-relacionado",
+                "Team Alignment relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a decisão a um alinhamento entre profissionais já documentado."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "shared-context-relacionado",
+                "Shared Context relacionado",
+                false,
+                "referencia",
+                "Permite relacionar a decisão a um contexto profissional compartilhado já documentado."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "collaboration-relacionada",
+                "Collaboration relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a decisão a uma colaboração profissional já documentada."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "coordination-relacionada",
+                "Coordination relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a decisão a uma coordenação profissional já documentada."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "escalation-relacionada",
+                "Escalation relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a decisão a um escalonamento profissional já documentado."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "continuity-relacionada",
+                "Continuity relacionada",
+                false,
+                "referencia",
+                "Permite relacionar a decisão a um registro de continuidade profissional já documentado."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "profissional-responsavel",
+                "Profissional responsável",
+                true,
+                "texto",
+                "Identifica documentalmente o profissional responsável pelo registro da decisão."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "participantes",
+                "Participantes",
+                false,
+                "texto",
+                "Registra os profissionais participantes da decisão documentada."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "decisao-documentada",
+                "Decisão documentada",
+                true,
+                "texto-longo",
+                "Registra a decisão profissional acordada sem executá-la automaticamente."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "racional-justificativa",
+                "Racional / justificativa",
+                false,
+                "texto-longo",
+                "Documenta o racional profissional associado à decisão sem produzir recomendação automática."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "horizonte",
+                "Horizonte",
+                false,
+                "texto",
+                "Registra referência temporal operacional sem definir urgência clínica."),
+            new ProfessionalReviewTeamDecisionFieldResponse(
+                "observacao-profissional",
+                "Observação profissional",
+                false,
+                "texto-longo",
+                "Permite registrar observações adicionais sobre a decisão da equipe.")
+        };
+
+        return Ok(new ProfessionalReviewTeamDecisionFoundationResponse(
+            "FundacaoTeamDecisionDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza decisões documentadas entre profissionais usando Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais. Não executa condutas, não cria prescrição automaticamente, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
+    }
+
     [HttpGet("team-alignment/closure")]
     public ActionResult<ProfessionalReviewTeamAlignmentClosureResponse> FechamentoTeamAlignments()
     {
