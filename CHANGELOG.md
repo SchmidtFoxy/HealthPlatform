@@ -1,4 +1,23 @@
-﻿# v0.47.6 — Professional Review Team Insight Closure
+﻿# v0.48.0 — Professional Review Team Knowledge Foundation
+
+- Abre a linha funcional 0.48.x.
+- Adiciona `ProfessionalReviewTeamKnowledgeFieldResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeFoundationResponse`.
+- Adiciona `GET .../team-knowledge/foundation`.
+- Define vínculos opcionais com Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity.
+- Define profissional responsável, participantes, conhecimento documentado, base observacional/evidência de suporte, interpretação profissional, aplicabilidade, horizonte e observação profissional.
+- Define `FundacaoTeamKnowledgeDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Conhecimento documentado da equipe` ao gerenciador profissional.
+- Não transforma conhecimento em evidência clínica validada.
+- Não infere causalidade, prognóstico, recomendação ou decisão terapêutica automaticamente.
+- Não executa conduta ou prescrição.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.48.1 — Professional Review Team Knowledge Persistence.
+
+# v0.47.6 — Professional Review Team Insight Closure
 
 - Adiciona `ProfessionalReviewTeamInsightClosureResponse`.
 - Adiciona endpoint `GET .../team-insight/closure`.

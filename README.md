@@ -5329,3 +5329,45 @@ O fechamento mede somente disponibilidade estrutural. Não transforma insight em
 
 **Próxima etapa:** `v0.48.0 — Professional Review Team Knowledge Foundation`.
 
+---
+
+## v0.48.0 — Professional Review Team Knowledge Foundation
+
+Abre a linha 0.48.x com a fundação estrutural para conhecimento documentado da equipe profissional.
+
+### Campos da fundação
+- Team Insight relacionado;
+- Team Learning relacionado;
+- Team Outcome relacionado;
+- Team Decision relacionada;
+- Team Alignment relacionado;
+- Shared Context relacionado;
+- Collaboration relacionada;
+- Coordination relacionada;
+- Escalation relacionada;
+- Continuity relacionada;
+- profissional responsável;
+- participantes;
+- conhecimento documentado;
+- base observacional / evidência de suporte;
+- interpretação profissional;
+- aplicabilidade;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../team-knowledge/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoTeamKnowledgeDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Conhecimento documentado da equipe**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza conhecimento documentado. Não transforma conhecimento em evidência clínica validada, não infere causalidade, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional.
+
+**Próxima etapa:** `v0.48.1 — Professional Review Team Knowledge Persistence`.
+
