@@ -136,6 +136,18 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTaskCoordinationFiltersResponse(
+    string? Status,
+    string? Responsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivadas,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewTaskCoordinationPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTaskCoordinationHistoryItemResponse(
     Guid Id,
     Guid TaskCoordinationId,

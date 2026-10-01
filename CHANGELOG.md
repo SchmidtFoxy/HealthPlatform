@@ -1,4 +1,19 @@
-﻿# v0.34.3 — Professional Review Task Coordination History
+﻿# v0.34.4 — Professional Review Task Coordination Filters
+
+- Adiciona `ProfessionalReviewTaskCoordinationFiltersResponse`.
+- Adiciona endpoint `GET .../task-coordination/search`.
+- Adiciona filtro por status.
+- Adiciona filtro por responsável.
+- Adiciona filtro por horizonte.
+- Adiciona busca textual.
+- Adiciona opção de incluir arquivadas.
+- Adiciona ordenação `asc` e `desc`.
+- Adiciona formulário de filtros à UI profissional.
+- Não cria classificação clínica, risco ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.34.5 — Professional Review Task Coordination Summary.
+
+# v0.34.3 — Professional Review Task Coordination History
 
 - Adiciona `ProfessionalReviewTaskCoordinationHistoryItemResponse`.
 - Adiciona `ProfessionalReviewTaskCoordinationHistoryResponse`.

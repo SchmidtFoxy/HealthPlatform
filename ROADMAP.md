@@ -2895,3 +2895,22 @@ Adicionar histórico consultável das tarefas operacionais, cobrindo criação, 
 ### v0.34.4 — Professional Review Task Coordination Filters
 Adicionar filtros profissionais por status, responsável, horizonte e texto, preservando a natureza documental da Task Coordination.
 
+## ✅ v0.34.4 — Professional Review Task Coordination Filters — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTaskCoordinationFiltersResponse`;
+- endpoint `task-coordination/search`;
+- filtro por status;
+- filtro por responsável;
+- filtro por horizonte;
+- busca textual;
+- opção incluir arquivadas;
+- ordenação asc/desc;
+- formulário de filtros na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.34.5 — Professional Review Task Coordination Summary
+Adicionar resumo estrutural das tarefas operacionais com contagem por status e distribuição por responsável, sem gerar score clínico ou prioridade automática.
+

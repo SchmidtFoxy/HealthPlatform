@@ -2272,3 +2272,30 @@ O histórico mostra somente eventos registrados. Não interpreta evolução clí
 
 **Próxima etapa:** `v0.34.4 — Professional Review Task Coordination Filters`.
 
+---
+
+## v0.34.4 — Professional Review Task Coordination Filters
+
+Adiciona filtros profissionais para localizar tarefas operacionais persistidas.
+
+### Filtros
+- status;
+- responsável;
+- horizonte;
+- texto livre;
+- incluir arquivadas;
+- ordenação asc/desc.
+
+### Busca textual
+A pesquisa considera:
+- tarefa operacional;
+- observação profissional.
+
+### UI
+O gerenciador de tarefas passa a ter **Aplicar filtros** e **Limpar filtros**.
+
+### Guardrail
+Os filtros apenas localizam registros operacionais. Não classificam urgência, risco, prioridade clínica, resposta ao tratamento ou necessidade de intervenção.
+
+**Próxima etapa:** `v0.34.5 — Professional Review Task Coordination Summary`.
+
