@@ -1,4 +1,20 @@
-﻿# v0.38.6 — Professional Review Continuity Closure
+﻿# v0.39.0 — Professional Review Escalation Foundation
+
+- Abre a linha funcional 0.39.x.
+- Adiciona `ProfessionalReviewEscalationFieldResponse`.
+- Adiciona `ProfessionalReviewEscalationFoundationResponse`.
+- Adiciona `GET .../escalation/foundation`.
+- Define Continuity relacionada, Handoff relacionado, Delegation relacionada, Assignment relacionada, profissional de origem, profissional de destino, contexto escalado, horizonte e observação profissional.
+- Define `FundacaoEscalationDisponivel`.
+- Define escopo `EquipeProfissional`.
+- Persistência permanece desabilitada nesta etapa.
+- Adiciona seção `Escalonamento profissional` ao gerenciador profissional.
+- Não cria execução automática, prioridade clínica ou classificação de risco.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.39.1 — Professional Review Escalation Persistence.
+
+# v0.38.6 — Professional Review Continuity Closure
 
 - Adiciona `ProfessionalReviewContinuityClosureResponse`.
 - Adiciona endpoint `GET .../continuity/closure`.

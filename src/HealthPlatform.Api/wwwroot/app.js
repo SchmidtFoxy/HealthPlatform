@@ -4914,6 +4914,7 @@ const HP_PROFESSIONAL_REVIEW_CONTINUITY_HISTORY_V0383='v0.38.3';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384='v0.38.4';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_SUMMARY_V0385='v0.38.5';
 const HP_PROFESSIONAL_REVIEW_CONTINUITY_CLOSURE_V0386='v0.38.6';
+const HP_PROFESSIONAL_REVIEW_ESCALATION_V0390='v0.39.0';
 
 
 
@@ -5331,6 +5332,34 @@ async function hpOpenProfessionalReviewContinuityHistoryV0383(p,continuity){
 
 
 
+
+async function hpLoadProfessionalReviewEscalationFoundationV0390(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/escalation/foundation`);
+}
+
+function hpRenderProfessionalReviewEscalationFoundationV0390(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-escalation-v0390="${HP_PROFESSIONAL_REVIEW_ESCALATION_V0390}">
+    <div class="row-between">
+      <div>
+        <b>Escalonamento profissional</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza escalonamento documental entre profissionais. Não executa condutas nem transfere automaticamente responsabilidade clínica.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewContinuityClosureV0386(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/continuity/closure`);
@@ -5403,6 +5432,7 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewContinuityV0381">Fechar</button>
     </div>
+    <div id="professionalReviewEscalationFoundationV0390"></div>
     <div id="professionalReviewContinuityClosureV0386"></div>
     <div id="professionalReviewContinuitySummaryV0385"></div>
     <form id="professionalReviewContinuityFiltersV0384" class="form-grid" data-professional-review-continuity-filters-v0384="${HP_PROFESSIONAL_REVIEW_CONTINUITY_FILTERS_V0384}">
@@ -5446,6 +5476,11 @@ async function hpOpenProfessionalReviewContinuityV0381(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const escalationFoundationHostV0390=$('#professionalReviewEscalationFoundationV0390');
+  hpLoadProfessionalReviewEscalationFoundationV0390(p.id)
+    .then(x=>hpRenderProfessionalReviewEscalationFoundationV0390(escalationFoundationHostV0390,x))
+    .catch(()=>{ if(escalationFoundationHostV0390) escalationFoundationHostV0390.innerHTML=''; });
 
   const continuityClosureHostV0386=$('#professionalReviewContinuityClosureV0386');
   hpLoadProfessionalReviewContinuityClosureV0386(p.id)
@@ -12807,7 +12842,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.38.6';
+const HP_MVP_VERSION='0.39.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

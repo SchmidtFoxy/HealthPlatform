@@ -3485,3 +3485,21 @@ Fechar o ciclo 0.38.x consolidando fundação, persistência, status, histórico
 ### v0.39.0 — Professional Review Escalation Foundation
 Criar a fundação estrutural para escalonamento profissional documentado, permitindo registrar encaminhamento interno de contexto entre profissionais a partir de continuidade, handoffs, delegações e atribuições existentes, sem automatizar conduta, risco, urgência, prioridade clínica ou transferência de responsabilidade.
 
+## ✅ v0.39.0 — Professional Review Escalation Foundation — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewEscalationFieldResponse`;
+- `ProfessionalReviewEscalationFoundationResponse`;
+- endpoint `escalation/foundation`;
+- nove campos estruturais;
+- estado `FundacaoEscalationDisponivel`;
+- escopo `EquipeProfissional`;
+- persistência explicitamente indisponível nesta etapa;
+- seção de fundação no gerenciador profissional;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.39.1 — Professional Review Escalation Persistence
+Adicionar persistência auditada dos registros de escalonamento profissional, com vínculos opcionais a Continuity, Handoff, Delegation e Assignment e preservação explícita da separação entre contexto documentado, decisão clínica e execução.
+

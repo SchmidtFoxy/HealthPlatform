@@ -3245,3 +3245,36 @@ O fechamento mede somente disponibilidade estrutural. Não representa score clí
 
 **Próxima etapa:** `v0.39.0 — Professional Review Escalation Foundation`.
 
+---
+
+## v0.39.0 — Professional Review Escalation Foundation
+
+Abre a linha 0.39.x com a fundação estrutural de escalonamento profissional, conectando continuidade, handoffs, delegações e atribuições já documentadas.
+
+### Campos da fundação
+- Continuity relacionada;
+- Handoff relacionado;
+- Delegation relacionada;
+- Assignment relacionada;
+- profissional de origem;
+- profissional de destino;
+- contexto escalado;
+- horizonte;
+- observação profissional.
+
+### Endpoint
+`GET .../escalation/foundation`
+
+### Estado inicial
+- `EstadoPreparacao = FundacaoEscalationDisponivel`
+- `PersistenciaDisponivel = false`
+- `Escopo = EquipeProfissional`
+
+### UI
+O gerenciador profissional passa a exibir a seção **Escalonamento profissional**, apresentando os campos estruturais disponíveis antes da persistência.
+
+### Guardrail
+A fundação organiza escalonamento documental entre profissionais. Não executa condutas, não transfere automaticamente responsabilidade clínica, não define prioridade clínica, não classifica risco e não substitui decisão profissional.
+
+**Próxima etapa:** `v0.39.1 — Professional Review Escalation Persistence`.
+
