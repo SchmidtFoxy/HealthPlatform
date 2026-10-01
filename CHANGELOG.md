@@ -1,4 +1,19 @@
-﻿# v0.40.2 — Professional Review Coordination Status
+﻿# v0.40.3 — Professional Review Coordination History
+
+- Adiciona `ProfessionalReviewCoordinationHistoryItemResponse`.
+- Adiciona `ProfessionalReviewCoordinationHistoryResponse`.
+- Adiciona `GET .../coordination/{id}/history`.
+- Reutiliza `AuditLog` existente.
+- Mapeia eventos Criado, Editado, StatusAlterado e Arquivado.
+- Adiciona autoria e data/hora ao histórico.
+- Suporta ordenação `asc` e `desc`.
+- Adiciona ação `Histórico` no gerenciador profissional.
+- Não interpreta evolução clínica.
+- Não transfere automaticamente responsabilidade clínica.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.40.4 — Professional Review Coordination Filters.
+
+# v0.40.2 — Professional Review Coordination Status
 
 - Adiciona `Status` à Coordination persistida.
 - Adiciona `StatusAtualizadoEmUtc`.

@@ -3580,3 +3580,35 @@ O status é documental. O sistema não inicia, conclui ou cancela coordenações
 
 **Próxima etapa:** `v0.40.3 — Professional Review Coordination History`.
 
+---
+
+## v0.40.3 — Professional Review Coordination History
+
+Adiciona histórico consultável dos eventos auditados das coordenações profissionais integradas.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../coordination/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada coordenação passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não interpreta evolução clínica, causalidade, urgência, prioridade, risco ou resultado e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.40.4 — Professional Review Coordination Filters`.
+

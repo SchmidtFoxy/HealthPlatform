@@ -3680,3 +3680,21 @@ Adicionar estados documentais explícitos aos registros de coordenação profiss
 ### v0.40.3 — Professional Review Coordination History
 Adicionar histórico consultável das coordenações profissionais, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.40.3 — Professional Review Coordination History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewCoordinationHistoryItemResponse`;
+- `ProfessionalReviewCoordinationHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por coordenação;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.40.4 — Professional Review Coordination Filters
+Adicionar filtros profissionais por status, profissional coordenador, horizonte e texto, preservando a natureza documental das coordenações.
+
