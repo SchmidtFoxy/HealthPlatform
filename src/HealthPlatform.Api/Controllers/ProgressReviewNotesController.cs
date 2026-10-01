@@ -1999,6 +1999,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearTeamKnowledge(nota));
     }
 
+    [HttpGet("team-knowledge/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeHistoryResponse>> HistoricoTeamKnowledge(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var teamKnowledgeExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledge),
+                cancellationToken);
+
+        if (!teamKnowledgeExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewTeamKnowledgeHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoTeamKnowledge(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra apenas eventos documentais do conhecimento da equipe. Não transforma conhecimento em evidência clínica validada, não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("team-knowledge/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgePersistedResponse>> AtualizarStatusTeamKnowledge(
         Guid pacienteId,
@@ -10204,6 +10279,16 @@ public class ProgressReviewNotesController(
             nota.UpdatedAtUtc,
             nota.Arquivada);
     }
+
+    private static string MapearEventoTeamKnowledge(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static TeamKnowledgePayload LerPayloadTeamKnowledge(NotaInternaProfissional nota)
     {

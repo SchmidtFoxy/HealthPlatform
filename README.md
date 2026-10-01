@@ -5454,3 +5454,35 @@ O status é documental. O sistema não transforma conhecimento em evidência cl�
 
 **Próxima etapa:** `v0.48.3 — Professional Review Team Knowledge History`.
 
+---
+
+## v0.48.3 — Professional Review Team Knowledge History
+
+Adiciona histórico consultável dos eventos auditados do conhecimento documentado da equipe profissional.
+
+### Eventos
+- criação;
+- edição;
+- mudança de status;
+- arquivamento.
+
+### Endpoint
+`GET .../team-knowledge/{id}/history?ordenacao=desc`
+
+O retorno informa:
+- evento;
+- autor;
+- usuário;
+- data/hora;
+- detalhes auditados;
+- total;
+- ordenação.
+
+### UI
+Cada registro de conhecimento passa a ter a ação **Histórico**, exibindo a linha do tempo documental em ordem decrescente por padrão.
+
+### Guardrail
+O histórico mostra somente eventos registrados. Não transforma conhecimento em evidência clínica validada, não interpreta causalidade, evolução clínica, prognóstico, urgência, prioridade, risco, resultado clínico ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica.
+
+**Próxima etapa:** `v0.48.4 — Professional Review Team Knowledge Filters`.
+

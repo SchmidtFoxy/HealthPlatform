@@ -4772,3 +4772,21 @@ Adicionar estados documentais explícitos ao conhecimento registrado da equipe, 
 ### v0.48.3 — Professional Review Team Knowledge History
 Adicionar histórico consultável do conhecimento registrado da equipe, cobrindo criação, edição, mudança de status e arquivamento, com autoria e data/hora.
 
+## ✅ v0.48.3 — Professional Review Team Knowledge History — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeHistoryItemResponse`;
+- `ProfessionalReviewTeamKnowledgeHistoryResponse`;
+- histórico baseado em `AuditLog`;
+- criação, edição, status e arquivamento;
+- autoria;
+- data/hora;
+- ordenação asc/desc;
+- UI de histórico por conhecimento documentado;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.48.4 — Professional Review Team Knowledge Filters
+Adicionar filtros profissionais por status, profissional responsável, horizonte e texto, preservando a natureza documental do conhecimento registrado da equipe e sem promover o registro a evidência clínica validada.
+

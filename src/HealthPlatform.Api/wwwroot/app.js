@@ -4980,6 +4980,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_INSIGHT_CLOSURE_V0476='v0.47.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_V0480='v0.48.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_PERSISTENCE_V0481='v0.48.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_STATUS_V0482='v0.48.2';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_HISTORY_V0483='v0.48.3';
 
 
 
@@ -6021,6 +6022,40 @@ function hpRenderProfessionalReviewTeamKnowledgeFoundationV0480(host,foundation)
 }
 
 
+
+async function hpOpenProfessionalReviewTeamKnowledgeHistoryV0483(p,teamKnowledge){
+  if(!p?.id || !teamKnowledge?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge/${teamKnowledge.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-history-v0483="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_HISTORY_V0483}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico do conhecimento documentado da equipe</h3>
+        <p class="muted-line">${esc(teamKnowledge.profissionalResponsavel||'Responsável')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeHistoryV0483">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não valida evidência clínica, não representa causalidade, prognóstico, recomendação, decisão terapêutica, conduta executada ou prescrição automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTeamKnowledgeHistoryV0483').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeV0481(p);
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeV0481(p){
   if(!p?.id) return;
 
@@ -6110,6 +6145,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeV0481(p){
         ${x.status!=='EmRevisao'?`<button type="button" class="ghost" data-team-knowledge-status-v0482="${x.id}" data-status-v0482="EmRevisao">Revisar</button>`:''}
         ${x.status!=='Consolidado'?`<button type="button" class="ghost" data-team-knowledge-status-v0482="${x.id}" data-status-v0482="Consolidado">Consolidar</button>`:''}
         ${x.status!=='Descartado'?`<button type="button" class="ghost" data-team-knowledge-status-v0482="${x.id}" data-status-v0482="Descartado">Descartar</button>`:''}
+        <button type="button" class="ghost" data-team-knowledge-history-v0483="${x.id}">Histórico</button>
         <button type="button" class="ghost danger" data-team-knowledge-archive-v0481="${x.id}">Arquivar</button>
       </div>
     </article>`).join(''):'<p class="muted-line">Nenhum conhecimento de equipe registrado.</p>';
@@ -6137,6 +6173,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeV0481(p){
       form.elements.horizonte.value=item.horizonte||'';
       form.elements.observacaoProfissional.value=item.observacaoProfissional||'';
       form.elements.profissionalResponsavel.focus();
+    });
+
+    [...listHost.querySelectorAll('[data-team-knowledge-history-v0483]')].forEach(btn=>btn.onclick=async()=>{
+      const item=items.find(x=>x.id===btn.dataset.teamKnowledgeHistoryV0483);
+      if(item) await hpOpenProfessionalReviewTeamKnowledgeHistoryV0483(p,item);
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-status-v0482]')].forEach(btn=>btn.onclick=async()=>{
@@ -16266,7 +16307,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.48.2';
+const HP_MVP_VERSION='0.48.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

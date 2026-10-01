@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.48.2",
+            "v0.48.3",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Status adiciona estados documentais explícitos ao conhecimento registrado da equipe, com transições manuais auditadas entre Registrado, EmRevisao, Consolidado e Descartado, sem transformar conhecimento em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
+            "Professional Review Team Knowledge History torna consultáveis os eventos auditados do conhecimento registrado da equipe, incluindo criação, edição, status e arquivamento, sem transformar conhecimento em evidência clínica validada nem inferir automaticamente causalidade, prognóstico, recomendação, decisão terapêutica, conduta ou prescrição.")
         {
             Recordes = recordes,
             Tempos = tempos,
