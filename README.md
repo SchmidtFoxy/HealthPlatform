@@ -2326,3 +2326,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.34.6 — Professional Review Task Coordination Closure`.
 
+---
+
+## v0.34.6 — Professional Review Task Coordination Closure
+
+Fecha a linha 0.34.x consolidando todas as capacidades estruturais da Task Coordination profissional.
+
+### Componentes consolidados
+- Task Coordination Foundation;
+- Task Coordination Persistence;
+- Task Coordination Status;
+- Task Coordination History;
+- Task Coordination Filters;
+- Task Coordination Summary.
+
+### Estado
+O endpoint `task-coordination/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaTaskCoordinationCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica.
+
+**Próxima etapa:** `v0.35.0 — Professional Review Assignment Foundation`.
+

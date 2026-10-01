@@ -2936,3 +2936,20 @@ Adicionar resumo estrutural das tarefas operacionais com contagem por status e d
 ### v0.34.6 — Professional Review Task Coordination Closure
 Fechar o ciclo 0.34.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão da Task Coordination.
 
+## ✅ v0.34.6 — Professional Review Task Coordination Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTaskCoordinationClosureResponse`;
+- endpoint `task-coordination/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaTaskCoordinationCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no gerenciador profissional;
+- encerramento da linha 0.34.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.35.0 — Professional Review Assignment Foundation
+Criar a fundação estrutural para atribuições profissionais relacionadas às tarefas operacionais, com organização de responsáveis e contexto documental, mantendo separação entre documentação, decisão clínica e execução.
+

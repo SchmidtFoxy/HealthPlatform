@@ -322,6 +322,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza tarefas acompanháveis pela equipe profissional e, a partir da v0.34.1, possui persistência auditada. Não executa condutas, não atribui prioridade clínica e não substitui decisão profissional."));
     }
 
+    [HttpGet("task-coordination/closure")]
+    public ActionResult<ProfessionalReviewTaskCoordinationClosureResponse> FechamentoTaskCoordination()
+    {
+        var componentes = new[]
+        {
+            "TaskCoordinationFoundation",
+            "TaskCoordinationPersistence",
+            "TaskCoordinationStatus",
+            "TaskCoordinationHistory",
+            "TaskCoordinationFilters",
+            "TaskCoordinationSummary"
+        };
+
+        return Ok(new ProfessionalReviewTaskCoordinationClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTaskCoordinationCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural da Task Coordination. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica."));
+    }
+
     [HttpGet("task-coordination/summary")]
     public async Task<ActionResult<ProfessionalReviewTaskCoordinationSummaryResponse>> ResumoTaskCoordination(
         Guid pacienteId,

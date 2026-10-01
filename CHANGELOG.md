@@ -1,4 +1,17 @@
-﻿# v0.34.5 — Professional Review Task Coordination Summary
+﻿# v0.34.6 — Professional Review Task Coordination Closure
+
+- Adiciona `ProfessionalReviewTaskCoordinationClosureResponse`.
+- Adiciona endpoint `GET .../task-coordination/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTaskCoordinationCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_TASK_COORDINATION_CLOSURE_V0346`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.34.x.
+- Próxima etapa: v0.35.0 — Professional Review Assignment Foundation.
+
+# v0.34.5 — Professional Review Task Coordination Summary
 
 - Adiciona `ProfessionalReviewTaskCoordinationResponsavelResumoResponse`.
 - Adiciona `ProfessionalReviewTaskCoordinationSummaryResponse`.
