@@ -4892,6 +4892,7 @@ const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_STATUS_V0352='v0.35.2';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_HISTORY_V0353='v0.35.3';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354='v0.35.4';
 const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_SUMMARY_V0355='v0.35.5';
+const HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356='v0.35.6';
 
 
 
@@ -5110,6 +5111,24 @@ async function hpOpenProfessionalReviewAssignmentHistoryV0353(p,assignment){
 }
 
 
+
+async function hpLoadProfessionalReviewAssignmentClosureV0356(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/assignment/closure`);
+}
+
+function hpRenderProfessionalReviewAssignmentClosureV0356(host,closure){
+  if(!host || !closure) return;
+
+  const complete=closure.estadoEstrutural==='EstruturaAssignmentCompleta';
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-assignment-closure-v0356="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356}">
+    <div><b>${complete?'Estrutura de atribuições profissionais completa':'Estrutura de atribuições profissionais parcial'}</b></div>
+    <small class="muted-line">${esc(String(closure.componentesDisponiveis??0))}/${esc(String(closure.componentesEsperados??0))} capacidades estruturais disponíveis.</small>
+    ${Array.isArray(closure.componentesAusentes)&&closure.componentesAusentes.length?`<div><small>Ausentes: ${esc(closure.componentesAusentes.join(', '))}</small></div>`:''}
+    <small class="muted-line">Fechamento estrutural. Não representa score clínico, risco, urgência, prioridade ou recomendação.</small>
+  </section>`;
+}
+
 async function hpLoadProfessionalReviewAssignmentSummaryV0355(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/assignment/summary`);
@@ -5165,6 +5184,7 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewAssignmentV0351">Fechar</button>
     </div>
+    <div id="professionalReviewAssignmentClosureV0356"></div>
     <div id="professionalReviewAssignmentSummaryV0355"></div>
     <form id="professionalReviewAssignmentFiltersV0354" class="form-grid" data-professional-review-assignment-filters-v0354="${HP_PROFESSIONAL_REVIEW_ASSIGNMENT_FILTERS_V0354}">
       <label>Status<select name="status">
@@ -5207,6 +5227,11 @@ async function hpOpenProfessionalReviewAssignmentV0351(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const assignmentClosureHostV0356=$('#professionalReviewAssignmentClosureV0356');
+  hpLoadProfessionalReviewAssignmentClosureV0356(p.id)
+    .then(x=>hpRenderProfessionalReviewAssignmentClosureV0356(assignmentClosureHostV0356,x))
+    .catch(()=>{ if(assignmentClosureHostV0356) assignmentClosureHostV0356.innerHTML=''; });
 
   const assignmentSummaryHostV0355=$('#professionalReviewAssignmentSummaryV0355');
   hpLoadProfessionalReviewAssignmentSummaryV0355(p.id)
@@ -11746,7 +11771,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.35.5';
+const HP_MVP_VERSION='0.35.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

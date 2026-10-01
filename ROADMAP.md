@@ -3068,3 +3068,20 @@ Adicionar resumo estrutural das atribuições profissionais com contagem por sta
 ### v0.35.6 — Professional Review Assignment Closure
 Fechar o ciclo 0.35.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das atribuições profissionais.
 
+## ✅ v0.35.6 — Professional Review Assignment Closure — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewAssignmentClosureResponse`;
+- endpoint `assignment/closure`;
+- seis componentes estruturais consolidados;
+- estado `EstruturaAssignmentCompleta`;
+- componentes presentes/ausentes;
+- painel de fechamento no gerenciador profissional;
+- encerramento da linha 0.35.x;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.36.0 — Professional Review Delegation Foundation
+Criar a fundação estrutural para delegação profissional relacionada às atribuições existentes, preservando autoria, responsabilidade e contexto documental sem automatizar decisão clínica ou execução.
+

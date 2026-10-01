@@ -390,6 +390,28 @@ public class ProgressReviewNotesController(
             "A fundação organiza atribuições documentais da equipe profissional e, a partir da v0.35.1, possui persistência auditada. Não executa condutas, não define prioridade clínica, não classifica risco e não substitui decisão profissional."));
     }
 
+    [HttpGet("assignment/closure")]
+    public ActionResult<ProfessionalReviewAssignmentClosureResponse> FechamentoAssignments()
+    {
+        var componentes = new[]
+        {
+            "AssignmentFoundation",
+            "AssignmentPersistence",
+            "AssignmentStatus",
+            "AssignmentHistory",
+            "AssignmentFilters",
+            "AssignmentSummary"
+        };
+
+        return Ok(new ProfessionalReviewAssignmentClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaAssignmentCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural das atribuições profissionais. Não representa score clínico, risco, urgência, prioridade, prognóstico, recomendação ou decisão terapêutica."));
+    }
+
     [HttpGet("assignment/summary")]
     public async Task<ActionResult<ProfessionalReviewAssignmentSummaryResponse>> ResumoAssignments(
         Guid pacienteId,

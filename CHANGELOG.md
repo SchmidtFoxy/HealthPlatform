@@ -1,4 +1,17 @@
-﻿# v0.35.5 — Professional Review Assignment Summary
+﻿# v0.35.6 — Professional Review Assignment Closure
+
+- Adiciona `ProfessionalReviewAssignmentClosureResponse`.
+- Adiciona endpoint `GET .../assignment/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaAssignmentCompleta`.
+- Adiciona marcador `HP_PROFESSIONAL_REVIEW_ASSIGNMENT_CLOSURE_V0356`.
+- Adiciona painel de fechamento no gerenciador profissional.
+- Não cria score clínico, risco, urgência ou prioridade automática.
+- Não cria migration ou tabela nova.
+- Encerra a linha funcional 0.35.x.
+- Próxima etapa: v0.36.0 — Professional Review Delegation Foundation.
+
+# v0.35.5 — Professional Review Assignment Summary
 
 - Adiciona `ProfessionalReviewAssignmentResponsavelResumoResponse`.
 - Adiciona `ProfessionalReviewAssignmentSummaryResponse`.

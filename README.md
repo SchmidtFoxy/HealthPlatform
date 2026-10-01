@@ -2547,3 +2547,34 @@ As contagens são agregações documentais. Não representam score clínico, ris
 
 **Próxima etapa:** `v0.35.6 — Professional Review Assignment Closure`.
 
+---
+
+## v0.35.6 — Professional Review Assignment Closure
+
+Fecha a linha 0.35.x consolidando todas as capacidades estruturais de Assignment profissional.
+
+### Componentes consolidados
+- Assignment Foundation;
+- Assignment Persistence;
+- Assignment Status;
+- Assignment History;
+- Assignment Filters;
+- Assignment Summary.
+
+### Estado
+O endpoint `assignment/closure` informa:
+- componentes esperados;
+- componentes disponíveis;
+- componentes presentes;
+- componentes ausentes;
+- estado `EstruturaAssignmentCompleta`;
+- regra de uso.
+
+### UI
+O gerenciador profissional passa a mostrar o estado estrutural de fechamento acima do resumo.
+
+### Guardrail
+O fechamento mede somente disponibilidade estrutural. Não representa score clínico, risco, urgência, prioridade, gravidade, prognóstico, recomendação ou decisão terapêutica.
+
+**Próxima etapa:** `v0.36.0 — Professional Review Delegation Foundation`.
+
