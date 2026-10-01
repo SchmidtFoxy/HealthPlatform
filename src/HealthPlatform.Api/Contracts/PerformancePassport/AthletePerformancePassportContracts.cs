@@ -245,6 +245,22 @@ public sealed record ProgressIntelligenceSignalResponse(
 
 
 
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionProfissionalResumoResponse(
+    string Profissional,
+    int Total);
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionSummaryResponse(
+    int Total,
+    int Ativas,
+    int Registradas,
+    int EmRevisao,
+    int Consolidadas,
+    int Descartadas,
+    int Arquivadas,
+    IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionProfissionalResumoResponse> PorProfissionalResponsavel,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionFiltersResponse(
     string? Status,
     string? ProfissionalResponsavel,

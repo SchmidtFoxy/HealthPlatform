@@ -2570,6 +2570,54 @@ public class ProgressReviewNotesController(
             "A fundação organiza decisões profissionais documentadas relacionadas às revisões dos efeitos observados do conhecimento da equipe usando Team Knowledge Effect Review, Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.52.1, possui persistência auditada. Não transforma decisão documentada em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    [HttpGet("team-knowledge-effect-decision/summary")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionSummaryResponse>> ResumoTeamKnowledgeEffectDecisions(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecision))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearTeamKnowledgeEffectDecision).ToArray();
+
+        var total = itens.Length;
+        var arquivadas = itens.Count(x => x.Arquivada);
+        var ativas = itens.Count(x => !x.Arquivada);
+        var registradas = itens.Count(x => !x.Arquivada && x.Status == "Registrado");
+        var emRevisao = itens.Count(x => !x.Arquivada && x.Status == "EmRevisao");
+        var consolidadas = itens.Count(x => !x.Arquivada && x.Status == "Consolidado");
+        var descartadas = itens.Count(x => !x.Arquivada && x.Status == "Descartado");
+
+        var porProfissionalResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalResponsavel))
+            .GroupBy(x => x.ProfissionalResponsavel.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewTeamKnowledgeEffectDecisionProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionSummaryResponse(
+            total,
+            ativas,
+            registradas,
+            emRevisao,
+            consolidadas,
+            descartadas,
+            arquivadas,
+            porProfissionalResponsavel,
+            "O resumo apresenta somente agregações documentais das decisões profissionais sobre os efeitos observados do conhecimento da equipe. Não transforma agregações em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision/search")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionFiltersResponse>> FiltrarTeamKnowledgeEffectDecisions(
         Guid pacienteId,

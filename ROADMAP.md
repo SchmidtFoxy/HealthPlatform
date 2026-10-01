@@ -5369,3 +5369,26 @@ Adicionar filtros profissionais por status, profissional responsável, horizonte
 ### v0.52.5 — Professional Review Team Knowledge Effect Decision Summary
 Adicionar resumo estrutural das decisões profissionais documentadas dos efeitos observados do conhecimento da equipe com contagem por status e distribuição por profissional responsável, sem transformar agregações em validação causal, evidência clínica validada, prognóstico, recomendação, decisão terapêutica, urgência, risco, prioridade clínica, conduta ou prescrição.
 
+## ✅ v0.52.5 — Professional Review Team Knowledge Effect Decision Summary — CONCLUÍDA
+
+**Entregue:**
+- `ProfessionalReviewTeamKnowledgeEffectDecisionSummaryResponse`;
+- `ProfessionalReviewTeamKnowledgeEffectDecisionProfissionalResumoResponse`;
+- total de registros;
+- ativas;
+- registradas;
+- em revisão;
+- consolidadas;
+- descartadas;
+- arquivadas;
+- agrupamento por profissional responsável;
+- painel de resumo no gerenciador;
+- atualização após alterações;
+- hotfix aprovado v0.52.1-r1 preservado cumulativamente;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.52.6 — Professional Review Team Knowledge Effect Decision Closure
+Fechar o ciclo 0.52.x consolidando fundação, persistência, status, histórico, filtros e resumo em um estado estrutural único de prontidão das decisões profissionais documentadas sobre os efeitos observados do conhecimento da equipe.
+

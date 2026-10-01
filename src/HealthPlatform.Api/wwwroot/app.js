@@ -5010,6 +5010,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_PERSISTENCE_V0521='v
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_STATUS_V0522='v0.52.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_HISTORY_V0523='v0.52.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_FILTERS_V0524='v0.52.4';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_SUMMARY_V0525='v0.52.5';
 
 
 
@@ -6349,6 +6350,36 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionHistoryV0523(p
   $('#closeProfessionalReviewTeamKnowledgeEffectDecisionHistoryV0523').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p);
 }
 
+
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision/summary`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(host,summary){
+  if(!host || !summary) return;
+
+  const porResponsavel=Array.isArray(summary.porProfissionalResponsavel)?summary.porProfissionalResponsavel:[];
+
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-summary-v0525="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_SUMMARY_V0525}">
+    <div><b>Resumo das decisões profissionais sobre os efeitos observados</b></div>
+    <div class="stack">
+      <div class="row-between"><span>Total</span><b>${esc(String(summary.total??0))}</b></div>
+      <div class="row-between"><span>Ativas</span><b>${esc(String(summary.ativas??0))}</b></div>
+      <div class="row-between"><span>Registradas</span><b>${esc(String(summary.registradas??0))}</b></div>
+      <div class="row-between"><span>Em revisão</span><b>${esc(String(summary.emRevisao??0))}</b></div>
+      <div class="row-between"><span>Consolidadas</span><b>${esc(String(summary.consolidadas??0))}</b></div>
+      <div class="row-between"><span>Descartadas</span><b>${esc(String(summary.descartadas??0))}</b></div>
+      <div class="row-between"><span>Arquivadas</span><b>${esc(String(summary.arquivadas??0))}</b></div>
+    </div>
+    ${porResponsavel.length?`<div class="stack">
+      <small class="muted-line">Por profissional responsável</small>
+      ${porResponsavel.map(x=>`<div class="row-between"><span>${esc(x.profissional||'Sem profissional')}</span><small>${esc(String(x.total??0))}</small></div>`).join('')}
+    </div>`:''}
+    <small class="muted-line">Resumo documental. Não valida causalidade, não valida evidência clínica, não representa prognóstico, recomendação, decisão terapêutica, score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição automática.</small>
+  </section>`;
+}
+
 async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
   if(!p?.id) return;
 
@@ -6376,6 +6407,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionV0521">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionSummaryV0525"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionFiltersV0524" class="form-grid" data-professional-review-team-knowledge-effect-decision-filters-v0524="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_FILTERS_V0524}">
       <label>Status<select name="status">
         <option value="">Todos</option>
@@ -6434,6 +6466,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
   </div>`;
 
   modal.classList.add('open');
+
+  const teamKnowledgeEffectDecisionSummaryHostV0525=$('#professionalReviewTeamKnowledgeEffectDecisionSummaryV0525');
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(teamKnowledgeEffectDecisionSummaryHostV0525,x))
+    .catch(()=>{ if(teamKnowledgeEffectDecisionSummaryHostV0525) teamKnowledgeEffectDecisionSummaryHostV0525.innerHTML=''; });
 
   const form=$('#professionalReviewTeamKnowledgeEffectDecisionFormV0521');
   const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionListV0521');
@@ -6504,12 +6541,18 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
       });
       toast(`Decisão profissional atualizada para ${status}.`);
       await render();
+      hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(teamKnowledgeEffectDecisionSummaryHostV0525,x))
+        .catch(()=>{});
     });
 
     [...listHost.querySelectorAll('[data-team-knowledge-effect-decision-archive-v0521]')].forEach(btn=>btn.onclick=async()=>{
       await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision/${btn.dataset.teamKnowledgeEffectDecisionArchiveV0521}`,{method:'DELETE'});
       toast('Decisão profissional arquivada.');
       await render();
+      hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(p.id)
+        .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(teamKnowledgeEffectDecisionSummaryHostV0525,x))
+        .catch(()=>{});
     });
   };
 
@@ -6553,6 +6596,9 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionV0521(p){
     toast(id?'Decisão profissional atualizada.':'Decisão profissional registrada.');
     clear();
     await render();
+    hpLoadProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(p.id)
+      .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionSummaryV0525(teamKnowledgeEffectDecisionSummaryHostV0525,x))
+      .catch(()=>{});
   };
 
   if(filtersForm){
@@ -17947,7 +17993,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.52.4';
+const HP_MVP_VERSION='0.52.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
