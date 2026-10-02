@@ -6696,3 +6696,23 @@ Adicionar ação local para copiar o feedback técnico de encerramento com motiv
 
 ### v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear
 Adicionar ação local para limpar explicitamente o feedback técnico de encerramento sem iniciar nova verificação, mantendo o fluxo sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear — CONCLUÍDA
+
+**Entregue:**
+- ação local `Limpar encerramento`;
+- limpeza explícita do feedback de expiração sem iniciar nova verificação;
+- remoção do motivo técnico `data-expiry-reason-v05647`;
+- remoção do timestamp `data-expiry-timestamp-v05648` e `datetime`;
+- desabilitação automática de `Copiar encerramento` e `Limpar encerramento` após a limpeza;
+- feedback `Feedback de encerramento limpo.`;
+- fluxo de cópia da v0.56.49 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility
+Melhorar a acessibilidade do feedback e das ações de encerramento com estado descritivo e associação semântica local, sem conteúdo clínico/textual.

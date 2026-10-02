@@ -8313,3 +8313,25 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear`.
+
+
+---
+
+## v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear
+
+Adiciona `Limpar encerramento` para remover explicitamente o feedback técnico da última expiração sem iniciar uma nova verificação.
+
+Ao limpar:
+- remove o texto do feedback;
+- remove o motivo técnico;
+- remove o timestamp técnico;
+- remove o `datetime`;
+- desabilita `Copiar encerramento`;
+- desabilita `Limpar encerramento`;
+- apresenta `Feedback de encerramento limpo.`.
+
+O estado da sessão técnica já expirada não é recriado nem enviado ao servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility`.

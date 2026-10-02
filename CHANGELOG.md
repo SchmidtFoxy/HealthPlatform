@@ -1,3 +1,14 @@
+# v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear
+
+- Adiciona `Limpar encerramento`.
+- Remove feedback, motivo e timestamp técnicos.
+- Desabilita copiar/limpar após a limpeza.
+- Mantém a cópia da v0.56.49.
+- Exibe confirmação local da limpeza.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.49 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Copy
 
 - Adiciona `Copiar encerramento`.

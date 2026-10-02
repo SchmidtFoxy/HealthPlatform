@@ -1,4 +1,4 @@
-HealthPlatform v0.56.49 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Copy - Incremental
+HealthPlatform v0.56.50 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,16 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- botao Copiar encerramento;
-- copia local do feedback tecnico com motivo e horario;
-- botao desabilitado sem encerramento;
-- feedback de sucesso/ausencia/falha;
+- botao Limpar encerramento;
+- limpeza explicita do feedback tecnico;
+- remocao de motivo/timestamp/datetime;
+- desabilitacao automatica de copiar/limpar;
+- confirmacao local da limpeza;
+- copia v0.56.49 preservada;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.49
+Se aprovado, commit/push apenas: v0.56.50
