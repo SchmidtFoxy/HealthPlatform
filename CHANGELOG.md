@@ -1,3 +1,14 @@
+# v0.56.75 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+
+- Adiciona helper explícito de reset do cache específico da v0.56.74.
+- Centraliza o reset de `lastResetSummaryTimestampClearFocusAnnouncementV05674`.
+- Usa o helper após nova cópia bem-sucedida.
+- Usa o helper no caminho de mensagem vazia.
+- Preserva deduplicação, foco e acessibilidade anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.74 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
 
 - Adiciona cache específico do anúncio de foco da limpeza do horário do reset.
