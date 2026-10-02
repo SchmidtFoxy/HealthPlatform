@@ -1,3 +1,13 @@
+# v0.56.63 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+- Adiciona anúncio acessível específico após limpar o horário.
+- Anuncia a movimentação para o indicador `Última cópia`.
+- Reutiliza o live region e a deduplicação existentes.
+- Preserva foco e acessibilidade anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.62 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus
 
 - Adiciona `tabindex=-1` ao indicador de última cópia.

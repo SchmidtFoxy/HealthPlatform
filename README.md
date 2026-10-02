@@ -8578,3 +8578,21 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.63 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement`.
+
+
+---
+
+## v0.56.63 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+Adiciona anúncio acessível específico após **Limpar horário** mover o foco para o indicador da última cópia.
+
+Mensagem:
+`Foco movido para o indicador Última cópia.`
+
+O anúncio usa o live region técnico já existente e preserva a deduplicação geral dos anúncios de foco.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.64 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication`.
