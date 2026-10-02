@@ -7769,3 +7769,29 @@ Evoluir o `DEPLOY-PRODUCAO.ps1` com validação mais detalhada do ambiente remot
 
 ### v0.57.2 — Deploy Seguro para Produção Application Package & Staging
 Preparar empacotamento e staging remoto da aplicação sem ativação imediata, com validação de integridade do pacote e mantendo a aplicação atual intacta até todos os gates de backup e staging estarem aprovados.
+
+
+## ✅ v0.57.2 — Deploy Seguro para Produção Application Package & Staging — CONCLUÍDA
+
+**Entregue:**
+- empacotamento local da aplicação em `tar.gz`;
+- exclusão explícita de `.git`, logs de deploy, pacotes temporários, backups e arquivos `.env*`;
+- SHA-256 local do pacote;
+- upload por `scp` sem senha hardcoded;
+- staging remoto isolado em diretório de releases, diferente do `RemoteRoot` ativo;
+- validação remota de SHA-256;
+- extração apenas no diretório de staging;
+- validação do `VERSION.txt` da release staged;
+- validação da presença do arquivo Compose no staging;
+- aplicação ativa preservada sem troca de diretório, symlink ou restart;
+- logs locais com caminho, versão e hash do staging;
+- staging liberado somente após backup PostgreSQL concluído, validado e guard de mutação aprovado.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates
+Adicionar gates pré-ativação do staging: validação estrutural do pacote, configuração obrigatória preservada no host, plano de rollback e checagens de saúde preparatórias, ainda sem promover a release staged para produção.

@@ -9408,3 +9408,27 @@ A v0.57.1 ainda **não executa migration, upload/substituição ativa da aplica�
 **Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
 
 **Próxima etapa:** `v0.57.2 — Deploy Seguro para Produção Application Package & Staging`.
+
+
+---
+
+## v0.57.2 — Deploy Seguro para Produção Application Package & Staging
+
+O `DEPLOY-PRODUCAO.ps1` agora prepara uma release de forma isolada, sem substituir a aplicação ativa.
+
+O fluxo:
+- gera um `tar.gz` local;
+- exclui `.git`, `.deploy-logs`, `.deploy-packages`, backups e `.env*`;
+- calcula SHA-256 local;
+- envia o pacote por `scp`;
+- cria um diretório `staging-v<versão>-<timestamp>` no diretório de releases;
+- valida SHA-256 remoto;
+- extrai somente no staging;
+- valida `VERSION.txt`;
+- valida a presença do Compose.
+
+A aplicação ativa continua intacta: **não há troca de release, symlink, restart ou migration na v0.57.2**.
+
+O staging só é permitido após o backup PostgreSQL estar concluído e validado.
+
+**Próxima etapa:** `v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates`.

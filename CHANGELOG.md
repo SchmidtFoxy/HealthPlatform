@@ -1,3 +1,15 @@
+# v0.57.2 — Deploy Seguro para Produção Application Package & Staging
+
+- Adiciona pacote local `tar.gz` da aplicação.
+- Exclui arquivos sensíveis e transitórios do pacote.
+- Calcula SHA-256 local.
+- Envia via `scp` para staging remoto isolado.
+- Valida SHA-256 remoto e `VERSION.txt`.
+- Valida a presença do Compose no staging.
+- Mantém aplicação ativa intacta.
+- Não executa migration, promoção de release ou restart.
+- Só permite staging depois do backup PostgreSQL validado.
+
 # v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0
 
 - Exige confirmação explícita `PRODUCAO:<host>:<versão>`.

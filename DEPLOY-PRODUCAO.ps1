@@ -7,6 +7,7 @@
     [string]$PostgresService = "postgres",
     [string]$DatabaseName = "",
     [string]$BackupDir = "/opt/healthplatform/backups",
+    [string]$ReleaseStagingDir = "/opt/healthplatform/releases",
     [int]$BackupRetentionCount = 7,
     [string]$ProductionConfirmation = "",
     [switch]$ValidarSomente,
@@ -24,11 +25,13 @@ $script:BackupValidado = $false
 $script:MutacaoLiberada = $false
 $script:RemoteMetadata = $null
 $script:BackupMetadata = $null
+$script:PackageMetadata = $null
+$script:StagingMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.1 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.2 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -78,6 +81,12 @@ function Assert-DeployArguments {
     }
     if ($BackupRetentionCount -lt 2) {
         throw "BackupRetentionCount deve ser pelo menos 2 para preservar margem de seguranca."
+    }
+    if ($ReleaseStagingDir -notmatch '^/') {
+        throw "ReleaseStagingDir deve ser um caminho absoluto Linux."
+    }
+    if ($ReleaseStagingDir -eq $RemoteRoot) {
+        throw "ReleaseStagingDir nao pode ser igual ao RemoteRoot ativo."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -325,10 +334,146 @@ function Assert-MutationGuard {
     $script:MutacaoLiberada = $true
 }
 
+function New-LocalApplicationPackage {
+    if (-not $script:MutacaoLiberada) {
+        throw "Empacotamento bloqueado: guard de backup ainda nao foi liberado."
+    }
+
+    Write-DeployTitle "PACOTE DA APLICACAO"
+
+    $tar = Assert-Command "tar"
+    $packageDir = Join-Path $ScriptRoot ".deploy-packages"
+    New-Item -ItemType Directory -Path $packageDir -Force | Out-Null
+
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $packageName = "healthplatform-v$TargetVersion-$timestamp.tar.gz"
+    $packagePath = Join-Path $packageDir $packageName
+
+    if (Test-Path -LiteralPath $packagePath) {
+        Remove-Item -LiteralPath $packagePath -Force
+    }
+
+    $tarArgs = @(
+        "-czf", $packagePath,
+        "--exclude=.git",
+        "--exclude=.deploy-logs",
+        "--exclude=.deploy-packages",
+        "--exclude=.env",
+        "--exclude=.env.*",
+        "--exclude=backups",
+        "-C", $ScriptRoot,
+        "."
+    )
+
+    & $tar @tarArgs
+    if ($LASTEXITCODE -ne 0) {
+        throw "Falha ao criar pacote local da aplicacao."
+    }
+    if (-not (Test-Path -LiteralPath $packagePath)) {
+        throw "Pacote local nao foi criado."
+    }
+
+    $file = Get-Item -LiteralPath $packagePath
+    if ($file.Length -le 0) {
+        throw "Pacote local foi criado vazio."
+    }
+
+    $hash = (Get-FileHash -LiteralPath $packagePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($hash -notmatch '^[a-f0-9]{64}$') {
+        throw "SHA256 local do pacote invalido."
+    }
+
+    $script:PackageMetadata = [pscustomobject]@{
+        Name = $packageName
+        Path = $packagePath
+        Bytes = [int64]$file.Length
+        Sha256 = $hash
+        CreatedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host ("Pacote local: " + $script:PackageMetadata.Path) -ForegroundColor Green
+    Write-Host ("Pacote SHA256: " + $script:PackageMetadata.Sha256) -ForegroundColor Green
+    return $script:PackageMetadata
+}
+
+function Send-ApplicationPackageToStaging {
+    if (-not $script:BackupConcluido -or -not $script:BackupValidado -or -not $script:MutacaoLiberada) {
+        throw "Staging bloqueado: backup PostgreSQL precisa estar concluido e validado antes de qualquer envio."
+    }
+    if (-not $script:PackageMetadata) {
+        throw "Staging bloqueado: pacote local ainda nao foi criado."
+    }
+
+    Write-DeployTitle "STAGING REMOTO"
+
+    $scp = Assert-Command "scp"
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $stageName = "staging-v$TargetVersion-$timestamp"
+    $stagePath = "$ReleaseStagingDir/$stageName"
+    $remotePackage = "$ReleaseStagingDir/$($script:PackageMetadata.Name)"
+    $target = "$VpsUser@$VpsHost"
+
+    $prepareCommand = @"
+set -e
+mkdir -p '$ReleaseStagingDir'
+test '$ReleaseStagingDir' != '$RemoteRoot'
+rm -rf '$stagePath'
+mkdir -p '$stagePath'
+printf 'STAGING_PREPARED'
+"@
+
+    $prepared = Invoke-SshChecked -Command $prepareCommand -Capture
+    if ($prepared -notmatch 'STAGING_PREPARED') {
+        throw "Diretorio de staging remoto nao foi preparado."
+    }
+
+    & $scp $script:PackageMetadata.Path ($target + ":" + $remotePackage)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Falha ao enviar pacote para staging remoto."
+    }
+
+    $validateCommand = @"
+set -e
+test -s '$remotePackage'
+remote_sha=`$(sha256sum '$remotePackage' | awk '{print `$1}')
+test "`$remote_sha" = '$($script:PackageMetadata.Sha256)'
+tar -xzf '$remotePackage' -C '$stagePath'
+test -f '$stagePath/VERSION.txt'
+staged_version=`$(tr -d '\r\n ' < '$stagePath/VERSION.txt')
+test "`$staged_version" = '$TargetVersion'
+test -f '$stagePath/$ComposeFile'
+test '$stagePath' != '$RemoteRoot'
+printf 'STAGING_VALIDATED:path=%s:sha256=%s:version=%s' '$stagePath' "`$remote_sha" "`$staged_version"
+"@
+
+    $validated = Invoke-SshChecked -Command $validateCommand -Capture
+    if ($validated -notmatch '^STAGING_VALIDATED:path=(?<path>[^:]+):sha256=(?<sha>[a-f0-9]{64}):version=(?<version>.+)$') {
+        throw "Staging remoto nao retornou comprovacao valida."
+    }
+    if ($Matches['sha'] -ne $script:PackageMetadata.Sha256) {
+        throw "SHA256 remoto do staging difere do pacote local."
+    }
+    if ($Matches['version'] -ne $TargetVersion) {
+        throw "VERSION.txt do staging difere da versao alvo."
+    }
+
+    $script:StagingMetadata = [pscustomobject]@{
+        Path = $Matches['path']
+        Package = $remotePackage
+        Sha256 = $Matches['sha']
+        Version = $Matches['version']
+        Activated = $false
+    }
+
+    Write-Host ("Staging validado: " + $script:StagingMetadata.Path) -ForegroundColor Green
+    Write-Host "Aplicacao ativa permanece intacta; nenhuma troca de release foi executada." -ForegroundColor Green
+    return $script:StagingMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.1 amplia a fundacao com validacao remota, metadados e retencao segura." -ForegroundColor Cyan
+    Write-Host "v0.57.2 adiciona pacote validado e staging remoto sem ativacao." -ForegroundColor Cyan
     Write-Host "Esta versao ainda NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -337,7 +482,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.1
+# Fluxo v0.57.2
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -369,10 +514,12 @@ if (-not $script:MutacaoLiberada) {
 }
 
 $retentionResult = Invoke-SafeBackupRetention
+$packageMetadata = New-LocalApplicationPackage
+$stagingMetadata = Send-ApplicationPackageToStaging
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-validation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-staging-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -391,11 +538,19 @@ $logFile = Join-Path $DeployLogDir ("deploy-validation-v" + $localVersion + "-" 
     "remoteCompose=$($remoteMetadata.Compose)",
     "remoteDiskFreeKb=$($remoteMetadata.DiskFreeKb)",
     "retention=$retentionResult",
+    "packagePath=$($packageMetadata.Path)",
+    "packageBytes=$($packageMetadata.Bytes)",
+    "packageSha256=$($packageMetadata.Sha256)",
+    "stagingPath=$($stagingMetadata.Path)",
+    "stagingPackage=$($stagingMetadata.Package)",
+    "stagingSha256=$($stagingMetadata.Sha256)",
+    "stagingVersion=$($stagingMetadata.Version)",
+    "stagingActivated=false",
     "mutationGuard=true",
     "foundationOnly=true",
     "completedAt=" + (Get-Date).ToString("o")
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Backup e validacao remota 2.0 concluidos. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Pacote e staging remoto validados sem ativacao. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration ou substituicao da aplicacao foi executada." -ForegroundColor Green
