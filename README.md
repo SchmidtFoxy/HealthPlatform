@@ -7322,3 +7322,23 @@ Adiciona leitura cronológica da trilha de auditoria das revisões profissionais
 A versão reutiliza `AuditLogs`; não cria migration ou tabela nova. O histórico é documental/auditável e não interpreta causalidade, diagnóstico, prognóstico, risco, urgência, prioridade ou decisão terapêutica.
 
 **Próxima etapa:** `v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters`.
+
+
+---
+
+## v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters
+
+Evolui o histórico da revisão com filtros documentais explícitos.
+
+### Filtros
+- tipo do evento;
+- data/hora inicial;
+- data/hora final.
+
+O endpoint de histórico aceita `tipoEvento`, `deUtc` e `ateUtc` como query string. A interface profissional oferece os mesmos filtros antes da leitura da linha do tempo.
+
+A filtragem é exclusivamente documental/auditável. Não classifica risco, urgência, prioridade, causalidade, prognóstico ou decisão terapêutica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export`.

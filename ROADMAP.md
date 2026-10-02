@@ -5843,3 +5843,19 @@ Adicionar histórico auditado e leitura cronológica das revisões dos acompanha
 
 ### v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters
 Adicionar filtros documentais e navegação do histórico por tipo de evento e período.
+
+
+## ✅ v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters — CONCLUÍDA
+
+**Entregue:**
+- filtro por tipo de evento;
+- filtro por período (`deUtc` / `ateUtc`);
+- filtros aplicados no endpoint de histórico;
+- controles de filtro na interface profissional;
+- contagem de eventos filtrados;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export
+Adicionar exportação documental do histórico filtrado para uso profissional e auditoria.

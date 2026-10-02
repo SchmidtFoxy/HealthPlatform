@@ -1,3 +1,12 @@
+# v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters
+
+- Adiciona filtro por tipo de evento ao histórico.
+- Adiciona período `deUtc` / `ateUtc`.
+- Aplica filtros diretamente na consulta de `AuditLogs`.
+- Adiciona controles de filtro à interface profissional.
+- Exibe contagem de eventos filtrados.
+- Não cria migration ou tabela nova.
+
 # v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History
 
 - Adiciona endpoint de histórico cronológico por revisão.

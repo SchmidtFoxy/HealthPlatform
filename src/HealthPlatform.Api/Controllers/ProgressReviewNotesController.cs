@@ -3431,6 +3431,9 @@ public class ProgressReviewNotesController(
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse>>> HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,
         Guid id,
+        [FromQuery] string? tipoEvento = null,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
         CancellationToken cancellationToken = default)
     {
         var existe = await db.NotasInternasProfissionais.AsNoTracking().AnyAsync(x =>
@@ -3445,13 +3448,27 @@ public class ProgressReviewNotesController(
 
         var prefixoAcao = "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_";
 
-        var eventos = await db.AuditLogs
+        var eventosQuery = db.AuditLogs
             .AsNoTracking()
             .Where(x =>
                 x.OrganizacaoId == currentUser.OrganizationId &&
                 x.Entidade == nameof(NotaInternaProfissional) &&
                 x.EntidadeId == id.ToString() &&
-                x.Acao.StartsWith(prefixoAcao))
+                x.Acao.StartsWith(prefixoAcao));
+
+        if (!string.IsNullOrWhiteSpace(tipoEvento))
+        {
+            var tipoNormalizado = tipoEvento.Trim().ToUpperInvariant();
+            eventosQuery = eventosQuery.Where(x => x.Acao.EndsWith(tipoNormalizado));
+        }
+
+        if (deUtc.HasValue)
+            eventosQuery = eventosQuery.Where(x => x.CreatedAtUtc >= deUtc.Value);
+
+        if (ateUtc.HasValue)
+            eventosQuery = eventosQuery.Where(x => x.CreatedAtUtc <= ateUtc.Value);
+
+        var eventos = await eventosQuery
             .OrderBy(x => x.CreatedAtUtc)
             .ThenBy(x => x.Id)
             .Select(x => new
