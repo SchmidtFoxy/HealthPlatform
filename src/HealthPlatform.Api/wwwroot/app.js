@@ -5056,6 +5056,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_RESTORE_V05612='v0.56.12';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_EDIT_V05613='v0.56.13';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_V05614='v0.56.14';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_FILTERS_V05615='v0.56.15';
 
 
 
@@ -6787,7 +6788,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + notas + histórico de revisões · v0.56.14</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + histórico filtrável de revisões · v0.56.15</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6917,12 +6918,35 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
         comparisonNotesHost.querySelectorAll('[data-history-comparison-note-v05614]').forEach(btn=>btn.onclick=async()=>{
           const noteId=btn.dataset.historyComparisonNoteV05614;
           if(!noteId)return;
-          const history=await api(`${base}/${id}/history/context/comparison-notes/${noteId}/history`);
-          const rows=Array.isArray(history)?history:[];
           const host=$('#comparisonNoteRevisionHistoryV05614');
           if(!host)return;
-          const actionLabel=a=>String(a||'').replace('PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_','').replaceAll('_',' ');
-          host.innerHTML=`<article class="internal-note-privacy-v0204"><div class="row-between"><b>Histórico de revisões da nota</b><small>${rows.length} evento(s)</small></div>${rows.length?rows.map(x=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(actionLabel(x.acao))}</b><small>${new Date(x.registradoEmUtc).toLocaleString()}</small></div>${x.notaAnterior!==x.notaNova?`<div class="muted-line"><b>Antes:</b> ${esc(x.notaAnterior||'—')}</div><div><b>Depois:</b> ${esc(x.notaNova||'—')}</div>`:`<div class="muted-line">${esc(x.notaNova||x.notaAnterior||'Sem alteração textual.')}</div>`}</div>`).join(''):'<p class="muted-line">Nenhum evento auditado encontrado para esta nota.</p>'}</article>`;
+
+          const renderRevisionHistoryV05615=async()=>{
+            const tipoEvento=$('#comparisonNoteHistoryTypeV05615')?.value||'';
+            const deUtc=$('#comparisonNoteHistoryFromV05615')?.value||'';
+            const ateUtc=$('#comparisonNoteHistoryToV05615')?.value||'';
+            const qs=new URLSearchParams();
+            if(tipoEvento)qs.set('tipoEvento',tipoEvento);
+            if(deUtc)qs.set('deUtc',new Date(deUtc).toISOString());
+            if(ateUtc)qs.set('ateUtc',new Date(ateUtc).toISOString());
+            const suffix=qs.toString()?`?${qs.toString()}`:'';
+            const history=await api(`${base}/${id}/history/context/comparison-notes/${noteId}/history${suffix}`);
+            const rows=Array.isArray(history)?history:[];
+            const actionLabel=a=>String(a||'').replace('PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_','').replaceAll('_',' ');
+            host.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-note-revision-history-filters-v05615="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_FILTERS_V05615}"><div class="row-between"><b>Histórico de revisões da nota</b><small>${rows.length} evento(s)</small></div><div class="form-grid"><label>Evento<select id="comparisonNoteHistoryTypeV05615"><option value="">Todos</option><option value="CREATED">Criada</option><option value="UPDATED">Editada</option><option value="ARCHIVED">Arquivada</option><option value="RESTORED">Restaurada</option></select></label><label>De<input id="comparisonNoteHistoryFromV05615" type="datetime-local"></label><label>Até<input id="comparisonNoteHistoryToV05615" type="datetime-local"></label><div class="span-2 form-actions"><button type="button" class="ghost" id="applyComparisonNoteHistoryFiltersV05615">Aplicar filtros</button><button type="button" class="ghost" id="clearComparisonNoteHistoryFiltersV05615">Limpar</button></div></div>${rows.length?rows.map(x=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(actionLabel(x.acao))}</b><small>${new Date(x.registradoEmUtc).toLocaleString()}</small></div>${x.notaAnterior!==x.notaNova?`<div class="muted-line"><b>Antes:</b> ${esc(x.notaAnterior||'—')}</div><div><b>Depois:</b> ${esc(x.notaNova||'—')}</div>`:`<div class="muted-line">${esc(x.notaNova||x.notaAnterior||'Sem alteração textual.')}</div>`}</div>`).join(''):'<p class="muted-line">Nenhum evento auditado encontrado para os filtros informados.</p>'}</article>`;
+            const tipo=$('#comparisonNoteHistoryTypeV05615'); if(tipo)tipo.value=tipoEvento;
+            const de=$('#comparisonNoteHistoryFromV05615'); if(de)de.value=deUtc;
+            const ate=$('#comparisonNoteHistoryToV05615'); if(ate)ate.value=ateUtc;
+            const apply=$('#applyComparisonNoteHistoryFiltersV05615'); if(apply)apply.onclick=renderRevisionHistoryV05615;
+            const clear=$('#clearComparisonNoteHistoryFiltersV05615'); if(clear)clear.onclick=()=>{
+              if(tipo)tipo.value='';
+              if(de)de.value='';
+              if(ate)ate.value='';
+              renderRevisionHistoryV05615();
+            };
+          };
+
+          await renderRevisionHistoryV05615();
           host.scrollIntoView({behavior:'smooth',block:'nearest'});
         });
         comparisonNotesHost.querySelectorAll('[data-archive-comparison-note-v05611]').forEach(btn=>btn.onclick=async()=>{
@@ -19292,7 +19316,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.14';
+const HP_MVP_VERSION='0.56.15';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

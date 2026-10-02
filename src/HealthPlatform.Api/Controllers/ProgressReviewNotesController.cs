@@ -3639,6 +3639,9 @@ public class ProgressReviewNotesController(
         Guid pacienteId,
         Guid id,
         Guid noteId,
+        [FromQuery] string? tipoEvento = null,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
         CancellationToken cancellationToken = default)
     {
         var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
@@ -3659,13 +3662,27 @@ public class ProgressReviewNotesController(
 
         var entityId = noteId.ToString();
 
-        var logs = await db.AuditLogs
+        var query = db.AuditLogs
             .AsNoTracking()
             .Where(x =>
                 x.OrganizacaoId == currentUser.OrganizationId &&
                 x.Entidade == nameof(NotaInternaProfissional) &&
                 x.EntidadeId == entityId &&
-                x.Acao.StartsWith(prefixoAcao))
+                x.Acao.StartsWith(prefixoAcao));
+
+        if (!string.IsNullOrWhiteSpace(tipoEvento))
+        {
+            var tipoNormalizado = tipoEvento.Trim();
+            query = query.Where(x => x.Acao == prefixoAcao + tipoNormalizado);
+        }
+
+        if (deUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc >= deUtc.Value);
+
+        if (ateUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc <= ateUtc.Value);
+
+        var logs = await query
             .OrderByDescending(x => x.CreatedAtUtc)
             .ThenByDescending(x => x.Id)
             .ToListAsync(cancellationToken);

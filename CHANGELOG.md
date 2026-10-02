@@ -1,3 +1,11 @@
+# v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters
+
+- Adiciona filtros por evento e intervalo de data/hora ao histórico de revisões das notas.
+- Endpoint aceita `tipoEvento`, `deUtc` e `ateUtc`.
+- UI adiciona controles Aplicar filtros e Limpar.
+- Mantém carregamento sob demanda.
+- Não cria migration ou tabela nova.
+
 # v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History
 
 - Adiciona histórico de revisões por nota de comparação.

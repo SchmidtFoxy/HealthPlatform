@@ -6033,3 +6033,21 @@ Adicionar histórico explícito das revisões de conteúdo das notas documentais
 
 ### v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters
 Adicionar filtros documentais ao histórico de revisões das notas.
+
+
+## ✅ v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters — CONCLUÍDA
+
+**Entregue:**
+- filtros documentais no histórico de revisões das notas;
+- filtro por tipo de evento;
+- filtro por data/hora inicial;
+- filtro por data/hora final;
+- aplicação e limpeza dos filtros na interface;
+- endpoint aceita `tipoEvento`, `deUtc` e `ateUtc`;
+- preserva o carregamento sob demanda;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export
+Adicionar exportação documental do histórico filtrado das revisões das notas.

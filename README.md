@@ -7580,3 +7580,21 @@ A linha do tempo deriva exclusivamente dos `AuditLogs` já existentes e permanec
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters`.
+
+
+---
+
+## v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters
+
+Adiciona filtros documentais ao histórico de revisões das notas de comparação.
+
+### Filtros
+- tipo de evento: `CREATED`, `UPDATED`, `ARCHIVED` ou `RESTORED`;
+- data/hora inicial;
+- data/hora final.
+
+O endpoint de histórico passa a aceitar `tipoEvento`, `deUtc` e `ateUtc`. A interface permite aplicar e limpar os filtros sem alterar os registros auditados.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export`.
