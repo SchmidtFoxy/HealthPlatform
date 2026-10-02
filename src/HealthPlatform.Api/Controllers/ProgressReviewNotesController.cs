@@ -2779,6 +2779,28 @@ public class ProgressReviewNotesController(
         string? Horizonte = null,
         string? ObservacaoProfissional = null);
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpClosureResponse> FechamentoTeamKnowledgeEffectDecisionReviewOutcomeFollowUps()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundation",
+            "TeamKnowledgeEffectDecisionReviewOutcomeFollowUpPersistence",
+            "TeamKnowledgeEffectDecisionReviewOutcomeFollowUpStatus",
+            "TeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistory",
+            "TeamKnowledgeEffectDecisionReviewOutcomeFollowUpFilters",
+            "TeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeEffectDecisionReviewOutcomeFollowUpCompleta",
+            "O fechamento descreve somente a disponibilidade estrutural dos acompanhamentos documentados dos resultados das revisões profissionais. Não transforma registros em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryResponse>> ResumoTeamKnowledgeEffectDecisionReviewOutcomeFollowUps(
         Guid pacienteId,

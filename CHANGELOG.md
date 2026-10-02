@@ -1,4 +1,15 @@
-﻿# v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary
+﻿# v0.55.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Closure
+
+- Encerra a linha funcional 0.55.x.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpClosureResponse`.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/closure`.
+- Consolida Foundation, Persistence, Status, History, Filters e Summary.
+- Adiciona estado `EstruturaTeamKnowledgeEffectDecisionReviewOutcomeFollowUpCompleta`.
+- Adiciona painel de fechamento estrutural na UI.
+- Sem migration nova.
+- Próxima etapa: v0.56.0 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Foundation.
+
+# v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryResponse`.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpProfissionalResumoResponse`.
