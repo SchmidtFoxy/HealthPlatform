@@ -1,4 +1,4 @@
-HealthPlatform v0.56.52 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus - Incremental
+HealthPlatform v0.56.53 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,16 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- foco preservado apos copiar;
-- foco no status apos limpar;
-- retorno ao botao Historico apos fechar;
-- foco em Fechar historico ao trocar de nota;
-- preventScroll nos focos programaticos;
-- status com tabindex=-1;
+- live region tecnico para anuncios de foco;
+- anuncio apos copiar, limpar, fechar e trocar nota;
+- aria-live polite, aria-atomic e role=status;
+- requestAnimationFrame para renovacao do anuncio;
+- fluxo de foco v0.56.52 preservado;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.52
+Se aprovado, commit/push apenas: v0.56.53

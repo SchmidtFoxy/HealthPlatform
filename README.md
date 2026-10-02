@@ -8374,3 +8374,24 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.53 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement`.
+
+
+---
+
+## v0.56.53 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement
+
+Adiciona um live region técnico para anunciar mudanças programáticas de foco.
+
+Anúncios:
+- `Foco mantido em Copiar encerramento.`;
+- `Foco movido para o status do encerramento.`;
+- `Foco retornado ao botão Histórico.`;
+- `Foco movido para Fechar histórico.`.
+
+O live region usa `aria-live="polite"`, `aria-atomic="true"` e `role="status"`. A atualização é feita com `requestAnimationFrame` para permitir que mensagens consecutivas sejam percebidas como novas alterações.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.54 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Deduplication`.

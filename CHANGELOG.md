@@ -1,3 +1,14 @@
+# v0.56.53 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement
+
+- Adiciona live region técnico de foco.
+- Anuncia foco após copiar, limpar, fechar e trocar de nota.
+- Usa `aria-live`, `aria-atomic` e `role=status`.
+- Atualiza o anúncio via `requestAnimationFrame`.
+- Preserva o fluxo de foco da v0.56.52.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus
 
 - Mantém foco em `Copiar encerramento` após cópia.
