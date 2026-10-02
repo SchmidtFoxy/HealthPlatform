@@ -1,3 +1,13 @@
+# v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset
+
+- Adiciona `Limpar verificação`.
+- Retorna o status para `Não verificado`.
+- Limpa feedback, detalhes técnicos e input de arquivo.
+- Descarta estado local de hashes/detalhes.
+- Mantém verificação totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge
 
 - Adiciona badge/indicador de status da verificação local.

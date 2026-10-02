@@ -8015,3 +8015,23 @@ O estado é atualizado pela mesma verificação SHA-256 local da v0.56.32 e não
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset`.
+
+
+---
+
+## v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset
+
+Adiciona a ação `Limpar verificação` ao fluxo local de integridade do CSV técnico.
+
+Ao limpar:
+- o status volta para `Não verificado`;
+- o feedback é limpo;
+- os detalhes técnicos são ocultados;
+- o arquivo selecionado é removido do input;
+- hashes/detalhes em memória são descartados.
+
+Nenhum dado é enviado à API durante esse fluxo.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp`.

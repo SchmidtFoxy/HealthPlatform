@@ -6420,3 +6420,23 @@ Adicionar indicador visual de status da integridade verificada, sem conteúdo cl
 
 ### v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset
 Adicionar ação para limpar o resultado da verificação local e retornar o estado visual para `Não verificado`.
+
+
+## ✅ v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset — CONCLUÍDA
+
+**Entregue:**
+- ação `Limpar verificação`;
+- retorno do status visual para `Não verificado`;
+- limpeza do feedback da verificação;
+- limpeza dos detalhes técnicos;
+- limpeza do arquivo selecionado no input local;
+- estado de hashes/detalhes em memória reiniciado;
+- detalhes, cópia e status das versões anteriores preservados;
+- processamento continua totalmente local;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp
+Registrar e exibir apenas localmente o horário da última verificação de integridade, sem conteúdo clínico/textual.
