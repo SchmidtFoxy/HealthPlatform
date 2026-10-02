@@ -403,6 +403,15 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRevisionHistorySummaryResponse(
+    int Total,
+    int Criacoes,
+    int Edicoes,
+    int Arquivamentos,
+    int Restauracoes,
+    DateTime? PrimeiroEventoUtc,
+    DateTime? UltimoEventoUtc);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRevisionHistoryResponse(
     Guid Id,
     string Acao,

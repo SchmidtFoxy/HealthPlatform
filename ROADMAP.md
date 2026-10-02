@@ -6067,3 +6067,20 @@ Adicionar exportação documental do histórico filtrado das revisões das notas
 
 ### v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary
 Adicionar resumo documental do histórico filtrado das revisões das notas.
+
+
+## ✅ v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo documental do histórico filtrado das revisões da nota;
+- total de eventos;
+- contagem de criações, edições, arquivamentos e restaurações;
+- primeiro e último evento no recorte filtrado;
+- resumo respeita `tipoEvento`, `deUtc` e `ateUtc`;
+- painel-resumo integrado à interface profissional;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination
+Adicionar paginação ao histórico de revisões das notas para manter desempenho e ergonomia em históricos longos.

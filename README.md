@@ -7619,3 +7619,28 @@ O CSV contém `Id`, `Acao`, `UsuarioId`, `RegistradoEmUtc`, `NotaAnterior` e `No
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary`.
+
+
+---
+
+## v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary
+
+Adiciona resumo documental do histórico filtrado das revisões das notas de comparação.
+
+### Resumo
+`GET .../{id}/history/context/comparison-notes/{noteId}/history/summary`
+
+O resumo apresenta:
+- total de eventos;
+- criações;
+- edições;
+- arquivamentos;
+- restaurações;
+- primeiro evento;
+- último evento.
+
+O endpoint usa os mesmos filtros `tipoEvento`, `deUtc` e `ateUtc` e o painel da interface acompanha exatamente o recorte aplicado ao histórico.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination`.

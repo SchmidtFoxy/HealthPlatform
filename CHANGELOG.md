@@ -1,3 +1,12 @@
+# v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary
+
+- Adiciona resumo do histórico filtrado por nota.
+- Exibe total, criações, edições, arquivamentos e restaurações.
+- Exibe primeiro e último evento do recorte.
+- Respeita `tipoEvento`, `deUtc` e `ateUtc`.
+- Adiciona painel-resumo à UI.
+- Não cria migration ou tabela nova.
+
 # v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export
 
 - Adiciona exportação CSV do histórico filtrado por nota.
