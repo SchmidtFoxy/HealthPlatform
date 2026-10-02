@@ -1,3 +1,13 @@
+# v0.56.77 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+
+- Adiciona resumo técnico local do estado de reset específico.
+- Exibe status, contador e último reset.
+- Mantém estado inicial `ready / 0 / —`.
+- Atualiza automaticamente pelo sync da v0.56.76.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.76 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
 
 - Adiciona estado técnico local ao reset específico da deduplicação.
