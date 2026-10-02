@@ -1,3 +1,13 @@
+# v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle
+
+- Adiciona `Mostrar detalhes` / `Ocultar detalhes`.
+- Usa `aria-expanded`.
+- Desabilita o controle quando não há detalhes.
+- Preserva exibição automática após uma verificação.
+- Mantém o fluxo totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy
 
 - Adiciona `Copiar resumo`.

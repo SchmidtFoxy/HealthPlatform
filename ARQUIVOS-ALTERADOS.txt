@@ -1,4 +1,4 @@
-HealthPlatform v0.56.41 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy - Incremental
+HealthPlatform v0.56.42 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- botao Copiar resumo;
-- copia do resumo tecnico consolidado;
-- bloqueio quando nao houver verificacao;
-- feedback especifico de clipboard;
+- Mostrar detalhes / Ocultar detalhes;
+- aria-expanded;
+- controle desabilitado sem detalhes;
+- exibicao automatica preservada apos verificacao;
+- reset recolhe e limpa detalhes;
 - fluxo local preservado;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.41
+Se aprovado, commit/push apenas: v0.56.42

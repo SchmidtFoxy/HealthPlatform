@@ -8138,3 +8138,24 @@ Nenhum dado é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle`.
+
+
+---
+
+## v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle
+
+Adiciona controle para expandir e recolher os detalhes técnicos da verificação.
+
+Comportamento:
+- `Mostrar detalhes` expande o bloco técnico;
+- `Ocultar detalhes` recolhe o bloco;
+- usa `aria-expanded`;
+- o botão fica desabilitado até existir uma verificação com detalhes;
+- após a verificação os detalhes continuam sendo exibidos automaticamente, preservando o comportamento anterior;
+- `Limpar verificação` remove os detalhes e retorna o controle ao estado inicial.
+
+Nenhum dado é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State`.

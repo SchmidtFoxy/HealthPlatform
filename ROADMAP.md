@@ -6536,3 +6536,23 @@ Adicionar ação para copiar o resumo técnico consolidado da última verificaç
 
 ### v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle
 Adicionar controle para expandir/recolher os detalhes técnicos da verificação a partir do resumo, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle — CONCLUÍDA
+
+**Entregue:**
+- ação `Mostrar detalhes` / `Ocultar detalhes`;
+- controle por `aria-expanded`;
+- botão desabilitado enquanto não há detalhes disponíveis;
+- detalhes expandidos automaticamente após uma verificação para preservar o comportamento anterior;
+- recolhimento/expansão sem nova chamada à API;
+- reset volta o controle ao estado recolhido e indisponível;
+- resumo, cópia, status, horário e duração preservados;
+- processamento continua totalmente local;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State
+Preservar localmente o estado expandido/recolhido dos detalhes técnicos durante re-renderizações da revisão, sem conteúdo clínico/textual.
