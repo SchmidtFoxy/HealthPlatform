@@ -7666,3 +7666,21 @@ Registrar estado técnico local do reset explícito da deduplicação do anúnci
 
 ### v0.56.97 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
 Exibir resumo técnico local do estado do reset explícito da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.97 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo técnico local visível do estado do reset explícito da deduplicação;
+- exibição de `status`, contador de resets e horário do último reset;
+- atualização automática do resumo a partir do estado técnico da v0.56.96;
+- marcador técnico v0.56.97 no indicador;
+- helper explícito da v0.56.95, deduplicação da v0.56.94 e anúncio/foco anteriores preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.98 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+Permitir copiar o resumo técnico local do estado do reset explícito da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.

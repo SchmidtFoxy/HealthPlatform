@@ -1,4 +1,4 @@
-HealthPlatform v0.56.96-r4 - Incremental
+HealthPlatform v0.56.97-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,12 +13,11 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- estado tecnico local do reset explicito da deduplicacao;
-- status ready/reset/announced;
-- contador local de resets;
-- horario ISO do ultimo reset;
-- sincronizacao tecnica no indicador via dataset;
-- helper v0.56.95 e wrapper v0.56.94 integrados ao estado;
+- resumo tecnico local visivel do estado do reset explicito da deduplicacao;
+- status, contador de resets e horario do ultimo reset;
+- sincronizacao automatica a partir do estado v0.56.96;
+- marcador tecnico v0.56.97;
+- fluxo anterior preservado;
 - marco de deploy seguro da v0.57.x preservado;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual novo;
@@ -26,11 +25,12 @@ Entrega funcional:
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.96
+Se aprovado, commit/push apenas: v0.56.97
 
-Hotfix cumulativo r4:
-- mesmo conteudo funcional integral da v0.56.96;
-- reemissao para retomada apos AESYN AUTO r24-r10;
-- VERSION.txt permanece 0.56.96;
-- nao commitar/pushar -r4 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.56.96.
+Hotfix cumulativo r1:
+- corrige quoting do gate [4993/4999] em TESTAR.ps1;
+- o token JavaScript com `$(` agora e literal em PowerShell e nao sofre expansao de subexpressao;
+- codigo funcional da v0.56.97 permanece inalterado;
+- VERSION.txt permanece 0.56.97;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.56.97.

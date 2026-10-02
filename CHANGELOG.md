@@ -1,3 +1,15 @@
+# v0.56.97 — Focus Announcement Deduplication Reset State Summary
+
+- Exibe resumo técnico local do estado do reset explícito da deduplicação.
+- Mostra `status`, contador de resets e último reset.
+- Atualiza o resumo pelo sincronizador técnico da v0.56.96.
+- Adiciona marcador técnico v0.56.97 no indicador.
+- Preserva reset explícito, deduplicação, anúncio, foco e acessibilidade anteriores.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
 # v0.56.96 — Focus Announcement Deduplication Reset State
 
 - Adiciona estado técnico local do reset explícito da deduplicação.
