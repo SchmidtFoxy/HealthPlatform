@@ -8784,3 +8784,22 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.74 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication`.
+
+
+---
+
+## v0.56.74 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+Adiciona deduplicação específica ao anúncio de foco disparado por **Limpar horário do reset**.
+
+O cache local evita repetir consecutivamente a mesma mensagem:
+
+`Foco movido para o indicador Última cópia do reset.`
+
+Uma nova cópia bem-sucedida limpa o cache específico, permitindo que a próxima limpeza anuncie novamente a mudança de foco.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.75 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset`.

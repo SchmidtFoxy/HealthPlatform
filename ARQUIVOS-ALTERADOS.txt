@@ -1,4 +1,4 @@
-HealthPlatform v0.56.73 - Incremental
+HealthPlatform v0.56.74 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- anuncio acessivel apos limpar horario do reset;
-- mensagem de mudanca de foco para o indicador;
-- reutilizacao da infraestrutura de anuncio existente;
-- foco v0.56.72 preservado;
+- cache especifico de deduplicacao do anuncio de foco;
+- wrapper especifico v0.56.74;
+- anuncios consecutivos identicos ignorados;
+- nova copia bem-sucedida libera o proximo anuncio;
+- gate historico v0.56.73 compatibilizado com chamada direta ou wrapper;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.73
+Se aprovado, commit/push apenas: v0.56.74
