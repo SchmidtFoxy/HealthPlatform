@@ -8731,3 +8731,20 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.71 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility`.
+
+
+---
+
+## v0.56.71 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+
+Melhora a acessibilidade da ação **Limpar horário do reset**.
+
+A ação passa a refletir semanticamente o estado habilitado/desabilitado, referencia o indicador controlado com `aria-controls` e recebe `aria-label` descritivo.
+
+O indicador `Última cópia do reset` passa a atuar como região de status com `role="status"`, `aria-live="polite"` e `aria-atomic="true"`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.72 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus`.
