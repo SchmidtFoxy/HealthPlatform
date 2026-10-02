@@ -6997,3 +6997,23 @@ Evitar repetição consecutiva do anúncio específico de foco após limpar o ho
 
 ### v0.56.65 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
 Adicionar reset explícito do cache específico de deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.65 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset — CONCLUÍDA
+
+**Entregue:**
+- helper explícito `resetTimestampClearFocusAnnouncementV05665`;
+- reset centralizado do cache `lastTimestampClearFocusAnnouncementV05664`;
+- nova cópia bem-sucedida usa o helper de reset;
+- caminho de mensagem vazia do helper de anúncio também usa o reset explícito;
+- marcador técnico v0.56.65 no indicador;
+- deduplicação específica da v0.56.64 preservada;
+- live region e deduplicação geral anteriores preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.66 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+Adicionar estado técnico local do reset específico da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.

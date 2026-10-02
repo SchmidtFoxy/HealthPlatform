@@ -1,23 +1,26 @@
-HealthPlatform v0.56.64-r1 - Incremental
-
-Hotfix cumulativo da versão funcional v0.56.64.
-NÃO commitar/pushar esta revisão individualmente.
+HealthPlatform v0.56.65 - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Diagnóstico:
-- a v0.56.64 evoluiu corretamente a emissão do anúncio da v0.56.63 para o wrapper `announceTimestampClearFocusV05664`;
-- o gate histórico da v0.56.63 ainda exigia apenas a chamada direta `announceComparisonNoteVerificationFocusV05653`;
-- isso gerou falso negativo no TESTAR.ps1.
-
-Correção:
-- o gate histórico v0.56.63 passa a aceitar a implementação direta original OU o wrapper específico da v0.56.64;
-- preserva a validação do foco anterior;
-- nenhuma alteração funcional em app.js;
-- VERSION.txt permanece 0.56.64;
-- UTF-8 com BOM preservado.
+Entrega funcional:
+- helper explicito de reset do cache especifico;
+- reset apos nova copia bem-sucedida;
+- reset no caminho de mensagem vazia;
+- deduplicacao v0.56.64 preservada;
+- sem persistencia no servidor;
+- sem conteudo clinico/textual;
+- sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.64
+Se aprovado, commit/push apenas: v0.56.65
