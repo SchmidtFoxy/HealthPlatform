@@ -1,4 +1,4 @@
-HealthPlatform v0.56.40 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary - Incremental
+HealthPlatform v0.56.41 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- resumo tecnico compacto da ultima verificacao;
-- status + horario + duracao + arquivo;
-- atualizacao automatica no final da verificacao;
-- reset do resumo;
+- botao Copiar resumo;
+- copia do resumo tecnico consolidado;
+- bloqueio quando nao houver verificacao;
+- feedback especifico de clipboard;
 - fluxo local preservado;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.40
+Se aprovado, commit/push apenas: v0.56.41

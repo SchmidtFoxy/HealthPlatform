@@ -1,3 +1,13 @@
+# v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy
+
+- Adiciona `Copiar resumo`.
+- Copia o resumo técnico consolidado da última verificação.
+- Reutiliza o helper de clipboard existente.
+- Bloqueia cópia quando não houver resumo disponível.
+- Mantém o fluxo totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.40 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary
 
 - Adiciona resumo técnico compacto da última verificação.

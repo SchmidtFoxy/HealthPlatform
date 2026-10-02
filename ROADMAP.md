@@ -6517,3 +6517,22 @@ Consolidar status, horário e duração em um resumo técnico local e compacto d
 
 ### v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy
 Adicionar ação para copiar o resumo técnico consolidado da última verificação, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy — CONCLUÍDA
+
+**Entregue:**
+- ação `Copiar resumo`;
+- cópia do resumo técnico consolidado da última verificação;
+- reutilização do helper de clipboard existente;
+- feedback `Resumo técnico copiado.`;
+- bloqueio da cópia quando ainda não existe verificação disponível;
+- feedback específico para ausência de resumo;
+- processamento continua totalmente local;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle
+Adicionar controle para expandir/recolher os detalhes técnicos da verificação a partir do resumo, mantendo o fluxo local e sem conteúdo clínico/textual.

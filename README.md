@@ -8119,3 +8119,22 @@ Nenhum dado é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy`.
+
+
+---
+
+## v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy
+
+Adiciona a ação `Copiar resumo` ao resumo técnico consolidado da última verificação.
+
+Comportamento:
+- copia exatamente o resumo visível com status, horário, duração e arquivo;
+- usa o helper de clipboard já existente;
+- informa `Resumo técnico copiado.` quando concluir;
+- evita copiar o estado inicial `Resumo: nenhuma verificação realizada.`.
+
+Nenhum dado é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle`.
