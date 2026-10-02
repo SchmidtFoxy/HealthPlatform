@@ -1,4 +1,16 @@
-﻿# v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters
+﻿# v0.54.5 — Professional Review Team Knowledge Effect Decision Review Outcome Summary
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeSummaryResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeProfissionalResumoResponse`.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome/summary`.
+- Agrega Total, Ativos, Registrados, EmRevisao, Consolidados, Descartados e Arquivados.
+- Agrupa por profissional responsável.
+- Adiciona painel de resumo na UI.
+- Atualiza resumo após operações.
+- Sem migration nova.
+- Próxima etapa: v0.54.6 — Professional Review Team Knowledge Effect Decision Review Outcome Closure.
+
+# v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersResponse`.
 - Adiciona GET `team-knowledge-effect-decision-review-outcome/search`.

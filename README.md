@@ -6955,3 +6955,30 @@ Pesquisa em:
 Os filtros apenas localizam registros documentais. Não inferem causalidade, evidência clínica, prognóstico, recomendação, risco, urgência, prioridade ou decisão terapêutica.
 
 **Próxima etapa:** `v0.54.5 — Professional Review Team Knowledge Effect Decision Review Outcome Summary`.
+
+---
+
+## v0.54.5 — Professional Review Team Knowledge Effect Decision Review Outcome Summary
+
+Adiciona resumo agregado dos resultados documentados das revisões profissionais.
+
+### Indicadores
+- total;
+- ativos;
+- registrados;
+- em revisão;
+- consolidados;
+- descartados;
+- arquivados;
+- agrupamento por profissional responsável.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome/summary`
+
+### UI
+O gerenciador de resultados passa a exibir um painel de resumo e atualizar os indicadores após alterações.
+
+### Guardrail
+O resumo é exclusivamente documental. Agregações não validam causalidade ou evidência clínica, não produzem prognóstico, recomendação ou decisão terapêutica, não representam score clínico, risco, urgência ou prioridade e não executam conduta ou prescrição.
+
+**Próxima etapa:** `v0.54.6 — Professional Review Team Knowledge Effect Decision Review Outcome Closure`.
