@@ -6211,3 +6211,21 @@ Adicionar telemetria técnica não clínica para registrar qual caminho de compa
 
 ### v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary
 Adicionar resumo técnico agregado dos caminhos de compartilhamento, sem expor conteúdo clínico ou textual.
+
+
+## ✅ v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo técnico agregado da telemetria de compartilhamento;
+- total de eventos;
+- contagem por Web Share, clipboard, URL, cancelamento e fallbacks após erro;
+- primeiro e último evento técnico;
+- painel-resumo integrado ao histórico da nota;
+- leitura somente da entidade técnica de telemetria;
+- nenhum conteúdo clínico/textual exposto;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter
+Adicionar filtro técnico por período ao resumo de telemetria de compartilhamento.

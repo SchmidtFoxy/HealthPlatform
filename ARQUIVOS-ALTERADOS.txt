@@ -1,4 +1,4 @@
-HealthPlatform v0.56.24 - Follow-Up Review Comparison Notes Revision History Share Telemetry - Incremental
+HealthPlatform v0.56.25 - Follow-Up Review Comparison Notes Revision History Share Telemetry Summary - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,14 +14,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- telemetria tecnica nao clinica de compartilhamento;
-- endpoint dedicado;
-- seis caminhos de compartilhamento;
-- persistencia em AuditLogs com entidade tecnica separada;
-- nenhum conteudo textual da nota;
-- telemetria best-effort;
+- resumo agregado da telemetria tecnica;
+- total e contagens por canal;
+- primeiro e ultimo evento;
+- painel tecnico na UI;
+- sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.24
+Se aprovado, commit/push apenas: v0.56.25

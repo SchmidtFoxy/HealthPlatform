@@ -7784,3 +7784,25 @@ A chamada de telemetria é best-effort: qualquer falha é ignorada para não int
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary`.
+
+
+---
+
+## v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary
+
+Adiciona um resumo agregado da telemetria técnica de compartilhamento por nota.
+
+O resumo apresenta:
+- total de eventos;
+- Web Share;
+- fallback de clipboard;
+- fallback de URL;
+- cancelamentos;
+- fallbacks após erro;
+- primeiro e último evento técnico.
+
+A interface apresenta um painel compacto junto ao histórico da nota. O endpoint consulta somente a entidade técnica `ComparisonNoteRevisionHistoryShareTelemetry`; o texto da nota não é lido nem exposto.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter`.

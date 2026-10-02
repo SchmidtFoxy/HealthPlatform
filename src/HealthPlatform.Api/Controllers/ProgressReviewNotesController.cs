@@ -3637,6 +3637,77 @@ public class ProgressReviewNotesController(
 
 
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/share-telemetry/summary")]
+    public async Task<IActionResult> ResumoTelemetriaCompartilhamentoHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+        var notaExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (!notaExiste)
+            return NotFound();
+
+        var logs = await db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Acao == "PROFESSIONAL_REVIEW_TECHNICAL_COMPARISON_NOTE_HISTORY_SHARE_TELEMETRY" &&
+                x.Entidade == "ComparisonNoteRevisionHistoryShareTelemetry" &&
+                x.EntidadeId == noteId.ToString())
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Select(x => new { x.DadosNovosJson, x.CreatedAtUtc })
+            .ToListAsync(cancellationToken);
+
+        static string? ExtrairCanal(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                return doc.RootElement.TryGetProperty("Canal", out var canal)
+                    ? canal.GetString()
+                    : null;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+        }
+
+        var canais = logs
+            .Select(x => new { Canal = ExtrairCanal(x.DadosNovosJson), x.CreatedAtUtc })
+            .Where(x => !string.IsNullOrWhiteSpace(x.Canal))
+            .ToList();
+
+        var resposta = new
+        {
+            Total = canais.Count,
+            WebShare = canais.Count(x => x.Canal == "WebShare"),
+            ClipboardFallback = canais.Count(x => x.Canal == "ClipboardFallback"),
+            UrlFallback = canais.Count(x => x.Canal == "UrlFallback"),
+            Cancelled = canais.Count(x => x.Canal == "Cancelled"),
+            ShareErrorClipboardFallback = canais.Count(x => x.Canal == "ShareErrorClipboardFallback"),
+            ShareErrorUrlFallback = canais.Count(x => x.Canal == "ShareErrorUrlFallback"),
+            PrimeiroEventoUtc = canais.Count > 0 ? canais.Min(x => x.CreatedAtUtc) : (DateTime?)null,
+            UltimoEventoUtc = canais.Count > 0 ? canais.Max(x => x.CreatedAtUtc) : (DateTime?)null
+        };
+
+        return Ok(resposta);
+    }
+
     [HttpPost("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/share-telemetry")]
     public async Task<IActionResult> RegistrarTelemetriaCompartilhamentoHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

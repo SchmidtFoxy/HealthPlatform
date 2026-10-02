@@ -1,3 +1,12 @@
+# v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary
+
+- Adiciona resumo agregado da telemetria técnica de compartilhamento.
+- Exibe total, Web Share, clipboard, URL, cancelamentos e fallbacks após erro.
+- Exibe primeiro e último evento técnico.
+- Adiciona painel compacto à interface.
+- Não lê nem expõe conteúdo textual da nota.
+- Não cria migration ou tabela nova.
+
 # v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry
 
 - Adiciona endpoint técnico de telemetria de compartilhamento.
