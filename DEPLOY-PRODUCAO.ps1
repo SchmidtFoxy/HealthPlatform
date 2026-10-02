@@ -46,11 +46,12 @@ $script:RestartVerificationMetadata = $null
 $script:MigrationSafetyMetadata = $null
 $script:MigrationExecutionMetadata = $null
 $script:MigrationFailureRecoveryMetadata = $null
+$script:RecoveryAuditMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.9 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.10 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -1340,10 +1341,90 @@ printf 'NON_DESTRUCTIVE_MIGRATIONS_EXECUTED:count=%s:hash=%s' '$approvedCount' '
     return $script:MigrationExecutionMetadata
 }
 
+function New-RecoveryAuditBundle {
+    Write-DeployTitle "RECOVERY AUDIT"
+
+    New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $auditDir = Join-Path $DeployLogDir ("recovery-audit-v" + $TargetVersion + "-" + $timestamp)
+    New-Item -ItemType Directory -Path $auditDir -Force | Out-Null
+
+    $summaryFile = Join-Path $auditDir "SUMMARY.txt"
+    $backupEvidenceFile = Join-Path $auditDir "BACKUP-EVIDENCE.txt"
+    $migrationEvidenceFile = Join-Path $auditDir "MIGRATION-EVIDENCE.txt"
+    $operatorNextStepsFile = Join-Path $auditDir "OPERATOR-NEXT-STEPS.txt"
+
+    @(
+        "targetVersion=v$TargetVersion",
+        "target=$VpsUser@$VpsHost",
+        "remoteRoot=$RemoteRoot",
+        "stagingPath=$($script:StagingMetadata.Path)",
+        "activeReleaseLink=$ActiveReleaseLink",
+        "backupValidated=$script:BackupValidado",
+        "mutationGuard=$script:MutacaoLiberada",
+        "recoveryConfirmationProvided=$(-not [string]::IsNullOrWhiteSpace($MigrationRecoveryConfirmation))",
+        "destructiveMigrationsAllowed=false",
+        "generatedAt=" + (Get-Date).ToString("o")
+    ) | Set-Content -LiteralPath $summaryFile -Encoding UTF8
+
+    @(
+        "backupFile=$($script:RollbackPlan.BackupFile)",
+        "backupBytes=$($script:BackupMetadata.Bytes)",
+        "backupSha256=$($script:BackupMetadata.Sha256)",
+        "backupEntries=$($script:BackupMetadata.Entries)",
+        "backupModifiedUtc=$($script:BackupMetadata.ModifiedUtc)",
+        "backupValidated=$script:BackupValidado"
+    ) | Set-Content -LiteralPath $backupEvidenceFile -Encoding UTF8
+
+    @(
+        "migrationCount=$($script:MigrationSafetyMetadata.MigrationCount)",
+        "migrationApprovedHash=$($script:MigrationSafetyMetadata.MigrationHash)",
+        "safeMigrationsAllowed=$($script:MigrationSafetyMetadata.SafeMigrationsAllowed)",
+        "destructiveDetected=$($script:MigrationSafetyMetadata.DestructiveDetected)",
+        "destructiveMigrationsAllowed=false",
+        "executionPerformed=$($script:MigrationExecutionMetadata.Executed)",
+        "executionSkipped=$($script:MigrationExecutionMetadata.Skipped)",
+        "revalidatedHash=$($script:MigrationExecutionMetadata.RevalidatedHash)",
+        "hashMatched=$($script:MigrationExecutionMetadata.HashMatched)"
+    ) | Set-Content -LiteralPath $migrationEvidenceFile -Encoding UTF8
+
+    @(
+        "1. Se houve falha de migration, nao promover a release alvo.",
+        "2. Ler o diagnostico migration-failure-v*.log antes de qualquer acao.",
+        "3. Confirmar o backup atual, SHA-256 e pg_restore --list.",
+        "4. Restore exige RESTORE-BACKUP:<host>:<versao>.",
+        "5. Depois do restore, confirmar SELECT 1 e healthcheck.",
+        "6. Nao reutilizar o ciclo falho: iniciar novo backup, staging, safety gate e validacoes.",
+        "7. Nunca liberar migration destrutiva por este fluxo."
+    ) | Set-Content -LiteralPath $operatorNextStepsFile -Encoding UTF8
+
+    foreach ($requiredFile in @($summaryFile,$backupEvidenceFile,$migrationEvidenceFile,$operatorNextStepsFile)) {
+        if (-not (Test-Path -LiteralPath $requiredFile)) {
+            throw "Recovery audit incompleto: arquivo obrigatorio ausente: $requiredFile"
+        }
+        if ((Get-Item -LiteralPath $requiredFile).Length -le 0) {
+            throw "Recovery audit incompleto: arquivo vazio: $requiredFile"
+        }
+    }
+
+    $script:RecoveryAuditMetadata = [pscustomobject]@{
+        AuditDir = $auditDir
+        SummaryFile = $summaryFile
+        BackupEvidenceFile = $backupEvidenceFile
+        MigrationEvidenceFile = $migrationEvidenceFile
+        OperatorNextStepsFile = $operatorNextStepsFile
+        Complete = $true
+        GeneratedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host ("Recovery audit bundle criado: " + $auditDir) -ForegroundColor Green
+    return $script:RecoveryAuditMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.9 adiciona diagnostico e recovery controlado para falhas de migrations aprovadas." -ForegroundColor Cyan
+    Write-Host "v0.57.10 consolida auditoria de recovery e runbook operacional sem relaxar gates." -ForegroundColor Cyan
     Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -1352,7 +1433,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.9
+# Fluxo v0.57.10
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -1399,10 +1480,11 @@ $migrationExecutionMetadata = Invoke-ApprovedNonDestructiveMigrations
 Test-AtomicPromotionReadiness
 $promotionMetadata = Invoke-AtomicReleasePromotion
 $restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerification
+$recoveryAuditMetadata = New-RecoveryAuditBundle
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-migration-recovery-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-recovery-audit-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1469,6 +1551,12 @@ $logFile = Join-Path $DeployLogDir ("deploy-migration-recovery-v" + $localVersio
     "migrationExecutionCount=$($migrationExecutionMetadata.MigrationCount)",
     "migrationFailureRecoveryRequired=false",
     "migrationFailureRecoveryExecuted=false",
+    "recoveryAuditDir=$($recoveryAuditMetadata.AuditDir)",
+    "recoveryAuditComplete=$($recoveryAuditMetadata.Complete)",
+    "recoveryAuditSummary=$($recoveryAuditMetadata.SummaryFile)",
+    "recoveryAuditBackupEvidence=$($recoveryAuditMetadata.BackupEvidenceFile)",
+    "recoveryAuditMigrationEvidence=$($recoveryAuditMetadata.MigrationEvidenceFile)",
+    "recoveryAuditOperatorNextSteps=$($recoveryAuditMetadata.OperatorNextStepsFile)",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1476,5 +1564,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-migration-recovery-v" + $localVersio
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Migration execution + recovery guards e fluxo de deploy concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Recovery audit + operator runbook e fluxo de deploy concluidos. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green

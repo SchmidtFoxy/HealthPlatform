@@ -9532,3 +9532,16 @@ Quando autorizado, o recovery revalida o backup, interrompe temporariamente a ap
 Mesmo com recovery concluído, a release alvo não é promovida. Uma nova tentativa exige um novo ciclo completo.
 
 **Próxima etapa:** `v0.57.10 — Deploy Seguro para Produção Recovery Audit & Operator Runbook`.
+
+
+---
+
+## v0.57.10 — Deploy Seguro para Produção Recovery Audit & Operator Runbook
+
+Cada execução passa a materializar um bundle local de evidências em `.deploy-logs/recovery-audit-v<versão>-<timestamp>/`, sem copiar segredos do `.env`.
+
+O bundle contém resumo operacional, evidências do backup, evidências das migrations e próximos passos seguros para o operador.
+
+O arquivo `DEPLOY-RECOVERY-RUNBOOK.md` documenta o procedimento de falha, restore e nova tentativa sem relaxar os gates automatizados.
+
+**Próxima etapa:** `v0.57.11 — Deploy Seguro para Produção End-to-End Closure Gate`.

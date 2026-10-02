@@ -1,3 +1,13 @@
+# v0.57.10 — Deploy Seguro para Produção Recovery Audit & Operator Runbook
+
+- Adiciona bundle de auditoria por execução.
+- Registra evidências do backup sem conteúdo de segredo.
+- Registra evidências do conjunto de migrations.
+- Materializa próximos passos operacionais.
+- Adiciona `DEPLOY-RECOVERY-RUNBOOK.md`.
+- Valida que todos os arquivos de auditoria existem e não estão vazios.
+- Preserva integralmente os guards anteriores.
+
 # v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery
 
 - Adiciona diagnóstico específico de falha de migration.
