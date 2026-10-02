@@ -8686,3 +8686,26 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.69 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp`.
+
+
+---
+
+## v0.56.69 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+Registra localmente o horário da última cópia bem-sucedida do resumo técnico do reset específico.
+
+O indicador começa como:
+`Última cópia do reset: —`
+
+Após uma cópia bem-sucedida:
+- mostra o horário local;
+- registra o ISO em `datetime`;
+- registra o ISO em `data-copy-timestamp-v05669`.
+
+Falha de clipboard ou resumo vazio não altera o último horário bem-sucedido.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.70 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear`.
