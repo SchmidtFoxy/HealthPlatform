@@ -8632,3 +8632,21 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.66 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State`.
+
+
+---
+
+## v0.56.66 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+
+Adiciona estado técnico local ao reset específico da deduplicação do anúncio de foco.
+
+O estado mantém:
+- status atual: `ready`, `reset` ou `announced`;
+- contador de resets;
+- horário ISO do último reset específico.
+
+A sincronização usa apenas atributos técnicos no indicador `Última cópia` e não envia nem persiste dados no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.67 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary`.
