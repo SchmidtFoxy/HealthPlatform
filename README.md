@@ -9324,3 +9324,24 @@ Não cria migration ou tabela nova.
 ### Marco de produção futuro
 
 Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
+
+
+---
+
+## v0.56.99 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+Registra localmente quando o resumo técnico da v0.56.97 foi copiado com sucesso.
+
+A entrega adiciona:
+- indicador **Última cópia do resumo do reset da deduplicação**;
+- atualização somente após `navigator.clipboard.writeText` concluir;
+- horário local para leitura;
+- `datetime` e `dataset.copyTimestampV05699` em ISO para inspeção técnica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.57.0 — Deploy Seguro para Produção Foundation`.
+
+### Marco obrigatório de produção
+
+A série `v0.57.x` passa a executar o fechamento de deploy seguro antes da `v0.58.0`. O `DEPLOY-PRODUCAO.ps1` deverá bloquear qualquer migration ou substituição da aplicação até o backup do PostgreSQL estar concluído e validado.

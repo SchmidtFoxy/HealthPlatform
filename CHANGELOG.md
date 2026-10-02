@@ -1,3 +1,14 @@
+# v0.56.99 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+- Registra localmente o horário da última cópia do resumo técnico.
+- Atualiza o indicador somente após cópia bem-sucedida.
+- Mantém horário ISO em `datetime` e `dataset.copyTimestampV05699`.
+- Adiciona marcador técnico v0.56.99.
+- Preserva estado v0.56.96, resumo v0.56.97 e cópia v0.56.98.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+- Prepara a transição para v0.57.0 / Deploy Seguro para Produção Foundation.
+
 # v0.56.98 — Focus Announcement Deduplication Reset State Summary Copy
 
 - Adiciona botão local para copiar o resumo técnico da v0.56.97.
