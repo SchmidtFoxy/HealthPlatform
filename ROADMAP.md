@@ -6016,3 +6016,20 @@ Adicionar edição controlada das notas documentais ativas, com trilha de audito
 
 ### v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History
 Adicionar histórico explícito das revisões de conteúdo das notas documentais.
+
+
+## ✅ v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History — CONCLUÍDA
+
+**Entregue:**
+- histórico explícito das revisões de conteúdo das notas;
+- leitura da trilha de `AuditLogs` por nota;
+- conteúdo anterior e novo extraídos dos snapshots;
+- criação, edição, arquivamento e restauração preservados na linha do tempo;
+- ação `Histórico` para notas ativas e arquivadas;
+- visualização sob demanda na interface profissional;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters
+Adicionar filtros documentais ao histórico de revisões das notas.

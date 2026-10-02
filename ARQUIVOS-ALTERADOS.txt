@@ -1,26 +1,14 @@
-HealthPlatform v0.56.13 - Follow-Up Review Comparison Notes Edit - Incremental
+HealthPlatform v0.56.14-r2 - Revision History Gate Fix
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- edicao controlada de notas ativas;
-- bloqueio de edicao de notas arquivadas;
-- auditoria COMPARISON_NOTE_UPDATED;
-- UpdatedAtUtc atualizado;
-- acao Editar / Salvar alteracao na UI;
-- sem migration/tabela nova.
+Correcao:
+- atualiza o gate da v0.56.14 para validar x.EntidadeId == entityId;
+- remove a expectativa obsoleta x.EntidadeId == noteId;
+- preserva integralmente a correcao de tipo aplicada no r1;
+- sem alteracao de schema, regra de negocio ou VERSION.txt.
 
-Fluxo:
-PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.13
+Nao commitar a revisao -r2 individualmente.
+Se aprovado, commit/push apenas: v0.56.14

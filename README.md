@@ -7562,3 +7562,21 @@ A edição é documental e não produz avaliação clínica automática.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History`.
+
+
+---
+
+## v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History
+
+Adiciona histórico explícito de revisões para cada nota documental de comparação.
+
+### Histórico por nota
+`GET .../{id}/history/context/comparison-notes/{noteId}/history`
+
+O histórico apresenta ação auditada, usuário quando disponível, data/hora, conteúdo anterior e conteúdo novo. A interface adiciona a ação `Histórico` tanto nas notas ativas quanto nas arquivadas, com carregamento sob demanda.
+
+A linha do tempo deriva exclusivamente dos `AuditLogs` já existentes e permanece documental.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters`.

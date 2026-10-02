@@ -3633,6 +3633,56 @@ public class ProgressReviewNotesController(
         return Ok(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
     }
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRevisionHistoryResponse>>> HistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var notaExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (!notaExiste)
+            return NotFound();
+
+        var prefixoAcao = "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_";
+
+        var entityId = noteId.ToString();
+
+        var logs = await db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith(prefixoAcao))
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .ThenByDescending(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        var resposta = logs
+            .Select(x => new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRevisionHistoryResponse(
+                x.Id,
+                x.Acao,
+                x.UsuarioId,
+                x.CreatedAtUtc,
+                ExtrairNotaComparacaoContextoDoSnapshot(x.DadosAnterioresJson),
+                ExtrairNotaComparacaoContextoDoSnapshot(x.DadosNovosJson)))
+            .ToArray();
+
+        return Ok(resposta);
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/archived")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse>>> ListarNotasComparacaoContextoHistoricoArquivadasTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,
@@ -15976,6 +16026,33 @@ public class ProgressReviewNotesController(
             nota.AutorUsuarioId, nota.AutorNome, nota.CreatedAtUtc, nota.UpdatedAtUtc, nota.Arquivada);
     }
 
+
+
+    private static string? ExtrairNotaComparacaoContextoDoSnapshot(string? snapshotJson)
+    {
+        if (string.IsNullOrWhiteSpace(snapshotJson))
+            return null;
+
+        try
+        {
+            using var snapshot = JsonDocument.Parse(snapshotJson);
+            if (!snapshot.RootElement.TryGetProperty("Conteudo", out var conteudo) || conteudo.ValueKind != JsonValueKind.String)
+                return null;
+
+            var payloadJson = conteudo.GetString();
+            if (string.IsNullOrWhiteSpace(payloadJson))
+                return null;
+
+            using var payload = JsonDocument.Parse(payloadJson);
+            return payload.RootElement.TryGetProperty("Nota", out var nota) && nota.ValueKind == JsonValueKind.String
+                ? nota.GetString()
+                : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
 
     private static string? ExtrairStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDoSnapshot(string? snapshotJson)
     {

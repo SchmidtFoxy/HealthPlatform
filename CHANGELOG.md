@@ -1,3 +1,12 @@
+# v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History
+
+- Adiciona histórico de revisões por nota de comparação.
+- Consulta a trilha existente em `AuditLogs`.
+- Exibe conteúdo anterior e novo.
+- Inclui criação, edição, arquivamento e restauração.
+- Adiciona ação `Histórico` para notas ativas e arquivadas.
+- Não cria migration ou tabela nova.
+
 # v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit
 
 - Adiciona edição de notas documentais ativas.

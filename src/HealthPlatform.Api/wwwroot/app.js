@@ -5055,6 +5055,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_ARCHIVE_V05611='v0.56.11';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_RESTORE_V05612='v0.56.12';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_EDIT_V05613='v0.56.13';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_V05614='v0.56.14';
 
 
 
@@ -6786,7 +6787,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + notas + edição/arquivamento/restauração · v0.56.13</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + notas + histórico de revisões · v0.56.14</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6883,7 +6884,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
         const notes=Array.isArray(comparisonNotes)?comparisonNotes:[];
         const archivedNotes=Array.isArray(archivedComparisonNotes)?archivedComparisonNotes:[];
         if(!notes.some(n=>String(n.id)===String(editingComparisonNoteIdV05613)))editingComparisonNoteIdV05613=null;
-        comparisonNotesHost.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-notes-archive-v05611="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_ARCHIVE_V05611}"><div class="row-between"><b>Notas da comparação</b><small>${notes.length} ativa(s) · ${archivedNotes.length} arquivada(s)</small></div><div class="form-grid"><label>Referência<select id="followUpReviewComparisonNoteReferenceV05610"><option value="Geral">Geral</option><option value="Anterior">Anterior</option><option value="Proxima">Próxima</option></select></label><label class="span-2">Nota documental<textarea id="followUpReviewComparisonNoteTextV05610" maxlength="3000" placeholder="Registre apenas a observação documental do profissional."></textarea></label><div class="span-2 form-actions"><button type="button" class="primary" id="saveFollowUpReviewComparisonNoteV05610">Registrar nota</button></div></div>${notes.length?notes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')}</small><div class="form-actions"><button type="button" class="ghost" data-edit-comparison-note-v05613="${n.id}">Editar</button><button type="button" class="ghost" data-archive-comparison-note-v05611="${n.id}">Arquivar</button></div></div></div>`).join(''):'<p class="muted-line">Nenhuma nota documental ativa.</p>'}${archivedNotes.length?`<details data-comparison-notes-restore-v05612="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_RESTORE_V05612}"><summary>Histórico arquivado (${archivedNotes.length})</summary>${archivedNotes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.atualizadoEmUtc||n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')} · arquivada</small><button type="button" class="ghost" data-restore-comparison-note-v05612="${n.id}">Restaurar</button></div></div>`).join('')}</details>`:''}</article>`;
+        comparisonNotesHost.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-notes-archive-v05611="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_ARCHIVE_V05611}"><div class="row-between"><b>Notas da comparação</b><small>${notes.length} ativa(s) · ${archivedNotes.length} arquivada(s)</small></div><div class="form-grid"><label>Referência<select id="followUpReviewComparisonNoteReferenceV05610"><option value="Geral">Geral</option><option value="Anterior">Anterior</option><option value="Proxima">Próxima</option></select></label><label class="span-2">Nota documental<textarea id="followUpReviewComparisonNoteTextV05610" maxlength="3000" placeholder="Registre apenas a observação documental do profissional."></textarea></label><div class="span-2 form-actions"><button type="button" class="primary" id="saveFollowUpReviewComparisonNoteV05610">Registrar nota</button></div></div>${notes.length?notes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')}</small><div class="form-actions"><button type="button" class="ghost" data-history-comparison-note-v05614="${n.id}">Histórico</button><button type="button" class="ghost" data-edit-comparison-note-v05613="${n.id}">Editar</button><button type="button" class="ghost" data-archive-comparison-note-v05611="${n.id}">Arquivar</button></div></div></div>`).join(''):'<p class="muted-line">Nenhuma nota documental ativa.</p>'}${archivedNotes.length?`<details data-comparison-notes-restore-v05612="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_RESTORE_V05612}"><summary>Histórico arquivado (${archivedNotes.length})</summary>${archivedNotes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.atualizadoEmUtc||n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')} · arquivada</small><div class="form-actions"><button type="button" class="ghost" data-history-comparison-note-v05614="${n.id}">Histórico</button><button type="button" class="ghost" data-restore-comparison-note-v05612="${n.id}">Restaurar</button></div></div></div>`).join('')}</details>`:''}<div id="comparisonNoteRevisionHistoryV05614" data-comparison-note-revision-history-v05614="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_V05614}"></div></article>`;
         const saveNote=$('#saveFollowUpReviewComparisonNoteV05610');
         if(saveNote){
           saveNote.textContent=editingComparisonNoteIdV05613?'Salvar alteração':'Registrar nota';
@@ -6912,6 +6913,17 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
           if(ref){ref.value=current.referencia||'Geral';ref.disabled=true;}
           if(textarea){textarea.value=current.nota||'';textarea.focus();}
           if(saveNote)saveNote.textContent='Salvar alteração';
+        });
+        comparisonNotesHost.querySelectorAll('[data-history-comparison-note-v05614]').forEach(btn=>btn.onclick=async()=>{
+          const noteId=btn.dataset.historyComparisonNoteV05614;
+          if(!noteId)return;
+          const history=await api(`${base}/${id}/history/context/comparison-notes/${noteId}/history`);
+          const rows=Array.isArray(history)?history:[];
+          const host=$('#comparisonNoteRevisionHistoryV05614');
+          if(!host)return;
+          const actionLabel=a=>String(a||'').replace('PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_','').replaceAll('_',' ');
+          host.innerHTML=`<article class="internal-note-privacy-v0204"><div class="row-between"><b>Histórico de revisões da nota</b><small>${rows.length} evento(s)</small></div>${rows.length?rows.map(x=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(actionLabel(x.acao))}</b><small>${new Date(x.registradoEmUtc).toLocaleString()}</small></div>${x.notaAnterior!==x.notaNova?`<div class="muted-line"><b>Antes:</b> ${esc(x.notaAnterior||'—')}</div><div><b>Depois:</b> ${esc(x.notaNova||'—')}</div>`:`<div class="muted-line">${esc(x.notaNova||x.notaAnterior||'Sem alteração textual.')}</div>`}</div>`).join(''):'<p class="muted-line">Nenhum evento auditado encontrado para esta nota.</p>'}</article>`;
+          host.scrollIntoView({behavior:'smooth',block:'nearest'});
         });
         comparisonNotesHost.querySelectorAll('[data-archive-comparison-note-v05611]').forEach(btn=>btn.onclick=async()=>{
           const noteId=btn.dataset.archiveComparisonNoteV05611;
@@ -19280,7 +19292,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.13';
+const HP_MVP_VERSION='0.56.14';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
