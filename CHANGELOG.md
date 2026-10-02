@@ -1,3 +1,15 @@
+# v0.56.82 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+- Adiciona `tabindex=-1` ao indicador da última cópia do estado do reset.
+- Move o foco para o indicador após limpar o horário.
+- Usa `focus({preventScroll:true})`.
+- Evita manter foco em botão recém-desabilitado.
+- Preserva a acessibilidade da v0.56.81.
+- Preserva a limpeza funcional da v0.56.80.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.81 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
 
 - Sincroniza `aria-disabled` da ação de limpeza.
