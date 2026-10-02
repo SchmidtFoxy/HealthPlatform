@@ -1,3 +1,17 @@
+# v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse`.
+- Adiciona requests de criação e atualização.
+- Adiciona namespace `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview:`.
+- Adiciona GET/POST/PUT/DELETE para persistência auditada.
+- Adiciona criação, edição e arquivamento com auditoria.
+- Mantém 18 referências documentais opcionais, incluindo o Follow-Up relacionado.
+- `Profissional revisor` e `Item da revisão` permanecem obrigatórios.
+- Adiciona UI de gerenciamento das revisões.
+- Foundation passa a anunciar persistência disponível.
+- Não cria migration ou tabela nova.
+- Próxima etapa: v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status.
+
 # v0.56.0 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Foundation
 
 - Abre a linha funcional 0.56.x.

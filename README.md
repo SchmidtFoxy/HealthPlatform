@@ -7230,7 +7230,7 @@ Abre a linha 0.56.x com a fundação estrutural para revisão profissional dos a
 `EquipeProfissional`
 
 ### Persistência
-Ainda indisponível nesta versão. Não cria migration ou tabela nova.
+Disponível a partir da v0.56.1, sem migration ou tabela nova.
 
 ### Campos estruturais
 A fundação possui 27 campos. Mantém rastreabilidade opcional com o acompanhamento e toda a cadeia documental anterior. Os principais campos operacionais são:
@@ -7248,3 +7248,27 @@ A fundação possui 27 campos. Mantém rastreabilidade opcional com o acompanham
 A estrutura organiza revisão documental. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence`.
+
+
+---
+
+## v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence
+
+Adiciona persistência auditada às revisões profissionais dos acompanhamentos documentados.
+
+### Entregas
+- contrato `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse`;
+- requests de criação e atualização;
+- namespace `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview:`;
+- GET/POST/PUT/DELETE para listar, criar, editar e arquivar;
+- `Profissional revisor` e `Item da revisão` obrigatórios;
+- rastreabilidade opcional com Follow-Up, resultado e cadeia documental anterior;
+- auditoria de criação, edição e arquivamento;
+- gerenciador profissional na UI;
+- fundação passa a anunciar persistência disponível;
+- não cria migration ou tabela nova.
+
+### Guardrail
+A persistência registra documentação profissional e não transforma a revisão em validação causal ou evidência clínica validada. Não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
+
+**Próxima etapa:** `v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status`.

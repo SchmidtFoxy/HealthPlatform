@@ -5789,3 +5789,22 @@ Abrir a próxima fundação estrutural profissional para revisão dos acompanham
 
 ### v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence
 Adicionar persistência auditada às revisões dos acompanhamentos documentados.
+
+## ✅ v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence — CONCLUÍDA
+
+**Entregue:**
+- contrato persistido e requests de criação/atualização;
+- namespace documental próprio;
+- GET/POST/PUT/DELETE;
+- listar/criar/editar/arquivar;
+- campos obrigatórios `Profissional revisor` e `Item da revisão`;
+- rastreabilidade opcional com Follow-Up e cadeia documental anterior;
+- auditoria de criação, edição e arquivamento;
+- UI de gerenciamento;
+- Foundation passa a anunciar persistência disponível;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status
+Adicionar estados documentais manuais e auditados às revisões dos acompanhamentos.

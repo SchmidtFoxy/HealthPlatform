@@ -43,6 +43,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoTeamKnowledgeEffectDecisionReview = "ProfessionalReviewTeamKnowledgeEffectDecisionReview:";
     private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcome = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcome:";
     private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUp:";
+    private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -2667,6 +2668,64 @@ public class ProgressReviewNotesController(
             "A fundação organiza revisões profissionais das decisões documentadas sobre os efeitos observados do conhecimento da equipe usando Team Knowledge Effect Decision, Team Knowledge Effect Review, Team Knowledge Effect, Team Knowledge Application, Team Knowledge, Team Insight, Team Learning, Team Outcome, Team Decision, Team Alignment, Shared Context, Collaboration, Coordination, Escalation e Continuity como referências opcionais e, a partir da v0.53.1, possui persistência auditada. Não transforma revisão em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica automática, não executa conduta ou prescrição, não transfere automaticamente responsabilidade clínica e não substitui avaliação profissional."));
     }
 
+    public sealed record CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest(
+        Guid? FollowUpRelacionadoId,
+        Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
+        Guid? TeamKnowledgeEffectDecisionReviewRelacionadaId,
+        Guid? TeamKnowledgeEffectDecisionRelacionadaId,
+        Guid? TeamKnowledgeEffectReviewRelacionadaId,
+        Guid? TeamKnowledgeEffectRelacionadoId,
+        Guid? TeamKnowledgeApplicationRelacionadaId,
+        Guid? TeamKnowledgeRelacionadoId,
+        Guid? TeamInsightRelacionadoId,
+        Guid? TeamLearningRelacionadoId,
+        Guid? TeamOutcomeRelacionadoId,
+        Guid? TeamDecisionRelacionadaId,
+        Guid? TeamAlignmentRelacionadoId,
+        Guid? SharedContextRelacionadoId,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string ProfissionalRevisor,
+        string? Participantes,
+        string ItemRevisao,
+        string? ContextoRevisao,
+        string? BaseObservacionalEvidenciaSuporte,
+        string? ResultadoObservado,
+        string? InterpretacaoProfissional,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    public sealed record AtualizarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest(
+        Guid? FollowUpRelacionadoId,
+        Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
+        Guid? TeamKnowledgeEffectDecisionReviewRelacionadaId,
+        Guid? TeamKnowledgeEffectDecisionRelacionadaId,
+        Guid? TeamKnowledgeEffectReviewRelacionadaId,
+        Guid? TeamKnowledgeEffectRelacionadoId,
+        Guid? TeamKnowledgeApplicationRelacionadaId,
+        Guid? TeamKnowledgeRelacionadoId,
+        Guid? TeamInsightRelacionadoId,
+        Guid? TeamLearningRelacionadoId,
+        Guid? TeamOutcomeRelacionadoId,
+        Guid? TeamDecisionRelacionadaId,
+        Guid? TeamAlignmentRelacionadoId,
+        Guid? SharedContextRelacionadoId,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string ProfissionalRevisor,
+        string? Participantes,
+        string ItemRevisao,
+        string? ContextoRevisao,
+        string? BaseObservacionalEvidenciaSuporte,
+        string? ResultadoObservado,
+        string? InterpretacaoProfissional,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
     public sealed record CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpRequest(
         Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
         Guid? TeamKnowledgeEffectDecisionReviewRelacionadaId,
@@ -3225,6 +3284,106 @@ public class ProgressReviewNotesController(
             "A fundação organiza acompanhamentos documentados derivados dos resultados das revisões profissionais. A persistência auditada está disponível a partir da v0.55.1. O acompanhamento estrutural não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
     }
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse>>> ListarTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviews(
+        Guid pacienteId,
+        [FromQuery] bool incluirArquivados = false,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var query = db.NotasInternasProfissionais.AsNoTracking().Where(x =>
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.PacienteId == pacienteId &&
+            x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview));
+
+        if (!incluirArquivados) query = query.Where(x => !x.Arquivada);
+
+        var notas = await query
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview).ToArray());
+    }
+
+    [HttpPost("team-knowledge-effect-decision-review-outcome-follow-up-review")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse>> CriarTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var profissionalRevisor = NormalizarObrigatorio(request.ProfissionalRevisor, 160);
+        var itemRevisao = NormalizarObrigatorio(request.ItemRevisao, 3000);
+        if (string.IsNullOrWhiteSpace(profissionalRevisor)) return BadRequest(new { message = "Informe o profissional revisor." });
+        if (string.IsNullOrWhiteSpace(itemRevisao)) return BadRequest(new { message = "Informe o item da revisão." });
+
+        var autor = await db.Users
+            .AsNoTracking()
+            .Where(x => x.Id == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId)
+            .Select(x => x.Nome)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Profissional";
+
+        var nota = new NotaInternaProfissional
+        {
+            Id = Guid.NewGuid(),
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            Categoria = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview + Guid.NewGuid().ToString("N"),
+            Conteudo = JsonSerializer.Serialize(CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(request, profissionalRevisor, itemRevisao)),
+            AutorUsuarioId = currentUser.UserId,
+            AutorNome = autor,
+            CreatedAtUtc = DateTime.UtcNow,
+            Arquivada = false
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CREATED", nota, null, Snapshot(nota));
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
+    }
+
+    [HttpPut("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse>> AtualizarTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId, Guid id, AtualizarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request, CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais.FirstOrDefaultAsync(x =>
+            x.Id == id && x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId &&
+            x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) && !x.Arquivada, cancellationToken);
+        if (nota is null) return NotFound();
+
+        var profissionalRevisor = NormalizarObrigatorio(request.ProfissionalRevisor, 160);
+        var itemRevisao = NormalizarObrigatorio(request.ItemRevisao, 3000);
+        if (string.IsNullOrWhiteSpace(profissionalRevisor)) return BadRequest(new { message = "Informe o profissional revisor." });
+        if (string.IsNullOrWhiteSpace(itemRevisao)) return BadRequest(new { message = "Informe o item da revisão." });
+
+        var antes = Snapshot(nota);
+        nota.Conteudo = JsonSerializer.Serialize(CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(request, profissionalRevisor, itemRevisao));
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+        Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_UPDATED", nota, antes, Snapshot(nota));
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
+    }
+
+    [HttpDelete("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}")]
+    public async Task<IActionResult> ArquivarTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(Guid pacienteId, Guid id, CancellationToken cancellationToken = default)
+    {
+        var nota = await db.NotasInternasProfissionais.FirstOrDefaultAsync(x =>
+            x.Id == id && x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId &&
+            x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) && !x.Arquivada, cancellationToken);
+        if (nota is null) return NotFound();
+        var antes = Snapshot(nota);
+        nota.Arquivada = true;
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+        Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_ARCHIVED", nota, antes, Snapshot(nota));
+        await db.SaveChangesAsync(cancellationToken);
+        return NoContent();
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/foundation")]
     public ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationResponse> TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundation()
     {
@@ -3261,10 +3420,10 @@ public class ProgressReviewNotesController(
 
         return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationResponse(
             "FundacaoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDisponivel",
-            false,
+            true,
             "EquipeProfissional",
             campos,
-            "A fundação organiza a revisão documental dos acompanhamentos profissionais já registrados. Nesta versão não há persistência própria. A estrutura não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+            "A fundação organiza a revisão documental dos acompanhamentos profissionais já registrados. A persistência auditada está disponível a partir da v0.56.1. A estrutura não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
     }
 
     [HttpGet("team-knowledge-effect-decision-review-outcome/closure")]
@@ -15050,6 +15209,81 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpValido(string? status) =>
         status is "Registrado" or "EmAcompanhamento" or "Concluido" or "Descartado";
+
+    private sealed record TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload(
+        Guid? FollowUpRelacionadoId,
+        Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
+        Guid? TeamKnowledgeEffectDecisionReviewRelacionadaId,
+        Guid? TeamKnowledgeEffectDecisionRelacionadaId,
+        Guid? TeamKnowledgeEffectReviewRelacionadaId,
+        Guid? TeamKnowledgeEffectRelacionadoId,
+        Guid? TeamKnowledgeApplicationRelacionadaId,
+        Guid? TeamKnowledgeRelacionadoId,
+        Guid? TeamInsightRelacionadoId,
+        Guid? TeamLearningRelacionadoId,
+        Guid? TeamOutcomeRelacionadoId,
+        Guid? TeamDecisionRelacionadaId,
+        Guid? TeamAlignmentRelacionadoId,
+        Guid? SharedContextRelacionadoId,
+        Guid? CollaborationRelacionadaId,
+        Guid? CoordinationRelacionadaId,
+        Guid? EscalationRelacionadaId,
+        Guid? ContinuityRelacionadaId,
+        string ProfissionalRevisor,
+        string? Participantes,
+        string ItemRevisao,
+        string? ContextoRevisao,
+        string? BaseObservacionalEvidenciaSuporte,
+        string? ResultadoObservado,
+        string? InterpretacaoProfissional,
+        string? Horizonte,
+        string? ObservacaoProfissional);
+
+    private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request, string profissionalRevisor, string itemRevisao) =>
+        new(request.FollowUpRelacionadoId, request.TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId, request.TeamKnowledgeEffectDecisionReviewRelacionadaId,
+            request.TeamKnowledgeEffectDecisionRelacionadaId, request.TeamKnowledgeEffectReviewRelacionadaId, request.TeamKnowledgeEffectRelacionadoId,
+            request.TeamKnowledgeApplicationRelacionadaId, request.TeamKnowledgeRelacionadoId, request.TeamInsightRelacionadoId, request.TeamLearningRelacionadoId,
+            request.TeamOutcomeRelacionadoId, request.TeamDecisionRelacionadaId, request.TeamAlignmentRelacionadoId, request.SharedContextRelacionadoId,
+            request.CollaborationRelacionadaId, request.CoordinationRelacionadaId, request.EscalationRelacionadaId, request.ContinuityRelacionadaId,
+            profissionalRevisor, NormalizarOpcional(request.Participantes, 500), itemRevisao, NormalizarOpcional(request.ContextoRevisao, 3000),
+            NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000), NormalizarOpcional(request.ResultadoObservado, 3000),
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000), NormalizarOpcional(request.Horizonte, 120), NormalizarOpcional(request.ObservacaoProfissional, 3000));
+
+    private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        AtualizarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request, string profissionalRevisor, string itemRevisao) =>
+        new(request.FollowUpRelacionadoId, request.TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId, request.TeamKnowledgeEffectDecisionReviewRelacionadaId,
+            request.TeamKnowledgeEffectDecisionRelacionadaId, request.TeamKnowledgeEffectReviewRelacionadaId, request.TeamKnowledgeEffectRelacionadoId,
+            request.TeamKnowledgeApplicationRelacionadaId, request.TeamKnowledgeRelacionadoId, request.TeamInsightRelacionadoId, request.TeamLearningRelacionadoId,
+            request.TeamOutcomeRelacionadoId, request.TeamDecisionRelacionadaId, request.TeamAlignmentRelacionadoId, request.SharedContextRelacionadoId,
+            request.CollaborationRelacionadaId, request.CoordinationRelacionadaId, request.EscalationRelacionadaId, request.ContinuityRelacionadaId,
+            profissionalRevisor, NormalizarOpcional(request.Participantes, 500), itemRevisao, NormalizarOpcional(request.ContextoRevisao, 3000),
+            NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000), NormalizarOpcional(request.ResultadoObservado, 3000),
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000), NormalizarOpcional(request.Horizonte, 120), NormalizarOpcional(request.ObservacaoProfissional, 3000));
+
+    private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload>(nota.Conteudo)
+                ?? new(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Profissional",null,nota.Conteudo,null,null,null,null,null,null);
+        }
+        catch (JsonException)
+        {
+            return new(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Profissional",null,nota.Conteudo,null,null,null,null,null,null);
+        }
+    }
+
+    private static ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(NotaInternaProfissional nota)
+    {
+        var p = LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota);
+        return new(nota.Id, p.FollowUpRelacionadoId, p.TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId, p.TeamKnowledgeEffectDecisionReviewRelacionadaId,
+            p.TeamKnowledgeEffectDecisionRelacionadaId, p.TeamKnowledgeEffectReviewRelacionadaId, p.TeamKnowledgeEffectRelacionadoId, p.TeamKnowledgeApplicationRelacionadaId,
+            p.TeamKnowledgeRelacionadoId, p.TeamInsightRelacionadoId, p.TeamLearningRelacionadoId, p.TeamOutcomeRelacionadoId, p.TeamDecisionRelacionadaId,
+            p.TeamAlignmentRelacionadoId, p.SharedContextRelacionadoId, p.CollaborationRelacionadaId, p.CoordinationRelacionadaId, p.EscalationRelacionadaId,
+            p.ContinuityRelacionadaId, p.ProfissionalRevisor, p.Participantes, p.ItemRevisao, p.ContextoRevisao, p.BaseObservacionalEvidenciaSuporte,
+            p.ResultadoObservado, p.InterpretacaoProfissional, p.Horizonte, p.ObservacaoProfissional, nota.AutorUsuarioId, nota.AutorNome, nota.CreatedAtUtc, nota.UpdatedAtUtc, nota.Arquivada);
+    }
 
     private sealed record TeamKnowledgeEffectDecisionReviewOutcomeFollowUpPayload(
         Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
