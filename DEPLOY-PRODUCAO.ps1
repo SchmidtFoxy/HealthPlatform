@@ -47,11 +47,12 @@ $script:MigrationSafetyMetadata = $null
 $script:MigrationExecutionMetadata = $null
 $script:MigrationFailureRecoveryMetadata = $null
 $script:RecoveryAuditMetadata = $null
+$script:EndToEndClosureMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.10 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.11 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -1421,10 +1422,106 @@ function New-RecoveryAuditBundle {
     return $script:RecoveryAuditMetadata
 }
 
+function Test-EndToEndClosureGate {
+    Write-DeployTitle "END-TO-END CLOSURE GATE"
+
+    if (-not $script:BackupConcluido -or -not $script:BackupValidado -or -not $script:BackupMetadata) {
+        throw "Closure gate bloqueado: backup PostgreSQL nao esta concluido, validado e catalogado."
+    }
+    if (-not $script:MutacaoLiberada) {
+        throw "Closure gate bloqueado: mutation guard nao foi liberado."
+    }
+    if (-not $script:StagingMetadata -or [string]::IsNullOrWhiteSpace([string]$script:StagingMetadata.Path)) {
+        throw "Closure gate bloqueado: staging metadata ausente."
+    }
+    if (-not $script:RollbackPlan -or [string]::IsNullOrWhiteSpace([string]$script:RollbackPlan.BackupFile)) {
+        throw "Closure gate bloqueado: rollback plan ausente."
+    }
+    if (-not $script:PreActivationMetadata -or -not $script:PreActivationMetadata.ActiveHealthOk -or -not $script:PreActivationMetadata.StagedComposeConfigOk) {
+        throw "Closure gate bloqueado: pre-activation gates incompletos."
+    }
+    if (-not $script:ActivationSnapshot -or -not $script:ControlledActivation) {
+        throw "Closure gate bloqueado: snapshot e controlled activation sao obrigatorios."
+    }
+    if (-not $script:MigrationSafetyMetadata -or -not $script:MigrationSafetyMetadata.SafeMigrationsAllowed) {
+        throw "Closure gate bloqueado: migration safety gate nao aprovado."
+    }
+    if ($script:MigrationSafetyMetadata.DestructiveMigrationsAllowed -or $script:MigrationSafetyMetadata.DestructiveDetected) {
+        throw "Closure gate bloqueado: migration destrutiva detectada ou liberada."
+    }
+    if (-not $script:MigrationExecutionMetadata -or -not $script:MigrationExecutionMetadata.HashMatched) {
+        throw "Closure gate bloqueado: execucao/revalidacao de migrations incompleta."
+    }
+    if (-not $script:PromotionMetadata -or -not $script:RestartVerificationMetadata) {
+        throw "Closure gate bloqueado: promotion/restart metadata ausentes."
+    }
+    if (-not $script:RecoveryAuditMetadata -or -not $script:RecoveryAuditMetadata.Complete) {
+        throw "Closure gate bloqueado: recovery audit bundle incompleto."
+    }
+
+    if ($Aplicar) {
+        if (-not $script:PromotionMetadata.Applied -or -not $script:PromotionMetadata.PostPromotionHealthOk) {
+            throw "Closure gate bloqueado: promocao aplicada sem comprovacao de health."
+        }
+        if (-not $script:RestartVerificationMetadata.Executed -or -not $script:RestartVerificationMetadata.HealthVerified -or -not $script:RestartVerificationMetadata.VersionVerified) {
+            throw "Closure gate bloqueado: restart/version verification aplicada incompleta."
+        }
+        if ($script:RestartVerificationMetadata.ServedVersion -ne $TargetVersion) {
+            throw "Closure gate bloqueado: versao servida diverge da TargetVersion."
+        }
+    }
+    else {
+        if ($script:PromotionMetadata.Applied -or $script:RestartVerificationMetadata.Executed) {
+            throw "Closure gate bloqueado: modo validacao nao pode aplicar promocao/restart."
+        }
+    }
+
+    $closureFile = Join-Path $script:RecoveryAuditMetadata.AuditDir "END-TO-END-CLOSURE.txt"
+    @(
+        "version=v$TargetVersion",
+        "mode=" + $(if ($Aplicar) { "apply" } else { "validate-only" }),
+        "backupValidated=$script:BackupValidado",
+        "mutationGuard=$script:MutacaoLiberada",
+        "stagingReady=true",
+        "preActivationReady=true",
+        "migrationSafetyApproved=$($script:MigrationSafetyMetadata.SafeMigrationsAllowed)",
+        "migrationHashMatched=$($script:MigrationExecutionMetadata.HashMatched)",
+        "destructiveMigrationsAllowed=false",
+        "promotionApplied=$($script:PromotionMetadata.Applied)",
+        "postPromotionHealthOk=$($script:PromotionMetadata.PostPromotionHealthOk)",
+        "restartExecuted=$($script:RestartVerificationMetadata.Executed)",
+        "restartHealthVerified=$($script:RestartVerificationMetadata.HealthVerified)",
+        "restartVersionVerified=$($script:RestartVerificationMetadata.VersionVerified)",
+        "servedVersion=$($script:RestartVerificationMetadata.ServedVersion)",
+        "recoveryAuditComplete=$($script:RecoveryAuditMetadata.Complete)",
+        "series057Closed=true",
+        "nextSeries=v0.58.x",
+        "closedAt=" + (Get-Date).ToString("o")
+    ) | Set-Content -LiteralPath $closureFile -Encoding UTF8
+
+    if (-not (Test-Path -LiteralPath $closureFile) -or (Get-Item -LiteralPath $closureFile).Length -le 0) {
+        throw "Closure gate nao conseguiu materializar evidencia final."
+    }
+
+    $script:EndToEndClosureMetadata = [pscustomobject]@{
+        Complete = $true
+        EvidenceFile = $closureFile
+        Mode = $(if ($Aplicar) { "apply" } else { "validate-only" })
+        Series057Closed = $true
+        NextSeries = "v0.58.x"
+        DestructiveMigrationsAllowed = $false
+        ClosedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host ("End-to-end closure gate aprovado: " + $closureFile) -ForegroundColor Green
+    Write-Host "Serie v0.57.x fechada com todos os guards preservados." -ForegroundColor Green
+    return $script:EndToEndClosureMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.10 consolida auditoria de recovery e runbook operacional sem relaxar gates." -ForegroundColor Cyan
+    Write-Host "v0.57.11 fecha a serie v0.57.x com gate end-to-end de producao." -ForegroundColor Cyan
     Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -1433,7 +1530,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.10
+# Fluxo v0.57.11
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -1481,10 +1578,11 @@ Test-AtomicPromotionReadiness
 $promotionMetadata = Invoke-AtomicReleasePromotion
 $restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerification
 $recoveryAuditMetadata = New-RecoveryAuditBundle
+$endToEndClosureMetadata = Test-EndToEndClosureGate
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-recovery-audit-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-end-to-end-closure-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1557,6 +1655,11 @@ $logFile = Join-Path $DeployLogDir ("deploy-recovery-audit-v" + $localVersion + 
     "recoveryAuditBackupEvidence=$($recoveryAuditMetadata.BackupEvidenceFile)",
     "recoveryAuditMigrationEvidence=$($recoveryAuditMetadata.MigrationEvidenceFile)",
     "recoveryAuditOperatorNextSteps=$($recoveryAuditMetadata.OperatorNextStepsFile)",
+    "endToEndClosureComplete=$($endToEndClosureMetadata.Complete)",
+    "endToEndClosureEvidence=$($endToEndClosureMetadata.EvidenceFile)",
+    "endToEndClosureMode=$($endToEndClosureMetadata.Mode)",
+    "series057Closed=$($endToEndClosureMetadata.Series057Closed)",
+    "nextSeries=$($endToEndClosureMetadata.NextSeries)",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1564,5 +1667,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-recovery-audit-v" + $localVersion + 
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Recovery audit + operator runbook e fluxo de deploy concluidos. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("End-to-end closure da serie v0.57.x concluido. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green

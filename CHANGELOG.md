@@ -1,3 +1,16 @@
+# v0.57.11 — Deploy Seguro para Produção End-to-End Closure Gate
+
+- Adiciona `Test-EndToEndClosureGate`.
+- Consolida os invariantes completos do deploy seguro.
+- Diferencia corretamente `-Aplicar` e modo de validação.
+- Exige versão servida igual à `TargetVersion` em aplicação real.
+- Exige audit bundle completo.
+- Materializa `END-TO-END-CLOSURE.txt`.
+- Registra fechamento da série v0.57.x.
+- Adiciona `DEPLOY-CLOSURE-CHECKLIST.md`.
+- Mantém migrations destrutivas bloqueadas.
+- Libera no ROADMAP a próxima série v0.58.x após aprovação funcional.
+
 # v0.57.10 — Deploy Seguro para Produção Recovery Audit & Operator Runbook
 
 - Adiciona bundle de auditoria por execução.

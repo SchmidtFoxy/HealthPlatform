@@ -9545,3 +9545,18 @@ O bundle contém resumo operacional, evidências do backup, evidências das migr
 O arquivo `DEPLOY-RECOVERY-RUNBOOK.md` documenta o procedimento de falha, restore e nova tentativa sem relaxar os gates automatizados.
 
 **Próxima etapa:** `v0.57.11 — Deploy Seguro para Produção End-to-End Closure Gate`.
+
+
+---
+
+## v0.57.11 — Deploy Seguro para Produção End-to-End Closure Gate
+
+A série v0.57.x passa a possuir um gate final que consolida backup, staging, configuração, migrations, promoção, restart, version verification, recovery e auditoria.
+
+O fechamento gera `END-TO-END-CLOSURE.txt` dentro do audit bundle e só marca `series057Closed=true` quando todos os invariantes obrigatórios estiverem satisfeitos.
+
+O fechamento **não** libera migrations destrutivas.
+
+O checklist versionado está em `DEPLOY-CLOSURE-CHECKLIST.md`.
+
+**Próxima etapa:** `v0.58.0 — Production Operations Foundation`.
