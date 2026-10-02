@@ -1,3 +1,17 @@
+# v0.56.88 — Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona ação local `Copiar estado da deduplicação`.
+- Copia o texto visível do resumo técnico da v0.56.87.
+- Adiciona feedback acessível de sucesso.
+- Adiciona feedback para resumo vazio.
+- Adiciona feedback para falha de clipboard.
+- Adiciona associação semântica com `aria-describedby`.
+- Preserva estado técnico e resumo das versões anteriores.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
 # v0.56.87 — Focus Announcement Deduplication Reset State Summary
 
 - Adiciona resumo técnico local do estado da v0.56.86.
