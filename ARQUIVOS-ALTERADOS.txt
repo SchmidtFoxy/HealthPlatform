@@ -1,18 +1,23 @@
-HealthPlatform v0.56.63-r2 - Incremental
+HealthPlatform v0.56.64-r1 - Incremental
 
-Hotfix cumulativo da versão funcional v0.56.63.
+Hotfix cumulativo da versão funcional v0.56.64.
 NÃO commitar/pushar esta revisão individualmente.
 
 Arquivos alterados:
 - TESTAR.ps1
 
-Correções cumulativas:
-- preserva a correção do r1 que converteu os `\n` internos do gate em quebras de linha reais;
-- remove o `\n` literal remanescente imediatamente antes do cabeçalho `# ===== v0.56.63`;
-- elimina o CommandNotFoundException causado pelo comando literal `\n#`;
+Diagnóstico:
+- a v0.56.64 evoluiu corretamente a emissão do anúncio da v0.56.63 para o wrapper `announceTimestampClearFocusV05664`;
+- o gate histórico da v0.56.63 ainda exigia apenas a chamada direta `announceComparisonNoteVerificationFocusV05653`;
+- isso gerou falso negativo no TESTAR.ps1.
+
+Correção:
+- o gate histórico v0.56.63 passa a aceitar a implementação direta original OU o wrapper específico da v0.56.64;
+- preserva a validação do foco anterior;
 - nenhuma alteração funcional em app.js;
-- VERSION.txt permanece 0.56.63.
+- VERSION.txt permanece 0.56.64;
+- UTF-8 com BOM preservado.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.63
+Se aprovado, commit/push apenas: v0.56.64

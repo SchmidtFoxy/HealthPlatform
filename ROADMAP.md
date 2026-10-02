@@ -6977,3 +6977,23 @@ Adicionar anúncio acessível específico para a movimentação de foco após li
 
 ### v0.56.64 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
 Evitar repetição consecutiva do anúncio específico de foco após limpar o horário, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.64 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication — CONCLUÍDA
+
+**Entregue:**
+- deduplicação local específica do anúncio de foco após limpar o horário;
+- cache `lastTimestampClearFocusAnnouncementV05664`;
+- helper `announceTimestampClearFocusV05664`;
+- anúncio idêntico consecutivo é ignorado;
+- nova cópia bem-sucedida libera novamente o próximo anúncio de limpeza;
+- marcador técnico v0.56.64 no indicador;
+- live region e deduplicação geral anteriores preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.65 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+Adicionar reset explícito do cache específico de deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.

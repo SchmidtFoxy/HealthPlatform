@@ -1,3 +1,13 @@
+# v0.56.64 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+- Adiciona cache específico do anúncio de foco após limpar horário.
+- Ignora anúncio idêntico consecutivo.
+- Reseta o cache específico após nova cópia bem-sucedida.
+- Preserva live region e deduplicação geral anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.63 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
 
 - Adiciona anúncio acessível específico após limpar o horário.

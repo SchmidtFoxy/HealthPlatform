@@ -8596,3 +8596,20 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.64 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication`.
+
+
+---
+
+## v0.56.64 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+Adiciona deduplicação específica ao anúncio acessível disparado após **Limpar horário**.
+
+O helper `announceTimestampClearFocusV05664` ignora a mesma mensagem quando ela já é a última mensagem específica registrada. Uma nova cópia bem-sucedida limpa esse cache específico, permitindo que a próxima limpeza seja anunciada normalmente.
+
+O live region e a deduplicação geral de foco continuam preservados.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.65 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset`.
