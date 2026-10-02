@@ -1,3 +1,14 @@
+# v0.56.79 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+- Adiciona indicador local da última cópia do estado do reset.
+- Atualiza o horário somente em cópia bem-sucedida.
+- Registra horário local, `datetime` ISO e `data-copy-timestamp-v05679`.
+- Preserva o último sucesso em caso de falha ou conteúdo vazio.
+- Preserva a cópia funcional da v0.56.78.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.78 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
 
 - Adiciona ação local `Copiar estado do reset`.
