@@ -1,4 +1,4 @@
-HealthPlatform v0.57.4-r1 - Incremental
+HealthPlatform v0.57.5-r2 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,24 +14,33 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- confirmacao adicional ATIVAR:<host>:<versao>;
-- snapshot isolado do estado ativo;
-- plano de rollback imediato;
-- readiness da ativacao controlada;
-- ActivationExecuted=false;
-- DestructiveMigrationsAllowed=false;
-- nenhuma promocao real da release;
-- guard absoluto de backup preservado.
+- ActiveReleaseLink dedicado;
+- readiness de promocao atomica;
+- modo padrao sem promocao quando -Aplicar nao e informado;
+- troca atomica via symlink temporario + mv -Tf;
+- healthcheck pos-promocao;
+- rollback automatico em falha;
+- migrations destrutivas continuam bloqueadas;
+- guard absoluto de backup preservado;
+- proxima etapa v0.57.6 / Service Restart & Version Verification.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.4
+Se aprovado, commit/push apenas: v0.57.5
 
 Hotfix cumulativo r1:
-- corrige o gate historico [5059/5062] da v0.57.3;
-- aceita o prefixo original deploy-preactivation-v e o prefixo evoluido deploy-activation-foundation-v da v0.57.4;
-- preserva os campos tecnicos obrigatorios do log pre-ativacao;
-- codigo funcional da v0.57.4 permanece inalterado;
-- VERSION.txt permanece 0.57.4;
+- corrige gates historicos [5024/5027] v0.57.0 e [5035/5038] v0.57.1;
+- aceita o fechamento original sem substituicao e o fechamento evoluido da v0.57.5 com promocao atomica reversivel;
+- preserva foundationOnly=true e os demais guards obrigatorios;
+- codigo funcional da v0.57.5 permanece inalterado;
+- VERSION.txt permanece 0.57.5;
 - nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.4.
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.5.
+
+Hotfix cumulativo r2:
+- inclui o prefixo evoluido deploy-atomic-promotion-v no gate historico [5059/5062] da v0.57.3;
+- preserva compatibilidade com deploy-preactivation-v e deploy-activation-foundation-v;
+- codigo funcional da v0.57.5 permanece inalterado;
+- VERSION.txt permanece 0.57.5;
+- nao commitar/pushar -r2 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.5.

@@ -7845,3 +7845,28 @@ Introduzir a fundação da ativação controlada da release staged, com confirma
 
 ### v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion
 Preparar a promoção atômica da release staged com diretório ativo versionado, troca controlada e reversível, healthcheck pós-promoção e rollback automático em falha, mantendo migrations destrutivas bloqueadas.
+
+
+## ✅ v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion — CONCLUÍDA
+
+**Entregue:**
+- `ActiveReleaseLink` dedicado e isolado do diretório legado ativo, staging e snapshots;
+- readiness explícito para promoção atômica;
+- modo padrão continua sem ativação quando `-Aplicar` não é informado;
+- promoção real somente com toda a cadeia de backup, staging, pre-activation, confirmação `ATIVAR` e snapshot aprovada;
+- troca atômica por symlink temporário + `mv -Tf`;
+- bloqueio se `ActiveReleaseLink` já existir como objeto que não seja symlink;
+- healthcheck obrigatório após promoção;
+- rollback automático para a release anterior se o healthcheck falhar;
+- falha bloqueante caso não exista release anterior utilizável para rollback;
+- logs de release anterior, nova release, healthcheck e rollback;
+- migrations destrutivas continuam bloqueadas.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification
+Integrar a promoção atômica com restart controlado do serviço/container da aplicação e verificação explícita da versão servida, mantendo rollback automático e migrations destrutivas bloqueadas.

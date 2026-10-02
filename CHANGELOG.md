@@ -1,3 +1,14 @@
+# v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion
+
+- Adiciona `ActiveReleaseLink` dedicado.
+- Adiciona readiness de promoção atômica.
+- Promoção real somente com `-Aplicar`.
+- Usa symlink temporário + `mv -Tf`.
+- Executa healthcheck pós-promoção.
+- Executa rollback automático em falha.
+- Registra release anterior/nova e resultado de healthcheck/rollback.
+- Mantém migrations destrutivas bloqueadas.
+
 # v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation
 
 - Adiciona confirmação `ATIVAR:<host>:<versão>`.

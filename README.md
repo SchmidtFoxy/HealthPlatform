@@ -9454,3 +9454,22 @@ A fundação de ativação controlada adiciona a confirmação `ATIVAR:<host>:<v
 A v0.57.4 **não executa a promoção real da release** e mantém migrations destrutivas bloqueadas.
 
 **Próxima etapa:** `v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion`.
+
+
+---
+
+## v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion
+
+A promoção atômica da release staged passa a existir atrás de `-Aplicar`, depois de toda a cadeia de segurança já aprovada.
+
+A troca usa um `ActiveReleaseLink` dedicado:
+- symlink temporário;
+- troca atômica com `mv -Tf`;
+- healthcheck pós-promoção;
+- rollback automático para a release anterior em falha.
+
+Sem `-Aplicar`, o script permanece apenas em validação e não promove a release.
+
+Migrations destrutivas continuam bloqueadas.
+
+**Próxima etapa:** `v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification`.

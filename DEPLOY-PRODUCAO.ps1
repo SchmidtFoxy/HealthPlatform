@@ -9,6 +9,7 @@
     [string]$BackupDir = "/opt/healthplatform/backups",
     [string]$ReleaseStagingDir = "/opt/healthplatform/releases",
     [string]$ActivationSnapshotDir = "/opt/healthplatform/activation-snapshots",
+    [string]$ActiveReleaseLink = "/opt/healthplatform-current",
     [string]$HealthUrl = "",
     [int]$BackupRetentionCount = 7,
     [string]$ProductionConfirmation = "",
@@ -34,11 +35,12 @@ $script:PreActivationMetadata = $null
 $script:RollbackPlan = $null
 $script:ActivationSnapshot = $null
 $script:ControlledActivation = $null
+$script:PromotionMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.4 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.5 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -106,6 +108,12 @@ function Assert-DeployArguments {
     }
     if ($ActivationSnapshotDir -eq $RemoteRoot -or $ActivationSnapshotDir -eq $ReleaseStagingDir) {
         throw "ActivationSnapshotDir deve ser isolado do RemoteRoot e do ReleaseStagingDir."
+    }
+    if ($ActiveReleaseLink -notmatch '^/') {
+        throw "ActiveReleaseLink deve ser um caminho absoluto Linux."
+    }
+    if ($ActiveReleaseLink -eq $RemoteRoot -or $ActiveReleaseLink -eq $ReleaseStagingDir -or $ActiveReleaseLink -eq $ActivationSnapshotDir) {
+        throw "ActiveReleaseLink deve ser isolado dos diretorios de fonte, staging e snapshot."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -752,10 +760,156 @@ printf 'CONTROLLED_ACTIVATION_READY:version=%s' "`$staged_version"
     return $script:ControlledActivation
 }
 
+function Test-AtomicPromotionReadiness {
+    if (-not $script:ControlledActivation -or -not $script:ActivationSnapshot -or -not $script:StagingMetadata) {
+        throw "Promocao atomica bloqueada: controlled activation, snapshot e staging sao obrigatorios."
+    }
+    if ($script:ControlledActivation.DestructiveMigrationsAllowed) {
+        throw "Promocao atomica bloqueada: migrations destrutivas nao podem estar liberadas."
+    }
+
+    Write-DeployTitle "ATOMIC PROMOTION READINESS"
+
+    $stagePath = $script:StagingMetadata.Path
+    $readinessCommand = @"
+set -e
+test -d '$stagePath'
+test -f '$stagePath/VERSION.txt'
+test -f '$stagePath/$ComposeFile'
+test '$stagePath' != '$RemoteRoot'
+test '$ActiveReleaseLink' != '$RemoteRoot'
+test '$ActiveReleaseLink' != '$ReleaseStagingDir'
+staged_version=`$(tr -d '\r\n ' < '$stagePath/VERSION.txt')
+test "`$staged_version" = '$TargetVersion'
+printf 'ATOMIC_PROMOTION_READY:version=%s' "`$staged_version"
+"@
+
+    $result = Invoke-SshChecked -Command $readinessCommand -Capture
+    if ($result -notmatch '^ATOMIC_PROMOTION_READY:version=(?<version>.+)$') {
+        throw "Readiness da promocao atomica nao foi confirmado."
+    }
+
+    Write-Host ("Promocao atomica pronta para v" + $Matches['version']) -ForegroundColor Green
+}
+
+function Invoke-AtomicReleasePromotion {
+    if (-not $Aplicar) {
+        $script:PromotionMetadata = [pscustomobject]@{
+            Applied = $false
+            Version = $TargetVersion
+            ActiveReleaseLink = $ActiveReleaseLink
+            PreviousRelease = ""
+            NewRelease = $script:StagingMetadata.Path
+            PostPromotionHealthOk = $false
+            AutoRollbackExecuted = $false
+            DestructiveMigrationsAllowed = $false
+        }
+        Write-Host "Modo de validacao: promocao atomica nao executada." -ForegroundColor Yellow
+        return $script:PromotionMetadata
+    }
+
+    if (-not $script:BackupValidado -or -not $script:ActivationSnapshot -or -not $script:RollbackPlan) {
+        throw "Promocao atomica bloqueada: backup validado, snapshot e rollback sao obrigatorios."
+    }
+
+    Write-DeployTitle "ATOMIC RELEASE PROMOTION"
+
+    $stagePath = $script:StagingMetadata.Path
+    $promotionCommand = @"
+set -e
+new_release='$stagePath'
+active_link='$ActiveReleaseLink'
+previous_release=''
+if [ -L "`$active_link" ]; then
+  previous_release=`$(readlink -f "`$active_link")
+elif [ -e "`$active_link" ]; then
+  echo 'ACTIVE_LINK_NOT_SYMLINK' >&2
+  exit 41
+fi
+
+test -d "`$new_release"
+test -f "`$new_release/VERSION.txt"
+test "`$new_release" != '$RemoteRoot'
+test "`$active_link" != '$RemoteRoot'
+
+temp_link="`$active_link.next"
+rm -f "`$temp_link"
+ln -s "`$new_release" "`$temp_link"
+mv -Tf "`$temp_link" "`$active_link"
+
+printf 'PROMOTION_SWITCHED:previous=%s:new=%s' "`$previous_release" "`$new_release"
+"@
+
+    $switchResult = Invoke-SshChecked -Command $promotionCommand -Capture
+    if ($switchResult -notmatch '^PROMOTION_SWITCHED:previous=(?<previous>.*):new=(?<new>.+)$') {
+        throw "Troca atomica da release nao retornou comprovacao valida."
+    }
+
+    $previousRelease = $Matches['previous']
+    $newRelease = $Matches['new']
+    $healthOk = $false
+    $rollbackExecuted = $false
+
+    try {
+        $postHealthCommand = @"
+set -e
+test -L '$ActiveReleaseLink'
+current_release=`$(readlink -f '$ActiveReleaseLink')
+test "`$current_release" = '$stagePath'
+curl -fsS --max-time 20 '$HealthUrl' >/dev/null
+printf 'POST_PROMOTION_HEALTH_OK'
+"@
+        $healthResult = Invoke-SshChecked -Command $postHealthCommand -Capture
+        if ($healthResult -notmatch 'POST_PROMOTION_HEALTH_OK') {
+            throw "Healthcheck pos-promocao nao confirmou sucesso."
+        }
+        $healthOk = $true
+    }
+    catch {
+        if ([string]::IsNullOrWhiteSpace($previousRelease)) {
+            throw "Healthcheck pos-promocao falhou e nao existe release anterior para rollback automatico."
+        }
+
+        $rollbackCommand = @"
+set -e
+test -d '$previousRelease'
+temp_link='$ActiveReleaseLink.rollback'
+rm -f "`$temp_link"
+ln -s '$previousRelease' "`$temp_link"
+mv -Tf "`$temp_link" '$ActiveReleaseLink'
+current_release=`$(readlink -f '$ActiveReleaseLink')
+test "`$current_release" = '$previousRelease'
+printf 'AUTO_ROLLBACK_OK:release=%s' "`$current_release"
+"@
+        $rollbackResult = Invoke-SshChecked -Command $rollbackCommand -Capture
+        if ($rollbackResult -notmatch '^AUTO_ROLLBACK_OK:release=') {
+            throw "Rollback automatico nao foi confirmado apos falha do healthcheck."
+        }
+        $rollbackExecuted = $true
+        throw "Healthcheck pos-promocao falhou. Rollback automatico executado para a release anterior."
+    }
+
+    $script:PromotionMetadata = [pscustomobject]@{
+        Applied = $true
+        Version = $TargetVersion
+        ActiveReleaseLink = $ActiveReleaseLink
+        PreviousRelease = $previousRelease
+        NewRelease = $newRelease
+        PostPromotionHealthOk = $healthOk
+        AutoRollbackExecuted = $rollbackExecuted
+        DestructiveMigrationsAllowed = $false
+    }
+
+    Write-Host ("Release promovida atomicamente: " + $newRelease) -ForegroundColor Green
+    Write-Host "Healthcheck pos-promocao aprovado." -ForegroundColor Green
+    Write-Host "Migrations destrutivas permanecem bloqueadas." -ForegroundColor Green
+    return $script:PromotionMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.4 adiciona confirmacao dupla, snapshot ativo e rollback imediato preparado." -ForegroundColor Cyan
+    Write-Host "v0.57.5 adiciona promocao atomica reversivel com healthcheck e rollback automatico." -ForegroundColor Cyan
     Write-Host "Esta versao ainda NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -764,7 +918,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.4
+# Fluxo v0.57.5
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -806,10 +960,12 @@ Assert-ControlledActivationConfirmation
 $activationSnapshot = New-ActiveStateSnapshot
 $immediateRollbackPlan = New-ImmediateRollbackCommandPlan
 $controlledActivation = Test-ControlledActivationReadiness
+Test-AtomicPromotionReadiness
+$promotionMetadata = Invoke-AtomicReleasePromotion
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-activation-foundation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-atomic-promotion-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -851,7 +1007,12 @@ $logFile = Join-Path $DeployLogDir ("deploy-activation-foundation-v" + $localVer
     "controlledActivationSnapshotReady=$($controlledActivation.SnapshotReady)",
     "controlledActivationRollbackReady=$($controlledActivation.RollbackReady)",
     "controlledActivationBackupReady=$($controlledActivation.BackupReady)",
-    "controlledActivationExecuted=false",
+    "controlledActivationExecuted=$($promotionMetadata.Applied)",
+    "atomicPromotionActiveLink=$($promotionMetadata.ActiveReleaseLink)",
+    "atomicPromotionPreviousRelease=$($promotionMetadata.PreviousRelease)",
+    "atomicPromotionNewRelease=$($promotionMetadata.NewRelease)",
+    "postPromotionHealthOk=$($promotionMetadata.PostPromotionHealthOk)",
+    "autoRollbackExecuted=$($promotionMetadata.AutoRollbackExecuted)",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -859,5 +1020,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-activation-foundation-v" + $localVer
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Controlled activation foundation validada sem ativacao real. Log local: " + $logFile) -ForegroundColor Green
-Write-Host "Nenhuma migration ou substituicao da aplicacao foi executada." -ForegroundColor Green
+Write-Host ("Atomic release promotion process concluido. Log local: " + $logFile) -ForegroundColor Green
+Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green
