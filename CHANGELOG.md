@@ -1,3 +1,15 @@
+# v0.56.83 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+- Adiciona anúncio acessível após limpar o horário do estado do reset.
+- Mensagem: `Foco movido para o indicador Última cópia do estado do reset.`
+- Emite somente quando o indicador alvo existe.
+- Reutiliza `announceComparisonNoteVerificationFocusV05653`.
+- Preserva o foco programático da v0.56.82.
+- Registra no ROADMAP o marco obrigatório de deploy seguro no fechamento da v0.57.x antes da v0.58.0.
+- Mantém tudo somente no navegador para a funcionalidade v0.56.83.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.82 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
 
 - Adiciona `tabindex=-1` ao indicador da última cópia do estado do reset.

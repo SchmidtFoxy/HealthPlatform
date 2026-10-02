@@ -8954,3 +8954,25 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.83 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement`.
+
+
+---
+
+## v0.56.83 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+Adiciona anúncio acessível após **Limpar horário do estado do reset**.
+
+Mensagem anunciada:
+`Foco movido para o indicador Última cópia do estado do reset.`
+
+O anúncio é emitido somente quando o indicador alvo existe e reutiliza a infraestrutura acessível local já consolidada.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.84 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication`.
+
+### Marco de produção futuro
+
+O fechamento da série `v0.57.x`, antes da `v0.58.0`, deverá incluir `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório, senha interativa quando necessária, deploy controlado, migrations seguras, healthcheck, logs e rollback/restauração.

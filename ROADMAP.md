@@ -7358,3 +7358,45 @@ Melhorar o fluxo de foco por teclado após limpar o horário da última cópia d
 
 ### v0.56.83 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
 Adicionar anúncio acessível da mudança de foco após limpar o horário da última cópia do estado do reset, reutilizando a infraestrutura local existente e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.83 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement — CONCLUÍDA
+
+**Entregue:**
+- anúncio acessível após `Limpar horário do estado do reset`;
+- mensagem `Foco movido para o indicador Última cópia do estado do reset.`;
+- anúncio emitido somente quando o indicador alvo existe;
+- reutilização da infraestrutura `announceComparisonNoteVerificationFocusV05653`;
+- foco programático da v0.56.82 preservado;
+- marcador técnico de anúncio v0.56.83 no indicador;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.84 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+Adicionar deduplicação específica do anúncio de foco após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+## Marco obrigatório de fechamento da série v0.57.x
+
+Antes de iniciar a v0.58.0, a série v0.57.x deve terminar com um **Deploy Seguro para Produção**.
+
+O fechamento da v0.57.x deve entregar um script de produção, preferencialmente `DEPLOY-PRODUCAO.ps1`, que:
+- identifique e confirme a versão local/alvo;
+- conecte à VPS sem armazenar senha no código e aguarde entrada interativa quando necessário;
+- faça backup do PostgreSQL **antes** de migrations ou substituição da aplicação;
+- valide a existência e integridade operacional do backup antes de prosseguir;
+- preserve `.env` e configurações de produção;
+- envie/aplique a versão mais recente;
+- execute migrations de forma controlada;
+- reinicie serviços/containers;
+- valide healthcheck e versão publicada;
+- grave logs do deploy;
+- interrompa o fluxo de forma bloqueante em qualquer erro;
+- ofereça caminho de rollback da aplicação;
+- permita restauração do banco a partir do backup quando necessário.
+
+**Regra de segurança:** nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup do banco concluir e ser validado com sucesso.
+
+A v0.58.x só deve ser aberta após esse marco de deploy seguro estar implementado e aprovado.
