@@ -1,3 +1,12 @@
+# v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export
+
+- Adiciona exportação CSV do histórico de Follow-Up Review.
+- Reaproveita filtros por tipo de evento e período.
+- Gera arquivo UTF-8 com BOM.
+- Inclui ação, usuário, data/hora e status anterior/novo.
+- Adiciona botão `Exportar CSV` à interface profissional.
+- Não cria migration ou tabela nova.
+
 # v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters
 
 - Adiciona filtro por tipo de evento ao histórico.

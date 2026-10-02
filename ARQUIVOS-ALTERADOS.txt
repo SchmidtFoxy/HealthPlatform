@@ -1,25 +1,13 @@
-HealthPlatform v0.56.4 - Follow-Up Review History Filters - Incremental
+HealthPlatform v0.56.5-r1 - Encoding Namespace Fix
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
-- TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Controllers/HealthController.cs
 - src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- filtro por tipo de evento;
-- filtro por periodo;
-- filtros aplicados no endpoint de historico;
-- controles de filtro na UI profissional;
-- sem migration/tabela nova.
+Correcao:
+- adiciona using System.Text; para resolver Encoding.UTF8 no export CSV;
+- corrige os erros CS0103 observados na compilacao da v0.56.5;
+- sem alteracao de funcionalidade, schema ou VERSION.txt.
 
-Fluxo:
-PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.4
+Nao commitar a revisao -r1 individualmente.
+Se aprovado, commit/push apenas: v0.56.5

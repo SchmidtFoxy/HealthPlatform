@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using HealthPlatform.Api.Contracts.PerformancePassport;
 using HealthPlatform.Api.Services;
@@ -3494,6 +3495,52 @@ public class ProgressReviewNotesController(
 
         return Ok(resposta);
     }
+
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/export")]
+    public async Task<IActionResult> ExportarHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string? tipoEvento = null,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
+        CancellationToken cancellationToken = default)
+    {
+        var historicoResult = await HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+            pacienteId, id, tipoEvento, deUtc, ateUtc, cancellationToken);
+
+        if (historicoResult.Result is NotFoundResult)
+            return NotFound();
+
+        var eventos = historicoResult.Value ?? Array.Empty<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse>();
+
+        static string Csv(string? valor)
+        {
+            var texto = valor ?? string.Empty;
+            return "\"" + texto.Replace("\"", "\"\"") + "\"";
+        }
+
+        var linhas = new List<string>
+        {
+            "Id,Acao,UsuarioId,RegistradoEmUtc,StatusAnterior,StatusNovo"
+        };
+
+        linhas.AddRange(eventos.Select(e => string.Join(",",
+            Csv(e.Id.ToString()),
+            Csv(e.Acao),
+            Csv(e.UsuarioId?.ToString()),
+            Csv(e.RegistradoEmUtc.ToString("O")),
+            Csv(e.StatusAnterior),
+            Csv(e.StatusNovo))));
+
+        var bytes = Encoding.UTF8.GetPreamble()
+            .Concat(Encoding.UTF8.GetBytes(string.Join(Environment.NewLine, linhas)))
+            .ToArray();
+
+        var nomeArquivo = $"follow-up-review-history-{id:N}-{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
+        return File(bytes, "text/csv; charset=utf-8", nomeArquivo);
+    }
+
 
     [HttpDelete("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}")]
     public async Task<IActionResult> ArquivarTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(Guid pacienteId, Guid id, CancellationToken cancellationToken = default)

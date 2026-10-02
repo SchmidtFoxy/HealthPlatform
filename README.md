@@ -7342,3 +7342,25 @@ A filtragem é exclusivamente documental/auditável. Não classifica risco, urg�
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export`.
+
+
+---
+
+## v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export
+
+Adiciona exportação CSV da linha do tempo auditável de Follow-Up Review.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up-review/{id}/history/export`
+
+### Características
+- respeita `tipoEvento`, `deUtc` e `ateUtc`;
+- gera CSV UTF-8 com BOM;
+- inclui `Id`, `Acao`, `UsuarioId`, `RegistradoEmUtc`, `StatusAnterior` e `StatusNovo`;
+- oferece ação `Exportar CSV` na interface profissional.
+
+A exportação é documental/auditável e não interpreta diagnóstico, prognóstico, risco, urgência, prioridade, causalidade ou decisão terapêutica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary`.

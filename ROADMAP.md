@@ -5859,3 +5859,19 @@ Adicionar filtros documentais e navegação do histórico por tipo de evento e p
 
 ### v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export
 Adicionar exportação documental do histórico filtrado para uso profissional e auditoria.
+
+
+## ✅ v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export — CONCLUÍDA
+
+**Entregue:**
+- exportação CSV do histórico de revisão;
+- exportação respeita os filtros de tipo e período;
+- arquivo em UTF-8 com BOM para compatibilidade com Excel/Windows;
+- colunas de ação, usuário, data/hora e transição de status;
+- ação `Exportar CSV` na interface profissional;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary
+Adicionar resumo documental do histórico filtrado para leitura profissional rápida.
