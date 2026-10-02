@@ -5609,3 +5609,18 @@ Adicionar histórico auditado dos resultados documentados.
 
 ### v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters
 Adicionar busca e filtros estruturais dos resultados documentados.
+
+## ✅ v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters — CONCLUÍDA
+
+**Entregue:**
+- filtros por status, profissional e horizonte;
+- busca textual;
+- opção de incluir arquivados;
+- ordenação asc/desc;
+- UI de filtros;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.54.5 — Professional Review Team Knowledge Effect Decision Review Outcome Summary
+Adicionar resumo agregado dos resultados documentados.

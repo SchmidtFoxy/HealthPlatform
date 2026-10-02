@@ -6921,3 +6921,37 @@ Cada resultado passa a exibir a ação **Histórico**, com modal dedicado.
 O histórico é documental e auditável. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters`.
+
+---
+
+## v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters
+
+Adiciona busca e filtros estruturais aos resultados documentados das revisões profissionais.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- busca textual;
+- incluir arquivados;
+- ordenação ascendente/descendente.
+
+### Busca textual
+Pesquisa em:
+- profissional responsável;
+- participantes;
+- resultado documentado;
+- contexto do resultado;
+- base observacional/evidência de suporte;
+- interpretação profissional;
+- impacto documentado;
+- necessidade de acompanhamento;
+- observação profissional.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome/search`
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não inferem causalidade, evidência clínica, prognóstico, recomendação, risco, urgência, prioridade ou decisão terapêutica.
+
+**Próxima etapa:** `v0.54.5 — Professional Review Team Knowledge Effect Decision Review Outcome Summary`.

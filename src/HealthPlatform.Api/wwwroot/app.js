@@ -5023,6 +5023,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_V0540
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541='v0.54.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_STATUS_V0542='v0.54.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_HISTORY_V0543='v0.54.3';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FILTERS_V0544='v0.54.4';
 
 
 
@@ -6497,13 +6498,41 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
   const modal=$('#clinicalActionModal');
   if(!modal) return;
 
-  const load=async()=>await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome`);
+  const load=async(filters={})=>{
+    const params=new URLSearchParams();
+    if(filters.status) params.set('status',filters.status);
+    if(filters.profissionalResponsavel) params.set('profissionalResponsavel',filters.profissionalResponsavel);
+    if(filters.horizonte) params.set('horizonte',filters.horizonte);
+    if(filters.texto) params.set('texto',filters.texto);
+    if(filters.incluirArquivados) params.set('incluirArquivados','true');
+    params.set('ordenacao',filters.ordenacao||'desc');
+    const result=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome/search?${params.toString()}`);
+    return Array.isArray(result?.itens)?result.itens:[];
+  };
 
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-persistence-v0541="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541}">
     <div class="row-between">
       <div><h3>Resultados documentados das revisões profissionais</h3><p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p></div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541">Fechar</button>
     </div>
+    <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersV0544" class="form-grid" data-professional-review-team-knowledge-effect-decision-review-outcome-filters-v0544="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FILTERS_V0544}">
+      <label>Status<select name="status">
+        <option value="">Todos</option>
+        <option value="Registrado">Registrado</option>
+        <option value="EmRevisao">Em revisão</option>
+        <option value="Consolidado">Consolidado</option>
+        <option value="Descartado">Descartado</option>
+      </select></label>
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" placeholder="Filtrar por profissional"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120" placeholder="Ex.: esta semana"></label>
+      <label class="span-2">Texto<input name="texto" maxlength="240" placeholder="Buscar resultado, contexto, interpretação ou observação"></label>
+      <label><input type="checkbox" name="incluirArquivados"> Incluir arquivados</label>
+      <label>Ordenação<select name="ordenacao"><option value="desc">Mais recentes</option><option value="asc">Mais antigos</option></select></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="secondary">Aplicar filtros</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersV0544">Limpar filtros</button>
+      </div>
+    </form>
     <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFormV0541" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
@@ -6528,12 +6557,23 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
 
   modal.classList.add('open');
   const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFormV0541');
+  const filtersForm=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersV0544');
   const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeListV0541');
+  let activeFilters={ordenacao:'desc'};
 
   const clear=()=>{ form?.reset(); if(form?.elements.id) form.elements.id.value=''; };
 
+  const readFilters=()=>({
+    status:String(filtersForm?.elements.status?.value||'').trim(),
+    profissionalResponsavel:String(filtersForm?.elements.profissionalResponsavel?.value||'').trim(),
+    horizonte:String(filtersForm?.elements.horizonte?.value||'').trim(),
+    texto:String(filtersForm?.elements.texto?.value||'').trim(),
+    incluirArquivados:Boolean(filtersForm?.elements.incluirArquivados?.checked),
+    ordenacao:String(filtersForm?.elements.ordenacao?.value||'desc')
+  });
+
   const render=async()=>{
-    const items=await load();
+    const items=await load(activeFilters);
     listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between"><b>${esc(x.profissionalResponsavel||'Profissional')}</b><span class="pill Info">${esc(x.status||'Registrado')}</span></div>
       <p>${esc(x.resultadoDocumentado||'')}</p>
@@ -6600,6 +6640,19 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
   };
 
   $('#clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541').onclick=clear;
+  if(filtersForm){
+    filtersForm.onsubmit=async ev=>{
+      ev.preventDefault();
+      activeFilters=readFilters();
+      await render();
+    };
+  }
+  const clearFilters=$('#clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersV0544');
+  if(clearFilters) clearFilters.onclick=async()=>{
+    filtersForm?.reset();
+    activeFilters={ordenacao:'desc'};
+    await render();
+  };
   $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewV0531(p);
   await render();
 }
@@ -18585,7 +18638,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.54.3';
+const HP_MVP_VERSION='0.54.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
