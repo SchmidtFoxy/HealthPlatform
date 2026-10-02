@@ -7954,3 +7954,23 @@ O arquivo não é enviado à API durante a verificação. O processo usa `Web Cr
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details`.
+
+
+---
+
+## v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details
+
+Amplia a verificação local de integridade com detalhes técnicos visíveis.
+
+Exibe:
+- nome do arquivo;
+- tamanho em bytes;
+- hash esperado;
+- hash calculado;
+- algoritmo `SHA-256`.
+
+Os detalhes permanecem locais ao navegador. Nenhum arquivo é enviado à API e nenhum conteúdo clínico/textual é adicionado ao fluxo.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy`.

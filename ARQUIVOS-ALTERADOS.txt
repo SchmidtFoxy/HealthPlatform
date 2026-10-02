@@ -1,4 +1,4 @@
-HealthPlatform v0.56.32 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification - Incremental
+HealthPlatform v0.56.33 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Details - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- verificacao local SHA-256 do CSV tecnico;
-- leitura do hash esperado no proprio arquivo;
-- recomputacao via Web Crypto API;
-- feedback de integridade valida/invalida;
-- processamento local, sem upload;
+- detalhes tecnicos da verificacao local;
+- nome e tamanho do arquivo;
+- hash esperado e calculado;
+- algoritmo SHA-256;
+- processamento local preservado;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.32
+Se aprovado, commit/push apenas: v0.56.33

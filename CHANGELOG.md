@@ -1,3 +1,12 @@
+# v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details
+
+- Exibe nome e tamanho do CSV verificado.
+- Exibe hash esperado e hash calculado.
+- Identifica o algoritmo SHA-256.
+- Mantém verificação totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification
 
 - Adiciona verificação local do SHA-256 do CSV técnico.

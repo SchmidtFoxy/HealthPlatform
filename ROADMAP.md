@@ -6362,3 +6362,23 @@ Adicionar verificação local da integridade do CSV técnico exportado, sem incl
 
 ### v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details
 Exibir detalhes técnicos da verificação local, como hash esperado, hash calculado e nome do arquivo, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details — CONCLUÍDA
+
+**Entregue:**
+- detalhes técnicos da verificação local de integridade;
+- nome do arquivo selecionado;
+- tamanho do arquivo em bytes;
+- hash esperado;
+- hash calculado;
+- algoritmo SHA-256 identificado;
+- detalhes também exibidos em cenários de arquivo inválido ou navegador sem Web Crypto;
+- arquivo continua processado somente no navegador;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy
+Adicionar ações para copiar hashes e detalhes técnicos da verificação, sem conteúdo clínico/textual.
