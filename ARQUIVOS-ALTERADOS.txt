@@ -1,4 +1,4 @@
-HealthPlatform v0.56.92 - Incremental
+HealthPlatform v0.56.65 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,17 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- tabindex=-1 no indicador da ultima copia da deduplicacao;
-- foco movido ao indicador apos limpar o horario;
-- focus({preventScroll:true});
-- acessibilidade v0.56.91 preservada;
-- fluxo v0.56.90 preservado;
-- hotfix historico v0.56.89-r1 preservado;
-- marco de deploy seguro da v0.57.x preservado;
+- helper explicito de reset do cache especifico;
+- reset apos nova copia bem-sucedida;
+- reset no caminho de mensagem vazia;
+- deduplicacao v0.56.64 preservada;
 - sem persistencia no servidor;
-- sem conteudo clinico/textual novo;
+- sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.92
+Se aprovado, commit/push apenas: v0.56.65
