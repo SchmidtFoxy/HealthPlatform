@@ -1,4 +1,17 @@
-﻿# v0.54.6 — Professional Review Team Knowledge Effect Decision Review Outcome Closure
+﻿# v0.55.0 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Foundation
+
+- Abre a linha funcional 0.55.x.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFieldResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationResponse`.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/foundation`.
+- Adiciona 26 campos estruturais.
+- `Profissional responsável` e `Item a acompanhar` são obrigatórios.
+- Persistência permanece indisponível.
+- Adiciona fundação na UI profissional.
+- Sem migration nova.
+- Próxima etapa: v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence.
+
+# v0.54.6 — Professional Review Team Knowledge Effect Decision Review Outcome Closure
 
 - Encerra a linha funcional 0.54.x.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureResponse`.

@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.54.6",
+            "v0.55.0",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Effect Decision Review Outcome Closure fecha a linha 0.54.x consolidando fundação, persistência, status, histórico, filtros e resumo dos resultados documentados das revisões profissionais em um estado estrutural único.")
+            "Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Foundation abre a linha 0.55.x com a estrutura de acompanhamento documental dos resultados das revisões profissionais, ainda sem persistência própria.")
         {
             Recordes = recordes,
             Tempos = tempos,

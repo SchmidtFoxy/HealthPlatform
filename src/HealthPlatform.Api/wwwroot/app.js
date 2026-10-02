@@ -1443,6 +1443,8 @@ async function hpOpenProgressReviewNotesV0302(p){
   };
 
   await render();
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(followUpFoundationHost,x));
   await refreshClosure();
   await refreshSummary();
 }
@@ -5028,6 +5030,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_HISTO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FILTERS_V0544='v0.54.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_SUMMARY_V0545='v0.54.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_CLOSURE_V0546='v0.54.6';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_V0550='v0.55.0';
 
 
 
@@ -6463,6 +6466,34 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFound
 }
 
 
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up/foundation`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(host,foundation){
+  if(!host || !foundation) return;
+
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-v0550="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_V0550}">
+    <div class="row-between">
+      <div>
+        <b>Acompanhamento dos resultados documentados das revisões profissionais</b>
+        <small class="muted-line">Fundação estrutural</small>
+      </div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">
+      ${campos.map(x=>`<div class="row-between">
+        <span>${esc(x.rotulo||x.chave||'Campo')}</span>
+        <small>${x.obrigatorio?'Obrigatório':'Opcional'}</small>
+      </div>`).join('')}
+    </div>
+    <small class="muted-line">Organiza acompanhamentos documentados dos resultados profissionais. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
+  </section>`;
+}
+
+
 async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureV0546(patientId){
   if(!patientId) return null;
   return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome/closure`);
@@ -6566,6 +6597,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
       <div><h3>Resultados documentados das revisões profissionais</h3><p class="muted-line">${esc(p.nome||p.name||'Paciente')}</p></div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureV0546"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeSummaryV0545"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersV0544" class="form-grid" data-professional-review-team-knowledge-effect-decision-review-outcome-filters-v0544="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FILTERS_V0544}">
@@ -6612,6 +6644,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV
   const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFormV0541');
   const filtersForm=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFiltersV0544');
   const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeListV0541');
+  const followUpFoundationHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550');
   const closureHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureV0546');
   const summaryHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeSummaryV0545');
   let activeFilters={ordenacao:'desc'};
@@ -18705,7 +18738,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.54.6';
+const HP_MVP_VERSION='0.55.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

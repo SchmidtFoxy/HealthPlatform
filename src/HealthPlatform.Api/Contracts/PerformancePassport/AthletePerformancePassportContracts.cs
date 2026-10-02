@@ -256,6 +256,20 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeP
     string Profissional,
     int Total);
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFieldResponse(
+    string Chave,
+    string Rotulo,
+    bool Obrigatorio,
+    string Tipo,
+    string? Ajuda);
+
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationResponse(
+    string EstadoPreparacao,
+    bool PersistenciaDisponivel,
+    string Escopo,
+    IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFieldResponse> Campos,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureResponse(
     int ComponentesEsperados,
     int ComponentesDisponiveis,
