@@ -1,3 +1,16 @@
+# v0.56.86 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+
+- Adiciona estado técnico local ao reset específico da deduplicação.
+- Registra status `ready`, `reset` ou `announced`.
+- Mantém contador local de resets.
+- Registra horário ISO do último reset.
+- Sincroniza status, contador e último reset no indicador local.
+- Preserva o helper de reset da v0.56.85 e a deduplicação da v0.56.84.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.85 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
 
 - Adiciona helper explícito `resetResetStateSummaryTimestampClearFocusAnnouncementV05685`.
