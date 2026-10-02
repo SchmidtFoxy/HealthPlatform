@@ -6286,3 +6286,22 @@ Adicionar exportação técnica CSV da telemetria filtrada por período e canal,
 
 ### v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename
 Melhorar o nome do arquivo exportado com recorte técnico identificável e seguro, sem incluir conteúdo clínico/textual.
+
+
+## ✅ v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename — CONCLUÍDA
+
+**Entregue:**
+- nome de arquivo CSV técnico mais identificável;
+- prefixo `aesyn-telemetria-compartilhamento`;
+- ID técnico da nota no nome;
+- recorte `de` / `ate` no nome do arquivo;
+- canal técnico no nome;
+- datas normalizadas em `yyyyMMdd-HHmm`;
+- fallback `todos` quando período/canal não estiver filtrado;
+- nenhum conteúdo clínico/textual incluído no nome;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata
+Adicionar metadados técnicos no cabeçalho do CSV exportado, preservando ausência de conteúdo clínico/textual.

@@ -7870,3 +7870,23 @@ O arquivo é emitido em UTF-8 com BOM e não inclui conteúdo textual da nota.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename`.
+
+
+---
+
+## v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename
+
+Melhora o nome do arquivo CSV técnico da telemetria de compartilhamento.
+
+Formato:
+`aesyn-telemetria-compartilhamento-nota-{noteId}-de-{periodo}-ate-{periodo}-canal-{canal}.csv`
+
+Regras:
+- ID da nota somente como identificador técnico;
+- datas em `yyyyMMdd-HHmm`;
+- `todos` quando o período ou canal não estiver filtrado;
+- sem conteúdo clínico ou textual da nota no nome.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata`.

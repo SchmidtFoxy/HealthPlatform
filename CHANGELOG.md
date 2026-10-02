@@ -1,3 +1,12 @@
+# v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename
+
+- Melhora o nome do CSV técnico exportado.
+- Inclui ID técnico da nota, período e canal.
+- Normaliza datas em `yyyyMMdd-HHmm`.
+- Usa `todos` para recortes não filtrados.
+- Não inclui conteúdo clínico/textual no nome.
+- Não cria migration ou tabela nova.
+
 # v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export
 
 - Adiciona exportação CSV da telemetria técnica.

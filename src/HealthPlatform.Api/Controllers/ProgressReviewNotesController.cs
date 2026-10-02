@@ -3734,7 +3734,22 @@ public class ProgressReviewNotesController(
 
         var utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
         var bytes = utf8.GetBytes(builder.ToString());
-        return File(bytes, "text/csv; charset=utf-8", $"telemetria-compartilhamento-{noteId:N}.csv");
+        static string TokenPeriodo(DateTime? value) =>
+            value.HasValue ? value.Value.ToUniversalTime().ToString("yyyyMMdd-HHmm") : "todos";
+
+        static string TokenCanal(string? value) =>
+            string.IsNullOrWhiteSpace(value)
+                ? "todos"
+                : value.Trim().Replace(" ", "-", StringComparison.Ordinal).ToLowerInvariant();
+
+        var nomeArquivo =
+            $"aesyn-telemetria-compartilhamento-" +
+            $"nota-{noteId:N}-" +
+            $"de-{TokenPeriodo(deUtc)}-" +
+            $"ate-{TokenPeriodo(ateUtc)}-" +
+            $"canal-{TokenCanal(canalNormalizado)}.csv";
+
+        return File(bytes, "text/csv; charset=utf-8", nomeArquivo);
     }
 
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/share-telemetry/summary")]

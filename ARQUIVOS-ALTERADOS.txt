@@ -1,14 +1,15 @@
-HealthPlatform v0.56.28-r1 - PowerShell Export Suffix Literal Gate Fix
+HealthPlatform v0.56.29-r1 - Export Filename Scope Gate Fix
 
 Arquivos alterados:
 - TESTAR.ps1
 - ARQUIVOS-ALTERADOS.txt
 
 Correcao:
-- impede interpolacao PowerShell do token JavaScript ${exportTelemetrySuffixV05628};
-- altera apenas o gate da v0.56.28 para literal entre aspas simples;
-- preserva toda a implementacao funcional da v0.56.28;
-- sem alteracao de schema, runtime ou VERSION.txt.
+- corrige falso positivo do gate da v0.56.29;
+- o gate anterior verificava nota.Conteudo e nomeArquivo no controller inteiro;
+- agora a validacao inspeciona apenas o bloco entre 'var nomeArquivo =' e o return File(..., nomeArquivo);
+- preserva integralmente a implementacao funcional da v0.56.29;
+- sem alteracao funcional, schema, runtime ou VERSION.txt.
 
 Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.28
+Se aprovado, commit/push apenas: v0.56.29
