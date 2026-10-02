@@ -263,6 +263,9 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
     string Tipo,
     string? Ajuda);
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpStatusRequest(
+    string Status);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpPersistedResponse(
     Guid Id,
     Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,

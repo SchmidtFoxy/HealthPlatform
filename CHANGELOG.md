@@ -1,4 +1,15 @@
-﻿# v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence
+﻿# v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpStatusRequest`.
+- Adiciona estados Registrado, EmAcompanhamento, Concluido e Descartado.
+- Adiciona PATCH `team-knowledge-effect-decision-review-outcome-follow-up/{id}/status`.
+- Preserva `StatusAtualizadoEmUtc`.
+- Adiciona auditoria `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_STATUS_CHANGED`.
+- Adiciona ações Reabrir, Em acompanhamento, Concluir e Descartar.
+- Sem migration nova.
+- Próxima etapa: v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History.
+
+# v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpPersistedResponse`.
 - Adiciona requests de criação e atualização.

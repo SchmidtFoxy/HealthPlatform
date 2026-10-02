@@ -7074,3 +7074,30 @@ Prefixo:
 A fundação passa a oferecer **Gerenciar acompanhamentos**, com criação, edição e arquivamento.
 
 **Próxima etapa:** `v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status`.
+
+---
+
+## v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status
+
+Adiciona estados documentais auditados aos acompanhamentos derivados dos resultados das revisões profissionais.
+
+### Estados
+- `Registrado`
+- `EmAcompanhamento`
+- `Concluido`
+- `Descartado`
+
+### Endpoint
+`PATCH .../team-knowledge-effect-decision-review-outcome-follow-up/{id}/status`
+
+### Auditoria
+Mudanças de estado registram:
+`PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_STATUS_CHANGED`
+
+### UI
+Cada acompanhamento passa a oferecer ações **Reabrir**, **Em acompanhamento**, **Concluir** e **Descartar**.
+
+### Guardrail
+O status é documental. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
+
+**Próxima etapa:** `v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History`.

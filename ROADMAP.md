@@ -5691,3 +5691,18 @@ Adicionar persistência auditada ao acompanhamento documental.
 
 ### v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status
 Adicionar estados documentais ao acompanhamento.
+
+## ✅ v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status — CONCLUÍDA
+
+**Entregue:**
+- estados `Registrado`, `EmAcompanhamento`, `Concluido` e `Descartado`;
+- PATCH de status;
+- timestamp de atualização de status;
+- auditoria `STATUS_CHANGED`;
+- ações de status na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History
+Adicionar histórico auditado aos acompanhamentos documentados.
