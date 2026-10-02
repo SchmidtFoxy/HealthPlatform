@@ -1,14 +1,26 @@
-HealthPlatform v0.56.39-r1 - Legacy Copy Feedback Gate Fix
+HealthPlatform v0.56.40 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
-- ARQUIVOS-ALTERADOS.txt
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- atualiza gate legado da v0.56.34 para o feedback atual da v0.56.39;
-- troca 'Detalhes técnicos copiados.' por 'Detalhes técnicos copiados com duração.';
-- preserva toda a implementação funcional da v0.56.39;
-- sem alteração funcional, schema, runtime ou VERSION.txt.
+Entrega funcional:
+- resumo tecnico compacto da ultima verificacao;
+- status + horario + duracao + arquivo;
+- atualizacao automatica no final da verificacao;
+- reset do resumo;
+- fluxo local preservado;
+- sem conteudo clinico/textual;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.39
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.40

@@ -8098,3 +8098,24 @@ Nenhum dado é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.40 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary`.
+
+
+---
+
+## v0.56.40 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary
+
+Adiciona um resumo técnico compacto da última tentativa de verificação local.
+
+O resumo consolida:
+- status da integridade;
+- horário da verificação;
+- duração;
+- nome do arquivo.
+
+O resumo é atualizado ao final da tentativa e volta para `Resumo: nenhuma verificação realizada.` ao usar `Limpar verificação`.
+
+Nenhum dado é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.41 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Copy`.

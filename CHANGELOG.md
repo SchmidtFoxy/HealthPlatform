@@ -1,3 +1,13 @@
+# v0.56.40 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary
+
+- Adiciona resumo técnico compacto da última verificação.
+- Consolida status, horário, duração e arquivo.
+- Atualiza o resumo ao final de cada tentativa.
+- Limpa o resumo junto com `Limpar verificação`.
+- Mantém processamento totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy
 
 - Inclui duração em `Copiar detalhes`.
