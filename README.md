@@ -8293,3 +8293,23 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.49 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Copy`.
+
+
+---
+
+## v0.56.49 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Copy
+
+Adiciona a ação `Copiar encerramento` ao feedback técnico de expiração da sessão local.
+
+Comportamento:
+- copia exatamente o feedback visível, incluindo motivo e horário;
+- o botão permanece desabilitado enquanto não existe encerramento;
+- informa `Feedback técnico copiado.` ao concluir;
+- informa quando não existe encerramento disponível;
+- trata falha local do clipboard sem enviar dados ao servidor.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear`.

@@ -1,3 +1,14 @@
+# v0.56.49 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Copy
+
+- Adiciona `Copiar encerramento`.
+- Copia o feedback técnico com motivo e horário.
+- Desabilita a ação sem encerramento disponível.
+- Exibe feedback de sucesso e falha do clipboard.
+- Mantém motivo e timestamp anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.48 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp
 
 - Adiciona horário local ao feedback de expiração.
