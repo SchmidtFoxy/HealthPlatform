@@ -7299,3 +7299,26 @@ Adiciona estados documentais manuais e auditados às revisões profissionais dos
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History`.
+
+
+---
+
+## v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History
+
+Adiciona leitura cronológica da trilha de auditoria das revisões profissionais de Follow-Up.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up-review/{id}/history`
+
+### Histórico
+- criação;
+- edição;
+- mudança de status;
+- arquivamento;
+- data/hora do evento;
+- usuário responsável quando disponível;
+- status anterior e status novo quando o snapshot permite a leitura.
+
+A versão reutiliza `AuditLogs`; não cria migration ou tabela nova. O histórico é documental/auditável e não interpreta causalidade, diagnóstico, prognóstico, risco, urgência, prioridade ou decisão terapêutica.
+
+**Próxima etapa:** `v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters`.

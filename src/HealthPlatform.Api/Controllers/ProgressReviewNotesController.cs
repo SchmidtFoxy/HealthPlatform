@@ -3426,6 +3426,58 @@ public class ProgressReviewNotesController(
         return Ok(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
     }
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse>>> HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var existe = await db.NotasInternasProfissionais.AsNoTracking().AnyAsync(x =>
+            x.Id == id &&
+            x.OrganizacaoId == currentUser.OrganizationId &&
+            x.PacienteId == pacienteId &&
+            x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview),
+            cancellationToken);
+
+        if (!existe)
+            return NotFound();
+
+        var prefixoAcao = "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_";
+
+        var eventos = await db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == id.ToString() &&
+                x.Acao.StartsWith(prefixoAcao))
+            .OrderBy(x => x.CreatedAtUtc)
+            .ThenBy(x => x.Id)
+            .Select(x => new
+            {
+                x.Id,
+                x.Acao,
+                x.UsuarioId,
+                x.CreatedAtUtc,
+                x.DadosAnterioresJson,
+                x.DadosNovosJson
+            })
+            .ToListAsync(cancellationToken);
+
+        var resposta = eventos
+            .Select(x => new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse(
+                x.Id,
+                x.Acao,
+                x.UsuarioId,
+                x.CreatedAtUtc,
+                ExtrairStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDoSnapshot(x.DadosAnterioresJson),
+                ExtrairStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDoSnapshot(x.DadosNovosJson)))
+            .ToArray();
+
+        return Ok(resposta);
+    }
+
     [HttpDelete("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}")]
     public async Task<IActionResult> ArquivarTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(Guid pacienteId, Guid id, CancellationToken cancellationToken = default)
     {
@@ -15346,6 +15398,33 @@ public class ProgressReviewNotesController(
             p.ContinuityRelacionadaId, p.ProfissionalRevisor, p.Participantes, p.ItemRevisao, p.ContextoRevisao, p.BaseObservacionalEvidenciaSuporte,
             p.ResultadoObservado, p.InterpretacaoProfissional, p.Horizonte, p.ObservacaoProfissional, p.Status, p.StatusAtualizadoEmUtc,
             nota.AutorUsuarioId, nota.AutorNome, nota.CreatedAtUtc, nota.UpdatedAtUtc, nota.Arquivada);
+    }
+
+
+    private static string? ExtrairStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDoSnapshot(string? snapshotJson)
+    {
+        if (string.IsNullOrWhiteSpace(snapshotJson))
+            return null;
+
+        try
+        {
+            using var snapshot = JsonDocument.Parse(snapshotJson);
+            if (!snapshot.RootElement.TryGetProperty("Conteudo", out var conteudo) || conteudo.ValueKind != JsonValueKind.String)
+                return null;
+
+            var payloadJson = conteudo.GetString();
+            if (string.IsNullOrWhiteSpace(payloadJson))
+                return null;
+
+            using var payload = JsonDocument.Parse(payloadJson);
+            return payload.RootElement.TryGetProperty("Status", out var status) && status.ValueKind == JsonValueKind.String
+                ? status.GetString()
+                : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     private static bool StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewValido(string? status) =>

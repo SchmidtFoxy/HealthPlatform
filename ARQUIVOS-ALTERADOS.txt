@@ -1,12 +1,13 @@
-HealthPlatform v0.56.2-r2 - Legacy Runtime Identity Gate Fix
+HealthPlatform v0.56.3-r1 - Missing Snapshot Helper Fix
 
-Hotfix cumulativo sobre v0.56.2-r1.
+Arquivos alterados:
+- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
+- ARQUIVOS-ALTERADOS.txt
 
 Correcao:
-- Foundation v0.19.1 passa a validar HP_MVP_VERSION='0.56.2';
-- atualiza gates legados de Health/Swagger/cache/PWA que ainda validavam 0.56.1 como identidade corrente;
-- preserva marcadores historicos de feature V0561;
-- TESTAR.ps1 permanece UTF-8 com BOM.
+- adiciona a implementacao ausente de ExtrairStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDoSnapshot;
+- corrige os erros CS0103 observados na compilacao da v0.56.3;
+- sem alteracao de schema, VERSION.txt ou comportamento funcional planejado.
 
-Nao commitar a revisao -r2 individualmente.
-Se aprovado, commit/push apenas: v0.56.2
+Nao commitar a revisao -r1 individualmente.
+Se aprovado, commit/push apenas: v0.56.3

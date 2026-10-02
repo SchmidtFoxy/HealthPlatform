@@ -5826,3 +5826,20 @@ Adicionar estados documentais manuais e auditados às revisões dos acompanhamen
 
 ### v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History
 Adicionar histórico auditado e leitura cronológica das revisões dos acompanhamentos.
+
+
+## ✅ v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History — CONCLUÍDA
+
+**Entregue:**
+- histórico cronológico das revisões de Follow-Up;
+- leitura dos eventos já persistidos em `AuditLogs`;
+- criação, edição, mudança de status e arquivamento na mesma linha do tempo;
+- exposição de status anterior e novo quando disponíveis;
+- endpoint dedicado por revisão;
+- visualização profissional do histórico;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Filters
+Adicionar filtros documentais e navegação do histórico por tipo de evento e período.

@@ -1,3 +1,13 @@
+# v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History
+
+- Adiciona endpoint de histórico cronológico por revisão.
+- Reutiliza os registros existentes de `AuditLogs`.
+- Inclui criação, edição, mudança de status e arquivamento.
+- Exibe status anterior e novo quando disponíveis nos snapshots.
+- Adiciona ação `Histórico` à UI profissional.
+- Não cria migration ou tabela nova.
+- Mantém caráter estritamente documental/auditável, sem automação clínica.
+
 # v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status
 
 - Adiciona status documental manual às revisões dos acompanhamentos.
