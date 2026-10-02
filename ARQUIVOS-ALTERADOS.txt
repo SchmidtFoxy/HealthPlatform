@@ -1,4 +1,4 @@
-HealthPlatform v0.56.75 - Incremental
+HealthPlatform v0.56.76 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,15 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- helper explicito de reset da deduplicacao v0.56.74;
-- reset centralizado do cache especifico;
-- nova copia bem-sucedida usa o helper;
-- mensagem vazia usa o helper;
-- gate historico v0.56.74 aceita reset direto ou helper;
+- estado tecnico local do reset especifico da deduplicacao;
+- status ready/reset/announced;
+- contador local de resets;
+- horario ISO do ultimo reset;
+- sincronizacao no indicador Ultima copia do reset;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.75
+Se aprovado, commit/push apenas: v0.56.76

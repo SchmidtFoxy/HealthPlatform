@@ -8820,3 +8820,23 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.76 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State`.
+
+
+---
+
+## v0.56.76 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+
+Adiciona estado técnico local ao reset específico da deduplicação do anúncio de foco da ação **Limpar horário do reset**.
+
+O estado acompanha:
+- `ready`, `reset` ou `announced`;
+- contador local de resets;
+- horário ISO do último reset.
+
+A sincronização ocorre somente no navegador, no indicador `Última cópia do reset`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.77 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary`.
