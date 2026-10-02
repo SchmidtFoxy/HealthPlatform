@@ -1,4 +1,4 @@
-HealthPlatform v0.56.90 - Incremental
+HealthPlatform v0.56.91 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,13 +13,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- acao local Limpar horario da deduplicacao;
-- habilitacao somente apos copia bem-sucedida;
-- restaura o indicador para —;
-- remove datetime e data-copy-timestamp-v05689;
-- desabilita novamente apos limpeza;
-- feedback local da limpeza;
-- hotfix aprovado v0.56.89-r1 incorporado ao TESTAR.ps1;
+- acessibilidade da acao Limpar horario da deduplicacao;
+- aria-disabled sincronizado com o estado real;
+- aria-controls e aria-label descritivo;
+- indicador com role=status, aria-live=polite e aria-atomic=true;
+- sincronizacao inicial, apos copia e apos limpeza;
+- fluxo v0.56.90 preservado;
+- hotfix historico v0.56.89-r1 preservado;
 - marco de deploy seguro da v0.57.x preservado;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual novo;
@@ -27,4 +27,4 @@ Entrega funcional:
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.90
+Se aprovado, commit/push apenas: v0.56.91

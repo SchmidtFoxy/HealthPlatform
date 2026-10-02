@@ -7542,3 +7542,26 @@ Adicionar ação local para limpar explicitamente o horário da última cópia d
 
 ### v0.56.91 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
 Adicionar acessibilidade à ação de limpar o horário da última cópia do resumo técnico do estado de reset específico da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.91 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility — CONCLUÍDA
+
+**Entregue:**
+- `aria-disabled` sincronizado com o estado real da ação de limpeza;
+- `aria-controls` ligando a ação ao indicador `Última cópia do estado da deduplicação`;
+- `aria-label` descritivo `Limpar horário da última cópia do estado da deduplicação`;
+- indicador de horário com `role="status"`;
+- indicador de horário com `aria-live="polite"`;
+- indicador de horário com `aria-atomic="true"`;
+- estado acessível inicial sincronizado como indisponível;
+- cópia bem-sucedida sincroniza a ação como disponível;
+- limpeza volta a sincronizar a ação como indisponível;
+- fluxo funcional da v0.56.90 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.92 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+Melhorar o fluxo de foco por teclado após limpar o horário da última cópia do estado da deduplicação, mantendo o fluxo local e sem conteúdo clínico/textual.

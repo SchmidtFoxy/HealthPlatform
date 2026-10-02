@@ -9147,3 +9147,28 @@ Não cria migration ou tabela nova.
 ### Marco de produção futuro
 
 Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
+
+
+---
+
+## v0.56.91 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+
+Adiciona acessibilidade à ação **Limpar horário da deduplicação**.
+
+A evolução sincroniza:
+- `aria-disabled` com o estado real do botão;
+- `aria-controls` com o indicador da última cópia;
+- `aria-label` descritivo;
+- `role="status"`, `aria-live="polite"` e `aria-atomic="true"` no indicador.
+
+O estado acessível começa indisponível, passa a disponível após cópia bem-sucedida e volta a indisponível após a limpeza.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.92 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus`.
+
+### Marco de produção futuro
+
+Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
