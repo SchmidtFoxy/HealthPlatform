@@ -3652,6 +3652,44 @@ public class ProgressReviewNotesController(
         return NoContent();
     }
 
+
+    [HttpPatch("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/restore")]
+    public async Task<IActionResult> RestaurarNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (!nota.Arquivada)
+            return NoContent();
+
+        var antes = Snapshot(nota);
+        nota.Arquivada = false;
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar(
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_RESTORED",
+            nota,
+            antes,
+            Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return NoContent();
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse>>> ComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

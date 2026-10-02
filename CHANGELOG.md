@@ -1,3 +1,12 @@
+# v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore
+
+- Adiciona restauração de notas de comparação arquivadas.
+- Mantém a operação idempotente.
+- Audita a restauração.
+- Atualiza `UpdatedAtUtc`.
+- Adiciona botão `Restaurar` ao histórico arquivado.
+- Não cria migration ou tabela nova.
+
 # v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive
 
 - Adiciona arquivamento controlado de notas de comparação.

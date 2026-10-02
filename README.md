@@ -7513,3 +7513,27 @@ O arquivamento é documental e reversibilidade será tratada na próxima etapa. 
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore`.
+
+
+---
+
+## v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore
+
+Adiciona restauração controlada das notas documentais de comparação previamente arquivadas.
+
+### Operação
+`PATCH .../{id}/history/context/comparison-notes/{noteId}/restore`
+
+### Comportamento
+- somente notas pertencentes à revisão e ao paciente atual podem ser restauradas;
+- restauração idempotente;
+- `Arquivada` volta para `false`;
+- `UpdatedAtUtc` registra o momento da restauração;
+- auditoria `COMPARISON_NOTE_RESTORED`;
+- a UI volta a apresentar a nota na lista ativa.
+
+A restauração altera apenas o estado documental da nota e não executa qualquer interpretação clínica ou decisão terapêutica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit`.

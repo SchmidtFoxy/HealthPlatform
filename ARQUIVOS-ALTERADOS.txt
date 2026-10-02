@@ -1,4 +1,4 @@
-HealthPlatform v0.56.11 - Follow-Up Review Comparison Notes Archive - Incremental
+HealthPlatform v0.56.12 - Follow-Up Review Comparison Notes Restore - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -6,7 +6,6 @@ Arquivos alterados:
 - ROADMAP.md
 - TESTAR.ps1
 - VERSION.txt
-- src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
 - src/HealthPlatform.Api/Controllers/HealthController.cs
 - src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
 - src/HealthPlatform.Api/Program.cs
@@ -15,13 +14,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- arquivamento controlado de notas de comparacao;
-- consulta separada de notas arquivadas;
-- auditoria de arquivamento;
-- historico arquivado na UI;
-- sem exclusao fisica;
+- restauracao controlada de notas arquivadas;
+- operacao idempotente;
+- auditoria COMPARISON_NOTE_RESTORED;
+- atualizacao de UpdatedAtUtc;
+- acao Restaurar na UI;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.11
+Se aprovado, commit/push apenas: v0.56.12

@@ -5981,3 +5981,20 @@ Adicionar arquivamento controlado e histórico das notas documentais de compara�
 
 ### v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore
 Adicionar restauração controlada das notas arquivadas, preservando a trilha de auditoria.
+
+
+## ✅ v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore — CONCLUÍDA
+
+**Entregue:**
+- restauração controlada de notas arquivadas;
+- operação idempotente de restauração;
+- auditoria `COMPARISON_NOTE_RESTORED`;
+- atualização de `UpdatedAtUtc`;
+- ação `Restaurar` no histórico arquivado;
+- retorno automático da nota à lista ativa após restauração;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit
+Adicionar edição controlada das notas documentais ativas, com trilha de auditoria.
