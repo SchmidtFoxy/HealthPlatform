@@ -1,3 +1,15 @@
+# v0.56.60 — Focus Announcement Reset State Summary Copy Timestamp Clear
+
+- Adiciona `Limpar horário`.
+- Habilita a ação somente após cópia bem-sucedida.
+- Redefine `Última cópia` para `—`.
+- Remove `datetime` e `data-copy-timestamp-v05659`.
+- Desabilita a ação após limpar.
+- Preserva o resumo técnico.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.59 — Focus Announcement Reset State Summary Copy Timestamp
 
 - Adiciona horário local da última cópia bem-sucedida.

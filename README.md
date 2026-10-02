@@ -8517,3 +8517,27 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.60 — Focus Announcement Reset State Summary Copy Timestamp Clear`.
+
+
+---
+
+## v0.56.60 — Focus Announcement Reset State Summary Copy Timestamp Clear
+
+Adiciona a ação local **Limpar horário**.
+
+Comportamento:
+- inicia desabilitada;
+- é habilitada após uma cópia bem-sucedida;
+- redefine o indicador para `Última cópia: —`;
+- remove `datetime`;
+- remove `data-copy-timestamp-v05659`;
+- volta a ficar desabilitada após a limpeza;
+- não altera o resumo técnico da v0.56.57.
+
+A limpeza gera o feedback acessível `Horário da última cópia limpo.`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.61 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility`.
