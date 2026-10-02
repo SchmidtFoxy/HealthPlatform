@@ -6735,3 +6735,23 @@ Melhorar a acessibilidade do feedback e das ações de encerramento com estado d
 
 ### v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus
 Melhorar o fluxo de foco por teclado após copiar, limpar, fechar ou trocar a nota, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus — CONCLUÍDA
+
+**Entregue:**
+- foco preservado no botão `Copiar encerramento` após sucesso, falha ou ausência de conteúdo;
+- após `Limpar encerramento`, foco movido para o status acessível da ação;
+- após `Fechar histórico`, foco devolvido ao botão `Histórico` que abriu a nota;
+- ao trocar entre notas com histórico aberto, foco movido ao `Fechar histórico` da nova nota;
+- uso de `focus({preventScroll:true})` para evitar saltos de viewport;
+- status técnico recebeu `tabindex="-1"` para foco programático;
+- acessibilidade da v0.56.51 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.53 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement
+Adicionar anúncio técnico acessível após mudanças programáticas de foco, mantendo o fluxo local e sem conteúdo clínico/textual.

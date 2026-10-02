@@ -1,3 +1,15 @@
+# v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus
+
+- Mantém foco em `Copiar encerramento` após cópia.
+- Move foco ao status após limpar.
+- Devolve foco ao botão `Histórico` após fechar.
+- Move foco ao `Fechar histórico` ao trocar de nota.
+- Usa `preventScroll` nos focos programáticos.
+- Adiciona `tabindex="-1"` ao status técnico.
+- Preserva a acessibilidade da v0.56.51.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility
 
 - Adiciona semântica `role=status` e `aria-atomic`.

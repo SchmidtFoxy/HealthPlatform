@@ -5093,6 +5093,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_COPY_V05649='v0.56.49';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_CLEAR_V05650='v0.56.50';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_ACCESSIBILITY_V05651='v0.56.51';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_KEYBOARD_FOCUS_V05652='v0.56.52';
 
 
 
@@ -6824,7 +6825,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + acessibilidade do feedback de encerramento · v0.56.51</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + fluxo de foco do encerramento · v0.56.52</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6955,7 +6956,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
         const notes=Array.isArray(comparisonNotes)?comparisonNotes:[];
         const archivedNotes=Array.isArray(archivedComparisonNotes)?archivedComparisonNotes:[];
         if(!notes.some(n=>String(n.id)===String(editingComparisonNoteIdV05613)))editingComparisonNoteIdV05613=null;
-        comparisonNotesHost.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-notes-archive-v05611="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_ARCHIVE_V05611}"><div class="row-between"><b>Notas da comparação</b><small>${notes.length} ativa(s) · ${archivedNotes.length} arquivada(s)</small></div><div class="form-grid"><label>Referência<select id="followUpReviewComparisonNoteReferenceV05610"><option value="Geral">Geral</option><option value="Anterior">Anterior</option><option value="Proxima">Próxima</option></select></label><label class="span-2">Nota documental<textarea id="followUpReviewComparisonNoteTextV05610" maxlength="3000" placeholder="Registre apenas a observação documental do profissional."></textarea></label><div class="span-2 form-actions"><button type="button" class="primary" id="saveFollowUpReviewComparisonNoteV05610">Registrar nota</button></div></div>${notes.length?notes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')}</small><div class="form-actions"><button type="button" class="ghost" data-history-comparison-note-v05614="${n.id}">Histórico</button><button type="button" class="ghost" data-edit-comparison-note-v05613="${n.id}">Editar</button><button type="button" class="ghost" data-archive-comparison-note-v05611="${n.id}">Arquivar</button></div></div></div>`).join(''):'<p class="muted-line">Nenhuma nota documental ativa.</p>'}${archivedNotes.length?`<details data-comparison-notes-restore-v05612="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_RESTORE_V05612}"><summary>Histórico arquivado (${archivedNotes.length})</summary>${archivedNotes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.atualizadoEmUtc||n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')} · arquivada</small><div class="form-actions"><button type="button" class="ghost" data-history-comparison-note-v05614="${n.id}">Histórico</button><button type="button" class="ghost" data-restore-comparison-note-v05612="${n.id}">Restaurar</button></div></div></div>`).join('')}</details>`:''}<div id="comparisonNoteRevisionHistoryV05614" data-comparison-note-revision-history-v05614="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_V05614}"></div><small id="comparisonNoteVerificationSessionExpiryFeedbackV05647" class="muted-line" aria-live="polite" aria-atomic="true" role="status" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-v05647="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_V05647}" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-timestamp-v05648="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_TIMESTAMP_V05648}" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-accessibility-v05651="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_ACCESSIBILITY_V05651}"></small><button type="button" class="ghost" id="copyComparisonNoteVerificationSessionExpiryFeedbackV05649" aria-describedby="comparisonNoteVerificationSessionExpiryFeedbackV05647 copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-copy-v05649="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_COPY_V05649}" disabled>Copiar encerramento</button><button type="button" class="ghost" id="clearComparisonNoteVerificationSessionExpiryFeedbackV05650" aria-describedby="comparisonNoteVerificationSessionExpiryFeedbackV05647 copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-clear-v05650="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_CLEAR_V05650}" disabled>Limpar encerramento</button><small id="copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649" class="muted-line" aria-live="polite" aria-atomic="true" role="status"></small></article>`;
+        comparisonNotesHost.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-notes-archive-v05611="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_ARCHIVE_V05611}"><div class="row-between"><b>Notas da comparação</b><small>${notes.length} ativa(s) · ${archivedNotes.length} arquivada(s)</small></div><div class="form-grid"><label>Referência<select id="followUpReviewComparisonNoteReferenceV05610"><option value="Geral">Geral</option><option value="Anterior">Anterior</option><option value="Proxima">Próxima</option></select></label><label class="span-2">Nota documental<textarea id="followUpReviewComparisonNoteTextV05610" maxlength="3000" placeholder="Registre apenas a observação documental do profissional."></textarea></label><div class="span-2 form-actions"><button type="button" class="primary" id="saveFollowUpReviewComparisonNoteV05610">Registrar nota</button></div></div>${notes.length?notes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')}</small><div class="form-actions"><button type="button" class="ghost" data-history-comparison-note-v05614="${n.id}">Histórico</button><button type="button" class="ghost" data-edit-comparison-note-v05613="${n.id}">Editar</button><button type="button" class="ghost" data-archive-comparison-note-v05611="${n.id}">Arquivar</button></div></div></div>`).join(''):'<p class="muted-line">Nenhuma nota documental ativa.</p>'}${archivedNotes.length?`<details data-comparison-notes-restore-v05612="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_RESTORE_V05612}"><summary>Histórico arquivado (${archivedNotes.length})</summary>${archivedNotes.map(n=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(n.referencia||'Geral')}</b><small>${new Date(n.atualizadoEmUtc||n.criadoEmUtc).toLocaleString()}</small></div><div>${esc(n.nota||'')}</div><div class="row-between"><small class="muted-line">${esc(n.autorNome||'Profissional')} · arquivada</small><div class="form-actions"><button type="button" class="ghost" data-history-comparison-note-v05614="${n.id}">Histórico</button><button type="button" class="ghost" data-restore-comparison-note-v05612="${n.id}">Restaurar</button></div></div></div>`).join('')}</details>`:''}<div id="comparisonNoteRevisionHistoryV05614" data-comparison-note-revision-history-v05614="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_V05614}"></div><small id="comparisonNoteVerificationSessionExpiryFeedbackV05647" class="muted-line" aria-live="polite" aria-atomic="true" role="status" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-v05647="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_V05647}" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-timestamp-v05648="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_TIMESTAMP_V05648}" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-accessibility-v05651="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_ACCESSIBILITY_V05651}" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-keyboard-focus-v05652="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_KEYBOARD_FOCUS_V05652}"></small><button type="button" class="ghost" id="copyComparisonNoteVerificationSessionExpiryFeedbackV05649" aria-describedby="comparisonNoteVerificationSessionExpiryFeedbackV05647 copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-copy-v05649="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_COPY_V05649}" disabled>Copiar encerramento</button><button type="button" class="ghost" id="clearComparisonNoteVerificationSessionExpiryFeedbackV05650" aria-describedby="comparisonNoteVerificationSessionExpiryFeedbackV05647 copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-session-state-expiry-feedback-clear-v05650="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_CLEAR_V05650}" disabled>Limpar encerramento</button><small id="copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649" class="muted-line" aria-live="polite" aria-atomic="true" role="status" tabindex="-1"></small></article>`;
         const saveNote=$('#saveFollowUpReviewComparisonNoteV05610');
         if(saveNote){
           saveNote.textContent=editingComparisonNoteIdV05613?'Salvar alteração':'Registrar nota';
@@ -7035,6 +7036,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
           const text=feedback?.textContent?.trim()||'';
           if(!text){
             if(copyStatus)copyStatus.textContent='Nenhum encerramento disponível para copiar.';
+            copyComparisonNoteVerificationSessionExpiryFeedbackV05649.focus({preventScroll:true});
             return;
           }
           try{
@@ -7042,24 +7044,32 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             if(copyStatus)copyStatus.textContent='Feedback técnico copiado.';
           }catch{
             if(copyStatus)copyStatus.textContent='Não foi possível copiar o feedback automaticamente.';
+          }finally{
+            copyComparisonNoteVerificationSessionExpiryFeedbackV05649.focus({preventScroll:true});
           }
         };
         const clearComparisonNoteVerificationSessionExpiryFeedbackV05650=$('#clearComparisonNoteVerificationSessionExpiryFeedbackV05650');
         if(clearComparisonNoteVerificationSessionExpiryFeedbackV05650)clearComparisonNoteVerificationSessionExpiryFeedbackV05650.onclick=()=>{
           const copyStatus=$('#copyComparisonNoteVerificationSessionExpiryFeedbackStatusV05649');
           setComparisonNoteVerificationSessionExpiryFeedbackV05647(null);
-          if(copyStatus)copyStatus.textContent='Feedback de encerramento limpo.';
+          if(copyStatus){
+            copyStatus.textContent='Feedback de encerramento limpo.';
+            copyStatus.focus({preventScroll:true});
+          }
         };
         let activeComparisonNoteHistoryIdV05646=null;
+        let activeComparisonNoteHistoryTriggerV05652=null;
         let expireComparisonNoteVerificationSessionV05646=null;
         comparisonNotesHost.querySelectorAll('[data-history-comparison-note-v05614]').forEach(btn=>btn.onclick=async()=>{
           const noteId=btn.dataset.historyComparisonNoteV05614;
           if(!noteId)return;
-          if(activeComparisonNoteHistoryIdV05646&&activeComparisonNoteHistoryIdV05646!==String(noteId)){
+          const switchedNoteV05652=!!activeComparisonNoteHistoryIdV05646&&activeComparisonNoteHistoryIdV05646!==String(noteId);
+          if(switchedNoteV05652){
             expireComparisonNoteVerificationSessionV05646?.('note-switch');
             setComparisonNoteVerificationSessionExpiryFeedbackV05647('note-switch');
           }
           activeComparisonNoteHistoryIdV05646=String(noteId);
+          activeComparisonNoteHistoryTriggerV05652=btn;
           const host=$('#comparisonNoteRevisionHistoryV05614');
           if(!host)return;
           const persistedStateV05619=comparisonNoteRevisionHistoryStateV05619.get(String(noteId))||{
@@ -7369,11 +7379,17 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             restoreVerifyTelemetrySessionStateV05644();
             const closeComparisonNoteHistoryV05646=$('#closeComparisonNoteHistoryV05646');
             if(closeComparisonNoteHistoryV05646)closeComparisonNoteHistoryV05646.onclick=()=>{
+              const returnFocusV05652=activeComparisonNoteHistoryTriggerV05652;
               expireTelemetryVerificationSessionV05646('close');
               setComparisonNoteVerificationSessionExpiryFeedbackV05647('close');
               expireComparisonNoteVerificationSessionV05646=null;
               host.innerHTML='';
+              returnFocusV05652?.focus({preventScroll:true});
+              activeComparisonNoteHistoryTriggerV05652=null;
             };
+            if(switchedNoteV05652){
+              closeComparisonNoteHistoryV05646?.focus({preventScroll:true});
+            }
             if(verifyTelemetryCsv)verifyTelemetryCsv.onchange=async()=>{
               const file=verifyTelemetryCsv.files?.[0];
               if(!file)return;
@@ -19937,7 +19953,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.51';
+const HP_MVP_VERSION='0.56.52';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

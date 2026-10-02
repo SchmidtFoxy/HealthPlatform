@@ -8354,3 +8354,23 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus`.
+
+
+---
+
+## v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus
+
+Melhora o fluxo de teclado das ações técnicas de encerramento.
+
+Comportamento:
+- `Copiar encerramento` mantém o foco após a tentativa de cópia;
+- `Limpar encerramento` move o foco para o status acessível da limpeza;
+- `Fechar histórico` devolve o foco ao botão `Histórico` que abriu a nota;
+- ao trocar a nota com outro histórico já aberto, o foco vai para `Fechar histórico` da nova nota;
+- todos os focos programáticos usam `preventScroll`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.53 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement`.
