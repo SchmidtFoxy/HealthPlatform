@@ -5945,3 +5945,21 @@ Adicionar comparação documental explícita entre a revisão atual e suas revis
 
 ### v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes
 Adicionar notas documentais do profissional sobre diferenças observadas entre revisões.
+
+
+## ✅ v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes — CONCLUÍDA
+
+**Entregue:**
+- notas documentais vinculadas à comparação de contexto;
+- referência geral, anterior ou próxima;
+- persistência reutilizando `NotasInternasProfissionais`;
+- autoria e data/hora;
+- listagem auditável das notas;
+- criação auditada;
+- interface profissional para registrar e consultar notas;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive
+Adicionar arquivamento controlado e histórico das notas documentais de comparação.

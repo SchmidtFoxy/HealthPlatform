@@ -7463,3 +7463,29 @@ A comparação apenas evidencia igualdade/diferença documental. Não classifica
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes`.
+
+
+---
+
+## v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes
+
+Permite registrar observações documentais do profissional sobre a comparação entre revisões.
+
+### Notas de comparação
+- referência `Geral`, `Anterior` ou `Proxima`;
+- texto documental com até 3000 caracteres;
+- autoria;
+- data/hora;
+- vínculo com a revisão atual e, quando aplicável, com a revisão de referência;
+- persistência em `NotasInternasProfissionais`;
+- criação auditada.
+
+### Endpoints
+- `GET .../{id}/history/context/comparison-notes`
+- `POST .../{id}/history/context/comparison-notes`
+
+As notas são texto documental livre do profissional. O sistema não converte essas notas em score, diagnóstico, prognóstico, risco, urgência, prioridade, causalidade ou decisão terapêutica automática.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive`.

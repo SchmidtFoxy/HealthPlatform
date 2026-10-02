@@ -45,6 +45,7 @@ public class ProgressReviewNotesController(
     private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcome = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcome:";
     private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUp:";
     private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview:";
+    private const string PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote = "ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote:";
 
     private static readonly IReadOnlyDictionary<string, string> Campos =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -2730,6 +2731,11 @@ public class ProgressReviewNotesController(
     public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewStatusRequest(
         string Status);
 
+    public sealed record CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRequest(
+        Guid? ReferenciaId,
+        string Referencia,
+        string Nota);
+
 
     public sealed record CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpRequest(
         Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
@@ -3463,6 +3469,116 @@ public class ProgressReviewNotesController(
     }
 
 
+
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse>>> ListarNotasComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var revisaoExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (!revisaoExiste)
+            return NotFound();
+
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo) &&
+                !x.Arquivada)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .ThenByDescending(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview).ToArray());
+    }
+
+    [HttpPost("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse>> CriarNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var revisaoExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (!revisaoExiste)
+            return NotFound();
+
+        var notaTexto = NormalizarObrigatorio(request.Nota, 3000);
+        if (string.IsNullOrWhiteSpace(notaTexto))
+            return BadRequest(new { message = "Informe a nota documental da comparação." });
+
+        var referencia = string.IsNullOrWhiteSpace(request.Referencia) ? "Geral" : request.Referencia.Trim();
+        if (referencia is not ("Anterior" or "Proxima" or "Geral"))
+            return BadRequest(new { message = "Referência inválida. Use Anterior, Proxima ou Geral." });
+
+        if (request.ReferenciaId.HasValue)
+        {
+            var referenciaExiste = await db.NotasInternasProfissionais
+                .AsNoTracking()
+                .AnyAsync(x =>
+                    x.Id == request.ReferenciaId.Value &&
+                    x.OrganizacaoId == currentUser.OrganizationId &&
+                    x.PacienteId == pacienteId &&
+                    x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                    !x.Arquivada,
+                    cancellationToken);
+
+            if (!referenciaExiste)
+                return BadRequest(new { message = "A revisão de referência não foi encontrada para este paciente." });
+        }
+
+        var payload = new TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNotePayload(
+            id,
+            request.ReferenciaId,
+            referencia,
+            notaTexto);
+
+        var nota = new NotaInternaProfissional
+        {
+            Id = Guid.NewGuid(),
+            OrganizacaoId = currentUser.OrganizationId,
+            PacienteId = pacienteId,
+            Categoria = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":" + Guid.NewGuid().ToString("N"),
+            Conteudo = JsonSerializer.Serialize(payload),
+            AutorUsuarioId = currentUser.UserId,
+            CreatedAtUtc = DateTime.UtcNow,
+            Arquivada = false
+        };
+
+        db.NotasInternasProfissionais.Add(nota);
+        Auditar(
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_CREATED",
+            nota,
+            null,
+            Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+
+        return Ok(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
+    }
 
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse>>> ComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
@@ -15580,6 +15696,40 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpValido(string? status) =>
         status is "Registrado" or "EmAcompanhamento" or "Concluido" or "Descartado";
+
+
+    private sealed record TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNotePayload(
+        Guid RevisaoId,
+        Guid? ReferenciaId,
+        string Referencia,
+        string Nota);
+
+    private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNotePayload LerPayloadNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(NotaInternaProfissional nota)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNotePayload>(nota.Conteudo)
+                ?? new(Guid.Empty, null, "Geral", nota.Conteudo);
+        }
+        catch (JsonException)
+        {
+            return new(Guid.Empty, null, "Geral", nota.Conteudo);
+        }
+    }
+
+    private static ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(NotaInternaProfissional nota)
+    {
+        var payload = LerPayloadNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota);
+        return new(
+            nota.Id,
+            payload.RevisaoId,
+            payload.ReferenciaId,
+            payload.Referencia,
+            payload.Nota,
+            nota.AutorUsuarioId,
+            nota.AutorNome,
+            nota.CreatedAtUtc);
+    }
 
     private sealed record TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload(
         Guid? FollowUpRelacionadoId,
