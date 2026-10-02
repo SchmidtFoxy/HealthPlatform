@@ -13,6 +13,7 @@
     [string]$HealthUrl = "",
     [string]$ApplicationService = "",
     [string]$MigrationSafetyConfirmation = "",
+    [string]$MigrationRecoveryConfirmation = "",
     [string]$MigrationCommand = "dotnet ef database update",
     [int]$RestartHealthAttempts = 12,
     [int]$RestartHealthDelaySeconds = 5,
@@ -44,11 +45,12 @@ $script:PromotionMetadata = $null
 $script:RestartVerificationMetadata = $null
 $script:MigrationSafetyMetadata = $null
 $script:MigrationExecutionMetadata = $null
+$script:MigrationFailureRecoveryMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.8 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.9 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -146,6 +148,10 @@ function Assert-DeployArguments {
     if ($MigrationCommand -match '[
 ]') {
         throw "MigrationCommand deve ser uma unica linha."
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($MigrationRecoveryConfirmation) -and $MigrationRecoveryConfirmation -notmatch '^RESTORE-BACKUP:.+:.+$') {
+        throw "MigrationRecoveryConfirmation possui formato invalido."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -1113,6 +1119,110 @@ printf 'MIGRATION_SAFETY_OK:count=%s:hash=%s:destructive=0' "`$migration_count" 
     return $script:MigrationSafetyMetadata
 }
 
+function Write-MigrationFailureDiagnostic([string]$FailureMessage) {
+    New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
+    $diagnosticFile = Join-Path $DeployLogDir ("migration-failure-v" + $TargetVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+
+    @(
+        "targetVersion=v$TargetVersion",
+        "target=$VpsUser@$VpsHost",
+        "database=$DatabaseName",
+        "backup=$($script:RollbackPlan.BackupFile)",
+        "backupValidated=$script:BackupValidado",
+        "migrationCount=$($script:MigrationSafetyMetadata.MigrationCount)",
+        "migrationApprovedHash=$($script:MigrationSafetyMetadata.MigrationHash)",
+        "promotionBlocked=true",
+        "restartBlocked=true",
+        "failure=" + $FailureMessage,
+        "recordedAt=" + (Get-Date).ToString("o")
+    ) | Set-Content -LiteralPath $diagnosticFile -Encoding UTF8
+
+    Write-Host ("Diagnostico de falha de migration salvo em: " + $diagnosticFile) -ForegroundColor Yellow
+    return $diagnosticFile
+}
+
+function Invoke-MigrationFailureRecovery([string]$FailureMessage) {
+    if (-not $script:BackupValidado -or -not $script:RollbackPlan) {
+        throw "Recovery bloqueado: backup validado e plano de rollback sao obrigatorios."
+    }
+
+    $expectedRecoveryConfirmation = "RESTORE-BACKUP:$VpsHost:$TargetVersion"
+    if ($MigrationRecoveryConfirmation -ne $expectedRecoveryConfirmation) {
+        throw "Recovery bloqueado por confirmacao. Informe -MigrationRecoveryConfirmation '$expectedRecoveryConfirmation'. Backup preservado em $($script:RollbackPlan.BackupFile)."
+    }
+
+    Write-DeployTitle "MIGRATION FAILURE RECOVERY"
+
+    $backupFile = $script:RollbackPlan.BackupFile
+    $restoreCommand = @"
+set -e
+test -s '$backupFile'
+cd '$RemoteRoot'
+docker compose -f '$ComposeFile' exec -T '$PostgresService' pg_restore --list < '$backupFile' >/dev/null
+docker compose -f '$ComposeFile' stop '$ApplicationService'
+restore_ok=0
+if docker compose -f '$ComposeFile' exec -T '$PostgresService' pg_restore --clean --if-exists --no-owner --no-privileges -d '$DatabaseName' < '$backupFile'; then
+  restore_ok=1
+fi
+if [ "`$restore_ok" -ne 1 ]; then
+  docker compose -f '$ComposeFile' up -d '$ApplicationService' || true
+  exit 43
+fi
+db_probe=`$(docker compose -f '$ComposeFile' exec -T '$PostgresService' psql -d '$DatabaseName' -Atqc 'SELECT 1')
+test "`$db_probe" = '1'
+docker compose -f '$ComposeFile' up -d '$ApplicationService'
+printf 'MIGRATION_RECOVERY_RESTORED:probe=%s' "`$db_probe"
+"@
+
+    $restoreResult = Invoke-SshChecked -Command $restoreCommand -Capture
+    if ($restoreResult -notmatch '^MIGRATION_RECOVERY_RESTORED:probe=1$') {
+        throw "Restore do backup nao retornou confirmacao valida."
+    }
+
+    $healthRecovered = $false
+    $lastHealthError = ""
+    for ($attempt = 1; $attempt -le $RestartHealthAttempts; $attempt++) {
+        try {
+            $healthCommand = @"
+set -e
+curl -fsS --max-time 20 '$HealthUrl' >/dev/null
+printf 'RECOVERY_HEALTH_OK'
+"@
+            $healthResult = Invoke-SshChecked -Command $healthCommand -Capture
+            if ($healthResult -match 'RECOVERY_HEALTH_OK') {
+                $healthRecovered = $true
+                break
+            }
+        }
+        catch {
+            $lastHealthError = $_.Exception.Message
+        }
+
+        if ($attempt -lt $RestartHealthAttempts) {
+            Start-Sleep -Seconds $RestartHealthDelaySeconds
+        }
+    }
+
+    if (-not $healthRecovered) {
+        throw "Backup restaurado, mas healthcheck de recovery falhou. Intervencao manual obrigatoria. Ultimo erro: $lastHealthError"
+    }
+
+    $script:MigrationFailureRecoveryMetadata = [pscustomobject]@{
+        RecoveryExecuted = $true
+        BackupFile = $backupFile
+        DatabaseProbeOk = $true
+        HealthRecovered = $true
+        PromotionBlocked = $true
+        RestartOfTargetReleaseBlocked = $true
+        FailureMessage = $FailureMessage
+        RecoveredAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host "Backup PostgreSQL restaurado e banco revalidado apos falha de migration." -ForegroundColor Green
+    Write-Host "Promocao da release alvo permanece bloqueada. Uma nova tentativa exige novo ciclo completo." -ForegroundColor Yellow
+    return $script:MigrationFailureRecoveryMetadata
+}
+
 function Invoke-ApprovedNonDestructiveMigrations {
     if (-not $script:MigrationSafetyMetadata) {
         throw "Execucao de migrations bloqueada: migration safety gate ainda nao foi executado."
@@ -1196,7 +1306,17 @@ printf 'NON_DESTRUCTIVE_MIGRATIONS_EXECUTED:count=%s:hash=%s' '$approvedCount' '
         $executionResult = Invoke-SshChecked -Command $executionCommand -Capture
     }
     catch {
-        throw "Execucao de migration nao destrutiva falhou. Deploy interrompido antes da promocao/restart. Backup preservado em $($script:RollbackPlan.BackupFile). Erro: $($_.Exception.Message)"
+        $migrationFailureMessage = $_.Exception.Message
+        $migrationFailureDiagnostic = Write-MigrationFailureDiagnostic -FailureMessage $migrationFailureMessage
+
+        try {
+            $recoveryMetadata = Invoke-MigrationFailureRecovery -FailureMessage $migrationFailureMessage
+        }
+        catch {
+            throw "Execucao de migration nao destrutiva falhou. Promocao/restart bloqueados. Diagnostico: $migrationFailureDiagnostic. Recovery nao concluido: $($_.Exception.Message)"
+        }
+
+        throw "Execucao de migration nao destrutiva falhou. Recovery concluido com restore + revalidacao. Promocao/restart permanecem bloqueados. Diagnostico: $migrationFailureDiagnostic"
     }
 
     if ($executionResult -notmatch '^NON_DESTRUCTIVE_MIGRATIONS_EXECUTED:count=(?<count>\d+):hash=(?<hash>[a-f0-9]{64}|none)$') {
@@ -1223,7 +1343,7 @@ printf 'NON_DESTRUCTIVE_MIGRATIONS_EXECUTED:count=%s:hash=%s' '$approvedCount' '
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.8 executa somente migrations nao destrutivas aprovadas e com hash revalidado." -ForegroundColor Cyan
+    Write-Host "v0.57.9 adiciona diagnostico e recovery controlado para falhas de migrations aprovadas." -ForegroundColor Cyan
     Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -1232,7 +1352,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.8
+# Fluxo v0.57.9
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -1282,7 +1402,7 @@ $restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerifica
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-safe-migrations-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-migration-recovery-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1347,6 +1467,8 @@ $logFile = Join-Path $DeployLogDir ("deploy-safe-migrations-v" + $localVersion +
     "migrationRevalidatedHash=$($migrationExecutionMetadata.RevalidatedHash)",
     "migrationHashMatched=$($migrationExecutionMetadata.HashMatched)",
     "migrationExecutionCount=$($migrationExecutionMetadata.MigrationCount)",
+    "migrationFailureRecoveryRequired=false",
+    "migrationFailureRecoveryExecuted=false",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1354,5 +1476,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-safe-migrations-v" + $localVersion +
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Migration safety + execucao nao destrutiva e fluxo de deploy concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Migration execution + recovery guards e fluxo de deploy concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green

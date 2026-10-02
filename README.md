@@ -9517,3 +9517,18 @@ Sem `-Aplicar`, nenhuma migration é executada. Com `-Aplicar`, o `MigrationComm
 Falha de migration interrompe o deploy mantendo o backup validado disponível. Migrations destrutivas continuam bloqueadas.
 
 **Próxima etapa:** `v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery`.
+
+
+---
+
+## v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery
+
+Falhas de migrations aprovadas agora geram diagnóstico local e bloqueiam imediatamente promoção/restart.
+
+O restore **não é automático**: exige `RESTORE-BACKUP:<host>:<versão>`.
+
+Quando autorizado, o recovery revalida o backup, interrompe temporariamente a aplicação, restaura o PostgreSQL, valida o banco com `SELECT 1`, religa a aplicação e confirma o healthcheck.
+
+Mesmo com recovery concluído, a release alvo não é promovida. Uma nova tentativa exige um novo ciclo completo.
+
+**Próxima etapa:** `v0.57.10 — Deploy Seguro para Produção Recovery Audit & Operator Runbook`.

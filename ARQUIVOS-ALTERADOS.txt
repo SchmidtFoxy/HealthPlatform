@@ -1,4 +1,4 @@
-HealthPlatform v0.57.8 - Incremental
+HealthPlatform v0.57.9-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,14 +14,24 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- MigrationCommand explicito;
-- revalidacao de quantidade e hash antes da execucao;
-- execucao somente de migrations aprovadas como nao destrutivas;
-- no-op seguro quando nao ha migrations;
-- execucao em container efemero;
-- falha bloqueia promocao/restart e preserva backup;
-- migrations destrutivas continuam bloqueadas.
+- diagnostico de falha de migration;
+- promocao/restart bloqueados em falha;
+- recovery exige RESTORE-BACKUP:<host>:<versao>;
+- revalidacao do backup antes do restore;
+- stop/start controlado do servico;
+- restore PostgreSQL + SELECT 1;
+- healthcheck de recovery;
+- nova tentativa exige novo ciclo completo.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.8
+Se aprovado, commit/push apenas: v0.57.9
+
+Hotfix cumulativo r1:
+- corrige o gate historico [5122/5130] da v0.57.8;
+- aceita a falha bloqueante original ou a estrategia evoluida da v0.57.9 com diagnostico + recovery controlado;
+- preserva a exigencia de comprovacao de execucao e bloqueio antes de promocao/restart;
+- codigo funcional da v0.57.9 permanece inalterado;
+- VERSION.txt permanece 0.57.9;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.9.

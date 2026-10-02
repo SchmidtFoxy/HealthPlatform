@@ -1,3 +1,16 @@
+# v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery
+
+- Adiciona diagnóstico específico de falha de migration.
+- Bloqueia promoção/restart após falha.
+- Adiciona confirmação `RESTORE-BACKUP:<host>:<versão>`.
+- Revalida backup antes do restore.
+- Para e religa o serviço durante recovery.
+- Restaura o banco com `pg_restore --clean --if-exists`.
+- Revalida o banco com `SELECT 1`.
+- Executa healthcheck de recovery com retry.
+- Exige novo ciclo completo após recovery.
+- Mantém migrations destrutivas bloqueadas no fluxo normal.
+
 # v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution
 
 - Adiciona `MigrationCommand`.

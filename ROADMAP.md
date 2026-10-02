@@ -7943,3 +7943,30 @@ Executar somente o conjunto de migrations aprovado pelo Migration Safety Gate, r
 
 ### v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery
 Adicionar recuperação explícita para falhas de migrations aprovadas: diagnóstico, bloqueio de promoção, procedimento controlado de restore do backup e revalidação do banco antes de qualquer nova tentativa.
+
+
+## ✅ v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery — CONCLUÍDA
+
+**Entregue:**
+- diagnóstico local específico para falhas de migrations aprovadas;
+- promoção e restart da release alvo permanecem bloqueados após qualquer falha de migration;
+- restore exige confirmação adicional `RESTORE-BACKUP:<host>:<versão>`;
+- backup é revalidado com `pg_restore --list` imediatamente antes do restore;
+- serviço da aplicação é interrompido durante o restore para evitar novas escritas;
+- restore controlado usa o backup PostgreSQL validado do ciclo atual;
+- banco é revalidado com `SELECT 1` após restore;
+- serviço ativo é religado após recuperação;
+- healthcheck de recovery com retry;
+- falha de health após restore exige intervenção manual e continua bloqueante;
+- mesmo após recovery bem-sucedido, a promoção da release alvo não continua automaticamente;
+- uma nova tentativa exige novo ciclo completo;
+- migrations destrutivas continuam bloqueadas no fluxo normal.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.10 — Deploy Seguro para Produção Recovery Audit & Operator Runbook
+Consolidar trilha de auditoria de recovery, runbook operacional, evidências de backup/restore e instruções seguras para nova tentativa após falha, sem relaxar nenhum dos gates existentes.
