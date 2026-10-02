@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.2';
+const HP_MVP_VERSION='0.58.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26492,7 +26492,7 @@ function hpRenderOperationsLatestV0582(latest){
 function hpRenderOperationsRowsV0582(data){
   const rows=data?.items||[];
   const tbody=$('#opsRowsV0582'),cards=$('#opsCardsV0582'),pagination=$('#opsPaginationTextV0582');
-  if(tbody)tbody.innerHTML=rows.length?rows.map(item=>`<tr>
+  if(tbody)tbody.innerHTML=rows.length?rows.map(item=>`<tr class="ops-release-row-v0583" tabindex="0" role="button" data-ops-release-version="${esc(item.version)}" data-ops-release-recorded-at="${esc(item.recordedAt)}">
     <td><span class="ops-version-v0582">${esc(item.version)}</span><span class="ops-sub-v0582">${hpOpsDateV0582(item.recordedAt)}</span></td>
     <td>${hpOpsStatusBadgeV0582(item)}</td>
     <td>${esc(item.mode||'—')}</td>
@@ -26501,7 +26501,7 @@ function hpRenderOperationsRowsV0582(data){
     <td>${hpOpsFlagsV0582(item)}</td>
   </tr>`).join(''):`<tr><td colspan="6"><div class="ops-empty-v0582">Nenhum deploy operacional registrado.</div></td></tr>`;
 
-  if(cards)cards.innerHTML=rows.length?rows.map(item=>`<article class="ops-card-v0582">
+  if(cards)cards.innerHTML=rows.length?rows.map(item=>`<article class="ops-card-v0582 ops-release-card-v0583" tabindex="0" role="button" data-ops-release-version="${esc(item.version)}" data-ops-release-recorded-at="${esc(item.recordedAt)}">
     <div class="ops-card-v0582-head"><div><strong class="ops-version-v0582">${esc(item.version)}</strong><span class="ops-sub-v0582">${hpOpsDateV0582(item.recordedAt)}</span></div>${hpOpsStatusBadgeV0582(item)}</div>
     <div class="ops-card-v0582-grid">
       <div><small>Modo</small><strong>${esc(item.mode||'—')}</strong></div>
@@ -26517,6 +26517,11 @@ function hpRenderOperationsRowsV0582(data){
   const prev=$('#opsPrevV0582'),next=$('#opsNextV0582');
   if(prev)prev.disabled=(data?.page||1)<=1;
   if(next)next.disabled=!hpOperationsStateV0582.totalPages||(data?.page||1)>=hpOperationsStateV0582.totalPages;
+  $$('[data-ops-release-version]').forEach(node=>{
+    const open=()=>hpOpenProductionReleaseDetailV0583(node.dataset.opsReleaseVersion,node.dataset.opsReleaseRecordedAt).catch(e=>toast(e.message,true));
+    node.addEventListener('click',open);
+    node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+  });
 }
 async function hpFetchOperationsV0582(){
   if(hpOperationsStateV0582.loading)return;
@@ -26554,4 +26559,65 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsPrevV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page>1){hpOperationsStateV0582.page--;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   $('#opsNextV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page<hpOperationsStateV0582.totalPages){hpOperationsStateV0582.page++;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   await hpFetchOperationsV0582();
+}
+
+
+// ===== v0.58.3 — Production Operations Release Detail =====
+const HP_PRODUCTION_OPERATIONS_RELEASE_DETAIL_V0583='v0.58.3';
+
+function hpOpsTimelineStateV0583(state){
+  const map={
+    passed:['ok','Concluído'],
+    applied:['ok','Aplicado'],
+    executed:['bad','Executado'],
+    'not-required':['neutral','Não necessário'],
+    skipped:['warn','Sem aplicação'],
+    unchecked:['neutral','Não verificado'],
+    pending:['warn','Pendente'],
+    blocked:['bad','Bloqueado']
+  };
+  return map[state]||['neutral',state||'Indefinido'];
+}
+function hpRenderProductionReleaseDetailV0583(detail){
+  const host=$('#opsReleaseDetailV0583');if(!host)return;
+  const release=detail?.release||{},health=detail?.health||{},timeline=detail?.timeline||[];
+  host.innerHTML=`<div class="ops-detail-v0583">
+    <div class="ops-detail-head-v0583">
+      <div><span class="eyebrow">RELEASE DETAIL • ${HP_PRODUCTION_OPERATIONS_RELEASE_DETAIL_V0583}</span><h3>${esc(release.version||'Release')}</h3><p>${hpOpsDateV0582(release.recordedAt)} • ${esc(release.mode||'—')}</p></div>
+      <button type="button" class="ghost" id="opsDetailCloseV0583" aria-label="Fechar detalhe">×</button>
+    </div>
+    <div class="ops-detail-health-v0583">
+      ${hpOpsMetricV0582('Estado',hpOpsStatusBadgeV0582(release))}
+      ${hpOpsMetricV0582('Runtime',health.runtimeHealthy?'Saudável':'Não confirmado')}
+      ${hpOpsMetricV0582('Versão servida',esc(health.servedVersion||'—'))}
+      ${hpOpsMetricV0582('Rollback',health.rollbackExecuted?'Executado':'Não')}
+    </div>
+    <div class="ops-detail-gates-v0583">${hpOpsFlagsV0582(release)}</div>
+    <section class="ops-timeline-v0583" aria-label="Timeline dos gates">
+      ${timeline.map(step=>{
+        const [kind,label]=hpOpsTimelineStateV0583(step.state);
+        return `<article class="ops-timeline-item-v0583 ${kind}">
+          <span class="ops-timeline-dot-v0583" aria-hidden="true"></span>
+          <div><div class="ops-timeline-title-v0583"><strong>${esc(step.label)}</strong><span class="ops-status-v0582 ${kind}">${esc(label)}</span></div><p>${esc(step.description||'')}</p></div>
+        </article>`;
+      }).join('')}
+    </section>
+    <div class="ops-detail-safe-v0583">Detalhe operacional seguro: sem hashes de backup, caminhos internos, tokens ou segredos.</div>
+  </div>`;
+  $('#opsDetailCloseV0583')?.addEventListener('click',hpCloseProductionReleaseDetailV0583);
+}
+function hpCloseProductionReleaseDetailV0583(){
+  $('#opsReleaseDetailBackdropV0583')?.classList.add('hidden');
+  $('#opsReleaseDetailPanelV0583')?.classList.add('hidden');
+  document.body.classList.remove('ops-detail-open-v0583');
+}
+async function hpOpenProductionReleaseDetailV0583(version,recordedAt){
+  const panel=$('#opsReleaseDetailPanelV0583'),backdrop=$('#opsReleaseDetailBackdropV0583'),host=$('#opsReleaseDetailV0583');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-detail-open-v0583');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Carregando detalhe da release');
+  const detail=await api(`/api/operacoes-producao/deploys/detail?version=${encodeURIComponent(version||'')}&recordedAt=${encodeURIComponent(recordedAt||'')}`);
+  hpRenderProductionReleaseDetailV0583(detail);
 }

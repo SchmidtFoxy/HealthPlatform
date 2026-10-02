@@ -9610,3 +9610,16 @@ O painel apresenta:
 A experiência possui tabela para desktop e cards para mobile, consumindo apenas os DTOs seguros da API v0.58.1.
 
 **Próxima etapa:** `v0.58.3 — Production Operations Release Detail`.
+
+
+---
+
+## v0.58.3 — Production Operations Release Detail
+
+Cada registro da área **Operações** agora abre um detalhe navegável da release.
+
+O detalhe mostra uma timeline segura dos gates de backup, migration safety, promoção, runtime, version verification, rollback, recovery audit e closure.
+
+A seleção usa `version + recordedAt`, permitindo diferenciar múltiplos ciclos da mesma versão. A UI funciona por clique ou teclado e adapta o detalhe para drawer no desktop e bottom sheet no mobile.
+
+**Próxima etapa:** `v0.58.4 — Production Operations Filters & Search`.

@@ -1,4 +1,4 @@
-HealthPlatform v0.58.2 - Incremental
+HealthPlatform v0.58.3-r2 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -8,6 +8,7 @@ Arquivos alterados:
 - VERSION.txt
 - DEPLOY-PRODUCAO.ps1
 - src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Controllers/ProductionOperationsController.cs
 - src/HealthPlatform.Api/Program.cs
 - src/HealthPlatform.Api/wwwroot/app.js
 - src/HealthPlatform.Api/wwwroot/index.html
@@ -15,15 +16,34 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Admin UI;
-- menu Operacoes;
-- estado atual + versao servida;
-- historico paginado;
-- badges de health/rollback;
-- gates de backup/migration/runtime/version/audit/closure;
-- tabela desktop + cards mobile;
-- proxima etapa v0.58.3 / Production Operations Release Detail.
+- Production Operations Release Detail;
+- endpoint detail por version + recordedAt;
+- timeline dos gates;
+- resumo de health e rollback;
+- linhas/cards navegaveis;
+- drawer desktop + bottom sheet mobile;
+- acessibilidade por teclado;
+- proxima etapa v0.58.4 / Filters & Search.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.2
+Se aprovado, commit/push apenas: v0.58.3
+
+Hotfix cumulativo r1:
+- corrige o gate historico [5219/5223] da v0.58.2;
+- aceita operations.css versionado em v0.58.2 ou evoluido para v0.58.3;
+- preserva a validacao semantica das classes ops-latest-v0582 e ops-pagination-v0582;
+- codigo funcional da v0.58.3 permanece inalterado;
+- VERSION.txt permanece 0.58.3;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.3.
+
+Hotfix cumulativo r2:
+- corrige o gate [5236/5240] de documentacao segura do Release Detail;
+- aceita a redacao real documentada: "sem SHA de backup, staging path, caminhos internos ou segredos";
+- preserva compatibilidade com a redacao anterior do gate;
+- preserva a exigencia de "evidências públicas seguras";
+- codigo funcional da v0.58.3 permanece inalterado;
+- VERSION.txt permanece 0.58.3;
+- nao commitar/pushar -r1 ou -r2 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.3.

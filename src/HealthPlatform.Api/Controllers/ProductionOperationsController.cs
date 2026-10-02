@@ -65,6 +65,44 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/detail")]
+    public async Task<ActionResult<ProductionDeployDetailResponse>> GetDeployDetail(
+        [FromQuery] string version,
+        [FromQuery] DateTimeOffset recordedAt,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            return BadRequest(new { message = "version e obrigatoria." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var item = allItems.FirstOrDefault(x =>
+            string.Equals(x.Version, version, StringComparison.OrdinalIgnoreCase) &&
+            x.RecordedAt.Equals(recordedAt));
+
+        if (item is null)
+        {
+            return NotFound(new { message = "Release operacional nao encontrada no historico." });
+        }
+
+        var timeline = BuildTimeline(item);
+
+        return Ok(new ProductionDeployDetailResponse(
+            item,
+            timeline,
+            new ProductionDeployHealthSummary(
+                item.RuntimeHealthy,
+                item.VersionHealthy,
+                item.ServedVersion,
+                item.RollbackExecuted,
+                item.RecoveryAuditComplete,
+                item.ClosureComplete,
+                item.OperationsStatus)));
+    }
+
     [HttpGet("deploys/latest")]
     public async Task<ActionResult<ProductionDeployHistoryItem>> GetLatest(
         CancellationToken cancellationToken = default)
@@ -165,6 +203,66 @@ public sealed class ProductionOperationsController : ControllerBase
         }
     }
 
+    private static IReadOnlyList<ProductionDeployTimelineItem> BuildTimeline(
+        ProductionDeployHistoryItem item)
+    {
+        var migrationOk =
+            item.MigrationSafetyApproved &&
+            item.MigrationHashMatched &&
+            !item.DestructiveMigrationsAllowed;
+
+        return new[]
+        {
+            new ProductionDeployTimelineItem(
+                "backup",
+                "Backup PostgreSQL",
+                item.BackupValidated ? "passed" : "pending",
+                item.BackupValidated ? "Backup validado antes das mutacoes." : "Backup nao confirmado."),
+
+            new ProductionDeployTimelineItem(
+                "migration-safety",
+                "Migration Safety",
+                migrationOk ? "passed" : "blocked",
+                migrationOk ? "Conjunto aprovado, hash conferido e destrutivas bloqueadas." : "Migration safety nao confirmou todos os invariantes."),
+
+            new ProductionDeployTimelineItem(
+                "promotion",
+                "Promocao",
+                item.PromotionApplied ? "applied" : "skipped",
+                item.PromotionApplied ? "Release promovida pelo fluxo atomico." : "Ciclo sem promocao real."),
+
+            new ProductionDeployTimelineItem(
+                "runtime",
+                "Runtime Health",
+                item.RuntimeHealthy ? "passed" : "unchecked",
+                item.RuntimeHealthy ? "Runtime respondeu saudavel." : "Runtime nao foi confirmado neste ciclo."),
+
+            new ProductionDeployTimelineItem(
+                "version",
+                "Version Verification",
+                item.VersionHealthy ? "passed" : "unchecked",
+                item.VersionHealthy ? $"Versao servida confirmada: {item.ServedVersion}." : "Versao servida nao foi confirmada."),
+
+            new ProductionDeployTimelineItem(
+                "rollback",
+                "Rollback",
+                item.RollbackExecuted ? "executed" : "not-required",
+                item.RollbackExecuted ? "Rollback executado durante o ciclo." : "Rollback nao foi necessario."),
+
+            new ProductionDeployTimelineItem(
+                "recovery-audit",
+                "Recovery Audit",
+                item.RecoveryAuditComplete ? "passed" : "pending",
+                item.RecoveryAuditComplete ? "Bundle de recovery audit concluido." : "Recovery audit nao concluido."),
+
+            new ProductionDeployTimelineItem(
+                "closure",
+                "Closure Gate",
+                item.ClosureComplete ? "passed" : "pending",
+                item.ClosureComplete ? "Closure gate end-to-end concluido." : "Closure gate nao concluido.")
+        };
+    }
+
     private static string? GetString(JsonElement root, string propertyName) =>
         root.TryGetProperty(propertyName, out var value) && value.ValueKind == JsonValueKind.String
             ? value.GetString()
@@ -183,6 +281,26 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionDeployDetailResponse(
+    ProductionDeployHistoryItem Release,
+    IReadOnlyList<ProductionDeployTimelineItem> Timeline,
+    ProductionDeployHealthSummary Health);
+
+public sealed record ProductionDeployTimelineItem(
+    string Key,
+    string Label,
+    string State,
+    string Description);
+
+public sealed record ProductionDeployHealthSummary(
+    bool RuntimeHealthy,
+    bool VersionHealthy,
+    string ServedVersion,
+    bool RollbackExecuted,
+    bool RecoveryAuditComplete,
+    bool ClosureComplete,
+    string OperationsStatus);
 
 public sealed record ProductionDeployHistoryResponse(
     int Page,

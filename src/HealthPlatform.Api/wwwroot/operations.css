@@ -50,3 +50,35 @@
   .ops-pagination-v0582 .actions{width:100%}
   .ops-pagination-v0582 .actions button{flex:1}
 }
+
+
+/* v0.58.3 — Production Operations Release Detail */
+.ops-release-row-v0583,.ops-release-card-v0583{cursor:pointer}
+.ops-release-row-v0583:hover,.ops-release-row-v0583:focus-visible{background:rgba(255,255,255,.035);outline:none}
+.ops-release-card-v0583:hover,.ops-release-card-v0583:focus-visible{border-color:rgba(98,217,172,.35);outline:none}
+.ops-detail-backdrop-v0583{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:1190}
+.ops-detail-panel-v0583{position:fixed;top:0;right:0;height:100dvh;width:min(560px,94vw);z-index:1200;background:#0f1514;border-left:1px solid rgba(255,255,255,.08);box-shadow:-20px 0 50px rgba(0,0,0,.28);overflow:auto}
+body.ops-detail-open-v0583{overflow:hidden}
+.ops-detail-v0583{padding:22px;display:grid;gap:18px}
+.ops-detail-head-v0583{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.ops-detail-head-v0583 h3{margin:4px 0 5px;font-size:1.35rem}
+.ops-detail-head-v0583 p{margin:0;opacity:.65}
+.ops-detail-health-v0583{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ops-detail-gates-v0583{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.025)}
+.ops-timeline-v0583{display:grid;gap:0}
+.ops-timeline-item-v0583{display:grid;grid-template-columns:18px 1fr;gap:12px;position:relative;padding:0 0 20px}
+.ops-timeline-item-v0583:not(:last-child)::before{content:"";position:absolute;left:6px;top:13px;bottom:0;width:1px;background:rgba(255,255,255,.1)}
+.ops-timeline-dot-v0583{width:13px;height:13px;border-radius:50%;margin-top:4px;border:2px solid currentColor;background:#0f1514;z-index:1}
+.ops-timeline-item-v0583.ok{color:#62d9ac}
+.ops-timeline-item-v0583.warn{color:#efc66c}
+.ops-timeline-item-v0583.bad{color:#f28f8f}
+.ops-timeline-item-v0583.neutral{color:#aab8b4}
+.ops-timeline-title-v0583{display:flex;justify-content:space-between;gap:10px;align-items:center;color:inherit}
+.ops-timeline-title-v0583 strong{color:var(--text,#f4f7f6)}
+.ops-timeline-item-v0583 p{margin:5px 0 0;color:var(--muted,#a7b2af);font-size:.84rem;line-height:1.45}
+.ops-detail-safe-v0583{padding:12px 14px;border-radius:12px;border:1px solid rgba(98,217,172,.18);background:rgba(98,217,172,.055);font-size:.8rem;opacity:.8}
+@media (max-width:680px){
+  .ops-detail-panel-v0583{width:100%;top:auto;bottom:0;height:min(86dvh,760px);border-left:0;border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0}
+  .ops-detail-v0583{padding:18px 16px 26px}
+  .ops-detail-health-v0583{grid-template-columns:1fr 1fr}
+}

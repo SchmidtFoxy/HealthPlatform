@@ -8101,3 +8101,23 @@ Adicionar visualização administrativa/profissional do histórico operacional, 
 
 ### v0.58.3 — Production Operations Release Detail
 Adicionar detalhe navegável por release/deploy com timeline dos gates, sinais de health, rollback/recovery, modo de execução e evidências públicas seguras.
+
+
+## ✅ v0.58.3 — Production Operations Release Detail — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/detail`;
+- identificação por `version` + `recordedAt`, evitando ambiguidade entre múltiplos deploys da mesma versão;
+- detalhe seguro da release sem SHA de backup, staging path, caminhos internos ou segredos;
+- timeline derivada dos gates de backup, migration safety, promoção, runtime, version verification, rollback, recovery audit e closure;
+- resumo de saúde com runtime, versão servida, rollback e status operacional;
+- linhas e cards do histórico tornados navegáveis por clique e teclado;
+- drawer lateral no desktop e bottom sheet no mobile;
+- status semânticos `Concluído`, `Aplicado`, `Executado`, `Não necessário`, `Sem aplicação`, `Pendente` e `Bloqueado`;
+- acessibilidade com `role=button`, `tabindex=0`, Enter/Espaço e botão de fechamento;
+- detalhe consome apenas evidências públicas seguras.
+
+## Próxima etapa
+
+### v0.58.4 — Production Operations Filters & Search
+Adicionar filtros por versão, status operacional, modo, rollback e período, além de busca rápida no histórico sem expor metadata interna.

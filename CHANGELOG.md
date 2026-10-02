@@ -1,3 +1,13 @@
+# v0.58.3 — Production Operations Release Detail
+
+- Adiciona endpoint de detalhe de deploy.
+- Adiciona timeline derivada dos gates operacionais.
+- Adiciona resumo de saúde da release.
+- Torna linhas/cards do histórico navegáveis.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Adiciona interação por Enter/Espaço.
+- Mantém metadata interna e segredos fora da resposta pública.
+
 # v0.58.2 — Production Operations Admin UI
 
 - Adiciona menu Operações.
