@@ -1,14 +1,13 @@
-HealthPlatform v0.56.7-r1 - Legacy History UI Gate Fix
+HealthPlatform v0.56.8-r1 - Nullable UpdatedAt Fix
 
 Arquivos alterados:
-- TESTAR.ps1
+- src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
 - ARQUIVOS-ALTERADOS.txt
 
 Correcao:
-- remove do gate historico v0.56.3 a exigencia do rotulo literal 'Historico da revisao';
-- preserva a validacao estrutural do historico por marcador, data attribute, host e rota /history;
-- necessario porque a v0.56.7 evoluiu a UI para navegacao por evento;
-- TESTAR.ps1 permanece UTF-8 com BOM.
+- ajusta AtualizadoEmUtc para DateTime? no contrato de contexto;
+- corrige o CS1503 ao mapear NotaInternaProfissional.UpdatedAtUtc;
+- sem alteracao de schema, regra de negocio ou VERSION.txt.
 
 Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.7
+Se aprovado, commit/push apenas: v0.56.8

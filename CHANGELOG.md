@@ -1,3 +1,11 @@
+# v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context
+
+- Adiciona contexto consolidado entre revisão anterior, atual e próxima.
+- Inclui item, status, profissional revisor e datas.
+- Adiciona endpoint `/history/context`.
+- Exibe painel comparativo de contexto na UI profissional.
+- Não cria migration ou tabela nova.
+
 # v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation
 
 - Adiciona navegação entre eventos do histórico filtrado.

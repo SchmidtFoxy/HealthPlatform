@@ -5910,3 +5910,20 @@ Adicionar navegação profissional entre eventos e revisões relacionadas.
 
 ### v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context
 Adicionar contexto documental consolidado entre revisão atual, revisão anterior e revisão seguinte.
+
+
+## ✅ v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context — CONCLUÍDA
+
+**Entregue:**
+- contexto documental consolidado entre revisão anterior, atual e próxima;
+- item da revisão, status, profissional revisor e datas;
+- posição da revisão atual no conjunto ativo;
+- endpoint dedicado `/history/context`;
+- painel comparativo na interface profissional;
+- reaproveita a persistência já existente;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison
+Adicionar comparação documental explícita entre a revisão atual e suas revisões vizinhas.

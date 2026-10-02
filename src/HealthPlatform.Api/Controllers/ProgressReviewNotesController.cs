@@ -3462,6 +3462,52 @@ public class ProgressReviewNotesController(
             revisoes.Count));
     }
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextResponse>> ContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var revisoes = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                !x.Arquivada)
+            .OrderBy(x => x.CreatedAtUtc)
+            .ThenBy(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        var indice = revisoes.FindIndex(x => x.Id == id);
+        if (indice < 0)
+            return NotFound();
+
+        ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextItemResponse MapearContexto(NotaInternaProfissional nota)
+        {
+            var payload = LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota);
+            return new(
+                nota.Id,
+                payload.ItemRevisao,
+                payload.Status,
+                payload.ProfissionalRevisor,
+                nota.CreatedAtUtc,
+                nota.UpdatedAtUtc);
+        }
+
+        var atual = MapearContexto(revisoes[indice]);
+        var anterior = indice > 0 ? MapearContexto(revisoes[indice - 1]) : null;
+        var proxima = indice < revisoes.Count - 1 ? MapearContexto(revisoes[indice + 1]) : null;
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextResponse(
+            anterior,
+            atual,
+            proxima,
+            indice + 1,
+            revisoes.Count));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse>>> HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

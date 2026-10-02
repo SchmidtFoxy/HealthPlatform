@@ -7414,3 +7414,29 @@ A navegação é estritamente documental e não interpreta risco, urgência, pri
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context`.
+
+
+---
+
+## v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context
+
+Adiciona contexto documental consolidado para leitura da revisão atual junto das revisões vizinhas.
+
+### Contexto exibido
+- revisão anterior;
+- revisão atual;
+- próxima revisão;
+- item da revisão;
+- status;
+- profissional revisor;
+- data de criação;
+- posição atual / total.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up-review/{id}/history/context`
+
+O contexto é exclusivamente documental e não infere evolução clínica, causalidade, risco, urgência, prioridade, diagnóstico, prognóstico ou decisão terapêutica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison`.
