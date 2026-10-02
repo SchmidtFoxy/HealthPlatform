@@ -8078,3 +8078,26 @@ Expor o histórico operacional de releases/deploys por API autenticada para o m�
 
 ### v0.58.2 — Production Operations Admin UI
 Adicionar visualização administrativa/profissional do histórico operacional, com estado atual, paginação, badges de saúde, versão servida, rollback/recovery e navegação mobile-first.
+
+
+## ✅ v0.58.2 — Production Operations Admin UI — CONCLUÍDA
+
+**Entregue:**
+- item `Operações` na navegação profissional para `Admin`, `Medico`, `Nutricionista` e `Personal`;
+- painel `Saúde e histórico de produção`;
+- estado atual com versão, status, runtime e versão servida;
+- histórico de deploys consumindo a API da v0.58.1;
+- paginação Anterior/Próxima;
+- status visuais `Saudável`, `Validado`, `Rollback` e fallback neutro;
+- indicadores de backup, migration safety, runtime, version verification, recovery audit e closure;
+- versão servida e rollback destacados;
+- atualização manual sem recarregar a aplicação;
+- tabela desktop e cards mobile-first;
+- acesso da UI protegido por perfil e API autenticada;
+- stylesheet isolado `operations.css`;
+- nenhum segredo, hash de backup ou caminho interno é renderizado.
+
+## Próxima etapa
+
+### v0.58.3 — Production Operations Release Detail
+Adicionar detalhe navegável por release/deploy com timeline dos gates, sinais de health, rollback/recovery, modo de execução e evidências públicas seguras.

@@ -293,6 +293,9 @@ function showApp(){
   $('#userType').textContent=u.tipoUsuario||'Usuário';
   $('#avatar').textContent=initials(u.nome);
   $$('.admin-only').forEach(x=>x.classList.toggle('hidden',u.tipoUsuario!=='Admin'));
+  const operationsAllowed=['Admin','Medico','Nutricionista','Personal'].includes(u.tipoUsuario);
+  $$('.operations-only').forEach(x=>x.classList.toggle('hidden',!operationsAllowed));
+  if(state.view==='operacoes-producao'&&!operationsAllowed)state.view='dashboard';
   navigate(state.view);
 }
 let hpSessionRenewTimer=null;
@@ -421,7 +424,7 @@ if(!state.token)hpResolvePublicRoute();
 $('#logoutButton').onclick=()=>state.user?.impersonating?hpEndImpersonation():logout();$('#menuButton').onclick=()=>$('.sidebar').classList.toggle('open');$$('.nav-item[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$$('[data-close-create]').forEach(x=>x.onclick=()=>$('#createPatientModal').classList.add('hidden'));
 function closeClinicalAction(){$('#clinicalActionModal').classList.add('hidden');$('#clinicalActionModal').classList.remove('nutrition-modal-open','workout-modal-open','patient-action-sheet','workout-complete-modal','workout-session-review-modal','patient-status-modal-v0203');document.body.classList.remove('patient-sheet-open');$('#clinicalActionContent').innerHTML=''}
 $$('[data-close-clinical]').forEach(x=>x.onclick=closeClinicalAction);
-function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['AESYN • PERFORMANCE CLÍNICA','Performance'],pacientes:['AESYN • ACOMPANHAMENTO','Pacientes'],prescricoes:['AESYN • PLANO INTEGRADO','Treino & Nutrição'],agenda:['AESYN • CONSULTAS','Agenda'],paciente:['AESYN • PERFORMANCE PROFILE','Paciente']};const title=titles[view]||titles.dashboard;$('#pageEyebrow').textContent=title[0];$('#pageTitle').textContent=title[1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,prescricoes:loadPrescriptionWorkspace,agenda:loadAgenda,paciente:loadPatient}[view]||loadDashboard)().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
+function navigate(view){state.view=view;$$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('.sidebar').classList.remove('open');const titles={dashboard:['AESYN • PERFORMANCE CLÍNICA','Performance'],pacientes:['AESYN • ACOMPANHAMENTO','Pacientes'],prescricoes:['AESYN • PLANO INTEGRADO','Treino & Nutrição'],agenda:['AESYN • CONSULTAS','Agenda'],paciente:['AESYN • PERFORMANCE PROFILE','Paciente'],'operacoes-producao':['AESYN • PRODUÇÃO','Operações']};const title=titles[view]||titles.dashboard;$('#pageEyebrow').textContent=title[0];$('#pageTitle').textContent=title[1];setLoading();({dashboard:loadDashboard,pacientes:loadPatients,prescricoes:loadPrescriptionWorkspace,agenda:loadAgenda,paciente:loadPatient,'operacoes-producao':hpLoadProductionOperationsV0582}[view]||loadDashboard)().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)})}
 function stat(label,value,hint){return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value??0}</div><div class="hint">${hint}</div></div>`}
 function agendaRow(x){return `<div class="list-row clickable" data-patient="${x.pacienteId}"><div class="time-badge">${fmtTime(x.dataHoraLocal)}</div><div class="row-main"><strong>${esc(x.pacienteNome)}</strong><small>${esc(x.motivo||'Consulta')}</small></div><span class="pill ${esc(x.status)}">${esc(x.status)}</span></div>`}
 const HP_PROFESSIONAL_DAILY_SIGNALS_V0228='v0.22.8';
@@ -20545,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.1';
+const HP_MVP_VERSION='0.58.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26444,3 +26447,111 @@ hpOpenSportsExpansionIV0260=async function(host){
   const detail=root?.querySelector('#recreationalHostV0266');
   if(button&&detail)button.onclick=()=>hpOpenRecreationalSportsV0266(detail);
 };
+
+
+// ===== v0.58.2 — Production Operations Admin UI =====
+const HP_PRODUCTION_OPERATIONS_UI_V0582='v0.58.2';
+const hpOperationsStateV0582={page:1,pageSize:20,totalPages:0,loading:false};
+
+function hpOpsStatusV0582(item){
+  if(item?.operationsStatus==='healthy'&&item?.runtimeHealthy&&item?.versionHealthy)return ['ok','Saudável'];
+  if(item?.rollbackExecuted)return ['bad','Rollback'];
+  if(item?.operationsStatus==='validated')return ['warn','Validado'];
+  return ['neutral',item?.operationsStatus||'Indefinido'];
+}
+function hpOpsBoolV0582(v){return v?'Sim':'Não'}
+function hpOpsDateV0582(v){return v?fmtDateTime(v):'—'}
+function hpOpsStatusBadgeV0582(item){
+  const [kind,label]=hpOpsStatusV0582(item);
+  return `<span class="ops-status-v0582 ${kind}">${esc(label)}</span>`;
+}
+function hpOpsFlagsV0582(item){
+  const flags=[
+    ['Backup',item.backupValidated],
+    ['Migração',item.migrationSafetyApproved&&item.migrationHashMatched&&!item.destructiveMigrationsAllowed],
+    ['Runtime',item.runtimeHealthy],
+    ['Versão',item.versionHealthy],
+    ['Audit',item.recoveryAuditComplete],
+    ['Closure',item.closureComplete]
+  ];
+  return `<div class="ops-flags-v0582">${flags.map(([name,ok])=>`<span class="ops-mini-v0582">${ok?'✓':'–'} ${esc(name)}</span>`).join('')}</div>`;
+}
+function hpOpsMetricV0582(label,value){
+  return `<article class="ops-metric-v0582"><small>${esc(label)}</small><strong>${value}</strong></article>`;
+}
+function hpRenderOperationsLatestV0582(latest){
+  const host=$('#opsLatestV0582');if(!host)return;
+  if(!latest){host.innerHTML=`<div class="ops-empty-v0582">Nenhum estado operacional foi materializado ainda.</div>`;return}
+  host.innerHTML=[
+    hpOpsMetricV0582('Versão',`<span class="ops-version-v0582">${esc(latest.version||'—')}</span>`),
+    hpOpsMetricV0582('Estado',hpOpsStatusBadgeV0582(latest)),
+    hpOpsMetricV0582('Runtime',latest.runtimeHealthy?'Saudável':'Não confirmado'),
+    hpOpsMetricV0582('Versão servida',esc(latest.servedVersion||'—'))
+  ].join('');
+}
+function hpRenderOperationsRowsV0582(data){
+  const rows=data?.items||[];
+  const tbody=$('#opsRowsV0582'),cards=$('#opsCardsV0582'),pagination=$('#opsPaginationTextV0582');
+  if(tbody)tbody.innerHTML=rows.length?rows.map(item=>`<tr>
+    <td><span class="ops-version-v0582">${esc(item.version)}</span><span class="ops-sub-v0582">${hpOpsDateV0582(item.recordedAt)}</span></td>
+    <td>${hpOpsStatusBadgeV0582(item)}</td>
+    <td>${esc(item.mode||'—')}</td>
+    <td>${esc(item.servedVersion||'—')}</td>
+    <td>${item.rollbackExecuted?'<span class="ops-status-v0582 bad">Executado</span>':'Não'}</td>
+    <td>${hpOpsFlagsV0582(item)}</td>
+  </tr>`).join(''):`<tr><td colspan="6"><div class="ops-empty-v0582">Nenhum deploy operacional registrado.</div></td></tr>`;
+
+  if(cards)cards.innerHTML=rows.length?rows.map(item=>`<article class="ops-card-v0582">
+    <div class="ops-card-v0582-head"><div><strong class="ops-version-v0582">${esc(item.version)}</strong><span class="ops-sub-v0582">${hpOpsDateV0582(item.recordedAt)}</span></div>${hpOpsStatusBadgeV0582(item)}</div>
+    <div class="ops-card-v0582-grid">
+      <div><small>Modo</small><strong>${esc(item.mode||'—')}</strong></div>
+      <div><small>Servida</small><strong>${esc(item.servedVersion||'—')}</strong></div>
+      <div><small>Rollback</small><strong>${hpOpsBoolV0582(item.rollbackExecuted)}</strong></div>
+      <div><small>Closure</small><strong>${hpOpsBoolV0582(item.closureComplete)}</strong></div>
+    </div>
+    <div style="margin-top:12px">${hpOpsFlagsV0582(item)}</div>
+  </article>`).join(''):`<div class="ops-empty-v0582">Nenhum deploy operacional registrado.</div>`;
+
+  hpOperationsStateV0582.totalPages=data?.totalPages||0;
+  if(pagination)pagination.textContent=`Página ${data?.page||1}${hpOperationsStateV0582.totalPages?` de ${hpOperationsStateV0582.totalPages}`:''} • ${data?.totalItems||0} registro(s)`;
+  const prev=$('#opsPrevV0582'),next=$('#opsNextV0582');
+  if(prev)prev.disabled=(data?.page||1)<=1;
+  if(next)next.disabled=!hpOperationsStateV0582.totalPages||(data?.page||1)>=hpOperationsStateV0582.totalPages;
+}
+async function hpFetchOperationsV0582(){
+  if(hpOperationsStateV0582.loading)return;
+  hpOperationsStateV0582.loading=true;
+  const refresh=$('#opsRefreshV0582');if(refresh){refresh.disabled=true;refresh.textContent='Atualizando…'}
+  try{
+    const [latestResult,history]=await Promise.all([
+      api('/api/operacoes-producao/deploys/latest').catch(err=>String(err?.message||'').includes('materializado')?null:Promise.reject(err)),
+      api(`/api/operacoes-producao/deploys?page=${hpOperationsStateV0582.page}&pageSize=${hpOperationsStateV0582.pageSize}`)
+    ]);
+    hpRenderOperationsLatestV0582(latestResult);
+    hpRenderOperationsRowsV0582(history);
+  }finally{
+    hpOperationsStateV0582.loading=false;
+    if(refresh){refresh.disabled=false;refresh.textContent='Atualizar'}
+  }
+}
+async function hpLoadProductionOperationsV0582(){
+  const allowed=['Admin','Medico','Nutricionista','Personal'].includes(state.user?.tipoUsuario);
+  if(!allowed){content.innerHTML=hpErrorState('Acesso restrito','Este painel é destinado à operação profissional/administrativa.');return}
+  content.innerHTML=`<section class="ops-v0582" data-production-operations-ui="${HP_PRODUCTION_OPERATIONS_UI_V0582}">
+    <div class="ops-hero">
+      <div><span class="eyebrow">PRODUCTION OPERATIONS • ${HP_PRODUCTION_OPERATIONS_UI_V0582}</span><h3>Saúde e histórico de produção</h3><p>Acompanhe releases, versão servida, rollback, recovery e os principais gates do pipeline seguro.</p></div>
+      <button type="button" class="secondary ops-refresh" id="opsRefreshV0582">Atualizar</button>
+    </div>
+    <div id="opsLatestV0582" class="ops-latest-v0582">${hpUiState('loading','Carregando estado atual')}</div>
+    <section class="ops-table-shell-v0582">
+      <div class="ops-table-head-v0582"><div><span class="eyebrow">HISTÓRICO</span><h3>Deploys operacionais</h3></div><small>Mais recente primeiro</small></div>
+      <table class="ops-table-v0582"><thead><tr><th>Release</th><th>Estado</th><th>Modo</th><th>Versão servida</th><th>Rollback</th><th>Gates</th></tr></thead><tbody id="opsRowsV0582"></tbody></table>
+      <div id="opsCardsV0582" class="ops-mobile-cards-v0582"></div>
+      <div class="ops-pagination-v0582"><small id="opsPaginationTextV0582">Carregando…</small><div class="actions"><button type="button" class="secondary" id="opsPrevV0582">Anterior</button><button type="button" class="secondary" id="opsNextV0582">Próxima</button></div></div>
+    </section>
+  </section>`;
+  $('#opsRefreshV0582')?.addEventListener('click',()=>hpFetchOperationsV0582().catch(e=>toast(e.message,true)));
+  $('#opsPrevV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page>1){hpOperationsStateV0582.page--;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
+  $('#opsNextV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page<hpOperationsStateV0582.totalPages){hpOperationsStateV0582.page++;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
+  await hpFetchOperationsV0582();
+}

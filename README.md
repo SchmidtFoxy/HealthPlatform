@@ -9589,3 +9589,24 @@ Perfis permitidos: `Admin`, `Medico`, `Nutricionista` e `Personal`.
 A API usa uma allowlist explícita de campos e não devolve hash do backup, staging path ou outros caminhos internos. O diretório pode ser configurado por `ProductionOperations:OperationsDirectory`.
 
 **Próxima etapa:** `v0.58.2 — Production Operations Admin UI`.
+
+
+---
+
+## v0.58.2 — Production Operations Admin UI
+
+A área profissional ganha o menu **Operações**, disponível para Admin, Médico, Nutricionista e Personal.
+
+O painel apresenta:
+- estado operacional atual;
+- versão servida;
+- runtime health;
+- histórico paginado;
+- rollback;
+- migration safety;
+- recovery audit;
+- closure gate.
+
+A experiência possui tabela para desktop e cards para mobile, consumindo apenas os DTOs seguros da API v0.58.1.
+
+**Próxima etapa:** `v0.58.3 — Production Operations Release Detail`.

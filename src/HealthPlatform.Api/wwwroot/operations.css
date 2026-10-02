@@ -1,0 +1,52 @@
+
+/* v0.58.2 — Production Operations Admin UI */
+.ops-v0582{display:grid;gap:18px}
+.ops-v0582 .ops-hero{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:20px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.035)}
+.ops-v0582 .ops-hero h3{margin:4px 0 6px;font-size:1.25rem}
+.ops-v0582 .ops-hero p{margin:0;opacity:.72;max-width:760px}
+.ops-v0582 .ops-refresh{min-width:112px}
+.ops-latest-v0582{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.ops-metric-v0582{padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.025);min-width:0}
+.ops-metric-v0582 small{display:block;opacity:.62;text-transform:uppercase;letter-spacing:.08em;font-size:.68rem}
+.ops-metric-v0582 strong{display:block;margin-top:7px;font-size:1.05rem;overflow-wrap:anywhere}
+.ops-status-v0582{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;font-size:.76rem;font-weight:700;border:1px solid rgba(255,255,255,.09)}
+.ops-status-v0582::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.ops-status-v0582.ok{color:#62d9ac;background:rgba(60,190,145,.1)}
+.ops-status-v0582.warn{color:#efc66c;background:rgba(220,170,70,.1)}
+.ops-status-v0582.bad{color:#f28f8f;background:rgba(220,90,90,.1)}
+.ops-status-v0582.neutral{color:#aab8b4;background:rgba(150,165,160,.08)}
+.ops-table-shell-v0582{border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.025)}
+.ops-table-head-v0582{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.ops-table-head-v0582 h3{margin:0}
+.ops-table-v0582{width:100%;border-collapse:collapse}
+.ops-table-v0582 th,.ops-table-v0582 td{padding:13px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:middle}
+.ops-table-v0582 th{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;opacity:.62}
+.ops-table-v0582 td{font-size:.88rem}
+.ops-table-v0582 tr:last-child td{border-bottom:0}
+.ops-version-v0582{font-weight:800}
+.ops-sub-v0582{display:block;opacity:.58;font-size:.73rem;margin-top:2px}
+.ops-flags-v0582{display:flex;flex-wrap:wrap;gap:5px}
+.ops-mini-v0582{font-size:.68rem;padding:3px 6px;border-radius:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06)}
+.ops-pagination-v0582{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid rgba(255,255,255,.07)}
+.ops-pagination-v0582 small{opacity:.65}
+.ops-pagination-v0582 .actions{display:flex;gap:8px}
+.ops-empty-v0582{padding:32px 18px;text-align:center;opacity:.7}
+.ops-mobile-cards-v0582{display:none}
+@media (max-width:900px){
+  .ops-latest-v0582{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ops-v0582 .ops-hero{flex-direction:column}
+  .ops-v0582 .ops-refresh{width:100%}
+}
+@media (max-width:680px){
+  .ops-latest-v0582{grid-template-columns:1fr 1fr}
+  .ops-table-v0582{display:none}
+  .ops-mobile-cards-v0582{display:grid;gap:10px;padding:12px}
+  .ops-card-v0582{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.025)}
+  .ops-card-v0582-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+  .ops-card-v0582-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .ops-card-v0582-grid small{display:block;opacity:.58;font-size:.67rem;text-transform:uppercase}
+  .ops-card-v0582-grid strong{font-size:.82rem}
+  .ops-pagination-v0582{align-items:flex-start;flex-direction:column}
+  .ops-pagination-v0582 .actions{width:100%}
+  .ops-pagination-v0582 .actions button{flex:1}
+}

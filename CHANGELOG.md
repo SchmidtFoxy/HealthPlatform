@@ -1,3 +1,14 @@
+# v0.58.2 — Production Operations Admin UI
+
+- Adiciona menu Operações.
+- Adiciona painel de saúde e histórico de produção.
+- Exibe estado atual e versão servida.
+- Adiciona histórico paginado de deploys.
+- Adiciona badges de status e gates.
+- Adiciona tabela desktop e cards mobile.
+- Adiciona `operations.css`.
+- Mantém dados internos e segredos fora da UI.
+
 # v0.58.1 — Production Operations Deploy History API
 
 - Adiciona `ProductionOperationsController`.
