@@ -1,3 +1,14 @@
+# v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback
+
+- Adiciona feedback ao trocar de nota.
+- Adiciona feedback ao fechar o histórico.
+- Mantém o feedback visível fora do bloco interno do histórico.
+- Registra motivo técnico em `data-expiry-reason-v05647`.
+- Nova verificação limpa feedback anterior.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry
 
 - Expira a sessão técnica ao trocar de nota.

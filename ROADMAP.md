@@ -6638,3 +6638,22 @@ Adicionar regra local para descartar explicitamente o estado técnico preservado
 
 ### v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback
 Adicionar feedback técnico local quando a sessão de verificação for encerrada explicitamente, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback — CONCLUÍDA
+
+**Entregue:**
+- feedback técnico local ao expirar a sessão por troca de nota;
+- feedback técnico local ao expirar a sessão por `Fechar histórico`;
+- mensagens sem conteúdo clínico/textual;
+- atributo técnico `data-expiry-reason-v05647`;
+- feedback permanece visível mesmo após o conteúdo do histórico ser fechado;
+- nova tentativa de verificação limpa feedback antigo de expiração;
+- sessão técnica continua sendo descartada pela regra da v0.56.46;
+- nenhum armazenamento persistente no servidor;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.48 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp
+Adicionar horário local ao feedback de encerramento da sessão técnica, sem conteúdo clínico/textual.

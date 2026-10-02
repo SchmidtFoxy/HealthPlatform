@@ -8251,3 +8251,24 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback`.
+
+
+---
+
+## v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback
+
+Adiciona feedback local explícito quando a sessão técnica da verificação é encerrada.
+
+Mensagens:
+- `Sessão técnica local encerrada ao trocar de nota.`;
+- `Sessão técnica local encerrada ao fechar o histórico.`.
+
+O feedback fica fora do conteúdo interno do histórico, portanto continua visível mesmo após `Fechar histórico`.
+
+Uma nova tentativa de verificação limpa o feedback anterior.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.48 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp`.
