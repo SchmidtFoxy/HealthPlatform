@@ -1,4 +1,16 @@
-﻿# v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters
+﻿# v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpProfissionalResumoResponse`.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/summary`.
+- Agrega Total, Ativos, Registrados, EmAcompanhamento, Concluidos, Descartados e Arquivados.
+- Agrupa por profissional responsável.
+- Adiciona painel de resumo na UI.
+- Atualiza resumo após operações.
+- Sem migration nova.
+- Próxima etapa: v0.55.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Closure.
+
+# v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersResponse`.
 - Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/search`.

@@ -2779,6 +2779,54 @@ public class ProgressReviewNotesController(
         string? Horizonte = null,
         string? ObservacaoProfissional = null);
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up/summary")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryResponse>> ResumoTeamKnowledgeEffectDecisionReviewOutcomeFollowUps(
+        Guid pacienteId,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas.Select(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUp).ToArray();
+
+        var total = itens.Length;
+        var arquivados = itens.Count(x => x.Arquivada);
+        var ativos = itens.Count(x => !x.Arquivada);
+        var registrados = itens.Count(x => !x.Arquivada && x.Status == "Registrado");
+        var emAcompanhamento = itens.Count(x => !x.Arquivada && x.Status == "EmAcompanhamento");
+        var concluidos = itens.Count(x => !x.Arquivada && x.Status == "Concluido");
+        var descartados = itens.Count(x => !x.Arquivada && x.Status == "Descartado");
+
+        var porProfissionalResponsavel = itens
+            .Where(x => !x.Arquivada && !string.IsNullOrWhiteSpace(x.ProfissionalResponsavel))
+            .GroupBy(x => x.ProfissionalResponsavel.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpProfissionalResumoResponse(
+                g.Key,
+                g.Count()))
+            .OrderByDescending(x => x.Total)
+            .ThenBy(x => x.Profissional)
+            .ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryResponse(
+            total,
+            ativos,
+            registrados,
+            emAcompanhamento,
+            concluidos,
+            descartados,
+            arquivados,
+            porProfissionalResponsavel,
+            "O resumo apresenta somente agregações documentais dos acompanhamentos profissionais. Não transforma agregações em validação causal ou evidência clínica validada, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up/search")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersResponse>> FiltrarTeamKnowledgeEffectDecisionReviewOutcomeFollowUps(
         Guid pacienteId,

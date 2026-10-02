@@ -5737,3 +5737,19 @@ Adicionar busca e filtros estruturais aos acompanhamentos documentados.
 
 ### v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary
 Adicionar resumo agregado dos acompanhamentos documentados.
+
+## ✅ v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary — CONCLUÍDA
+
+**Entregue:**
+- totais por estado;
+- ativos/arquivados;
+- agrupamento por profissional responsável;
+- endpoint de resumo;
+- painel de resumo na UI;
+- atualização após operações;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.55.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Closure
+Fechar a linha funcional 0.55.x consolidando Foundation, Persistence, Status, History, Filters e Summary.

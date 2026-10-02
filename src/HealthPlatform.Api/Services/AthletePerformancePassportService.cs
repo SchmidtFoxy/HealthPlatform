@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.55.4",
+            "v0.55.5",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters adiciona busca textual, filtros por status, profissional, horizonte, arquivamento e ordenação aos acompanhamentos documentados.")
+            "Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary adiciona agregações documentais por status e profissional responsável aos acompanhamentos das revisões profissionais, sem inferência clínica automática.")
         {
             Recordes = recordes,
             Tempos = tempos,
