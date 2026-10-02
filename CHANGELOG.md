@@ -1,3 +1,15 @@
+# v0.56.98 — Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona botão local para copiar o resumo técnico da v0.56.97.
+- Usa `navigator.clipboard.writeText`.
+- Exibe feedback local de sucesso, resumo indisponível ou falha.
+- Adiciona marcador técnico v0.56.98.
+- Preserva estado técnico v0.56.96 e resumo v0.56.97.
+- Mantém fluxo local, sem persistência no servidor.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+
 # v0.56.97 — Focus Announcement Deduplication Reset State Summary
 
 - Exibe resumo técnico local do estado do reset explícito da deduplicação.

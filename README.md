@@ -9302,3 +9302,25 @@ Não cria migration ou tabela nova.
 ### Marco de produção futuro
 
 Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
+
+
+---
+
+## v0.56.98 — Focus Announcement Deduplication Reset State Summary Copy
+
+Permite copiar o resumo técnico local introduzido na v0.56.97.
+
+A entrega adiciona:
+- botão **Copiar resumo do reset da deduplicação**;
+- cópia via `navigator.clipboard.writeText`;
+- feedback técnico local para sucesso, indisponibilidade e falha.
+
+O conteúdo copiado continua sendo apenas o resumo técnico local do estado da deduplicação.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.99 — Focus Announcement Deduplication Reset State Summary Copy Timestamp`.
+
+### Marco de produção futuro
+
+Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
