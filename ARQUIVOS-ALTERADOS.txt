@@ -1,4 +1,4 @@
-HealthPlatform v0.57.11-r1 - Incremental
+HealthPlatform v0.58.0 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -7,7 +7,7 @@ Arquivos alterados:
 - TESTAR.ps1
 - VERSION.txt
 - DEPLOY-PRODUCAO.ps1
-- DEPLOY-CLOSURE-CHECKLIST.md
+- PRODUCTION-OPERATIONS.md
 - src/HealthPlatform.Api/Controllers/HealthController.cs
 - src/HealthPlatform.Api/Program.cs
 - src/HealthPlatform.Api/wwwroot/app.js
@@ -15,23 +15,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- End-to-End Closure Gate da serie v0.57.x;
-- validacao consolidada de backup, staging, pre-activation, migrations, promotion, restart/version e audit;
-- evidencia END-TO-END-CLOSURE.txt;
-- checklist versionado de fechamento;
-- series057Closed=true;
-- DestructiveMigrationsAllowed=false preservado;
-- proxima serie liberada no ROADMAP somente apos aprovacao funcional: v0.58.x.
+- Production Operations Foundation;
+- latest-production-state.json;
+- production-deploy-history.jsonl append-only;
+- sinais de backup, migrations, promotion, runtime, version, rollback e recovery;
+- status healthy/validated;
+- pipeline seguro da v0.57.x preservado;
+- proxima etapa v0.58.1 / Deploy History API.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.11
-
-Hotfix cumulativo r1:
-- corrige o gate [5175/5178] do checklist de fechamento;
-- aceita a forma real do checklist com markdown: `v0.58.x` pode iniciar somente após aprovação funcional da v0.57.11.;
-- preserva compatibilidade com a mesma frase sem markdown;
-- codigo funcional da v0.57.11 permanece inalterado;
-- VERSION.txt permanece 0.57.11;
-- nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.11.
+Se aprovado, commit/push apenas: v0.58.0

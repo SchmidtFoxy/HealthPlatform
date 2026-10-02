@@ -48,11 +48,12 @@ $script:MigrationExecutionMetadata = $null
 $script:MigrationFailureRecoveryMetadata = $null
 $script:RecoveryAuditMetadata = $null
 $script:EndToEndClosureMetadata = $null
+$script:ProductionOperationsMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.11 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.58.0 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -1518,19 +1519,110 @@ function Test-EndToEndClosureGate {
     return $script:EndToEndClosureMetadata
 }
 
+function New-ProductionOperationsSnapshot {
+    Write-DeployTitle "PRODUCTION OPERATIONS"
+
+    if (-not $script:EndToEndClosureMetadata -or -not $script:EndToEndClosureMetadata.Complete) {
+        throw "Production operations bloqueado: end-to-end closure gate precisa estar completo."
+    }
+    if (-not $script:BackupMetadata -or -not $script:StagingMetadata -or -not $script:RecoveryAuditMetadata) {
+        throw "Production operations bloqueado: evidencias de backup, staging e recovery audit sao obrigatorias."
+    }
+
+    $operationsDir = Join-Path $DeployLogDir "operations"
+    New-Item -ItemType Directory -Path $operationsDir -Force | Out-Null
+
+    $latestFile = Join-Path $operationsDir "latest-production-state.json"
+    $historyFile = Join-Path $operationsDir "production-deploy-history.jsonl"
+    $timestamp = (Get-Date).ToString("o")
+
+    $mode = $(if ($Aplicar) { "apply" } else { "validate-only" })
+    $runtimeHealthy = $false
+    $versionHealthy = $false
+    if ($Aplicar) {
+        $runtimeHealthy = [bool]$script:RestartVerificationMetadata.HealthVerified
+        $versionHealthy = [bool]$script:RestartVerificationMetadata.VersionVerified
+    }
+    else {
+        $runtimeHealthy = [bool]$script:PreActivationMetadata.ActiveHealthOk
+        $versionHealthy = $true
+    }
+
+    $operationState = [ordered]@{
+        schemaVersion = 1
+        version = "v$TargetVersion"
+        mode = $mode
+        target = "$VpsUser@$VpsHost"
+        remoteRoot = $RemoteRoot
+        activeReleaseLink = $ActiveReleaseLink
+        backupValidated = [bool]$script:BackupValidado
+        backupSha256 = [string]$script:BackupMetadata.Sha256
+        stagingPath = [string]$script:StagingMetadata.Path
+        migrationSafetyApproved = [bool]$script:MigrationSafetyMetadata.SafeMigrationsAllowed
+        migrationHashMatched = [bool]$script:MigrationExecutionMetadata.HashMatched
+        destructiveMigrationsAllowed = $false
+        promotionApplied = [bool]$script:PromotionMetadata.Applied
+        runtimeHealthy = $runtimeHealthy
+        versionHealthy = $versionHealthy
+        servedVersion = [string]$script:RestartVerificationMetadata.ServedVersion
+        rollbackExecuted = [bool]$script:PromotionMetadata.AutoRollbackExecuted -or [bool]$script:RestartVerificationMetadata.RollbackExecuted
+        recoveryAuditComplete = [bool]$script:RecoveryAuditMetadata.Complete
+        closureComplete = [bool]$script:EndToEndClosureMetadata.Complete
+        operationsStatus = $(if ($runtimeHealthy -and $versionHealthy) { "healthy" } else { "validated" })
+        recordedAt = $timestamp
+    }
+
+    $json = $operationState | ConvertTo-Json -Depth 5 -Compress
+    if ([string]::IsNullOrWhiteSpace($json)) {
+        throw "Production operations nao conseguiu serializar o estado operacional."
+    }
+
+    $json | Set-Content -LiteralPath $latestFile -Encoding UTF8
+    $json | Add-Content -LiteralPath $historyFile -Encoding UTF8
+
+    foreach ($requiredFile in @($latestFile,$historyFile)) {
+        if (-not (Test-Path -LiteralPath $requiredFile)) {
+            throw "Production operations incompleto: arquivo obrigatorio ausente: $requiredFile"
+        }
+        if ((Get-Item -LiteralPath $requiredFile).Length -le 0) {
+            throw "Production operations incompleto: arquivo vazio: $requiredFile"
+        }
+    }
+
+    $historyCount = @(Get-Content -LiteralPath $historyFile -Encoding UTF8 | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count
+    if ($historyCount -lt 1) {
+        throw "Production operations history nao possui entradas."
+    }
+
+    $script:ProductionOperationsMetadata = [pscustomobject]@{
+        LatestFile = $latestFile
+        HistoryFile = $historyFile
+        HistoryCount = $historyCount
+        RuntimeHealthy = $runtimeHealthy
+        VersionHealthy = $versionHealthy
+        Status = [string]$operationState.operationsStatus
+        RecordedAt = $timestamp
+    }
+
+    Write-Host ("Production operations snapshot: " + $latestFile) -ForegroundColor Green
+    Write-Host ("Production deploy history entries: " + $historyCount) -ForegroundColor Green
+    Write-Host ("Production operations status: " + $script:ProductionOperationsMetadata.Status) -ForegroundColor Green
+    return $script:ProductionOperationsMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.11 fecha a serie v0.57.x com gate end-to-end de producao." -ForegroundColor Cyan
+    Write-Host "v0.58.0 inicia observabilidade operacional e historico continuo de producao." -ForegroundColor Cyan
     Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
-    Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
+    Write-Host "O pipeline seguro da v0.57.x permanece como base obrigatoria da serie v0.58.x." -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Garantia ativa:" -ForegroundColor Cyan
     Write-Host "  nenhuma migration ou substituicao da aplicacao antes de backup PostgreSQL concluido e validado." -ForegroundColor Green
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.11
+# Fluxo v0.58.0
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -1579,10 +1671,11 @@ $promotionMetadata = Invoke-AtomicReleasePromotion
 $restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerification
 $recoveryAuditMetadata = New-RecoveryAuditBundle
 $endToEndClosureMetadata = Test-EndToEndClosureGate
+$productionOperationsMetadata = New-ProductionOperationsSnapshot
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-end-to-end-closure-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-production-operations-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1660,6 +1753,12 @@ $logFile = Join-Path $DeployLogDir ("deploy-end-to-end-closure-v" + $localVersio
     "endToEndClosureMode=$($endToEndClosureMetadata.Mode)",
     "series057Closed=$($endToEndClosureMetadata.Series057Closed)",
     "nextSeries=$($endToEndClosureMetadata.NextSeries)",
+    "operationsLatestState=$($productionOperationsMetadata.LatestFile)",
+    "operationsHistory=$($productionOperationsMetadata.HistoryFile)",
+    "operationsHistoryCount=$($productionOperationsMetadata.HistoryCount)",
+    "operationsRuntimeHealthy=$($productionOperationsMetadata.RuntimeHealthy)",
+    "operationsVersionHealthy=$($productionOperationsMetadata.VersionHealthy)",
+    "operationsStatus=$($productionOperationsMetadata.Status)",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1667,5 +1766,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-end-to-end-closure-v" + $localVersio
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("End-to-end closure da serie v0.57.x concluido. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Production Operations Foundation concluida. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green

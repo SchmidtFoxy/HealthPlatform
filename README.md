@@ -9560,3 +9560,16 @@ O fechamento **não** libera migrations destrutivas.
 O checklist versionado está em `DEPLOY-CLOSURE-CHECKLIST.md`.
 
 **Próxima etapa:** `v0.58.0 — Production Operations Foundation`.
+
+
+---
+
+## v0.58.0 — Production Operations Foundation
+
+A v0.58.x inicia uma camada de operação contínua sem substituir o pipeline seguro da v0.57.x.
+
+Cada ciclo passa a gerar um snapshot do estado de produção e uma entrada append-only no histórico de deploys em `.deploy-logs/operations/`.
+
+A documentação operacional está em `PRODUCTION-OPERATIONS.md`.
+
+**Próxima etapa:** `v0.58.1 — Production Operations Deploy History API`.

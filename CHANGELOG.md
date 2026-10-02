@@ -1,3 +1,13 @@
+# v0.58.0 — Production Operations Foundation
+
+- Inicia a série v0.58.x.
+- Adiciona snapshot operacional de produção.
+- Adiciona histórico append-only de deploys.
+- Registra saúde, versão, rollback, migrations, backup e closure.
+- Diferencia `healthy` de `validated`.
+- Adiciona `PRODUCTION-OPERATIONS.md`.
+- Preserva integralmente o pipeline seguro da v0.57.x.
+
 # v0.57.11 — Deploy Seguro para Produção End-to-End Closure Gate
 
 - Adiciona `Test-EndToEndClosureGate`.

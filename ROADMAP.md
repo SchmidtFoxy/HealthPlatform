@@ -8027,3 +8027,29 @@ Consolidar um gate final de fechamento da série v0.57.x, verificando backup, st
 
 ### v0.58.0 — Production Operations Foundation
 Iniciar a próxima série com observabilidade operacional de produção, histórico de releases/deploys, estado de saúde e sinais necessários para operação contínua, preservando todo o pipeline seguro consolidado na v0.57.x.
+
+
+## ✅ v0.58.0 — Production Operations Foundation — CONCLUÍDA
+
+**Entregue:**
+- nova camada operacional construída sobre o pipeline seguro fechado na v0.57.x;
+- `New-ProductionOperationsSnapshot` executado somente após o End-to-End Closure Gate;
+- snapshot atual em `.deploy-logs/operations/latest-production-state.json`;
+- histórico append-only em `.deploy-logs/operations/production-deploy-history.jsonl`;
+- registro de versão, modo, alvo, backup, staging, migration safety, promoção, runtime, versão servida, rollback, recovery audit e closure;
+- status operacional `healthy` para aplicação real saudável e versionada;
+- status `validated` para ciclos sem ativação;
+- validação de existência e conteúdo dos arquivos operacionais;
+- contador de entradas do histórico;
+- documentação `PRODUCTION-OPERATIONS.md`;
+- nenhuma credencial, senha ou conteúdo do `.env` é persistido;
+- todos os gates de segurança da v0.57.x permanecem obrigatórios.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.58.1 — Production Operations Deploy History API
+Expor o histórico operacional de releases/deploys por API autenticada para o módulo profissional/admin, com paginação, estado da release, resultado do deploy e sinais de saúde sem expor segredos.
