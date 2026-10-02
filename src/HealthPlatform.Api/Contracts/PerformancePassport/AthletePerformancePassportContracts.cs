@@ -411,7 +411,9 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
     string Nota,
     Guid? AutorUsuarioId,
     string? AutorNome,
-    DateTime CriadoEmUtc);
+    DateTime CriadoEmUtc,
+    bool Arquivada,
+    DateTime? AtualizadoEmUtc);
 
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse(
     Guid AtualId,

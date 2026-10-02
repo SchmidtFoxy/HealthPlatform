@@ -1,4 +1,4 @@
-HealthPlatform v0.56.10 - Follow-Up Review History Context Comparison Notes - Incremental
+HealthPlatform v0.56.11 - Follow-Up Review Comparison Notes Archive - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,14 +15,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- notas documentais da comparacao;
-- referencia Geral/Anterior/Proxima;
-- persistencia em NotasInternasProfissionais;
-- autoria e data/hora;
-- criacao auditada;
-- listagem e formulario na UI;
+- arquivamento controlado de notas de comparacao;
+- consulta separada de notas arquivadas;
+- auditoria de arquivamento;
+- historico arquivado na UI;
+- sem exclusao fisica;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.10
+Se aprovado, commit/push apenas: v0.56.11

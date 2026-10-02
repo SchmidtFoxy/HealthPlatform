@@ -3580,6 +3580,78 @@ public class ProgressReviewNotesController(
         return Ok(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
     }
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/archived")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse>>> ListarNotasComparacaoContextoHistoricoArquivadasTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var revisaoExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview),
+                cancellationToken);
+
+        if (!revisaoExiste)
+            return NotFound();
+
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo) &&
+                x.Arquivada)
+            .OrderByDescending(x => x.UpdatedAtUtc ?? x.CreatedAtUtc)
+            .ThenByDescending(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        return Ok(notas.Select(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview).ToArray());
+    }
+
+    [HttpDelete("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}")]
+    public async Task<IActionResult> ArquivarNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (nota.Arquivada)
+            return NoContent();
+
+        var antes = Snapshot(nota);
+        nota.Arquivada = true;
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar(
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_ARCHIVED",
+            nota,
+            antes,
+            Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return NoContent();
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse>>> ComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,
@@ -15728,7 +15800,9 @@ public class ProgressReviewNotesController(
             payload.Nota,
             nota.AutorUsuarioId,
             nota.AutorNome,
-            nota.CreatedAtUtc);
+            nota.CreatedAtUtc,
+            nota.Arquivada,
+            nota.UpdatedAtUtc);
     }
 
     private sealed record TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload(

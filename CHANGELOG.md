@@ -1,3 +1,12 @@
+# v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive
+
+- Adiciona arquivamento controlado de notas de comparação.
+- Mantém as notas no banco, sem exclusão física.
+- Audita o arquivamento.
+- Adiciona consulta de notas arquivadas.
+- Exibe histórico arquivado na UI profissional.
+- Não cria migration ou tabela nova.
+
 # v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes
 
 - Adiciona notas documentais vinculadas à comparação entre revisões.

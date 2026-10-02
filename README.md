@@ -7489,3 +7489,27 @@ As notas são texto documental livre do profissional. O sistema não converte es
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive`.
+
+
+---
+
+## v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive
+
+Adiciona arquivamento controlado às notas documentais de comparação.
+
+### Operações
+- arquivar uma nota sem excluí-la fisicamente;
+- consultar notas arquivadas separadamente;
+- exibir histórico arquivado na interface profissional;
+- registrar auditoria do arquivamento;
+- preservar autoria, conteúdo e data de criação.
+
+### Endpoints
+- `DELETE .../{id}/history/context/comparison-notes/{noteId}`
+- `GET .../{id}/history/context/comparison-notes/archived`
+
+O arquivamento é documental e reversibilidade será tratada na próxima etapa. Nenhuma nota é convertida em score, diagnóstico, prognóstico, risco, urgência, prioridade ou decisão terapêutica automática.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore`.

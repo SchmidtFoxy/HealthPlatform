@@ -5963,3 +5963,21 @@ Adicionar notas documentais do profissional sobre diferenças observadas entre r
 
 ### v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive
 Adicionar arquivamento controlado e histórico das notas documentais de comparação.
+
+
+## ✅ v0.56.11 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Archive — CONCLUÍDA
+
+**Entregue:**
+- arquivamento controlado de notas documentais de comparação;
+- operação idempotente de arquivamento;
+- auditoria `COMPARISON_NOTE_ARCHIVED`;
+- consulta separada de notas arquivadas;
+- histórico arquivado visível na interface;
+- data/hora de arquivamento via `UpdatedAtUtc`;
+- sem exclusão física;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore
+Adicionar restauração controlada das notas arquivadas, preservando a trilha de auditoria.
