@@ -8976,3 +8976,25 @@ Não cria migration ou tabela nova.
 ### Marco de produção futuro
 
 O fechamento da série `v0.57.x`, antes da `v0.58.0`, deverá incluir `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório, senha interativa quando necessária, deploy controlado, migrations seguras, healthcheck, logs e rollback/restauração.
+
+
+---
+
+## v0.56.84 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+Adiciona deduplicação específica ao anúncio acessível da v0.56.83.
+
+O mesmo anúncio consecutivo:
+`Foco movido para o indicador Última cópia do estado do reset.`
+
+passa a ser ignorado. Uma nova cópia bem-sucedida libera novamente o próximo anúncio de limpeza, preservando a semântica do fluxo.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.85 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset`.
+
+### Marco de produção futuro
+
+Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório, senha interativa quando necessária, deploy controlado, migrations seguras, healthcheck, logs e rollback/restauração.

@@ -5125,6 +5125,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_V05681='v0.56.81';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_V05682='v0.56.82';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_V05683='v0.56.83';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_V05684='v0.56.84';
 
 
 
@@ -6856,7 +6857,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + anúncio de foco após limpeza do horário do estado do reset · v0.56.83</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + deduplicação do anúncio de foco do horário do estado do reset · v0.56.84</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -7031,6 +7032,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
         let lastComparisonNoteVerificationFocusAnnouncementV05654='';
         let lastTimestampClearFocusAnnouncementV05664='';
         let lastResetSummaryTimestampClearFocusAnnouncementV05674='';
+        let lastResetStateSummaryTimestampClearFocusAnnouncementV05684='';
         let resetSummaryTimestampClearFocusAnnouncementResetStateV05676={
           status:'ready',
           resetCount:0,
@@ -7198,6 +7200,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
               copiedAtHostV05679.dataset.copyTimestampV05679=copiedAtV05679.toISOString();
               const clearTimestampV05680=$('#clearResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampV05680');
               if(clearTimestampV05680)clearTimestampV05680.disabled=false;
+              lastResetStateSummaryTimestampClearFocusAnnouncementV05684='';
               setResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampClearAccessibilityV05681(true);
             }
           }catch{
@@ -7220,9 +7223,20 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             timestampV05679.setAttribute('tabindex','-1');
             timestampV05679.dataset.resetSummaryTimestampClearFocusV05682=HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_V05682;
             timestampV05679.dataset.resetSummaryTimestampClearFocusAnnouncementV05683=HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_V05683;
+            timestampV05679.dataset.resetSummaryTimestampClearFocusAnnouncementDeduplicationV05684=HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_FOCUS_ANNOUNCEMENT_DEDUPLICATION_V05684;
           }
         };
         setResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampClearAccessibilityV05681(false);
+        const announceResetStateSummaryTimestampClearFocusV05684=(message)=>{
+          const announcementV05684=message||'';
+          if(!announcementV05684){
+            lastResetStateSummaryTimestampClearFocusAnnouncementV05684='';
+            return;
+          }
+          if(lastResetStateSummaryTimestampClearFocusAnnouncementV05684===announcementV05684)return;
+          lastResetStateSummaryTimestampClearFocusAnnouncementV05684=announcementV05684;
+          announceComparisonNoteVerificationFocusV05653(announcementV05684);
+        };
         const clearResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampV05680=$('#clearResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampV05680');
         if(clearResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampV05680)clearResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampV05680.onclick=()=>{
           const copiedAtHostV05679=$('#copyResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampV05679');
@@ -7236,7 +7250,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
           setResetSummaryTimestampClearFocusAnnouncementResetStateSummaryTimestampClearAccessibilityV05681(false);
           if(copyStatusV05678)copyStatusV05678.textContent='Horário da última cópia do estado do reset limpo.';
           copiedAtHostV05679?.focus({preventScroll:true});
-          if(copiedAtHostV05679)announceComparisonNoteVerificationFocusV05653('Foco movido para o indicador Última cópia do estado do reset.');
+          if(copiedAtHostV05679)announceResetStateSummaryTimestampClearFocusV05684('Foco movido para o indicador Última cópia do estado do reset.');
         };
         const resetResetSummaryTimestampClearFocusAnnouncementV05675=()=>{
           lastResetSummaryTimestampClearFocusAnnouncementV05674='';
@@ -20335,7 +20349,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.83';
+const HP_MVP_VERSION='0.56.84';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

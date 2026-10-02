@@ -7400,3 +7400,22 @@ O fechamento da v0.57.x deve entregar um script de produção, preferencialmente
 **Regra de segurança:** nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup do banco concluir e ser validado com sucesso.
 
 A v0.58.x só deve ser aberta após esse marco de deploy seguro estar implementado e aprovado.
+
+
+## ✅ v0.56.84 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication — CONCLUÍDA
+
+**Entregue:**
+- cache específico `lastResetStateSummaryTimestampClearFocusAnnouncementV05684`;
+- helper `announceResetStateSummaryTimestampClearFocusV05684`;
+- anúncios idênticos consecutivos do foco após `Limpar horário do estado do reset` passam a ser ignorados;
+- nova cópia bem-sucedida libera novamente o próximo anúncio de limpeza;
+- marcador técnico de deduplicação v0.56.84 no indicador `Última cópia do estado do reset`;
+- infraestrutura geral de anúncio acessível preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.85 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+Adicionar reset explícito do cache específico de deduplicação do anúncio de foco após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.

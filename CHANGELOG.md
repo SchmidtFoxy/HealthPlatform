@@ -1,3 +1,15 @@
+# v0.56.84 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+- Adiciona cache específico de deduplicação do anúncio de foco da v0.56.83.
+- Adiciona helper `announceResetStateSummaryTimestampClearFocusV05684`.
+- Ignora anúncios idênticos consecutivos.
+- Nova cópia bem-sucedida libera o próximo anúncio.
+- Preserva a infraestrutura geral de anúncio acessível.
+- Mantém o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador para a funcionalidade v0.56.84.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.83 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
 
 - Adiciona anúncio acessível após limpar o horário do estado do reset.
