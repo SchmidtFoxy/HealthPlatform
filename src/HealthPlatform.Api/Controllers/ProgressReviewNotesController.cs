@@ -3793,6 +3793,8 @@ public class ProgressReviewNotesController(
         [FromQuery] string? tipoEvento = null,
         [FromQuery] DateTime? deUtc = null,
         [FromQuery] DateTime? ateUtc = null,
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamanhoPagina = 20,
         CancellationToken cancellationToken = default)
     {
         var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
@@ -3833,9 +3835,14 @@ public class ProgressReviewNotesController(
         if (ateUtc.HasValue)
             query = query.Where(x => x.CreatedAtUtc <= ateUtc.Value);
 
+        pagina = Math.Max(1, pagina);
+        tamanhoPagina = Math.Clamp(tamanhoPagina, 5, 100);
+
         var logs = await query
             .OrderByDescending(x => x.CreatedAtUtc)
             .ThenByDescending(x => x.Id)
+            .Skip((pagina - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
             .ToListAsync(cancellationToken);
 
         var resposta = logs

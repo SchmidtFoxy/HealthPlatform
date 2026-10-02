@@ -1,3 +1,13 @@
+# v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination
+
+- Adiciona paginação ao histórico de revisões por nota.
+- Endpoint aceita `pagina` e `tamanhoPagina`.
+- Backend aplica `Skip/Take` com tamanho entre 5 e 100.
+- UI oferece 10, 20 e 50 itens por página.
+- Adiciona navegação Anterior/Próxima.
+- Preserva filtros, resumo e exportação.
+- Não cria migration ou tabela nova.
+
 # v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary
 
 - Adiciona resumo do histórico filtrado por nota.

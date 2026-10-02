@@ -6084,3 +6084,21 @@ Adicionar resumo documental do histórico filtrado das revisões das notas.
 
 ### v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination
 Adicionar paginação ao histórico de revisões das notas para manter desempenho e ergonomia em históricos longos.
+
+
+## ✅ v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination — CONCLUÍDA
+
+**Entregue:**
+- paginação do histórico de revisões das notas;
+- parâmetros `pagina` e `tamanhoPagina`;
+- limite de página entre 5 e 100 itens no backend;
+- opções de 10, 20 e 50 itens na interface;
+- navegação anterior/próxima;
+- total de páginas calculado a partir do resumo filtrado;
+- filtros e exportação preservados;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State
+Preservar estado de filtros, página e tamanho da página durante a navegação entre históricos de notas.

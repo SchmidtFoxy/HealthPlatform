@@ -7644,3 +7644,22 @@ O endpoint usa os mesmos filtros `tipoEvento`, `deUtc` e `ateUtc` e o painel da 
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination`.
+
+
+---
+
+## v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination
+
+Adiciona paginação ao histórico de revisões das notas documentais.
+
+### Parâmetros
+- `pagina` — começa em 1;
+- `tamanhoPagina` — normalizado entre 5 e 100 itens.
+
+A interface oferece 10, 20 ou 50 itens por página e navegação `Anterior` / `Próxima`. O total de páginas usa o resumo filtrado, portanto continua compatível com `tipoEvento`, `deUtc` e `ateUtc`.
+
+A exportação CSV permanece independente da paginação e exporta todo o recorte filtrado.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State`.

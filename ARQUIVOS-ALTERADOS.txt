@@ -1,27 +1,14 @@
-HealthPlatform v0.56.17 - Follow-Up Review Comparison Notes Revision History Summary - Incremental
+HealthPlatform v0.56.18-r2 - Legacy Filter Query Gate Fix
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- resumo do historico filtrado das revisoes;
-- total, criacoes, edicoes, arquivamentos e restauracoes;
-- primeiro e ultimo evento;
-- mesmos filtros do historico;
-- painel-resumo na UI;
-- sem migration/tabela nova.
+Correcao:
+- atualiza gate legado da v0.56.15 para filterQs;
+- substitui expectativa history${suffix} por historySuffix;
+- preserva o fix de escopo de paginacao do r1;
+- sem alteracao funcional, schema ou VERSION.txt.
 
-Fluxo:
-PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.17
+Nao commitar a revisao -r2 individualmente.
+Se aprovado, commit/push apenas: v0.56.18
