@@ -1,3 +1,13 @@
+# v0.56.58 — Focus Announcement Reset State Summary Copy
+
+- Adiciona `Copiar resumo técnico`.
+- Copia o resumo técnico visível da v0.56.57.
+- Adiciona feedback de sucesso, vazio e falha.
+- Adiciona `aria-describedby` e status acessível.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.57 — Focus Announcement Reset State Summary
 
 - Adiciona resumo técnico local do estado de reset.

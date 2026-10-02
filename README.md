@@ -8476,3 +8476,21 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.58 — Focus Announcement Reset State Summary Copy`.
+
+
+---
+
+## v0.56.58 — Focus Announcement Reset State Summary Copy
+
+Adiciona a ação local **Copiar resumo técnico**.
+
+O botão copia exatamente o conteúdo visível do resumo da v0.56.57 e apresenta feedback acessível para:
+- sucesso;
+- ausência de conteúdo;
+- falha automática do clipboard.
+
+A ação usa apenas o navegador e não envia nem persiste dados no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.59 — Focus Announcement Reset State Summary Copy Timestamp`.

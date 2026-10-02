@@ -6856,3 +6856,24 @@ Adicionar resumo técnico local do estado, contador e horário do último reset 
 
 ### v0.56.58 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy
 Adicionar ação local para copiar o resumo técnico de reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.58 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy — CONCLUÍDA
+
+**Entregue:**
+- ação local `Copiar resumo técnico`;
+- cópia do conteúdo visível do resumo de reset;
+- feedback de sucesso `Resumo técnico copiado.`;
+- feedback quando o resumo estiver vazio;
+- feedback de falha do clipboard;
+- associação semântica via `aria-describedby`;
+- status acessível com `aria-live`, `aria-atomic` e `role="status"`;
+- resumo da v0.56.57 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.59 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp
+Adicionar horário local da última cópia do resumo técnico, mantendo o fluxo local e sem conteúdo clínico/textual.
