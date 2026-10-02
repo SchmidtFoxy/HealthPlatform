@@ -1,3 +1,13 @@
+# v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit
+
+- Adiciona edição de notas documentais ativas.
+- Bloqueia edição enquanto a nota estiver arquivada.
+- Preserva referência e metadados de criação.
+- Atualiza `UpdatedAtUtc`.
+- Audita com `COMPARISON_NOTE_UPDATED`.
+- Adiciona ação `Editar` à UI profissional.
+- Não cria migration ou tabela nova.
+
 # v0.56.12 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Restore
 
 - Adiciona restauração de notas de comparação arquivadas.

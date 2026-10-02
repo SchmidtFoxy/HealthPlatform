@@ -2736,6 +2736,9 @@ public class ProgressReviewNotesController(
         string Referencia,
         string Nota);
 
+    public sealed record EditarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRequest(
+        string Nota);
+
 
     public sealed record CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpRequest(
         Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
@@ -3580,6 +3583,55 @@ public class ProgressReviewNotesController(
         return Ok(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
     }
 
+
+
+    [HttpPut("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse>> EditarNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        EditarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        if (nota.Arquivada)
+            return Conflict(new { message = "Nota arquivada não pode ser editada. Restaure a nota antes da edição." });
+
+        var notaTexto = NormalizarObrigatorio(request.Nota, 3000);
+        if (string.IsNullOrWhiteSpace(notaTexto))
+            return BadRequest(new { message = "Informe a nota documental da comparação." });
+
+        var payloadAnterior = LerPayloadNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota);
+
+        if (string.Equals(payloadAnterior.Nota, notaTexto, StringComparison.Ordinal))
+            return Ok(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
+
+        var antes = Snapshot(nota);
+        var payloadAtualizado = payloadAnterior with { Nota = notaTexto };
+        nota.Conteudo = JsonSerializer.Serialize(payloadAtualizado);
+        nota.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar(
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_UPDATED",
+            nota,
+            antes,
+            Snapshot(nota));
+
+        await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearNotaComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
+    }
 
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/archived")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteResponse>>> ListarNotasComparacaoContextoHistoricoArquivadasTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(

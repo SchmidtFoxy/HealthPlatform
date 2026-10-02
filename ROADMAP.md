@@ -5998,3 +5998,21 @@ Adicionar restauração controlada das notas arquivadas, preservando a trilha de
 
 ### v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit
 Adicionar edição controlada das notas documentais ativas, com trilha de auditoria.
+
+
+## ✅ v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit — CONCLUÍDA
+
+**Entregue:**
+- edição controlada de notas documentais ativas;
+- notas arquivadas bloqueadas para edição até restauração;
+- limite de 3000 caracteres preservado;
+- atualização de `UpdatedAtUtc`;
+- auditoria `COMPARISON_NOTE_UPDATED`;
+- edição reutilizando o formulário existente;
+- referência original preservada durante a edição;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History
+Adicionar histórico explícito das revisões de conteúdo das notas documentais.

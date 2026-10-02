@@ -1,4 +1,4 @@
-HealthPlatform v0.56.12 - Follow-Up Review Comparison Notes Restore - Incremental
+HealthPlatform v0.56.13 - Follow-Up Review Comparison Notes Edit - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,13 +14,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- restauracao controlada de notas arquivadas;
-- operacao idempotente;
-- auditoria COMPARISON_NOTE_RESTORED;
-- atualizacao de UpdatedAtUtc;
-- acao Restaurar na UI;
+- edicao controlada de notas ativas;
+- bloqueio de edicao de notas arquivadas;
+- auditoria COMPARISON_NOTE_UPDATED;
+- UpdatedAtUtc atualizado;
+- acao Editar / Salvar alteracao na UI;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.12
+Se aprovado, commit/push apenas: v0.56.13

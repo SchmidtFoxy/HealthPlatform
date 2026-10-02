@@ -7537,3 +7537,28 @@ A restauração altera apenas o estado documental da nota e não executa qualque
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit`.
+
+
+---
+
+## v0.56.13 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Edit
+
+Adiciona edição controlada das notas documentais ativas de comparação.
+
+### Operação
+`PUT .../{id}/history/context/comparison-notes/{noteId}`
+
+### Regras
+- somente notas da revisão/paciente atuais podem ser editadas;
+- notas arquivadas precisam ser restauradas antes da edição;
+- conteúdo obrigatório com limite de 3000 caracteres;
+- a referência original da nota é preservada;
+- `UpdatedAtUtc` registra a alteração;
+- auditoria `COMPARISON_NOTE_UPDATED`;
+- envio idêntico ao conteúdo atual não gera alteração desnecessária.
+
+A edição é documental e não produz avaliação clínica automática.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.14 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History`.
