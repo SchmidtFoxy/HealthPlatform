@@ -1,14 +1,26 @@
-HealthPlatform v0.56.15-r1 - PowerShell Literal Gate Fix
+HealthPlatform v0.56.16 - Follow-Up Review Comparison Notes Revision History Export - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
-- ARQUIVOS-ALTERADOS.txt
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- torna literal o token history${suffix} no gate da v0.56.15;
-- evita expansao indevida de $suffix pelo PowerShell;
-- preserva integralmente a funcionalidade da v0.56.15;
-- sem alteracao de schema, codigo funcional ou VERSION.txt.
+Entrega funcional:
+- exportacao CSV do historico filtrado;
+- filtros por evento/de/ate preservados;
+- conteudo anterior e novo;
+- UTF-8 BOM;
+- botao Exportar CSV;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.15
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.16

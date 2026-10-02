@@ -1,3 +1,12 @@
+# v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export
+
+- Adiciona exportação CSV do histórico filtrado por nota.
+- Reaproveita `tipoEvento`, `deUtc` e `ateUtc`.
+- Exporta conteúdo anterior e novo.
+- Gera CSV UTF-8 com BOM.
+- Adiciona botão `Exportar CSV`.
+- Não cria migration ou tabela nova.
+
 # v0.56.15 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Filters
 
 - Adiciona filtros por evento e intervalo de data/hora ao histórico de revisões das notas.

@@ -7598,3 +7598,24 @@ O endpoint de histórico passa a aceitar `tipoEvento`, `deUtc` e `ateUtc`. A int
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export`.
+
+
+---
+
+## v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export
+
+Adiciona exportação CSV ao histórico filtrado das revisões das notas documentais de comparação.
+
+### Exportação
+`GET .../{id}/history/context/comparison-notes/{noteId}/history/export`
+
+Aceita os mesmos filtros da consulta:
+- `tipoEvento`;
+- `deUtc`;
+- `ateUtc`.
+
+O CSV contém `Id`, `Acao`, `UsuarioId`, `RegistradoEmUtc`, `NotaAnterior` e `NotaNova`, com UTF-8 BOM para melhor compatibilidade com Excel/Windows.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary`.

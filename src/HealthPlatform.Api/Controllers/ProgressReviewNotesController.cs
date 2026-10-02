@@ -3634,6 +3634,86 @@ public class ProgressReviewNotesController(
     }
 
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/export")]
+    public async Task<IActionResult> ExportarHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        [FromQuery] string? tipoEvento = null,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+
+        var notaExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (!notaExiste)
+            return NotFound();
+
+        var prefixoAcao = "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_";
+        var entityId = noteId.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith(prefixoAcao));
+
+        if (!string.IsNullOrWhiteSpace(tipoEvento))
+        {
+            var tipoNormalizado = tipoEvento.Trim();
+            query = query.Where(x => x.Acao == prefixoAcao + tipoNormalizado);
+        }
+
+        if (deUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc >= deUtc.Value);
+
+        if (ateUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc <= ateUtc.Value);
+
+        var logs = await query
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .ThenByDescending(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        static string Csv(string? valor)
+        {
+            var texto = valor ?? string.Empty;
+            return "\"" + texto.Replace("\"", "\"\"") + "\"";
+        }
+
+        var linhas = new List<string>
+        {
+            "Id,Acao,UsuarioId,RegistradoEmUtc,NotaAnterior,NotaNova"
+        };
+
+        linhas.AddRange(logs.Select(x => string.Join(",",
+            Csv(x.Id.ToString()),
+            Csv(x.Acao),
+            Csv(x.UsuarioId?.ToString()),
+            Csv(x.CreatedAtUtc.ToString("O")),
+            Csv(ExtrairNotaComparacaoContextoDoSnapshot(x.DadosAnterioresJson)),
+            Csv(ExtrairNotaComparacaoContextoDoSnapshot(x.DadosNovosJson)))));
+
+        var bytes = Encoding.UTF8.GetPreamble()
+            .Concat(Encoding.UTF8.GetBytes(string.Join(Environment.NewLine, linhas)))
+            .ToArray();
+
+        var nomeArquivo = $"follow-up-review-comparison-note-history-{noteId:N}-{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
+        return File(bytes, "text/csv; charset=utf-8", nomeArquivo);
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRevisionHistoryResponse>>> HistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

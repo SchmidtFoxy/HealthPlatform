@@ -6051,3 +6051,19 @@ Adicionar filtros documentais ao histórico de revisões das notas.
 
 ### v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export
 Adicionar exportação documental do histórico filtrado das revisões das notas.
+
+
+## ✅ v0.56.16 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Export — CONCLUÍDA
+
+**Entregue:**
+- exportação CSV do histórico de revisões das notas;
+- export respeita os filtros `tipoEvento`, `deUtc` e `ateUtc`;
+- colunas de ação, usuário, data/hora, nota anterior e nota nova;
+- arquivo UTF-8 com BOM;
+- botão `Exportar CSV` na interface profissional;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.17 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Summary
+Adicionar resumo documental do histórico filtrado das revisões das notas.
