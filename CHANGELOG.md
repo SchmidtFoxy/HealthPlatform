@@ -1,3 +1,15 @@
+# v0.56.56 — Focus Announcement Reset State
+
+- Adiciona estado técnico explícito do reset.
+- Registra status `ready`, `reset` e `announced`.
+- Registra contador local de resets.
+- Registra horário ISO do último reset.
+- Espelha o estado em atributos `data-*` no live region.
+- Preserva reset e deduplicação anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.55 — Focus Announcement Reset
 
 - Adiciona reset explícito do cache de deduplicação.

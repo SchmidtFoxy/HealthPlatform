@@ -8429,3 +8429,26 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.56 — Focus Announcement Reset State`.
+
+
+---
+
+## v0.56.56 — Focus Announcement Reset State
+
+Adiciona estado técnico explícito para diagnóstico local do reset dos anúncios de foco.
+
+Estado mantido apenas em memória:
+- `status`: `ready`, `reset` ou `announced`;
+- `resetCount`: quantidade de resets no contexto atual;
+- `lastResetAtIso`: horário ISO do último reset.
+
+O live region recebe os atributos:
+- `data-reset-state-v05656`;
+- `data-reset-count-v05656`;
+- `data-last-reset-at-v05656`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.57 — Focus Announcement Reset State Summary`.
