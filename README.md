@@ -7890,3 +7890,27 @@ Regras:
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata`.
+
+
+---
+
+## v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata
+
+Adiciona metadados técnicos no início do CSV da telemetria de compartilhamento.
+
+Cabeçalho técnico:
+- `# AESYN Telemetria Tecnica de Compartilhamento`;
+- `# NotaId=...`;
+- `# DeUtc=...`;
+- `# AteUtc=...`;
+- `# Canal=...`;
+- `# Total=...`.
+
+As linhas de dados continuam usando as colunas:
+`Canal,RegistradoEmUtc`.
+
+Nenhum conteúdo clínico ou textual da nota é incluído no arquivo.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity`.

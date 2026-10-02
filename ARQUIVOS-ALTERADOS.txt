@@ -1,15 +1,25 @@
-HealthPlatform v0.56.29-r1 - Export Filename Scope Gate Fix
+HealthPlatform v0.56.30 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Metadata - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
-- ARQUIVOS-ALTERADOS.txt
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- corrige falso positivo do gate da v0.56.29;
-- o gate anterior verificava nota.Conteudo e nomeArquivo no controller inteiro;
-- agora a validacao inspeciona apenas o bloco entre 'var nomeArquivo =' e o return File(..., nomeArquivo);
-- preserva integralmente a implementacao funcional da v0.56.29;
-- sem alteracao funcional, schema, runtime ou VERSION.txt.
+Entrega funcional:
+- metadados tecnicos no cabecalho do CSV;
+- NotaId, deUtc, ateUtc, canal e total;
+- colunas CSV preservadas;
+- sem conteudo clinico/textual;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.29
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.30

@@ -6305,3 +6305,23 @@ Melhorar o nome do arquivo exportado com recorte técnico identificável e segur
 
 ### v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata
 Adicionar metadados técnicos no cabeçalho do CSV exportado, preservando ausência de conteúdo clínico/textual.
+
+
+## ✅ v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata — CONCLUÍDA
+
+**Entregue:**
+- metadados técnicos no início do CSV exportado;
+- identificação técnica AESYN;
+- `NotaId`;
+- `DeUtc`;
+- `AteUtc`;
+- `Canal`;
+- `Total`;
+- preservação das colunas `Canal,RegistradoEmUtc`;
+- ausência de conteúdo clínico/textual nos metadados;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity
+Adicionar integridade técnica simples ao CSV exportado para facilitar conferência do arquivo sem incluir conteúdo clínico/textual.

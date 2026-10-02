@@ -3727,6 +3727,12 @@ public class ProgressReviewNotesController(
         }
 
         var builder = new StringBuilder();
+        builder.AppendLine("# AESYN Telemetria Tecnica de Compartilhamento");
+        builder.AppendLine($"# NotaId={noteId:N}");
+        builder.AppendLine($"# DeUtc={(deUtc.HasValue ? deUtc.Value.ToUniversalTime().ToString("O") : "todos")}");
+        builder.AppendLine($"# AteUtc={(ateUtc.HasValue ? ateUtc.Value.ToUniversalTime().ToString("O") : "todos")}");
+        builder.AppendLine($"# Canal={(canalNormalizado ?? "todos")}");
+        builder.AppendLine($"# Total={rows.Count}");
         builder.AppendLine("Canal,RegistradoEmUtc");
 
         foreach (var row in rows)

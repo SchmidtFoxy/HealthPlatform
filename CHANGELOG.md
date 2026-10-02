@@ -1,3 +1,11 @@
+# v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata
+
+- Adiciona metadados técnicos no cabeçalho do CSV.
+- Inclui NotaId, período, canal e total.
+- Mantém as colunas Canal/RegistradoEmUtc.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename
 
 - Melhora o nome do CSV técnico exportado.
