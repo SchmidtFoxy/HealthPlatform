@@ -1,4 +1,4 @@
-HealthPlatform v0.57.0 - Incremental
+HealthPlatform v0.57.1-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,21 +14,25 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- fundacao do deploy seguro para producao;
-- confirmacao de versao local/alvo;
-- parametros de VPS/usuario/banco explicitos;
-- SSH sem senha hardcoded;
-- preflight remoto;
-- backup PostgreSQL pg_dump -Fc;
-- validacao com pg_restore --list;
-- guard absoluto antes de qualquer mutacao;
-- log local da fundacao;
+- confirmacao explicita do alvo de producao;
+- metadados remotos auditaveis;
+- metadados do backup com SHA-256 e entradas pg_restore;
+- retencao segura configuravel, padrao 7 / minimo 2;
+- protecao do backup atual;
+- logs enriquecidos;
+- guard absoluto antes de qualquer mutacao preservado;
 - nenhuma migration/substituicao/restart/rollback nesta versao;
-- proxima etapa v0.57.1.
-
-Regra absoluta:
-Nenhuma migration ou substituicao da aplicacao antes de backup PostgreSQL concluido e validado.
+- proxima etapa v0.57.2 / Application Package & Staging.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.0
+Se aprovado, commit/push apenas: v0.57.1
+
+Hotfix cumulativo r1:
+- corrige o gate historico [5024/5027] da v0.57.0;
+- aceita a frase original da Foundation e a variante evoluida da v0.57.1 com "ainda NAO";
+- mantem os demais tokens de seguranca obrigatorios;
+- codigo funcional da v0.57.1 permanece inalterado;
+- VERSION.txt permanece 0.57.1;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.1.

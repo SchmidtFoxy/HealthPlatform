@@ -7,6 +7,8 @@
     [string]$PostgresService = "postgres",
     [string]$DatabaseName = "",
     [string]$BackupDir = "/opt/healthplatform/backups",
+    [int]$BackupRetentionCount = 7,
+    [string]$ProductionConfirmation = "",
     [switch]$ValidarSomente,
     [switch]$Aplicar
 )
@@ -20,11 +22,13 @@ $DeployLogDir = Join-Path $ScriptRoot ".deploy-logs"
 $script:BackupConcluido = $false
 $script:BackupValidado = $false
 $script:MutacaoLiberada = $false
+$script:RemoteMetadata = $null
+$script:BackupMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.0 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.1 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -72,6 +76,16 @@ function Assert-DeployArguments {
     if ($RemoteRoot -notmatch '^/') {
         throw "RemoteRoot deve ser um caminho absoluto Linux."
     }
+    if ($BackupRetentionCount -lt 2) {
+        throw "BackupRetentionCount deve ser pelo menos 2 para preservar margem de seguranca."
+    }
+
+    $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
+    if ($ProductionConfirmation -ne $expectedConfirmation) {
+        throw "Confirmacao de producao invalida. Informe -ProductionConfirmation '$expectedConfirmation'."
+    }
+
+    Write-Host ("Alvo de producao confirmado explicitamente: " + $VpsUser + "@" + $VpsHost + " / v" + $TargetVersion) -ForegroundColor Green
 }
 
 function Invoke-SshChecked {
@@ -116,6 +130,140 @@ printf 'REMOTE_PREFLIGHT_OK'
     }
 
     Write-Host "VPS, Docker Compose e arquivo de producao validados." -ForegroundColor Green
+}
+
+function Get-RemoteEnvironmentMetadata {
+    Write-DeployTitle "METADADOS REMOTOS"
+
+    $metadataCommand = @"
+set -e
+hostname_value=`$(hostname)
+kernel_value=`$(uname -sr)
+docker_value=`$(docker --version | tr '\n' ' ')
+compose_value=`$(docker compose version | tr '\n' ' ')
+disk_value=`$(df -Pk '$RemoteRoot' | awk 'NR==2 {print `$4}')
+utc_value=`$(date -u +%Y-%m-%dT%H:%M:%SZ)
+printf 'HOSTNAME=%s\nKERNEL=%s\nDOCKER=%s\nCOMPOSE=%s\nDISK_FREE_KB=%s\nUTC=%s\n' "`$hostname_value" "`$kernel_value" "`$docker_value" "`$compose_value" "`$disk_value" "`$utc_value"
+"@
+
+    $raw = Invoke-SshChecked -Command $metadataCommand -Capture
+    $map = @{}
+    foreach ($line in ($raw -split "`r?`n")) {
+        if ($line -match '^(?<key>[A-Z_]+)=(?<value>.*)$') {
+            $map[$Matches['key']] = $Matches['value']
+        }
+    }
+
+    foreach ($required in @('HOSTNAME','KERNEL','DOCKER','COMPOSE','DISK_FREE_KB','UTC')) {
+        if (-not $map.ContainsKey($required) -or [string]::IsNullOrWhiteSpace([string]$map[$required])) {
+            throw "Metadado remoto obrigatorio ausente: $required"
+        }
+    }
+
+    if ([int64]$map['DISK_FREE_KB'] -le 0) {
+        throw "Espaco livre remoto invalido."
+    }
+
+    $script:RemoteMetadata = [pscustomobject]@{
+        Hostname = [string]$map['HOSTNAME']
+        Kernel = [string]$map['KERNEL']
+        Docker = [string]$map['DOCKER']
+        Compose = [string]$map['COMPOSE']
+        DiskFreeKb = [int64]$map['DISK_FREE_KB']
+        Utc = [string]$map['UTC']
+    }
+
+    Write-Host ("Host remoto: " + $script:RemoteMetadata.Hostname) -ForegroundColor Green
+    Write-Host ("Espaco livre: " + $script:RemoteMetadata.DiskFreeKb + " KB") -ForegroundColor Green
+    return $script:RemoteMetadata
+}
+
+function Get-RemoteBackupMetadata([string]$BackupFile) {
+    if (-not $script:BackupValidado) {
+        throw "Metadados do backup so podem ser coletados apos validacao de integridade."
+    }
+
+    Write-DeployTitle "METADADOS DO BACKUP"
+
+    $metadataCommand = @"
+set -e
+test -s '$BackupFile'
+bytes=`$(wc -c < '$BackupFile')
+sha=`$(sha256sum '$BackupFile' | awk '{print `$1}')
+entries=`$(cd '$RemoteRoot' && docker compose -f '$ComposeFile' exec -T '$PostgresService' pg_restore --list < '$BackupFile' | wc -l)
+modified=`$(date -u -r '$BackupFile' +%Y-%m-%dT%H:%M:%SZ)
+printf 'BYTES=%s\nSHA256=%s\nENTRIES=%s\nMODIFIED_UTC=%s\n' "`$bytes" "`$sha" "`$entries" "`$modified"
+"@
+
+    $raw = Invoke-SshChecked -Command $metadataCommand -Capture
+    $map = @{}
+    foreach ($line in ($raw -split "`r?`n")) {
+        if ($line -match '^(?<key>[A-Z0-9_]+)=(?<value>.*)$') {
+            $map[$Matches['key']] = $Matches['value']
+        }
+    }
+
+    foreach ($required in @('BYTES','SHA256','ENTRIES','MODIFIED_UTC')) {
+        if (-not $map.ContainsKey($required) -or [string]::IsNullOrWhiteSpace([string]$map[$required])) {
+            throw "Metadado de backup obrigatorio ausente: $required"
+        }
+    }
+
+    if ([int64]$map['BYTES'] -le 0) { throw "Backup possui tamanho invalido." }
+    if ([int64]$map['ENTRIES'] -le 0) { throw "Backup nao possui entradas restauraveis listadas." }
+    if ([string]$map['SHA256'] -notmatch '^[a-fA-F0-9]{64}$') { throw "SHA256 do backup invalido." }
+
+    $script:BackupMetadata = [pscustomobject]@{
+        File = $BackupFile
+        Bytes = [int64]$map['BYTES']
+        Sha256 = ([string]$map['SHA256']).ToLowerInvariant()
+        Entries = [int64]$map['ENTRIES']
+        ModifiedUtc = [string]$map['MODIFIED_UTC']
+    }
+
+    Write-Host ("Backup bytes: " + $script:BackupMetadata.Bytes) -ForegroundColor Green
+    Write-Host ("Backup SHA256: " + $script:BackupMetadata.Sha256) -ForegroundColor Green
+    Write-Host ("Entradas pg_restore: " + $script:BackupMetadata.Entries) -ForegroundColor Green
+    return $script:BackupMetadata
+}
+
+function Invoke-SafeBackupRetention {
+    if (-not $script:BackupConcluido -or -not $script:BackupValidado -or -not $script:BackupMetadata) {
+        throw "Retencao bloqueada: backup atual ainda nao foi concluido, validado e catalogado."
+    }
+
+    Write-DeployTitle "RETENCAO SEGURA"
+
+    $retentionCommand = @"
+set -e
+mkdir -p '$BackupDir'
+current='$($script:BackupMetadata.File)'
+keep='$BackupRetentionCount'
+test -s "`$current"
+files=`$(find '$BackupDir' -maxdepth 1 -type f -name 'healthplatform-*.dump' -printf '%T@ %p\n' | sort -nr | awk '{print `$2}')
+count=0
+removed=0
+for file in `$files; do
+  count=`$((count+1))
+  if [ "`$count" -le "`$keep" ]; then
+    continue
+  fi
+  if [ "`$file" = "`$current" ]; then
+    continue
+  fi
+  rm -- "`$file"
+  removed=`$((removed+1))
+done
+printf 'RETENTION_OK:kept=%s:removed=%s' "`$keep" "`$removed"
+"@
+
+    $result = Invoke-SshChecked -Command $retentionCommand -Capture
+    if ($result -notmatch '^RETENTION_OK:kept=\d+:removed=\d+$') {
+        throw "Retencao segura nao confirmou resultado esperado."
+    }
+
+    Write-Host ("Retencao concluida: " + $result) -ForegroundColor Green
+    return $result
 }
 
 function New-RemotePostgresBackup {
@@ -180,8 +328,8 @@ function Assert-MutationGuard {
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.0 conclui apenas a fundacao segura de deploy." -ForegroundColor Cyan
-    Write-Host "Esta versao NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
+    Write-Host "v0.57.1 amplia a fundacao com validacao remota, metadados e retencao segura." -ForegroundColor Cyan
+    Write-Host "Esta versao ainda NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Garantia ativa:" -ForegroundColor Cyan
@@ -189,7 +337,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.0
+# Fluxo v0.57.1
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -209,19 +357,22 @@ if (-not $ValidarSomente -and -not $Aplicar) {
 Assert-DeployArguments
 [void](Assert-Command "ssh")
 Assert-RemotePreflight
+$remoteMetadata = Get-RemoteEnvironmentMetadata
 
 $backupFile = New-RemotePostgresBackup
 Assert-RemoteBackupIntegrity -BackupFile $backupFile
+$backupMetadata = Get-RemoteBackupMetadata -BackupFile $backupFile
 Assert-MutationGuard
 
 if (-not $script:MutacaoLiberada) {
     throw "Guard de mutacao nao foi liberado apos backup validado."
 }
 
+$retentionResult = Invoke-SafeBackupRetention
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-foundation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-validation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -230,11 +381,21 @@ $logFile = Join-Path $DeployLogDir ("deploy-foundation-v" + $localVersion + "-" 
     "database=$DatabaseName",
     "backup=$backupFile",
     "backupValidated=true",
+    "backupBytes=$($backupMetadata.Bytes)",
+    "backupSha256=$($backupMetadata.Sha256)",
+    "backupEntries=$($backupMetadata.Entries)",
+    "backupModifiedUtc=$($backupMetadata.ModifiedUtc)",
+    "remoteHostname=$($remoteMetadata.Hostname)",
+    "remoteKernel=$($remoteMetadata.Kernel)",
+    "remoteDocker=$($remoteMetadata.Docker)",
+    "remoteCompose=$($remoteMetadata.Compose)",
+    "remoteDiskFreeKb=$($remoteMetadata.DiskFreeKb)",
+    "retention=$retentionResult",
     "mutationGuard=true",
     "foundationOnly=true",
     "completedAt=" + (Get-Date).ToString("o")
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Fundacao de deploy seguro validada. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Backup e validacao remota 2.0 concluidos. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration ou substituicao da aplicacao foi executada." -ForegroundColor Green

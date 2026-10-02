@@ -9374,3 +9374,37 @@ A v0.57.0 **não** executa migration, upload/substituição da aplicação, rest
 **Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
 
 **Próxima etapa:** `v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0`.
+
+
+---
+
+## v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0
+
+O `DEPLOY-PRODUCAO.ps1` agora exige confirmação explícita do alvo no formato:
+
+`PRODUCAO:<host>:<versão>`
+
+Além da fundação da v0.57.0, o fluxo coleta:
+- hostname, kernel, Docker e Compose remotos;
+- espaço livre disponível;
+- horário UTC do servidor;
+- tamanho do backup;
+- SHA-256 do backup;
+- quantidade de entradas listadas pelo `pg_restore`;
+- horário UTC do arquivo de backup.
+
+### Retenção segura
+
+O script mantém por padrão os **7 backups mais recentes**, com mínimo permitido de 2. A limpeza:
+- só ocorre depois do backup atual ser concluído e validado;
+- só considera arquivos `healthplatform-*.dump`;
+- nunca remove o backup atual;
+- registra o resultado no log local.
+
+A v0.57.1 ainda **não executa migration, upload/substituição ativa da aplicação, restart ou rollback**.
+
+### Regra absoluta
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+**Próxima etapa:** `v0.57.2 — Deploy Seguro para Produção Application Package & Staging`.

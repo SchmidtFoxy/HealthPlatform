@@ -7746,3 +7746,26 @@ Iniciar o fechamento obrigatório da série v0.57.x com a fundação do `DEPLOY-
 
 ### v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0
 Evoluir o `DEPLOY-PRODUCAO.ps1` com validação mais detalhada do ambiente remoto, metadados do backup, retenção segura e confirmação explícita do alvo de produção, mantendo o guard de backup obrigatório antes de qualquer mutação.
+
+
+## ✅ v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0 — CONCLUÍDA
+
+**Entregue:**
+- confirmação explícita do alvo com token `PRODUCAO:<host>:<versão>`;
+- coleta de metadados remotos: hostname, kernel, Docker, Compose, espaço livre e horário UTC;
+- metadados auditáveis do backup: bytes, SHA-256, quantidade de entradas do `pg_restore` e horário UTC;
+- retenção segura configurável de backups, com mínimo de 2 cópias e padrão de 7;
+- exclusão limitada exclusivamente a `healthplatform-*.dump`;
+- retenção executada somente após o backup atual estar concluído, validado e catalogado;
+- log local enriquecido com metadados do ambiente e do backup;
+- guard absoluto de backup antes de qualquer mutação preservado;
+- nenhuma migration, substituição da aplicação, restart ou rollback executados nesta versão.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.2 — Deploy Seguro para Produção Application Package & Staging
+Preparar empacotamento e staging remoto da aplicação sem ativação imediata, com validação de integridade do pacote e mantendo a aplicação atual intacta até todos os gates de backup e staging estarem aprovados.

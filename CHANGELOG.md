@@ -1,3 +1,15 @@
+# v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0
+
+- Exige confirmação explícita `PRODUCAO:<host>:<versão>`.
+- Coleta metadados do ambiente remoto.
+- Registra tamanho, SHA-256, entradas restauráveis e horário UTC do backup.
+- Adiciona retenção segura configurável, padrão 7 e mínimo 2.
+- Limita retenção a `healthplatform-*.dump`.
+- Executa retenção somente após backup atual concluído, validado e catalogado.
+- Enriquece logs locais com metadados de backup e ambiente.
+- Preserva o guard absoluto antes de qualquer mutação.
+- Não executa migration, substituição da aplicação, restart ou rollback.
+
 # v0.57.0 — Deploy Seguro para Produção Foundation
 
 - Adiciona `DEPLOY-PRODUCAO.ps1`.
