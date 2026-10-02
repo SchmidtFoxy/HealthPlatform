@@ -2779,6 +2779,73 @@ public class ProgressReviewNotesController(
         string? Horizonte = null,
         string? ObservacaoProfissional = null);
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up/search")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersResponse>> FiltrarTeamKnowledgeEffectDecisionReviewOutcomeFollowUps(
+        Guid pacienteId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? profissionalResponsavel = null,
+        [FromQuery] string? horizonte = null,
+        [FromQuery] string? texto = null,
+        [FromQuery] bool incluirArquivados = false,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        if (!await PacienteExiste(pacienteId, cancellationToken))
+            return NotFound();
+
+        var statusNormalizado = string.IsNullOrWhiteSpace(status) ? null : status.Trim();
+        if (statusNormalizado is not null && !StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpValido(statusNormalizado))
+            return BadRequest(new { message = "Status inválido. Use Registrado, EmAcompanhamento, Concluido ou Descartado." });
+
+        var profissionalNormalizado = NormalizarOpcional(profissionalResponsavel, 160);
+        var horizonteNormalizado = NormalizarOpcional(horizonte, 120);
+        var textoNormalizado = NormalizarOpcional(texto, 240);
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+
+        var notas = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp) &&
+                (incluirArquivados || !x.Arquivada))
+            .ToListAsync(cancellationToken);
+
+        var itens = notas
+            .Select(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUp)
+            .Where(x =>
+                (statusNormalizado is null || x.Status == statusNormalizado) &&
+                (profissionalNormalizado is null ||
+                    x.ProfissionalResponsavel.Contains(profissionalNormalizado, StringComparison.OrdinalIgnoreCase)) &&
+                (horizonteNormalizado is null ||
+                    (x.Horizonte?.Contains(horizonteNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+                (textoNormalizado is null ||
+                    x.ProfissionalResponsavel.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.Participantes?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    x.ItemAcompanhar.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ||
+                    (x.ContextoAcompanhamento?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.BaseObservacionalEvidenciaSuporte?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.InterpretacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.CriterioRevisaoDocumentado?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ObservacaoProfissional?.Contains(textoNormalizado, StringComparison.OrdinalIgnoreCase) ?? false)))
+            .ToArray();
+
+        itens = ordemAsc
+            ? itens.OrderBy(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray()
+            : itens.OrderByDescending(x => x.AtualizadoEmUtc ?? x.CriadoEmUtc).ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersResponse(
+            statusNormalizado,
+            profissionalNormalizado,
+            horizonteNormalizado,
+            textoNormalizado,
+            incluirArquivados,
+            ordemAsc ? "asc" : "desc",
+            itens.Length,
+            itens,
+            "Os filtros servem apenas para localizar acompanhamentos documentados. Não transformam registro em validação causal ou evidência clínica validada, não produzem prognóstico, recomendação, decisão terapêutica, urgência, risco ou prioridade clínica, não executam conduta ou prescrição e não transferem automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpPersistedResponse>>> ListarTeamKnowledgeEffectDecisionReviewOutcomeFollowUps(
         Guid pacienteId,

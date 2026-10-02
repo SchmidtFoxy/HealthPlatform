@@ -1,4 +1,16 @@
-﻿# v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History
+﻿# v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersResponse`.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/search`.
+- Adiciona filtros por status, profissional responsável e horizonte.
+- Adiciona busca textual multi-campo.
+- Adiciona opção de incluir arquivados.
+- Adiciona ordenação ascendente/descendente.
+- Adiciona formulário de filtros na UI.
+- Sem migration nova.
+- Próxima etapa: v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary.
+
+# v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History
 
 - Adiciona contratos de histórico do Follow-Up.
 - Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/{id}/history`.

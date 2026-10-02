@@ -5038,6 +5038,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_PERSISTENCE_V0551='v0.55.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_STATUS_V0552='v0.55.2';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_HISTORY_V0553='v0.55.3';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_FILTERS_V0554='v0.55.4';
 
 
 
@@ -6524,6 +6525,24 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551">Fechar</button>
     </div>
+    <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersV0554" class="form-grid" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-filters-v0554="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_FILTERS_V0554}">
+      <label>Status<select name="status">
+        <option value="">Todos</option>
+        <option value="Registrado">Registrado</option>
+        <option value="EmAcompanhamento">Em acompanhamento</option>
+        <option value="Concluido">Concluído</option>
+        <option value="Descartado">Descartado</option>
+      </select></label>
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" placeholder="Filtrar por profissional"></label>
+      <label>Horizonte<input name="horizonte" maxlength="120" placeholder="Ex.: próxima revisão"></label>
+      <label class="span-2">Texto<input name="texto" maxlength="240" placeholder="Buscar item, contexto, interpretação ou observação"></label>
+      <label><input type="checkbox" name="incluirArquivados"> Incluir arquivados</label>
+      <label>Ordenação<select name="ordenacao"><option value="desc">Mais recentes</option><option value="asc">Mais antigos</option></select></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="secondary">Aplicar filtros</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersV0554">Limpar filtros</button>
+      </div>
+    </form>
     <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFormV0551" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
@@ -6548,12 +6567,34 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFormV0551');
   const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpListV0551');
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up`;
+  const filtersForm=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersV0554');
+  let activeFilters={ordenacao:'desc'};
 
   const clear=()=>{ form?.reset(); if(form?.elements.id) form.elements.id.value=''; };
 
+  const readFilters=()=>({
+    status:String(filtersForm?.elements.status?.value||'').trim(),
+    profissionalResponsavel:String(filtersForm?.elements.profissionalResponsavel?.value||'').trim(),
+    horizonte:String(filtersForm?.elements.horizonte?.value||'').trim(),
+    texto:String(filtersForm?.elements.texto?.value||'').trim(),
+    incluirArquivados:Boolean(filtersForm?.elements.incluirArquivados?.checked),
+    ordenacao:String(filtersForm?.elements.ordenacao?.value||'desc')
+  });
+
+  const loadFiltered=async()=>{
+    const params=new URLSearchParams();
+    if(activeFilters.status) params.set('status',activeFilters.status);
+    if(activeFilters.profissionalResponsavel) params.set('profissionalResponsavel',activeFilters.profissionalResponsavel);
+    if(activeFilters.horizonte) params.set('horizonte',activeFilters.horizonte);
+    if(activeFilters.texto) params.set('texto',activeFilters.texto);
+    if(activeFilters.incluirArquivados) params.set('incluirArquivados','true');
+    params.set('ordenacao',activeFilters.ordenacao||'desc');
+    const result=await api(`${base}/search?${params.toString()}`);
+    return Array.isArray(result?.itens)?result.itens:[];
+  };
+
   const render=async()=>{
-    const items=await api(base);
-    const list=Array.isArray(items)?items:[];
+    const list=await loadFiltered();
     listHost.innerHTML=list.length?list.map(x=>`<article class="internal-note-privacy-v0204">
       <div class="row-between"><b>${esc(x.profissionalResponsavel||'Profissional')}</b><small>${esc(x.status||'Registrado')}</small></div>
       <div>${esc(x.itemAcompanhar||'')}</div>
@@ -6632,6 +6673,19 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   };
 
   $('#clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551').onclick=clear;
+  if(filtersForm){
+    filtersForm.onsubmit=async ev=>{
+      ev.preventDefault();
+      activeFilters=readFilters();
+      await render();
+    };
+  }
+  const clearFilters=$('#clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersV0554');
+  if(clearFilters) clearFilters.onclick=async()=>{
+    filtersForm?.reset();
+    activeFilters={ordenacao:'desc'};
+    await render();
+  };
   $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541(p);
   await render();
 }
@@ -18909,7 +18963,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.55.3';
+const HP_MVP_VERSION='0.55.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

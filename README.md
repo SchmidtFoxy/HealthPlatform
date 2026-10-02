@@ -7127,3 +7127,36 @@ Cada acompanhamento passa a exibir a ação **Histórico**, com modal dedicado.
 O histórico é documental e auditável. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters`.
+
+---
+
+## v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters
+
+Adiciona busca e filtros estruturais aos acompanhamentos documentados derivados dos resultados das revisões profissionais.
+
+### Filtros
+- status;
+- profissional responsável;
+- horizonte;
+- busca textual;
+- incluir arquivados;
+- ordenação ascendente/descendente.
+
+### Busca textual
+Pesquisa em:
+- profissional responsável;
+- participantes;
+- item a acompanhar;
+- contexto do acompanhamento;
+- base observacional/evidência de suporte;
+- interpretação profissional;
+- critério de revisão documentado;
+- observação profissional.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up/search`
+
+### Guardrail
+Os filtros apenas localizam registros documentais. Não inferem causalidade, evidência clínica, prognóstico, recomendação, risco, urgência, prioridade ou decisão terapêutica.
+
+**Próxima etapa:** `v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary`.

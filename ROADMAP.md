@@ -5722,3 +5722,18 @@ Adicionar histórico auditado aos acompanhamentos documentados.
 
 ### v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters
 Adicionar busca e filtros estruturais aos acompanhamentos documentados.
+
+## ✅ v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters — CONCLUÍDA
+
+**Entregue:**
+- filtros por status, profissional e horizonte;
+- busca textual;
+- opção de incluir arquivados;
+- ordenação asc/desc;
+- UI de filtros;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.55.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Summary
+Adicionar resumo agregado dos acompanhamentos documentados.

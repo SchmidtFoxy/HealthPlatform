@@ -263,6 +263,17 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
     string Tipo,
     string? Ajuda);
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersResponse(
+    string? Status,
+    string? ProfissionalResponsavel,
+    string? Horizonte,
+    string? Texto,
+    bool IncluirArquivados,
+    string Ordenacao,
+    int Total,
+    IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpPersistedResponse> Itens,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryItemResponse(
     Guid Id,
     Guid TeamKnowledgeEffectDecisionReviewOutcomeFollowUpId,
