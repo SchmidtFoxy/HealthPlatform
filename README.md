@@ -8179,3 +8179,26 @@ O estado existe apenas no ciclo local da nota aberta e não é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.44 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State`.
+
+
+---
+
+## v0.56.44 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State
+
+Preserva localmente o estado completo da última verificação durante re-renderizações da mesma revisão.
+
+São preservados:
+- status da integridade;
+- horário da última verificação;
+- duração;
+- resumo técnico;
+- detalhes técnicos;
+- estado expandido/recolhido dos detalhes.
+
+Filtros, paginação e outras re-renderizações restauram automaticamente a interface sem repetir a verificação e sem enviar o estado à API.
+
+`Limpar verificação` descarta integralmente essa sessão técnica local.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.45 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Indicator`.

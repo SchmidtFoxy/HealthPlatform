@@ -1,3 +1,14 @@
+# v0.56.44 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State
+
+- Preserva status, horário, duração e resumo entre re-renderizações.
+- Restaura automaticamente o estado técnico da interface.
+- Mantém detalhes e toggle da v0.56.43.
+- Nova verificação substitui a sessão local anterior.
+- `Limpar verificação` zera toda a sessão técnica.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State
 
 - Preserva detalhes técnicos entre re-renderizações da revisão.
