@@ -1,27 +1,20 @@
-HealthPlatform v0.56.88 - Incremental
+HealthPlatform v0.56.89-r1 - Incremental
+
+Hotfix cumulativo da mesma versão funcional v0.56.89.
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- acao local Copiar estado da deduplicacao;
-- copia do resumo tecnico v0.56.87;
-- feedback de sucesso, resumo vazio e falha de clipboard;
-- aria-describedby e status acessivel;
-- marco de deploy seguro da v0.57.x preservado;
-- sem persistencia no servidor;
-- sem conteudo clinico/textual novo;
-- sem migration/tabela nova.
+Correção:
+- corrige falso negativo do gate [4920/4927];
+- o atributo data-copy-timestamp-v05689 é criado dinamicamente por dataset após cópia bem-sucedida, portanto não deve ser exigido no HTML inicial;
+- o gate inicial agora valida o ID do indicador e o texto inicial;
+- o gate [4921/4927] continua validando a criação dinâmica via dataset.copyTimestampV05689;
+- VERSION.txt permanece 0.56.89;
+- não altera app.js nem comportamento funcional.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.88
+Não commitar/pushar esta revisão -r1 individualmente.
+Se o TESTAR aprovar, commit/push somente como v0.56.89.

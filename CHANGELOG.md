@@ -1,3 +1,17 @@
+# v0.56.89 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+- Adiciona indicador local da última cópia bem-sucedida.
+- Atualiza o horário somente após sucesso no clipboard.
+- Exibe horário local com `toLocaleString()`.
+- Registra ISO em `datetime`.
+- Registra ISO em `data-copy-timestamp-v05689`.
+- Preserva o timestamp anterior em resumo vazio ou falha.
+- Preserva a ação de cópia e feedbacks da v0.56.88.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
 # v0.56.88 — Focus Announcement Deduplication Reset State Summary Copy
 
 - Adiciona ação local `Copiar estado da deduplicação`.

@@ -9092,3 +9092,30 @@ Não cria migration ou tabela nova.
 ### Marco de produção futuro
 
 Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
+
+
+---
+
+## v0.56.89 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+Registra localmente o horário da última cópia bem-sucedida do resumo técnico da deduplicação.
+
+O indicador inicia como:
+`Última cópia do estado da deduplicação: —`
+
+Após sucesso, armazena:
+- horário local via `toLocaleString()`;
+- ISO em `datetime`;
+- ISO em `data-copy-timestamp-v05689`.
+
+Resumo vazio ou falha de clipboard não alteram o último horário bem-sucedido.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.90 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear`.
+
+### Marco de produção futuro
+
+Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
