@@ -1,3 +1,14 @@
+# v0.56.78 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona ação local `Copiar estado do reset`.
+- Copia o texto visível do resumo técnico da v0.56.77.
+- Adiciona feedback de sucesso, vazio e falha de clipboard.
+- Liga ação, resumo e status com `aria-describedby`.
+- Mantém feedback com `aria-live=polite` e `role=status`.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.77 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
 
 - Adiciona resumo técnico local do estado de reset específico.
