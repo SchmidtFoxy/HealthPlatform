@@ -6119,3 +6119,21 @@ Preservar estado de filtros, página e tamanho da página durante a navegação 
 
 ### v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link
 Adicionar deep link documental para reabrir uma nota diretamente no histórico com o estado de navegação correspondente.
+
+
+## ✅ v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link — CONCLUÍDA
+
+**Entregue:**
+- deep link documental para histórico de revisões por nota;
+- link inclui revisão, nota, filtros, página e tamanho da página;
+- botão `Copiar link` no histórico;
+- estado da URL reaplicado ao abrir o link;
+- revisão e nota correspondentes são abertas automaticamente;
+- estado em memória é hidratado a partir do deep link;
+- sem dados clínicos textuais na URL;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard
+Adicionar validação e limpeza segura de deep links inválidos, incompletos ou apontando para notas não disponíveis.

@@ -1,4 +1,4 @@
-HealthPlatform v0.56.19 - Follow-Up Review Comparison Notes Revision History Pagination State - Incremental
+HealthPlatform v0.56.20 - Follow-Up Review Comparison Notes Revision History Deep Link - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,12 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- estado por nota para filtros e paginacao;
-- restaura tipo de evento, periodo, pagina e tamanho;
-- navegacao atualiza o estado;
-- exportacao usa o recorte persistido;
+- deep link por revisao/nota;
+- filtros, pagina e tamanho preservados na URL;
+- botao Copiar link;
+- abertura automatica da revisao e nota;
+- hidratacao do estado;
+- sem conteudo textual da nota na URL;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.19
+Se aprovado, commit/push apenas: v0.56.20

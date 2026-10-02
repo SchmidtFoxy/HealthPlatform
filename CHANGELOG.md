@@ -1,3 +1,13 @@
+# v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link
+
+- Adiciona deep link para histórico de revisões por nota.
+- Preserva revisão, nota, filtros, página e tamanho da página.
+- Adiciona botão `Copiar link`.
+- Reabre automaticamente a revisão e a nota indicadas na URL.
+- Hidrata o estado de paginação/filtros a partir do link.
+- Não inclui conteúdo textual da nota na URL.
+- Não cria migration ou tabela nova.
+
 # v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State
 
 - Preserva filtros e paginação por nota.

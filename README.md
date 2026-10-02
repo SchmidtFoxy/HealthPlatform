@@ -7683,3 +7683,26 @@ Ao retornar ao histórico de uma nota, filtros e paginação são restaurados. A
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link`.
+
+
+---
+
+## v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link
+
+Adiciona deep link documental para reabrir diretamente o histórico de revisões de uma nota com seu estado de navegação.
+
+### Estado codificado na URL
+- revisão (`hpReview`);
+- nota (`hpComparisonNote`);
+- evento (`hpNoteEvent`);
+- período (`hpNoteFrom` / `hpNoteTo`);
+- página (`hpNotePage`);
+- tamanho da página (`hpNotePageSize`).
+
+O botão `Copiar link` atualiza a URL atual e copia o endereço quando a API de clipboard está disponível. Ao reabrir o link, a revisão e a nota são abertas automaticamente e o estado é restaurado.
+
+O deep link não inclui o conteúdo textual da nota.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard`.
