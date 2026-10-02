@@ -8,6 +8,7 @@
     [string]$DatabaseName = "",
     [string]$BackupDir = "/opt/healthplatform/backups",
     [string]$ReleaseStagingDir = "/opt/healthplatform/releases",
+    [string]$HealthUrl = "",
     [int]$BackupRetentionCount = 7,
     [string]$ProductionConfirmation = "",
     [switch]$ValidarSomente,
@@ -27,11 +28,13 @@ $script:RemoteMetadata = $null
 $script:BackupMetadata = $null
 $script:PackageMetadata = $null
 $script:StagingMetadata = $null
+$script:PreActivationMetadata = $null
+$script:RollbackPlan = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.2 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.3 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -87,6 +90,12 @@ function Assert-DeployArguments {
     }
     if ($ReleaseStagingDir -eq $RemoteRoot) {
         throw "ReleaseStagingDir nao pode ser igual ao RemoteRoot ativo."
+    }
+    if ([string]::IsNullOrWhiteSpace($HealthUrl)) {
+        throw "Informe -HealthUrl para validar a saude da aplicacao ativa antes da promocao."
+    }
+    if ($HealthUrl -notmatch '^https?://') {
+        throw "HealthUrl deve usar http:// ou https://."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -470,10 +479,143 @@ printf 'STAGING_VALIDATED:path=%s:sha256=%s:version=%s' '$stagePath' "`$remote_s
     return $script:StagingMetadata
 }
 
+
+function Assert-StagingStructureReady {
+    if (-not $script:StagingMetadata -or $script:StagingMetadata.Activated) {
+        throw "Pre-activation bloqueada: staging valido e nao ativado e obrigatorio."
+    }
+
+    Write-DeployTitle "PRE-ACTIVATION STRUCTURE"
+    $stagePath = $script:StagingMetadata.Path
+    $cmd = @"
+set -e
+test '$stagePath' != '$RemoteRoot'
+test -d '$stagePath'
+test -f '$stagePath/VERSION.txt'
+test -f '$stagePath/$ComposeFile'
+test -f '$stagePath/DEPLOY-PRODUCAO.ps1'
+test ! -e '$stagePath/.git'
+test ! -e '$stagePath/.env'
+test ! -e '$stagePath/.env.production'
+staged_version=`$(tr -d '\r\n ' < '$stagePath/VERSION.txt')
+test "`$staged_version" = '$TargetVersion'
+printf 'STRUCTURE_READY:version=%s' "`$staged_version"
+"@
+    $result = Invoke-SshChecked -Command $cmd -Capture
+    if ($result -notmatch '^STRUCTURE_READY:version=(?<version>.+)$') {
+        throw "Estrutura staged nao passou pelos gates pre-ativacao."
+    }
+    Write-Host ("Estrutura staged pronta para pre-ativacao: v" + $Matches['version']) -ForegroundColor Green
+}
+
+function Assert-ProductionConfigurationPreserved {
+    if (-not $script:StagingMetadata) {
+        throw "Configuracao de producao nao pode ser validada sem staging."
+    }
+
+    Write-DeployTitle "CONFIGURACAO PRESERVADA"
+    $stagePath = $script:StagingMetadata.Path
+    $cmd = @"
+set -e
+test -f '$RemoteRoot/.env'
+test ! -e '$stagePath/.env'
+test ! -e '$stagePath/.env.production'
+test -f '$RemoteRoot/$ComposeFile'
+active_env_sha=`$(sha256sum '$RemoteRoot/.env' | awk '{print `$1}')
+test -n "`$active_env_sha"
+printf 'CONFIG_PRESERVED:env_sha=%s' "`$active_env_sha"
+"@
+    $result = Invoke-SshChecked -Command $cmd -Capture
+    if ($result -notmatch '^CONFIG_PRESERVED:env_sha=(?<sha>[a-fA-F0-9]{64})$') {
+        throw "Configuracao de producao nao foi confirmada como preservada no host."
+    }
+    Write-Host "Configuracao .env permanece somente no host ativo e nao foi empacotada no staging." -ForegroundColor Green
+    return $Matches['sha'].ToLowerInvariant()
+}
+
+function New-PreActivationRollbackPlan([string]$BackupFile) {
+    if (-not $script:BackupValidado -or -not $script:StagingMetadata) {
+        throw "Plano de rollback bloqueado: backup validado e staging sao obrigatorios."
+    }
+
+    Write-DeployTitle "PLANO DE ROLLBACK"
+    $stagePath = $script:StagingMetadata.Path
+    $cmd = @"
+set -e
+active_version='unknown'
+if [ -f '$RemoteRoot/VERSION.txt' ]; then
+  active_version=`$(tr -d '\r\n ' < '$RemoteRoot/VERSION.txt')
+fi
+test -s '$BackupFile'
+test -d '$RemoteRoot'
+test -d '$stagePath'
+plan='$stagePath/ROLLBACK-PLAN.txt'
+{
+  printf 'active_root=%s\n' '$RemoteRoot'
+  printf 'active_version=%s\n' "`$active_version"
+  printf 'target_version=%s\n' '$TargetVersion'
+  printf 'database_backup=%s\n' '$BackupFile'
+  printf 'staging_path=%s\n' '$stagePath'
+  printf 'activation_performed=false\n'
+} > "`$plan"
+test -s "`$plan"
+printf 'ROLLBACK_READY:active_version=%s:plan=%s' "`$active_version" "`$plan"
+"@
+    $result = Invoke-SshChecked -Command $cmd -Capture
+    if ($result -notmatch '^ROLLBACK_READY:active_version=(?<version>[^:]+):plan=(?<plan>.+)$') {
+        throw "Plano de rollback nao foi materializado."
+    }
+
+    $script:RollbackPlan = [pscustomobject]@{
+        ActiveVersion = $Matches['version']
+        TargetVersion = $TargetVersion
+        BackupFile = $BackupFile
+        StagingPath = $stagePath
+        PlanFile = $Matches['plan']
+        ActivationPerformed = $false
+    }
+    Write-Host ("Plano de rollback preparado: " + $script:RollbackPlan.PlanFile) -ForegroundColor Green
+    return $script:RollbackPlan
+}
+
+function Test-PreActivationHealthReadiness {
+    if (-not $script:StagingMetadata -or -not $script:RollbackPlan) {
+        throw "Health readiness bloqueado: staging e plano de rollback sao obrigatorios."
+    }
+
+    Write-DeployTitle "HEALTH READINESS"
+    $stagePath = $script:StagingMetadata.Path
+    $cmd = @"
+set -e
+command -v curl >/dev/null
+curl -fsS --max-time 15 '$HealthUrl' >/dev/null
+docker compose --env-file '$RemoteRoot/.env' -f '$stagePath/$ComposeFile' config -q
+test '$stagePath' != '$RemoteRoot'
+printf 'PREACTIVATION_HEALTH_READY'
+"@
+    $result = Invoke-SshChecked -Command $cmd -Capture
+    if ($result -notmatch 'PREACTIVATION_HEALTH_READY') {
+        throw "Health readiness pre-ativacao nao foi confirmado."
+    }
+
+    $script:PreActivationMetadata = [pscustomobject]@{
+        HealthUrl = $HealthUrl
+        ActiveHealthOk = $true
+        StagedComposeConfigOk = $true
+        RollbackReady = $true
+        ActivationAllowed = $false
+        CheckedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host "Aplicacao ativa respondeu ao healthcheck e Compose staged passou em config -q." -ForegroundColor Green
+    Write-Host "Pre-activation gates aprovados; promocao continua bloqueada nesta versao." -ForegroundColor Green
+    return $script:PreActivationMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.2 adiciona pacote validado e staging remoto sem ativacao." -ForegroundColor Cyan
+    Write-Host "v0.57.3 adiciona gates pre-ativacao, configuracao preservada e rollback preparado." -ForegroundColor Cyan
     Write-Host "Esta versao ainda NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -482,7 +624,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.2
+# Fluxo v0.57.3
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -516,10 +658,14 @@ if (-not $script:MutacaoLiberada) {
 $retentionResult = Invoke-SafeBackupRetention
 $packageMetadata = New-LocalApplicationPackage
 $stagingMetadata = Send-ApplicationPackageToStaging
+Assert-StagingStructureReady
+$productionEnvSha256 = Assert-ProductionConfigurationPreserved
+$rollbackPlan = New-PreActivationRollbackPlan -BackupFile $backupFile
+$preActivationMetadata = Test-PreActivationHealthReadiness
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-staging-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-preactivation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -546,11 +692,20 @@ $logFile = Join-Path $DeployLogDir ("deploy-staging-v" + $localVersion + "-" + (
     "stagingSha256=$($stagingMetadata.Sha256)",
     "stagingVersion=$($stagingMetadata.Version)",
     "stagingActivated=false",
+    "productionEnvSha256=$productionEnvSha256",
+    "rollbackPlan=$($rollbackPlan.PlanFile)",
+    "rollbackActiveVersion=$($rollbackPlan.ActiveVersion)",
+    "rollbackTargetVersion=$($rollbackPlan.TargetVersion)",
+    "preActivationHealthUrl=$($preActivationMetadata.HealthUrl)",
+    "preActivationActiveHealthOk=$($preActivationMetadata.ActiveHealthOk)",
+    "preActivationStagedComposeConfigOk=$($preActivationMetadata.StagedComposeConfigOk)",
+    "preActivationRollbackReady=$($preActivationMetadata.RollbackReady)",
+    "preActivationActivationAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
     "completedAt=" + (Get-Date).ToString("o")
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Pacote e staging remoto validados sem ativacao. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Pre-activation gates validados sem promocao da release. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration ou substituicao da aplicacao foi executada." -ForegroundColor Green

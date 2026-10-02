@@ -1,3 +1,12 @@
+# v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates
+
+- Adiciona gates estruturais do staging.
+- Preserva `.env` somente no host ativo.
+- Materializa plano de rollback.
+- Valida healthcheck ativo e `docker compose config -q` staged.
+- Mantém promoção, restart e migrations bloqueados.
+- Preserva o guard absoluto de backup PostgreSQL.
+
 # v0.57.2 — Deploy Seguro para Produção Application Package & Staging
 
 - Adiciona pacote local `tar.gz` da aplicação.

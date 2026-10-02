@@ -1,4 +1,4 @@
-HealthPlatform v0.57.2 - Incremental
+HealthPlatform v0.57.3-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,16 +14,23 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- pacote local tar.gz da aplicacao;
-- exclusao de arquivos sensiveis/transitorios;
-- SHA-256 local;
-- envio por scp para staging remoto isolado;
-- validacao SHA-256 remota;
-- validacao VERSION.txt e Compose no staging;
-- aplicacao ativa preservada sem promocao/restart/migration;
-- staging liberado somente apos backup PostgreSQL validado;
-- proxima etapa v0.57.3 / Pre-Activation Gates.
+- gates pre-ativacao do staging;
+- configuracao .env preservada no host;
+- plano de rollback materializado;
+- healthcheck da aplicacao ativa;
+- docker compose config -q staged;
+- promocao continua bloqueada;
+- guard absoluto do backup preservado.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.2
+Se aprovado, commit/push apenas: v0.57.3
+
+Hotfix cumulativo r1:
+- corrige marcadores de identidade corrente remanescentes da v0.57.2 em gates historicos do TESTAR.ps1;
+- atualiza HP_MVP_VERSION, HealthController current-version Contains e Program Version para v0.57.3;
+- preserva referencias documentais/historicas reais da v0.57.2;
+- codigo funcional da v0.57.3 permanece inalterado;
+- VERSION.txt permanece 0.57.3;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.3.

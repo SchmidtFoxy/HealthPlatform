@@ -9432,3 +9432,14 @@ A aplicação ativa continua intacta: **não há troca de release, symlink, rest
 O staging só é permitido após o backup PostgreSQL estar concluído e validado.
 
 **Próxima etapa:** `v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates`.
+
+
+---
+
+## v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates
+
+Antes de qualquer futura promoção da release staged, o `DEPLOY-PRODUCAO.ps1` agora valida estrutura, configuração preservada, rollback e health readiness.
+
+A v0.57.3 **ainda não promove a release, não reinicia serviços e não executa migrations**.
+
+**Próxima etapa:** `v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation`.

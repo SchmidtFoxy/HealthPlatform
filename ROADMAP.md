@@ -7795,3 +7795,27 @@ Preparar empacotamento e staging remoto da aplicação sem ativação imediata, 
 
 ### v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates
 Adicionar gates pré-ativação do staging: validação estrutural do pacote, configuração obrigatória preservada no host, plano de rollback e checagens de saúde preparatórias, ainda sem promover a release staged para produção.
+
+
+## ✅ v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates — CONCLUÍDA
+
+**Entregue:**
+- validação estrutural do staging antes de qualquer promoção;
+- confirmação de ausência de `.git` e `.env*` no staging;
+- confirmação de que o `.env` permanece somente no host ativo;
+- SHA-256 técnico da configuração ativa, sem copiar segredo para o staging;
+- plano de rollback materializado no staging com versão ativa, versão alvo, backup e caminhos envolvidos;
+- healthcheck da aplicação atualmente ativa;
+- `docker compose config -q` do Compose staged usando a configuração preservada no host;
+- gates pré-ativação registrados no log local;
+- promoção da release continua explicitamente bloqueada nesta versão;
+- guard absoluto do backup PostgreSQL preservado.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation
+Introduzir a fundação da ativação controlada da release staged, com confirmação explícita adicional, snapshot do estado ativo e rollback imediato preparado, sem ainda liberar migrations destrutivas.
