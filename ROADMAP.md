@@ -6229,3 +6229,22 @@ Adicionar resumo técnico agregado dos caminhos de compartilhamento, sem expor c
 
 ### v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter
 Adicionar filtro técnico por período ao resumo de telemetria de compartilhamento.
+
+
+## ✅ v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter — CONCLUÍDA
+
+**Entregue:**
+- filtro técnico por período no resumo de telemetria;
+- parâmetros `deUtc` e `ateUtc` no endpoint de resumo;
+- aplicação do período diretamente na consulta de `AuditLogs`;
+- controles independentes de data/hora na interface;
+- ação `Aplicar período técnico`;
+- ação `Limpar período`;
+- painel informa o recorte técnico atual;
+- sem conteúdo clínico/textual no filtro;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter
+Adicionar filtro técnico por canal de compartilhamento ao resumo de telemetria.

@@ -7806,3 +7806,22 @@ A interface apresenta um painel compacto junto ao histórico da nota. O endpoint
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter`.
+
+
+---
+
+## v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter
+
+Adiciona filtro por período ao resumo técnico da telemetria de compartilhamento.
+
+O endpoint `history/share-telemetry/summary` passa a aceitar:
+- `deUtc`;
+- `ateUtc`.
+
+A interface possui período técnico independente dos filtros do histórico clínico/documental, com ações para aplicar e limpar o recorte.
+
+O filtro atua somente sobre `AuditLogs` da entidade técnica `ComparisonNoteRevisionHistoryShareTelemetry`.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter`.

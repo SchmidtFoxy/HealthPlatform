@@ -1,4 +1,4 @@
-HealthPlatform v0.56.25 - Follow-Up Review Comparison Notes Revision History Share Telemetry Summary - Incremental
+HealthPlatform v0.56.26 - Follow-Up Review Comparison Notes Revision History Share Telemetry Period Filter - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,13 +14,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- resumo agregado da telemetria tecnica;
-- total e contagens por canal;
-- primeiro e ultimo evento;
-- painel tecnico na UI;
+- filtro tecnico por periodo;
+- deUtc/ateUtc no resumo de telemetria;
+- controles independentes na UI;
+- aplicar/limpar periodo;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.25
+Se aprovado, commit/push apenas: v0.56.26

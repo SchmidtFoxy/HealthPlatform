@@ -1,3 +1,12 @@
+# v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter
+
+- Adiciona `deUtc` e `ateUtc` ao resumo técnico de telemetria.
+- Filtra `AuditLogs` pelo período informado.
+- Adiciona controles independentes de período técnico à UI.
+- Adiciona aplicar/limpar período.
+- Mantém conteúdo clínico/textual fora do filtro.
+- Não cria migration ou tabela nova.
+
 # v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary
 
 - Adiciona resumo agregado da telemetria técnica de compartilhamento.

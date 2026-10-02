@@ -3643,6 +3643,8 @@ public class ProgressReviewNotesController(
         Guid pacienteId,
         Guid id,
         Guid noteId,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
         CancellationToken cancellationToken = default)
     {
         var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
@@ -3658,13 +3660,21 @@ public class ProgressReviewNotesController(
         if (!notaExiste)
             return NotFound();
 
-        var logs = await db.AuditLogs
+        var query = db.AuditLogs
             .AsNoTracking()
             .Where(x =>
                 x.OrganizacaoId == currentUser.OrganizationId &&
                 x.Acao == "PROFESSIONAL_REVIEW_TECHNICAL_COMPARISON_NOTE_HISTORY_SHARE_TELEMETRY" &&
                 x.Entidade == "ComparisonNoteRevisionHistoryShareTelemetry" &&
-                x.EntidadeId == noteId.ToString())
+                x.EntidadeId == noteId.ToString());
+
+        if (deUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc >= deUtc.Value);
+
+        if (ateUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc <= ateUtc.Value);
+
+        var logs = await query
             .OrderByDescending(x => x.CreatedAtUtc)
             .Select(x => new { x.DadosNovosJson, x.CreatedAtUtc })
             .ToListAsync(cancellationToken);
