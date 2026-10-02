@@ -6716,3 +6716,22 @@ Adicionar ação local para limpar explicitamente o feedback técnico de encerra
 
 ### v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility
 Melhorar a acessibilidade do feedback e das ações de encerramento com estado descritivo e associação semântica local, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility — CONCLUÍDA
+
+**Entregue:**
+- `role="status"` e `aria-atomic="true"` no feedback técnico e no status das ações;
+- `aria-describedby` em `Copiar encerramento` e `Limpar encerramento`;
+- descrição semântica dinâmica do estado disponível/indisponível;
+- sincronização de `aria-disabled` com o estado real dos botões;
+- marcador técnico de acessibilidade v0.56.51;
+- comportamento funcional das v0.56.47–v0.56.50 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus
+Melhorar o fluxo de foco por teclado após copiar, limpar, fechar ou trocar a nota, sem conteúdo clínico/textual.

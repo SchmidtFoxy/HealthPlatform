@@ -8335,3 +8335,22 @@ O estado da sessão técnica já expirada não é recriado nem enviado ao servid
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility`.
+
+
+---
+
+## v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility
+
+Melhora a acessibilidade do feedback técnico e das ações de encerramento.
+
+Inclui:
+- `role="status"` e `aria-atomic="true"`;
+- `aria-describedby` para associar as ações ao feedback/status;
+- `aria-disabled` sincronizado com a disponibilidade real;
+- descrição semântica dinâmica informando se existe encerramento técnico disponível.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.52 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Keyboard Focus`.

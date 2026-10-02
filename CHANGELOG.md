@@ -1,3 +1,14 @@
+# v0.56.51 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Accessibility
+
+- Adiciona semântica `role=status` e `aria-atomic`.
+- Associa copiar/limpar ao feedback via `aria-describedby`.
+- Sincroniza `aria-disabled`.
+- Adiciona descrição semântica dinâmica do estado.
+- Preserva o fluxo funcional anterior.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.50 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Clear
 
 - Adiciona `Limpar encerramento`.
