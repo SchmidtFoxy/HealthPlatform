@@ -6459,3 +6459,24 @@ Registrar e exibir apenas localmente o horário da última verificação de inte
 
 ### v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration
 Exibir localmente a duração da última verificação de integridade, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration — CONCLUÍDA
+
+**Entregue:**
+- medição local da duração da verificação de integridade;
+- cronômetro iniciado com `performance.now()`;
+- duração registrada no `finally`, inclusive para falhas e retornos antecipados;
+- exibição em milissegundos abaixo de 1 segundo;
+- exibição em segundos com duas casas a partir de 1 segundo;
+- atributo técnico `data-duration-ms-v05638`;
+- `Limpar verificação` também limpa a duração;
+- timestamp, status, detalhes e ações de cópia preservados;
+- nenhum dado de duração é enviado à API;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy
+Adicionar a duração da verificação aos detalhes técnicos copiáveis, mantendo o fluxo local e sem conteúdo clínico/textual.

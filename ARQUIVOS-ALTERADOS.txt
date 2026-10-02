@@ -1,4 +1,4 @@
-HealthPlatform v0.56.37 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp - Incremental
+HealthPlatform v0.56.38 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- horario local da ultima tentativa de verificacao;
-- datetime ISO 8601;
-- horario registrado para resultados terminais;
-- reset limpa o horario;
-- dado somente local;
+- medicao local da duracao da verificacao;
+- performance.now() no inicio e no finally;
+- exibicao em ms ou segundos;
+- data-duration-ms-v05638;
+- reset limpa a duracao;
+- sem envio para API;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.37
+Se aprovado, commit/push apenas: v0.56.38

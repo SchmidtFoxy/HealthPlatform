@@ -8054,3 +8054,24 @@ O horário permanece apenas na interface do navegador e não é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration`.
+
+
+---
+
+## v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration
+
+Adiciona medição local da duração da última tentativa de verificação do CSV técnico.
+
+Comportamento:
+- usa `performance.now()` para medir o processamento;
+- registra a duração no `finally`, incluindo retornos antecipados e erros;
+- mostra milissegundos quando menor que 1 segundo;
+- mostra segundos com duas casas quando igual ou maior que 1 segundo;
+- mantém o valor técnico em `data-duration-ms-v05638`;
+- `Limpar verificação` remove também a duração.
+
+Nenhum dado de duração é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy`.

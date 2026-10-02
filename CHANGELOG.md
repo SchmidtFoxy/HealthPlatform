@@ -1,3 +1,14 @@
+# v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration
+
+- Mede localmente a duração da verificação SHA-256.
+- Usa `performance.now()`.
+- Registra a duração no `finally`.
+- Exibe ms ou segundos conforme o tempo.
+- Limpa a duração junto com `Limpar verificação`.
+- Mantém o dado somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp
 
 - Exibe o horário local da última tentativa de verificação.
