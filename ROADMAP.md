@@ -6556,3 +6556,23 @@ Adicionar controle para expandir/recolher os detalhes técnicos da verificação
 
 ### v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State
 Preservar localmente o estado expandido/recolhido dos detalhes técnicos durante re-renderizações da revisão, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State — CONCLUÍDA
+
+**Entregue:**
+- estado expandido/recolhido preservado durante re-renderizações da revisão;
+- estado mantido no escopo local da nota aberta;
+- detalhes técnicos da última verificação preservados no mesmo ciclo de revisão;
+- restauração automática do bloco de detalhes após filtros, paginação ou atualização local da revisão;
+- preferência recolhida/expandida reaplicada sem nova verificação;
+- nova verificação continua abrindo os detalhes automaticamente;
+- `Limpar verificação` continua zerando detalhes e estado visual;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.44 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State
+Preservar localmente também status, horário, duração e resumo técnico da última verificação durante re-renderizações da revisão, sem conteúdo clínico/textual.

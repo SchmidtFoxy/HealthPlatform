@@ -1,3 +1,14 @@
+# v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State
+
+- Preserva detalhes técnicos entre re-renderizações da revisão.
+- Preserva estado expandido/recolhido do toggle.
+- Restaura automaticamente o bloco técnico após re-render.
+- Nova verificação continua expandindo detalhes.
+- Reset continua limpando o estado.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.42 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle
 
 - Adiciona `Mostrar detalhes` / `Ocultar detalhes`.

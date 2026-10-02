@@ -1,4 +1,4 @@
-HealthPlatform v0.56.42 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle - Incremental
+HealthPlatform v0.56.43 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,15 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- Mostrar detalhes / Ocultar detalhes;
-- aria-expanded;
-- controle desabilitado sem detalhes;
-- exibicao automatica preservada apos verificacao;
-- reset recolhe e limpa detalhes;
-- fluxo local preservado;
+- preservacao local do estado expandido/recolhido;
+- preservacao dos detalhes tecnicos entre rerenderizacoes;
+- restauracao automatica do bloco tecnico;
+- nova verificacao continua expandindo detalhes;
+- reset continua zerando o estado;
+- sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.42
+Se aprovado, commit/push apenas: v0.56.43

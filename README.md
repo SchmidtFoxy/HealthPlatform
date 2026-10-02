@@ -8159,3 +8159,23 @@ Nenhum dado é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State`.
+
+
+---
+
+## v0.56.43 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary Details Toggle State
+
+Preserva o estado expandido/recolhido dos detalhes técnicos durante re-renderizações da mesma revisão.
+
+Comportamento:
+- mantém localmente os detalhes técnicos já produzidos;
+- mantém se o usuário deixou o bloco expandido ou recolhido;
+- filtros, paginação e re-renderizações reutilizam esse estado;
+- uma nova verificação continua abrindo os detalhes automaticamente;
+- `Limpar verificação` continua descartando os detalhes e retornando ao estado inicial.
+
+O estado existe apenas no ciclo local da nota aberta e não é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.44 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State`.

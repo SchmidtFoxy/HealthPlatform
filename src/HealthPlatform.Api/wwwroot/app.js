@@ -5084,6 +5084,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SUMMARY_V05640='v0.56.40';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SUMMARY_COPY_V05641='v0.56.41';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SUMMARY_DETAILS_TOGGLE_V05642='v0.56.42';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SUMMARY_DETAILS_TOGGLE_STATE_V05643='v0.56.43';
 
 
 
@@ -6815,7 +6816,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + resumo técnico com detalhes expansíveis · v0.56.42</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + estado local dos detalhes técnicos · v0.56.43</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6996,6 +6997,8 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
           let shareTelemetryFromV05626='';
           let shareTelemetryToV05626='';
           let shareTelemetryChannelV05627='';
+          let verifyTelemetryDetailsStateV05634=null;
+          let telemetryDetailsExpandedStateV05643=true;
 
           const persistRevisionHistoryStateV05619=()=>{
             comparisonNoteRevisionHistoryStateV05619.set(String(noteId),{
@@ -7089,7 +7092,6 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             const copyTelemetrySummaryV05641=$('#copyShareTelemetrySummaryV05641');
             const toggleTelemetryDetailsV05642=$('#toggleShareTelemetryDetailsV05642');
             const verifyTelemetryDetailsV05633=$('#verifyShareTelemetryCsvDetailsV05633');
-            let verifyTelemetryDetailsStateV05634=null;
             const setVerifyTelemetryStatusV05635=(status)=>{
               if(!verifyTelemetryStatusBadgeV05635)return;
               const labels={
@@ -7196,6 +7198,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             const setTelemetryDetailsExpandedV05642=(expanded)=>{
               const hasDetails=!!verifyTelemetryDetailsStateV05634;
               const shouldExpand=hasDetails&&!!expanded;
+              telemetryDetailsExpandedStateV05643=shouldExpand;
               if(verifyTelemetryDetailsV05633)verifyTelemetryDetailsV05633.hidden=!shouldExpand;
               if(toggleTelemetryDetailsV05642){
                 toggleTelemetryDetailsV05642.disabled=!hasDetails;
@@ -7207,7 +7210,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
               const expanded=toggleTelemetryDetailsV05642.getAttribute('aria-expanded')==='true';
               setTelemetryDetailsExpandedV05642(!expanded);
             };
-            const setVerifyTelemetryDetailsV05633=(details)=>{
+            const setVerifyTelemetryDetailsV05633=(details,preserveToggleStateV05643=false)=>{
               verifyTelemetryDetailsStateV05634=details||null;
               if(!verifyTelemetryDetailsV05633)return;
               if(!details){
@@ -7218,8 +7221,15 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
               verifyTelemetryDetailsV05633.hidden=false;
               verifyTelemetryDetailsV05633.innerHTML=`<div><b>Arquivo:</b> ${esc(details.fileName||'—')}</div><div><b>Tamanho:</b> ${Number(details.fileSize||0).toLocaleString()} bytes</div><div><b>Hash esperado:</b> <code>${esc(details.expectedHash||'—')}</code></div><div><b>Hash calculado:</b> <code>${esc(details.actualHash||'—')}</code></div><div><b>Algoritmo:</b> SHA-256</div><div class="form-actions" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-copy-v05634="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_COPY_V05634}" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-duration-copy-v05639="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_DURATION_COPY_V05639}"><button type="button" class="ghost" id="copyExpectedHashV05634">Copiar hash esperado</button><button type="button" class="ghost" id="copyActualHashV05634">Copiar hash calculado</button><button type="button" class="ghost" id="copyVerificationDetailsV05634">Copiar detalhes</button></div>`;
               bindVerificationCopyActionsV05634();
-              setTelemetryDetailsExpandedV05642(true);
+              if(preserveToggleStateV05643){
+                setTelemetryDetailsExpandedV05642(telemetryDetailsExpandedStateV05643);
+              }else{
+                setTelemetryDetailsExpandedV05642(true);
+              }
             };
+            if(verifyTelemetryDetailsStateV05634){
+              setVerifyTelemetryDetailsV05633(verifyTelemetryDetailsStateV05634,true);
+            }
             if(verifyTelemetryCsv)verifyTelemetryCsv.onchange=async()=>{
               const file=verifyTelemetryCsv.files?.[0];
               if(!file)return;
@@ -19781,7 +19791,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.42';
+const HP_MVP_VERSION='0.56.43';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
