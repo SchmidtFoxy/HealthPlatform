@@ -8053,3 +8053,28 @@ Iniciar a próxima série com observabilidade operacional de produção, histór
 
 ### v0.58.1 — Production Operations Deploy History API
 Expor o histórico operacional de releases/deploys por API autenticada para o módulo profissional/admin, com paginação, estado da release, resultado do deploy e sinais de saúde sem expor segredos.
+
+
+## ✅ v0.58.1 — Production Operations Deploy History API — CONCLUÍDA
+
+**Entregue:**
+- API autenticada `GET /api/operacoes-producao/deploys`;
+- acesso restrito a `Admin`, `Medico`, `Nutricionista` e `Personal`;
+- paginação por `page` e `pageSize`, com máximo de 100 itens;
+- ordenação do mais recente para o mais antigo;
+- total de itens e total de páginas;
+- `GET /api/operacoes-producao/deploys/latest`;
+- leitura concorrente segura do JSONL operacional;
+- linhas inválidas são ignoradas na listagem;
+- resposta pública usa allowlist de campos;
+- não devolve hash do backup, staging path ou caminhos internos;
+- sinais públicos: versão, modo, alvo, backup validado, migration safety, promoção, runtime health, version health, versão servida, rollback, recovery audit, closure e status;
+- diretório configurável por `ProductionOperations:OperationsDirectory`;
+- histórico ausente retorna coleção vazia;
+- latest ausente retorna `404`;
+- nenhum endpoint expõe conteúdo de `.env`, senha, token ou segredo.
+
+## Próxima etapa
+
+### v0.58.2 — Production Operations Admin UI
+Adicionar visualização administrativa/profissional do histórico operacional, com estado atual, paginação, badges de saúde, versão servida, rollback/recovery e navegação mobile-first.

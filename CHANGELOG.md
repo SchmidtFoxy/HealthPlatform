@@ -1,3 +1,14 @@
+# v0.58.1 — Production Operations Deploy History API
+
+- Adiciona `ProductionOperationsController`.
+- Expõe histórico operacional paginado.
+- Expõe o último estado operacional.
+- Restringe acesso a profissionais e administrador.
+- Tolera linhas JSONL inválidas sem derrubar a API.
+- Usa DTO allowlist para impedir exposição de metadados internos.
+- Suporta `ProductionOperations:OperationsDirectory`.
+- Mantém o pipeline seguro da v0.57.x/v0.58.0 inalterado.
+
 # v0.58.0 — Production Operations Foundation
 
 - Inicia a série v0.58.x.

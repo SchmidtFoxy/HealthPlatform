@@ -1,4 +1,4 @@
-HealthPlatform v0.58.0 - Incremental
+HealthPlatform v0.58.1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -7,22 +7,22 @@ Arquivos alterados:
 - TESTAR.ps1
 - VERSION.txt
 - DEPLOY-PRODUCAO.ps1
-- PRODUCTION-OPERATIONS.md
 - src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Controllers/ProductionOperationsController.cs
 - src/HealthPlatform.Api/Program.cs
 - src/HealthPlatform.Api/wwwroot/app.js
 - src/HealthPlatform.Api/wwwroot/index.html
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- Production Operations Foundation;
-- latest-production-state.json;
-- production-deploy-history.jsonl append-only;
-- sinais de backup, migrations, promotion, runtime, version, rollback e recovery;
-- status healthy/validated;
-- pipeline seguro da v0.57.x preservado;
-- proxima etapa v0.58.1 / Deploy History API.
+- API autenticada de historico operacional;
+- GET /api/operacoes-producao/deploys;
+- GET /api/operacoes-producao/deploys/latest;
+- paginacao e ordenacao;
+- DTO allowlist sem segredos/metadados internos;
+- perfis Admin/Medico/Nutricionista/Personal;
+- proxima etapa v0.58.2 / Production Operations Admin UI.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.0
+Se aprovado, commit/push apenas: v0.58.1

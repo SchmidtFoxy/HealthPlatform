@@ -9573,3 +9573,19 @@ Cada ciclo passa a gerar um snapshot do estado de produção e uma entrada appen
 A documentação operacional está em `PRODUCTION-OPERATIONS.md`.
 
 **Próxima etapa:** `v0.58.1 — Production Operations Deploy History API`.
+
+
+---
+
+## v0.58.1 — Production Operations Deploy History API
+
+O histórico operacional passa a ser consultável por API autenticada:
+
+- `GET /api/operacoes-producao/deploys?page=1&pageSize=20`
+- `GET /api/operacoes-producao/deploys/latest`
+
+Perfis permitidos: `Admin`, `Medico`, `Nutricionista` e `Personal`.
+
+A API usa uma allowlist explícita de campos e não devolve hash do backup, staging path ou outros caminhos internos. O diretório pode ser configurado por `ProductionOperations:OperationsDirectory`.
+
+**Próxima etapa:** `v0.58.2 — Production Operations Admin UI`.
