@@ -9043,3 +9043,28 @@ Não cria migration ou tabela nova.
 ### Marco de produção futuro
 
 Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.
+
+
+---
+
+## v0.56.87 — Focus Announcement Deduplication Reset State Summary
+
+Adiciona um resumo técnico local visível do estado da v0.56.86:
+
+`Estado do reset da deduplicação: ready · Resets: 0 · Último reset: —`
+
+O resumo acompanha automaticamente:
+- status `ready`, `reset` ou `announced`;
+- contador local de resets;
+- horário local derivado do ISO do último reset;
+- atributo técnico `data-reset-state-summary-v05687`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.88 — Focus Announcement Deduplication Reset State Summary Copy`.
+
+### Marco de produção futuro
+
+Permanece obrigatório no fechamento da série `v0.57.x`, antes da `v0.58.0`, o `DEPLOY-PRODUCAO.ps1` com backup PostgreSQL obrigatório e validado antes de migrations/deploy, senha interativa quando necessária, logs, healthcheck e rollback/restauração.

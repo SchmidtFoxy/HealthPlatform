@@ -1,4 +1,4 @@
-HealthPlatform v0.56.86 - Incremental
+HealthPlatform v0.56.87 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,12 +13,11 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- estado tecnico local do reset da deduplicacao;
+- resumo tecnico local do estado da v0.56.86;
 - status ready/reset/announced;
-- contador local de resets;
-- horario ISO do ultimo reset;
-- sincronizacao no indicador Ultima copia do estado do reset;
-- reset v0.56.85 e deduplicacao v0.56.84 preservados;
+- contador de resets;
+- horario local do ultimo reset derivado do ISO;
+- data-reset-state-summary-v05687;
 - marco de deploy seguro da v0.57.x preservado;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
@@ -26,4 +25,4 @@ Entrega funcional:
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.86
+Se aprovado, commit/push apenas: v0.56.87

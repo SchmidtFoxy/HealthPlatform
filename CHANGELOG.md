@@ -1,3 +1,16 @@
+# v0.56.87 — Focus Announcement Deduplication Reset State Summary
+
+- Adiciona resumo técnico local do estado da v0.56.86.
+- Exibe status `ready`, `reset` ou `announced`.
+- Exibe contador local de resets.
+- Exibe horário local do último reset derivado do ISO.
+- Adiciona `data-reset-state-summary-v05687`.
+- Preserva o estado técnico da v0.56.86, o reset da v0.56.85 e a deduplicação da v0.56.84.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.86 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
 
 - Adiciona estado técnico local ao reset específico da deduplicação.
