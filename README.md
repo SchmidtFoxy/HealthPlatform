@@ -8035,3 +8035,22 @@ Nenhum dado é enviado à API durante esse fluxo.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp`.
+
+
+---
+
+## v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp
+
+Adiciona o horário da última tentativa de verificação local do CSV técnico.
+
+Comportamento:
+- antes da primeira verificação: `Ainda não verificado`;
+- após uma tentativa: `Última verificação: <data/hora local>`;
+- o elemento mantém também `datetime` em ISO 8601;
+- `Limpar verificação` remove o horário e volta ao estado inicial.
+
+O horário permanece apenas na interface do navegador e não é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration`.

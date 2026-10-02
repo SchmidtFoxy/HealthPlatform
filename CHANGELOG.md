@@ -1,3 +1,13 @@
+# v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp
+
+- Exibe o horário local da última tentativa de verificação.
+- Mantém `datetime` em ISO 8601.
+- Registra horário para todos os resultados terminais da verificação.
+- `Limpar verificação` limpa também o horário.
+- Mantém o dado somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset
 
 - Adiciona `Limpar verificação`.

@@ -1,4 +1,4 @@
-HealthPlatform v0.56.36 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset - Incremental
+HealthPlatform v0.56.37 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,14 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- botao Limpar verificacao;
-- reset de status para Nao verificado;
-- limpeza de feedback e detalhes;
-- limpeza do input local;
-- descarte do estado local de hashes/detalhes;
+- horario local da ultima tentativa de verificacao;
+- datetime ISO 8601;
+- horario registrado para resultados terminais;
+- reset limpa o horario;
+- dado somente local;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.36
+Se aprovado, commit/push apenas: v0.56.37

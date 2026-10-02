@@ -6440,3 +6440,22 @@ Adicionar ação para limpar o resultado da verificação local e retornar o est
 
 ### v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp
 Registrar e exibir apenas localmente o horário da última verificação de integridade, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.37 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Timestamp — CONCLUÍDA
+
+**Entregue:**
+- horário local da última tentativa de verificação de integridade;
+- exibição `Última verificação: ...`;
+- atributo `datetime` com ISO 8601;
+- estados iniciais `Ainda não verificado` e fallback `Horário indisponível`;
+- timestamp registrado para resultado válido, inválido, arquivo inválido, navegador sem Web Crypto e erro;
+- ação `Limpar verificação` também limpa o horário;
+- horário existe somente no estado local da interface;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration
+Exibir localmente a duração da última verificação de integridade, sem conteúdo clínico/textual.
