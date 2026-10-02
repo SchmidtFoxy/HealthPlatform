@@ -1,3 +1,14 @@
+# v0.56.45 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Indicator
+
+- Adiciona indicador técnico da sessão local.
+- Diferencia sessão vazia e verificação preservada.
+- Restaura o indicador após re-renderizações.
+- Ativa o indicador ao concluir uma verificação.
+- Reset retorna ao estado vazio.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.44 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State
 
 - Preserva status, horário, duração e resumo entre re-renderizações.

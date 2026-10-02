@@ -8202,3 +8202,25 @@ Filtros, paginação e outras re-renderizações restauram automaticamente a int
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.45 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Indicator`.
+
+
+---
+
+## v0.56.45 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Indicator
+
+Adiciona um indicador explícito de que o estado da última verificação existe somente na sessão local da revisão.
+
+Estados:
+- `Sessão local: sem verificação preservada.`;
+- `Sessão local: última verificação preservada somente nesta revisão.`.
+
+O indicador acompanha a sessão técnica da v0.56.44:
+- é restaurado após re-renderizações;
+- é ativado ao concluir uma tentativa de verificação;
+- volta ao estado vazio com `Limpar verificação`.
+
+Nenhum estado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry`.
