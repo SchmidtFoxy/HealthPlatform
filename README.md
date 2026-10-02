@@ -7364,3 +7364,26 @@ A exportação é documental/auditável e não interpreta diagnóstico, prognós
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary`.
+
+
+---
+
+## v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary
+
+Adiciona um resumo documental rápido do histórico filtrado da revisão.
+
+### Resumo
+- total de eventos;
+- criações;
+- edições;
+- mudanças de status;
+- arquivamentos;
+- primeiro evento;
+- último evento;
+- último status conhecido.
+
+O resumo usa exatamente os mesmos filtros do histórico (`tipoEvento`, `deUtc`, `ateUtc`) e é derivado da trilha auditável já existente.
+
+Não cria migration ou tabela nova e não interpreta diagnóstico, prognóstico, risco, urgência, prioridade, causalidade ou decisão terapêutica.
+
+**Próxima etapa:** `v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation`.

@@ -5875,3 +5875,21 @@ Adicionar exportação documental do histórico filtrado para uso profissional e
 
 ### v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary
 Adicionar resumo documental do histórico filtrado para leitura profissional rápida.
+
+
+## ✅ v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo documental do histórico filtrado;
+- total de eventos;
+- contagem de criações, edições, mudanças de status e arquivamentos;
+- primeiro e último evento do recorte;
+- último status conhecido;
+- painel de resumo na interface profissional;
+- reaproveita os mesmos filtros do histórico;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation
+Adicionar navegação profissional entre eventos e revisões relacionadas.

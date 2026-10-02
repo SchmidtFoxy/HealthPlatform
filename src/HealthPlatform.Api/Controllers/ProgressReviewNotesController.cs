@@ -3497,6 +3497,49 @@ public class ProgressReviewNotesController(
     }
 
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/summary")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistorySummaryResponse>> ResumoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string? tipoEvento = null,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
+        CancellationToken cancellationToken = default)
+    {
+        var historicoResult = await HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+            pacienteId, id, tipoEvento, deUtc, ateUtc, cancellationToken);
+
+        if (historicoResult.Result is NotFoundResult)
+            return NotFound();
+
+        var eventos = historicoResult.Value ?? Array.Empty<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse>();
+
+        var total = eventos.Count;
+        var criacoes = eventos.Count(x => x.Acao.EndsWith("_CREATED", StringComparison.OrdinalIgnoreCase));
+        var edicoes = eventos.Count(x => x.Acao.EndsWith("_UPDATED", StringComparison.OrdinalIgnoreCase));
+        var mudancasStatus = eventos.Count(x => x.Acao.EndsWith("_STATUS_CHANGED", StringComparison.OrdinalIgnoreCase));
+        var arquivamentos = eventos.Count(x => x.Acao.EndsWith("_ARCHIVED", StringComparison.OrdinalIgnoreCase));
+
+        var primeiro = eventos.Count > 0 ? eventos.Min(x => x.RegistradoEmUtc) : (DateTime?)null;
+        var ultimo = eventos.Count > 0 ? eventos.Max(x => x.RegistradoEmUtc) : (DateTime?)null;
+        var ultimoStatus = eventos
+            .Where(x => !string.IsNullOrWhiteSpace(x.StatusNovo))
+            .OrderBy(x => x.RegistradoEmUtc)
+            .Select(x => x.StatusNovo)
+            .LastOrDefault();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistorySummaryResponse(
+            total,
+            criacoes,
+            edicoes,
+            mudancasStatus,
+            arquivamentos,
+            primeiro,
+            ultimo,
+            ultimoStatus));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/export")]
     public async Task<IActionResult> ExportarHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

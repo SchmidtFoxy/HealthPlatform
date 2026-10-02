@@ -1,3 +1,12 @@
+# v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary
+
+- Adiciona endpoint de resumo do histórico filtrado.
+- Resume total de eventos, criações, edições, mudanças de status e arquivamentos.
+- Exibe primeiro/último evento e último status conhecido.
+- Adiciona painel de resumo à interface profissional.
+- Reutiliza os mesmos filtros do histórico.
+- Não cria migration ou tabela nova.
+
 # v0.56.5 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Export
 
 - Adiciona exportação CSV do histórico de Follow-Up Review.

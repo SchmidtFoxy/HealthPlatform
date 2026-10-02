@@ -5047,6 +5047,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_V0563='v0.56.3';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_FILTERS_V0564='v0.56.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_EXPORT_V0565='v0.56.5';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_SUMMARY_V0566='v0.56.6';
 
 
 
@@ -6778,7 +6779,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + status + histórico filtrável/exportável · v0.56.5</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + status + histórico filtrável/exportável + resumo · v0.56.6</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6800,6 +6801,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
       <label>De<input id="followUpReviewHistoryDeV0564" type="datetime-local"></label>
       <label>Até<input id="followUpReviewHistoryAteV0564" type="datetime-local"></label>
     </div>
+    <div id="followUpReviewHistorySummaryV0566" class="stack" data-follow-up-review-history-summary-v0566="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_SUMMARY_V0566}"></div>
     <div id="followUpReviewHistoryV0563" class="stack" data-follow-up-review-history-v0563="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_V0563}"></div>
     <small class="muted-line">Registro documental profissional. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
   </div>`;
@@ -6807,6 +6809,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   const form=$('#followUpReviewFormV0561');
   const listHost=$('#followUpReviewListV0561');
   const historyHost=$('#followUpReviewHistoryV0563');
+  const summaryHost=$('#followUpReviewHistorySummaryV0566');
   const clear=()=>{form?.reset(); if(form?.elements.id) form.elements.id.value='';};
   const guidOrNull=v=>{const x=String(v||'').trim(); return x||null;};
   const render=async()=>{
@@ -6836,9 +6839,16 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
       if(de)qs.set('deUtc',new Date(de).toISOString());
       if(ate)qs.set('ateUtc',new Date(ate).toISOString());
 
-      const history=await api(`${base}/${id}/history${qs.toString()?`?${qs.toString()}`:''}`);
+      const suffix=qs.toString()?`?${qs.toString()}`:'';
+      const [history,summary]=await Promise.all([
+        api(`${base}/${id}/history${suffix}`),
+        api(`${base}/${id}/history/summary${suffix}`)
+      ]);
       const events=Array.isArray(history)?history:[];
       const label=a=>String(a||'').replace('PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_','').replaceAll('_',' ');
+      if(summaryHost){
+        summaryHost.innerHTML=`<article class="internal-note-privacy-v0204"><div class="row-between"><b>Resumo do histórico</b><small>${summary?.totalEventos||0} evento(s)</small></div><div class="grid-4"><div><small>Criações</small><b>${summary?.criacoes||0}</b></div><div><small>Edições</small><b>${summary?.edicoes||0}</b></div><div><small>Status</small><b>${summary?.mudancasStatus||0}</b></div><div><small>Arquivamentos</small><b>${summary?.arquivamentos||0}</b></div></div><small class="muted-line">Primeiro: ${summary?.primeiroEventoEmUtc?new Date(summary.primeiroEventoEmUtc).toLocaleString():'—'} · Último: ${summary?.ultimoEventoEmUtc?new Date(summary.ultimoEventoEmUtc).toLocaleString():'—'} · Último status: ${esc(summary?.ultimoStatus||'—')}</small></article>`;
+      }
       historyHost.innerHTML=`<article class="internal-note-privacy-v0204"><div class="row-between"><b>Histórico da revisão</b><small>${events.length} evento(s)</small></div><small class="muted-line">Filtros: ${esc(tipo||'todos')} · ${esc(de||'início')} → ${esc(ate||'agora')}</small>${events.length?events.map(e=>`<div class="muted-line"><b>${esc(label(e.acao))}</b> · ${new Date(e.registradoEmUtc).toLocaleString()}${(e.statusAnterior||e.statusNovo)?` · ${esc(e.statusAnterior||'—')} → ${esc(e.statusNovo||'—')}`:''}</div>`).join(''):'<p class="muted-line">Nenhum evento auditado encontrado para os filtros.</p>'}</article>`;
       historyHost.scrollIntoView({behavior:'smooth',block:'nearest'});
     });
@@ -19166,7 +19176,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.5';
+const HP_MVP_VERSION='0.56.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

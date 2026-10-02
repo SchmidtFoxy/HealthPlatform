@@ -1,13 +1,27 @@
-HealthPlatform v0.56.5-r1 - Encoding Namespace Fix
+HealthPlatform v0.56.6 - Follow-Up Review History Summary - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
+- TESTAR.ps1
+- VERSION.txt
+- src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
+- src/HealthPlatform.Api/Controllers/HealthController.cs
 - src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
-- ARQUIVOS-ALTERADOS.txt
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- adiciona using System.Text; para resolver Encoding.UTF8 no export CSV;
-- corrige os erros CS0103 observados na compilacao da v0.56.5;
-- sem alteracao de funcionalidade, schema ou VERSION.txt.
+Entrega funcional:
+- resumo documental do historico filtrado;
+- contagem por tipo de evento;
+- primeiro/ultimo evento;
+- ultimo status conhecido;
+- painel de resumo na UI;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.5
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.6
