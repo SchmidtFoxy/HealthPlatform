@@ -1,27 +1,18 @@
-HealthPlatform v0.56.53 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement - Incremental
+HealthPlatform v0.56.54-r1 - Incremental
+
+Hotfix cumulativo da versão funcional v0.56.54.
+NÃO commitar/pushar esta revisão individualmente.
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
 
-Entrega funcional:
-- live region tecnico para anuncios de foco;
-- anuncio apos copiar, limpar, fechar e trocar nota;
-- aria-live polite, aria-atomic e role=status;
-- requestAnimationFrame para renovacao do anuncio;
-- fluxo de foco v0.56.52 preservado;
-- sem persistencia no servidor;
-- sem conteudo clinico/textual;
-- sem migration/tabela nova.
+Correção:
+- ajusta somente o gate histórico v0.56.53 para aceitar a implementação evoluída da v0.56.54;
+- preserva a validação do requestAnimationFrame do live region;
+- aceita tanto o payload original `message||` quanto o novo `announcementV05654`;
+- nenhuma alteração funcional em app.js;
+- VERSION.txt permanece 0.56.54.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.53
+Se aprovado, commit/push apenas: v0.56.54

@@ -8395,3 +8395,14 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.54 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Deduplication`.
+
+
+---
+
+## v0.56.54 — Focus Announcement Deduplication
+
+Evita repetir em sequência o mesmo anúncio acessível de destino de foco. Mensagens diferentes continuam sendo anunciadas e uma mensagem vazia limpa o cache local.
+
+Nenhum dado é enviado ou persistido no servidor. Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.55 — Focus Announcement Reset`.

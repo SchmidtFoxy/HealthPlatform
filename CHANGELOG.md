@@ -1,3 +1,10 @@
+# v0.56.54 — Focus Announcement Deduplication
+
+- Deduplica anúncios acessíveis consecutivos idênticos.
+- Mantém cache local da última mensagem.
+- Preserva anúncios diferentes e `requestAnimationFrame`.
+- Não cria migration ou tabela nova.
+
 # v0.56.53 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement
 
 - Adiciona live region técnico de foco.
