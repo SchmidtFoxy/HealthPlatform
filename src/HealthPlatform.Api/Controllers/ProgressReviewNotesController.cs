@@ -3726,6 +3726,16 @@ public class ProgressReviewNotesController(
             return "\"" + text.Replace("\"", "\"\"") + "\"";
         }
 
+        var dadosCsv = new StringBuilder();
+        dadosCsv.AppendLine("Canal,RegistradoEmUtc");
+
+        foreach (var row in rows)
+            dadosCsv.AppendLine($"{Csv(row.Canal)},{Csv(row.CreatedAtUtc.ToString("O"))}");
+
+        var dadosCsvTexto = dadosCsv.ToString();
+        var hashBytes = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(dadosCsvTexto));
+        var hashSha256 = Convert.ToHexString(hashBytes).ToLowerInvariant();
+
         var builder = new StringBuilder();
         builder.AppendLine("# AESYN Telemetria Tecnica de Compartilhamento");
         builder.AppendLine($"# NotaId={noteId:N}");
@@ -3733,10 +3743,9 @@ public class ProgressReviewNotesController(
         builder.AppendLine($"# AteUtc={(ateUtc.HasValue ? ateUtc.Value.ToUniversalTime().ToString("O") : "todos")}");
         builder.AppendLine($"# Canal={(canalNormalizado ?? "todos")}");
         builder.AppendLine($"# Total={rows.Count}");
-        builder.AppendLine("Canal,RegistradoEmUtc");
-
-        foreach (var row in rows)
-            builder.AppendLine($"{Csv(row.Canal)},{Csv(row.CreatedAtUtc.ToString("O"))}");
+        builder.AppendLine("# IntegridadeAlgoritmo=SHA-256");
+        builder.AppendLine($"# IntegridadeSHA256={hashSha256}");
+        builder.Append(dadosCsvTexto);
 
         var utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
         var bytes = utf8.GetBytes(builder.ToString());

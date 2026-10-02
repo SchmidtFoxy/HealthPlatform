@@ -6325,3 +6325,21 @@ Adicionar metadados técnicos no cabeçalho do CSV exportado, preservando ausên
 
 ### v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity
 Adicionar integridade técnica simples ao CSV exportado para facilitar conferência do arquivo sem incluir conteúdo clínico/textual.
+
+
+## ✅ v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity — CONCLUÍDA
+
+**Entregue:**
+- integridade técnica SHA-256 no CSV exportado;
+- hash calculado somente sobre o bloco técnico `Canal,RegistradoEmUtc` + linhas;
+- metadado `IntegridadeAlgoritmo=SHA-256`;
+- metadado `IntegridadeSHA256`;
+- hash em hexadecimal minúsculo;
+- metadados e filename das versões anteriores preservados;
+- nenhum conteúdo clínico/textual entra no cálculo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification
+Adicionar verificação local da integridade do CSV técnico exportado, sem incluir conteúdo clínico/textual.

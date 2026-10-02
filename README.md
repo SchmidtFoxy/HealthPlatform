@@ -7914,3 +7914,24 @@ Nenhum conteúdo clínico ou textual da nota é incluído no arquivo.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity`.
+
+
+---
+
+## v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity
+
+Adiciona uma assinatura de integridade técnica baseada em SHA-256 ao CSV de telemetria.
+
+O hash é calculado somente sobre:
+- cabeçalho `Canal,RegistradoEmUtc`;
+- linhas técnicas exportadas.
+
+Metadados adicionados:
+- `# IntegridadeAlgoritmo=SHA-256`;
+- `# IntegridadeSHA256=<hash>`.
+
+O cálculo não usa conteúdo clínico ou textual da nota.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification`.

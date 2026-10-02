@@ -1,3 +1,12 @@
+# v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity
+
+- Adiciona SHA-256 ao CSV técnico exportado.
+- Calcula o hash sobre o bloco técnico de dados.
+- Adiciona `IntegridadeAlgoritmo` e `IntegridadeSHA256`.
+- Preserva metadados e filename anteriores.
+- Não inclui conteúdo clínico/textual no cálculo.
+- Não cria migration ou tabela nova.
+
 # v0.56.30 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Metadata
 
 - Adiciona metadados técnicos no cabeçalho do CSV.
