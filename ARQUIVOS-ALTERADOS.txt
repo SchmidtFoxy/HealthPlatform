@@ -1,4 +1,4 @@
-HealthPlatform v0.56.45 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Indicator - Incremental
+HealthPlatform v0.56.46 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,15 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- indicador tecnico da sessao local;
-- estado vazio e estado preservado;
-- restauracao apos rerenderizacao;
-- ativacao ao concluir verificacao;
-- reset do indicador;
+- expiracao da sessao local ao trocar de nota;
+- botao Fechar historico;
+- expiracao ao fechar historico;
+- limpeza explicita do estado tecnico anterior;
+- preservacao durante rerender da mesma nota;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.45
+Se aprovado, commit/push apenas: v0.56.46

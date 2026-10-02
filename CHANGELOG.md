@@ -1,3 +1,14 @@
+# v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry
+
+- Expira a sessão técnica ao trocar de nota.
+- Adiciona `Fechar histórico`.
+- Expira a sessão ao fechar o histórico.
+- Evita transferir estado técnico entre notas.
+- Mantém preservação durante re-renderizações da mesma nota.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.45 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Indicator
 
 - Adiciona indicador técnico da sessão local.

@@ -6618,3 +6618,23 @@ Adicionar indicador técnico de que a última verificação está sendo preserva
 
 ### v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry
 Adicionar regra local para descartar explicitamente o estado técnico preservado ao fechar/trocar a nota de revisão, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry — CONCLUÍDA
+
+**Entregue:**
+- expiração explícita da sessão técnica local ao trocar de nota de revisão;
+- ação `Fechar histórico`;
+- expiração explícita ao fechar o histórico;
+- limpeza de detalhes, status, horário, duração, resumo e estado expandido/recolhido da sessão anterior;
+- nova nota inicia uma sessão técnica independente;
+- re-renderizações da mesma nota continuam preservando a sessão;
+- nenhum dado técnico da sessão anterior é transferido para outra nota;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback
+Adicionar feedback técnico local quando a sessão de verificação for encerrada explicitamente, sem conteúdo clínico/textual.

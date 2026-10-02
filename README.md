@@ -8224,3 +8224,30 @@ Nenhum estado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry`.
+
+
+---
+
+## v0.56.46 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry
+
+Define o ciclo de vida da sessão técnica local da verificação.
+
+A sessão é descartada quando:
+- o usuário abre o histórico de outra nota;
+- o usuário aciona `Fechar histórico`.
+
+Ao expirar, são descartados:
+- detalhes técnicos;
+- status;
+- horário;
+- duração;
+- resumo;
+- preferência expandida/recolhida.
+
+Re-renderizações da mesma nota continuam preservando o estado, mantendo o comportamento das versões anteriores.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback`.
