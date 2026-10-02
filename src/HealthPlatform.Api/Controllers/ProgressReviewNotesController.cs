@@ -3645,6 +3645,7 @@ public class ProgressReviewNotesController(
         Guid noteId,
         [FromQuery] DateTime? deUtc = null,
         [FromQuery] DateTime? ateUtc = null,
+        [FromQuery] string? canal = null,
         CancellationToken cancellationToken = default)
     {
         var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
@@ -3659,6 +3660,21 @@ public class ProgressReviewNotesController(
 
         if (!notaExiste)
             return NotFound();
+
+        var canaisPermitidosResumo = new[]
+        {
+            "WebShare",
+            "ClipboardFallback",
+            "UrlFallback",
+            "Cancelled",
+            "ShareErrorClipboardFallback",
+            "ShareErrorUrlFallback"
+        };
+
+        var canalNormalizadoResumo = string.IsNullOrWhiteSpace(canal) ? null : canal.Trim();
+        if (canalNormalizadoResumo is not null &&
+            !canaisPermitidosResumo.Contains(canalNormalizadoResumo, StringComparer.Ordinal))
+            return BadRequest(new { message = "Canal de telemetria inválido." });
 
         var query = db.AuditLogs
             .AsNoTracking()
@@ -3700,6 +3716,7 @@ public class ProgressReviewNotesController(
         var canais = logs
             .Select(x => new { Canal = ExtrairCanal(x.DadosNovosJson), x.CreatedAtUtc })
             .Where(x => !string.IsNullOrWhiteSpace(x.Canal))
+            .Where(x => canalNormalizadoResumo is null || x.Canal == canalNormalizadoResumo)
             .ToList();
 
         var resposta = new

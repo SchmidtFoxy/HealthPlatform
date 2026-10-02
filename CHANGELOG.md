@@ -1,3 +1,12 @@
+# v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter
+
+- Adiciona parâmetro técnico `canal` ao resumo de telemetria.
+- Valida os seis canais suportados.
+- Permite combinar canal com `deUtc` e `ateUtc`.
+- Adiciona seletor de canal e ação `Limpar canal`.
+- Mantém conteúdo clínico/textual fora do filtro.
+- Não cria migration ou tabela nova.
+
 # v0.56.26 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Period Filter
 
 - Adiciona `deUtc` e `ateUtc` ao resumo técnico de telemetria.

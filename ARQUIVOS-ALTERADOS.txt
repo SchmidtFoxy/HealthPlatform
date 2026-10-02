@@ -1,26 +1,14 @@
-HealthPlatform v0.56.26 - Follow-Up Review Comparison Notes Revision History Share Telemetry Period Filter - Incremental
+HealthPlatform v0.56.27-r1 - Legacy Telemetry Period Action Gate Fix
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- filtro tecnico por periodo;
-- deUtc/ateUtc no resumo de telemetria;
-- controles independentes na UI;
-- aplicar/limpar periodo;
-- sem conteudo clinico/textual;
-- sem migration/tabela nova.
+Correcao:
+- atualiza o gate legado da v0.56.26 para o novo rotulo da v0.56.27;
+- 'Aplicar período técnico' -> 'Aplicar filtros técnicos';
+- preserva o filtro por periodo e o novo filtro por canal;
+- sem alteracao funcional, schema ou VERSION.txt.
 
-Fluxo:
-PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.26
+Nao commitar a revisao -r1 individualmente.
+Se aprovado, commit/push apenas: v0.56.27

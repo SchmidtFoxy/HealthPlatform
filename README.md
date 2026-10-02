@@ -7825,3 +7825,26 @@ O filtro atua somente sobre `AuditLogs` da entidade técnica `ComparisonNoteRevi
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter`.
+
+
+---
+
+## v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter
+
+Adiciona filtro por canal ao resumo técnico da telemetria de compartilhamento.
+
+O endpoint `history/share-telemetry/summary` passa a aceitar `canal`, além de `deUtc` e `ateUtc`.
+
+Canais permitidos:
+- `WebShare`;
+- `ClipboardFallback`;
+- `UrlFallback`;
+- `Cancelled`;
+- `ShareErrorClipboardFallback`;
+- `ShareErrorUrlFallback`.
+
+A interface permite combinar canal e período técnico. O filtro continua restrito à entidade técnica de telemetria e não lê conteúdo textual da nota.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export`.

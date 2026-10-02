@@ -6248,3 +6248,23 @@ Adicionar filtro técnico por período ao resumo de telemetria de compartilhamen
 
 ### v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter
 Adicionar filtro técnico por canal de compartilhamento ao resumo de telemetria.
+
+
+## ✅ v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter — CONCLUÍDA
+
+**Entregue:**
+- filtro técnico por canal no resumo de telemetria;
+- parâmetro `canal` no endpoint de resumo;
+- validação dos seis canais técnicos permitidos;
+- filtro aplicado após leitura segura do payload técnico;
+- seletor de canal na interface;
+- canal combinado com o filtro de período existente;
+- ação `Limpar canal`;
+- painel informa o canal técnico atual;
+- sem conteúdo clínico/textual no filtro;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export
+Adicionar exportação técnica CSV da telemetria filtrada por período e canal, sem conteúdo clínico/textual.
