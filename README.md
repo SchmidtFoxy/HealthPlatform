@@ -8406,3 +8406,26 @@ Evita repetir em sequência o mesmo anúncio acessível de destino de foco. Mens
 Nenhum dado é enviado ou persistido no servidor. Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.55 — Focus Announcement Reset`.
+
+
+---
+
+## v0.56.55 — Focus Announcement Reset
+
+Adiciona um reset explícito do estado local de deduplicação dos anúncios de foco.
+
+O reset ocorre:
+- ao fechar o histórico;
+- ao trocar de nota antes do novo anúncio;
+- ao iniciar uma nova verificação;
+- quando o helper de anúncio recebe mensagem vazia.
+
+O reset limpa:
+- a última mensagem armazenada em memória;
+- o conteúdo do live region técnico.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.56 — Focus Announcement Reset State`.

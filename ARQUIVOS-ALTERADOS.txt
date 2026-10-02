@@ -1,18 +1,27 @@
-HealthPlatform v0.56.54-r1 - Incremental
-
-Hotfix cumulativo da versão funcional v0.56.54.
-NÃO commitar/pushar esta revisão individualmente.
+HealthPlatform v0.56.55 - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correção:
-- ajusta somente o gate histórico v0.56.53 para aceitar a implementação evoluída da v0.56.54;
-- preserva a validação do requestAnimationFrame do live region;
-- aceita tanto o payload original `message||` quanto o novo `announcementV05654`;
-- nenhuma alteração funcional em app.js;
-- VERSION.txt permanece 0.56.54.
+Entrega funcional:
+- reset explicito do cache de anuncios de foco;
+- reset ao fechar historico;
+- reset ao trocar nota;
+- reset ao iniciar nova verificacao;
+- reset por mensagem vazia;
+- sem persistencia no servidor;
+- sem conteudo clinico/textual;
+- sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.54
+Se aprovado, commit/push apenas: v0.56.55

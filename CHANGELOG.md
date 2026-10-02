@@ -1,3 +1,14 @@
+# v0.56.55 — Focus Announcement Reset
+
+- Adiciona reset explícito do cache de deduplicação.
+- Limpa o live region junto com o cache.
+- Executa reset em fechamento, troca de nota e nova verificação.
+- Reutiliza o reset quando o anúncio recebe mensagem vazia.
+- Preserva a deduplicação da v0.56.54.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.54 — Focus Announcement Deduplication
 
 - Deduplica anúncios acessíveis consecutivos idênticos.

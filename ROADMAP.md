@@ -6795,3 +6795,23 @@ Evitar anúncios acessíveis repetidos do mesmo destino de foco em sequência, m
 
 ### v0.56.55 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset
 Adicionar reset explícito do estado de deduplicação quando o contexto técnico de revisão for encerrado ou reiniciado, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.55 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset — CONCLUÍDA
+
+**Entregue:**
+- helper explícito `resetComparisonNoteVerificationFocusAnnouncementV05655`;
+- reset do cache de deduplicação ao fechar o histórico;
+- reset ao trocar de nota antes do novo anúncio de foco;
+- reset ao iniciar uma nova verificação;
+- mensagem vazia do helper de anúncio passa a reutilizar o reset explícito;
+- live region técnico é limpo junto com o cache;
+- deduplicação da v0.56.54 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.56 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State
+Adicionar estado técnico explícito do reset de anúncios para facilitar diagnóstico local e testes, sem conteúdo clínico/textual.
