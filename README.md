@@ -8494,3 +8494,26 @@ A ação usa apenas o navegador e não envia nem persiste dados no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.59 — Focus Announcement Reset State Summary Copy Timestamp`.
+
+
+---
+
+## v0.56.59 — Focus Announcement Reset State Summary Copy Timestamp
+
+Adiciona o horário local da última cópia bem-sucedida do resumo técnico.
+
+Estado inicial:
+`Última cópia: —`
+
+Após copiar:
+`Última cópia: <data e hora local>`
+
+Também registra o instante ISO em `datetime` e `data-copy-timestamp-v05659`.
+
+Falhas de clipboard ou tentativa sem conteúdo não substituem o horário da última cópia bem-sucedida.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.60 — Focus Announcement Reset State Summary Copy Timestamp Clear`.

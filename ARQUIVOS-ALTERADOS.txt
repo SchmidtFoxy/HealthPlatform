@@ -1,4 +1,4 @@
-HealthPlatform v0.56.58 - Incremental
+HealthPlatform v0.56.59 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,13 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- botao Copiar resumo tecnico;
-- copia do resumo visivel;
-- feedback acessivel de sucesso, vazio e falha;
+- horario local da ultima copia bem-sucedida;
+- datetime ISO;
+- data-copy-timestamp-v05659;
+- falha/vazio preservam ultimo horario valido;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.58
+Se aprovado, commit/push apenas: v0.56.59

@@ -1,3 +1,14 @@
+# v0.56.59 — Focus Announcement Reset State Summary Copy Timestamp
+
+- Adiciona horário local da última cópia bem-sucedida.
+- Mantém estado inicial `Última cópia: —`.
+- Registra `datetime` ISO.
+- Registra `data-copy-timestamp-v05659`.
+- Falha ou ausência de conteúdo preservam o último horário válido.
+- Preserva a cópia da v0.56.58.
+- Não inclui persistência no servidor.
+- Não cria migration ou tabela nova.
+
 # v0.56.58 — Focus Announcement Reset State Summary Copy
 
 - Adiciona `Copiar resumo técnico`.
