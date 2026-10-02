@@ -7994,3 +7994,24 @@ A cópia usa a área de transferência do navegador e mantém o processamento to
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge`.
+
+
+---
+
+## v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge
+
+Adiciona um indicador visual persistente do estado da última verificação local do CSV técnico.
+
+Estados:
+- `Não verificado`;
+- `Integridade válida`;
+- `Integridade inválida`;
+- `Verificação indisponível`;
+- `Arquivo inválido`;
+- `Erro na verificação`.
+
+O estado é atualizado pela mesma verificação SHA-256 local da v0.56.32 e não exige comunicação com a API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset`.

@@ -1,3 +1,12 @@
+# v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge
+
+- Adiciona badge/indicador de status da verificação local.
+- Diferencia integridade válida, inválida, arquivo inválido, indisponibilidade e erro.
+- Mantém detalhes e ações de cópia.
+- Mantém verificação totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy
 
 - Adiciona cópia do hash esperado.

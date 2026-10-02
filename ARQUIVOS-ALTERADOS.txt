@@ -1,26 +1,14 @@
-HealthPlatform v0.56.34 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy - Incremental
+HealthPlatform v0.56.35-r1 - Status Badge Dataset Gate Fix
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- copiar hash esperado;
-- copiar hash calculado;
-- copiar detalhes tecnicos;
-- feedback de clipboard;
-- processamento local preservado;
-- sem conteudo clinico/textual;
-- sem migration/tabela nova.
+Correcao:
+- corrige token do gate da v0.56.35 de 'data.integrityStatusV05635' para 'dataset.integrityStatusV05635';
+- alinha o TESTAR.ps1 ao codigo real: verifyTelemetryStatusBadgeV05635.dataset.integrityStatusV05635;
+- preserva toda a implementacao funcional da v0.56.35;
+- sem alteracao funcional, schema, runtime ou VERSION.txt.
 
-Fluxo:
-PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.34
+Nao commitar a revisao -r1 individualmente.
+Se aprovado, commit/push apenas: v0.56.35

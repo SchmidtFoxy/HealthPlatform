@@ -6402,3 +6402,21 @@ Adicionar ações para copiar hashes e detalhes técnicos da verificação, sem 
 
 ### v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge
 Adicionar indicador visual de status da integridade verificada, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge — CONCLUÍDA
+
+**Entregue:**
+- indicador visual de status da verificação local;
+- estados `Não verificado`, `Integridade válida`, `Integridade inválida`, `Verificação indisponível`, `Arquivo inválido` e `Erro na verificação`;
+- atributo técnico `data-integrity-status-v05635`;
+- status atualizado automaticamente conforme o resultado da verificação;
+- detalhes técnicos e ações de cópia preservados;
+- processamento continua totalmente local;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.36 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Reset
+Adicionar ação para limpar o resultado da verificação local e retornar o estado visual para `Não verificado`.
