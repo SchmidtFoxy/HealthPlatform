@@ -8272,3 +8272,24 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.48 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp`.
+
+
+---
+
+## v0.56.48 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp
+
+Adiciona horário ao feedback local de encerramento da sessão técnica.
+
+Comportamento:
+- registra o instante com `new Date()`;
+- mostra o horário local com `toLocaleString()`;
+- grava o instante ISO em `datetime`;
+- grava também `data-expiry-timestamp-v05648`;
+- funciona tanto ao trocar de nota quanto ao usar `Fechar histórico`;
+- uma nova tentativa de verificação limpa motivo e horário antigos.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.49 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Copy`.

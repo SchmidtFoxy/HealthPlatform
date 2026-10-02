@@ -1,4 +1,4 @@
-HealthPlatform v0.56.47 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback - Incremental
+HealthPlatform v0.56.48 - Follow-Up Review Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,15 +13,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- feedback local de expiracao por troca de nota;
-- feedback local de expiracao por fechamento do historico;
-- data-expiry-reason-v05647;
-- feedback permanece visivel fora do historico;
-- nova verificacao limpa feedback anterior;
+- horario local no feedback de expiracao;
+- datetime ISO 8601;
+- data-expiry-timestamp-v05648;
+- timestamp em troca de nota e fechamento;
+- limpeza em nova verificacao;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.47
+Se aprovado, commit/push apenas: v0.56.48

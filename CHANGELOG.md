@@ -1,3 +1,14 @@
+# v0.56.48 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Timestamp
+
+- Adiciona horário local ao feedback de expiração.
+- Registra ISO 8601 em `datetime`.
+- Registra `data-expiry-timestamp-v05648`.
+- Aplica timestamp em troca de nota e fechamento.
+- Limpa timestamp em nova verificação.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.47 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback
 
 - Adiciona feedback ao trocar de nota.
