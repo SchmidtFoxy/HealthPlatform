@@ -5037,6 +5037,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_CLOSU
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_V0550='v0.55.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_PERSISTENCE_V0551='v0.55.1';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_STATUS_V0552='v0.55.2';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_HISTORY_V0553='v0.55.3';
 
 
 
@@ -6475,6 +6476,40 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFound
 }
 
 
+async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryV0553(p,followUp){
+  if(!p?.id || !followUp?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  const history=await api(`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up/${followUp.id}/history?ordenacao=desc`);
+  const items=Array.isArray(history?.itens)?history.itens:[];
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-history-v0553="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_HISTORY_V0553}">
+    <div class="row-between">
+      <div>
+        <h3>Histórico dos acompanhamentos documentados</h3>
+        <p class="muted-line">${esc(followUp.profissionalResponsavel||'Profissional')}</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryV0553">Fechar</button>
+    </div>
+    <div class="stack">
+      ${items.length?items.map(x=>`<article class="internal-note-privacy-v0204">
+        <div class="row-between">
+          <b>${esc(x.evento||'Atualizado')}</b>
+          <small>${esc(x.autorNome||'Sistema')}</small>
+        </div>
+        <small class="muted-line">${esc(new Date(x.ocorridoEmUtc).toLocaleString())}</small>
+      </article>`).join(''):'<p class="muted-line">Nenhum evento de histórico disponível.</p>'}
+    </div>
+    <small class="muted-line">Histórico documental. Não valida causalidade ou evidência clínica, não representa prognóstico, recomendação, decisão terapêutica, score clínico, risco, urgência, prioridade, conduta executada ou prescrição automática.</small>
+  </div>`;
+
+  modal.classList.add('open');
+  $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryV0553').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551(p);
+}
+
+
 async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551(p){
   if(!p?.id) return;
 
@@ -6525,6 +6560,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
       ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
       <div class="form-actions" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-status-v0552="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_STATUS_V0552}">
         <button type="button" class="secondary" data-edit-follow-up-v0551="${x.id}">Editar</button>
+        <button type="button" class="ghost" data-history-follow-up-v0553="${x.id}">Histórico</button>
         <button type="button" class="ghost" data-status-follow-up-v0552="Registrado" data-follow-up-id-v0552="${x.id}">Reabrir</button>
         <button type="button" class="ghost" data-status-follow-up-v0552="EmAcompanhamento" data-follow-up-id-v0552="${x.id}">Em acompanhamento</button>
         <button type="button" class="ghost" data-status-follow-up-v0552="Concluido" data-follow-up-id-v0552="${x.id}">Concluir</button>
@@ -6546,6 +6582,11 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
       form.elements.criterioRevisaoDocumentado.value=x.criterioRevisaoDocumentado||'';
       form.elements.horizonte.value=x.horizonte||'';
       form.elements.observacaoProfissional.value=x.observacaoProfissional||'';
+    });
+
+    listHost.querySelectorAll('[data-history-follow-up-v0553]').forEach(btn=>btn.onclick=()=>{
+      const x=list.find(i=>i.id===btn.dataset.historyFollowUpV0553);
+      if(x) hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryV0553(p,x);
     });
 
     listHost.querySelectorAll('[data-status-follow-up-v0552]').forEach(btn=>btn.onclick=async()=>{
@@ -18868,7 +18909,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.55.2';
+const HP_MVP_VERSION='0.55.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

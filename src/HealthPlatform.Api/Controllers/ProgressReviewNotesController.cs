@@ -2894,6 +2894,81 @@ public class ProgressReviewNotesController(
         return Ok(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUp(nota));
     }
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up/{id:guid}/history")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryResponse>> HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp(
+        Guid pacienteId,
+        Guid id,
+        [FromQuery] string ordenacao = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var followUpExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp),
+                cancellationToken);
+
+        if (!followUpExiste)
+            return NotFound();
+
+        var ordemAsc = string.Equals(ordenacao, "asc", StringComparison.OrdinalIgnoreCase);
+        var entityId = id.ToString();
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Entidade == nameof(NotaInternaProfissional) &&
+                x.EntidadeId == entityId &&
+                x.Acao.StartsWith("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_"));
+
+        query = ordemAsc
+            ? query.OrderBy(x => x.CreatedAtUtc)
+            : query.OrderByDescending(x => x.CreatedAtUtc);
+
+        var logs = await query.ToListAsync(cancellationToken);
+
+        var usuarioIds = logs
+            .Where(x => x.UsuarioId.HasValue)
+            .Select(x => x.UsuarioId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var usuarios = await db.Users
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                usuarioIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Nome })
+            .ToDictionaryAsync(x => x.Id, x => x.Nome, cancellationToken);
+
+        var itens = logs.Select(log =>
+        {
+            var autorNome = log.UsuarioId.HasValue &&
+                            usuarios.TryGetValue(log.UsuarioId.Value, out var nome)
+                ? nome
+                : "Sistema";
+
+            return new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryItemResponse(
+                log.Id,
+                id,
+                MapearEventoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp(log.Acao),
+                autorNome,
+                log.UsuarioId,
+                log.CreatedAtUtc,
+                log.DadosNovosJson ?? log.DadosAnterioresJson);
+        }).ToArray();
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpHistoryResponse(
+            id,
+            itens,
+            itens.Length,
+            ordemAsc ? "asc" : "desc",
+            "O histórico registra apenas eventos documentais dos acompanhamentos profissionais. Não valida causalidade ou evidência clínica, não interpreta prognóstico, urgência, prioridade, risco, decisão terapêutica, conduta executada ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpPatch("team-knowledge-effect-decision-review-outcome-follow-up/{id:guid}/status")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpPersistedResponse>> AtualizarStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUp(
         Guid pacienteId,
@@ -14783,6 +14858,16 @@ public class ProgressReviewNotesController(
 
     private static bool StatusTeamKnowledgeEffectDecisionReviewOutcomeValido(string? status) =>
         status is "Registrado" or "EmRevisao" or "Consolidado" or "Descartado";
+
+    private static string MapearEventoTeamKnowledgeEffectDecisionReviewOutcomeFollowUp(string acao) =>
+        acao switch
+        {
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_CREATED" => "Criado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_UPDATED" => "Editado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_STATUS_CHANGED" => "StatusAlterado",
+            "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_ARCHIVED" => "Arquivado",
+            _ => "Atualizado"
+        };
 
     private static bool StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpValido(string? status) =>
         status is "Registrado" or "EmAcompanhamento" or "Concluido" or "Descartado";

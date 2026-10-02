@@ -7101,3 +7101,29 @@ Cada acompanhamento passa a oferecer ações **Reabrir**, **Em acompanhamento**,
 O status é documental. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History`.
+
+---
+
+## v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History
+
+Adiciona histórico auditado aos acompanhamentos documentados derivados dos resultados das revisões profissionais.
+
+### Histórico
+- criação;
+- edição;
+- alteração de status;
+- arquivamento;
+- autor;
+- data/hora;
+- detalhes registrados pelo `AuditLog`.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up/{id}/history?ordenacao=desc`
+
+### UI
+Cada acompanhamento passa a exibir a ação **Histórico**, com modal dedicado.
+
+### Guardrail
+O histórico é documental e auditável. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
+
+**Próxima etapa:** `v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters`.

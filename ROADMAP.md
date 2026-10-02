@@ -5706,3 +5706,19 @@ Adicionar estados documentais ao acompanhamento.
 
 ### v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History
 Adicionar histórico auditado aos acompanhamentos documentados.
+
+## ✅ v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History — CONCLUÍDA
+
+**Entregue:**
+- contratos de histórico;
+- endpoint de histórico;
+- leitura de `AuditLog`;
+- resolução de autor com fallback `Sistema`;
+- eventos Criado, Editado, StatusAlterado e Arquivado;
+- modal de histórico na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters
+Adicionar busca e filtros estruturais aos acompanhamentos documentados.

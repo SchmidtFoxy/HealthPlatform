@@ -1,4 +1,16 @@
-﻿# v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status
+﻿# v0.55.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up History
+
+- Adiciona contratos de histórico do Follow-Up.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome-follow-up/{id}/history`.
+- Lê eventos de `AuditLog`.
+- Resolve autor por `Users.Nome`, com fallback `Sistema`.
+- Usa `DadosNovosJson ?? DadosAnterioresJson` como detalhes.
+- Mapeia CREATED, UPDATED, STATUS_CHANGED e ARCHIVED.
+- Adiciona ação e modal Histórico na UI.
+- Sem migration nova.
+- Próxima etapa: v0.55.4 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Filters.
+
+# v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpStatusRequest`.
 - Adiciona estados Registrado, EmAcompanhamento, Concluido e Descartado.
