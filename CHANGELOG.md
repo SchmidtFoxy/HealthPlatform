@@ -1,3 +1,15 @@
+# v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status
+
+- Adiciona status documental manual às revisões dos acompanhamentos.
+- Estados disponíveis: Registrado, EmRevisao, Consolidado e Descartado.
+- Adiciona PATCH dedicado para mudança de status.
+- Registra `StatusAtualizadoEmUtc`.
+- Audita mudanças com `PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_STATUS_CHANGED`.
+- Edição preserva status e data de status.
+- UI profissional recebe ações explícitas de status.
+- Não cria migration ou tabela nova.
+- Não automatiza decisão clínica, prioridade, risco, urgência, prognóstico, recomendação, conduta ou prescrição.
+
 # v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence
 
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse`.

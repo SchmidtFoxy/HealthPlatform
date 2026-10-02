@@ -1,10 +1,12 @@
-HealthPlatform v0.56.1-r4 - Legacy Runtime Identity Gate Fix
-Hotfix cumulativo sobre v0.56.1-r3.
+HealthPlatform v0.56.2-r2 - Legacy Runtime Identity Gate Fix
 
-Correcao principal:
-- TESTAR.ps1: atualiza gates legados que ainda validavam a identidade corrente como 0.55.6.
-- Mantem intactas referencias historicas/funcionais legitimas da v0.55.6.
+Hotfix cumulativo sobre v0.56.2-r1.
+
+Correcao:
+- Foundation v0.19.1 passa a validar HP_MVP_VERSION='0.56.2';
+- atualiza gates legados de Health/Swagger/cache/PWA que ainda validavam 0.56.1 como identidade corrente;
+- preserva marcadores historicos de feature V0561;
 - TESTAR.ps1 permanece UTF-8 com BOM.
 
-Este pacote inclui cumulativamente os arquivos da v0.56.1-r3 para poder recuperar estados parciais.
-Nao commitar a revisao -r4 individualmente; se aprovado, commit/push apenas v0.56.1.
+Nao commitar a revisao -r2 individualmente.
+Se aprovado, commit/push apenas: v0.56.2

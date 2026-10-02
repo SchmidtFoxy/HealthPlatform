@@ -2726,6 +2726,10 @@ public class ProgressReviewNotesController(
         string? Horizonte,
         string? ObservacaoProfissional);
 
+    public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewStatusRequest(
+        string Status);
+
+
     public sealed record CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpRequest(
         Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,
         Guid? TeamKnowledgeEffectDecisionReviewRelacionadaId,
@@ -3362,10 +3366,63 @@ public class ProgressReviewNotesController(
         if (string.IsNullOrWhiteSpace(itemRevisao)) return BadRequest(new { message = "Informe o item da revisão." });
 
         var antes = Snapshot(nota);
-        nota.Conteudo = JsonSerializer.Serialize(CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(request, profissionalRevisor, itemRevisao));
+        var payloadAnterior = LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota);
+        nota.Conteudo = JsonSerializer.Serialize(CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+            request, profissionalRevisor, itemRevisao, payloadAnterior.Status, payloadAnterior.StatusAtualizadoEmUtc));
         nota.UpdatedAtUtc = DateTime.UtcNow;
         Auditar("PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_UPDATED", nota, antes, Snapshot(nota));
         await db.SaveChangesAsync(cancellationToken);
+        return Ok(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
+    }
+
+
+    [HttpPatch("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/status")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPersistedResponse>> AtualizarStatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewStatusRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var status = string.IsNullOrWhiteSpace(request.Status) ? null : request.Status.Trim();
+
+        if (!StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewValido(status))
+            return BadRequest(new { message = "Status inválido. Use Registrado, EmRevisao, Consolidado ou Descartado." });
+
+        var nota = await db.NotasInternasProfissionais
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                !x.Arquivada,
+                cancellationToken);
+
+        if (nota is null)
+            return NotFound();
+
+        var antes = Snapshot(nota);
+        var payload = LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota);
+
+        if (!string.Equals(payload.Status, status, StringComparison.OrdinalIgnoreCase))
+        {
+            var atualizado = payload with
+            {
+                Status = status!,
+                StatusAtualizadoEmUtc = DateTime.UtcNow
+            };
+
+            nota.Conteudo = JsonSerializer.Serialize(atualizado);
+            nota.UpdatedAtUtc = DateTime.UtcNow;
+
+            Auditar(
+                "PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_STATUS_CHANGED",
+                nota,
+                antes,
+                Snapshot(nota));
+
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return Ok(MapearTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(nota));
     }
 
@@ -15237,7 +15294,9 @@ public class ProgressReviewNotesController(
         string? ResultadoObservado,
         string? InterpretacaoProfissional,
         string? Horizonte,
-        string? ObservacaoProfissional);
+        string? ObservacaoProfissional,
+        string Status,
+        DateTime? StatusAtualizadoEmUtc);
 
     private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         CriarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request, string profissionalRevisor, string itemRevisao) =>
@@ -15248,10 +15307,12 @@ public class ProgressReviewNotesController(
             request.CollaborationRelacionadaId, request.CoordinationRelacionadaId, request.EscalationRelacionadaId, request.ContinuityRelacionadaId,
             profissionalRevisor, NormalizarOpcional(request.Participantes, 500), itemRevisao, NormalizarOpcional(request.ContextoRevisao, 3000),
             NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000), NormalizarOpcional(request.ResultadoObservado, 3000),
-            NormalizarOpcional(request.InterpretacaoProfissional, 3000), NormalizarOpcional(request.Horizonte, 120), NormalizarOpcional(request.ObservacaoProfissional, 3000));
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000), NormalizarOpcional(request.Horizonte, 120), NormalizarOpcional(request.ObservacaoProfissional, 3000),
+            "Registrado", null);
 
     private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload CriarPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
-        AtualizarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request, string profissionalRevisor, string itemRevisao) =>
+        AtualizarProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewRequest request, string profissionalRevisor, string itemRevisao,
+        string status, DateTime? statusAtualizadoEmUtc) =>
         new(request.FollowUpRelacionadoId, request.TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId, request.TeamKnowledgeEffectDecisionReviewRelacionadaId,
             request.TeamKnowledgeEffectDecisionRelacionadaId, request.TeamKnowledgeEffectReviewRelacionadaId, request.TeamKnowledgeEffectRelacionadoId,
             request.TeamKnowledgeApplicationRelacionadaId, request.TeamKnowledgeRelacionadoId, request.TeamInsightRelacionadoId, request.TeamLearningRelacionadoId,
@@ -15259,18 +15320,19 @@ public class ProgressReviewNotesController(
             request.CollaborationRelacionadaId, request.CoordinationRelacionadaId, request.EscalationRelacionadaId, request.ContinuityRelacionadaId,
             profissionalRevisor, NormalizarOpcional(request.Participantes, 500), itemRevisao, NormalizarOpcional(request.ContextoRevisao, 3000),
             NormalizarOpcional(request.BaseObservacionalEvidenciaSuporte, 3000), NormalizarOpcional(request.ResultadoObservado, 3000),
-            NormalizarOpcional(request.InterpretacaoProfissional, 3000), NormalizarOpcional(request.Horizonte, 120), NormalizarOpcional(request.ObservacaoProfissional, 3000));
+            NormalizarOpcional(request.InterpretacaoProfissional, 3000), NormalizarOpcional(request.Horizonte, 120), NormalizarOpcional(request.ObservacaoProfissional, 3000),
+            string.IsNullOrWhiteSpace(status) ? "Registrado" : status, statusAtualizadoEmUtc);
 
     private static TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(NotaInternaProfissional nota)
     {
         try
         {
             return JsonSerializer.Deserialize<TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewPayload>(nota.Conteudo)
-                ?? new(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Profissional",null,nota.Conteudo,null,null,null,null,null,null);
+                ?? new(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Profissional",null,nota.Conteudo,null,null,null,null,null,null,"Registrado",null);
         }
         catch (JsonException)
         {
-            return new(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Profissional",null,nota.Conteudo,null,null,null,null,null,null);
+            return new(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Profissional",null,nota.Conteudo,null,null,null,null,null,null,"Registrado",null);
         }
     }
 
@@ -15282,8 +15344,12 @@ public class ProgressReviewNotesController(
             p.TeamKnowledgeRelacionadoId, p.TeamInsightRelacionadoId, p.TeamLearningRelacionadoId, p.TeamOutcomeRelacionadoId, p.TeamDecisionRelacionadaId,
             p.TeamAlignmentRelacionadoId, p.SharedContextRelacionadoId, p.CollaborationRelacionadaId, p.CoordinationRelacionadaId, p.EscalationRelacionadaId,
             p.ContinuityRelacionadaId, p.ProfissionalRevisor, p.Participantes, p.ItemRevisao, p.ContextoRevisao, p.BaseObservacionalEvidenciaSuporte,
-            p.ResultadoObservado, p.InterpretacaoProfissional, p.Horizonte, p.ObservacaoProfissional, nota.AutorUsuarioId, nota.AutorNome, nota.CreatedAtUtc, nota.UpdatedAtUtc, nota.Arquivada);
+            p.ResultadoObservado, p.InterpretacaoProfissional, p.Horizonte, p.ObservacaoProfissional, p.Status, p.StatusAtualizadoEmUtc,
+            nota.AutorUsuarioId, nota.AutorNome, nota.CreatedAtUtc, nota.UpdatedAtUtc, nota.Arquivada);
     }
+
+    private static bool StatusTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewValido(string? status) =>
+        status is "Registrado" or "EmRevisao" or "Consolidado" or "Descartado";
 
     private sealed record TeamKnowledgeEffectDecisionReviewOutcomeFollowUpPayload(
         Guid? TeamKnowledgeEffectDecisionReviewOutcomeRelacionadoId,

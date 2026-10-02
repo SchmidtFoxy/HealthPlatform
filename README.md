@@ -7272,3 +7272,30 @@ Adiciona persistência auditada às revisões profissionais dos acompanhamentos 
 A persistência registra documentação profissional e não transforma a revisão em validação causal ou evidência clínica validada. Não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status`.
+
+
+---
+
+## v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status
+
+Adiciona estados documentais manuais e auditados às revisões profissionais dos acompanhamentos.
+
+### Estados
+- `Registrado`
+- `EmRevisao`
+- `Consolidado`
+- `Descartado`
+
+### Endpoint
+`PATCH .../team-knowledge-effect-decision-review-outcome-follow-up-review/{id}/status`
+
+### Regras
+- toda revisão nasce como `Registrado`;
+- mudança de status é explícita e auditada;
+- edição de conteúdo preserva o status vigente;
+- o status não representa diagnóstico, prognóstico, risco, urgência, prioridade ou decisão terapêutica;
+- nenhuma transição é executada automaticamente.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History`.

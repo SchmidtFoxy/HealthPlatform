@@ -5043,6 +5043,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_CLOSURE_V0556='v0.55.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_V0560='v0.56.0';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561='v0.56.1';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_STATUS_V0562='v0.56.2';
 
 
 
@@ -6774,7 +6775,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada · v0.56.1</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + status manual · v0.56.2</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6801,10 +6802,17 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   const render=async()=>{
     const list=await api(base);
     const items=Array.isArray(list)?list:[];
-    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(x.profissionalRevisor||'Profissional')}</b><small>${new Date(x.atualizadoEmUtc||x.criadoEmUtc).toLocaleString()}</small></div><div>${esc(x.itemRevisao||'')}</div>${x.resultadoObservado?`<small class="muted-line">Resultado observado: ${esc(x.resultadoObservado)}</small>`:''}<div class="form-actions"><button type="button" class="secondary" data-edit-follow-up-review-v0561="${x.id}">Editar</button><button type="button" class="ghost" data-archive-follow-up-review-v0561="${x.id}">Arquivar</button></div></article>`).join(''):'<p class="muted-line">Nenhuma revisão registrada.</p>';
+    listHost.innerHTML=items.length?items.map(x=>`<article class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(x.profissionalRevisor||'Profissional')}</b><small>${new Date(x.atualizadoEmUtc||x.criadoEmUtc).toLocaleString()}</small></div><div>${esc(x.itemRevisao||'')}</div>${x.resultadoObservado?`<small class="muted-line">Resultado observado: ${esc(x.resultadoObservado)}</small>`:''}<small class="muted-line">Status: ${esc(x.status||'Registrado')}</small><div class="form-actions" data-follow-up-review-status-v0562="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_STATUS_V0562}"><button type="button" class="secondary" data-edit-follow-up-review-v0561="${x.id}">Editar</button><button type="button" class="ghost" data-status-follow-up-review-v0562="Registrado" data-follow-up-review-id-v0562="${x.id}">Reabrir</button><button type="button" class="ghost" data-status-follow-up-review-v0562="EmRevisao" data-follow-up-review-id-v0562="${x.id}">Em revisão</button><button type="button" class="ghost" data-status-follow-up-review-v0562="Consolidado" data-follow-up-review-id-v0562="${x.id}">Consolidar</button><button type="button" class="ghost" data-status-follow-up-review-v0562="Descartado" data-follow-up-review-id-v0562="${x.id}">Descartar</button><button type="button" class="ghost" data-archive-follow-up-review-v0561="${x.id}">Arquivar</button></div></article>`).join(''):'<p class="muted-line">Nenhuma revisão registrada.</p>';
     listHost.querySelectorAll('[data-edit-follow-up-review-v0561]').forEach(btn=>btn.onclick=()=>{
       const x=items.find(i=>i.id===btn.dataset.editFollowUpReviewV0561); if(!x) return;
       for(const k of ['id','profissionalRevisor','participantes','followUpRelacionadoId','teamKnowledgeEffectDecisionReviewOutcomeRelacionadoId','itemRevisao','contextoRevisao','baseObservacionalEvidenciaSuporte','resultadoObservado','interpretacaoProfissional','horizonte','observacaoProfissional']) if(form.elements[k]) form.elements[k].value=x[k]||'';
+    });
+    listHost.querySelectorAll('[data-status-follow-up-review-v0562]').forEach(btn=>btn.onclick=async()=>{
+      const id=btn.dataset.followUpReviewIdV0562;
+      const status=btn.dataset.statusFollowUpReviewV0562;
+      if(!id||!status)return;
+      await api(`${base}/${id}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+      await render();
     });
     listHost.querySelectorAll('[data-archive-follow-up-review-v0561]').forEach(btn=>btn.onclick=async()=>{await api(`${base}/${btn.dataset.archiveFollowUpReviewV0561}`,{method:'DELETE'}); await render();});
   };
@@ -19117,7 +19125,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.1';
+const HP_MVP_VERSION='0.56.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

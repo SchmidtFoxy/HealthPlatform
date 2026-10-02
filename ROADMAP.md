@@ -5808,3 +5808,21 @@ Adicionar persistência auditada às revisões dos acompanhamentos documentados.
 
 ### v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status
 Adicionar estados documentais manuais e auditados às revisões dos acompanhamentos.
+
+
+## ✅ v0.56.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Status — CONCLUÍDA
+
+**Entregue:**
+- estados documentais manuais `Registrado`, `EmRevisao`, `Consolidado` e `Descartado`;
+- alteração de status via PATCH dedicado;
+- data de atualização do status;
+- auditoria `FOLLOW_UP_REVIEW_STATUS_CHANGED`;
+- edição preserva o status vigente;
+- UI profissional com ações explícitas de status;
+- sem transição clínica automática;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.56.3 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History
+Adicionar histórico auditado e leitura cronológica das revisões dos acompanhamentos.
