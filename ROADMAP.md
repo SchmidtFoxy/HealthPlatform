@@ -5927,3 +5927,21 @@ Adicionar contexto documental consolidado entre revisão atual, revisão anterio
 
 ### v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison
 Adicionar comparação documental explícita entre a revisão atual e suas revisões vizinhas.
+
+
+## ✅ v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison — CONCLUÍDA
+
+**Entregue:**
+- comparação documental da revisão atual com anterior e próxima;
+- comparação de item da revisão;
+- comparação de status;
+- comparação de profissional revisor;
+- intervalo temporal entre revisões;
+- endpoint dedicado `/history/context/comparison`;
+- painel comparativo na interface profissional;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes
+Adicionar notas documentais do profissional sobre diferenças observadas entre revisões.

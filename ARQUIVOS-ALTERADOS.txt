@@ -1,13 +1,27 @@
-HealthPlatform v0.56.8-r1 - Nullable UpdatedAt Fix
+HealthPlatform v0.56.9 - Follow-Up Review History Context Comparison - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
+- TESTAR.ps1
+- VERSION.txt
 - src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
-- ARQUIVOS-ALTERADOS.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- ajusta AtualizadoEmUtc para DateTime? no contrato de contexto;
-- corrige o CS1503 ao mapear NotaInternaProfissional.UpdatedAtUtc;
-- sem alteracao de schema, regra de negocio ou VERSION.txt.
+Entrega funcional:
+- comparacao documental com revisao anterior e proxima;
+- comparacao de item, status e profissional;
+- intervalo temporal entre revisoes;
+- endpoint /history/context/comparison;
+- painel comparativo na UI;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.8
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.9

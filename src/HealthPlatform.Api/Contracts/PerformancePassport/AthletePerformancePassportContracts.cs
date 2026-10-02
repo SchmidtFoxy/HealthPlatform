@@ -403,6 +403,21 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
     DateTime? AtualizadoEmUtc,
     bool Arquivada);
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse(
+    Guid AtualId,
+    Guid? ReferenciaId,
+    string Referencia,
+    bool MesmoItemRevisao,
+    bool MesmoStatus,
+    bool MesmoProfissionalRevisor,
+    TimeSpan? IntervaloEntreRevisoes,
+    string ItemRevisaoAtual,
+    string? ItemRevisaoReferencia,
+    string StatusAtual,
+    string? StatusReferencia,
+    string ProfissionalAtual,
+    string? ProfissionalReferencia);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextItemResponse(
     Guid Id,
     string ItemRevisao,

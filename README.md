@@ -7440,3 +7440,26 @@ O contexto é exclusivamente documental e não infere evolução clínica, causa
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison`.
+
+
+---
+
+## v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison
+
+Adiciona comparação documental explícita entre a revisão atual e as revisões vizinhas.
+
+### Comparações
+- mesmo item de revisão;
+- mesmo status;
+- mesmo profissional revisor;
+- intervalo temporal entre revisões;
+- valores atual e de referência.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up-review/{id}/history/context/comparison`
+
+A comparação apenas evidencia igualdade/diferença documental. Não classifica melhora, piora, risco, urgência, prioridade, causalidade, diagnóstico, prognóstico ou decisão terapêutica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.10 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes`.

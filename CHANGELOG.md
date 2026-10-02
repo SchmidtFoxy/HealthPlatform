@@ -1,3 +1,12 @@
+# v0.56.9 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison
+
+- Adiciona comparação documental com revisão anterior e próxima.
+- Compara item, status e profissional revisor.
+- Calcula intervalo temporal entre revisões.
+- Adiciona endpoint `/history/context/comparison`.
+- Adiciona painel comparativo à interface profissional.
+- Não cria migration ou tabela nova.
+
 # v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context
 
 - Adiciona contexto consolidado entre revisão anterior, atual e próxima.

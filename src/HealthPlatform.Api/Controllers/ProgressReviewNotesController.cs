@@ -3463,6 +3463,81 @@ public class ProgressReviewNotesController(
     }
 
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison")]
+    public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse>>> ComparacaoContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var revisoes = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                !x.Arquivada)
+            .OrderBy(x => x.CreatedAtUtc)
+            .ThenBy(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        var indice = revisoes.FindIndex(x => x.Id == id);
+        if (indice < 0)
+            return NotFound();
+
+        var notaAtual = revisoes[indice];
+        var payloadAtual = LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(notaAtual);
+
+        ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonResponse Comparar(
+            NotaInternaProfissional? referencia,
+            string rotulo)
+        {
+            if (referencia is null)
+            {
+                return new(
+                    notaAtual.Id,
+                    null,
+                    rotulo,
+                    false,
+                    false,
+                    false,
+                    null,
+                    payloadAtual.ItemRevisao,
+                    null,
+                    payloadAtual.Status,
+                    null,
+                    payloadAtual.ProfissionalRevisor,
+                    null);
+            }
+
+            var payloadReferencia = LerPayloadTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(referencia);
+
+            return new(
+                notaAtual.Id,
+                referencia.Id,
+                rotulo,
+                string.Equals(payloadAtual.ItemRevisao, payloadReferencia.ItemRevisao, StringComparison.OrdinalIgnoreCase),
+                string.Equals(payloadAtual.Status, payloadReferencia.Status, StringComparison.OrdinalIgnoreCase),
+                string.Equals(payloadAtual.ProfissionalRevisor, payloadReferencia.ProfissionalRevisor, StringComparison.OrdinalIgnoreCase),
+                notaAtual.CreatedAtUtc - referencia.CreatedAtUtc,
+                payloadAtual.ItemRevisao,
+                payloadReferencia.ItemRevisao,
+                payloadAtual.Status,
+                payloadReferencia.Status,
+                payloadAtual.ProfissionalRevisor,
+                payloadReferencia.ProfissionalRevisor);
+        }
+
+        var anterior = indice > 0 ? revisoes[indice - 1] : null;
+        var proxima = indice < revisoes.Count - 1 ? revisoes[indice + 1] : null;
+
+        return Ok(new[]
+        {
+            Comparar(anterior, "Anterior"),
+            Comparar(proxima, "Proxima")
+        });
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextResponse>> ContextoHistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,
