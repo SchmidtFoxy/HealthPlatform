@@ -7935,3 +7935,22 @@ O cálculo não usa conteúdo clínico ou textual da nota.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification`.
+
+
+---
+
+## v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification
+
+Adiciona verificação local da integridade SHA-256 do CSV técnico exportado.
+
+Fluxo:
+1. selecionar o CSV em `Verificar integridade CSV`;
+2. o navegador lê `IntegridadeAlgoritmo` e `IntegridadeSHA256`;
+3. o SHA-256 é recalculado localmente sobre o bloco técnico iniciado em `Canal,RegistradoEmUtc`;
+4. a interface informa se a integridade foi confirmada ou se o arquivo foi alterado.
+
+O arquivo não é enviado à API durante a verificação. O processo usa `Web Crypto API` e mantém conteúdo clínico/textual fora do fluxo.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details`.

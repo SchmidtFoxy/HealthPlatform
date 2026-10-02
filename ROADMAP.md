@@ -6343,3 +6343,22 @@ Adicionar integridade técnica simples ao CSV exportado para facilitar conferên
 
 ### v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification
 Adicionar verificação local da integridade do CSV técnico exportado, sem incluir conteúdo clínico/textual.
+
+
+## ✅ v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification — CONCLUÍDA
+
+**Entregue:**
+- verificação local do SHA-256 do CSV técnico exportado;
+- seleção local de arquivo CSV;
+- leitura dos metadados `IntegridadeAlgoritmo` e `IntegridadeSHA256`;
+- recomputação do SHA-256 apenas sobre o bloco `Canal,RegistradoEmUtc` + linhas;
+- feedback `Integridade confirmada` ou `Integridade inválida`;
+- fallback quando Web Crypto API não estiver disponível;
+- arquivo processado somente no navegador, sem upload para a API;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details
+Exibir detalhes técnicos da verificação local, como hash esperado, hash calculado e nome do arquivo, sem conteúdo clínico/textual.

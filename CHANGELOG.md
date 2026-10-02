@@ -1,3 +1,13 @@
+# v0.56.32 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification
+
+- Adiciona verificação local do SHA-256 do CSV técnico.
+- Processa o arquivo somente no navegador.
+- Recalcula o hash do bloco técnico exportado.
+- Informa integridade válida ou conteúdo alterado.
+- Usa Web Crypto API.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.31 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity
 
 - Adiciona SHA-256 ao CSV técnico exportado.
