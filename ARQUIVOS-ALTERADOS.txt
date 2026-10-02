@@ -1,14 +1,27 @@
-HealthPlatform v0.56.23-r1 - Legacy Share Fallback Gate Fix
+HealthPlatform v0.56.24 - Follow-Up Review Comparison Notes Revision History Share Telemetry - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
-- ARQUIVOS-ALTERADOS.txt
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- atualiza o gate legado da v0.56.22 para o tratamento de cancelamento da v0.56.23;
-- error?.name!=='AbortError' -> error?.name==='AbortError';
-- preserva feedback visual e fallbacks da v0.56.23;
-- sem alteracao funcional, schema ou VERSION.txt.
+Entrega funcional:
+- telemetria tecnica nao clinica de compartilhamento;
+- endpoint dedicado;
+- seis caminhos de compartilhamento;
+- persistencia em AuditLogs com entidade tecnica separada;
+- nenhum conteudo textual da nota;
+- telemetria best-effort;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.23
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.24

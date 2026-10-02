@@ -7761,3 +7761,26 @@ As mensagens são temporárias, usam `aria-live="polite"` e não bloqueiam o flu
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry`.
+
+
+---
+
+## v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry
+
+Adiciona telemetria técnica, não clínica, para identificar qual caminho de compartilhamento foi utilizado.
+
+### Canais registrados
+- `WebShare`;
+- `ClipboardFallback`;
+- `UrlFallback`;
+- `Cancelled`;
+- `ShareErrorClipboardFallback`;
+- `ShareErrorUrlFallback`.
+
+O endpoint grava somente IDs técnicos de revisão/nota e o canal utilizado em `AuditLogs`, usando uma entidade de telemetria separada. O texto da nota, filtros e demais conteúdo documental não são armazenados pela telemetria.
+
+A chamada de telemetria é best-effort: qualquer falha é ignorada para não interromper o fluxo profissional.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary`.

@@ -3636,6 +3636,63 @@ public class ProgressReviewNotesController(
 
 
 
+
+    [HttpPost("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/share-telemetry")]
+    public async Task<IActionResult> RegistrarTelemetriaCompartilhamentoHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        [FromQuery] string canal,
+        CancellationToken cancellationToken = default)
+    {
+        var canaisPermitidos = new[]
+        {
+            "WebShare",
+            "ClipboardFallback",
+            "UrlFallback",
+            "Cancelled",
+            "ShareErrorClipboardFallback",
+            "ShareErrorUrlFallback"
+        };
+
+        var canalNormalizado = canal?.Trim();
+        if (string.IsNullOrWhiteSpace(canalNormalizado) ||
+            !canaisPermitidos.Contains(canalNormalizado, StringComparer.Ordinal))
+            return BadRequest(new { message = "Canal de compartilhamento inválido." });
+
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+        var notaExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (!notaExiste)
+            return NotFound();
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = currentUser.OrganizationId,
+            UsuarioId = currentUser.UserId,
+            Acao = "PROFESSIONAL_REVIEW_TECHNICAL_COMPARISON_NOTE_HISTORY_SHARE_TELEMETRY",
+            Entidade = "ComparisonNoteRevisionHistoryShareTelemetry",
+            EntidadeId = noteId.ToString(),
+            DadosNovosJson = JsonSerializer.Serialize(new
+            {
+                RevisaoId = id,
+                NotaId = noteId,
+                Canal = canalNormalizado
+            }),
+            IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+        });
+
+        await db.SaveChangesAsync(cancellationToken);
+        return NoContent();
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryContextComparisonNoteRevisionHistorySummaryResponse>> ResumoHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

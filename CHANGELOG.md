@@ -1,3 +1,12 @@
+# v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry
+
+- Adiciona endpoint técnico de telemetria de compartilhamento.
+- Registra o caminho utilizado sem conteúdo textual da nota.
+- Usa `AuditLogs` com entidade técnica separada.
+- Valida canais permitidos.
+- Telemetria é best-effort e não bloqueia o compartilhamento.
+- Não cria migration ou tabela nova.
+
 # v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback
 
 - Adiciona feedback visual consistente ao compartilhamento.

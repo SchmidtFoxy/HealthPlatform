@@ -6193,3 +6193,21 @@ Adicionar feedback visual consistente para sucesso, cancelamento e fallback do c
 
 ### v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry
 Adicionar telemetria técnica não clínica para registrar qual caminho de compartilhamento foi utilizado, sem armazenar conteúdo textual da nota.
+
+
+## ✅ v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry — CONCLUÍDA
+
+**Entregue:**
+- telemetria técnica não clínica do caminho de compartilhamento;
+- registro de `WebShare`, fallback de clipboard, fallback de URL, cancelamento e fallbacks após erro;
+- endpoint dedicado de telemetria com validação de canal;
+- registro em `AuditLogs` com entidade técnica separada;
+- vínculo apenas com IDs de revisão/nota e canal;
+- nenhum conteúdo textual da nota armazenado;
+- falha de telemetria nunca bloqueia o compartilhamento;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.25 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Summary
+Adicionar resumo técnico agregado dos caminhos de compartilhamento, sem expor conteúdo clínico ou textual.
