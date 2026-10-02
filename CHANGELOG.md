@@ -1,3 +1,13 @@
+# v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy
+
+- Adiciona cópia do hash esperado.
+- Adiciona cópia do hash calculado.
+- Adiciona cópia dos detalhes técnicos.
+- Usa `navigator.clipboard`.
+- Mantém verificação totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.33 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Details
 
 - Exibe nome e tamanho do CSV verificado.

@@ -6382,3 +6382,23 @@ Exibir detalhes técnicos da verificação local, como hash esperado, hash calcu
 
 ### v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy
 Adicionar ações para copiar hashes e detalhes técnicos da verificação, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy — CONCLUÍDA
+
+**Entregue:**
+- ação `Copiar hash esperado`;
+- ação `Copiar hash calculado`;
+- ação `Copiar detalhes`;
+- cópia usa `navigator.clipboard`;
+- detalhes copiados incluem arquivo, tamanho, hashes e algoritmo SHA-256;
+- feedback visual para sucesso, valor ausente e falha de clipboard;
+- ações disponíveis apenas após existir resultado de verificação;
+- processamento continua totalmente local;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge
+Adicionar indicador visual de status da integridade verificada, sem conteúdo clínico/textual.

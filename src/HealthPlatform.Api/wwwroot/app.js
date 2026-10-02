@@ -5075,6 +5075,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_V05631='v0.56.31';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_V05632='v0.56.32';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_DETAILS_V05633='v0.56.33';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_COPY_V05634='v0.56.34';
 
 
 
@@ -6806,7 +6807,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + verificação local com detalhes técnicos · v0.56.33</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + verificação local com cópia de detalhes técnicos · v0.56.34</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -7074,10 +7075,37 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             const verifyTelemetryCsv=$('#verifyShareTelemetryCsvV05632');
             const verifyTelemetryFeedback=$('#verifyShareTelemetryCsvFeedbackV05632');
             const verifyTelemetryDetailsV05633=$('#verifyShareTelemetryCsvDetailsV05633');
+            let verifyTelemetryDetailsStateV05634=null;
             const setVerifyTelemetryFeedbackV05632=(message)=>{
               if(verifyTelemetryFeedback)verifyTelemetryFeedback.textContent=message;
             };
+            const copyVerificationTextV05634=async(text,successMessage)=>{
+              if(!text||text==='—'){
+                setVerifyTelemetryFeedbackV05632('Nenhum valor disponível para copiar.');
+                return;
+              }
+              try{
+                await navigator.clipboard.writeText(text);
+                setVerifyTelemetryFeedbackV05632(successMessage);
+              }catch{
+                setVerifyTelemetryFeedbackV05632('Não foi possível copiar automaticamente.');
+              }
+            };
+            const bindVerificationCopyActionsV05634=()=>{
+              const copyExpected=$('#copyExpectedHashV05634');
+              if(copyExpected)copyExpected.onclick=()=>copyVerificationTextV05634(verifyTelemetryDetailsStateV05634?.expectedHash,'Hash esperado copiado.');
+              const copyActual=$('#copyActualHashV05634');
+              if(copyActual)copyActual.onclick=()=>copyVerificationTextV05634(verifyTelemetryDetailsStateV05634?.actualHash,'Hash calculado copiado.');
+              const copyDetails=$('#copyVerificationDetailsV05634');
+              if(copyDetails)copyDetails.onclick=()=>{
+                const d=verifyTelemetryDetailsStateV05634;
+                if(!d)return copyVerificationTextV05634('','');
+                const text=`Arquivo: ${d.fileName||'—'}\nTamanho: ${Number(d.fileSize||0)} bytes\nHash esperado: ${d.expectedHash||'—'}\nHash calculado: ${d.actualHash||'—'}\nAlgoritmo: SHA-256`;
+                copyVerificationTextV05634(text,'Detalhes técnicos copiados.');
+              };
+            };
             const setVerifyTelemetryDetailsV05633=(details)=>{
+              verifyTelemetryDetailsStateV05634=details||null;
               if(!verifyTelemetryDetailsV05633)return;
               if(!details){
                 verifyTelemetryDetailsV05633.hidden=true;
@@ -7085,7 +7113,8 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
                 return;
               }
               verifyTelemetryDetailsV05633.hidden=false;
-              verifyTelemetryDetailsV05633.innerHTML=`<div><b>Arquivo:</b> ${esc(details.fileName||'—')}</div><div><b>Tamanho:</b> ${Number(details.fileSize||0).toLocaleString()} bytes</div><div><b>Hash esperado:</b> <code>${esc(details.expectedHash||'—')}</code></div><div><b>Hash calculado:</b> <code>${esc(details.actualHash||'—')}</code></div><div><b>Algoritmo:</b> SHA-256</div>`;
+              verifyTelemetryDetailsV05633.innerHTML=`<div><b>Arquivo:</b> ${esc(details.fileName||'—')}</div><div><b>Tamanho:</b> ${Number(details.fileSize||0).toLocaleString()} bytes</div><div><b>Hash esperado:</b> <code>${esc(details.expectedHash||'—')}</code></div><div><b>Hash calculado:</b> <code>${esc(details.actualHash||'—')}</code></div><div><b>Algoritmo:</b> SHA-256</div><div class="form-actions" data-comparison-note-revision-history-share-telemetry-export-integrity-verification-copy-v05634="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_COPY_V05634}"><button type="button" class="ghost" id="copyExpectedHashV05634">Copiar hash esperado</button><button type="button" class="ghost" id="copyActualHashV05634">Copiar hash calculado</button><button type="button" class="ghost" id="copyVerificationDetailsV05634">Copiar detalhes</button></div>`;
+              bindVerificationCopyActionsV05634();
             };
             if(verifyTelemetryCsv)verifyTelemetryCsv.onchange=async()=>{
               const file=verifyTelemetryCsv.files?.[0];
@@ -19632,7 +19661,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.33';
+const HP_MVP_VERSION='0.56.34';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

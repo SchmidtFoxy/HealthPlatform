@@ -7974,3 +7974,23 @@ Os detalhes permanecem locais ao navegador. Nenhum arquivo é enviado à API e n
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy`.
+
+
+---
+
+## v0.56.34 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Copy
+
+Adiciona ações de cópia aos detalhes técnicos da verificação local.
+
+Ações:
+- `Copiar hash esperado`;
+- `Copiar hash calculado`;
+- `Copiar detalhes`.
+
+`Copiar detalhes` gera um texto técnico com nome do arquivo, tamanho, hash esperado, hash calculado e algoritmo SHA-256.
+
+A cópia usa a área de transferência do navegador e mantém o processamento totalmente local.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.35 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Status Badge`.
