@@ -7387,3 +7387,30 @@ O resumo usa exatamente os mesmos filtros do histórico (`tipoEvento`, `deUtc`, 
 Não cria migration ou tabela nova e não interpreta diagnóstico, prognóstico, risco, urgência, prioridade, causalidade ou decisão terapêutica.
 
 **Próxima etapa:** `v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation`.
+
+
+---
+
+## v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation
+
+Adiciona navegação profissional na linha do tempo e entre revisões relacionadas do mesmo paciente.
+
+### Navegação entre eventos
+- evento anterior;
+- próximo evento;
+- posição atual dentro do histórico filtrado.
+
+### Navegação entre revisões
+- revisão anterior;
+- próxima revisão;
+- posição da revisão atual;
+- total de revisões ativas.
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome-follow-up-review/{id}/navigation`
+
+A navegação é estritamente documental e não interpreta risco, urgência, prioridade, diagnóstico, prognóstico ou decisão terapêutica.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context`.

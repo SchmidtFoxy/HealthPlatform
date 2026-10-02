@@ -1,27 +1,14 @@
-HealthPlatform v0.56.6 - Follow-Up Review History Summary - Incremental
+HealthPlatform v0.56.7-r1 - Legacy History UI Gate Fix
 
 Arquivos alterados:
-- CHANGELOG.md
-- README.md
-- ROADMAP.md
 - TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
+- ARQUIVOS-ALTERADOS.txt
 
-Entrega funcional:
-- resumo documental do historico filtrado;
-- contagem por tipo de evento;
-- primeiro/ultimo evento;
-- ultimo status conhecido;
-- painel de resumo na UI;
-- sem migration/tabela nova.
+Correcao:
+- remove do gate historico v0.56.3 a exigencia do rotulo literal 'Historico da revisao';
+- preserva a validacao estrutural do historico por marcador, data attribute, host e rota /history;
+- necessario porque a v0.56.7 evoluiu a UI para navegacao por evento;
+- TESTAR.ps1 permanece UTF-8 com BOM.
 
-Fluxo:
-PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.6
+Nao commitar a revisao -r1 individualmente.
+Se aprovado, commit/push apenas: v0.56.7

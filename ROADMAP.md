@@ -5893,3 +5893,20 @@ Adicionar resumo documental do histórico filtrado para leitura profissional rá
 
 ### v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation
 Adicionar navegação profissional entre eventos e revisões relacionadas.
+
+
+## ✅ v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation — CONCLUÍDA
+
+**Entregue:**
+- navegação entre eventos do histórico filtrado;
+- evento anterior / próximo evento;
+- navegação entre revisões ativas do mesmo paciente;
+- revisão anterior / próxima revisão;
+- posição atual e total de revisões disponíveis;
+- endpoint dedicado de navegação;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.8 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context
+Adicionar contexto documental consolidado entre revisão atual, revisão anterior e revisão seguinte.

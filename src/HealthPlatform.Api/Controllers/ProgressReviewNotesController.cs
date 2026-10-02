@@ -3428,6 +3428,40 @@ public class ProgressReviewNotesController(
     }
 
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/navigation")]
+    public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewNavigationResponse>> NavegacaoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var revisoes = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview) &&
+                !x.Arquivada)
+            .OrderBy(x => x.CreatedAtUtc)
+            .ThenBy(x => x.Id)
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+
+        var indice = revisoes.IndexOf(id);
+        if (indice < 0)
+            return NotFound();
+
+        var anterior = indice > 0 ? revisoes[indice - 1] : (Guid?)null;
+        var proximo = indice < revisoes.Count - 1 ? revisoes[indice + 1] : (Guid?)null;
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewNavigationResponse(
+            id,
+            anterior,
+            proximo,
+            indice + 1,
+            revisoes.Count));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history")]
     public async Task<ActionResult<IReadOnlyCollection<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewHistoryResponse>>> HistoricoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

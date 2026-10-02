@@ -1,3 +1,11 @@
+# v0.56.7 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Navigation
+
+- Adiciona navegação entre eventos do histórico filtrado.
+- Adiciona navegação entre revisões ativas do mesmo paciente.
+- Exibe posição e total de revisões.
+- Adiciona endpoint `/navigation`.
+- Não cria migration ou tabela nova.
+
 # v0.56.6 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Summary
 
 - Adiciona endpoint de resumo do histórico filtrado.
