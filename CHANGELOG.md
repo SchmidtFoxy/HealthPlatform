@@ -1,3 +1,19 @@
+# v0.56.90 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+
+- Adiciona ação local `Limpar horário da deduplicação`.
+- O botão inicia desabilitado.
+- É habilitado após cópia bem-sucedida.
+- Restaura o indicador da última cópia para `—`.
+- Remove `datetime` e `data-copy-timestamp-v05689`.
+- Desabilita novamente a ação após limpeza.
+- Publica feedback local da limpeza.
+- Preserva o resumo técnico da v0.56.87.
+- Preserva a correção de gate aprovada em v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
 # v0.56.89 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
 
 - Adiciona indicador local da última cópia bem-sucedida.
