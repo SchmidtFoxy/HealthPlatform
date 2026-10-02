@@ -1,3 +1,12 @@
+# v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export
+
+- Adiciona exportação CSV da telemetria técnica.
+- Respeita período e canal filtrados.
+- Exporta somente `Canal` e `RegistradoEmUtc`.
+- Usa UTF-8 com BOM.
+- Não inclui conteúdo clínico/textual da nota.
+- Não cria migration ou tabela nova.
+
 # v0.56.27 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Channel Filter
 
 - Adiciona parâmetro técnico `canal` ao resumo de telemetria.

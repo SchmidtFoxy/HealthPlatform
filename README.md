@@ -7848,3 +7848,25 @@ A interface permite combinar canal e período técnico. O filtro continua restri
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export`.
+
+
+---
+
+## v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export
+
+Adiciona exportação CSV da telemetria técnica filtrada.
+
+O export respeita:
+- `deUtc`;
+- `ateUtc`;
+- `canal`.
+
+O CSV contém somente:
+- `Canal`;
+- `RegistradoEmUtc`.
+
+O arquivo é emitido em UTF-8 com BOM e não inclui conteúdo textual da nota.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename`.

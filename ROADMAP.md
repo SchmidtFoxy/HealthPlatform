@@ -6268,3 +6268,21 @@ Adicionar filtro técnico por canal de compartilhamento ao resumo de telemetria.
 
 ### v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export
 Adicionar exportação técnica CSV da telemetria filtrada por período e canal, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.28 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export — CONCLUÍDA
+
+**Entregue:**
+- exportação CSV da telemetria técnica de compartilhamento;
+- export respeita `deUtc`, `ateUtc` e `canal`;
+- colunas `Canal` e `RegistradoEmUtc`;
+- arquivo UTF-8 com BOM;
+- botão `Exportar telemetria CSV` na interface;
+- utiliza somente a entidade técnica de telemetria;
+- não exporta conteúdo clínico/textual da nota;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.29 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Filename
+Melhorar o nome do arquivo exportado com recorte técnico identificável e seguro, sem incluir conteúdo clínico/textual.

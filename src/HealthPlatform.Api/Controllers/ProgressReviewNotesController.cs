@@ -3638,6 +3638,105 @@ public class ProgressReviewNotesController(
 
 
 
+
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/share-telemetry/export")]
+    public async Task<IActionResult> ExportarTelemetriaCompartilhamentoHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
+        Guid pacienteId,
+        Guid id,
+        Guid noteId,
+        [FromQuery] DateTime? deUtc = null,
+        [FromQuery] DateTime? ateUtc = null,
+        [FromQuery] string? canal = null,
+        CancellationToken cancellationToken = default)
+    {
+        var prefixo = PrefixoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpComparisonNote + id.ToString("N") + ":";
+        var notaExiste = await db.NotasInternasProfissionais
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == noteId &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == pacienteId &&
+                x.Categoria.StartsWith(prefixo),
+                cancellationToken);
+
+        if (!notaExiste)
+            return NotFound();
+
+        var canaisPermitidos = new[]
+        {
+            "WebShare",
+            "ClipboardFallback",
+            "UrlFallback",
+            "Cancelled",
+            "ShareErrorClipboardFallback",
+            "ShareErrorUrlFallback"
+        };
+
+        var canalNormalizado = string.IsNullOrWhiteSpace(canal) ? null : canal.Trim();
+        if (canalNormalizado is not null &&
+            !canaisPermitidos.Contains(canalNormalizado, StringComparer.Ordinal))
+            return BadRequest(new { message = "Canal de telemetria inválido." });
+
+        var query = db.AuditLogs
+            .AsNoTracking()
+            .Where(x =>
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Acao == "PROFESSIONAL_REVIEW_TECHNICAL_COMPARISON_NOTE_HISTORY_SHARE_TELEMETRY" &&
+                x.Entidade == "ComparisonNoteRevisionHistoryShareTelemetry" &&
+                x.EntidadeId == noteId.ToString());
+
+        if (deUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc >= deUtc.Value);
+
+        if (ateUtc.HasValue)
+            query = query.Where(x => x.CreatedAtUtc <= ateUtc.Value);
+
+        var logs = await query
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Select(x => new { x.DadosNovosJson, x.CreatedAtUtc })
+            .ToListAsync(cancellationToken);
+
+        static string? ExtrairCanalExportacao(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                return doc.RootElement.TryGetProperty("Canal", out var canalJson)
+                    ? canalJson.GetString()
+                    : null;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+        }
+
+        var rows = logs
+            .Select(x => new { Canal = ExtrairCanalExportacao(x.DadosNovosJson), x.CreatedAtUtc })
+            .Where(x => !string.IsNullOrWhiteSpace(x.Canal))
+            .Where(x => canalNormalizado is null || x.Canal == canalNormalizado)
+            .ToList();
+
+        static string Csv(string? value)
+        {
+            var text = value ?? string.Empty;
+            return "\"" + text.Replace("\"", "\"\"") + "\"";
+        }
+
+        var builder = new StringBuilder();
+        builder.AppendLine("Canal,RegistradoEmUtc");
+
+        foreach (var row in rows)
+            builder.AppendLine($"{Csv(row.Canal)},{Csv(row.CreatedAtUtc.ToString("O"))}");
+
+        var utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
+        var bytes = utf8.GetBytes(builder.ToString());
+        return File(bytes, "text/csv; charset=utf-8", $"telemetria-compartilhamento-{noteId:N}.csv");
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/{id:guid}/history/context/comparison-notes/{noteId:guid}/history/share-telemetry/summary")]
     public async Task<IActionResult> ResumoTelemetriaCompartilhamentoHistoricoRevisoesNotaComparacaoContextoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReview(
         Guid pacienteId,

@@ -1,14 +1,14 @@
-HealthPlatform v0.56.27-r1 - Legacy Telemetry Period Action Gate Fix
+HealthPlatform v0.56.28-r1 - PowerShell Export Suffix Literal Gate Fix
 
 Arquivos alterados:
 - TESTAR.ps1
 - ARQUIVOS-ALTERADOS.txt
 
 Correcao:
-- atualiza o gate legado da v0.56.26 para o novo rotulo da v0.56.27;
-- 'Aplicar período técnico' -> 'Aplicar filtros técnicos';
-- preserva o filtro por periodo e o novo filtro por canal;
-- sem alteracao funcional, schema ou VERSION.txt.
+- impede interpolacao PowerShell do token JavaScript ${exportTelemetrySuffixV05628};
+- altera apenas o gate da v0.56.28 para literal entre aspas simples;
+- preserva toda a implementacao funcional da v0.56.28;
+- sem alteracao de schema, runtime ou VERSION.txt.
 
 Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.27
+Se aprovado, commit/push apenas: v0.56.28
