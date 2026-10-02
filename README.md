@@ -7706,3 +7706,24 @@ O deep link não inclui o conteúdo textual da nota.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard`.
+
+
+---
+
+## v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard
+
+Endurece o deep link documental introduzido na v0.56.20.
+
+Antes de abrir automaticamente uma revisão/nota, a interface valida:
+- GUID da revisão;
+- GUID da nota;
+- evento permitido;
+- página positiva;
+- tamanho da página em 10, 20 ou 50;
+- datas válidas quando informadas.
+
+Links inválidos, incompletos ou que apontem para revisão/nota indisponível têm seus parâmetros `hp*` removidos da URL com `history.replaceState`, evitando loops de reabertura.
+
+O guard não envia conteúdo textual da nota para a URL e não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share`.

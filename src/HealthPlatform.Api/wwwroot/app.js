@@ -5062,6 +5062,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_V05618='v0.56.18';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_STATE_V05619='v0.56.19';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_DEEP_LINK_V05620='v0.56.20';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_DEEP_LINK_GUARD_V05621='v0.56.21';
 
 
 
@@ -6793,7 +6794,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + histórico paginado com deep link · v0.56.20</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + deep link validado e protegido · v0.56.21</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6834,6 +6835,38 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   let editingComparisonNoteIdV05613=null;
 const comparisonNoteRevisionHistoryStateV05619=new Map();
 let comparisonNoteRevisionHistoryDeepLinkConsumedV05620=false;
+const comparisonNoteRevisionHistoryDeepLinkKeysV05621=['hpReview','hpComparisonNote','hpNotePage','hpNotePageSize','hpNoteEvent','hpNoteFrom','hpNoteTo'];
+const clearComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
+  const url=new URL(window.location.href);
+  comparisonNoteRevisionHistoryDeepLinkKeysV05621.forEach(k=>url.searchParams.delete(k));
+  window.history.replaceState(null,'',url);
+};
+const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
+  const params=new URLSearchParams(window.location.search);
+  const hasAny=comparisonNoteRevisionHistoryDeepLinkKeysV05621.some(k=>params.has(k));
+  if(!hasAny)return null;
+  const guid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const reviewId=params.get('hpReview')||'';
+  const noteId=params.get('hpComparisonNote')||'';
+  const event=params.get('hpNoteEvent')||'';
+  const pageRaw=params.get('hpNotePage');
+  const pageSizeRaw=params.get('hpNotePageSize');
+  const from=params.get('hpNoteFrom')||'';
+  const to=params.get('hpNoteTo')||'';
+  const page=pageRaw===null?1:Number(pageRaw);
+  const pageSize=pageSizeRaw===null?20:Number(pageSizeRaw);
+  const validEvent=!event||['CREATED','UPDATED','ARCHIVED','RESTORED'].includes(event);
+  const validFrom=!from||!Number.isNaN(Date.parse(from));
+  const validTo=!to||!Number.isNaN(Date.parse(to));
+  const validPage=Number.isInteger(page)&&page>=1;
+  const validPageSize=[10,20,50].includes(pageSize);
+  if(!guid.test(reviewId)||!guid.test(noteId)||!validEvent||!validFrom||!validTo||!validPage||!validPageSize){
+    clearComparisonNoteRevisionHistoryDeepLinkV05621();
+    comparisonNoteRevisionHistoryDeepLinkConsumedV05620=true;
+    return null;
+  }
+  return {reviewId,noteId,event,page,pageSize,from,to};
+};
   const navigationHost=$('#followUpReviewNavigationV0567');
   const clear=()=>{form?.reset(); if(form?.elements.id) form.elements.id.value='';};
   const guidOrNull=v=>{const x=String(v||'').trim(); return x||null;};
@@ -7029,24 +7062,22 @@ let comparisonNoteRevisionHistoryDeepLinkConsumedV05620=false;
           host.scrollIntoView({behavior:'smooth',block:'nearest'});
         });
         if(!comparisonNoteRevisionHistoryDeepLinkConsumedV05620){
-          const deepParamsV05620=new URLSearchParams(window.location.search);
-          const deepReviewIdV05620=deepParamsV05620.get('hpReview');
-          const deepNoteIdV05620=deepParamsV05620.get('hpComparisonNote');
-          if(String(deepReviewIdV05620||'')===String(id)&&deepNoteIdV05620){
-            const deepPageV05620=Math.max(1,Number(deepParamsV05620.get('hpNotePage'))||1);
-            const deepPageSizeRawV05620=Number(deepParamsV05620.get('hpNotePageSize'))||20;
-            const deepPageSizeV05620=[10,20,50].includes(deepPageSizeRawV05620)?deepPageSizeRawV05620:20;
-            comparisonNoteRevisionHistoryStateV05619.set(String(deepNoteIdV05620),{
-              pagina:deepPageV05620,
-              tamanhoPagina:deepPageSizeV05620,
-              tipoEvento:deepParamsV05620.get('hpNoteEvent')||'',
-              deUtc:deepParamsV05620.get('hpNoteFrom')||'',
-              ateUtc:deepParamsV05620.get('hpNoteTo')||''
+          const deepStateV05621=parseComparisonNoteRevisionHistoryDeepLinkV05621();
+          if(deepStateV05621&&String(deepStateV05621.reviewId)===String(id)){
+            comparisonNoteRevisionHistoryStateV05619.set(String(deepStateV05621.noteId),{
+              pagina:deepStateV05621.page,
+              tamanhoPagina:deepStateV05621.pageSize,
+              tipoEvento:deepStateV05621.event,
+              deUtc:deepStateV05621.from,
+              ateUtc:deepStateV05621.to
             });
-            const deepNoteButtonV05620=comparisonNotesHost.querySelector(`[data-history-comparison-note-v05614="${deepNoteIdV05620}"]`);
+            const deepNoteButtonV05620=comparisonNotesHost.querySelector(`[data-history-comparison-note-v05614="${deepStateV05621.noteId}"]`);
             if(deepNoteButtonV05620){
               comparisonNoteRevisionHistoryDeepLinkConsumedV05620=true;
               deepNoteButtonV05620.click();
+            }else{
+              clearComparisonNoteRevisionHistoryDeepLinkV05621();
+              comparisonNoteRevisionHistoryDeepLinkConsumedV05620=true;
             }
           }
         }
@@ -7108,12 +7139,15 @@ let comparisonNoteRevisionHistoryDeepLinkConsumedV05620=false;
     });
     listHost.querySelectorAll('[data-archive-follow-up-review-v0561]').forEach(btn=>btn.onclick=async()=>{await api(`${base}/${btn.dataset.archiveFollowUpReviewV0561}`,{method:'DELETE'}); await render();});
     if(!comparisonNoteRevisionHistoryDeepLinkConsumedV05620){
-      const deepParamsV05620=new URLSearchParams(window.location.search);
-      const deepReviewIdV05620=deepParamsV05620.get('hpReview');
-      const deepNoteIdV05620=deepParamsV05620.get('hpComparisonNote');
-      if(deepReviewIdV05620&&deepNoteIdV05620){
-        const deepReviewButtonV05620=listHost.querySelector(`[data-history-follow-up-review-v0563="${deepReviewIdV05620}"]`);
-        if(deepReviewButtonV05620)deepReviewButtonV05620.click();
+      const deepStateV05621=parseComparisonNoteRevisionHistoryDeepLinkV05621();
+      if(deepStateV05621){
+        const deepReviewButtonV05620=listHost.querySelector(`[data-history-follow-up-review-v0563="${deepStateV05621.reviewId}"]`);
+        if(deepReviewButtonV05620){
+          deepReviewButtonV05620.click();
+        }else{
+          clearComparisonNoteRevisionHistoryDeepLinkV05621();
+          comparisonNoteRevisionHistoryDeepLinkConsumedV05620=true;
+        }
       }
     }
   };
@@ -19426,7 +19460,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.20';
+const HP_MVP_VERSION='0.56.21';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

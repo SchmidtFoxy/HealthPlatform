@@ -1,3 +1,12 @@
+# v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard
+
+- Valida GUIDs de revisão e nota antes da abertura automática.
+- Valida evento, página, tamanho e datas do deep link.
+- Remove parâmetros inválidos/incompletos da URL.
+- Limpa links que apontem para revisão ou nota indisponível.
+- Evita repetição de tentativas de abertura inválida.
+- Não cria migration ou tabela nova.
+
 # v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link
 
 - Adiciona deep link para histórico de revisões por nota.

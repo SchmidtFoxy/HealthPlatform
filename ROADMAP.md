@@ -6137,3 +6137,22 @@ Adicionar deep link documental para reabrir uma nota diretamente no histórico c
 
 ### v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard
 Adicionar validação e limpeza segura de deep links inválidos, incompletos ou apontando para notas não disponíveis.
+
+
+## ✅ v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard — CONCLUÍDA
+
+**Entregue:**
+- validação estrutural dos parâmetros do deep link;
+- validação de GUID da revisão e da nota;
+- validação de evento permitido;
+- validação de página, tamanho da página e datas;
+- limpeza segura dos parâmetros quando o link é inválido ou incompleto;
+- limpeza quando a revisão não está disponível;
+- limpeza quando a nota não está disponível na revisão;
+- prevenção de tentativas repetidas de abertura inválida;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share
+Adicionar compartilhamento do deep link usando Web Share API quando disponível, mantendo fallback seguro para copiar link.
