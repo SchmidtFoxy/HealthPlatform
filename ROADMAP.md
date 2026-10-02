@@ -7038,3 +7038,22 @@ Adicionar estado técnico local do reset específico da deduplicação do anúnc
 
 ### v0.56.67 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
 Adicionar resumo técnico local do estado de reset específico da deduplicação do anúncio de foco, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.67 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo técnico local do reset específico da deduplicação;
+- estado inicial `Reset específico: ready · Resets: 0 · Último reset: —`;
+- atualização automática de status, contador e último reset;
+- horário local derivado do ISO do último reset;
+- atributo técnico `data-reset-state-summary-v05667`;
+- sincronização pelo helper da v0.56.66;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.68 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+Adicionar ação local para copiar o resumo técnico do reset específico da deduplicação, sem conteúdo clínico/textual.

@@ -8650,3 +8650,24 @@ A sincronização usa apenas atributos técnicos no indicador `Última cópia` e
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.67 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary`.
+
+
+---
+
+## v0.56.67 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+
+Adiciona resumo técnico local do estado de reset específico da deduplicação do anúncio de foco.
+
+Estado inicial:
+`Reset específico: ready · Resets: 0 · Último reset: —`
+
+O resumo é atualizado automaticamente para refletir:
+- status atual;
+- contador de resets;
+- horário local do último reset específico.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.68 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy`.
