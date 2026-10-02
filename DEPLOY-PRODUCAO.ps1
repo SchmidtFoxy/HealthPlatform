@@ -13,6 +13,7 @@
     [string]$HealthUrl = "",
     [string]$ApplicationService = "",
     [string]$MigrationSafetyConfirmation = "",
+    [string]$MigrationCommand = "dotnet ef database update",
     [int]$RestartHealthAttempts = 12,
     [int]$RestartHealthDelaySeconds = 5,
     [int]$BackupRetentionCount = 7,
@@ -42,11 +43,12 @@ $script:ControlledActivation = $null
 $script:PromotionMetadata = $null
 $script:RestartVerificationMetadata = $null
 $script:MigrationSafetyMetadata = $null
+$script:MigrationExecutionMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.7 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.8 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -137,6 +139,13 @@ function Assert-DeployArguments {
     $expectedMigrationSafetyConfirmation = "VALIDAR-MIGRATIONS:$VpsHost:$TargetVersion"
     if ($MigrationSafetyConfirmation -ne $expectedMigrationSafetyConfirmation) {
         throw "Confirmacao de seguranca de migrations invalida. Informe -MigrationSafetyConfirmation '$expectedMigrationSafetyConfirmation'."
+    }
+    if ([string]::IsNullOrWhiteSpace($MigrationCommand)) {
+        throw "MigrationCommand nao pode ser vazio."
+    }
+    if ($MigrationCommand -match '[
+]') {
+        throw "MigrationCommand deve ser uma unica linha."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -1104,10 +1113,117 @@ printf 'MIGRATION_SAFETY_OK:count=%s:hash=%s:destructive=0' "`$migration_count" 
     return $script:MigrationSafetyMetadata
 }
 
+function Invoke-ApprovedNonDestructiveMigrations {
+    if (-not $script:MigrationSafetyMetadata) {
+        throw "Execucao de migrations bloqueada: migration safety gate ainda nao foi executado."
+    }
+    if (-not $script:MigrationSafetyMetadata.SafeMigrationsAllowed -or $script:MigrationSafetyMetadata.DestructiveMigrationsAllowed) {
+        throw "Execucao de migrations bloqueada: conjunto nao foi aprovado como exclusivamente nao destrutivo."
+    }
+    if (-not $script:BackupValidado -or -not $script:RollbackPlan) {
+        throw "Execucao de migrations bloqueada: backup validado e plano de rollback sao obrigatorios."
+    }
+
+    if (-not $Aplicar) {
+        $script:MigrationExecutionMetadata = [pscustomobject]@{
+            Executed = $false
+            Skipped = $true
+            MigrationCount = $script:MigrationSafetyMetadata.MigrationCount
+            ApprovedHash = $script:MigrationSafetyMetadata.MigrationHash
+            RevalidatedHash = $script:MigrationSafetyMetadata.MigrationHash
+            HashMatched = $true
+            ExitCode = 0
+            DestructiveMigrationsAllowed = $false
+        }
+        Write-Host "Modo de validacao: migrations nao destrutivas aprovadas, mas nao executadas." -ForegroundColor Yellow
+        return $script:MigrationExecutionMetadata
+    }
+
+    Write-DeployTitle "NON-DESTRUCTIVE MIGRATION EXECUTION"
+
+    $stagePath = $script:StagingMetadata.Path
+    $approvedHash = $script:MigrationSafetyMetadata.MigrationHash
+    $approvedCount = $script:MigrationSafetyMetadata.MigrationCount
+
+    $rehashCommand = @"
+set -e
+migration_files=`$(find '$stagePath' -type f \( -name '*Migration*.cs' -o -name '*Migrations*.cs' \) | sort || true)
+migration_count=0
+migration_hash='none'
+if [ -n "`$migration_files" ]; then
+  migration_count=`$(printf '%s\n' "`$migration_files" | sed '/^$/d' | wc -l)
+  migration_hash=`$(printf '%s\n' "`$migration_files" | while IFS= read -r file; do sha256sum "`$file"; done | sha256sum | awk '{print `$1}')
+fi
+test "`$migration_count" -eq '$approvedCount'
+test "`$migration_hash" = '$approvedHash'
+printf 'MIGRATION_HASH_REVALIDATED:count=%s:hash=%s' "`$migration_count" "`$migration_hash"
+"@
+
+    $rehashResult = Invoke-SshChecked -Command $rehashCommand -Capture
+    if ($rehashResult -notmatch '^MIGRATION_HASH_REVALIDATED:count=(?<count>\d+):hash=(?<hash>[a-f0-9]{64}|none)$') {
+        throw "Revalidacao do conjunto de migrations falhou."
+    }
+    if ([int]$Matches['count'] -ne $approvedCount -or $Matches['hash'] -ne $approvedHash) {
+        throw "Conjunto de migrations mudou apos aprovacao do safety gate."
+    }
+
+    if ($approvedCount -eq 0) {
+        $script:MigrationExecutionMetadata = [pscustomobject]@{
+            Executed = $false
+            Skipped = $true
+            MigrationCount = 0
+            ApprovedHash = $approvedHash
+            RevalidatedHash = $approvedHash
+            HashMatched = $true
+            ExitCode = 0
+            DestructiveMigrationsAllowed = $false
+        }
+        Write-Host "Nenhuma migration staged para executar; etapa concluida como no-op seguro." -ForegroundColor Green
+        return $script:MigrationExecutionMetadata
+    }
+
+    $escapedMigrationCommand = $MigrationCommand.Replace("'", "'\"'\"'")
+    $executionCommand = @"
+set -e
+test -s '$($script:RollbackPlan.BackupFile)'
+test -f '$stagePath/$ComposeFile'
+docker compose --env-file '$RemoteRoot/.env' -f '$stagePath/$ComposeFile' config --services | grep -Fx '$ApplicationService' >/dev/null
+docker compose --env-file '$RemoteRoot/.env' -f '$stagePath/$ComposeFile' run --rm --no-deps --entrypoint sh '$ApplicationService' -lc '$escapedMigrationCommand'
+printf 'NON_DESTRUCTIVE_MIGRATIONS_EXECUTED:count=%s:hash=%s' '$approvedCount' '$approvedHash'
+"@
+
+    try {
+        $executionResult = Invoke-SshChecked -Command $executionCommand -Capture
+    }
+    catch {
+        throw "Execucao de migration nao destrutiva falhou. Deploy interrompido antes da promocao/restart. Backup preservado em $($script:RollbackPlan.BackupFile). Erro: $($_.Exception.Message)"
+    }
+
+    if ($executionResult -notmatch '^NON_DESTRUCTIVE_MIGRATIONS_EXECUTED:count=(?<count>\d+):hash=(?<hash>[a-f0-9]{64}|none)$') {
+        throw "Execucao de migrations nao retornou comprovacao valida."
+    }
+
+    $script:MigrationExecutionMetadata = [pscustomobject]@{
+        Executed = $true
+        Skipped = $false
+        MigrationCount = [int]$Matches['count']
+        ApprovedHash = $approvedHash
+        RevalidatedHash = $Matches['hash']
+        HashMatched = ($Matches['hash'] -eq $approvedHash)
+        ExitCode = 0
+        DestructiveMigrationsAllowed = $false
+    }
+
+    Write-Host ("Migrations nao destrutivas executadas: " + $script:MigrationExecutionMetadata.MigrationCount) -ForegroundColor Green
+    Write-Host ("Hash revalidado: " + $script:MigrationExecutionMetadata.RevalidatedHash) -ForegroundColor Green
+    Write-Host "Migrations destrutivas permanecem bloqueadas." -ForegroundColor Green
+    return $script:MigrationExecutionMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.7 adiciona classificacao e gate explicito de seguranca para migrations." -ForegroundColor Cyan
+    Write-Host "v0.57.8 executa somente migrations nao destrutivas aprovadas e com hash revalidado." -ForegroundColor Cyan
     Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -1116,7 +1232,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.7
+# Fluxo v0.57.8
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -1159,13 +1275,14 @@ $activationSnapshot = New-ActiveStateSnapshot
 $immediateRollbackPlan = New-ImmediateRollbackCommandPlan
 $controlledActivation = Test-ControlledActivationReadiness
 $migrationSafetyMetadata = Test-MigrationSafetyGate
+$migrationExecutionMetadata = Invoke-ApprovedNonDestructiveMigrations
 Test-AtomicPromotionReadiness
 $promotionMetadata = Invoke-AtomicReleasePromotion
 $restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerification
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-migration-safety-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-safe-migrations-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1224,7 +1341,12 @@ $logFile = Join-Path $DeployLogDir ("deploy-migration-safety-v" + $localVersion 
     "migrationHash=$($migrationSafetyMetadata.MigrationHash)",
     "migrationDestructiveDetected=$($migrationSafetyMetadata.DestructiveDetected)",
     "safeMigrationsAllowed=$($migrationSafetyMetadata.SafeMigrationsAllowed)",
-    "migrationExecutionPerformed=false",
+    "migrationExecutionPerformed=$($migrationExecutionMetadata.Executed)",
+    "migrationExecutionSkipped=$($migrationExecutionMetadata.Skipped)",
+    "migrationApprovedHash=$($migrationExecutionMetadata.ApprovedHash)",
+    "migrationRevalidatedHash=$($migrationExecutionMetadata.RevalidatedHash)",
+    "migrationHashMatched=$($migrationExecutionMetadata.HashMatched)",
+    "migrationExecutionCount=$($migrationExecutionMetadata.MigrationCount)",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1232,5 +1354,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-migration-safety-v" + $localVersion 
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Migration safety gate e fluxo de deploy concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Migration safety + execucao nao destrutiva e fluxo de deploy concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green

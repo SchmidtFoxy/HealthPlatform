@@ -1,3 +1,14 @@
+# v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution
+
+- Adiciona `MigrationCommand`.
+- Revalida quantidade e hash do conjunto antes da execução.
+- Bloqueia execução se o conjunto mudar.
+- Executa somente migrations aprovadas como não destrutivas.
+- Usa container efêmero do serviço da aplicação.
+- Executa antes de promoção/restart.
+- Interrompe o deploy em falha e preserva o backup.
+- Mantém migrations destrutivas bloqueadas.
+
 # v0.57.7 — Deploy Seguro para Produção Migration Safety Gate
 
 - Adiciona confirmação explícita de segurança de migrations.

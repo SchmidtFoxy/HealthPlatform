@@ -7917,3 +7917,29 @@ Adicionar classificação e gate explícito de migrations, permitindo somente mi
 
 ### v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution
 Executar somente o conjunto de migrations aprovado pelo Migration Safety Gate, revalidando o hash antes da execução e mantendo qualquer migration destrutiva bloqueada.
+
+
+## ✅ v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution — CONCLUÍDA
+
+**Entregue:**
+- execução condicionada ao Migration Safety Gate aprovado;
+- `MigrationCommand` explícito e validado;
+- modo sem `-Aplicar` continua sem executar migrations;
+- revalidação de quantidade e SHA-256 do conjunto imediatamente antes da execução;
+- bloqueio se o conjunto mudar após a aprovação;
+- no-op seguro quando não existem migrations staged;
+- execução via container efêmero do `ApplicationService`, usando a configuração preservada do host;
+- execução ocorre antes da promoção atômica e do restart;
+- falha de migration interrompe o deploy antes da promoção/restart;
+- backup PostgreSQL validado permanece preservado para recuperação;
+- logs registram hash aprovado, hash revalidado, correspondência, quantidade e execução;
+- migrations destrutivas continuam bloqueadas.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery
+Adicionar recuperação explícita para falhas de migrations aprovadas: diagnóstico, bloqueio de promoção, procedimento controlado de restore do backup e revalidação do banco antes de qualquer nova tentativa.

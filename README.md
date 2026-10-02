@@ -9502,3 +9502,18 @@ Quando aprovado:
 A v0.57.7 **não executa migrations**.
 
 **Próxima etapa:** `v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution`.
+
+
+---
+
+## v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution
+
+O deploy agora pode executar apenas migrations aprovadas pelo Migration Safety Gate.
+
+Antes da execução, a quantidade e o SHA-256 do conjunto são recalculados. Qualquer diferença bloqueia imediatamente o deploy.
+
+Sem `-Aplicar`, nenhuma migration é executada. Com `-Aplicar`, o `MigrationCommand` roda em container efêmero do `ApplicationService` antes da promoção atômica e do restart.
+
+Falha de migration interrompe o deploy mantendo o backup validado disponível. Migrations destrutivas continuam bloqueadas.
+
+**Próxima etapa:** `v0.57.9 — Deploy Seguro para Produção Migration Failure Recovery`.

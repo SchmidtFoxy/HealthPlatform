@@ -1,4 +1,4 @@
-HealthPlatform v0.57.7 - Incremental
+HealthPlatform v0.57.8 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,14 +14,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- confirmacao VALIDAR-MIGRATIONS:<host>:<versao>;
-- inventario e SHA-256 do conjunto de migrations;
-- classificacao fail-closed de operacoes destrutivas;
-- SafeMigrationsAllowed=true somente para conjunto nao destrutivo;
-- DestructiveMigrationsAllowed=false;
-- ExecutionPerformed=false;
-- migration gate antes da promocao atomica.
+- MigrationCommand explicito;
+- revalidacao de quantidade e hash antes da execucao;
+- execucao somente de migrations aprovadas como nao destrutivas;
+- no-op seguro quando nao ha migrations;
+- execucao em container efemero;
+- falha bloqueia promocao/restart e preserva backup;
+- migrations destrutivas continuam bloqueadas.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.7
+Se aprovado, commit/push apenas: v0.57.8
