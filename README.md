@@ -8709,3 +8709,25 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.70 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear`.
+
+
+---
+
+## v0.56.70 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+
+Adiciona a ação local **Limpar horário do reset**.
+
+O botão começa desabilitado, é habilitado somente após uma cópia bem-sucedida e, ao ser acionado:
+- restaura `Última cópia do reset: —`;
+- remove `datetime`;
+- remove `data-copy-timestamp-v05669`;
+- volta a ficar desabilitado;
+- publica feedback acessível da limpeza.
+
+O resumo técnico não é alterado.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.71 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility`.
