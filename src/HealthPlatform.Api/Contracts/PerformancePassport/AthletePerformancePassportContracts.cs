@@ -256,6 +256,14 @@ public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeP
     string Profissional,
     int Total);
 
+public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureResponse(
+    int ComponentesEsperados,
+    int ComponentesDisponiveis,
+    IReadOnlyCollection<string> ComponentesPresentes,
+    IReadOnlyCollection<string> ComponentesAusentes,
+    string EstadoEstrutural,
+    string RegraDeUso);
+
 public sealed record ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeSummaryResponse(
     int Total,
     int Ativos,

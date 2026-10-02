@@ -6982,3 +6982,31 @@ O gerenciador de resultados passa a exibir um painel de resumo e atualizar os in
 O resumo é exclusivamente documental. Agregações não validam causalidade ou evidência clínica, não produzem prognóstico, recomendação ou decisão terapêutica, não representam score clínico, risco, urgência ou prioridade e não executam conduta ou prescrição.
 
 **Próxima etapa:** `v0.54.6 — Professional Review Team Knowledge Effect Decision Review Outcome Closure`.
+
+---
+
+## v0.54.6 — Professional Review Team Knowledge Effect Decision Review Outcome Closure
+
+Encerra a linha funcional 0.54.x consolidando a estrutura de resultados documentados das revisões profissionais.
+
+### Componentes consolidados
+1. Foundation
+2. Persistence
+3. Status
+4. History
+5. Filters
+6. Summary
+
+### Estado estrutural
+`EstruturaTeamKnowledgeEffectDecisionReviewOutcomeCompleta`
+
+### Endpoint
+`GET .../team-knowledge-effect-decision-review-outcome/closure`
+
+### UI
+O gerenciador passa a exibir o fechamento estrutural com a quantidade de componentes disponíveis e ausentes.
+
+### Guardrail
+O fechamento indica somente disponibilidade estrutural. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
+
+**Próxima etapa:** `v0.55.0 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Foundation`.

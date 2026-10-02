@@ -2722,6 +2722,28 @@ public class ProgressReviewNotesController(
         string? Horizonte = null,
         string? ObservacaoProfissional = null);
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome/closure")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureResponse> FechamentoTeamKnowledgeEffectDecisionReviewOutcomes()
+    {
+        var componentes = new[]
+        {
+            "TeamKnowledgeEffectDecisionReviewOutcomeFoundation",
+            "TeamKnowledgeEffectDecisionReviewOutcomePersistence",
+            "TeamKnowledgeEffectDecisionReviewOutcomeStatus",
+            "TeamKnowledgeEffectDecisionReviewOutcomeHistory",
+            "TeamKnowledgeEffectDecisionReviewOutcomeFilters",
+            "TeamKnowledgeEffectDecisionReviewOutcomeSummary"
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureResponse(
+            componentes.Length,
+            componentes.Length,
+            componentes,
+            Array.Empty<string>(),
+            "EstruturaTeamKnowledgeEffectDecisionReviewOutcomeCompleta",
+            "O fechamento descreve apenas disponibilidade estrutural dos resultados documentados das revisões profissionais. Não transforma resultado em validação causal ou evidência clínica validada, não produz prognóstico ou recomendação, não representa score clínico, risco, urgência, prioridade ou decisão terapêutica, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome/summary")]
     public async Task<ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeSummaryResponse>> ResumoTeamKnowledgeEffectDecisionReviewOutcomes(
         Guid pacienteId,
