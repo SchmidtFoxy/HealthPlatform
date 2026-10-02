@@ -7742,3 +7742,22 @@ O link compartilhado preserva revisão, nota, filtros e paginação, sem incluir
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback`.
+
+
+---
+
+## v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback
+
+Padroniza o feedback visual do compartilhamento do histórico de revisões.
+
+A interface diferencia:
+- compartilhamento concluído;
+- compartilhamento cancelado pelo usuário;
+- fallback com link copiado;
+- fallback final mantendo o link na barra de endereço.
+
+As mensagens são temporárias, usam `aria-live="polite"` e não bloqueiam o fluxo profissional.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry`.

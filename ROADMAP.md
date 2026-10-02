@@ -6175,3 +6175,21 @@ Adicionar compartilhamento do deep link usando Web Share API quando disponível,
 
 ### v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback
 Adicionar feedback visual consistente para sucesso, cancelamento e fallback do compartilhamento, sem bloquear o fluxo profissional.
+
+
+## ✅ v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback — CONCLUÍDA
+
+**Entregue:**
+- feedback visual consistente para compartilhamento;
+- mensagem de sucesso após Web Share API;
+- mensagem específica para cancelamento voluntário;
+- feedback explícito para fallback de cópia;
+- feedback explícito quando resta apenas a URL na barra;
+- área `aria-live` para anúncio não bloqueante;
+- mensagens temporárias sem interromper o fluxo profissional;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.24 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry
+Adicionar telemetria técnica não clínica para registrar qual caminho de compartilhamento foi utilizado, sem armazenar conteúdo textual da nota.

@@ -1,3 +1,12 @@
+# v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback
+
+- Adiciona feedback visual consistente ao compartilhamento.
+- Diferencia sucesso, cancelamento e fallbacks.
+- Usa área `aria-live` não bloqueante.
+- Mensagens desaparecem automaticamente.
+- Mantém deep link e Web Share API da v0.56.22.
+- Não cria migration ou tabela nova.
+
 # v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share
 
 - Adiciona botão `Compartilhar`.
