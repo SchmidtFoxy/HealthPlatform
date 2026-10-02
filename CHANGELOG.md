@@ -1,3 +1,13 @@
+# v0.57.7 — Deploy Seguro para Produção Migration Safety Gate
+
+- Adiciona confirmação explícita de segurança de migrations.
+- Inventaria e gera hash do conjunto staged.
+- Bloqueia padrões destrutivos e SQL arbitrário.
+- Marca somente conjunto não destrutivo como seguro para futura execução.
+- Mantém `DestructiveMigrationsAllowed=false`.
+- Mantém `ExecutionPerformed=false`.
+- Não executa migrations nesta versão.
+
 # v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification
 
 - Adiciona `ApplicationService` obrigatório.

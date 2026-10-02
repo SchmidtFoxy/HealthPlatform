@@ -1,4 +1,4 @@
-HealthPlatform v0.57.6-r1 - Incremental
+HealthPlatform v0.57.7 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,22 +14,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- ApplicationService explicito;
-- restart/recreate controlado somente do servico da aplicacao;
-- retry de health/version;
-- verificacao exata da TargetVersion servida;
-- rollback automatico da release e servico em falha;
-- RemoteRoot legado como baseline de rollback inicial;
-- migrations destrutivas continuam bloqueadas.
+- confirmacao VALIDAR-MIGRATIONS:<host>:<versao>;
+- inventario e SHA-256 do conjunto de migrations;
+- classificacao fail-closed de operacoes destrutivas;
+- SafeMigrationsAllowed=true somente para conjunto nao destrutivo;
+- DestructiveMigrationsAllowed=false;
+- ExecutionPerformed=false;
+- migration gate antes da promocao atomica.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.6
-
-Hotfix cumulativo r1:
-- corrige expansao indevida de $RemoteRoot no gate [5090/5101] do TESTAR.ps1;
-- usa literal PowerShell com aspas simples: previous_release='$RemoteRoot';
-- preserva codigo funcional da v0.57.6;
-- VERSION.txt permanece 0.57.6;
-- nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.6.
+Se aprovado, commit/push apenas: v0.57.7

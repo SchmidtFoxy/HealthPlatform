@@ -9486,3 +9486,19 @@ Em falha, o script restaura a release anterior e recria o serviço anterior auto
 Sem `-Aplicar`, restart e verificação operacional não são executados. Migrations destrutivas continuam bloqueadas.
 
 **Próxima etapa:** `v0.57.7 — Deploy Seguro para Produção Migration Safety Gate`.
+
+
+---
+
+## v0.57.7 — Deploy Seguro para Produção Migration Safety Gate
+
+O deploy agora classifica as migrations staged antes de qualquer futura execução. O gate exige `VALIDAR-MIGRATIONS:<host>:<versão>`, calcula o SHA-256 do conjunto e bloqueia operações destrutivas ou SQL arbitrário.
+
+Quando aprovado:
+- `SafeMigrationsAllowed=true`;
+- `DestructiveMigrationsAllowed=false`;
+- `ExecutionPerformed=false`.
+
+A v0.57.7 **não executa migrations**.
+
+**Próxima etapa:** `v0.57.8 — Deploy Seguro para Produção Non-Destructive Migration Execution`.

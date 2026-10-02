@@ -12,6 +12,7 @@
     [string]$ActiveReleaseLink = "/opt/healthplatform-current",
     [string]$HealthUrl = "",
     [string]$ApplicationService = "",
+    [string]$MigrationSafetyConfirmation = "",
     [int]$RestartHealthAttempts = 12,
     [int]$RestartHealthDelaySeconds = 5,
     [int]$BackupRetentionCount = 7,
@@ -40,11 +41,12 @@ $script:ActivationSnapshot = $null
 $script:ControlledActivation = $null
 $script:PromotionMetadata = $null
 $script:RestartVerificationMetadata = $null
+$script:MigrationSafetyMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.6 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.7 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -130,6 +132,11 @@ function Assert-DeployArguments {
     }
     if ($RestartHealthDelaySeconds -lt 1 -or $RestartHealthDelaySeconds -gt 60) {
         throw "RestartHealthDelaySeconds deve ficar entre 1 e 60."
+    }
+
+    $expectedMigrationSafetyConfirmation = "VALIDAR-MIGRATIONS:$VpsHost:$TargetVersion"
+    if ($MigrationSafetyConfirmation -ne $expectedMigrationSafetyConfirmation) {
+        throw "Confirmacao de seguranca de migrations invalida. Informe -MigrationSafetyConfirmation '$expectedMigrationSafetyConfirmation'."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -1036,10 +1043,71 @@ printf 'RESTART_VERSION_ROLLBACK_OK:%s' '$previousRelease'
     return $script:RestartVerificationMetadata
 }
 
+function Test-MigrationSafetyGate {
+    if (-not $script:BackupValidado -or -not $script:StagingMetadata) {
+        throw "Migration safety gate bloqueado: backup validado e staging sao obrigatorios."
+    }
+
+    Write-DeployTitle "MIGRATION SAFETY GATE"
+
+    $stagePath = $script:StagingMetadata.Path
+    $migrationCommand = @"
+set -e
+test -d '$stagePath'
+test -s '$($script:RollbackPlan.BackupFile)'
+
+migration_files=`$(find '$stagePath' -type f \( -name '*Migration*.cs' -o -name '*Migrations*.cs' \) | sort || true)
+migration_count=0
+migration_hash='none'
+destructive_hits=0
+
+if [ -n "`$migration_files" ]; then
+  migration_count=`$(printf '%s\n' "`$migration_files" | sed '/^$/d' | wc -l)
+  migration_hash=`$(printf '%s\n' "`$migration_files" | while IFS= read -r file; do sha256sum "`$file"; done | sha256sum | awk '{print `$1}')
+
+  if grep -E -n \
+    'DropTable[[:space:]]*\(|DropColumn[[:space:]]*\(|DropForeignKey[[:space:]]*\(|DropPrimaryKey[[:space:]]*\(|DropIndex[[:space:]]*\(|RenameColumn[[:space:]]*\(|RenameTable[[:space:]]*\(|AlterColumn[[:space:]]*<|DeleteData[[:space:]]*\(|Sql[[:space:]]*\(' \
+    `$migration_files >/dev/null 2>&1; then
+    destructive_hits=1
+  fi
+fi
+
+if [ "`$destructive_hits" -ne 0 ]; then
+  printf 'MIGRATION_SAFETY_BLOCKED:count=%s:hash=%s' "`$migration_count" "`$migration_hash"
+  exit 42
+fi
+
+printf 'MIGRATION_SAFETY_OK:count=%s:hash=%s:destructive=0' "`$migration_count" "`$migration_hash"
+"@
+
+    $result = Invoke-SshChecked -Command $migrationCommand -Capture
+    if ($result -notmatch '^MIGRATION_SAFETY_OK:count=(?<count>\d+):hash=(?<hash>[a-f0-9]{64}|none):destructive=0$') {
+        throw "Migration safety gate nao confirmou conjunto nao destrutivo."
+    }
+
+    $count = [int]$Matches['count']
+    $hash = [string]$Matches['hash']
+
+    $script:MigrationSafetyMetadata = [pscustomobject]@{
+        MigrationCount = $count
+        MigrationHash = $hash
+        DestructiveDetected = $false
+        SafeMigrationsAllowed = $true
+        DestructiveMigrationsAllowed = $false
+        ExecutionPerformed = $false
+        CheckedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host ("Migration safety gate aprovado. Arquivos analisados: " + $count) -ForegroundColor Green
+    Write-Host ("Migration set hash: " + $hash) -ForegroundColor Green
+    Write-Host "Somente migrations classificadas como nao destrutivas podem avancar; nenhuma migration foi executada nesta versao." -ForegroundColor Green
+    return $script:MigrationSafetyMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.6 integra restart controlado e verificacao explicita da versao servida." -ForegroundColor Cyan
+    Write-Host "v0.57.7 adiciona classificacao e gate explicito de seguranca para migrations." -ForegroundColor Cyan
     Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -1048,7 +1116,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.6
+# Fluxo v0.57.7
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -1090,13 +1158,14 @@ Assert-ControlledActivationConfirmation
 $activationSnapshot = New-ActiveStateSnapshot
 $immediateRollbackPlan = New-ImmediateRollbackCommandPlan
 $controlledActivation = Test-ControlledActivationReadiness
+$migrationSafetyMetadata = Test-MigrationSafetyGate
 Test-AtomicPromotionReadiness
 $promotionMetadata = Invoke-AtomicReleasePromotion
 $restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerification
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-restart-version-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-migration-safety-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1151,6 +1220,11 @@ $logFile = Join-Path $DeployLogDir ("deploy-restart-version-v" + $localVersion +
     "restartHealthVerified=$($restartVerificationMetadata.HealthVerified)",
     "restartVersionVerified=$($restartVerificationMetadata.VersionVerified)",
     "restartRollbackExecuted=$($restartVerificationMetadata.RollbackExecuted)",
+    "migrationCount=$($migrationSafetyMetadata.MigrationCount)",
+    "migrationHash=$($migrationSafetyMetadata.MigrationHash)",
+    "migrationDestructiveDetected=$($migrationSafetyMetadata.DestructiveDetected)",
+    "safeMigrationsAllowed=$($migrationSafetyMetadata.SafeMigrationsAllowed)",
+    "migrationExecutionPerformed=false",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1158,5 +1232,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-restart-version-v" + $localVersion +
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Promocao, restart e verificacao de versao concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Migration safety gate e fluxo de deploy concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green
