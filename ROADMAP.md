@@ -6937,3 +6937,23 @@ Melhorar a acessibilidade da ação de limpar o horário da última cópia com e
 
 ### v0.56.62 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus
 Melhorar o fluxo de foco por teclado após limpar o horário da última cópia, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.62 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus — CONCLUÍDA
+
+**Entregue:**
+- indicador `Última cópia` passa a aceitar foco programático com `tabindex="-1"`;
+- após `Limpar horário`, o foco sai do botão que acabou de ser desabilitado;
+- foco é movido para o indicador atualizado `Última cópia: —`;
+- uso de `focus({preventScroll:true})` para evitar deslocamento visual desnecessário;
+- marcador técnico de foco v0.56.62;
+- acessibilidade da v0.56.61 preservada;
+- fluxo funcional da v0.56.60 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.63 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+Adicionar anúncio acessível específico para a movimentação de foco após limpar o horário da última cópia, mantendo o fluxo local e sem conteúdo clínico/textual.

@@ -1,3 +1,14 @@
+# v0.56.62 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+- Adiciona `tabindex=-1` ao indicador de última cópia.
+- Move o foco para o indicador após limpar o horário.
+- Evita manter foco em botão desabilitado.
+- Usa `focus({preventScroll:true})`.
+- Preserva acessibilidade e fluxo funcional anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.61 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility
 
 - Sincroniza `aria-disabled`.

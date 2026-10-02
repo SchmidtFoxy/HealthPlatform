@@ -8561,3 +8561,20 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.62 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus`.
+
+
+---
+
+## v0.56.62 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+Melhora o fluxo de teclado após a ação **Limpar horário**.
+
+Como o botão de limpeza é desabilitado depois da ação, o foco passa a ser movido para o indicador atualizado `Última cópia: —`.
+
+O indicador recebe `tabindex="-1"` e o foco usa `focus({preventScroll:true})`, permitindo foco programático sem inserir o elemento na navegação normal por Tab.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.63 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement`.
