@@ -7663,3 +7663,23 @@ A exportação CSV permanece independente da paginação e exporta todo o recort
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State`.
+
+
+---
+
+## v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State
+
+Preserva o estado de navegação do histórico de revisões por nota enquanto o profissional alterna entre diferentes notas.
+
+O estado mantido em memória inclui:
+- tipo de evento;
+- data/hora inicial;
+- data/hora final;
+- página atual;
+- tamanho da página.
+
+Ao retornar ao histórico de uma nota, filtros e paginação são restaurados. A exportação CSV usa o mesmo recorte persistido.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link`.

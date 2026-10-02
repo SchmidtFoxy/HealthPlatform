@@ -5060,6 +5060,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_EXPORT_V05616='v0.56.16';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SUMMARY_V05617='v0.56.17';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_V05618='v0.56.18';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_STATE_V05619='v0.56.19';
 
 
 
@@ -6791,7 +6792,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + histórico paginado/filtrável/exportável · v0.56.18</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + histórico paginado com estado preservado · v0.56.19</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -6830,6 +6831,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   const comparisonHost=$('#followUpReviewContextComparisonV0569');
   const comparisonNotesHost=$('#followUpReviewContextComparisonNotesV05610');
   let editingComparisonNoteIdV05613=null;
+const comparisonNoteRevisionHistoryStateV05619=new Map();
   const navigationHost=$('#followUpReviewNavigationV0567');
   const clear=()=>{form?.reset(); if(form?.elements.id) form.elements.id.value='';};
   const guidOrNull=v=>{const x=String(v||'').trim(); return x||null;};
@@ -6923,13 +6925,33 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
           if(!noteId)return;
           const host=$('#comparisonNoteRevisionHistoryV05614');
           if(!host)return;
-          let revisionHistoryPageV05618=1;
-          let revisionHistoryPageSizeV05618=20;
+          const persistedStateV05619=comparisonNoteRevisionHistoryStateV05619.get(String(noteId))||{
+            pagina:1,
+            tamanhoPagina:20,
+            tipoEvento:'',
+            deUtc:'',
+            ateUtc:''
+          };
+          let revisionHistoryPageV05618=persistedStateV05619.pagina||1;
+          let revisionHistoryPageSizeV05618=persistedStateV05619.tamanhoPagina||20;
+          let revisionHistoryTipoEventoV05619=persistedStateV05619.tipoEvento||'';
+          let revisionHistoryDeUtcV05619=persistedStateV05619.deUtc||'';
+          let revisionHistoryAteUtcV05619=persistedStateV05619.ateUtc||'';
+
+          const persistRevisionHistoryStateV05619=()=>{
+            comparisonNoteRevisionHistoryStateV05619.set(String(noteId),{
+              pagina:revisionHistoryPageV05618,
+              tamanhoPagina:revisionHistoryPageSizeV05618,
+              tipoEvento:revisionHistoryTipoEventoV05619,
+              deUtc:revisionHistoryDeUtcV05619,
+              ateUtc:revisionHistoryAteUtcV05619
+            });
+          };
 
           const renderRevisionHistoryV05615=async()=>{
-            const tipoEvento=$('#comparisonNoteHistoryTypeV05615')?.value||'';
-            const deUtc=$('#comparisonNoteHistoryFromV05615')?.value||'';
-            const ateUtc=$('#comparisonNoteHistoryToV05615')?.value||'';
+            const tipoEvento=revisionHistoryTipoEventoV05619;
+            const deUtc=revisionHistoryDeUtcV05619;
+            const ateUtc=revisionHistoryAteUtcV05619;
             const filterQs=new URLSearchParams();
             if(tipoEvento)filterQs.set('tipoEvento',tipoEvento);
             if(deUtc)filterQs.set('deUtc',new Date(deUtc).toISOString());
@@ -6945,28 +6967,36 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
             ]);
             const rows=Array.isArray(history)?history:[];
             const totalPages=Math.max(1,Math.ceil((historySummary?.total||0)/revisionHistoryPageSizeV05618));
-            if(revisionHistoryPageV05618>totalPages){revisionHistoryPageV05618=totalPages;return renderRevisionHistoryV05615();}
+            if(revisionHistoryPageV05618>totalPages){revisionHistoryPageV05618=totalPages;persistRevisionHistoryStateV05619();return renderRevisionHistoryV05615();}
             const actionLabel=a=>String(a||'').replace('PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_CONTEXT_COMPARISON_NOTE_','').replaceAll('_',' ');
-            host.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-note-revision-history-filters-v05615="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_FILTERS_V05615}" data-comparison-note-revision-history-summary-v05617="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SUMMARY_V05617}"><div class="row-between"><b>Histórico de revisões da nota</b><small>${historySummary?.total??rows.length} evento(s)</small></div><div class="grid-4"><div><small>Criações</small><b>${historySummary?.criacoes??0}</b></div><div><small>Edições</small><b>${historySummary?.edicoes??0}</b></div><div><small>Arquivamentos</small><b>${historySummary?.arquivamentos??0}</b></div><div><small>Restaurações</small><b>${historySummary?.restauracoes??0}</b></div></div><small class="muted-line">Período: ${historySummary?.primeiroEventoUtc?new Date(historySummary.primeiroEventoUtc).toLocaleString():'—'} → ${historySummary?.ultimoEventoUtc?new Date(historySummary.ultimoEventoUtc).toLocaleString():'—'}</small><div class="form-grid"><label>Evento<select id="comparisonNoteHistoryTypeV05615"><option value="">Todos</option><option value="CREATED">Criada</option><option value="UPDATED">Editada</option><option value="ARCHIVED">Arquivada</option><option value="RESTORED">Restaurada</option></select></label><label>De<input id="comparisonNoteHistoryFromV05615" type="datetime-local"></label><label>Até<input id="comparisonNoteHistoryToV05615" type="datetime-local"></label><div class="span-2 form-actions"><button type="button" class="ghost" id="applyComparisonNoteHistoryFiltersV05615">Aplicar filtros</button><button type="button" class="ghost" id="clearComparisonNoteHistoryFiltersV05615">Limpar</button><button type="button" class="ghost" id="exportComparisonNoteHistoryV05616" data-comparison-note-revision-history-export-v05616="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_EXPORT_V05616}">Exportar CSV</button></div></div><div class="row-between" data-comparison-note-revision-history-pagination-v05618="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_V05618}"><div class="form-actions"><button type="button" class="ghost" id="previousComparisonNoteHistoryPageV05618" ${revisionHistoryPageV05618<=1?'disabled':''}>← Anterior</button><button type="button" class="ghost" id="nextComparisonNoteHistoryPageV05618" ${revisionHistoryPageV05618>=totalPages?'disabled':''}>Próxima →</button></div><div class="form-actions"><small>Página ${revisionHistoryPageV05618}/${totalPages}</small><label>Por página<select id="comparisonNoteHistoryPageSizeV05618"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select></label></div></div>${rows.length?rows.map(x=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(actionLabel(x.acao))}</b><small>${new Date(x.registradoEmUtc).toLocaleString()}</small></div>${x.notaAnterior!==x.notaNova?`<div class="muted-line"><b>Antes:</b> ${esc(x.notaAnterior||'—')}</div><div><b>Depois:</b> ${esc(x.notaNova||'—')}</div>`:`<div class="muted-line">${esc(x.notaNova||x.notaAnterior||'Sem alteração textual.')}</div>`}</div>`).join(''):'<p class="muted-line">Nenhum evento auditado encontrado para os filtros informados.</p>'}</article>`;
-            const tipo=$('#comparisonNoteHistoryTypeV05615'); if(tipo)tipo.value=tipoEvento;
-            const de=$('#comparisonNoteHistoryFromV05615'); if(de)de.value=deUtc;
-            const ate=$('#comparisonNoteHistoryToV05615'); if(ate)ate.value=ateUtc;
-            const apply=$('#applyComparisonNoteHistoryFiltersV05615'); if(apply)apply.onclick=()=>{revisionHistoryPageV05618=1;renderRevisionHistoryV05615();};
-            const clear=$('#clearComparisonNoteHistoryFiltersV05615'); if(clear)clear.onclick=()=>{
-              if(tipo)tipo.value='';
-              if(de)de.value='';
-              if(ate)ate.value='';
+            host.innerHTML=`<article class="internal-note-privacy-v0204" data-comparison-note-revision-history-filters-v05615="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_FILTERS_V05615}" data-comparison-note-revision-history-summary-v05617="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SUMMARY_V05617}"><div class="row-between"><b>Histórico de revisões da nota</b><small>${historySummary?.total??rows.length} evento(s)</small></div><div class="grid-4"><div><small>Criações</small><b>${historySummary?.criacoes??0}</b></div><div><small>Edições</small><b>${historySummary?.edicoes??0}</b></div><div><small>Arquivamentos</small><b>${historySummary?.arquivamentos??0}</b></div><div><small>Restaurações</small><b>${historySummary?.restauracoes??0}</b></div></div><small class="muted-line">Período: ${historySummary?.primeiroEventoUtc?new Date(historySummary.primeiroEventoUtc).toLocaleString():'—'} → ${historySummary?.ultimoEventoUtc?new Date(historySummary.ultimoEventoUtc).toLocaleString():'—'}</small><div class="form-grid"><label>Evento<select id="comparisonNoteHistoryTypeV05615"><option value="">Todos</option><option value="CREATED">Criada</option><option value="UPDATED">Editada</option><option value="ARCHIVED">Arquivada</option><option value="RESTORED">Restaurada</option></select></label><label>De<input id="comparisonNoteHistoryFromV05615" type="datetime-local"></label><label>Até<input id="comparisonNoteHistoryToV05615" type="datetime-local"></label><div class="span-2 form-actions"><button type="button" class="ghost" id="applyComparisonNoteHistoryFiltersV05615">Aplicar filtros</button><button type="button" class="ghost" id="clearComparisonNoteHistoryFiltersV05615">Limpar</button><button type="button" class="ghost" id="exportComparisonNoteHistoryV05616" data-comparison-note-revision-history-export-v05616="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_EXPORT_V05616}">Exportar CSV</button></div></div><div class="row-between" data-comparison-note-revision-history-pagination-v05618="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_V05618}" data-comparison-note-revision-history-pagination-state-v05619="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_PAGINATION_STATE_V05619}"><div class="form-actions"><button type="button" class="ghost" id="previousComparisonNoteHistoryPageV05618" ${revisionHistoryPageV05618<=1?'disabled':''}>← Anterior</button><button type="button" class="ghost" id="nextComparisonNoteHistoryPageV05618" ${revisionHistoryPageV05618>=totalPages?'disabled':''}>Próxima →</button></div><div class="form-actions"><small>Página ${revisionHistoryPageV05618}/${totalPages}</small><label>Por página<select id="comparisonNoteHistoryPageSizeV05618"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select></label></div></div>${rows.length?rows.map(x=>`<div class="internal-note-privacy-v0204"><div class="row-between"><b>${esc(actionLabel(x.acao))}</b><small>${new Date(x.registradoEmUtc).toLocaleString()}</small></div>${x.notaAnterior!==x.notaNova?`<div class="muted-line"><b>Antes:</b> ${esc(x.notaAnterior||'—')}</div><div><b>Depois:</b> ${esc(x.notaNova||'—')}</div>`:`<div class="muted-line">${esc(x.notaNova||x.notaAnterior||'Sem alteração textual.')}</div>`}</div>`).join(''):'<p class="muted-line">Nenhum evento auditado encontrado para os filtros informados.</p>'}</article>`;
+            const tipo=$('#comparisonNoteHistoryTypeV05615'); if(tipo)tipo.value=revisionHistoryTipoEventoV05619;
+            const de=$('#comparisonNoteHistoryFromV05615'); if(de)de.value=revisionHistoryDeUtcV05619;
+            const ate=$('#comparisonNoteHistoryToV05615'); if(ate)ate.value=revisionHistoryAteUtcV05619;
+            const apply=$('#applyComparisonNoteHistoryFiltersV05615'); if(apply)apply.onclick=()=>{
+              revisionHistoryTipoEventoV05619=tipo?.value||'';
+              revisionHistoryDeUtcV05619=de?.value||'';
+              revisionHistoryAteUtcV05619=ate?.value||'';
               revisionHistoryPageV05618=1;
+              persistRevisionHistoryStateV05619();
               renderRevisionHistoryV05615();
             };
-            const pageSize=$('#comparisonNoteHistoryPageSizeV05618'); if(pageSize){pageSize.value=String(revisionHistoryPageSizeV05618);pageSize.onchange=()=>{revisionHistoryPageSizeV05618=Number(pageSize.value)||20;revisionHistoryPageV05618=1;renderRevisionHistoryV05615();};}
-            const previousPage=$('#previousComparisonNoteHistoryPageV05618'); if(previousPage)previousPage.onclick=()=>{if(revisionHistoryPageV05618>1){revisionHistoryPageV05618--;renderRevisionHistoryV05615();}};
-            const nextPage=$('#nextComparisonNoteHistoryPageV05618'); if(nextPage)nextPage.onclick=()=>{if(revisionHistoryPageV05618<totalPages){revisionHistoryPageV05618++;renderRevisionHistoryV05615();}};
+            const clear=$('#clearComparisonNoteHistoryFiltersV05615'); if(clear)clear.onclick=()=>{
+              revisionHistoryTipoEventoV05619='';
+              revisionHistoryDeUtcV05619='';
+              revisionHistoryAteUtcV05619='';
+              revisionHistoryPageV05618=1;
+              persistRevisionHistoryStateV05619();
+              renderRevisionHistoryV05615();
+            };
+            const pageSize=$('#comparisonNoteHistoryPageSizeV05618'); if(pageSize){pageSize.value=String(revisionHistoryPageSizeV05618);pageSize.onchange=()=>{revisionHistoryPageSizeV05618=Number(pageSize.value)||20;revisionHistoryPageV05618=1;persistRevisionHistoryStateV05619();renderRevisionHistoryV05615();};}
+            const previousPage=$('#previousComparisonNoteHistoryPageV05618'); if(previousPage)previousPage.onclick=()=>{if(revisionHistoryPageV05618>1){revisionHistoryPageV05618--;persistRevisionHistoryStateV05619();renderRevisionHistoryV05615();}};
+            const nextPage=$('#nextComparisonNoteHistoryPageV05618'); if(nextPage)nextPage.onclick=()=>{if(revisionHistoryPageV05618<totalPages){revisionHistoryPageV05618++;persistRevisionHistoryStateV05619();renderRevisionHistoryV05615();}};
             const exportBtn=$('#exportComparisonNoteHistoryV05616'); if(exportBtn)exportBtn.onclick=()=>{
               const exportQs=new URLSearchParams();
-              const exportTipo=$('#comparisonNoteHistoryTypeV05615')?.value||'';
-              const exportDe=$('#comparisonNoteHistoryFromV05615')?.value||'';
-              const exportAte=$('#comparisonNoteHistoryToV05615')?.value||'';
+              const exportTipo=revisionHistoryTipoEventoV05619;
+              const exportDe=revisionHistoryDeUtcV05619;
+              const exportAte=revisionHistoryAteUtcV05619;
               if(exportTipo)exportQs.set('tipoEvento',exportTipo);
               if(exportDe)exportQs.set('deUtc',new Date(exportDe).toISOString());
               if(exportAte)exportQs.set('ateUtc',new Date(exportAte).toISOString());
@@ -19345,7 +19375,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.18';
+const HP_MVP_VERSION='0.56.19';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -6102,3 +6102,20 @@ Adicionar paginação ao histórico de revisões das notas para manter desempenh
 
 ### v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State
 Preservar estado de filtros, página e tamanho da página durante a navegação entre históricos de notas.
+
+
+## ✅ v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State — CONCLUÍDA
+
+**Entregue:**
+- preservação de estado por nota no histórico de revisões;
+- mantém tipo de evento, período, página e tamanho da página;
+- restaura o estado ao alternar entre históricos de notas;
+- aplicação/limpeza de filtros atualiza o estado persistido em memória;
+- navegação anterior/próxima e alteração do tamanho da página atualizam o estado;
+- exportação usa o mesmo recorte persistido;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.20 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link
+Adicionar deep link documental para reabrir uma nota diretamente no histórico com o estado de navegação correspondente.

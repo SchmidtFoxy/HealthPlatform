@@ -1,3 +1,12 @@
+# v0.56.19 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination State
+
+- Preserva filtros e paginação por nota.
+- Mantém página e tamanho da página ao alternar históricos.
+- Restaura tipo de evento e período.
+- Exportação utiliza o recorte persistido.
+- Estado é mantido somente em memória da sessão da interface.
+- Não cria migration ou tabela nova.
+
 # v0.56.18 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Pagination
 
 - Adiciona paginação ao histórico de revisões por nota.
