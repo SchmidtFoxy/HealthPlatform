@@ -9473,3 +9473,16 @@ Sem `-Aplicar`, o script permanece apenas em validação e não promove a releas
 Migrations destrutivas continuam bloqueadas.
 
 **Próxima etapa:** `v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification`.
+
+
+---
+
+## v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification
+
+Após promoção aplicada, o deploy pode recriar somente o serviço informado por `-ApplicationService`, aguardar o healthcheck e confirmar que o endpoint serve exatamente a `TargetVersion`.
+
+Em falha, o script restaura a release anterior e recria o serviço anterior automaticamente.
+
+Sem `-Aplicar`, restart e verificação operacional não são executados. Migrations destrutivas continuam bloqueadas.
+
+**Próxima etapa:** `v0.57.7 — Deploy Seguro para Produção Migration Safety Gate`.

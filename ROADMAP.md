@@ -7870,3 +7870,26 @@ Preparar a promoção atômica da release staged com diretório ativo versionado
 
 ### v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification
 Integrar a promoção atômica com restart controlado do serviço/container da aplicação e verificação explícita da versão servida, mantendo rollback automático e migrations destrutivas bloqueadas.
+
+
+## ✅ v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification — CONCLUÍDA
+
+**Entregue:**
+- `ApplicationService` obrigatório;
+- restart/recreate controlado somente do serviço da aplicação;
+- tentativas configuráveis de health/version verification;
+- verificação explícita da versão servida pelo `HealthUrl`;
+- sucesso exige versão HTTP igual à `TargetVersion`;
+- rollback automático da release e do serviço em falha;
+- `RemoteRoot` legado como baseline de rollback na primeira promoção;
+- logs de serviço, versão esperada, versão servida, health e rollback;
+- migrations destrutivas continuam bloqueadas.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.7 — Deploy Seguro para Produção Migration Safety Gate
+Adicionar classificação e gate explícito de migrations, permitindo somente migrations previamente validadas como não destrutivas e mantendo qualquer operação destrutiva bloqueada por padrão.

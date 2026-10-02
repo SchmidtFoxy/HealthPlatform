@@ -11,6 +11,9 @@
     [string]$ActivationSnapshotDir = "/opt/healthplatform/activation-snapshots",
     [string]$ActiveReleaseLink = "/opt/healthplatform-current",
     [string]$HealthUrl = "",
+    [string]$ApplicationService = "",
+    [int]$RestartHealthAttempts = 12,
+    [int]$RestartHealthDelaySeconds = 5,
     [int]$BackupRetentionCount = 7,
     [string]$ProductionConfirmation = "",
     [string]$ActivationConfirmation = "",
@@ -36,11 +39,12 @@ $script:RollbackPlan = $null
 $script:ActivationSnapshot = $null
 $script:ControlledActivation = $null
 $script:PromotionMetadata = $null
+$script:RestartVerificationMetadata = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.5 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.6 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -114,6 +118,18 @@ function Assert-DeployArguments {
     }
     if ($ActiveReleaseLink -eq $RemoteRoot -or $ActiveReleaseLink -eq $ReleaseStagingDir -or $ActiveReleaseLink -eq $ActivationSnapshotDir) {
         throw "ActiveReleaseLink deve ser isolado dos diretorios de fonte, staging e snapshot."
+    }
+    if ([string]::IsNullOrWhiteSpace($ApplicationService)) {
+        throw "Informe -ApplicationService para identificar inequivocamente o servico da aplicacao no Compose."
+    }
+    if ($ApplicationService -notmatch '^[A-Za-z0-9._-]+$') {
+        throw "ApplicationService contem caracteres invalidos."
+    }
+    if ($RestartHealthAttempts -lt 1 -or $RestartHealthAttempts -gt 60) {
+        throw "RestartHealthAttempts deve ficar entre 1 e 60."
+    }
+    if ($RestartHealthDelaySeconds -lt 1 -or $RestartHealthDelaySeconds -gt 60) {
+        throw "RestartHealthDelaySeconds deve ficar entre 1 e 60."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -819,7 +835,7 @@ function Invoke-AtomicReleasePromotion {
 set -e
 new_release='$stagePath'
 active_link='$ActiveReleaseLink'
-previous_release=''
+previous_release='$RemoteRoot'
 if [ -L "`$active_link" ]; then
   previous_release=`$(readlink -f "`$active_link")
 elif [ -e "`$active_link" ]; then
@@ -906,11 +922,125 @@ printf 'AUTO_ROLLBACK_OK:release=%s' "`$current_release"
     return $script:PromotionMetadata
 }
 
+function Invoke-ControlledServiceRestartAndVersionVerification {
+    if (-not $script:PromotionMetadata) {
+        throw "Restart controlado bloqueado: metadados da promocao ausentes."
+    }
+
+    if (-not $script:PromotionMetadata.Applied) {
+        $script:RestartVerificationMetadata = [pscustomobject]@{
+            Executed = $false
+            Service = $ApplicationService
+            ExpectedVersion = $TargetVersion
+            ServedVersion = ""
+            HealthVerified = $false
+            VersionVerified = $false
+            RollbackExecuted = $false
+            DestructiveMigrationsAllowed = $false
+        }
+        Write-Host "Modo de validacao: restart controlado e verificacao de versao nao executados." -ForegroundColor Yellow
+        return $script:RestartVerificationMetadata
+    }
+
+    if (-not $script:BackupValidado -or -not $script:ActivationSnapshot -or -not $script:PromotionMetadata.PostPromotionHealthOk) {
+        throw "Restart controlado bloqueado: backup, snapshot e health pos-promocao sao obrigatorios."
+    }
+
+    Write-DeployTitle "SERVICE RESTART & VERSION VERIFICATION"
+
+    $restartCommand = @"
+set -e
+test -L '$ActiveReleaseLink'
+active_release=`$(readlink -f '$ActiveReleaseLink')
+test "`$active_release" = '$($script:PromotionMetadata.NewRelease)'
+test -f '$ActiveReleaseLink/$ComposeFile'
+docker compose --env-file '$RemoteRoot/.env' -f '$ActiveReleaseLink/$ComposeFile' config --services | grep -Fx '$ApplicationService' >/dev/null
+docker compose --env-file '$RemoteRoot/.env' -f '$ActiveReleaseLink/$ComposeFile' up -d --build --no-deps --force-recreate '$ApplicationService'
+printf 'SERVICE_RESTARTED:%s' '$ApplicationService'
+"@
+
+    $restartResult = Invoke-SshChecked -Command $restartCommand -Capture
+    if ($restartResult -notmatch '^SERVICE_RESTARTED:') {
+        throw "Restart controlado do servico nao foi confirmado."
+    }
+
+    $verified = $false
+    $servedVersion = ""
+    $lastError = ""
+
+    for ($attempt = 1; $attempt -le $RestartHealthAttempts; $attempt++) {
+        try {
+            $verifyCommand = @"
+set -e
+body=`$(curl -fsS --max-time 20 '$HealthUrl')
+printf '%s' "`$body" | grep -Eq '"version"[[:space:]]*:[[:space:]]*"$TargetVersion"'
+printf 'VERSION_VERIFIED:%s' '$TargetVersion'
+"@
+            $verifyResult = Invoke-SshChecked -Command $verifyCommand -Capture
+            if ($verifyResult -match '^VERSION_VERIFIED:(?<version>.+)$') {
+                $servedVersion = $Matches['version']
+                $verified = $true
+                break
+            }
+        }
+        catch {
+            $lastError = $_.Exception.Message
+        }
+
+        if ($attempt -lt $RestartHealthAttempts) {
+            Start-Sleep -Seconds $RestartHealthDelaySeconds
+        }
+    }
+
+    $rollbackExecuted = $false
+    if (-not $verified) {
+        $previousRelease = $script:PromotionMetadata.PreviousRelease
+        if ([string]::IsNullOrWhiteSpace($previousRelease)) {
+            throw "Verificacao de versao falhou e nao existe release anterior para rollback."
+        }
+
+        $rollbackCommand = @"
+set -e
+test -d '$previousRelease'
+temp_link='$ActiveReleaseLink.restart-rollback'
+rm -f "`$temp_link"
+ln -s '$previousRelease' "`$temp_link"
+mv -Tf "`$temp_link" '$ActiveReleaseLink'
+docker compose --env-file '$RemoteRoot/.env' -f '$ActiveReleaseLink/$ComposeFile' config --services | grep -Fx '$ApplicationService' >/dev/null
+docker compose --env-file '$RemoteRoot/.env' -f '$ActiveReleaseLink/$ComposeFile' up -d --build --no-deps --force-recreate '$ApplicationService'
+curl -fsS --max-time 20 '$HealthUrl' >/dev/null
+printf 'RESTART_VERSION_ROLLBACK_OK:%s' '$previousRelease'
+"@
+        $rollbackResult = Invoke-SshChecked -Command $rollbackCommand -Capture
+        if ($rollbackResult -notmatch '^RESTART_VERSION_ROLLBACK_OK:') {
+            throw "Rollback automatico apos falha de restart/versao nao foi confirmado."
+        }
+        $rollbackExecuted = $true
+        throw "Restart ou verificacao de versao falhou. Rollback automatico executado. Ultimo erro: $lastError"
+    }
+
+    $script:RestartVerificationMetadata = [pscustomobject]@{
+        Executed = $true
+        Service = $ApplicationService
+        ExpectedVersion = $TargetVersion
+        ServedVersion = $servedVersion
+        HealthVerified = $true
+        VersionVerified = $true
+        RollbackExecuted = $rollbackExecuted
+        DestructiveMigrationsAllowed = $false
+    }
+
+    Write-Host ("Servico reiniciado controladamente: " + $ApplicationService) -ForegroundColor Green
+    Write-Host ("Versao servida confirmada: v" + $servedVersion) -ForegroundColor Green
+    Write-Host "Migrations destrutivas permanecem bloqueadas." -ForegroundColor Green
+    return $script:RestartVerificationMetadata
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.5 adiciona promocao atomica reversivel com healthcheck e rollback automatico." -ForegroundColor Cyan
-    Write-Host "Esta versao ainda NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
+    Write-Host "v0.57.6 integra restart controlado e verificacao explicita da versao servida." -ForegroundColor Cyan
+    Write-Host "Migrations destrutivas continuam bloqueadas; promocao e restart so ocorrem em modo -Aplicar apos todos os gates." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Garantia ativa:" -ForegroundColor Cyan
@@ -918,7 +1048,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.5
+# Fluxo v0.57.6
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -962,10 +1092,11 @@ $immediateRollbackPlan = New-ImmediateRollbackCommandPlan
 $controlledActivation = Test-ControlledActivationReadiness
 Test-AtomicPromotionReadiness
 $promotionMetadata = Invoke-AtomicReleasePromotion
+$restartVerificationMetadata = Invoke-ControlledServiceRestartAndVersionVerification
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-atomic-promotion-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-restart-version-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -1013,6 +1144,13 @@ $logFile = Join-Path $DeployLogDir ("deploy-atomic-promotion-v" + $localVersion 
     "atomicPromotionNewRelease=$($promotionMetadata.NewRelease)",
     "postPromotionHealthOk=$($promotionMetadata.PostPromotionHealthOk)",
     "autoRollbackExecuted=$($promotionMetadata.AutoRollbackExecuted)",
+    "restartVerificationExecuted=$($restartVerificationMetadata.Executed)",
+    "applicationService=$($restartVerificationMetadata.Service)",
+    "expectedServedVersion=$($restartVerificationMetadata.ExpectedVersion)",
+    "servedVersion=$($restartVerificationMetadata.ServedVersion)",
+    "restartHealthVerified=$($restartVerificationMetadata.HealthVerified)",
+    "restartVersionVerified=$($restartVerificationMetadata.VersionVerified)",
+    "restartRollbackExecuted=$($restartVerificationMetadata.RollbackExecuted)",
     "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
@@ -1020,5 +1158,5 @@ $logFile = Join-Path $DeployLogDir ("deploy-atomic-promotion-v" + $localVersion 
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Atomic release promotion process concluido. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Promocao, restart e verificacao de versao concluidos conforme o modo selecionado. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration destrutiva foi executada. A promocao, quando aplicada, usa troca atomica reversivel." -ForegroundColor Green

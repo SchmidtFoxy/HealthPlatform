@@ -1,3 +1,13 @@
+# v0.57.6 — Deploy Seguro para Produção Service Restart & Version Verification
+
+- Adiciona `ApplicationService` obrigatório.
+- Recria somente o serviço da aplicação.
+- Adiciona retry de health/version verification.
+- Confirma a `TargetVersion` no `HealthUrl`.
+- Executa rollback automático da release e serviço em falha.
+- Usa `RemoteRoot` como baseline de rollback inicial.
+- Mantém migrations destrutivas bloqueadas.
+
 # v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion
 
 - Adiciona `ActiveReleaseLink` dedicado.

@@ -1,4 +1,4 @@
-HealthPlatform v0.57.5-r2 - Incremental
+HealthPlatform v0.57.6-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,33 +14,22 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- ActiveReleaseLink dedicado;
-- readiness de promocao atomica;
-- modo padrao sem promocao quando -Aplicar nao e informado;
-- troca atomica via symlink temporario + mv -Tf;
-- healthcheck pos-promocao;
-- rollback automatico em falha;
-- migrations destrutivas continuam bloqueadas;
-- guard absoluto de backup preservado;
-- proxima etapa v0.57.6 / Service Restart & Version Verification.
+- ApplicationService explicito;
+- restart/recreate controlado somente do servico da aplicacao;
+- retry de health/version;
+- verificacao exata da TargetVersion servida;
+- rollback automatico da release e servico em falha;
+- RemoteRoot legado como baseline de rollback inicial;
+- migrations destrutivas continuam bloqueadas.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.5
+Se aprovado, commit/push apenas: v0.57.6
 
 Hotfix cumulativo r1:
-- corrige gates historicos [5024/5027] v0.57.0 e [5035/5038] v0.57.1;
-- aceita o fechamento original sem substituicao e o fechamento evoluido da v0.57.5 com promocao atomica reversivel;
-- preserva foundationOnly=true e os demais guards obrigatorios;
-- codigo funcional da v0.57.5 permanece inalterado;
-- VERSION.txt permanece 0.57.5;
+- corrige expansao indevida de $RemoteRoot no gate [5090/5101] do TESTAR.ps1;
+- usa literal PowerShell com aspas simples: previous_release='$RemoteRoot';
+- preserva codigo funcional da v0.57.6;
+- VERSION.txt permanece 0.57.6;
 - nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.5.
-
-Hotfix cumulativo r2:
-- inclui o prefixo evoluido deploy-atomic-promotion-v no gate historico [5059/5062] da v0.57.3;
-- preserva compatibilidade com deploy-preactivation-v e deploy-activation-foundation-v;
-- codigo funcional da v0.57.5 permanece inalterado;
-- VERSION.txt permanece 0.57.5;
-- nao commitar/pushar -r2 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.5.
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.6.
