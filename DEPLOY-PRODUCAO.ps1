@@ -8,9 +8,11 @@
     [string]$DatabaseName = "",
     [string]$BackupDir = "/opt/healthplatform/backups",
     [string]$ReleaseStagingDir = "/opt/healthplatform/releases",
+    [string]$ActivationSnapshotDir = "/opt/healthplatform/activation-snapshots",
     [string]$HealthUrl = "",
     [int]$BackupRetentionCount = 7,
     [string]$ProductionConfirmation = "",
+    [string]$ActivationConfirmation = "",
     [switch]$ValidarSomente,
     [switch]$Aplicar
 )
@@ -30,11 +32,13 @@ $script:PackageMetadata = $null
 $script:StagingMetadata = $null
 $script:PreActivationMetadata = $null
 $script:RollbackPlan = $null
+$script:ActivationSnapshot = $null
+$script:ControlledActivation = $null
 
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.3 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.57.4 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -96,6 +100,12 @@ function Assert-DeployArguments {
     }
     if ($HealthUrl -notmatch '^https?://') {
         throw "HealthUrl deve usar http:// ou https://."
+    }
+    if ($ActivationSnapshotDir -notmatch '^/') {
+        throw "ActivationSnapshotDir deve ser um caminho absoluto Linux."
+    }
+    if ($ActivationSnapshotDir -eq $RemoteRoot -or $ActivationSnapshotDir -eq $ReleaseStagingDir) {
+        throw "ActivationSnapshotDir deve ser isolado do RemoteRoot e do ReleaseStagingDir."
     }
 
     $expectedConfirmation = "PRODUCAO:$VpsHost:$TargetVersion"
@@ -612,10 +622,140 @@ printf 'PREACTIVATION_HEALTH_READY'
     return $script:PreActivationMetadata
 }
 
+function Assert-ControlledActivationConfirmation {
+    if (-not $script:PreActivationMetadata -or -not $script:PreActivationMetadata.ActiveHealthOk -or -not $script:PreActivationMetadata.RollbackReady) {
+        throw "Ativacao controlada bloqueada: gates pre-ativacao ainda nao estao aprovados."
+    }
+
+    $expectedActivationConfirmation = "ATIVAR:$VpsHost:$TargetVersion"
+    if ($ActivationConfirmation -ne $expectedActivationConfirmation) {
+        throw "Confirmacao de ativacao invalida. Informe -ActivationConfirmation '$expectedActivationConfirmation'."
+    }
+
+    Write-Host ("Confirmacao adicional de ativacao aceita para v" + $TargetVersion + ".") -ForegroundColor Green
+}
+
+function New-ActiveStateSnapshot {
+    if (-not $script:BackupValidado -or -not $script:StagingMetadata -or -not $script:RollbackPlan) {
+        throw "Snapshot ativo bloqueado: backup, staging e rollback sao obrigatorios."
+    }
+
+    Write-DeployTitle "SNAPSHOT DO ESTADO ATIVO"
+
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $snapshotPath = "$ActivationSnapshotDir/active-before-v$TargetVersion-$timestamp"
+    $snapshotCommand = @"
+set -e
+mkdir -p '$ActivationSnapshotDir'
+test '$ActivationSnapshotDir' != '$RemoteRoot'
+test '$ActivationSnapshotDir' != '$ReleaseStagingDir'
+test -d '$RemoteRoot'
+mkdir -p '$snapshotPath'
+if [ -f '$RemoteRoot/VERSION.txt' ]; then cp '$RemoteRoot/VERSION.txt' '$snapshotPath/VERSION.txt'; fi
+if [ -f '$RemoteRoot/$ComposeFile' ]; then cp '$RemoteRoot/$ComposeFile' '$snapshotPath/$ComposeFile'; fi
+if [ -f '$RemoteRoot/.env' ]; then
+  env_sha=`$(sha256sum '$RemoteRoot/.env' | awk '{print `$1}')
+  printf '%s' "`$env_sha" > '$snapshotPath/ENV-SHA256.txt'
+fi
+docker compose -f '$RemoteRoot/$ComposeFile' ps > '$snapshotPath/compose-ps.txt'
+test -s '$snapshotPath/compose-ps.txt'
+printf 'ACTIVE_SNAPSHOT_READY:path=%s' '$snapshotPath'
+"@
+
+    $result = Invoke-SshChecked -Command $snapshotCommand -Capture
+    if ($result -notmatch '^ACTIVE_SNAPSHOT_READY:path=(?<path>.+)$') {
+        throw "Snapshot do estado ativo nao foi confirmado."
+    }
+
+    $script:ActivationSnapshot = [pscustomobject]@{
+        Path = $Matches['path']
+        TargetVersion = $TargetVersion
+        DatabaseBackup = $script:RollbackPlan.BackupFile
+        CreatedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host ("Snapshot ativo preparado: " + $script:ActivationSnapshot.Path) -ForegroundColor Green
+    return $script:ActivationSnapshot
+}
+
+function New-ImmediateRollbackCommandPlan {
+    if (-not $script:ActivationSnapshot -or -not $script:RollbackPlan -or -not $script:StagingMetadata) {
+        throw "Rollback imediato bloqueado: snapshot, rollback base e staging sao obrigatorios."
+    }
+
+    Write-DeployTitle "ROLLBACK IMEDIATO PREPARADO"
+
+    $stagePath = $script:StagingMetadata.Path
+    $snapshotPath = $script:ActivationSnapshot.Path
+    $rollbackCommand = @"
+set -e
+plan='$stagePath/IMMEDIATE-ROLLBACK.txt'
+{
+  printf 'active_root=%s\n' '$RemoteRoot'
+  printf 'snapshot_path=%s\n' '$snapshotPath'
+  printf 'database_backup=%s\n' '$($script:RollbackPlan.BackupFile)'
+  printf 'target_version=%s\n' '$TargetVersion'
+  printf 'restore_database_allowed=false\n'
+  printf 'activation_executed=false\n'
+} > "`$plan"
+test -s "`$plan"
+printf 'IMMEDIATE_ROLLBACK_READY:plan=%s' "`$plan"
+"@
+
+    $result = Invoke-SshChecked -Command $rollbackCommand -Capture
+    if ($result -notmatch '^IMMEDIATE_ROLLBACK_READY:plan=(?<plan>.+)$') {
+        throw "Plano de rollback imediato nao foi preparado."
+    }
+
+    Write-Host ("Rollback imediato preparado: " + $Matches['plan']) -ForegroundColor Green
+    return $Matches['plan']
+}
+
+function Test-ControlledActivationReadiness {
+    if (-not $script:ActivationSnapshot -or -not $script:PreActivationMetadata -or -not $script:StagingMetadata) {
+        throw "Readiness de ativacao bloqueado: snapshot, pre-activation e staging sao obrigatorios."
+    }
+
+    Write-DeployTitle "CONTROLLED ACTIVATION READINESS"
+
+    $stagePath = $script:StagingMetadata.Path
+    $snapshotPath = $script:ActivationSnapshot.Path
+    $readinessCommand = @"
+set -e
+test -d '$stagePath'
+test -d '$snapshotPath'
+test -s '$($script:RollbackPlan.BackupFile)'
+test '$stagePath' != '$RemoteRoot'
+test '$snapshotPath' != '$RemoteRoot'
+staged_version=`$(tr -d '\r\n ' < '$stagePath/VERSION.txt')
+test "`$staged_version" = '$TargetVersion'
+printf 'CONTROLLED_ACTIVATION_READY:version=%s' "`$staged_version"
+"@
+
+    $result = Invoke-SshChecked -Command $readinessCommand -Capture
+    if ($result -notmatch '^CONTROLLED_ACTIVATION_READY:version=(?<version>.+)$') {
+        throw "Readiness da ativacao controlada nao foi confirmado."
+    }
+
+    $script:ControlledActivation = [pscustomobject]@{
+        Version = $Matches['version']
+        SnapshotReady = $true
+        RollbackReady = $true
+        BackupReady = $true
+        ActivationExecuted = $false
+        DestructiveMigrationsAllowed = $false
+        CheckedAt = (Get-Date).ToString("o")
+    }
+
+    Write-Host "Controlled activation foundation pronta; ativacao real permanece bloqueada nesta versao." -ForegroundColor Green
+    Write-Host "Migrations destrutivas continuam proibidas." -ForegroundColor Green
+    return $script:ControlledActivation
+}
+
 function Show-FoundationBoundary {
     Write-DeployTitle "FOUNDATION"
 
-    Write-Host "v0.57.3 adiciona gates pre-ativacao, configuracao preservada e rollback preparado." -ForegroundColor Cyan
+    Write-Host "v0.57.4 adiciona confirmacao dupla, snapshot ativo e rollback imediato preparado." -ForegroundColor Cyan
     Write-Host "Esta versao ainda NAO executa migration, upload, substituicao da aplicacao, restart ou rollback." -ForegroundColor Yellow
     Write-Host "Essas etapas entram nas proximas entregas da serie v0.57.x." -ForegroundColor Yellow
     Write-Host ""
@@ -624,7 +764,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.57.3
+# Fluxo v0.57.4
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 
@@ -662,10 +802,14 @@ Assert-StagingStructureReady
 $productionEnvSha256 = Assert-ProductionConfigurationPreserved
 $rollbackPlan = New-PreActivationRollbackPlan -BackupFile $backupFile
 $preActivationMetadata = Test-PreActivationHealthReadiness
+Assert-ControlledActivationConfirmation
+$activationSnapshot = New-ActiveStateSnapshot
+$immediateRollbackPlan = New-ImmediateRollbackCommandPlan
+$controlledActivation = Test-ControlledActivationReadiness
 Show-FoundationBoundary
 
 New-Item -ItemType Directory -Path $DeployLogDir -Force | Out-Null
-$logFile = Join-Path $DeployLogDir ("deploy-preactivation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
+$logFile = Join-Path $DeployLogDir ("deploy-activation-foundation-v" + $localVersion + "-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".log")
 @(
     "version=v$localVersion",
     "target=$VpsUser@$VpsHost",
@@ -701,11 +845,19 @@ $logFile = Join-Path $DeployLogDir ("deploy-preactivation-v" + $localVersion + "
     "preActivationStagedComposeConfigOk=$($preActivationMetadata.StagedComposeConfigOk)",
     "preActivationRollbackReady=$($preActivationMetadata.RollbackReady)",
     "preActivationActivationAllowed=false",
+    "activationSnapshot=$($activationSnapshot.Path)",
+    "immediateRollbackPlan=$immediateRollbackPlan",
+    "controlledActivationVersion=$($controlledActivation.Version)",
+    "controlledActivationSnapshotReady=$($controlledActivation.SnapshotReady)",
+    "controlledActivationRollbackReady=$($controlledActivation.RollbackReady)",
+    "controlledActivationBackupReady=$($controlledActivation.BackupReady)",
+    "controlledActivationExecuted=false",
+    "destructiveMigrationsAllowed=false",
     "mutationGuard=true",
     "foundationOnly=true",
     "completedAt=" + (Get-Date).ToString("o")
 ) | Set-Content -LiteralPath $logFile -Encoding UTF8
 
 Write-Host ""
-Write-Host ("Pre-activation gates validados sem promocao da release. Log local: " + $logFile) -ForegroundColor Green
+Write-Host ("Controlled activation foundation validada sem ativacao real. Log local: " + $logFile) -ForegroundColor Green
 Write-Host "Nenhuma migration ou substituicao da aplicacao foi executada." -ForegroundColor Green

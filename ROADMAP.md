@@ -7819,3 +7819,29 @@ Adicionar gates pré-ativação do staging: validação estrutural do pacote, co
 
 ### v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation
 Introduzir a fundação da ativação controlada da release staged, com confirmação explícita adicional, snapshot do estado ativo e rollback imediato preparado, sem ainda liberar migrations destrutivas.
+
+
+## ✅ v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation — CONCLUÍDA
+
+**Entregue:**
+- confirmação adicional de ativação no formato `ATIVAR:<host>:<versão>`;
+- ativação continua dependente de todos os gates pré-ativação aprovados;
+- snapshot técnico do estado ativo antes de qualquer futura promoção;
+- snapshot isolado do `RemoteRoot` e do diretório de staging;
+- registro de `VERSION.txt`, Compose, hash do `.env` e estado atual do Compose;
+- plano de rollback imediato materializado;
+- readiness da ativação controlada validando staging, snapshot e backup;
+- `ActivationExecuted=false`;
+- `DestructiveMigrationsAllowed=false`;
+- nenhuma promoção real da release nesta versão;
+- nenhuma migration destrutiva permitida;
+- guard absoluto do backup PostgreSQL preservado.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion
+Preparar a promoção atômica da release staged com diretório ativo versionado, troca controlada e reversível, healthcheck pós-promoção e rollback automático em falha, mantendo migrations destrutivas bloqueadas.

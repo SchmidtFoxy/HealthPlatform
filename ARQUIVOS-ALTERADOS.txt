@@ -1,4 +1,4 @@
-HealthPlatform v0.57.3-r1 - Incremental
+HealthPlatform v0.57.4-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -14,23 +14,24 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- gates pre-ativacao do staging;
-- configuracao .env preservada no host;
-- plano de rollback materializado;
-- healthcheck da aplicacao ativa;
-- docker compose config -q staged;
-- promocao continua bloqueada;
-- guard absoluto do backup preservado.
+- confirmacao adicional ATIVAR:<host>:<versao>;
+- snapshot isolado do estado ativo;
+- plano de rollback imediato;
+- readiness da ativacao controlada;
+- ActivationExecuted=false;
+- DestructiveMigrationsAllowed=false;
+- nenhuma promocao real da release;
+- guard absoluto de backup preservado.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.57.3
+Se aprovado, commit/push apenas: v0.57.4
 
 Hotfix cumulativo r1:
-- corrige marcadores de identidade corrente remanescentes da v0.57.2 em gates historicos do TESTAR.ps1;
-- atualiza HP_MVP_VERSION, HealthController current-version Contains e Program Version para v0.57.3;
-- preserva referencias documentais/historicas reais da v0.57.2;
-- codigo funcional da v0.57.3 permanece inalterado;
-- VERSION.txt permanece 0.57.3;
+- corrige o gate historico [5059/5062] da v0.57.3;
+- aceita o prefixo original deploy-preactivation-v e o prefixo evoluido deploy-activation-foundation-v da v0.57.4;
+- preserva os campos tecnicos obrigatorios do log pre-ativacao;
+- codigo funcional da v0.57.4 permanece inalterado;
+- VERSION.txt permanece 0.57.4;
 - nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.3.
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.57.4.

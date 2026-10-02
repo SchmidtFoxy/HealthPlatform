@@ -9443,3 +9443,14 @@ Antes de qualquer futura promoção da release staged, o `DEPLOY-PRODUCAO.ps1` a
 A v0.57.3 **ainda não promove a release, não reinicia serviços e não executa migrations**.
 
 **Próxima etapa:** `v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation`.
+
+
+---
+
+## v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation
+
+A fundação de ativação controlada adiciona a confirmação `ATIVAR:<host>:<versão>`, snapshot do estado ativo e rollback imediato preparado.
+
+A v0.57.4 **não executa a promoção real da release** e mantém migrations destrutivas bloqueadas.
+
+**Próxima etapa:** `v0.57.5 — Deploy Seguro para Produção Atomic Release Promotion`.

@@ -1,3 +1,13 @@
+# v0.57.4 — Deploy Seguro para Produção Controlled Activation Foundation
+
+- Adiciona confirmação `ATIVAR:<host>:<versão>`.
+- Cria snapshot técnico do estado ativo.
+- Prepara rollback imediato.
+- Valida readiness para ativação controlada.
+- Mantém `ActivationExecuted=false`.
+- Mantém `DestructiveMigrationsAllowed=false`.
+- Não promove a release nem executa migrations destrutivas.
+
 # v0.57.3 — Deploy Seguro para Produção Pre-Activation Gates
 
 - Adiciona gates estruturais do staging.
