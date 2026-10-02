@@ -5675,3 +5675,19 @@ Abrir a próxima fundação estrutural profissional.
 
 ### v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence
 Adicionar persistência auditada ao acompanhamento documental.
+
+## ✅ v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence — CONCLUÍDA
+
+**Entregue:**
+- persistência auditada;
+- reutilização de `NotaInternaProfissional`;
+- prefixo próprio;
+- listar/criar/editar/arquivar;
+- campos obrigatórios;
+- UI de gerenciamento;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status
+Adicionar estados documentais ao acompanhamento.

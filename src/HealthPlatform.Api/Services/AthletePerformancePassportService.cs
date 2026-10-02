@@ -105,14 +105,14 @@ public static class AthletePerformancePassportService
         var estado = recordes.Count > 0 ? "PerformanceRecordsDisponiveis" : tempos.Count > 0 ? "TimedPerformanceDisponivel" : "BaseEmConstrucao";
 
         return new AthletePerformancePassportResponse(
-            "v0.55.0",
+            "v0.55.1",
             performance.DiasObservados,
             performance.TreinosPeriodo,
             performance.PrsRecentes,
             estado,
             dominios,
             melhoresMarcas,
-            "Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Foundation abre a linha 0.55.x com a estrutura de acompanhamento documental dos resultados das revisões profissionais, ainda sem persistência própria.")
+            "Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence habilita persistência auditada para acompanhamentos documentados derivados dos resultados das revisões profissionais, reutilizando NotasInternasProfissionais sem schema novo.")
         {
             Recordes = recordes,
             Tempos = tempos,

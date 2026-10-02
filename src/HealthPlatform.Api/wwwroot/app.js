@@ -1444,7 +1444,11 @@ async function hpOpenProgressReviewNotesV0302(p){
 
   await render();
   hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(p.id)
-    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(followUpFoundationHost,x));
+    .then(x=>{
+      hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFoundationV0550(followUpFoundationHost,x);
+      const openFollowUp=followUpFoundationHost?.querySelector('[data-team-knowledge-effect-decision-review-outcome-follow-up-open-v0551]');
+      if(openFollowUp) openFollowUp.onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551(p);
+    });
   await refreshClosure();
   await refreshSummary();
 }
@@ -5031,6 +5035,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FILTE
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_SUMMARY_V0545='v0.54.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_CLOSURE_V0546='v0.54.6';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_V0550='v0.55.0';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_PERSISTENCE_V0551='v0.55.1';
 
 
 
@@ -5135,7 +5140,10 @@ function hpRenderProfessionalReviewTaskCoordinationFoundationV0340(host,foundati
         <b>Coordenação operacional</b>
         <small class="muted-line">Fundação estrutural</small>
       </div>
-      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+      <div class="row">
+        <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+        ${foundation.persistenciaDisponivel?'<button type="button" class="secondary" data-team-knowledge-effect-decision-review-outcome-follow-up-open-v0551>Gerenciar acompanhamentos</button>':''}
+      </div>
     </div>
     <div class="stack">
       ${campos.map(x=>`<div class="row-between">
@@ -6463,6 +6471,111 @@ function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFound
     <small class="muted-line">Organiza resultados documentados das revisões profissionais. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
     ${foundation.persistenciaDisponivel?`<button type="button" class="secondary" data-team-knowledge-effect-decision-review-outcome-open-v0541="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_PERSISTENCE_V0541}">Gerenciar resultados</button>`:''}
   </section>`;
+}
+
+
+async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551(p){
+  if(!p?.id) return;
+
+  const modal=$('#clinicalActionModal');
+  if(!modal) return;
+
+  modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-persistence-v0551="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_PERSISTENCE_V0551}">
+    <div class="row-between">
+      <div>
+        <h3>Acompanhamentos dos resultados documentados</h3>
+        <p class="muted-line">Persistência auditada do acompanhamento profissional.</p>
+      </div>
+      <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551">Fechar</button>
+    </div>
+    <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFormV0551" class="form-grid">
+      <input type="hidden" name="id">
+      <label>Profissional responsável<input name="profissionalResponsavel" maxlength="160" required></label>
+      <label>Participantes<input name="participantes" maxlength="500"></label>
+      <label class="span-2">Item a acompanhar<textarea name="itemAcompanhar" maxlength="3000" required></textarea></label>
+      <label class="span-2">Contexto do acompanhamento<textarea name="contextoAcompanhamento" maxlength="3000"></textarea></label>
+      <label class="span-2">Base observacional / evidência de suporte<textarea name="baseObservacionalEvidenciaSuporte" maxlength="3000"></textarea></label>
+      <label class="span-2">Interpretação profissional<textarea name="interpretacaoProfissional" maxlength="3000"></textarea></label>
+      <label class="span-2">Critério de revisão documentado<textarea name="criterioRevisaoDocumentado" maxlength="3000"></textarea></label>
+      <label>Horizonte<input name="horizonte" maxlength="120"></label>
+      <label class="span-2">Observação profissional<textarea name="observacaoProfissional" maxlength="3000"></textarea></label>
+      <div class="span-2 form-actions">
+        <button type="submit" class="primary">Salvar acompanhamento</button>
+        <button type="button" class="ghost" id="clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551">Limpar</button>
+      </div>
+    </form>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpListV0551" class="stack"></div>
+  </div>`;
+
+  modal.classList.add('open');
+
+  const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFormV0551');
+  const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpListV0551');
+  const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up`;
+
+  const clear=()=>{ form?.reset(); if(form?.elements.id) form.elements.id.value=''; };
+
+  const render=async()=>{
+    const items=await api(base);
+    const list=Array.isArray(items)?items:[];
+    listHost.innerHTML=list.length?list.map(x=>`<article class="internal-note-privacy-v0204">
+      <div class="row-between"><b>${esc(x.profissionalResponsavel||'Profissional')}</b><small>${esc(x.status||'Registrado')}</small></div>
+      <div>${esc(x.itemAcompanhar||'')}</div>
+      ${x.horizonte?`<small class="muted-line">Horizonte: ${esc(x.horizonte)}</small>`:''}
+      <div class="form-actions">
+        <button type="button" class="secondary" data-edit-follow-up-v0551="${x.id}">Editar</button>
+        <button type="button" class="ghost" data-archive-follow-up-v0551="${x.id}">Arquivar</button>
+      </div>
+    </article>`).join(''):'<p class="muted-line">Nenhum acompanhamento registrado.</p>';
+
+    listHost.querySelectorAll('[data-edit-follow-up-v0551]').forEach(btn=>btn.onclick=()=>{
+      const x=list.find(i=>i.id===btn.dataset.editFollowUpV0551);
+      if(!x) return;
+      form.elements.id.value=x.id||'';
+      form.elements.profissionalResponsavel.value=x.profissionalResponsavel||'';
+      form.elements.participantes.value=x.participantes||'';
+      form.elements.itemAcompanhar.value=x.itemAcompanhar||'';
+      form.elements.contextoAcompanhamento.value=x.contextoAcompanhamento||'';
+      form.elements.baseObservacionalEvidenciaSuporte.value=x.baseObservacionalEvidenciaSuporte||'';
+      form.elements.interpretacaoProfissional.value=x.interpretacaoProfissional||'';
+      form.elements.criterioRevisaoDocumentado.value=x.criterioRevisaoDocumentado||'';
+      form.elements.horizonte.value=x.horizonte||'';
+      form.elements.observacaoProfissional.value=x.observacaoProfissional||'';
+    });
+
+    listHost.querySelectorAll('[data-archive-follow-up-v0551]').forEach(btn=>btn.onclick=async()=>{
+      await api(`${base}/${btn.dataset.archiveFollowUpV0551}`,{method:'DELETE'});
+      await render();
+    });
+  };
+
+  form.onsubmit=async ev=>{
+    ev.preventDefault();
+    const f=new FormData(form);
+    const id=String(f.get('id')||'').trim();
+    const payload={
+      profissionalResponsavel:String(f.get('profissionalResponsavel')||'').trim(),
+      participantes:String(f.get('participantes')||'').trim()||null,
+      itemAcompanhar:String(f.get('itemAcompanhar')||'').trim(),
+      contextoAcompanhamento:String(f.get('contextoAcompanhamento')||'').trim()||null,
+      baseObservacionalEvidenciaSuporte:String(f.get('baseObservacionalEvidenciaSuporte')||'').trim()||null,
+      interpretacaoProfissional:String(f.get('interpretacaoProfissional')||'').trim()||null,
+      criterioRevisaoDocumentado:String(f.get('criterioRevisaoDocumentado')||'').trim()||null,
+      horizonte:String(f.get('horizonte')||'').trim()||null,
+      observacaoProfissional:String(f.get('observacaoProfissional')||'').trim()||null
+    };
+    await api(id?`${base}/${id}`:base,{
+      method:id?'PUT':'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    clear();
+    await render();
+  };
+
+  $('#clearProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551').onclick=clear;
+  $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541(p);
+  await render();
 }
 
 
@@ -18738,7 +18851,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.55.0';
+const HP_MVP_VERSION='0.55.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

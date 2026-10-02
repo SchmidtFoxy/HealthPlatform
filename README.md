@@ -7042,3 +7042,35 @@ A fundação possui 26 campos, incluindo rastreabilidade opcional com o outcome/
 A estrutura organiza acompanhamento documental. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence`.
+
+---
+
+## v0.55.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Persistence
+
+Adiciona persistência auditada aos acompanhamentos documentados derivados dos resultados das revisões profissionais.
+
+### Persistência
+Reutiliza `NotaInternaProfissional`, sem migration nova.
+
+Prefixo:
+`ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUp:`
+
+### Operações
+- listar;
+- criar;
+- editar;
+- arquivar.
+
+### Campos obrigatórios
+- Profissional responsável;
+- Item a acompanhar.
+
+### Auditoria
+- `..._FOLLOW_UP_CREATED`
+- `..._FOLLOW_UP_UPDATED`
+- `..._FOLLOW_UP_ARCHIVED`
+
+### UI
+A fundação passa a oferecer **Gerenciar acompanhamentos**, com criação, edição e arquivamento.
+
+**Próxima etapa:** `v0.55.2 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Status`.
