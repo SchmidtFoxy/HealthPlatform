@@ -1,3 +1,13 @@
+# v0.56.68 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona ação `Copiar resumo do reset`.
+- Copia o texto visível do resumo técnico da v0.56.67.
+- Adiciona feedback acessível de sucesso, vazio e falha.
+- Liga semanticamente botão, resumo e status.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.67 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
 
 - Adiciona resumo técnico local do reset específico.

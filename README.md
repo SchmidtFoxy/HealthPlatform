@@ -8671,3 +8671,18 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.68 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy`.
+
+
+---
+
+## v0.56.68 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+
+Adiciona a ação local **Copiar resumo do reset** ao resumo técnico da v0.56.67.
+
+A ação copia somente o texto atualmente visível do resumo técnico e fornece feedback acessível para sucesso, ausência de conteúdo e falha do clipboard.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.69 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp`.

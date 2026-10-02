@@ -1,25 +1,25 @@
-HealthPlatform v0.56.67-r1 - Incremental
-
-Hotfix cumulativo da versão funcional v0.56.67.
-NÃO commitar/pushar esta revisão individualmente.
+HealthPlatform v0.56.68 - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Diagnóstico:
-- o gate da v0.56.67 usava uma string PowerShell com aspas duplas contendo `$(`;
-- o PowerShell interpretou `$(` como subexpressão;
-- o seletor `$('#timestampClearFocusAnnouncementResetStateSummaryV05667')` virou `#timestampClearFocusAnnouncementResetStateSummaryV05667`;
-- isso causou falso negativo no TESTAR.ps1.
-
-Correção:
-- usa literal PowerShell com aspas simples;
-- escapa as aspas simples internas duplicando-as;
-- preserva o token JavaScript exato;
-- nenhuma alteração funcional em app.js;
-- VERSION.txt permanece 0.56.67;
-- UTF-8 com BOM preservado.
+Entrega funcional:
+- acao local Copiar resumo do reset;
+- copia do resumo tecnico v0.56.67;
+- feedback acessivel de sucesso, vazio e falha;
+- sem persistencia no servidor;
+- sem conteudo clinico/textual;
+- sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.67
+Se aprovado, commit/push apenas: v0.56.68
