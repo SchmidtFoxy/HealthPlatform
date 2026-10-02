@@ -1,4 +1,4 @@
-﻿## v0.27.5 — Periodization 3.0
+## v0.27.5 — Periodization 3.0
 
 A camada de Workout Intelligence passa a organizar o planejamento temporal já registrado, sem criar periodização automática.
 
@@ -7215,3 +7215,36 @@ O gerenciador passa a exibir o fechamento estrutural com a quantidade de compone
 O fechamento indica somente disponibilidade estrutural. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não representa score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
 
 **Próxima etapa:** `v0.56.0 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Foundation`.
+
+
+---
+
+## v0.56.0 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Foundation
+
+Abre a linha 0.56.x com a fundação estrutural para revisão profissional dos acompanhamentos documentados na linha 0.55.x.
+
+### Estado
+`FundacaoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDisponivel`
+
+### Escopo
+`EquipeProfissional`
+
+### Persistência
+Ainda indisponível nesta versão. Não cria migration ou tabela nova.
+
+### Campos estruturais
+A fundação possui 27 campos. Mantém rastreabilidade opcional com o acompanhamento e toda a cadeia documental anterior. Os principais campos operacionais são:
+- Profissional revisor — obrigatório;
+- Item da revisão — obrigatório;
+- Participantes;
+- Contexto da revisão;
+- Base observacional / evidência de suporte;
+- Resultado observado;
+- Interpretação profissional;
+- Horizonte;
+- Observação profissional.
+
+### Guardrail
+A estrutura organiza revisão documental. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.
+
+**Próxima etapa:** `v0.56.1 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review Persistence`.

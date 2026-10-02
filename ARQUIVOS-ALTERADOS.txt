@@ -1,0 +1,27 @@
+HealthPlatform v0.56.0-r3 - Cumulative Recovery
+
+Hotfix cumulativo da versao funcional v0.56.0.
+Este pacote pode ser aplicado diretamente sobre a baseline v0.55.6 ou sobre qualquer tentativa parcial da v0.56.0/r1/r2.
+Nao realizar commit individual de -rN. Se PREPARAR + RODAR + TESTAR passarem, o commit deve ser apenas v0.56.0.
+
+Arquivos incluidos:
+CHANGELOG.md
+README.md
+ROADMAP.md
+TESTAR.ps1
+VERSION.txt
+src/HealthPlatform.Api/Contracts/PerformancePassport/AthletePerformancePassportContracts.cs
+src/HealthPlatform.Api/Controllers/HealthController.cs
+src/HealthPlatform.Api/Controllers/ProgressReviewNotesController.cs
+src/HealthPlatform.Api/Program.cs
+src/HealthPlatform.Api/wwwroot/app.js
+src/HealthPlatform.Api/wwwroot/index.html
+src/HealthPlatform.Api/wwwroot/sw.js
+
+Correcao cumulativa:
+- reaplica toda a fundacao funcional v0.56.0;
+- API /health volta a anunciar 0.56.0;
+- Swagger anuncia v0.56.0;
+- frontend/PWA/cache busting anunciam 0.56.0;
+- inclui o fix do gate HP_MVP_VERSION do r1;
+- inclui os fixes dos gates historicos de identidade/PWA do r2.

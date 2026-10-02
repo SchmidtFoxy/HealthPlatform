@@ -5041,6 +5041,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_FILTERS_V0554='v0.55.4';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_SUMMARY_V0555='v0.55.5';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_CLOSURE_V0556='v0.55.6';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_V0560='v0.56.0';
 
 
 
@@ -6574,6 +6575,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
       </div>
       <button type="button" class="ghost" id="closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551">Fechar</button>
     </div>
+    <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationV0560"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpClosureV0556"></div>
     <div id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryV0555"></div>
     <form id="professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFiltersV0554" class="form-grid" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-filters-v0554="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_FILTERS_V0554}">
@@ -6617,6 +6619,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
 
   const form=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpFormV0551');
   const listHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpListV0551');
+  const reviewFoundationHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationV0560');
   const closureHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpClosureV0556');
   const summaryHost=$('#professionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpSummaryV0555');
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up`;
@@ -6754,8 +6757,29 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   };
   $('#closeProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpV0551').onclick=()=>hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeV0541(p);
   await render();
+  hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationV0560(p.id)
+    .then(x=>hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationV0560(reviewFoundationHost,x));
   await refreshClosure();
   await refreshSummary();
+}
+
+
+async function hpLoadProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationV0560(patientId){
+  if(!patientId) return null;
+  return await api(`/api/pacientes/${patientId}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review/foundation`);
+}
+
+function hpRenderProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationV0560(host,foundation){
+  if(!host || !foundation) return;
+  const campos=Array.isArray(foundation.campos)?foundation.campos:[];
+  host.innerHTML=`<section class="internal-note-privacy-v0204" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-v0560="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_V0560}">
+    <div class="row-between">
+      <div><b>Revisão dos acompanhamentos documentados</b><small class="muted-line">Fundação estrutural</small></div>
+      <span class="pill Info">${foundation.persistenciaDisponivel?'Persistência disponível':'Preparação'}</span>
+    </div>
+    <div class="stack">${campos.map(x=>`<div class="row-between"><span>${esc(x.rotulo||x.chave||'Campo')}</span><small>${x.obrigatorio?'Obrigatório':'Opcional'}</small></div>`).join('')}</div>
+    <small class="muted-line">Organiza a revisão documental de acompanhamentos já registrados. Não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica automática, não cria score clínico, risco, urgência ou prioridade e não executa conduta ou prescrição.</small>
+  </section>`;
 }
 
 
@@ -19031,7 +19055,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.55.6';
+const HP_MVP_VERSION='0.56.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

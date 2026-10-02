@@ -3225,6 +3225,48 @@ public class ProgressReviewNotesController(
             "A fundação organiza acompanhamentos documentados derivados dos resultados das revisões profissionais. A persistência auditada está disponível a partir da v0.55.1. O acompanhamento estrutural não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
     }
 
+    [HttpGet("team-knowledge-effect-decision-review-outcome-follow-up-review/foundation")]
+    public ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationResponse> TeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundation()
+    {
+        var campos = new[]
+        {
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("follow-up-relacionado", "Acompanhamento documentado relacionado", false, "referencia", "Permite vincular a revisão ao acompanhamento documentado que a originou."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-effect-decision-review-outcome-relacionado", "Resultado documentado relacionado", false, "referencia", "Mantém rastreabilidade opcional com o resultado documentado anterior."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-effect-decision-review-relacionada", "Revisão profissional relacionada", false, "referencia", "Mantém rastreabilidade opcional com a revisão profissional anterior."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-effect-decision-relacionada", "Decisão profissional relacionada", false, "referencia", "Mantém rastreabilidade opcional com a decisão documentada."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-effect-review-relacionada", "Revisão do efeito relacionada", false, "referencia", "Referência opcional à revisão anterior do efeito observado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-effect-relacionado", "Efeito observado relacionado", false, "referencia", "Referência opcional ao efeito observado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-application-relacionada", "Aplicação do conhecimento relacionada", false, "referencia", "Referência opcional à aplicação do conhecimento da equipe."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-knowledge-relacionado", "Conhecimento da equipe relacionado", false, "referencia", "Referência opcional ao conhecimento compartilhado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-insight-relacionado", "Insight da equipe relacionado", false, "referencia", "Referência opcional ao insight documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-learning-relacionado", "Aprendizado da equipe relacionado", false, "referencia", "Referência opcional ao aprendizado documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-outcome-relacionado", "Outcome da equipe relacionado", false, "referencia", "Referência opcional ao outcome documentado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-decision-relacionada", "Decisão da equipe relacionada", false, "referencia", "Referência opcional à decisão da equipe."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("team-alignment-relacionado", "Alinhamento da equipe relacionado", false, "referencia", "Referência opcional ao alinhamento."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("shared-context-relacionado", "Shared Context relacionado", false, "referencia", "Referência opcional ao contexto compartilhado."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("collaboration-relacionada", "Collaboration relacionada", false, "referencia", "Referência opcional à colaboração."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("coordination-relacionada", "Coordination relacionada", false, "referencia", "Referência opcional à coordenação."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("escalation-relacionada", "Escalation relacionada", false, "referencia", "Referência opcional ao escalonamento."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("continuity-relacionada", "Continuity relacionada", false, "referencia", "Referência opcional à continuidade."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("profissional-revisor", "Profissional revisor", true, "texto", "Identifica o profissional responsável pela revisão documental do acompanhamento."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("participantes", "Participantes", false, "texto", "Registra participantes envolvidos na revisão."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("item-revisao", "Item da revisão", true, "texto-longo", "Descreve objetivamente o item do acompanhamento que está sendo revisto."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("contexto-revisao", "Contexto da revisão", false, "texto-longo", "Registra o contexto documental da revisão."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("base-observacional-evidencia-suporte", "Base observacional / evidência de suporte", false, "texto-longo", "Registra a base documental consultada pelo profissional."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("resultado-observado", "Resultado observado", false, "texto-longo", "Registra o resultado observado durante a revisão, sem inferência clínica automática."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("interpretacao-profissional", "Interpretação profissional", false, "texto-longo", "Permite interpretação profissional descritiva, sem automatizar conclusão clínica."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("horizonte", "Horizonte", false, "texto", "Referência temporal descritiva para nova revisão ou acompanhamento."),
+            new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFieldResponse("observacao-profissional", "Observação profissional", false, "texto-longo", "Campo livre de observação profissional.")
+        };
+
+        return Ok(new ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewFoundationResponse(
+            "FundacaoTeamKnowledgeEffectDecisionReviewOutcomeFollowUpReviewDisponivel",
+            false,
+            "EquipeProfissional",
+            campos,
+            "A fundação organiza a revisão documental dos acompanhamentos profissionais já registrados. Nesta versão não há persistência própria. A estrutura não valida causalidade ou evidência clínica, não produz prognóstico, recomendação ou decisão terapêutica, não cria score clínico, risco, urgência ou prioridade, não executa conduta ou prescrição e não transfere automaticamente responsabilidade clínica."));
+    }
+
     [HttpGet("team-knowledge-effect-decision-review-outcome/closure")]
     public ActionResult<ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeClosureResponse> FechamentoTeamKnowledgeEffectDecisionReviewOutcomes()
     {
