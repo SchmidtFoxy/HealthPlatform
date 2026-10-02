@@ -1,3 +1,14 @@
+# v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share
+
+- Adiciona botão `Compartilhar`.
+- Usa Web Share API quando disponível.
+- Faz fallback para copiar o deep link.
+- Mantém fallback seguro na barra de endereço.
+- Reutiliza o builder do deep link protegido.
+- Ignora cancelamento voluntário (`AbortError`) sem tratá-lo como falha.
+- Não inclui conteúdo textual da nota.
+- Não cria migration ou tabela nova.
+
 # v0.56.21 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Deep Link Guard
 
 - Valida GUIDs de revisão e nota antes da abertura automática.

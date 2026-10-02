@@ -6156,3 +6156,22 @@ Adicionar validação e limpeza segura de deep links inválidos, incompletos ou 
 
 ### v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share
 Adicionar compartilhamento do deep link usando Web Share API quando disponível, mantendo fallback seguro para copiar link.
+
+
+## ✅ v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share — CONCLUÍDA
+
+**Entregue:**
+- compartilhamento do deep link pelo Web Share API quando disponível;
+- botão `Compartilhar` no histórico de revisões;
+- fallback para copiar o link;
+- fallback final mantendo o link seguro na barra de endereço;
+- reutilização do mesmo builder do deep link protegido;
+- cancelamento voluntário do compartilhamento não tratado como erro;
+- filtros, página e tamanho continuam presentes no link;
+- sem conteúdo textual da nota no compartilhamento;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback
+Adicionar feedback visual consistente para sucesso, cancelamento e fallback do compartilhamento, sem bloquear o fluxo profissional.

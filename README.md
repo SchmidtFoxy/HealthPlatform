@@ -7727,3 +7727,18 @@ Links inválidos, incompletos ou que apontem para revisão/nota indisponível t�
 O guard não envia conteúdo textual da nota para a URL e não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share`.
+
+
+---
+
+## v0.56.22 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share
+
+Adiciona compartilhamento nativo do deep link documental do histórico de revisões.
+
+Quando `navigator.share` está disponível, o botão `Compartilhar` abre o compartilhamento nativo do dispositivo. Em navegadores sem Web Share API, o sistema tenta copiar o mesmo link protegido para a área de transferência. Se isso também não estiver disponível, o endereço continua atualizado na barra do navegador.
+
+O link compartilhado preserva revisão, nota, filtros e paginação, sem incluir o texto da nota.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.23 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Feedback`.

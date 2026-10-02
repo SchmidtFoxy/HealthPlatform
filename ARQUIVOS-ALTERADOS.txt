@@ -1,15 +1,26 @@
-HealthPlatform v0.56.21-r1 - Legacy Deep Link Hydrate Gate Fix
+HealthPlatform v0.56.22 - Follow-Up Review Comparison Notes Revision History Share - Incremental
 
 Arquivos alterados:
+- CHANGELOG.md
+- README.md
+- ROADMAP.md
 - TESTAR.ps1
-- ARQUIVOS-ALTERADOS.txt
+- VERSION.txt
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
 
-Correcao:
-- atualiza o gate legado da v0.56.20 para a implementacao protegida da v0.56.21;
-- deepParamsV05620 -> params dentro do parser validado;
-- deepNoteIdV05620 -> deepStateV05621.noteId;
-- preserva integralmente o Deep Link Guard da v0.56.21;
-- sem alteracao funcional, schema ou VERSION.txt.
+Entrega funcional:
+- Web Share API;
+- botao Compartilhar;
+- fallback para copiar link;
+- fallback para URL na barra;
+- deep link protegido preservado;
+- sem conteudo textual da nota;
+- sem migration/tabela nova.
 
-Nao commitar a revisao -r1 individualmente.
-Se aprovado, commit/push apenas: v0.56.21
+Fluxo:
+PREPARAR -> RODAR -> TESTAR.
+Se aprovado, commit/push apenas: v0.56.22
