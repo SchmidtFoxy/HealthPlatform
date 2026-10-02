@@ -8748,3 +8748,22 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.72 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus`.
+
+
+---
+
+## v0.56.72 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+Melhora o fluxo de teclado após **Limpar horário do reset**.
+
+Como o botão fica desabilitado após a limpeza, o foco passa a ser movido para o indicador atualizado `Última cópia do reset: —`.
+
+O indicador recebe `tabindex="-1"` somente para permitir foco programático, sem entrar na sequência normal de Tab.
+
+A movimentação usa `focus({preventScroll:true})`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.73 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement`.
