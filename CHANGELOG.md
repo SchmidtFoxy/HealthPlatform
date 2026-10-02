@@ -1,3 +1,16 @@
+# v0.57.0 — Deploy Seguro para Produção Foundation
+
+- Adiciona `DEPLOY-PRODUCAO.ps1`.
+- Confirma versão local/alvo antes de acessar produção.
+- Exige host, usuário e banco explicitamente.
+- Faz preflight remoto por SSH.
+- Cria backup PostgreSQL com `pg_dump -Fc`.
+- Valida o backup com `pg_restore --list`.
+- Bloqueia mutações se o backup não estiver concluído e validado.
+- Gera log local da fundação.
+- Não executa migration, substituição da aplicação, restart, rollback ou restore nesta versão.
+- Estabelece a regra absoluta: nenhuma migration ou substituição da aplicação antes de backup PostgreSQL concluído e validado.
+
 # v0.56.99 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
 
 - Registra localmente o horário da última cópia do resumo técnico.

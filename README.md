@@ -9345,3 +9345,32 @@ Não cria migration ou tabela nova.
 ### Marco obrigatório de produção
 
 A série `v0.57.x` passa a executar o fechamento de deploy seguro antes da `v0.58.0`. O `DEPLOY-PRODUCAO.ps1` deverá bloquear qualquer migration ou substituição da aplicação até o backup do PostgreSQL estar concluído e validado.
+
+
+---
+
+## v0.57.0 — Deploy Seguro para Produção Foundation
+
+A série `v0.57.x` começa com a fundação do deploy seguro para produção.
+
+Novo script: `DEPLOY-PRODUCAO.ps1`.
+
+A fundação já executa:
+- conferência da versão local e versão alvo;
+- validação explícita de host, usuário, diretório remoto, Compose e banco;
+- conexão SSH sem credencial hardcoded;
+- preflight do Docker Compose remoto;
+- backup PostgreSQL em formato custom;
+- validação estrutural do backup com `pg_restore --list`;
+- bloqueio técnico das etapas mutáveis até o backup estar confirmado;
+- log local auditável da execução.
+
+### Limite intencional da v0.57.0
+
+A v0.57.0 **não** executa migration, upload/substituição da aplicação, restart, rollback ou restore. O objetivo desta versão é estabelecer e testar a barreira de segurança antes de liberar mutações em produção nas próximas versões.
+
+### Regra absoluta
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+**Próxima etapa:** `v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0`.

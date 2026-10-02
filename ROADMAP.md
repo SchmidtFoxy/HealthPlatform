@@ -7721,3 +7721,28 @@ Registrar localmente o horário da última cópia do resumo técnico do reset ex
 
 ### v0.57.0 — Deploy Seguro para Produção Foundation
 Iniciar o fechamento obrigatório da série v0.57.x com a fundação do `DEPLOY-PRODUCAO.ps1`, preservando como regra absoluta que nenhuma migration ou substituição da aplicação pode ocorrer antes de backup PostgreSQL concluído e validado.
+
+
+## ✅ v0.57.0 — Deploy Seguro para Produção Foundation — CONCLUÍDA
+
+**Entregue:**
+- novo `DEPLOY-PRODUCAO.ps1`;
+- confirmação obrigatória da versão local/alvo;
+- host, usuário e banco de produção exigidos explicitamente;
+- conexão SSH sem senha hardcoded;
+- preflight remoto de diretório, Compose e Docker;
+- criação de backup PostgreSQL em formato custom (`pg_dump -Fc`);
+- validação do backup com `pg_restore --list`;
+- verificação de arquivo não vazio;
+- guard técnico que bloqueia qualquer etapa mutável antes de backup concluído e validado;
+- log local da fundação em `.deploy-logs`;
+- v0.57.0 deliberadamente não executa migration, substituição da aplicação, restart ou rollback.
+
+### Regra absoluta de segurança
+
+**Nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup PostgreSQL estar concluído e validado.**
+
+## Próxima etapa
+
+### v0.57.1 — Deploy Seguro para Produção Backup & Remote Validation 2.0
+Evoluir o `DEPLOY-PRODUCAO.ps1` com validação mais detalhada do ambiente remoto, metadados do backup, retenção segura e confirmação explícita do alvo de produção, mantendo o guard de backup obrigatório antes de qualquer mutação.

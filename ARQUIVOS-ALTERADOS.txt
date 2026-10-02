@@ -1,4 +1,4 @@
-HealthPlatform v0.56.99 - Incremental
+HealthPlatform v0.57.0 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -6,6 +6,7 @@ Arquivos alterados:
 - ROADMAP.md
 - TESTAR.ps1
 - VERSION.txt
+- DEPLOY-PRODUCAO.ps1
 - src/HealthPlatform.Api/Controllers/HealthController.cs
 - src/HealthPlatform.Api/Program.cs
 - src/HealthPlatform.Api/wwwroot/app.js
@@ -13,16 +14,21 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- timestamp local da ultima copia do resumo tecnico v0.56.97;
-- atualizacao somente apos copia bem-sucedida v0.56.98;
-- datetime ISO e dataset.copyTimestampV05699;
-- marcador tecnico v0.56.99;
-- fluxo v0.56.96 -> v0.56.98 preservado;
-- transicao do ROADMAP para v0.57.0 / Deploy Seguro para Producao Foundation;
-- sem persistencia no servidor;
-- sem conteudo clinico/textual novo;
-- sem migration/tabela nova.
+- fundacao do deploy seguro para producao;
+- confirmacao de versao local/alvo;
+- parametros de VPS/usuario/banco explicitos;
+- SSH sem senha hardcoded;
+- preflight remoto;
+- backup PostgreSQL pg_dump -Fc;
+- validacao com pg_restore --list;
+- guard absoluto antes de qualquer mutacao;
+- log local da fundacao;
+- nenhuma migration/substituicao/restart/rollback nesta versao;
+- proxima etapa v0.57.1.
+
+Regra absoluta:
+Nenhuma migration ou substituicao da aplicacao antes de backup PostgreSQL concluido e validado.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.99
+Se aprovado, commit/push apenas: v0.57.0
