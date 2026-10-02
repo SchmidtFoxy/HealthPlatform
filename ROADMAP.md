@@ -7318,3 +7318,23 @@ Adicionar ação local para limpar explicitamente o horário da última cópia d
 
 ### v0.56.81 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
 Melhorar a acessibilidade da ação de limpar o horário da última cópia do estado do reset com estado descritivo e associação semântica local, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.81 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility — CONCLUÍDA
+
+**Entregue:**
+- estado semântico `aria-disabled` sincronizado com o estado real de `Limpar horário do estado do reset`;
+- `aria-controls` ligando a ação ao indicador `Última cópia do estado do reset`;
+- `aria-label` descritivo para a ação de limpeza;
+- indicador da última cópia configurado como `role="status"`;
+- `aria-live="polite"` e `aria-atomic="true"` no indicador;
+- marcador técnico de acessibilidade v0.56.81;
+- fluxo funcional da v0.56.80 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.82 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+Melhorar o fluxo de foco por teclado após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.

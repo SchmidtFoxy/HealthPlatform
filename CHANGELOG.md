@@ -1,3 +1,14 @@
+# v0.56.81 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+
+- Sincroniza `aria-disabled` da ação de limpeza.
+- Adiciona `aria-controls` e `aria-label`.
+- Define o indicador da última cópia como `role=status`.
+- Adiciona `aria-live=polite` e `aria-atomic=true`.
+- Preserva a limpeza funcional da v0.56.80.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.80 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
 
 - Adiciona ação `Limpar horário do estado do reset`.

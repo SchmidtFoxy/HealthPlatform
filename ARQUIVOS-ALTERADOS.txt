@@ -1,4 +1,4 @@
-HealthPlatform v0.56.80 - Incremental
+HealthPlatform v0.56.81 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,15 +13,14 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- acao local Limpar horario do estado do reset;
-- habilitacao somente apos copia bem-sucedida;
-- limpeza de texto, datetime e data-copy-timestamp-v05679;
-- feedback de limpeza;
-- resumo tecnico preservado;
+- aria-disabled sincronizado;
+- aria-controls e aria-label na acao de limpeza;
+- role=status, aria-live=polite e aria-atomic=true no indicador;
+- fluxo v0.56.80 preservado;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
 - sem migration/tabela nova.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.80
+Se aprovado, commit/push apenas: v0.56.81
