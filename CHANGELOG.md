@@ -1,3 +1,14 @@
+# v0.56.57 — Focus Announcement Reset State Summary
+
+- Adiciona resumo técnico local do estado de reset.
+- Exibe status atual.
+- Exibe contador de resets.
+- Exibe horário local do último reset.
+- Atualiza automaticamente junto com o estado técnico.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.56 — Focus Announcement Reset State
 
 - Adiciona estado técnico explícito do reset.

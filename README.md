@@ -8452,3 +8452,27 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.57 — Focus Announcement Reset State Summary`.
+
+
+---
+
+## v0.56.57 — Focus Announcement Reset State Summary
+
+Adiciona resumo técnico local do estado de reset dos anúncios de foco.
+
+O resumo apresenta:
+- estado atual;
+- quantidade de resets;
+- horário local do último reset.
+
+Exemplo:
+`Estado técnico: reset · Resets: 2 · Último reset: 02/10/2026 10:30:00`
+
+Sem reset anterior:
+`Estado técnico: ready · Resets: 0 · Último reset: —`
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.58 — Focus Announcement Reset State Summary Copy`.
