@@ -5102,6 +5102,7 @@ const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLO
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_V05658='v0.56.58';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_V05659='v0.56.59';
 const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_V05660='v0.56.60';
+const HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_V05661='v0.56.61';
 
 
 
@@ -6833,7 +6834,7 @@ async function hpOpenProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeF
   if(!modal) return;
   const base=`/api/pacientes/${p.id}/performance/progress-review-notes/team-knowledge-effect-decision-review-outcome-follow-up-review`;
   modal.innerHTML=`<div class="modal-card large" data-professional-review-team-knowledge-effect-decision-review-outcome-follow-up-review-persistence-v0561="${HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_PERSISTENCE_V0561}">
-    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + limpeza do horário da cópia técnica · v0.56.60</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
+    <div class="row-between"><div><h3>Revisões dos acompanhamentos documentados</h3><small class="muted-line">Persistência auditada + acessibilidade da limpeza do horário · v0.56.61</small></div><button type="button" class="ghost" id="closeFollowUpReviewV0561">Fechar</button></div>
     <form id="followUpReviewFormV0561" class="form-grid">
       <input type="hidden" name="id">
       <label>Profissional revisor<input name="profissionalRevisor" maxlength="160" required></label>
@@ -7062,11 +7063,28 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
               copiedAtHostV05659.dataset.copyTimestampV05659=copiedAtV05659.toISOString();
               const clearTimestampV05660=$('#clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660');
               if(clearTimestampV05660)clearTimestampV05660.disabled=false;
+              setComparisonNoteVerificationFocusResetTimestampClearAccessibilityV05661(true);
             }
           }catch{
             if(copyStatus)copyStatus.textContent='Não foi possível copiar o resumo técnico automaticamente.';
           }
         };
+        const setComparisonNoteVerificationFocusResetTimestampClearAccessibilityV05661=(available)=>{
+          const clearButton=$('#clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660');
+          const timestamp=$('#comparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05659');
+          if(clearButton){
+            clearButton.setAttribute('aria-disabled',available?'false':'true');
+            clearButton.setAttribute('aria-controls','comparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05659');
+            clearButton.setAttribute('aria-label','Limpar horário da última cópia do resumo técnico');
+            clearButton.dataset.timestampClearAccessibilityV05661=HP_PROFESSIONAL_REVIEW_TEAM_KNOWLEDGE_EFFECT_DECISION_REVIEW_OUTCOME_FOLLOW_UP_REVIEW_HISTORY_CONTEXT_COMPARISON_NOTES_REVISION_HISTORY_SHARE_TELEMETRY_EXPORT_INTEGRITY_VERIFICATION_SESSION_STATE_EXPIRY_FEEDBACK_FOCUS_ANNOUNCEMENT_RESET_STATE_SUMMARY_COPY_TIMESTAMP_CLEAR_ACCESSIBILITY_V05661;
+          }
+          if(timestamp){
+            timestamp.setAttribute('role','status');
+            timestamp.setAttribute('aria-live','polite');
+            timestamp.setAttribute('aria-atomic','true');
+          }
+        };
+        setComparisonNoteVerificationFocusResetTimestampClearAccessibilityV05661(false);
         const clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660=$('#clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660');
         if(clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660)clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660.onclick=()=>{
           const copiedAtHostV05659=$('#comparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05659');
@@ -7077,6 +7095,7 @@ const parseComparisonNoteRevisionHistoryDeepLinkV05621=()=>{
             copiedAtHostV05659.removeAttribute('data-copy-timestamp-v05659');
           }
           clearComparisonNoteVerificationFocusResetStateSummaryCopyTimestampV05660.disabled=true;
+          setComparisonNoteVerificationFocusResetTimestampClearAccessibilityV05661(false);
           if(copyStatus)copyStatus.textContent='Horário da última cópia limpo.';
         };
         const announceComparisonNoteVerificationFocusV05653=(message)=>{
@@ -20061,7 +20080,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.56.60';
+const HP_MVP_VERSION='0.56.61';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

@@ -1,3 +1,15 @@
+# v0.56.61 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility
+
+- Sincroniza `aria-disabled`.
+- Adiciona `aria-controls`.
+- Adiciona `aria-label` descritivo.
+- Configura o indicador de última cópia como `role=status`.
+- Adiciona `aria-live=polite` e `aria-atomic=true`.
+- Preserva o fluxo funcional da v0.56.60.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.60 — Focus Announcement Reset State Summary Copy Timestamp Clear
 
 - Adiciona `Limpar horário`.

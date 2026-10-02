@@ -8541,3 +8541,23 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.61 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility`.
+
+
+---
+
+## v0.56.61 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility
+
+Melhora a acessibilidade da ação **Limpar horário** sem alterar seu comportamento funcional.
+
+Inclui:
+- `aria-disabled` sincronizado com o botão;
+- `aria-controls` apontando para o indicador `Última cópia`;
+- `aria-label` descritivo;
+- indicador configurado como `role="status"`;
+- `aria-live="polite"` e `aria-atomic="true"`.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.62 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus`.
