@@ -1,4 +1,4 @@
-HealthPlatform v0.56.84 - Incremental
+HealthPlatform v0.56.85 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -13,10 +13,11 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/sw.js
 
 Entrega funcional:
-- deduplicacao especifica do anuncio de foco apos limpar horario do estado do reset;
-- cache especifico e wrapper local;
-- nova copia bem-sucedida libera o proximo anuncio;
-- gate historico v0.56.83 aceita chamada direta ou wrapper v0.56.84;
+- reset explicito do cache de deduplicacao do anuncio de foco;
+- helper resetResetStateSummaryTimestampClearFocusAnnouncementV05685;
+- nova copia e mensagem vazia usam o helper;
+- deduplicacao v0.56.84 preservada;
+- gate historico v0.56.84 aceita reset direto ou helper v0.56.85;
 - marco de deploy seguro da v0.57.x preservado;
 - sem persistencia no servidor;
 - sem conteudo clinico/textual;
@@ -24,4 +25,4 @@ Entrega funcional:
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.56.84
+Se aprovado, commit/push apenas: v0.56.85
