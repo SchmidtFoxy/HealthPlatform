@@ -1,4 +1,17 @@
-﻿# v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status
+﻿# v0.54.3 — Professional Review Team Knowledge Effect Decision Review Outcome History
+
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeHistoryItemResponse`.
+- Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeHistoryResponse`.
+- Adiciona GET `team-knowledge-effect-decision-review-outcome/{id}/history`.
+- Lê eventos de `AuditLog`.
+- Resolve autor por `Users.Nome`, com fallback `Sistema`.
+- Usa `DadosNovosJson ?? DadosAnterioresJson` como detalhes.
+- Mapeia CREATED, UPDATED, STATUS_CHANGED e ARCHIVED.
+- Adiciona ação e modal Histórico na UI.
+- Sem migration nova.
+- Próxima etapa: v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters.
+
+# v0.54.2 — Professional Review Team Knowledge Effect Decision Review Outcome Status
 
 - Adiciona estados Registrado, EmRevisao, Consolidado e Descartado.
 - Adiciona `ProfessionalReviewTeamKnowledgeEffectDecisionReviewOutcomeStatusRequest`.

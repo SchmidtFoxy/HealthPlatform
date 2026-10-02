@@ -5593,3 +5593,19 @@ Adicionar estados documentais e transição auditada.
 
 ### v0.54.3 — Professional Review Team Knowledge Effect Decision Review Outcome History
 Adicionar histórico auditado dos resultados documentados.
+
+## ✅ v0.54.3 — Professional Review Team Knowledge Effect Decision Review Outcome History — CONCLUÍDA
+
+**Entregue:**
+- contrato de histórico;
+- endpoint de histórico;
+- leitura de `AuditLog`;
+- resolução de autor com fallback `Sistema`;
+- eventos Criado, Editado, StatusAlterado e Arquivado;
+- modal de histórico na UI;
+- sem migration nova.
+
+## Próxima etapa
+
+### v0.54.4 — Professional Review Team Knowledge Effect Decision Review Outcome Filters
+Adicionar busca e filtros estruturais dos resultados documentados.
