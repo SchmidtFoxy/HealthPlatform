@@ -1,3 +1,13 @@
+# v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy
+
+- Inclui duração em `Copiar detalhes`.
+- Lê o valor técnico `data-duration-ms-v05638`.
+- Usa `—` quando ainda não houver duração.
+- Atualiza feedback de cópia.
+- Mantém o fluxo totalmente local.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.38 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration
 
 - Mede localmente a duração da verificação SHA-256.

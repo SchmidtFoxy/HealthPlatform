@@ -8075,3 +8075,26 @@ Nenhum dado de duração é enviado à API.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy`.
+
+
+---
+
+## v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy
+
+Amplia `Copiar detalhes` para incluir também a duração técnica da última verificação local.
+
+O texto copiado contém:
+- arquivo;
+- tamanho;
+- hash esperado;
+- hash calculado;
+- algoritmo SHA-256;
+- duração em milissegundos.
+
+Quando não houver duração registrada, o campo usa `—`.
+
+Nenhum dado é enviado à API.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.40 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary`.

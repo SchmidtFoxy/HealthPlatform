@@ -6480,3 +6480,21 @@ Exibir localmente a duração da última verificação de integridade, sem conte
 
 ### v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy
 Adicionar a duração da verificação aos detalhes técnicos copiáveis, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.39 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Duration Copy — CONCLUÍDA
+
+**Entregue:**
+- duração da última verificação incluída em `Copiar detalhes`;
+- leitura do valor técnico `data-duration-ms-v05638`;
+- payload copiado agora inclui `Duração`;
+- fallback `—` quando ainda não existe duração registrada;
+- feedback `Detalhes técnicos copiados com duração.`;
+- cópia continua restrita aos dados técnicos locais;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.40 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Summary
+Consolidar status, horário e duração em um resumo técnico local e compacto da última verificação, sem conteúdo clínico/textual.
