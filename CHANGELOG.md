@@ -1,3 +1,16 @@
+# v0.56.80 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+
+- Adiciona ação `Limpar horário do estado do reset`.
+- Habilita a limpeza somente após cópia bem-sucedida.
+- Restaura o indicador para `Última cópia do estado do reset: —`.
+- Remove `datetime` e `data-copy-timestamp-v05679`.
+- Desabilita novamente a ação após limpar.
+- Adiciona feedback da limpeza.
+- Preserva o resumo técnico.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.79 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
 
 - Adiciona indicador local da última cópia do estado do reset.
