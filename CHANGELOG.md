@@ -1,3 +1,14 @@
+# v0.56.73 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+- Adiciona anúncio acessível após limpar o horário do reset.
+- Usa a mensagem `Foco movido para o indicador Última cópia do reset.`.
+- Emite o anúncio somente quando o indicador alvo existe.
+- Reutiliza a infraestrutura de anúncio já existente.
+- Preserva foco programático e acessibilidade anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.72 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
 
 - Adiciona `tabindex=-1` ao indicador da última cópia do reset.

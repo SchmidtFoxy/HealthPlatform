@@ -8767,3 +8767,20 @@ Nenhum dado é enviado ou persistido no servidor.
 Não cria migration ou tabela nova.
 
 **Próxima etapa:** `v0.56.73 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement`.
+
+
+---
+
+## v0.56.73 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+Após **Limpar horário do reset**, além de mover o foco para `Última cópia do reset: —`, o fluxo agora anuncia:
+
+`Foco movido para o indicador Última cópia do reset.`
+
+O anúncio reutiliza a infraestrutura acessível já existente e só é emitido quando o indicador alvo existe.
+
+Nenhum dado é enviado ou persistido no servidor.
+
+Não cria migration ou tabela nova.
+
+**Próxima etapa:** `v0.56.74 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication`.

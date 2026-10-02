@@ -7159,3 +7159,22 @@ Melhorar o fluxo de foco por teclado após limpar o horário da última cópia d
 
 ### v0.56.73 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
 Adicionar anúncio acessível da mudança de foco após limpar o horário da última cópia do resumo do reset, reutilizando a infraestrutura local existente e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.73 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement — CONCLUÍDA
+
+**Entregue:**
+- anúncio acessível após `Limpar horário do reset`;
+- mensagem `Foco movido para o indicador Última cópia do reset.`;
+- anúncio emitido somente quando o indicador alvo existe;
+- reutilização da infraestrutura `announceComparisonNoteVerificationFocusV05653`;
+- foco programático da v0.56.72 preservado;
+- marcador técnico de anúncio v0.56.73 no indicador;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.74 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+Adicionar deduplicação específica do anúncio de foco após limpar o horário da última cópia do resumo do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
