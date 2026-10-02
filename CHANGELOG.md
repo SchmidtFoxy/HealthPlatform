@@ -1,3 +1,381 @@
+# v0.56.96 — Focus Announcement Deduplication Reset State
+
+- Adiciona estado técnico local do reset explícito da deduplicação.
+- Rastreia `ready`, `reset` e `announced`.
+- Mantém contador local de resets.
+- Registra horário ISO do último reset.
+- Sincroniza estado técnico no indicador da última cópia via `dataset`.
+- Preserva helper explícito da v0.56.95 e deduplicação da v0.56.94.
+- Preserva anúncio, foco e acessibilidade anteriores.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.95 — Focus Announcement Deduplication Reset
+
+- Adiciona helper explícito de reset para o cache específico da v0.56.94.
+- Centraliza o reset do cache.
+- Nova cópia bem-sucedida usa o helper.
+- Caminho de anúncio vazio usa o helper.
+- Preserva deduplicação, anúncio, foco e acessibilidade anteriores.
+- Preserva a correção histórica consolidada desde v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.94 — Focus Announcement Deduplication
+
+- Adiciona cache específico de deduplicação ao anúncio de foco da v0.56.93.
+- Adiciona helper `announceResetStateSummaryTimestampClearFocusDeduplicationV05694`.
+- Ignora anúncios idênticos consecutivos.
+- Nova cópia bem-sucedida libera o próximo anúncio.
+- Preserva anúncio, foco e acessibilidade das versões anteriores.
+- Preserva a correção histórica consolidada desde v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.93 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+- Adiciona anúncio acessível após limpar o horário da deduplicação.
+- Mensagem: `Foco movido para o indicador Última cópia do estado da deduplicação.`
+- Emite somente quando o indicador alvo existe.
+- Reutiliza `announceComparisonNoteVerificationFocusV05653`.
+- Preserva o foco programático da v0.56.92.
+- Preserva a acessibilidade da v0.56.91 e o fluxo funcional da v0.56.90.
+- Preserva a correção histórica consolidada desde v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.92 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+- Adiciona `tabindex="-1"` ao indicador da última cópia do estado da deduplicação.
+- Move o foco para o indicador após limpar o horário.
+- Usa `focus({preventScroll:true})`.
+- Evita manter foco no botão recém-desabilitado.
+- Preserva acessibilidade da v0.56.91.
+- Preserva fluxo funcional da v0.56.90.
+- Preserva a correção histórica consolidada desde v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.91 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+
+- Sincroniza `aria-disabled` com o estado real da ação de limpeza.
+- Adiciona `aria-controls` para o indicador da última cópia.
+- Adiciona `aria-label` descritivo.
+- Configura o indicador com `role="status"`.
+- Configura `aria-live="polite"` e `aria-atomic="true"`.
+- Sincroniza acessibilidade no estado inicial, após cópia e após limpeza.
+- Preserva o fluxo funcional da v0.56.90.
+- Preserva a correção de gate consolidada desde v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.90 — Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+
+- Adiciona ação local `Limpar horário da deduplicação`.
+- O botão inicia desabilitado.
+- É habilitado após cópia bem-sucedida.
+- Restaura o indicador da última cópia para `—`.
+- Remove `datetime` e `data-copy-timestamp-v05689`.
+- Desabilita novamente a ação após limpeza.
+- Publica feedback local da limpeza.
+- Preserva o resumo técnico da v0.56.87.
+- Preserva a correção de gate aprovada em v0.56.89-r1.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.89 — Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+- Adiciona indicador local da última cópia bem-sucedida.
+- Atualiza o horário somente após sucesso no clipboard.
+- Exibe horário local com `toLocaleString()`.
+- Registra ISO em `datetime`.
+- Registra ISO em `data-copy-timestamp-v05689`.
+- Preserva o timestamp anterior em resumo vazio ou falha.
+- Preserva a ação de cópia e feedbacks da v0.56.88.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.88 — Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona ação local `Copiar estado da deduplicação`.
+- Copia o texto visível do resumo técnico da v0.56.87.
+- Adiciona feedback acessível de sucesso.
+- Adiciona feedback para resumo vazio.
+- Adiciona feedback para falha de clipboard.
+- Adiciona associação semântica com `aria-describedby`.
+- Preserva estado técnico e resumo das versões anteriores.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual novo.
+- Não cria migration ou tabela nova.
+
+# v0.56.87 — Focus Announcement Deduplication Reset State Summary
+
+- Adiciona resumo técnico local do estado da v0.56.86.
+- Exibe status `ready`, `reset` ou `announced`.
+- Exibe contador local de resets.
+- Exibe horário local do último reset derivado do ISO.
+- Adiciona `data-reset-state-summary-v05687`.
+- Preserva o estado técnico da v0.56.86, o reset da v0.56.85 e a deduplicação da v0.56.84.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.86 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+
+- Adiciona estado técnico local ao reset específico da deduplicação.
+- Registra status `ready`, `reset` ou `announced`.
+- Mantém contador local de resets.
+- Registra horário ISO do último reset.
+- Sincroniza status, contador e último reset no indicador local.
+- Preserva o helper de reset da v0.56.85 e a deduplicação da v0.56.84.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.85 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+
+- Adiciona helper explícito `resetResetStateSummaryTimestampClearFocusAnnouncementV05685`.
+- Centraliza o reset de `lastResetStateSummaryTimestampClearFocusAnnouncementV05684`.
+- Nova cópia bem-sucedida usa o helper explícito.
+- Mensagem vazia do helper de anúncio usa o reset explícito.
+- Preserva a deduplicação da v0.56.84.
+- Preserva o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador para a funcionalidade v0.56.85.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.84 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+- Adiciona cache específico de deduplicação do anúncio de foco da v0.56.83.
+- Adiciona helper `announceResetStateSummaryTimestampClearFocusV05684`.
+- Ignora anúncios idênticos consecutivos.
+- Nova cópia bem-sucedida libera o próximo anúncio.
+- Preserva a infraestrutura geral de anúncio acessível.
+- Mantém o marco obrigatório de deploy seguro no fechamento da v0.57.x.
+- Mantém tudo somente no navegador para a funcionalidade v0.56.84.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.83 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+- Adiciona anúncio acessível após limpar o horário do estado do reset.
+- Mensagem: `Foco movido para o indicador Última cópia do estado do reset.`
+- Emite somente quando o indicador alvo existe.
+- Reutiliza `announceComparisonNoteVerificationFocusV05653`.
+- Preserva o foco programático da v0.56.82.
+- Registra no ROADMAP o marco obrigatório de deploy seguro no fechamento da v0.57.x antes da v0.58.0.
+- Mantém tudo somente no navegador para a funcionalidade v0.56.83.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.82 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+- Adiciona `tabindex=-1` ao indicador da última cópia do estado do reset.
+- Move o foco para o indicador após limpar o horário.
+- Usa `focus({preventScroll:true})`.
+- Evita manter foco em botão recém-desabilitado.
+- Preserva a acessibilidade da v0.56.81.
+- Preserva a limpeza funcional da v0.56.80.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.81 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+
+- Sincroniza `aria-disabled` da ação de limpeza.
+- Adiciona `aria-controls` e `aria-label`.
+- Define o indicador da última cópia como `role=status`.
+- Adiciona `aria-live=polite` e `aria-atomic=true`.
+- Preserva a limpeza funcional da v0.56.80.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.80 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+
+- Adiciona ação `Limpar horário do estado do reset`.
+- Habilita a limpeza somente após cópia bem-sucedida.
+- Restaura o indicador para `Última cópia do estado do reset: —`.
+- Remove `datetime` e `data-copy-timestamp-v05679`.
+- Desabilita novamente a ação após limpar.
+- Adiciona feedback da limpeza.
+- Preserva o resumo técnico.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.79 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+- Adiciona indicador local da última cópia do estado do reset.
+- Atualiza o horário somente em cópia bem-sucedida.
+- Registra horário local, `datetime` ISO e `data-copy-timestamp-v05679`.
+- Preserva o último sucesso em caso de falha ou conteúdo vazio.
+- Preserva a cópia funcional da v0.56.78.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.78 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona ação local `Copiar estado do reset`.
+- Copia o texto visível do resumo técnico da v0.56.77.
+- Adiciona feedback de sucesso, vazio e falha de clipboard.
+- Liga ação, resumo e status com `aria-describedby`.
+- Mantém feedback com `aria-live=polite` e `role=status`.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.77 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+
+- Adiciona resumo técnico local do estado de reset específico.
+- Exibe status, contador e último reset.
+- Mantém estado inicial `ready / 0 / —`.
+- Atualiza automaticamente pelo sync da v0.56.76.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.76 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+
+- Adiciona estado técnico local ao reset específico da deduplicação.
+- Registra status `ready`, `reset` ou `announced`.
+- Mantém contador local de resets.
+- Registra horário ISO do último reset.
+- Sincroniza status, contador e último reset no indicador local.
+- Preserva o helper de reset da v0.56.75 e a deduplicação da v0.56.74.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.75 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+
+- Adiciona helper explícito de reset do cache específico da v0.56.74.
+- Centraliza o reset de `lastResetSummaryTimestampClearFocusAnnouncementV05674`.
+- Usa o helper após nova cópia bem-sucedida.
+- Usa o helper no caminho de mensagem vazia.
+- Preserva deduplicação, foco e acessibilidade anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.74 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+
+- Adiciona cache específico do anúncio de foco da limpeza do horário do reset.
+- Ignora anúncios consecutivos idênticos.
+- Nova cópia bem-sucedida libera o próximo anúncio de limpeza.
+- Reutiliza a infraestrutura geral de anúncio existente.
+- Preserva foco e acessibilidade anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.73 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+
+- Adiciona anúncio acessível após limpar o horário do reset.
+- Usa a mensagem `Foco movido para o indicador Última cópia do reset.`.
+- Emite o anúncio somente quando o indicador alvo existe.
+- Reutiliza a infraestrutura de anúncio já existente.
+- Preserva foco programático e acessibilidade anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.72 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+
+- Adiciona `tabindex=-1` ao indicador da última cópia do reset.
+- Move o foco para o indicador após a limpeza.
+- Evita manter foco em botão recém-desabilitado.
+- Usa `focus({preventScroll:true})`.
+- Preserva acessibilidade e limpeza anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.71 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+
+- Sincroniza `aria-disabled` com o estado real da ação de limpeza.
+- Adiciona `aria-controls` e `aria-label`.
+- Configura o indicador como `role=status`.
+- Adiciona `aria-live=polite` e `aria-atomic=true`.
+- Preserva a limpeza funcional da v0.56.70.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.70 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+
+- Adiciona ação `Limpar horário do reset`.
+- Habilita a limpeza somente após cópia bem-sucedida.
+- Restaura o indicador para `Última cópia do reset: —`.
+- Remove `datetime` e `data-copy-timestamp-v05669`.
+- Desabilita novamente a ação após limpar.
+- Adiciona feedback acessível da limpeza.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.69 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+
+- Adiciona indicador local da última cópia do resumo do reset.
+- Atualiza o horário somente em cópia bem-sucedida.
+- Registra horário local, `datetime` ISO e `data-copy-timestamp-v05669`.
+- Preserva o último sucesso em caso de falha ou conteúdo vazio.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.68 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+
+- Adiciona ação `Copiar resumo do reset`.
+- Copia o texto visível do resumo técnico da v0.56.67.
+- Adiciona feedback acessível de sucesso, vazio e falha.
+- Liga semanticamente botão, resumo e status.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.67 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+
+- Adiciona resumo técnico local do reset específico.
+- Exibe status, contador e último reset.
+- Mantém estado inicial `ready / 0 / —`.
+- Atualiza automaticamente pelo sync da v0.56.66.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
+# v0.56.66 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+
+- Adiciona estado técnico local do reset específico.
+- Registra status `ready`, `reset` e `announced`.
+- Conta resets específicos.
+- Registra horário ISO do último reset.
+- Sincroniza atributos técnicos no indicador `Última cópia`.
+- Preserva reset e deduplicação anteriores.
+- Mantém tudo somente no navegador.
+- Não inclui conteúdo clínico/textual.
+- Não cria migration ou tabela nova.
+
 # v0.56.65 — Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
 
 - Adiciona helper explícito de reset do cache específico.

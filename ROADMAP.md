@@ -7017,3 +7017,652 @@ Adicionar reset explícito do cache específico de deduplicação do anúncio de
 
 ### v0.56.66 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
 Adicionar estado técnico local do reset específico da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.66 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State — CONCLUÍDA
+
+**Entregue:**
+- estado técnico local `timestampClearFocusAnnouncementResetStateV05666`;
+- status `ready`, `reset` ou `announced`;
+- contador local de resets específicos;
+- horário ISO do último reset específico;
+- sincronização técnica no indicador `Última cópia`;
+- atributos técnicos de status, contador e último reset;
+- reset explícito da v0.56.65 preservado;
+- deduplicação específica da v0.56.64 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.67 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+Adicionar resumo técnico local do estado de reset específico da deduplicação do anúncio de foco, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.67 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo técnico local do reset específico da deduplicação;
+- estado inicial `Reset específico: ready · Resets: 0 · Último reset: —`;
+- atualização automática de status, contador e último reset;
+- horário local derivado do ISO do último reset;
+- atributo técnico `data-reset-state-summary-v05667`;
+- sincronização pelo helper da v0.56.66;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.68 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+Adicionar ação local para copiar o resumo técnico do reset específico da deduplicação, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.68 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy — CONCLUÍDA
+
+**Entregue:**
+- ação local `Copiar resumo do reset`;
+- cópia do texto visível do resumo técnico da v0.56.67;
+- feedback acessível de sucesso;
+- feedback para resumo vazio;
+- feedback para falha de clipboard;
+- `aria-describedby` ligando ação, resumo e status;
+- `aria-live="polite"` e `role="status"` no feedback;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.69 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+Registrar localmente o horário da última cópia bem-sucedida do resumo técnico do reset específico, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.69 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp — CONCLUÍDA
+
+**Entregue:**
+- indicador local `Última cópia do reset: —`;
+- atualização somente após cópia bem-sucedida do resumo específico;
+- horário local com `toLocaleString()`;
+- valor ISO em `datetime`;
+- valor ISO técnico em `data-copy-timestamp-v05669`;
+- falha ou ausência de conteúdo não altera o último horário bem-sucedido;
+- cópia e feedback da v0.56.68 preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.70 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+Adicionar ação local para limpar explicitamente o horário da última cópia do resumo técnico do reset específico, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.70 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear — CONCLUÍDA
+
+**Entregue:**
+- ação local `Limpar horário do reset`;
+- botão inicia desabilitado;
+- botão é habilitado após cópia bem-sucedida;
+- limpeza explícita do texto `Última cópia do reset`;
+- remoção de `datetime`;
+- remoção de `data-copy-timestamp-v05669`;
+- botão volta a ficar desabilitado após a limpeza;
+- feedback acessível `Horário da última cópia do reset limpo.`;
+- resumo técnico permanece inalterado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.71 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+Melhorar a acessibilidade da ação de limpar o horário da última cópia do resumo do reset com estado descritivo e associação semântica local, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.71 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility — CONCLUÍDA
+
+**Entregue:**
+- estado semântico `aria-disabled` sincronizado com o estado real de `Limpar horário do reset`;
+- `aria-controls` ligando a ação ao indicador `Última cópia do reset`;
+- `aria-label` descritivo para a ação de limpeza;
+- indicador da última cópia do reset configurado como `role="status"`;
+- `aria-live="polite"` e `aria-atomic="true"` no indicador;
+- marcador técnico de acessibilidade v0.56.71;
+- fluxo funcional da v0.56.70 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.72 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+Melhorar o fluxo de foco por teclado após limpar o horário da última cópia do resumo do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.72 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus — CONCLUÍDA
+
+**Entregue:**
+- indicador `Última cópia do reset` com `tabindex="-1"` para foco programático;
+- após `Limpar horário do reset`, o foco sai do botão recém-desabilitado;
+- foco é movido para o indicador atualizado `Última cópia do reset: —`;
+- uso de `focus({preventScroll:true})`;
+- marcador técnico de foco v0.56.72;
+- acessibilidade da v0.56.71 preservada;
+- fluxo funcional da v0.56.70 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.73 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+Adicionar anúncio acessível da mudança de foco após limpar o horário da última cópia do resumo do reset, reutilizando a infraestrutura local existente e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.73 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement — CONCLUÍDA
+
+**Entregue:**
+- anúncio acessível após `Limpar horário do reset`;
+- mensagem `Foco movido para o indicador Última cópia do reset.`;
+- anúncio emitido somente quando o indicador alvo existe;
+- reutilização da infraestrutura `announceComparisonNoteVerificationFocusV05653`;
+- foco programático da v0.56.72 preservado;
+- marcador técnico de anúncio v0.56.73 no indicador;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.74 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+Adicionar deduplicação específica do anúncio de foco após limpar o horário da última cópia do resumo do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.74 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication — CONCLUÍDA
+
+**Entregue:**
+- cache específico local `lastResetSummaryTimestampClearFocusAnnouncementV05674`;
+- helper `announceResetSummaryTimestampClearFocusV05674`;
+- anúncios consecutivos idênticos do fluxo de limpeza são ignorados;
+- nova cópia bem-sucedida libera novamente o próximo anúncio de limpeza;
+- marcador técnico v0.56.74 no indicador `Última cópia do reset`;
+- infraestrutura geral de anúncio e foco anteriores preservadas;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.75 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+Adicionar reset explícito do cache específico de deduplicação do anúncio de foco da limpeza do horário do resumo do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.75 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset — CONCLUÍDA
+
+**Entregue:**
+- helper explícito `resetResetSummaryTimestampClearFocusAnnouncementV05675`;
+- reset centralizado do cache `lastResetSummaryTimestampClearFocusAnnouncementV05674`;
+- nova cópia bem-sucedida passa a usar o helper explícito;
+- caminho de mensagem vazia do helper de anúncio passa a usar o reset explícito;
+- marcador técnico v0.56.75 no indicador `Última cópia do reset`;
+- deduplicação da v0.56.74 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.76 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+Adicionar estado técnico local do reset específico da deduplicação do anúncio de foco da limpeza do horário do resumo do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.76 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State — CONCLUÍDA
+
+**Entregue:**
+- estado técnico local `resetSummaryTimestampClearFocusAnnouncementResetStateV05676`;
+- status `ready`, `reset` ou `announced`;
+- contador local de resets específicos;
+- horário ISO do último reset específico;
+- sincronização técnica no indicador `Última cópia do reset`;
+- atributos técnicos de status, contador e último reset;
+- reset explícito da v0.56.75 preservado;
+- deduplicação específica da v0.56.74 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.77 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+Adicionar resumo técnico local do estado de reset específico da deduplicação do anúncio de foco da limpeza do horário do resumo do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.77 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo técnico local `Estado do reset do anúncio`;
+- estado inicial `ready · Resets: 0 · Último reset: —`;
+- atualização automática de status, contador e último reset;
+- horário local derivado do ISO do último reset;
+- atributo técnico `data-reset-state-summary-v05677`;
+- sincronização pelo helper da v0.56.76;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.78 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+Adicionar ação local para copiar o resumo técnico do estado de reset específico da deduplicação do anúncio de foco da limpeza do horário do resumo do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.78 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy — CONCLUÍDA
+
+**Entregue:**
+- ação local `Copiar estado do reset`;
+- cópia do texto visível do resumo técnico da v0.56.77;
+- feedback acessível de sucesso;
+- feedback para resumo vazio;
+- feedback para falha de clipboard;
+- `aria-describedby` ligando ação, resumo e status;
+- `aria-live="polite"` e `role="status"` no feedback;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.79 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+Registrar localmente o horário da última cópia bem-sucedida do resumo técnico do estado de reset específico da deduplicação do anúncio de foco da limpeza do horário do resumo do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.79 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp — CONCLUÍDA
+
+**Entregue:**
+- indicador local `Última cópia do estado do reset: —`;
+- atualização somente após cópia bem-sucedida do resumo técnico da v0.56.77;
+- horário local via `toLocaleString()`;
+- valor ISO em `datetime`;
+- valor ISO técnico em `data-copy-timestamp-v05679`;
+- falha de clipboard ou ausência de conteúdo não altera o último horário bem-sucedido;
+- fluxo de cópia da v0.56.78 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.80 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+Adicionar ação local para limpar explicitamente o horário da última cópia do resumo técnico do estado de reset específico da deduplicação do anúncio de foco da limpeza do horário do resumo do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.80 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear — CONCLUÍDA
+
+**Entregue:**
+- ação local `Limpar horário do estado do reset`;
+- botão inicia desabilitado;
+- botão é habilitado somente após cópia bem-sucedida;
+- restauração de `Última cópia do estado do reset: —`;
+- remoção de `datetime`;
+- remoção de `data-copy-timestamp-v05679`;
+- botão volta a ficar desabilitado após a limpeza;
+- feedback `Horário da última cópia do estado do reset limpo.`;
+- resumo técnico permanece inalterado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.81 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+Melhorar a acessibilidade da ação de limpar o horário da última cópia do estado do reset com estado descritivo e associação semântica local, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.81 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility — CONCLUÍDA
+
+**Entregue:**
+- estado semântico `aria-disabled` sincronizado com o estado real de `Limpar horário do estado do reset`;
+- `aria-controls` ligando a ação ao indicador `Última cópia do estado do reset`;
+- `aria-label` descritivo para a ação de limpeza;
+- indicador da última cópia configurado como `role="status"`;
+- `aria-live="polite"` e `aria-atomic="true"` no indicador;
+- marcador técnico de acessibilidade v0.56.81;
+- fluxo funcional da v0.56.80 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.82 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+Melhorar o fluxo de foco por teclado após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.82 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus — CONCLUÍDA
+
+**Entregue:**
+- indicador `Última cópia do estado do reset` com `tabindex="-1"` para foco programático;
+- após `Limpar horário do estado do reset`, o foco sai do botão recém-desabilitado;
+- foco é movido para o indicador atualizado `Última cópia do estado do reset: —`;
+- uso de `focus({preventScroll:true})`;
+- marcador técnico de foco v0.56.82;
+- acessibilidade da v0.56.81 preservada;
+- fluxo funcional da v0.56.80 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.83 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+Adicionar anúncio acessível da mudança de foco após limpar o horário da última cópia do estado do reset, reutilizando a infraestrutura local existente e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.83 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement — CONCLUÍDA
+
+**Entregue:**
+- anúncio acessível após `Limpar horário do estado do reset`;
+- mensagem `Foco movido para o indicador Última cópia do estado do reset.`;
+- anúncio emitido somente quando o indicador alvo existe;
+- reutilização da infraestrutura `announceComparisonNoteVerificationFocusV05653`;
+- foco programático da v0.56.82 preservado;
+- marcador técnico de anúncio v0.56.83 no indicador;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.84 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+Adicionar deduplicação específica do anúncio de foco após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+## Marco obrigatório de fechamento da série v0.57.x
+
+Antes de iniciar a v0.58.0, a série v0.57.x deve terminar com um **Deploy Seguro para Produção**.
+
+O fechamento da v0.57.x deve entregar um script de produção, preferencialmente `DEPLOY-PRODUCAO.ps1`, que:
+- identifique e confirme a versão local/alvo;
+- conecte à VPS sem armazenar senha no código e aguarde entrada interativa quando necessário;
+- faça backup do PostgreSQL **antes** de migrations ou substituição da aplicação;
+- valide a existência e integridade operacional do backup antes de prosseguir;
+- preserve `.env` e configurações de produção;
+- envie/aplique a versão mais recente;
+- execute migrations de forma controlada;
+- reinicie serviços/containers;
+- valide healthcheck e versão publicada;
+- grave logs do deploy;
+- interrompa o fluxo de forma bloqueante em qualquer erro;
+- ofereça caminho de rollback da aplicação;
+- permita restauração do banco a partir do backup quando necessário.
+
+**Regra de segurança:** nenhuma migration ou substituição da aplicação pode ocorrer antes de o backup do banco concluir e ser validado com sucesso.
+
+A v0.58.x só deve ser aberta após esse marco de deploy seguro estar implementado e aprovado.
+
+
+## ✅ v0.56.84 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication — CONCLUÍDA
+
+**Entregue:**
+- cache específico `lastResetStateSummaryTimestampClearFocusAnnouncementV05684`;
+- helper `announceResetStateSummaryTimestampClearFocusV05684`;
+- anúncios idênticos consecutivos do foco após `Limpar horário do estado do reset` passam a ser ignorados;
+- nova cópia bem-sucedida libera novamente o próximo anúncio de limpeza;
+- marcador técnico de deduplicação v0.56.84 no indicador `Última cópia do estado do reset`;
+- infraestrutura geral de anúncio acessível preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.85 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+Adicionar reset explícito do cache específico de deduplicação do anúncio de foco após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.85 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset — CONCLUÍDA
+
+**Entregue:**
+- helper explícito `resetResetStateSummaryTimestampClearFocusAnnouncementV05685`;
+- reset centralizado do cache `lastResetStateSummaryTimestampClearFocusAnnouncementV05684`;
+- nova cópia bem-sucedida passa a usar o helper explícito;
+- caminho de mensagem vazia do helper de anúncio passa a usar o reset explícito;
+- marcador técnico v0.56.85 no indicador `Última cópia do estado do reset`;
+- deduplicação da v0.56.84 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.86 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+Adicionar estado técnico local do reset específico da deduplicação do anúncio de foco após limpar o horário da última cópia do estado do reset, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.86 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State — CONCLUÍDA
+
+**Entregue:**
+- estado técnico local `resetStateSummaryTimestampClearFocusAnnouncementResetStateV05686`;
+- status `ready`, `reset` ou `announced`;
+- contador local de resets específicos;
+- horário ISO do último reset específico;
+- sincronização técnica no indicador `Última cópia do estado do reset`;
+- atributos técnicos de status, contador e último reset;
+- reset explícito da v0.56.85 preservado;
+- deduplicação específica da v0.56.84 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.87 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+Adicionar resumo técnico local do estado de reset específico da deduplicação do anúncio de foco após limpar o horário da última cópia do estado do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.87 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo técnico local `Estado do reset da deduplicação`;
+- estado inicial `ready · Resets: 0 · Último reset: —`;
+- sincronização automática com o estado técnico da v0.56.86;
+- exibição de status `ready`, `reset` ou `announced`;
+- exibição do contador local de resets;
+- exibição local do horário do último reset derivado do ISO;
+- atributo técnico `data-reset-state-summary-v05687`;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.88 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy
+Adicionar ação local para copiar o resumo técnico do estado de reset específico da deduplicação do anúncio de foco após limpar o horário da última cópia do estado do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.88 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy — CONCLUÍDA
+
+**Entregue:**
+- ação local `Copiar estado da deduplicação`;
+- cópia do texto visível do resumo técnico da v0.56.87;
+- feedback acessível de sucesso;
+- feedback para resumo vazio;
+- feedback para falha de clipboard;
+- `aria-describedby` ligando ação, resumo e status;
+- `aria-live="polite"`, `aria-atomic="true"` e `role="status"` no feedback;
+- estado técnico e resumo das versões anteriores preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.89 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp
+Registrar localmente o horário da última cópia bem-sucedida do resumo técnico do estado de reset específico da deduplicação do anúncio de foco após limpar o horário da última cópia do estado do reset, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.89 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp — CONCLUÍDA
+
+**Entregue:**
+- indicador local `Última cópia do estado da deduplicação: —`;
+- atualização somente após cópia bem-sucedida do resumo técnico da v0.56.87;
+- horário local via `toLocaleString()`;
+- atributo `datetime` com ISO;
+- atributo técnico `data-copy-timestamp-v05689` com ISO;
+- caminhos de resumo vazio e falha de clipboard preservam o último horário bem-sucedido;
+- ação de cópia e feedbacks da v0.56.88 preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.90 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear
+Adicionar ação local para limpar explicitamente o horário da última cópia do resumo técnico do estado de reset específico da deduplicação do anúncio de foco, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.90 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear — CONCLUÍDA
+
+**Entregue:**
+- ação local `Limpar horário da deduplicação`;
+- botão inicia desabilitado;
+- botão é habilitado somente após cópia bem-sucedida da v0.56.88/v0.56.89;
+- limpeza restaura `Última cópia do estado da deduplicação: —`;
+- limpeza remove `datetime`;
+- limpeza remove `data-copy-timestamp-v05689`;
+- botão volta a ficar desabilitado após a limpeza;
+- feedback `Horário da última cópia do estado da deduplicação limpo.`;
+- resumo técnico da v0.56.87 permanece intacto;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.91 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility
+Adicionar acessibilidade à ação de limpar o horário da última cópia do resumo técnico do estado de reset específico da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.91 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility — CONCLUÍDA
+
+**Entregue:**
+- `aria-disabled` sincronizado com o estado real da ação de limpeza;
+- `aria-controls` ligando a ação ao indicador `Última cópia do estado da deduplicação`;
+- `aria-label` descritivo `Limpar horário da última cópia do estado da deduplicação`;
+- indicador de horário com `role="status"`;
+- indicador de horário com `aria-live="polite"`;
+- indicador de horário com `aria-atomic="true"`;
+- estado acessível inicial sincronizado como indisponível;
+- cópia bem-sucedida sincroniza a ação como disponível;
+- limpeza volta a sincronizar a ação como indisponível;
+- fluxo funcional da v0.56.90 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.92 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus
+Melhorar o fluxo de foco por teclado após limpar o horário da última cópia do estado da deduplicação, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.92 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus — CONCLUÍDA
+
+**Entregue:**
+- indicador `Última cópia do estado da deduplicação` com `tabindex="-1"` para foco programático;
+- após `Limpar horário da deduplicação`, o foco sai do botão recém-desabilitado;
+- foco é movido para o indicador atualizado `Última cópia do estado da deduplicação: —`;
+- uso de `focus({preventScroll:true})`;
+- marcador técnico de foco v0.56.92;
+- acessibilidade da v0.56.91 preservada;
+- fluxo funcional da v0.56.90 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.93 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement
+Adicionar anúncio acessível da mudança de foco após limpar o horário da última cópia do estado da deduplicação, reutilizando a infraestrutura local existente e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.93 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement — CONCLUÍDA
+
+**Entregue:**
+- anúncio acessível após `Limpar horário da deduplicação`;
+- mensagem `Foco movido para o indicador Última cópia do estado da deduplicação.`;
+- anúncio emitido somente quando o indicador alvo existe;
+- reutilização da infraestrutura `announceComparisonNoteVerificationFocusV05653`;
+- foco programático da v0.56.92 preservado;
+- marcador técnico de anúncio v0.56.93 no indicador;
+- acessibilidade da v0.56.91 preservada;
+- fluxo funcional da v0.56.90 preservado;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.94 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication
+Adicionar deduplicação específica do anúncio de foco após limpar o horário da última cópia do estado da deduplicação, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.94 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication — CONCLUÍDA
+
+**Entregue:**
+- cache específico `lastResetStateSummaryTimestampClearFocusAnnouncementDeduplicationV05694`;
+- helper `announceResetStateSummaryTimestampClearFocusDeduplicationV05694`;
+- anúncios idênticos consecutivos após `Limpar horário da deduplicação` passam a ser ignorados;
+- nova cópia bem-sucedida libera novamente o próximo anúncio;
+- marcador técnico v0.56.94 no indicador;
+- anúncio acessível da v0.56.93 preservado;
+- foco programático da v0.56.92 preservado;
+- acessibilidade da v0.56.91 preservada;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.95 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset
+Adicionar reset explícito do cache específico de deduplicação do anúncio de foco após limpar o horário da última cópia do estado da deduplicação, mantendo o fluxo local e sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.95 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset — CONCLUÍDA
+
+**Entregue:**
+- helper explícito `resetResetStateSummaryTimestampClearFocusAnnouncementDeduplicationV05695`;
+- reset centralizado do cache específico da v0.56.94;
+- nova cópia bem-sucedida usa o helper explícito;
+- caminho de anúncio vazio usa o helper explícito;
+- deduplicação da v0.56.94 preservada;
+- anúncio da v0.56.93, foco da v0.56.92 e acessibilidade da v0.56.91 preservados;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.96 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State
+Registrar estado técnico local do reset explícito da deduplicação do anúncio de foco após limpar o horário da última cópia do estado da deduplicação, sem conteúdo clínico/textual.
+
+
+## ✅ v0.56.96 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State — CONCLUÍDA
+
+**Entregue:**
+- estado técnico local `resetStateSummaryTimestampClearFocusAnnouncementDeduplicationResetStateV05696`;
+- status `ready`, `reset` e `announced`;
+- contador local de resets;
+- horário ISO do último reset;
+- sincronização técnica no indicador da última cópia da deduplicação via `dataset`;
+- helper explícito da v0.56.95 atualiza o estado para `reset`;
+- wrapper da v0.56.94 atualiza o estado para `announced`;
+- nenhum armazenamento persistente no servidor;
+- nenhum conteúdo clínico/textual adicionado ao fluxo;
+- sem migration/tabela nova.
+
+## Próxima etapa
+
+### v0.56.97 — Professional Review Team Knowledge Effect Decision Review Outcome Follow-Up Review History Context Comparison Notes Revision History Share Telemetry Export Integrity Verification Session State Expiry Feedback Focus Announcement Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary Copy Timestamp Clear Accessibility Focus Announcement Deduplication Reset State Summary
+Exibir resumo técnico local do estado do reset explícito da deduplicação do anúncio de foco, mantendo o fluxo local e sem conteúdo clínico/textual.
