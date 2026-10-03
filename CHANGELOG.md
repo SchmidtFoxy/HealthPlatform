@@ -1,3 +1,12 @@
+# v0.58.32 — Production Operations Support Session Handoff Copy Summary
+
+- Adiciona resumo local da última cópia concluída.
+- Registra horário, recibo anexado, caracteres e linhas.
+- Usa exatamente o texto enviado ao clipboard.
+- Exibe resumo textual somente leitura.
+- Reinicia em nova prévia.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.31 — Production Operations Support Session Handoff Copy Confirmation
 
 - Adiciona confirmação local após a cópia do handoff.

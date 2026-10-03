@@ -10083,3 +10083,19 @@ Depois de uma cópia concluída, a prévia do handoff agora mostra uma confirma�
 A confirmação existe somente na memória da página e é reiniciada ao abrir uma nova prévia. Nenhum evento de cópia é persistido ou enviado automaticamente.
 
 **Próxima etapa:** `v0.58.32 — Production Operations Support Session Handoff Copy Summary`.
+
+
+---
+
+## v0.58.32 — Production Operations Support Session Handoff Copy Summary
+
+Após uma cópia concluída, a prévia do handoff agora apresenta um resumo local com:
+- horário da cópia;
+- status do recibo anexado;
+- quantidade de caracteres;
+- quantidade de linhas;
+- operador não coletado.
+
+As métricas são calculadas sobre o mesmo texto efetivamente enviado à área de transferência. O resumo é transitório, somente leitura e reiniciado em uma nova prévia.
+
+**Próxima etapa:** `v0.58.33 — Production Operations Support Session Handoff Copy Verification`.

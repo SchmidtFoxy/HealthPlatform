@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.31';
+const HP_MVP_VERSION='0.58.32';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28472,6 +28472,7 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
     </div>
 
     <div id="opsSupportSessionHandoffCopyConfirmationV05831" class="ops-support-handoff-copy-confirmation-v05831 hidden" aria-live="polite"></div>
+    <div id="opsSupportSessionHandoffCopySummaryV05832" class="ops-support-handoff-copy-summary-v05832 hidden" aria-live="polite"></div>
 
     <div class="ops-support-boundary-v05810">
       <p>A prévia usa somente o handoff local já preparado para continuidade do suporte.</p>
@@ -28499,6 +28500,7 @@ function hpOpenSupportSessionLifecycleHandoffPreviewV05827(){
   hpSupportSessionHandoffPreviewStateV05827.openedAt=new Date().toISOString();
   hpSupportSessionResetHandoffReviewReceiptV05829();
   hpSupportSessionResetHandoffCopyConfirmationV05831();
+  hpSupportSessionResetHandoffCopySummaryV05832();
 
   document.body.classList.add('ops-support-handoff-preview-open-v05827');
   backdrop.classList.remove('hidden');
@@ -28542,6 +28544,7 @@ async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
     area.remove();
   }
 
+  hpSupportSessionCaptureHandoffCopySummaryV05832(text,Boolean(receipt));
   hpSupportSessionConfirmHandoffCopyV05831(Boolean(receipt));
   toast('Handoff conferido e copiado');
 }
@@ -28763,4 +28766,79 @@ function hpSupportSessionConfirmHandoffCopyV05831(receiptAttached){
   hpSupportSessionHandoffCopyConfirmationStateV05831.copiedAt=new Date().toISOString();
   hpSupportSessionHandoffCopyConfirmationStateV05831.receiptAttached=Boolean(receiptAttached);
   hpRenderSupportSessionHandoffCopyConfirmationV05831();
+}
+
+
+// ===== v0.58.32 — Production Operations Support Session Handoff Copy Summary =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_SUMMARY_V05832='v0.58.32';
+
+const hpSupportSessionHandoffCopySummaryStateV05832={
+  copiedAt:null,
+  receiptAttached:false,
+  charCount:0,
+  lineCount:0
+};
+
+function hpSupportSessionResetHandoffCopySummaryV05832(){
+  hpSupportSessionHandoffCopySummaryStateV05832.copiedAt=null;
+  hpSupportSessionHandoffCopySummaryStateV05832.receiptAttached=false;
+  hpSupportSessionHandoffCopySummaryStateV05832.charCount=0;
+  hpSupportSessionHandoffCopySummaryStateV05832.lineCount=0;
+  hpRenderSupportSessionHandoffCopySummaryV05832();
+}
+
+function hpSupportSessionCaptureHandoffCopySummaryV05832(text,receiptAttached){
+  const content=String(text||'');
+  hpSupportSessionHandoffCopySummaryStateV05832.copiedAt=new Date().toISOString();
+  hpSupportSessionHandoffCopySummaryStateV05832.receiptAttached=Boolean(receiptAttached);
+  hpSupportSessionHandoffCopySummaryStateV05832.charCount=content.length;
+  hpSupportSessionHandoffCopySummaryStateV05832.lineCount=content?content.split(/\r?\n/).length:0;
+  hpRenderSupportSessionHandoffCopySummaryV05832();
+}
+
+function hpSupportSessionHandoffCopySummaryTextV05832(){
+  const state=hpSupportSessionHandoffCopySummaryStateV05832;
+  if(!state.copiedAt)return '';
+
+  return [
+    'AESYN Performance - Support Session Handoff Copy Summary',
+    `Versão: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_SUMMARY_V05832}`,
+    `Copiado em: ${state.copiedAt}`,
+    `Recibo anexado: ${state.receiptAttached?'Sim':'Não'}`,
+    `Caracteres copiados: ${state.charCount}`,
+    `Linhas copiadas: ${state.lineCount}`,
+    'Operador: não coletado',
+    '',
+    'Resumo local e transitório da última cópia concluída nesta prévia.',
+    'Nenhum evento é persistido, enviado automaticamente ou registrado na API.'
+  ].join('\n');
+}
+
+function hpRenderSupportSessionHandoffCopySummaryV05832(){
+  const host=$('#opsSupportSessionHandoffCopySummaryV05832');if(!host)return;
+  const state=hpSupportSessionHandoffCopySummaryStateV05832;
+
+  if(!state.copiedAt){
+    host.classList.add('hidden');
+    host.textContent='';
+    return;
+  }
+
+  host.classList.remove('hidden');
+  host.innerHTML=`<div class="ops-support-handoff-copy-summary-head-v05832">
+    <div>
+      <span class="eyebrow">RESUMO DA CÓPIA • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_SUMMARY_V05832}</span>
+      <strong>Conferência rápida da última cópia</strong>
+    </div>
+    <span>${esc(state.copiedAt)}</span>
+  </div>
+  <div class="ops-support-handoff-copy-summary-grid-v05832">
+    <article><small>Recibo anexado</small><strong>${state.receiptAttached?'Sim':'Não'}</strong></article>
+    <article><small>Caracteres</small><strong>${esc(String(state.charCount))}</strong></article>
+    <article><small>Linhas</small><strong>${esc(String(state.lineCount))}</strong></article>
+  </div>
+  <pre id="opsSupportSessionHandoffCopySummaryTextV05832"></pre>`;
+
+  const preview=$('#opsSupportSessionHandoffCopySummaryTextV05832');
+  if(preview)preview.textContent=hpSupportSessionHandoffCopySummaryTextV05832();
 }

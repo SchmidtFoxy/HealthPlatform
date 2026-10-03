@@ -636,3 +636,22 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
 @media (max-width:680px){
   .ops-support-handoff-copy-confirmation-meta-v05831{grid-template-columns:1fr}
 }
+
+
+/* v0.58.32 — Production Operations Support Session Handoff Copy Summary */
+.ops-support-handoff-copy-summary-v05832{display:grid;gap:10px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.018)}
+.ops-support-handoff-copy-summary-v05832.hidden{display:none}
+.ops-support-handoff-copy-summary-head-v05832{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-copy-summary-head-v05832 strong{display:block;margin-top:4px;font-size:.82rem}
+.ops-support-handoff-copy-summary-head-v05832>span{font-size:.7rem;opacity:.62;overflow-wrap:anywhere;text-align:right}
+.ops-support-handoff-copy-summary-grid-v05832{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ops-support-handoff-copy-summary-grid-v05832 article{padding:9px;border-radius:9px;background:rgba(0,0,0,.14);border:1px solid rgba(255,255,255,.05)}
+.ops-support-handoff-copy-summary-grid-v05832 small{display:block;font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;opacity:.55}
+.ops-support-handoff-copy-summary-grid-v05832 strong{display:block;margin-top:4px;font-size:.78rem}
+.ops-support-handoff-copy-summary-v05832 pre{margin:0;max-height:190px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border-radius:9px;background:rgba(0,0,0,.16);font:500 .7rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;opacity:.78}
+@media (max-width:680px){
+  .ops-support-handoff-copy-summary-head-v05832{align-items:flex-start;flex-direction:column}
+  .ops-support-handoff-copy-summary-head-v05832>span{text-align:left}
+  .ops-support-handoff-copy-summary-grid-v05832{grid-template-columns:1fr}
+  .ops-support-handoff-copy-summary-v05832 pre{max-height:230px}
+}
