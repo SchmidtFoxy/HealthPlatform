@@ -10412,3 +10412,21 @@ A orientação da continuidade após o fechamento agora possui um handoff local 
 O handoff é somente leitura e não executa, persiste ou envia ações.
 
 **Próxima etapa:** `v0.58.55 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure`.
+
+
+---
+
+## v0.58.55 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure
+
+A orientação final da continuidade após o fechamento agora pode ter apenas seu contexto visual encerrado manualmente.
+
+O fechamento:
+- exige que a orientação final esteja disponível;
+- registra horário apenas em memória;
+- preserva a próxima decisão manual;
+- oculta somente orientação, resumo e handoff final;
+- mantém sessão de suporte, handoff e dados temporários intactos;
+- é reiniciado ao abrir uma nova prévia;
+- não persiste, envia ou altera produção.
+
+**Próxima etapa:** `v0.58.56 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Summary`.
