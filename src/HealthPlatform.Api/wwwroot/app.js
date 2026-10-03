@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.16';
+const HP_MVP_VERSION='0.58.17';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27445,7 +27445,7 @@ function hpRenderSupportSessionV05815(){
   </div>`;
 
   $('#opsSupportSessionCloseV05815')?.addEventListener('click',hpCloseSupportSessionV05815);
-  $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpExportSupportSessionV05816().catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpOpenSupportSessionSharePreviewV05817().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
     hpSupportSessionResetV05815();
@@ -27645,4 +27645,132 @@ async function hpExportSupportSessionV05816(){
   }finally{
     if(button){button.disabled=false;button.textContent='Exportar sessão'}
   }
+}
+
+
+// ===== v0.58.17 — Production Operations Support Session Share Preview =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_SHARE_PREVIEW_V05817='v0.58.17';
+
+function hpSupportSessionPreviewStatsV05817(content){
+  const text=String(content||'');
+  return {
+    characters:text.length,
+    lines:text?text.split('\n').length:0,
+    evidences:hpSupportSessionStateV05815.evidences.length,
+    timeline:(hpSupportSessionStateV05815.timeline?.items||[]).slice(0,12).length
+  };
+}
+
+function hpRenderSupportSessionSharePreviewV05817(content){
+  const host=$('#opsSupportSessionSharePreviewV05817');if(!host)return;
+  const text=String(content||'');
+  const stats=hpSupportSessionPreviewStatsV05817(text);
+
+  host.innerHTML=`<div class="ops-support-share-preview-v05817">
+    <div class="ops-support-share-preview-head-v05817">
+      <div>
+        <span class="eyebrow">SHARE PREVIEW • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_SHARE_PREVIEW_V05817}</span>
+        <h3>Revisar antes de compartilhar</h3>
+        <p>Pré-visualização local do mesmo conteúdo que será baixado.</p>
+      </div>
+      <button type="button" class="ghost" id="opsSupportSessionSharePreviewCloseV05817" aria-label="Fechar pré-visualização">×</button>
+    </div>
+
+    <div class="ops-support-share-preview-stats-v05817">
+      <article><small>Linhas</small><strong>${esc(String(stats.lines))}</strong></article>
+      <article><small>Caracteres</small><strong>${esc(String(stats.characters))}</strong></article>
+      <article><small>Timeline</small><strong>${esc(String(stats.timeline))}</strong></article>
+      <article><small>Evidências</small><strong>${esc(String(stats.evidences))}</strong></article>
+    </div>
+
+    <div class="ops-support-share-preview-safe-v05817">
+      <strong>Revisão humana obrigatória</strong>
+      <p>Confira o conteúdo abaixo antes do download. A prévia não salva, envia ou compartilha nada automaticamente.</p>
+    </div>
+
+    <section class="ops-support-share-preview-content-v05817">
+      <div class="ops-support-share-preview-title-v05817">
+        <span class="eyebrow">CONTEÚDO DO ARQUIVO</span>
+        <small>Markdown UTF-8</small>
+      </div>
+      <pre id="opsSupportSessionSharePreviewTextV05817"></pre>
+    </section>
+
+    <div class="ops-support-share-preview-actions-v05817">
+      <button type="button" class="ghost" id="opsSupportSessionSharePreviewCopyV05817">Copiar prévia</button>
+      <button type="button" class="secondary" id="opsSupportSessionSharePreviewDownloadV05817">Baixar revisado</button>
+    </div>
+
+    <div class="ops-support-boundary-v05810">
+      <p>Prévia gerada apenas em memória desta página.</p>
+      <p>Nenhum arquivo é baixado até a ação explícita “Baixar revisado”.</p>
+      <p>Nenhum dado é enviado para terceiros pela pré-visualização.</p>
+    </div>
+  </div>`;
+
+  const preview=$('#opsSupportSessionSharePreviewTextV05817');
+  if(preview)preview.textContent=text;
+
+  $('#opsSupportSessionSharePreviewCloseV05817')?.addEventListener('click',hpCloseSupportSessionSharePreviewV05817);
+  $('#opsSupportSessionSharePreviewCopyV05817')?.addEventListener('click',()=>hpCopySupportSessionSharePreviewV05817(text).catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionSharePreviewDownloadV05817')?.addEventListener('click',()=>hpDownloadReviewedSupportSessionV05817(text).catch(err=>toast(err.message,true)));
+}
+
+async function hpCopySupportSessionSharePreviewV05817(content){
+  const text=String(content||'');
+  if(!text)return;
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=text;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  toast('Prévia copiada');
+}
+
+async function hpDownloadReviewedSupportSessionV05817(content){
+  const text=String(content||'');
+  if(!text)return;
+  const button=$('#opsSupportSessionSharePreviewDownloadV05817');
+  if(button){button.disabled=true;button.textContent='Baixando…'}
+  try{
+    const startedAt=hpSupportSessionStateV05815.startedAt||new Date().toISOString();
+    const stamp=startedAt.replace(/[-:]/g,'').replace(/\..+$/,'').replace('T','-');
+    const fileName=`aesyn-support-session-${stamp}.md`;
+    hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',text);
+    toast(`Sessão revisada exportada • ${hpSupportSessionStateV05815.evidences.length} evidência(s)`);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Baixar revisado'}
+  }
+}
+
+function hpCloseSupportSessionSharePreviewV05817(){
+  $('#opsSupportSessionSharePreviewBackdropV05817')?.classList.add('hidden');
+  $('#opsSupportSessionSharePreviewPanelV05817')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-share-preview-open-v05817');
+}
+
+async function hpOpenSupportSessionSharePreviewV05817(){
+  if(!hpSupportSessionStateV05815.active){
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    await hpStartSupportSessionV05815(days);
+  }
+
+  const panel=$('#opsSupportSessionSharePreviewPanelV05817');
+  const backdrop=$('#opsSupportSessionSharePreviewBackdropV05817');
+  const host=$('#opsSupportSessionSharePreviewV05817');
+  if(!panel||!backdrop||!host)return;
+
+  const content=hpSupportSessionExportTextV05816();
+  document.body.classList.add('ops-support-share-preview-open-v05817');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  hpRenderSupportSessionSharePreviewV05817(content);
 }

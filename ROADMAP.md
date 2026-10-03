@@ -8439,3 +8439,27 @@ Permitir exportar a sessão temporária de suporte em um único pacote textual s
 
 ### v0.58.17 — Production Operations Support Session Share Preview
 Adicionar uma pré-visualização segura do conteúdo que será compartilhado/exportado pela sessão, permitindo revisão humana antes do download, sem persistir automaticamente o material.
+
+
+## ✅ v0.58.17 — Production Operations Support Session Share Preview — CONCLUÍDA
+
+**Entregue:**
+- pré-visualização segura antes do download da sessão;
+- o botão `Exportar sessão` agora abre revisão humana antes de gerar o arquivo;
+- prévia usa exatamente o mesmo conteúdo Markdown do export;
+- contagem de linhas, caracteres, eventos de timeline e evidências;
+- conteúdo renderizado como texto, sem executar HTML;
+- ação `Copiar prévia`;
+- ação explícita `Baixar revisado`;
+- nenhum download ocorre ao abrir a prévia;
+- drawer desktop e bottom sheet mobile;
+- nenhum envio automático a terceiros;
+- nenhuma persistência automática;
+- nenhum conteúdo bruto adicional de evidências;
+- nenhuma alteração em produção;
+- nenhum segredo ou metadata interna é acrescentado pela pré-visualização.
+
+## Próxima etapa
+
+### v0.58.18 — Production Operations Support Session Redaction Review
+Adicionar revisão de termos sensíveis e alertas locais antes do compartilhamento, destacando possíveis conteúdos que mereçam remoção manual sem alterar automaticamente o texto.

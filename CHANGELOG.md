@@ -1,3 +1,14 @@
+# v0.58.17 — Production Operations Support Session Share Preview
+
+- Adiciona pré-visualização antes do download da sessão.
+- Exportar sessão agora exige revisão humana.
+- Mostra o mesmo Markdown que será baixado.
+- Adiciona métricas da prévia.
+- Adiciona Copiar prévia.
+- Adiciona Baixar revisado.
+- Não baixa, persiste ou envia nada ao abrir a prévia.
+- Adiciona drawer desktop e bottom sheet mobile.
+
 # v0.58.16 — Production Operations Support Session Export
 
 - Adiciona ação Exportar sessão.

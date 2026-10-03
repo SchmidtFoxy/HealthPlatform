@@ -9845,3 +9845,22 @@ O arquivo reúne:
 A exportação é gerada localmente no navegador, não persiste automaticamente a sessão e não inclui metadata interna de infraestrutura.
 
 **Próxima etapa:** `v0.58.17 — Production Operations Support Session Share Preview`.
+
+
+---
+
+## v0.58.17 — Production Operations Support Session Share Preview
+
+A exportação da **Sessão suporte** agora passa por uma etapa de revisão humana.
+
+Ao tocar em **Exportar sessão**, o sistema abre uma prévia local com:
+- conteúdo completo que será baixado;
+- quantidade de linhas e caracteres;
+- eventos da timeline;
+- evidências referenciadas;
+- ação para copiar;
+- ação explícita **Baixar revisado**.
+
+Abrir a prévia não baixa, salva ou envia o conteúdo automaticamente.
+
+**Próxima etapa:** `v0.58.18 — Production Operations Support Session Redaction Review`.
