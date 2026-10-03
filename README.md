@@ -9975,3 +9975,20 @@ O indicador de lifecycle agora inclui uma orientação curta para o estado atual
 A orientação descreve somente a **próxima ação disponível** no fluxo local, por exemplo revisar a exportação, conferir o recibo ou encerrar a sessão. Ela não executa ações, não toma decisões operacionais e não interfere em deploy, promoção ou rollback.
 
 **Próxima etapa:** `v0.58.25 — Production Operations Support Session Lifecycle Summary`.
+
+
+---
+
+## v0.58.25 — Production Operations Support Session Lifecycle Summary
+
+A **Sessão suporte** agora apresenta um resumo textual do ciclo atual, reunindo:
+- estado atual;
+- início e janela da sessão;
+- última revisão;
+- última exportação;
+- evidências selecionadas;
+- próxima ação disponível.
+
+O resumo pode ser copiado explicitamente para handoff. Ele não inclui conteúdo bruto de evidências, credenciais, segredos ou identificação do operador e permanece somente na memória da página.
+
+**Próxima etapa:** `v0.58.26 — Production Operations Support Session Lifecycle Handoff`.

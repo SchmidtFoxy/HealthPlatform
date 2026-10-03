@@ -8624,3 +8624,29 @@ Adicionar orientação contextual curta para cada etapa do ciclo da sessão, exp
 
 ### v0.58.25 — Production Operations Support Session Lifecycle Summary
 Adicionar um resumo textual local do ciclo atual da sessão, reunindo estado, última revisão, última exportação e próxima ação disponível para facilitar handoff sem persistir dados.
+
+
+## ✅ v0.58.25 — Production Operations Support Session Lifecycle Summary — CONCLUÍDA
+
+**Entregue:**
+- resumo textual local do ciclo atual da sessão;
+- estado atual da sessão;
+- horário de início da sessão;
+- janela operacional selecionada;
+- horário da última revisão;
+- horário da última exportação;
+- quantidade de evidências selecionadas;
+- próxima ação disponível derivada da orientação de lifecycle;
+- ação `Copiar resumo do ciclo`;
+- conteúdo exibido como texto seguro;
+- nenhum conteúdo bruto de evidências é incluído;
+- nenhuma credencial, segredo ou identificação do operador é incluída;
+- nenhuma chamada à API;
+- nenhuma persistência automática;
+- nenhuma alteração em produção;
+- layout responsivo para desktop e mobile.
+
+## Próxima etapa
+
+### v0.58.26 — Production Operations Support Session Lifecycle Handoff
+Adicionar um bloco local de handoff baseado no resumo do lifecycle, com contexto mínimo para continuidade do suporte e cópia explícita, sem persistir ou enviar automaticamente o conteúdo.

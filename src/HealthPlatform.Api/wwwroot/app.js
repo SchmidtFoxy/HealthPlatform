@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.24';
+const HP_MVP_VERSION='0.58.25';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27447,9 +27447,11 @@ function hpRenderSupportSessionV05815(){
     </div>
   </div>`;
 
+  hpHydrateSupportSessionLifecycleSummaryV05825();
   $('#opsSupportSessionCloseV05815')?.addEventListener('click',hpCloseSupportSessionV05815);
   $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpOpenSupportSessionSharePreviewV05817().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCloseoutV05822')?.addEventListener('click',hpCloseoutSupportSessionV05822);
+  $('#opsSupportSessionLifecycleSummaryCopyV05825')?.addEventListener('click',()=>hpCopySupportSessionLifecycleSummaryV05825().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
     hpSupportSessionResetV05815();
@@ -28189,6 +28191,7 @@ function hpSupportSessionLifecycleMarkupV05823(){
       ${steps.map(step=>`<span class="${step.done?'done':''}" data-lifecycle-step-v05823="${step.key}"><b>${step.done?'✓':'○'}</b>${esc(step.label)}</span>`).join('')}
     </div>
     ${hpSupportSessionLifecycleGuidanceMarkupV05824(lifecycle)}
+    ${hpSupportSessionLifecycleSummaryMarkupV05825(lifecycle)}
   </section>`;
 }
 
@@ -28251,4 +28254,66 @@ function hpSupportSessionLifecycleGuidanceMarkupV05824(lifecycle=hpSupportSessio
     <p>${esc(guidance.message)}</p>
     <small>${esc(guidance.action)}</small>
   </div>`;
+}
+
+
+// ===== v0.58.25 — Production Operations Support Session Lifecycle Summary =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_SUMMARY_V05825='v0.58.25';
+
+function hpSupportSessionLifecycleSummaryV05825(lifecycle=hpSupportSessionLifecycleV05823()){
+  const guidance=hpSupportSessionLifecycleGuidanceV05824(lifecycle);
+  const s=hpSupportSessionStateV05815;
+  const lines=[
+    'AESYN Performance - Support Session Lifecycle Summary',
+    `Versão da interface: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_SUMMARY_V05825}`,
+    `Estado atual: ${lifecycle.current}`,
+    `Sessão iniciada: ${s.startedAt||'não iniciada'}`,
+    `Janela: ${s.days||0} dias`,
+    `Última revisão: ${lifecycle.reviewedAt||'não registrada'}`,
+    `Última exportação: ${lifecycle.exportedAt||'não registrada'}`,
+    `Evidências selecionadas: ${s.evidences.length}`,
+    `Próxima ação disponível: ${String(guidance.action||'').replace(/^Ação disponível:\s*/,'')||'nenhuma'}`,
+    '',
+    'Resumo gerado localmente a partir do estado temporário da sessão.',
+    'Não inclui conteúdo bruto das evidências, credenciais, segredos ou identificação do operador.',
+    'Não persiste o resumo, não altera produção e não executa ações operacionais.'
+  ];
+  return lines.join('\n');
+}
+
+function hpSupportSessionLifecycleSummaryMarkupV05825(lifecycle=hpSupportSessionLifecycleV05823()){
+  const text=hpSupportSessionLifecycleSummaryV05825(lifecycle);
+  return `<div class="ops-support-lifecycle-summary-v05825">
+    <div class="ops-support-lifecycle-summary-head-v05825">
+      <div>
+        <span class="eyebrow">RESUMO DO CICLO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_SUMMARY_V05825}</span>
+        <strong>Handoff local da sessão</strong>
+      </div>
+      <button type="button" class="ghost" id="opsSupportSessionLifecycleSummaryCopyV05825">Copiar resumo do ciclo</button>
+    </div>
+    <pre id="opsSupportSessionLifecycleSummaryTextV05825"></pre>
+  </div>`;
+}
+
+function hpHydrateSupportSessionLifecycleSummaryV05825(){
+  const target=$('#opsSupportSessionLifecycleSummaryTextV05825');
+  if(target)target.textContent=hpSupportSessionLifecycleSummaryV05825();
+}
+
+async function hpCopySupportSessionLifecycleSummaryV05825(){
+  const text=hpSupportSessionLifecycleSummaryV05825();
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=text;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  toast('Resumo do ciclo copiado');
 }

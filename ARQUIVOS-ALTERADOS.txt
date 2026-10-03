@@ -1,4 +1,4 @@
-HealthPlatform v0.58.24 - Incremental
+HealthPlatform v0.58.25 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,12 +15,12 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Lifecycle Guidance;
-- orientacao contextual para cada estado do lifecycle;
-- proxima acao disponivel sem execucao automatica;
-- sem API, persistencia ou alteracao em producao;
-- proxima etapa v0.58.25 / Production Operations Support Session Lifecycle Summary.
+- Production Operations Support Session Lifecycle Summary;
+- resumo local com estado, revisao, exportacao e proxima acao;
+- copia explicita para handoff;
+- sem conteudo bruto de evidencias, API, persistencia ou alteracao em producao;
+- proxima etapa v0.58.26 / Production Operations Support Session Lifecycle Handoff.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.24
+Se aprovado, commit/push apenas: v0.58.25

@@ -1,3 +1,12 @@
+# v0.58.25 — Production Operations Support Session Lifecycle Summary
+
+- Adiciona resumo textual local do ciclo da sessão.
+- Reúne estado, início, janela, última revisão e última exportação.
+- Inclui quantidade de evidências e próxima ação disponível.
+- Adiciona Copiar resumo do ciclo.
+- Não inclui conteúdo bruto das evidências ou identificação do operador.
+- Não chama API, não persiste estado e não altera produção.
+
 # v0.58.24 — Production Operations Support Session Lifecycle Guidance
 
 - Adiciona orientação contextual por etapa do lifecycle.
