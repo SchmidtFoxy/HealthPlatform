@@ -8531,3 +8531,27 @@ Adicionar recibo local da revisão humana ao arquivo exportado, registrando apen
 
 ### v0.58.21 — Production Operations Support Session Receipt Preview
 Exibir uma prévia local do recibo de revisão antes do download, permitindo verificar horário e categorias confirmadas sem identificar o operador ou persistir o recibo.
+
+
+## ✅ v0.58.21 — Production Operations Support Session Receipt Preview — CONCLUÍDA
+
+**Entregue:**
+- pré-visualização local do recibo antes do download final;
+- horário ISO fixado no momento em que a prévia do recibo é aberta;
+- exibição das categorias confirmadas;
+- indicação explícita de que o operador não é coletado;
+- recibo exibido como texto somente leitura;
+- ação `Voltar à revisão`;
+- ação explícita `Baixar com recibo`;
+- o download final reutiliza exatamente o recibo exibido;
+- nova checagem do checklist imediatamente antes do download;
+- se o checklist mudar, o download é bloqueado e exige nova revisão;
+- nenhum download ocorre ao abrir a prévia do recibo;
+- recibo mantido apenas em memória;
+- nenhuma persistência ou envio automático;
+- drawer desktop e bottom sheet mobile.
+
+## Próxima etapa
+
+### v0.58.22 — Production Operations Support Session Closeout
+Adicionar fechamento explícito da sessão após exportação revisada, permitindo ao operador encerrar e limpar o contexto local de suporte somente por ação manual.

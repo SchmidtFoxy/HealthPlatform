@@ -1,3 +1,13 @@
+# v0.58.21 — Production Operations Support Session Receipt Preview
+
+- Adiciona prévia local do recibo antes do download.
+- Fixa horário e categorias da revisão no momento da prévia.
+- Mostra recibo somente leitura.
+- Adiciona Voltar à revisão e Baixar com recibo.
+- Revalida checklist antes do download.
+- Não baixa, persiste ou envia nada automaticamente ao abrir a prévia.
+- Adiciona drawer desktop e bottom sheet mobile.
+
 # v0.58.20 — Production Operations Support Session Review Receipt
 
 - Adiciona recibo de revisão ao Markdown exportado.

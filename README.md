@@ -9917,3 +9917,20 @@ O recibo registra somente:
 Ele declara explicitamente que a identificação do operador **não é coletada**. O recibo não é persistido nem enviado automaticamente.
 
 **Próxima etapa:** `v0.58.21 — Production Operations Support Session Receipt Preview`.
+
+
+---
+
+## v0.58.21 — Production Operations Support Session Receipt Preview
+
+Antes do download final, a **Sessão suporte** agora mostra uma prévia do recibo de revisão.
+
+A tela confirma:
+- horário da revisão;
+- categorias confirmadas;
+- ausência de identificação do operador;
+- conteúdo exato do recibo que será anexado.
+
+O download só acontece em **Baixar com recibo**. Se o checklist tiver mudado, o download é bloqueado e a revisão precisa ser refeita.
+
+**Próxima etapa:** `v0.58.22 — Production Operations Support Session Closeout`.

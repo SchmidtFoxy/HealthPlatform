@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.20';
+const HP_MVP_VERSION='0.58.21';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27779,18 +27779,7 @@ async function hpDownloadReviewedSupportSessionV05817(content){
     toast('Confirme os 4 itens do checklist antes do download',true);
     return;
   }
-  const button=$('#opsSupportSessionSharePreviewDownloadV05817');
-  if(button){button.disabled=true;button.textContent='Baixando…'}
-  try{
-    const startedAt=hpSupportSessionStateV05815.startedAt||new Date().toISOString();
-    const stamp=startedAt.replace(/[-:]/g,'').replace(/\..+$/,'').replace('T','-');
-    const fileName=`aesyn-support-session-${stamp}.md`;
-    const reviewedContent=hpSupportSessionAppendReviewReceiptV05820(text);
-    hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',reviewedContent);
-    toast(`Sessão revisada exportada • ${hpSupportSessionStateV05815.evidences.length} evidência(s)`);
-  }finally{
-    if(button){button.disabled=false;button.textContent='Baixar revisado'}
-  }
+  hpOpenSupportSessionReceiptPreviewV05821(text);
 }
 
 function hpCloseSupportSessionSharePreviewV05817(){
@@ -27976,4 +27965,125 @@ function hpSupportSessionAppendReviewReceiptV05820(content){
   const text=String(content||'').replace(/\s+$/,'');
   const receipt=hpSupportSessionBuildReviewReceiptV05820();
   return `${text}\n\n${receipt}\n`;
+}
+
+
+// ===== v0.58.21 — Production Operations Support Session Receipt Preview =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_RECEIPT_PREVIEW_V05821='v0.58.21';
+
+const hpSupportSessionReceiptPreviewStateV05821={
+  content:'',
+  reviewedAt:null,
+  receipt:''
+};
+
+function hpSupportSessionResetReceiptPreviewV05821(){
+  hpSupportSessionReceiptPreviewStateV05821.content='';
+  hpSupportSessionReceiptPreviewStateV05821.reviewedAt=null;
+  hpSupportSessionReceiptPreviewStateV05821.receipt='';
+}
+
+function hpRenderSupportSessionReceiptPreviewV05821(){
+  const host=$('#opsSupportSessionReceiptPreviewV05821');if(!host)return;
+  const state=hpSupportSessionReceiptPreviewStateV05821;
+  const categories=hpSupportSessionReviewReceiptCategoriesV05820();
+
+  host.innerHTML=`<div class="ops-support-receipt-preview-v05821">
+    <div class="ops-support-receipt-preview-head-v05821">
+      <div>
+        <span class="eyebrow">RECEIPT PREVIEW • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_RECEIPT_PREVIEW_V05821}</span>
+        <h3>Conferir recibo de revisão</h3>
+        <p>Última confirmação antes do download do Markdown.</p>
+      </div>
+      <button type="button" class="ghost" id="opsSupportSessionReceiptPreviewCloseV05821" aria-label="Fechar prévia do recibo">×</button>
+    </div>
+
+    <div class="ops-support-receipt-preview-meta-v05821">
+      <article><small>Revisado em</small><strong>${esc(state.reviewedAt||'—')}</strong></article>
+      <article><small>Categorias</small><strong>${esc(String(categories.length))}/4</strong></article>
+      <article><small>Operador</small><strong>Não coletado</strong></article>
+    </div>
+
+    <section class="ops-support-receipt-preview-categories-v05821">
+      <span class="eyebrow">CATEGORIAS CONFIRMADAS</span>
+      ${categories.length?categories.map(item=>`<article><span>✓</span><strong>${esc(item.label)}</strong></article>`).join(''):'<div class="ops-empty-v0582">Nenhuma categoria confirmada.</div>'}
+    </section>
+
+    <section class="ops-support-receipt-preview-text-v05821">
+      <div><span class="eyebrow">RECIBO QUE SERÁ ANEXADO</span><small>Somente leitura</small></div>
+      <pre id="opsSupportSessionReceiptPreviewTextV05821"></pre>
+    </section>
+
+    <div class="ops-support-receipt-preview-actions-v05821">
+      <button type="button" class="ghost" id="opsSupportSessionReceiptPreviewBackV05821">Voltar à revisão</button>
+      <button type="button" class="secondary" id="opsSupportSessionReceiptPreviewDownloadV05821">Baixar com recibo</button>
+    </div>
+
+    <div class="ops-support-boundary-v05810">
+      <p>O recibo mostra apenas horário e categorias confirmadas.</p>
+      <p>A identificação do operador não é coletada e o recibo não é persistido nem enviado automaticamente.</p>
+      <p>Nenhum download ocorre até a ação explícita “Baixar com recibo”.</p>
+    </div>
+  </div>`;
+
+  const preview=$('#opsSupportSessionReceiptPreviewTextV05821');
+  if(preview)preview.textContent=state.receipt;
+
+  $('#opsSupportSessionReceiptPreviewCloseV05821')?.addEventListener('click',hpCloseSupportSessionReceiptPreviewV05821);
+  $('#opsSupportSessionReceiptPreviewBackV05821')?.addEventListener('click',hpCloseSupportSessionReceiptPreviewV05821);
+  $('#opsSupportSessionReceiptPreviewDownloadV05821')?.addEventListener('click',()=>hpDownloadSupportSessionWithReceiptV05821().catch(err=>toast(err.message,true)));
+}
+
+function hpOpenSupportSessionReceiptPreviewV05821(content){
+  const text=String(content||'');
+  if(!text)return;
+  if(!hpSupportSessionRedactionChecklistCompleteV05819()){
+    toast('Confirme os 4 itens do checklist antes do recibo',true);
+    return;
+  }
+
+  const panel=$('#opsSupportSessionReceiptPreviewPanelV05821');
+  const backdrop=$('#opsSupportSessionReceiptPreviewBackdropV05821');
+  const host=$('#opsSupportSessionReceiptPreviewV05821');
+  if(!panel||!backdrop||!host)return;
+
+  const reviewedAt=new Date().toISOString();
+  hpSupportSessionReceiptPreviewStateV05821.content=text;
+  hpSupportSessionReceiptPreviewStateV05821.reviewedAt=reviewedAt;
+  hpSupportSessionReceiptPreviewStateV05821.receipt=hpSupportSessionBuildReviewReceiptV05820(reviewedAt);
+
+  document.body.classList.add('ops-support-receipt-preview-open-v05821');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  hpRenderSupportSessionReceiptPreviewV05821();
+}
+
+function hpCloseSupportSessionReceiptPreviewV05821(){
+  $('#opsSupportSessionReceiptPreviewBackdropV05821')?.classList.add('hidden');
+  $('#opsSupportSessionReceiptPreviewPanelV05821')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-receipt-preview-open-v05821');
+}
+
+async function hpDownloadSupportSessionWithReceiptV05821(){
+  const state=hpSupportSessionReceiptPreviewStateV05821;
+  if(!state.content||!state.reviewedAt||!state.receipt)return;
+  if(!hpSupportSessionRedactionChecklistCompleteV05819()){
+    hpCloseSupportSessionReceiptPreviewV05821();
+    toast('O checklist mudou. Revise novamente antes do download',true);
+    return;
+  }
+
+  const button=$('#opsSupportSessionReceiptPreviewDownloadV05821');
+  if(button){button.disabled=true;button.textContent='Baixando…'}
+  try{
+    const startedAt=hpSupportSessionStateV05815.startedAt||new Date().toISOString();
+    const stamp=startedAt.replace(/[-:]/g,'').replace(/\..+$/,'').replace('T','-');
+    const fileName=`aesyn-support-session-${stamp}.md`;
+    const finalContent=`${String(state.content).replace(/\s+$/,'')}\n\n${state.receipt}\n`;
+    hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',finalContent);
+    hpCloseSupportSessionReceiptPreviewV05821();
+    toast(`Sessão revisada exportada com recibo • ${hpSupportSessionStateV05815.evidences.length} evidência(s)`);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Baixar com recibo'}
+  }
 }
