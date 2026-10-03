@@ -10235,3 +10235,18 @@ A continuidade após o fechamento agora possui um handoff local compacto com:
 O handoff é somente leitura e não executa, persiste ou envia ações.
 
 **Próxima etapa:** `v0.58.43 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance`.
+
+
+---
+
+## v0.58.43 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance
+
+O handoff da continuidade agora apresenta uma orientação curta e local, deixando explícita apenas a próxima decisão manual disponível.
+
+A orientação:
+- aparece somente quando a continuidade está disponível;
+- confirma que a sessão de suporte permanece ativa;
+- deriva a decisão da próxima ação manual já calculada pela v0.58.40;
+- não executa, persiste ou envia ações.
+
+**Próxima etapa:** `v0.58.44 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Summary`.

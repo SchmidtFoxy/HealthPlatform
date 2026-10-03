@@ -1,3 +1,11 @@
+# v0.58.43 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance
+
+- Adiciona orientação local curta ao handoff da continuidade.
+- Explicita apenas a próxima decisão manual disponível.
+- Mantém a sessão de suporte ativa e o handoff somente para consulta.
+- Não adiciona handlers ou automações.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.42 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff
 
 - Adiciona handoff local compacto da continuidade.

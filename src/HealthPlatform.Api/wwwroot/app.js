@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.42';
+const HP_MVP_VERSION='0.58.43';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -29156,7 +29156,8 @@ function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
   ${hpSupportSessionHandoffCopyVerificationClosureHandoffMarkupV05839()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityMarkupV05840()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuitySummaryMarkupV05841()}
-  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffMarkupV05842()}`;
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffMarkupV05842()}
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceMarkupV05843()}`;
 
   hpHydrateSupportSessionHandoffCopyVerificationClosureSummaryV05838();
   hpHydrateSupportSessionHandoffCopyVerificationClosureHandoffV05839();
@@ -29380,4 +29381,40 @@ function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffMarkupV0
 function hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffV05842(){
   const target=$('#opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffTextV05842');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffV05842();
+}
+
+// ===== v0.58.43 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_V05843='v0.58.43';
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceV05843(){
+  const continuity=hpSupportSessionHandoffCopyVerificationClosureContinuityV05840();
+  if(!continuity.available){
+    return {
+      available:false,
+      title:'Continuidade ainda indisponível',
+      message:'Conclua primeiro o fechamento manual da conferência.',
+      decision:'Próxima decisão manual disponível: concluir o fechamento da conferência.'
+    };
+  }
+
+  return {
+    available:true,
+    title:'Continuidade pronta para decisão manual',
+    message:'A sessão de suporte permanece ativa e o handoff de continuidade está disponível apenas para consulta.',
+    decision:`Próxima decisão manual disponível: ${continuity.nextAction}`
+  };
+}
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceMarkupV05843(){
+  const guidance=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceV05843();
+  if(!guidance.available)return '';
+
+  return `<div class="ops-support-handoff-copy-verification-closure-continuity-handoff-guidance-v05843">
+    <div>
+      <span class="eyebrow">ORIENTAÇÃO DO HANDOFF • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_V05843}</span>
+      <strong>${esc(guidance.title)}</strong>
+    </div>
+    <p>${esc(guidance.message)}</p>
+    <small>${esc(guidance.decision)}</small>
+  </div>`;
 }
