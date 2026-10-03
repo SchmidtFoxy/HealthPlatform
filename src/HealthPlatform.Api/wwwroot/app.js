@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.18';
+const HP_MVP_VERSION='0.58.19';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27699,6 +27699,20 @@ function hpRenderSupportSessionSharePreviewV05817(content){
       <small>A análise apenas sinaliza possíveis riscos. Nada é removido ou alterado automaticamente.</small>
     </section>
 
+    <section class="ops-support-redaction-checklist-v05819">
+      <div class="ops-support-redaction-checklist-head-v05819">
+        <div><span class="eyebrow">REDACTION CHECKLIST • v0.58.19</span><strong>Confirmações antes do download</strong></div>
+        <span class="ops-status-v0582 warn" id="opsSupportRedactionChecklistStatusV05819">0/4 confirmado(s)</span>
+      </div>
+      <div class="ops-support-redaction-checklist-items-v05819">
+        <label><input type="checkbox" data-redaction-check-v05819="credentials"><span><strong>Credenciais e segredos</strong><small>Confirme que senhas, tokens, chaves e credenciais não estão presentes.</small></span></label>
+        <label><input type="checkbox" data-redaction-check-v05819="paths"><span><strong>Caminhos e infraestrutura</strong><small>Confirme que caminhos internos, hosts, IPs e referências de infraestrutura foram revisados.</small></span></label>
+        <label><input type="checkbox" data-redaction-check-v05819="personal"><span><strong>Dados pessoais</strong><small>Confirme que e-mails, nomes ou outros dados pessoais foram revisados antes do compartilhamento.</small></span></label>
+        <label><input type="checkbox" data-redaction-check-v05819="context"><span><strong>Contexto operacional</strong><small>Confirme que o resumo técnico está adequado para o destinatário e não revela contexto indevido.</small></span></label>
+      </div>
+      <p class="ops-support-redaction-checklist-note-v05819">O checklist registra apenas a confirmação local desta prévia. Nenhuma confirmação é persistida ou enviada.</p>
+    </section>
+
     <section class="ops-support-share-preview-content-v05817">
       <div class="ops-support-share-preview-title-v05817">
         <span class="eyebrow">CONTEÚDO DO ARQUIVO</span>
@@ -27726,8 +27740,13 @@ function hpRenderSupportSessionSharePreviewV05817(content){
   if(editor){
     editor.value=text;
     hpRenderSupportSessionRedactionReviewV05818(text);
-    editor.addEventListener('input',()=>hpRenderSupportSessionRedactionReviewV05818(editor.value));
+    editor.addEventListener('input',()=>{
+      hpRenderSupportSessionRedactionReviewV05818(editor.value);
+      hpSupportSessionResetRedactionChecklistV05819();
+    });
   }
+
+  hpSupportSessionBindRedactionChecklistV05819();
 
   $('#opsSupportSessionSharePreviewCloseV05817')?.addEventListener('click',hpCloseSupportSessionSharePreviewV05817);
   $('#opsSupportSessionSharePreviewCopyV05817')?.addEventListener('click',()=>hpCopySupportSessionSharePreviewV05817(hpSupportSessionReviewedTextV05818(text)).catch(err=>toast(err.message,true)));
@@ -27756,6 +27775,10 @@ async function hpCopySupportSessionSharePreviewV05817(content){
 async function hpDownloadReviewedSupportSessionV05817(content){
   const text=String(content||'');
   if(!text)return;
+  if(!hpSupportSessionRedactionChecklistCompleteV05819()){
+    toast('Confirme os 4 itens do checklist antes do download',true);
+    return;
+  }
   const button=$('#opsSupportSessionSharePreviewDownloadV05817');
   if(button){button.disabled=true;button.textContent='Baixando…'}
   try{
@@ -27849,4 +27872,55 @@ function hpRenderSupportSessionRedactionReviewV05818(content){
         ${item.samples.length?`<small>${item.samples.map(sample=>esc(sample)).join(' • ')}</small>`:''}
       </article>`).join('')}</div>`
     : `<div class="ops-support-redaction-empty-v05818">Nenhum padrão sensível conhecido foi detectado. Ainda assim, faça revisão humana antes de compartilhar.</div>`;
+}
+
+
+// ===== v0.58.19 — Production Operations Support Session Redaction Checklist =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_REDACTION_CHECKLIST_V05819='v0.58.19';
+
+function hpSupportSessionRedactionChecklistInputsV05819(){
+  return [...document.querySelectorAll('[data-redaction-check-v05819]')];
+}
+
+function hpSupportSessionRedactionChecklistStateV05819(){
+  const inputs=hpSupportSessionRedactionChecklistInputsV05819();
+  const confirmed=inputs.filter(input=>input.checked).length;
+  return {
+    total:inputs.length,
+    confirmed,
+    complete:inputs.length===4&&confirmed===4
+  };
+}
+
+function hpSupportSessionRenderRedactionChecklistStatusV05819(){
+  const state=hpSupportSessionRedactionChecklistStateV05819();
+  const status=$('#opsSupportRedactionChecklistStatusV05819');
+  const download=$('#opsSupportSessionSharePreviewDownloadV05817');
+
+  if(status){
+    status.className=`ops-status-v0582 ${state.complete?'ok':'warn'}`;
+    status.textContent=state.complete?'Revisão confirmada':`${state.confirmed}/${state.total} confirmado(s)`;
+  }
+
+  if(download){
+    download.disabled=!state.complete;
+    download.title=state.complete?'Checklist concluído':'Confirme os 4 itens do checklist antes do download';
+  }
+}
+
+function hpSupportSessionBindRedactionChecklistV05819(){
+  hpSupportSessionRedactionChecklistInputsV05819().forEach(input=>{
+    input.checked=false;
+    input.addEventListener('change',hpSupportSessionRenderRedactionChecklistStatusV05819);
+  });
+  hpSupportSessionRenderRedactionChecklistStatusV05819();
+}
+
+function hpSupportSessionResetRedactionChecklistV05819(){
+  hpSupportSessionRedactionChecklistInputsV05819().forEach(input=>{input.checked=false;});
+  hpSupportSessionRenderRedactionChecklistStatusV05819();
+}
+
+function hpSupportSessionRedactionChecklistCompleteV05819(){
+  return hpSupportSessionRedactionChecklistStateV05819().complete;
 }

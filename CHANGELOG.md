@@ -1,3 +1,13 @@
+# v0.58.19 — Production Operations Support Session Redaction Checklist
+
+- Adiciona checklist explícito de revisão antes do download.
+- Exige confirmação de 4 categorias.
+- Bloqueia Baixar revisado até 4/4.
+- Reinicia checklist após edição do texto.
+- Mantém confirmações apenas em memória.
+- Não persiste nem envia confirmações.
+- Mantém revisão e decisão final sob controle humano.
+
 # v0.58.18 — Production Operations Support Session Redaction Review
 
 - Adiciona scanner local de possíveis conteúdos sensíveis.

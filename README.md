@@ -9884,3 +9884,20 @@ São sinalizados padrões como:
 O sistema **não remove nada automaticamente**. O operador pode revisar manualmente o texto e os botões **Copiar prévia** e **Baixar revisado** usam exatamente a versão editada.
 
 **Próxima etapa:** `v0.58.19 — Production Operations Support Session Redaction Checklist`.
+
+
+---
+
+## v0.58.19 — Production Operations Support Session Redaction Checklist
+
+A prévia de compartilhamento agora exige quatro confirmações antes do download:
+- credenciais e segredos;
+- caminhos e infraestrutura;
+- dados pessoais;
+- contexto operacional.
+
+O botão **Baixar revisado** fica bloqueado até `4/4`. Qualquer edição do conteúdo reinicia as confirmações para evitar que uma revisão antiga valide um texto novo.
+
+As confirmações existem apenas na memória da prévia e não são enviadas ou persistidas.
+
+**Próxima etapa:** `v0.58.20 — Production Operations Support Session Review Receipt`.
