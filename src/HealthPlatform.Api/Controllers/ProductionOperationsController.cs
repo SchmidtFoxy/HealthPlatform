@@ -120,6 +120,121 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/reliability/detail")]
+    public async Task<ActionResult<ProductionReliabilityDetailResponse>> GetReliabilityDetail(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 2 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 2 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var midpoint = from.AddTicks((now - from).Ticks / 2);
+
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .ToList();
+
+        var previousHalf = periodItems.Where(x => x.RecordedAt < midpoint).ToList();
+        var recentHalf = periodItems.Where(x => x.RecordedAt >= midpoint).ToList();
+
+        var previousHealthy = previousHalf.Count(IsHealthy);
+        var recentHealthy = recentHalf.Count(IsHealthy);
+        var previousHealthyPercentage = Percentage(previousHealthy, previousHalf.Count);
+        var recentHealthyPercentage = Percentage(recentHealthy, recentHalf.Count);
+        var healthyPercentageDelta = Math.Round(
+            recentHealthyPercentage - previousHealthyPercentage,
+            1,
+            MidpointRounding.AwayFromZero);
+
+        var currentHealthyStreak = 0;
+        foreach (var item in periodItems)
+        {
+            if (!IsHealthy(item))
+            {
+                break;
+            }
+
+            currentHealthyStreak++;
+        }
+
+        var lastRollback = periodItems.FirstOrDefault(x => x.RollbackExecuted);
+        var lastHealthyApply = periodItems.FirstOrDefault(x =>
+            IsHealthy(x) &&
+            string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase));
+
+        var stabilityDirection =
+            healthyPercentageDelta >= 10m ? "improving" :
+            healthyPercentageDelta <= -10m ? "degrading" :
+            "stable";
+
+        var explanations = new[]
+        {
+            new ProductionReliabilityExplanation(
+                "healthy-streak",
+                "Sequencia saudavel",
+                $"Conta ciclos consecutivos a partir do deploy mais recente ate o primeiro ciclo que nao atende ao criterio saudavel. Resultado atual: {currentHealthyStreak}.",
+                "Informativo"),
+
+            new ProductionReliabilityExplanation(
+                "last-rollback",
+                "Ultimo rollback",
+                lastRollback is null
+                    ? "Nenhum rollback foi registrado dentro da janela selecionada."
+                    : $"Rollback mais recente na janela: {lastRollback.Version} em {lastRollback.RecordedAt:O}.",
+                "Informativo"),
+
+            new ProductionReliabilityExplanation(
+                "last-healthy-apply",
+                "Ultimo apply saudavel",
+                lastHealthyApply is null
+                    ? "Nenhum ciclo apply saudavel foi encontrado dentro da janela selecionada."
+                    : $"Apply saudavel mais recente: {lastHealthyApply.Version} em {lastHealthyApply.RecordedAt:O}.",
+                "Informativo"),
+
+            new ProductionReliabilityExplanation(
+                "stability",
+                "Direcao de estabilidade",
+                $"Compara a taxa saudavel da metade recente ({recentHealthyPercentage}%) com a metade anterior ({previousHealthyPercentage}%). Delta: {healthyPercentageDelta} p.p. Limiar: >= +10 improving; <= -10 degrading; entre os limites stable.",
+                "Informativo")
+        };
+
+        return Ok(new ProductionReliabilityDetailResponse(
+            days,
+            from,
+            midpoint,
+            now,
+            new ProductionReliabilityWindow(
+                "previous",
+                from,
+                midpoint,
+                previousHalf.Count,
+                previousHealthy,
+                previousHealthyPercentage),
+            new ProductionReliabilityWindow(
+                "recent",
+                midpoint,
+                now,
+                recentHalf.Count,
+                recentHealthy,
+                recentHealthyPercentage),
+            currentHealthyStreak,
+            lastRollback?.Version,
+            lastRollback?.RecordedAt,
+            lastHealthyApply?.Version,
+            lastHealthyApply?.RecordedAt,
+            healthyPercentageDelta,
+            stabilityDirection,
+            explanations));
+    }
+
     [HttpGet("deploys/reliability")]
     public async Task<ActionResult<ProductionReliabilitySignalsResponse>> GetReliabilitySignals(
         [FromQuery] int days = 30,
@@ -476,6 +591,36 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionReliabilityDetailResponse(
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset Midpoint,
+    DateTimeOffset To,
+    ProductionReliabilityWindow PreviousWindow,
+    ProductionReliabilityWindow RecentWindow,
+    int CurrentHealthyStreak,
+    string? LastRollbackVersion,
+    DateTimeOffset? LastRollbackAt,
+    string? LastHealthyApplyVersion,
+    DateTimeOffset? LastHealthyApplyAt,
+    decimal HealthyPercentageDelta,
+    string StabilityDirection,
+    IReadOnlyList<ProductionReliabilityExplanation> Explanations);
+
+public sealed record ProductionReliabilityWindow(
+    string Key,
+    DateTimeOffset From,
+    DateTimeOffset To,
+    int TotalDeploys,
+    int HealthyDeploys,
+    decimal HealthyPercentage);
+
+public sealed record ProductionReliabilityExplanation(
+    string Key,
+    string Label,
+    string Calculation,
+    string DecisionBoundary);
 
 public sealed record ProductionReliabilitySignalsResponse(
     int Days,

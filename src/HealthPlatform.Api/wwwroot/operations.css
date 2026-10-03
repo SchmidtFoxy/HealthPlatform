@@ -153,3 +153,38 @@ body.ops-detail-open-v0583{overflow:hidden}
   .ops-reliability-head-v0586>small{text-align:left}
   .ops-reliability-grid-v0586{grid-template-columns:1fr}
 }
+
+
+/* v0.58.7 — Production Operations Reliability Detail */
+.ops-reliability-actions-v0587{display:flex;align-items:center;gap:10px}
+.ops-reliability-actions-v0587 small{opacity:.58;max-width:320px;text-align:right}
+.ops-reliability-detail-backdrop-v0587{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:1210}
+.ops-reliability-detail-panel-v0587{position:fixed;top:0;right:0;height:100dvh;width:min(620px,96vw);z-index:1220;background:#0f1514;border-left:1px solid rgba(255,255,255,.08);box-shadow:-20px 0 50px rgba(0,0,0,.28);overflow:auto}
+body.ops-reliability-detail-open-v0587{overflow:hidden}
+.ops-reliability-detail-v0587{padding:22px;display:grid;gap:18px}
+.ops-reliability-detail-head-v0587{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.ops-reliability-detail-head-v0587 h3{margin:4px 0 5px}
+.ops-reliability-detail-head-v0587 p{margin:0;opacity:.65}
+.ops-reliability-windows-v0587{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ops-reliability-window-v0587{padding:15px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.025)}
+.ops-reliability-window-v0587 small,.ops-reliability-result-v0587 small{display:block;font-size:.67rem;text-transform:uppercase;letter-spacing:.06em;opacity:.58}
+.ops-reliability-window-v0587 strong{display:block;margin-top:6px;font-size:1.3rem}
+.ops-reliability-window-v0587 span{display:block;margin-top:4px;font-size:.78rem;opacity:.74}
+.ops-reliability-window-v0587 em{display:block;margin-top:8px;font-size:.7rem;font-style:normal;opacity:.5}
+.ops-reliability-result-v0587{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ops-reliability-result-v0587>div{padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)}
+.ops-reliability-result-v0587 strong{display:block;margin-top:6px}
+.ops-reliability-explanations-v0587{display:grid;gap:10px}
+.ops-reliability-explanations-v0587 article{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.02)}
+.ops-reliability-explanations-v0587 article>div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-reliability-explanations-v0587 article>div span{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;opacity:.55}
+.ops-reliability-explanations-v0587 p{margin:8px 0 0;font-size:.84rem;line-height:1.48;opacity:.76}
+@media (max-width:680px){
+  .ops-reliability-actions-v0587{align-items:stretch;flex-direction:column}
+  .ops-reliability-actions-v0587 small{text-align:left;max-width:none}
+  .ops-reliability-actions-v0587 button{width:100%}
+  .ops-reliability-detail-panel-v0587{width:100%;top:auto;bottom:0;height:min(90dvh,820px);border-left:0;border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0}
+  .ops-reliability-detail-v0587{padding:18px 16px 26px}
+  .ops-reliability-windows-v0587{grid-template-columns:1fr}
+  .ops-reliability-result-v0587{grid-template-columns:1fr}
+}

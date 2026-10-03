@@ -8194,3 +8194,27 @@ Adicionar sinais operacionais derivados das tendências, como sequência de cicl
 
 ### v0.58.7 — Production Operations Reliability Detail
 Permitir detalhar como cada sinal de confiabilidade foi calculado, com janela comparativa, contagens e explicação operacional rastreável, sem transformar o indicador em decisão automática.
+
+
+## ✅ v0.58.7 — Production Operations Reliability Detail — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/reliability/detail`;
+- detalhe da janela selecionada de confiabilidade;
+- divisão explícita entre metade anterior e metade recente;
+- contagem total e saudável em cada janela;
+- percentual saudável de cada metade;
+- delta em pontos percentuais;
+- explicação rastreável da sequência saudável;
+- explicação rastreável do último rollback;
+- explicação rastreável do último `apply` saudável;
+- explicação do limiar de estabilidade (`improving`, `stable`, `degrading`);
+- botão `Como foi calculado` no painel de confiabilidade;
+- drawer no desktop e bottom sheet no mobile;
+- resposta somente leitura e sem metadata interna;
+- o detalhe não executa, recomenda, autoriza ou automatiza deploy, promoção ou rollback.
+
+## Próxima etapa
+
+### v0.58.8 — Production Operations Reliability Export
+Permitir exportar uma visão segura e legível dos sinais, janelas comparativas e histórico operacional para auditoria técnica, sem exportar segredos, caminhos internos ou dados sensíveis.

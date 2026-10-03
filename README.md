@@ -9675,3 +9675,21 @@ A área **Operações** agora apresenta sinais derivados do histórico:
 A direção compara a taxa saudável da metade mais recente do período com a metade anterior. Ela é apenas informativa e não executa ou recomenda deploy, rollback ou promoção automaticamente.
 
 **Próxima etapa:** `v0.58.7 — Production Operations Reliability Detail`.
+
+
+---
+
+## v0.58.7 — Production Operations Reliability Detail
+
+O painel **Sinais operacionais** ganhou a ação **Como foi calculado**.
+
+O detalhe mostra:
+- metade anterior e metade recente da janela;
+- contagens de deploys e ciclos saudáveis;
+- percentuais;
+- delta em pontos percentuais;
+- explicação individual de cada sinal.
+
+A visualização é somente leitura e explicativa. Não executa nem recomenda decisões de deploy, promoção ou rollback.
+
+**Próxima etapa:** `v0.58.8 — Production Operations Reliability Export`.

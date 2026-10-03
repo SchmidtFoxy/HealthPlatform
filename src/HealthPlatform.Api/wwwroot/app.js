@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.6';
+const HP_MVP_VERSION='0.58.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><small>Leitura derivada do histórico, sem automação de deploy</small></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26584,6 +26584,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsRefreshV0582')?.addEventListener('click',()=>hpFetchOperationsV0582().catch(e=>toast(e.message,true)));
   $('#opsFiltersV0584')?.addEventListener('submit',e=>{e.preventDefault();hpApplyOperationsFiltersV0584(e.currentTarget);});
   $('#opsClearFiltersV0584')?.addEventListener('click',hpClearOperationsFiltersV0584);
+  $('#opsReliabilityDetailButtonV0587')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpOpenReliabilityDetailV0587(days).catch(err=>toast(err.message,true));
+  });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
     Promise.all([hpFetchProductionTrendsV0585(days),hpFetchReliabilitySignalsV0586(days)]).catch(err=>toast(err.message,true));
@@ -26789,4 +26793,63 @@ async function hpFetchReliabilitySignalsV0586(days=30){
   const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
   const data=await api(`/api/operacoes-producao/deploys/reliability?days=${safeDays}`);
   hpRenderReliabilitySignalsV0586(data);
+}
+
+
+// ===== v0.58.7 — Production Operations Reliability Detail =====
+const HP_PRODUCTION_OPERATIONS_RELIABILITY_DETAIL_V0587='v0.58.7';
+
+function hpReliabilityWindowCardV0587(title,window){
+  return `<article class="ops-reliability-window-v0587">
+    <small>${esc(title)}</small>
+    <strong>${hpOpsPercentV0585(window?.healthyPercentage)}</strong>
+    <span>${window?.healthyDeploys||0} saudável(is) de ${window?.totalDeploys||0} deploy(s)</span>
+    <em>${hpOpsDateV0582(window?.from)} → ${hpOpsDateV0582(window?.to)}</em>
+  </article>`;
+}
+function hpRenderReliabilityDetailV0587(data){
+  const host=$('#opsReliabilityDetailV0587');if(!host)return;
+  const [kind,directionLabel]=hpOpsReliabilityDirectionV0586(data?.stabilityDirection);
+  const delta=Number(data?.healthyPercentageDelta||0);
+  const deltaText=`${delta>0?'+':''}${delta.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})} p.p.`;
+
+  host.innerHTML=`<div class="ops-reliability-detail-v0587">
+    <div class="ops-reliability-detail-head-v0587">
+      <div><span class="eyebrow">RELIABILITY DETAIL • ${HP_PRODUCTION_OPERATIONS_RELIABILITY_DETAIL_V0587}</span><h3>Como os sinais foram calculados</h3><p>Janela de ${data?.days||0} dias, dividida em duas metades comparáveis.</p></div>
+      <button type="button" class="ghost" id="opsReliabilityDetailCloseV0587" aria-label="Fechar detalhe de confiabilidade">×</button>
+    </div>
+    <div class="ops-reliability-windows-v0587">
+      ${hpReliabilityWindowCardV0587('Metade anterior',data?.previousWindow)}
+      ${hpReliabilityWindowCardV0587('Metade recente',data?.recentWindow)}
+    </div>
+    <div class="ops-reliability-result-v0587">
+      <div><small>Delta saudável</small><strong>${esc(deltaText)}</strong></div>
+      <div><small>Direção</small><strong><span class="ops-status-v0582 ${kind}">${esc(directionLabel)}</span></strong></div>
+      <div><small>Sequência atual</small><strong>${data?.currentHealthyStreak||0} ciclo(s)</strong></div>
+    </div>
+    <section class="ops-reliability-explanations-v0587">
+      ${(data?.explanations||[]).map(item=>`<article>
+        <div><strong>${esc(item.label)}</strong><span>${esc(item.decisionBoundary||'Informativo')}</span></div>
+        <p>${esc(item.calculation||'')}</p>
+      </article>`).join('')}
+    </section>
+    <div class="ops-detail-safe-v0583">Explicação rastreável e somente leitura. Não executa, recomenda ou autoriza deploy, promoção ou rollback.</div>
+  </div>`;
+  $('#opsReliabilityDetailCloseV0587')?.addEventListener('click',hpCloseReliabilityDetailV0587);
+}
+function hpCloseReliabilityDetailV0587(){
+  $('#opsReliabilityDetailBackdropV0587')?.classList.add('hidden');
+  $('#opsReliabilityDetailPanelV0587')?.classList.add('hidden');
+  document.body.classList.remove('ops-reliability-detail-open-v0587');
+}
+async function hpOpenReliabilityDetailV0587(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const panel=$('#opsReliabilityDetailPanelV0587'),backdrop=$('#opsReliabilityDetailBackdropV0587'),host=$('#opsReliabilityDetailV0587');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-reliability-detail-open-v0587');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Carregando cálculo dos sinais');
+  const data=await api(`/api/operacoes-producao/deploys/reliability/detail?days=${safeDays}`);
+  hpRenderReliabilityDetailV0587(data);
 }

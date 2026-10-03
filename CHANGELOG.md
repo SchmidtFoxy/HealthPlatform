@@ -1,3 +1,13 @@
+# v0.58.7 — Production Operations Reliability Detail
+
+- Adiciona endpoint detalhado de confiabilidade.
+- Expõe janelas anterior/recente e suas contagens.
+- Expõe percentuais e delta.
+- Adiciona explicações rastreáveis de cada sinal.
+- Adiciona botão Como foi calculado.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Mantém o detalhe somente leitura e sem automação operacional.
+
 # v0.58.6 — Production Operations Reliability Signals
 
 - Adiciona endpoint de sinais de confiabilidade.
