@@ -1,4 +1,4 @@
-HealthPlatform v0.58.37 - Incremental
+HealthPlatform v0.58.38-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,13 +15,21 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Handoff Copy Verification Closure;
-- fechamento manual somente do contexto visual da conferencia;
-- sessao de suporte, handoff e dados temporarios preservados;
-- horario/status do fechamento apenas em memoria;
-- sem clipboard read/write, API, persistencia ou alteracao em producao;
-- proxima etapa v0.58.38 / Production Operations Support Session Handoff Copy Verification Closure Summary.
+- Production Operations Support Session Handoff Copy Verification Closure Summary;
+- resumo local do fechamento com horario, status final e preservacao da sessao/handoff;
+- somente leitura;
+- sem clipboard read/write, handlers, API, persistencia ou alteracao em producao;
+- proxima etapa v0.58.39 / Production Operations Support Session Handoff Copy Verification Closure Handoff.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.37
+Se aprovado, commit/push apenas: v0.58.38
+
+Hotfix cumulativo r1:
+- corrige a serializacao do gate v0.58.38 em TESTAR.ps1;
+- sequencias literais `\n` foram normalizadas para quebras de linha reais;
+- corrige o erro de parser PowerShell `UnexpectedToken`;
+- nenhum codigo funcional da v0.58.38 foi alterado;
+- VERSION.txt permanece 0.58.38;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.38.

@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.37';
+const HP_MVP_VERSION='0.58.38';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -29151,10 +29151,14 @@ function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
     <span><small>Status no fechamento</small><b>${esc(label)}</b></span>
     <span><small>Sessão de suporte</small><b>Permanece ativa</b></span>
   </div>
-  <p>Fechamento local e transitório. Nenhum dado da sessão foi apagado, persistido, enviado ou alterado em produção.</p>`;
+  <p>Fechamento local e transitório. Nenhum dado da sessão foi apagado, persistido, enviado ou alterado em produção.</p>
+  ${hpSupportSessionHandoffCopyVerificationClosureSummaryMarkupV05838()}`;
+
+  hpHydrateSupportSessionHandoffCopyVerificationClosureSummaryV05838();
 }
 
 function hpBindSupportSessionHandoffCopyVerificationClosureV05837(){
   const button=$('#opsSupportSessionHandoffCopyVerificationCloseV05837');
   if(button)button.addEventListener('click',hpSupportSessionCloseHandoffCopyVerificationV05837,{once:true});
 }
+\n\n// ===== v0.58.38 — Production Operations Support Session Handoff Copy Verification Closure Summary =====\nconst HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_SUMMARY_V05838='v0.58.38';\n\nfunction hpSupportSessionHandoffCopyVerificationClosureSummaryV05838(){\n  const closure=hpSupportSessionHandoffCopyVerificationClosureStateV05837;\n  if(!closure.closedAt)return '';\n\n  const label=closure.statusAtClosure==='verified'?'Verificado':'Divergente';\n\n  return [\n    'AESYN Performance - Support Session Handoff Copy Verification Closure Summary',\n    `Versão: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_SUMMARY_V05838}`,\n    `Encerrado em: ${closure.closedAt}`,\n    `Status final: ${label}`,\n    'Sessão de suporte: permanece ativa',\n    'Conteúdo do handoff: preservado',\n    'Dados temporários da sessão: preservados',\n    '',\n    'Resumo local e transitório do fechamento da conferência.',\n    'Nenhum dado é persistido, enviado automaticamente ou alterado em produção.'\n  ].join('\\n');\n}\n\nfunction hpSupportSessionHandoffCopyVerificationClosureSummaryMarkupV05838(){\n  const closure=hpSupportSessionHandoffCopyVerificationClosureStateV05837;\n  if(!closure.closedAt)return '';\n\n  return `<div class="ops-support-handoff-copy-verification-closure-summary-v05838">\n    <div class="ops-support-handoff-copy-verification-closure-summary-head-v05838">\n      <span class="eyebrow">RESUMO DO FECHAMENTO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_SUMMARY_V05838}</span>\n      <strong>Somente leitura</strong>\n    </div>\n    <pre id="opsSupportSessionHandoffCopyVerificationClosureSummaryTextV05838"></pre>\n  </div>`;\n}\n\nfunction hpHydrateSupportSessionHandoffCopyVerificationClosureSummaryV05838(){\n  const target=$('#opsSupportSessionHandoffCopyVerificationClosureSummaryTextV05838');\n  if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureSummaryV05838();\n}\n

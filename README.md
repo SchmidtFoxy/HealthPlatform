@@ -10173,3 +10173,14 @@ O fechamento:
 - não altera produção.
 
 **Próxima etapa:** `v0.58.38 — Production Operations Support Session Handoff Copy Verification Closure Summary`.
+
+
+---
+
+## v0.58.38 — Production Operations Support Session Handoff Copy Verification Closure Summary
+
+O fechamento manual da conferência agora apresenta um resumo textual local com horário, status final, sessão de suporte ativa e preservação do handoff/dados temporários.
+
+O resumo é somente leitura, usa apenas estado local e não persiste nem envia informações.
+
+**Próxima etapa:** `v0.58.39 — Production Operations Support Session Handoff Copy Verification Closure Handoff`.
