@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.25';
+const HP_MVP_VERSION='0.58.26';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27448,10 +27448,12 @@ function hpRenderSupportSessionV05815(){
   </div>`;
 
   hpHydrateSupportSessionLifecycleSummaryV05825();
+  hpHydrateSupportSessionLifecycleHandoffV05826();
   $('#opsSupportSessionCloseV05815')?.addEventListener('click',hpCloseSupportSessionV05815);
   $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpOpenSupportSessionSharePreviewV05817().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCloseoutV05822')?.addEventListener('click',hpCloseoutSupportSessionV05822);
   $('#opsSupportSessionLifecycleSummaryCopyV05825')?.addEventListener('click',()=>hpCopySupportSessionLifecycleSummaryV05825().catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionLifecycleHandoffCopyV05826')?.addEventListener('click',()=>hpCopySupportSessionLifecycleHandoffV05826().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
     hpSupportSessionResetV05815();
@@ -28192,6 +28194,7 @@ function hpSupportSessionLifecycleMarkupV05823(){
     </div>
     ${hpSupportSessionLifecycleGuidanceMarkupV05824(lifecycle)}
     ${hpSupportSessionLifecycleSummaryMarkupV05825(lifecycle)}
+    ${hpSupportSessionLifecycleHandoffMarkupV05826(lifecycle)}
   </section>`;
 }
 
@@ -28316,4 +28319,79 @@ async function hpCopySupportSessionLifecycleSummaryV05825(){
     area.remove();
   }
   toast('Resumo do ciclo copiado');
+}
+
+
+// ===== v0.58.26 — Production Operations Support Session Lifecycle Handoff =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_HANDOFF_V05826='v0.58.26';
+
+function hpSupportSessionLifecycleHandoffV05826(lifecycle=hpSupportSessionLifecycleV05823()){
+  const summary=hpSupportSessionLifecycleSummaryV05825(lifecycle);
+  const guidance=hpSupportSessionLifecycleGuidanceV05824(lifecycle);
+  const s=hpSupportSessionStateV05815;
+  const latest=s.snapshot?.latestCycle||s.context?.latestCycle||null;
+
+  const lines=[
+    'AESYN Performance - Support Session Lifecycle Handoff',
+    `Versão da interface: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_HANDOFF_V05826}`,
+    '',
+    '## Contexto mínimo',
+    `Estado: ${lifecycle.current}`,
+    `Sessão iniciada: ${s.startedAt||'não iniciada'}`,
+    `Janela: ${s.days||0} dias`,
+    `Última release: ${latest?.version||'não disponível'}`,
+    `Evidências selecionadas: ${s.evidences.length}`,
+    `Última revisão: ${lifecycle.reviewedAt||'não registrada'}`,
+    `Última exportação: ${lifecycle.exportedAt||'não registrada'}`,
+    '',
+    '## Continuidade',
+    `Próxima ação disponível: ${String(guidance.action||'').replace(/^Ação disponível:\s*/,'')||'nenhuma'}`,
+    `Orientação atual: ${guidance.message||'sem orientação'}`,
+    '',
+    '## Resumo do ciclo',
+    summary,
+    '',
+    '## Limites',
+    'Handoff gerado localmente apenas para continuidade do suporte.',
+    'Não inclui conteúdo bruto das evidências, credenciais, segredos ou identificação do operador.',
+    'Não persiste, não envia automaticamente e não executa ações operacionais.'
+  ];
+
+  return lines.join('\n');
+}
+
+function hpSupportSessionLifecycleHandoffMarkupV05826(lifecycle=hpSupportSessionLifecycleV05823()){
+  return `<div class="ops-support-lifecycle-handoff-v05826">
+    <div class="ops-support-lifecycle-handoff-head-v05826">
+      <div>
+        <span class="eyebrow">HANDOFF • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_HANDOFF_V05826}</span>
+        <strong>Continuidade mínima do suporte</strong>
+      </div>
+      <button type="button" class="ghost" id="opsSupportSessionLifecycleHandoffCopyV05826">Copiar handoff</button>
+    </div>
+    <pre id="opsSupportSessionLifecycleHandoffTextV05826"></pre>
+  </div>`;
+}
+
+function hpHydrateSupportSessionLifecycleHandoffV05826(){
+  const target=$('#opsSupportSessionLifecycleHandoffTextV05826');
+  if(target)target.textContent=hpSupportSessionLifecycleHandoffV05826();
+}
+
+async function hpCopySupportSessionLifecycleHandoffV05826(){
+  const text=hpSupportSessionLifecycleHandoffV05826();
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=text;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  toast('Handoff do ciclo copiado');
 }

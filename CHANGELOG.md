@@ -1,3 +1,12 @@
+# v0.58.26 — Production Operations Support Session Lifecycle Handoff
+
+- Adiciona bloco local de handoff da sessão.
+- Reúne contexto mínimo para continuidade do suporte.
+- Reutiliza resumo e orientação do lifecycle.
+- Adiciona Copiar handoff.
+- Não inclui conteúdo bruto de evidências, credenciais ou identificação do operador.
+- Não chama API, não persiste e não envia automaticamente.
+
 # v0.58.25 — Production Operations Support Session Lifecycle Summary
 
 - Adiciona resumo textual local do ciclo da sessão.

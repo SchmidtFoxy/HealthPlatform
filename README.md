@@ -9992,3 +9992,24 @@ A **Sessão suporte** agora apresenta um resumo textual do ciclo atual, reunindo
 O resumo pode ser copiado explicitamente para handoff. Ele não inclui conteúdo bruto de evidências, credenciais, segredos ou identificação do operador e permanece somente na memória da página.
 
 **Próxima etapa:** `v0.58.26 — Production Operations Support Session Lifecycle Handoff`.
+
+
+---
+
+## v0.58.26 — Production Operations Support Session Lifecycle Handoff
+
+A **Sessão suporte** agora possui um bloco local de handoff para continuidade do atendimento.
+
+O conteúdo reúne somente o contexto mínimo:
+- estado atual;
+- início e janela da sessão;
+- última release;
+- quantidade de evidências;
+- última revisão e exportação;
+- próxima ação disponível;
+- orientação atual;
+- resumo do ciclo.
+
+A cópia é sempre explícita por **Copiar handoff**. Nenhum conteúdo é persistido ou enviado automaticamente.
+
+**Próxima etapa:** `v0.58.27 — Production Operations Support Session Handoff Preview`.
