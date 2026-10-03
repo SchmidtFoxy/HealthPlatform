@@ -8293,3 +8293,26 @@ Adicionar contexto técnico seguro para suporte, correlacionando snapshot, últi
 
 ### v0.58.11 — Production Operations Support Handoff
 Adicionar um handoff seguro para suporte técnico com resumo copiável, identificador da janela, fatos correlacionados e checklist de investigação, sem incluir infraestrutura sensível ou automatizar ações.
+
+
+## ✅ v0.58.11 — Production Operations Support Handoff — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/support-handoff`;
+- identificador de handoff por janela;
+- resumo técnico copiável;
+- fatos operacionais seguros;
+- checklist de investigação;
+- indicação do que já está coberto pelo contexto atual e do que exige revisão manual;
+- estado consolidado `healthy`, `attention`, `rollback` ou `no-data`;
+- referência segura da última release e versão servida;
+- botão `Handoff suporte` na área Operações;
+- ação `Copiar handoff` com Clipboard API e fallback;
+- drawer desktop e bottom sheet mobile;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais;
+- handoff somente leitura e sem automatizar decisões operacionais.
+
+## Próxima etapa
+
+### v0.58.12 — Production Operations Support Timeline
+Adicionar uma timeline curta de suporte, derivada de releases e eventos operacionais seguros da janela selecionada, para facilitar investigação cronológica sem expor infraestrutura sensível.

@@ -1,3 +1,14 @@
+# v0.58.11 — Production Operations Support Handoff
+
+- Adiciona endpoint de handoff técnico.
+- Adiciona identificador por janela.
+- Adiciona resumo copiável.
+- Adiciona fatos seguros e checklist de investigação.
+- Indica itens cobertos vs revisão manual.
+- Adiciona botão Handoff suporte.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Mantém o handoff somente leitura e sem infraestrutura sensível.
+
 # v0.58.10 — Production Operations Support Context
 
 - Adiciona endpoint de contexto técnico para suporte.

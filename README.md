@@ -9733,3 +9733,21 @@ A área **Operações** ganhou **Contexto suporte**, uma visão única que corre
 O contexto é somente leitura e foi desenhado para acelerar diagnóstico e comunicação de suporte sem expor infraestrutura sensível.
 
 **Próxima etapa:** `v0.58.11 — Production Operations Support Handoff`.
+
+
+---
+
+## v0.58.11 — Production Operations Support Handoff
+
+A área **Operações** ganhou **Handoff suporte**.
+
+O handoff reúne:
+- resumo técnico copiável;
+- fatos correlacionados;
+- checklist de investigação;
+- marcação do que já está coberto pelo contexto atual;
+- pontos que ainda precisam de revisão manual.
+
+O material é somente leitura e foi desenhado para ser compartilhado com suporte técnico sem carregar infraestrutura sensível.
+
+**Próxima etapa:** `v0.58.12 — Production Operations Support Timeline`.

@@ -120,6 +120,97 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/support-handoff")]
+    public async Task<ActionResult<ProductionSupportHandoffResponse>> GetSupportHandoff(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 2 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 2 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .ToList();
+
+        var latest = periodItems.FirstOrDefault();
+        var healthyDeploys = periodItems.Count(IsHealthy);
+        var rollbackDeploys = periodItems.Count(x => x.RollbackExecuted);
+        var healthyPercentage = Percentage(healthyDeploys, periodItems.Count);
+        var currentHealthyStreak = 0;
+
+        foreach (var item in periodItems)
+        {
+            if (!IsHealthy(item))
+            {
+                break;
+            }
+
+            currentHealthyStreak++;
+        }
+
+        var state =
+            latest is null ? "no-data" :
+            IsHealthy(latest) ? "healthy" :
+            latest.RollbackExecuted ? "rollback" :
+            "attention";
+
+        var handoffId = $"OPS-{now:yyyyMMddHHmm}-{days}D";
+
+        var checklist = new List<ProductionSupportChecklistItem>
+        {
+            new("confirm-window", "Confirmar a janela analisada e o horário do snapshot.", true),
+            new("review-latest", "Revisar versão, modo, status, runtime e closure do último ciclo.", latest is not null),
+            new("review-health", "Comparar quantidade de ciclos saudáveis e rollbacks dentro da janela.", periodItems.Count > 0),
+            new("review-version", "Confirmar se a versão servida corresponde à última release registrada.", latest is not null && latest.VersionHealthy),
+            new("review-recovery", "Verificar se recovery audit e closure estão concluídos no último ciclo.", latest is not null && latest.RecoveryAuditComplete && latest.ClosureComplete),
+            new("escalate-only-with-evidence", "Escalar para infraestrutura somente com evidências públicas e sem incluir segredos ou caminhos internos.", true)
+        };
+
+        var facts = new List<ProductionSupportFact>
+        {
+            new("window", "Janela", $"{days} dias ({from:O} ate {now:O})"),
+            new("state", "Estado", state),
+            new("health", "Saude", $"{healthyDeploys}/{periodItems.Count} saudavel(is) ({healthyPercentage}%)."),
+            new("rollbacks", "Rollbacks", rollbackDeploys.ToString()),
+            new("streak", "Sequencia saudavel", currentHealthyStreak.ToString())
+        };
+
+        if (latest is not null)
+        {
+            facts.Add(new ProductionSupportFact(
+                "latest",
+                "Ultimo ciclo",
+                $"{latest.Version} | {latest.Mode} | {latest.OperationsStatus} | servido {latest.ServedVersion} | {latest.RecordedAt:O}."));
+        }
+
+        var summary = latest is null
+            ? $"AESYN Support Handoff {handoffId} | janela {days} dias | sem ciclos operacionais registrados."
+            : $"AESYN Support Handoff {handoffId} | janela {days} dias | estado {state} | ultimo ciclo {latest.Version} | servido {latest.ServedVersion} | saudaveis {healthyDeploys}/{periodItems.Count} ({healthyPercentage}%) | rollbacks {rollbackDeploys} | streak {currentHealthyStreak}.";
+
+        return Ok(new ProductionSupportHandoffResponse(
+            handoffId,
+            days,
+            from,
+            now,
+            state,
+            latest?.Version,
+            latest?.RecordedAt,
+            latest?.ServedVersion,
+            summary,
+            facts,
+            checklist,
+            "Handoff tecnico somente leitura para suporte. Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.",
+            "O handoff organiza evidencias e checklist; nao executa, recomenda, autoriza ou automatiza deploy, promocao ou rollback."));
+    }
+
     [HttpGet("deploys/support-context")]
     public async Task<ActionResult<ProductionSupportContextResponse>> GetSupportContext(
         [FromQuery] int days = 30,
@@ -920,6 +1011,26 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionSupportHandoffResponse(
+    string HandoffId,
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset To,
+    string State,
+    string? LatestVersion,
+    DateTimeOffset? LatestRecordedAt,
+    string? LatestServedVersion,
+    string Summary,
+    IReadOnlyList<ProductionSupportFact> Facts,
+    IReadOnlyList<ProductionSupportChecklistItem> Checklist,
+    string SafetyNote,
+    string DecisionBoundary);
+
+public sealed record ProductionSupportChecklistItem(
+    string Key,
+    string Label,
+    bool SatisfiedByCurrentContext);
 
 public sealed record ProductionSupportContextResponse(
     int Days,

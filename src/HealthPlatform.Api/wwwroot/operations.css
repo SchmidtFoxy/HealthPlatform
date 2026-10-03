@@ -259,3 +259,30 @@ body.ops-support-context-open-v05810{overflow:hidden}
   .ops-support-correlation-v05810{grid-template-columns:1fr}
   .ops-support-latest-grid-v05810{grid-template-columns:1fr}
 }
+
+
+/* v0.58.11 — Production Operations Support Handoff */
+.ops-support-handoff-backdrop-v05811{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);z-index:1270}
+.ops-support-handoff-panel-v05811{position:fixed;top:0;right:0;height:100dvh;width:min(680px,96vw);z-index:1280;background:#0f1514;border-left:1px solid rgba(255,255,255,.08);box-shadow:-20px 0 50px rgba(0,0,0,.28);overflow:auto}
+body.ops-support-handoff-open-v05811{overflow:hidden}
+.ops-support-handoff-v05811{padding:22px;display:grid;gap:18px}
+.ops-support-handoff-head-v05811{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.ops-support-handoff-head-v05811 h3{margin:4px 0 5px}
+.ops-support-handoff-head-v05811 p{margin:0;opacity:.65}
+.ops-support-handoff-state-v05811{display:flex}
+.ops-support-handoff-summary-v05811{display:grid;gap:10px;padding:14px;border:1px solid rgba(98,217,172,.18);border-radius:14px;background:rgba(98,217,172,.045)}
+.ops-support-handoff-summary-v05811 p{margin:0;font-size:.84rem;line-height:1.5;opacity:.82;overflow-wrap:anywhere}
+.ops-support-handoff-summary-v05811 button{justify-self:start}
+.ops-support-handoff-facts-v05811,.ops-support-handoff-checklist-v05811{display:grid;gap:10px}
+.ops-support-handoff-facts-v05811 article,.ops-support-handoff-checklist-v05811 article{padding:13px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.02)}
+.ops-support-handoff-facts-v05811 p{margin:5px 0 0;font-size:.82rem;line-height:1.45;opacity:.74;overflow-wrap:anywhere}
+.ops-support-handoff-checklist-v05811 article{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:flex-start}
+.ops-support-handoff-checklist-v05811 article>span{font-size:1rem;line-height:1.2}
+.ops-support-handoff-checklist-v05811 article.ok>span{color:#62d9ac}
+.ops-support-handoff-checklist-v05811 article.pending>span{color:#efc66c}
+.ops-support-handoff-checklist-v05811 small{display:block;margin-top:4px;opacity:.58}
+@media (max-width:680px){
+  .ops-support-handoff-panel-v05811{width:100%;top:auto;bottom:0;height:min(92dvh,860px);border-left:0;border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0}
+  .ops-support-handoff-v05811{padding:18px 16px 26px}
+  .ops-support-handoff-summary-v05811 button{width:100%}
+}

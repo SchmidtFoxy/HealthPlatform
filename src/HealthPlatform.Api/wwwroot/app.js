@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.10';
+const HP_MVP_VERSION='0.58.11';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportHandoffButtonV05811">Handoff suporte</button><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26599,6 +26599,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsSupportContextButtonV05810')?.addEventListener('click',()=>{
     const days=Number($('#opsTrendsDaysV0585')?.value)||30;
     hpOpenSupportContextV05810(days).catch(err=>toast(err.message,true));
+  });
+  $('#opsSupportHandoffButtonV05811')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpOpenSupportHandoffV05811(days).catch(err=>toast(err.message,true));
   });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
@@ -27061,4 +27065,96 @@ async function hpOpenSupportContextV05810(days=30){
   host.innerHTML=hpUiState('loading','Correlacionando contexto operacional');
   const data=await api(`/api/operacoes-producao/deploys/support-context?days=${safeDays}`);
   hpRenderSupportContextV05810(data);
+}
+
+
+// ===== v0.58.11 — Production Operations Support Handoff =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_HANDOFF_V05811='v0.58.11';
+
+function hpRenderSupportHandoffV05811(data){
+  const host=$('#opsSupportHandoffV05811');if(!host)return;
+  const [kind,label]=hpSupportStateV05810(data?.state);
+  host.innerHTML=`<div class="ops-support-handoff-v05811">
+    <div class="ops-support-handoff-head-v05811">
+      <div><span class="eyebrow">SUPPORT HANDOFF • ${HP_PRODUCTION_OPERATIONS_SUPPORT_HANDOFF_V05811}</span><h3>Handoff técnico de suporte</h3><p>${esc(data?.handoffId||'—')} • ${esc(String(data?.days||0))} dias</p></div>
+      <button type="button" class="ghost" id="opsSupportHandoffCloseV05811" aria-label="Fechar handoff de suporte">×</button>
+    </div>
+
+    <div class="ops-support-handoff-state-v05811"><span class="ops-status-v0582 ${kind}">${esc(label)}</span></div>
+
+    <section class="ops-support-handoff-summary-v05811">
+      <strong>Resumo copiável</strong>
+      <p id="opsSupportHandoffSummaryV05811">${esc(data?.summary||'')}</p>
+      <button type="button" class="secondary" id="opsSupportHandoffCopyV05811">Copiar handoff</button>
+    </section>
+
+    <section class="ops-support-handoff-facts-v05811">
+      <span class="eyebrow">FATOS</span>
+      ${(data?.facts||[]).map(item=>`<article><strong>${esc(item.label||item.key||'Fato')}</strong><p>${esc(item.value||'')}</p></article>`).join('')}
+    </section>
+
+    <section class="ops-support-handoff-checklist-v05811">
+      <span class="eyebrow">CHECKLIST DE INVESTIGAÇÃO</span>
+      ${(data?.checklist||[]).map(item=>`<article class="${item.satisfiedByCurrentContext?'ok':'pending'}">
+        <span>${item.satisfiedByCurrentContext?'✓':'○'}</span>
+        <div><strong>${esc(item.label||'')}</strong><small>${item.satisfiedByCurrentContext?'Coberto pelo contexto atual':'Requer revisão manual'}</small></div>
+      </article>`).join('')}
+    </section>
+
+    <div class="ops-support-boundary-v05810">
+      <p>${esc(data?.safetyNote||'Handoff técnico seguro.')}</p>
+      <p>${esc(data?.decisionBoundary||'Somente leitura.')}</p>
+    </div>
+  </div>`;
+  $('#opsSupportHandoffCloseV05811')?.addEventListener('click',hpCloseSupportHandoffV05811);
+  $('#opsSupportHandoffCopyV05811')?.addEventListener('click',()=>hpCopySupportHandoffV05811(data));
+}
+
+async function hpCopySupportHandoffV05811(data){
+  const checklist=(data?.checklist||[]).map(item=>`${item.satisfiedByCurrentContext?'[x]':'[ ]'} ${item.label}`).join('\n');
+  const facts=(data?.facts||[]).map(item=>`- ${item.label}: ${item.value}`).join('\n');
+  const text=[
+    data?.summary||'',
+    '',
+    'Fatos:',
+    facts,
+    '',
+    'Checklist:',
+    checklist,
+    '',
+    data?.safetyNote||'',
+    data?.decisionBoundary||''
+  ].join('\n');
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=text;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  toast('Handoff técnico copiado');
+}
+
+function hpCloseSupportHandoffV05811(){
+  $('#opsSupportHandoffBackdropV05811')?.classList.add('hidden');
+  $('#opsSupportHandoffPanelV05811')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-handoff-open-v05811');
+}
+
+async function hpOpenSupportHandoffV05811(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const panel=$('#opsSupportHandoffPanelV05811'),backdrop=$('#opsSupportHandoffBackdropV05811'),host=$('#opsSupportHandoffV05811');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-support-handoff-open-v05811');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Preparando handoff de suporte');
+  const data=await api(`/api/operacoes-producao/deploys/support-handoff?days=${safeDays}`);
+  hpRenderSupportHandoffV05811(data);
 }
