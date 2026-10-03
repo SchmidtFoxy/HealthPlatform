@@ -8147,3 +8147,27 @@ Adicionar filtros por versão, status operacional, modo, rollback e período, al
 
 ### v0.58.5 — Production Operations Health Trends
 Adicionar tendências operacionais derivadas do histórico: frequência de deploy, percentual saudável, rollbacks, validate-only vs apply e evolução temporal, mantendo leitura operacional e sem criar alertas clínicos.
+
+
+## ✅ v0.58.5 — Production Operations Health Trends — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/trends`;
+- períodos configuráveis de 1 a 365 dias;
+- total de deploys no período;
+- quantidade e percentual de ciclos saudáveis;
+- quantidade e percentual de rollbacks;
+- contagem `apply` vs `validate-only`;
+- série diária com deploys, saudáveis, rollbacks, apply e validate-only;
+- cálculo derivado somente do histórico operacional público;
+- painel de tendências na área Operações;
+- seletor rápido de 7, 30, 90 e 180 dias;
+- métricas resumidas;
+- barras temporais responsivas com proporção saudável por dia;
+- estado vazio quando não houver ciclos;
+- nenhuma inferência clínica, alerta médico ou metadata interna.
+
+## Próxima etapa
+
+### v0.58.6 — Production Operations Reliability Signals
+Adicionar sinais operacionais derivados das tendências, como sequência de ciclos saudáveis, último rollback, última aplicação saudável e mudanças relevantes de estabilidade, sem automatizar decisões de deploy.

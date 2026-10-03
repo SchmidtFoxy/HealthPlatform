@@ -103,3 +103,33 @@ body.ops-detail-open-v0583{overflow:hidden}
   .ops-filter-actions-v0584{grid-column:1/-1}
   .ops-filter-actions-v0584 button{flex:1}
 }
+
+
+/* v0.58.5 — Production Operations Health Trends */
+.ops-trends-v0585{display:grid;gap:14px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}
+.ops-trends-head-v0585{display:flex;justify-content:space-between;align-items:flex-end;gap:14px}
+.ops-trends-head-v0585 h3{margin:3px 0 0}
+.ops-trends-head-v0585 label{display:grid;gap:5px}
+.ops-trends-head-v0585 label span{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;opacity:.62}
+.ops-trends-head-v0585 select{min-height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:inherit;padding:0 10px}
+.ops-trends-summary-v0585{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ops-trend-metric-v0585{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.02)}
+.ops-trend-metric-v0585 small{display:block;font-size:.67rem;text-transform:uppercase;letter-spacing:.06em;opacity:.58}
+.ops-trend-metric-v0585 strong{display:block;margin-top:5px;font-size:1.22rem}
+.ops-trend-metric-v0585 span{display:block;margin-top:3px;font-size:.72rem;opacity:.62}
+.ops-trends-daily-v0585{overflow-x:auto;padding-bottom:4px}
+.ops-trend-bars-v0585{height:170px;display:flex;gap:6px;align-items:flex-end;min-width:max-content;padding:8px 2px 0}
+.ops-trend-day-v0585{width:34px;display:grid;grid-template-rows:135px auto;gap:5px;text-align:center}
+.ops-trend-bar-shell-v0585{height:135px;display:flex;align-items:flex-end;justify-content:center}
+.ops-trend-bar-v0585{width:18px;min-height:8px;border-radius:6px 6px 2px 2px;background:rgba(167,178,175,.3);display:flex;align-items:flex-end;overflow:hidden}
+.ops-trend-bar-v0585 span{display:block;width:100%;background:rgba(98,217,172,.72)}
+.ops-trend-day-v0585 small{font-size:.61rem;opacity:.58;white-space:nowrap}
+.ops-trend-legend-v0585{display:flex;gap:14px;font-size:.72rem;opacity:.68}
+.ops-trend-legend-v0585 span{display:flex;align-items:center;gap:5px}
+.ops-trend-legend-v0585 i{width:8px;height:8px;border-radius:2px;background:rgba(167,178,175,.3)}
+.ops-trend-legend-v0585 i.healthy{background:rgba(98,217,172,.72)}
+@media (max-width:680px){
+  .ops-trends-head-v0585{align-items:stretch;flex-direction:column}
+  .ops-trends-head-v0585 select{width:100%}
+  .ops-trends-summary-v0585{grid-template-columns:1fr 1fr}
+}

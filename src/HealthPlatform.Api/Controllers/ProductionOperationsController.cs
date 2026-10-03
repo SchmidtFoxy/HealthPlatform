@@ -120,6 +120,63 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/trends")]
+    public async Task<ActionResult<ProductionDeployTrendsResponse>> GetDeployTrends(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 1 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 1 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderBy(x => x.RecordedAt)
+            .ToList();
+
+        var totalDeploys = periodItems.Count;
+        var healthyDeploys = periodItems.Count(IsHealthy);
+        var rollbackDeploys = periodItems.Count(x => x.RollbackExecuted);
+        var applyDeploys = periodItems.Count(x =>
+            string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase));
+        var validateOnlyDeploys = periodItems.Count(x =>
+            string.Equals(x.Mode, "validate-only", StringComparison.OrdinalIgnoreCase));
+
+        var healthyPercentage = Percentage(healthyDeploys, totalDeploys);
+        var rollbackPercentage = Percentage(rollbackDeploys, totalDeploys);
+
+        var daily = periodItems
+            .GroupBy(x => DateOnly.FromDateTime(x.RecordedAt.UtcDateTime))
+            .Select(group => new ProductionDeployTrendPoint(
+                group.Key,
+                group.Count(),
+                group.Count(IsHealthy),
+                group.Count(x => x.RollbackExecuted),
+                group.Count(x => string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase)),
+                group.Count(x => string.Equals(x.Mode, "validate-only", StringComparison.OrdinalIgnoreCase))))
+            .OrderBy(x => x.Date)
+            .ToList();
+
+        return Ok(new ProductionDeployTrendsResponse(
+            days,
+            from,
+            now,
+            totalDeploys,
+            healthyDeploys,
+            healthyPercentage,
+            rollbackDeploys,
+            rollbackPercentage,
+            applyDeploys,
+            validateOnlyDeploys,
+            daily));
+    }
+
     [HttpGet("deploys/detail")]
     public async Task<ActionResult<ProductionDeployDetailResponse>> GetDeployDetail(
         [FromQuery] string version,
@@ -258,6 +315,17 @@ public sealed class ProductionOperationsController : ControllerBase
         }
     }
 
+    private static bool IsHealthy(ProductionDeployHistoryItem item) =>
+        string.Equals(item.OperationsStatus, "healthy", StringComparison.OrdinalIgnoreCase) &&
+        item.RuntimeHealthy &&
+        item.VersionHealthy &&
+        !item.RollbackExecuted;
+
+    private static decimal Percentage(int part, int total) =>
+        total == 0
+            ? 0m
+            : Math.Round(part * 100m / total, 1, MidpointRounding.AwayFromZero);
+
     private static IReadOnlyList<ProductionDeployTimelineItem> BuildTimeline(
         ProductionDeployHistoryItem item)
     {
@@ -336,6 +404,27 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionDeployTrendsResponse(
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset To,
+    int TotalDeploys,
+    int HealthyDeploys,
+    decimal HealthyPercentage,
+    int RollbackDeploys,
+    decimal RollbackPercentage,
+    int ApplyDeploys,
+    int ValidateOnlyDeploys,
+    IReadOnlyList<ProductionDeployTrendPoint> Daily);
+
+public sealed record ProductionDeployTrendPoint(
+    DateOnly Date,
+    int TotalDeploys,
+    int HealthyDeploys,
+    int RollbackDeploys,
+    int ApplyDeploys,
+    int ValidateOnlyDeploys);
 
 public sealed record ProductionDeployDetailResponse(
     ProductionDeployHistoryItem Release,

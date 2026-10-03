@@ -1,4 +1,4 @@
-HealthPlatform v0.58.4-r3 - Incremental
+HealthPlatform v0.58.5 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -16,43 +16,15 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Filters & Search;
-- busca rapida por versao alvo/servida;
-- filtros por versao, status, modo, rollback e periodo;
-- filtros server-side antes da paginacao;
-- chips de filtros ativos;
-- limpar filtros;
-- layout responsivo;
-- proxima etapa v0.58.5 / Production Operations Health Trends.
+- Production Operations Health Trends;
+- endpoint /api/operacoes-producao/deploys/trends;
+- metricas de volume, saudaveis, rollback e modo;
+- serie diaria;
+- painel de tendencias;
+- seletor 7/30/90/180 dias;
+- barras temporais responsivas;
+- proxima etapa v0.58.6 / Production Operations Reliability Signals.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.4
-
-Hotfix cumulativo r1:
-- corrige o gate historico [5213/5223] da v0.58.2;
-- aceita a consulta direta original ou a estrategia evoluida da v0.58.4 com hpBuildOperationsHistoryUrlV0584;
-- preserva a exigencia de paginacao por pageSize e renderizacao por hpRenderOperationsRowsV0582;
-- codigo funcional da v0.58.4 permanece inalterado;
-- VERSION.txt permanece 0.58.4;
-- nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.4.
-
-Hotfix cumulativo r2:
-- corrige o gate [5248/5258] do periodo na UI;
-- evita expansao do template literal JavaScript pelo PowerShell 5.1;
-- usa tokens PowerShell de aspas simples com aspas internas escapadas;
-- preserva a verificacao exata dos templates `${value}T00:00:00-03:00` e `${value}T23:59:59-03:00`;
-- codigo funcional da v0.58.4 permanece inalterado;
-- VERSION.txt permanece 0.58.4;
-- nao commitar/pushar -r1 ou -r2 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.4.
-
-Hotfix cumulativo r3:
-- corrige definitivamente o gate [5248/5258] do periodo na UI;
-- remove a dependencia de quoting exato entre PowerShell 5.1 e template literal JavaScript;
-- valida semanticamente from/to, params.set e os limites T00:00:00-03:00 / T23:59:59-03:00;
-- codigo funcional da v0.58.4 permanece inalterado;
-- VERSION.txt permanece 0.58.4;
-- nao commitar/pushar revisoes -rN individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.4.
+Se aprovado, commit/push apenas: v0.58.5

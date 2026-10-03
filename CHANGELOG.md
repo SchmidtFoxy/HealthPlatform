@@ -1,3 +1,13 @@
+# v0.58.5 — Production Operations Health Trends
+
+- Adiciona endpoint de tendências operacionais.
+- Adiciona métricas de deploys, saúde, rollback e modo.
+- Adiciona série diária.
+- Adiciona painel responsivo de tendências.
+- Adiciona seletor de período.
+- Adiciona barras temporais com proporção saudável.
+- Mantém metadata interna fora da API/UI.
+
 # v0.58.4 — Production Operations Filters & Search
 
 - Adiciona filtros server-side ao histórico operacional.

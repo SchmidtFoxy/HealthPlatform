@@ -9642,3 +9642,21 @@ Os filtros são aplicados no backend antes da paginação, portanto os totais ap
 A UI exibe filtros ativos e permite limpar a consulta em um clique.
 
 **Próxima etapa:** `v0.58.5 — Production Operations Health Trends`.
+
+
+---
+
+## v0.58.5 — Production Operations Health Trends
+
+A área **Operações** passa a mostrar tendências do histórico de produção.
+
+São apresentados:
+- volume de deploys;
+- percentual saudável;
+- rollbacks;
+- apply vs validate-only;
+- evolução diária.
+
+O período pode ser alternado entre 7, 30, 90 e 180 dias. Os dados são derivados apenas do histórico operacional seguro.
+
+**Próxima etapa:** `v0.58.6 — Production Operations Reliability Signals`.

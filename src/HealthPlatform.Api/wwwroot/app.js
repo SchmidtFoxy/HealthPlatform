@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.4';
+const HP_MVP_VERSION='0.58.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26562,6 +26562,14 @@ async function hpLoadProductionOperationsV0582(){
       <div class="ops-filter-actions-v0584"><button type="submit" class="primary">Aplicar filtros</button><button type="button" class="secondary" id="opsClearFiltersV0584">Limpar</button></div>
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
+    <section class="ops-trends-v0585" aria-label="Tendências operacionais">
+      <div class="ops-trends-head-v0585">
+        <div><span class="eyebrow">TENDÊNCIAS</span><h3>Saúde operacional</h3></div>
+        <label><span>Período</span><select id="opsTrendsDaysV0585"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option><option value="180">180 dias</option></select></label>
+      </div>
+      <div id="opsTrendsSummaryV0585" class="ops-trends-summary-v0585">${hpUiState('loading','Calculando tendências')}</div>
+      <div id="opsTrendsDailyV0585" class="ops-trends-daily-v0585"></div>
+    </section>
     <section class="ops-table-shell-v0582">
       <div class="ops-table-head-v0582"><div><span class="eyebrow">HISTÓRICO</span><h3>Deploys operacionais</h3></div><small>Mais recente primeiro</small></div>
       <table class="ops-table-v0582"><thead><tr><th>Release</th><th>Estado</th><th>Modo</th><th>Versão servida</th><th>Rollback</th><th>Gates</th></tr></thead><tbody id="opsRowsV0582"></tbody></table>
@@ -26572,9 +26580,13 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsRefreshV0582')?.addEventListener('click',()=>hpFetchOperationsV0582().catch(e=>toast(e.message,true)));
   $('#opsFiltersV0584')?.addEventListener('submit',e=>{e.preventDefault();hpApplyOperationsFiltersV0584(e.currentTarget);});
   $('#opsClearFiltersV0584')?.addEventListener('click',hpClearOperationsFiltersV0584);
+  $('#opsTrendsDaysV0585')?.addEventListener('change',e=>hpFetchProductionTrendsV0585(Number(e.currentTarget.value)||30).catch(err=>toast(err.message,true)));
   $('#opsPrevV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page>1){hpOperationsStateV0582.page--;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   $('#opsNextV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page<hpOperationsStateV0582.totalPages){hpOperationsStateV0582.page++;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
-  await hpFetchOperationsV0582();
+  await Promise.all([
+    hpFetchOperationsV0582(),
+    hpFetchProductionTrendsV0585(30)
+  ]);
 }
 
 
@@ -26686,4 +26698,51 @@ function hpClearOperationsFiltersV0584(){
   hpOperationsStateV0582.page=1;
   hpRenderActiveOperationsFiltersV0584();
   hpFetchOperationsV0582().catch(e=>toast(e.message,true));
+}
+
+
+// ===== v0.58.5 — Production Operations Health Trends =====
+const HP_PRODUCTION_OPERATIONS_TRENDS_V0585='v0.58.5';
+
+function hpOpsPercentV0585(value){
+  const n=Number(value||0);
+  return `${n.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%`;
+}
+function hpOpsTrendMetricV0585(label,value,hint=''){
+  return `<article class="ops-trend-metric-v0585"><small>${esc(label)}</small><strong>${value}</strong>${hint?`<span>${esc(hint)}</span>`:''}</article>`;
+}
+function hpRenderProductionTrendsV0585(data){
+  const summary=$('#opsTrendsSummaryV0585'),daily=$('#opsTrendsDailyV0585');
+  if(!summary||!daily)return;
+  summary.innerHTML=[
+    hpOpsTrendMetricV0585('Deploys',String(data?.totalDeploys??0),`${data?.days||0} dias`),
+    hpOpsTrendMetricV0585('Saudáveis',hpOpsPercentV0585(data?.healthyPercentage),`${data?.healthyDeploys||0} ciclo(s)`),
+    hpOpsTrendMetricV0585('Rollbacks',hpOpsPercentV0585(data?.rollbackPercentage),`${data?.rollbackDeploys||0} ciclo(s)`),
+    hpOpsTrendMetricV0585('Apply',String(data?.applyDeploys??0),`${data?.validateOnlyDeploys||0} validate-only`)
+  ].join('');
+
+  const points=data?.daily||[];
+  if(!points.length){
+    daily.innerHTML='<div class="ops-empty-v0582">Sem ciclos operacionais no período selecionado.</div>';
+    return;
+  }
+
+  const max=Math.max(1,...points.map(x=>Number(x.totalDeploys||0)));
+  daily.innerHTML=`<div class="ops-trend-bars-v0585">${points.map(point=>{
+    const total=Number(point.totalDeploys||0);
+    const healthy=Number(point.healthyDeploys||0);
+    const rollbacks=Number(point.rollbackDeploys||0);
+    const height=Math.max(8,Math.round(total/max*100));
+    const healthyPct=total?Math.round(healthy/total*100):0;
+    return `<div class="ops-trend-day-v0585" title="${esc(point.date)} • ${total} deploy(s) • ${healthy} saudável(is) • ${rollbacks} rollback(s)">
+      <div class="ops-trend-bar-shell-v0585"><div class="ops-trend-bar-v0585" style="height:${height}%"><span style="height:${healthyPct}%"></span></div></div>
+      <small>${esc(String(point.date||'').slice(5))}</small>
+    </div>`;
+  }).join('')}</div>
+  <div class="ops-trend-legend-v0585"><span><i class="all"></i>Deploys</span><span><i class="healthy"></i>Saudáveis</span></div>`;
+}
+async function hpFetchProductionTrendsV0585(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const data=await api(`/api/operacoes-producao/deploys/trends?days=${safeDays}`);
+  hpRenderProductionTrendsV0585(data);
 }
