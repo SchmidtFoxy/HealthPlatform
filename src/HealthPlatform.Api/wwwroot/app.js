@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.56';
+const HP_MVP_VERSION='0.58.57';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -29173,7 +29173,8 @@ function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceSummaryMarkupV05853()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceHandoffMarkupV05854()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureReceiptMarkupV05855()}
-  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryMarkupV05856()}`;
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryMarkupV05856()}
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffMarkupV05857()}`;
 
   hpHydrateSupportSessionHandoffCopyVerificationClosureSummaryV05838();
   hpHydrateSupportSessionHandoffCopyVerificationClosureHandoffV05839();
@@ -29192,6 +29193,7 @@ function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
   hpBindSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureV05855();
   hpApplySupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureV05855();
   hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryV05856();
+  hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffV05857();
 }
 
 function hpBindSupportSessionHandoffCopyVerificationClosureV05837(){
@@ -30052,4 +30054,54 @@ function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidance
 function hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryV05856(){
   const target=$('#opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryTextV05856');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryV05856();
+}
+
+// ===== v0.58.57 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Handoff =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_HANDOFF_V05857='v0.58.57';
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffV05857(){
+  const state=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureStateV05855;
+  if(!state||!state.closedAt)return '';
+
+  const summary=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryV05856();
+
+  return [
+    'AESYN Performance - Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Handoff',
+    `Versão: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_HANDOFF_V05857}`,
+    '',
+    '## Fechamento da orientação final',
+    `Encerrado em: ${state.closedAt}`,
+    'Sessão de suporte: permanece ativa',
+    `Próxima decisão manual preservada: ${state.decisionAtClosure||'Disponível para continuidade manual.'}`,
+    '',
+    '## Resumo final',
+    summary,
+    '',
+    '## Continuidade manual',
+    'O contexto visual da orientação final foi encerrado, mas a sessão de suporte permanece disponível.',
+    'O handoff e os dados temporários permanecem preservados para continuidade manual.',
+    '',
+    '## Limites',
+    'Handoff local e somente leitura.',
+    'Nenhuma ação é executada automaticamente.',
+    'Nenhum dado é persistido, enviado automaticamente ou alterado em produção.'
+  ].join('\n');
+}
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffMarkupV05857(){
+  const state=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureStateV05855;
+  if(!state||!state.closedAt)return '';
+
+  return `<div class="ops-support-handoff-copy-verification-closure-continuity-handoff-guidance-closure-continuity-handoff-guidance-closure-handoff-v05857">
+    <div class="ops-support-handoff-copy-verification-closure-continuity-handoff-guidance-closure-continuity-handoff-guidance-closure-handoff-head-v05857">
+      <span class="eyebrow">HANDOFF DO FECHAMENTO DA ORIENTAÇÃO FINAL • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_HANDOFF_V05857}</span>
+      <strong>Continuidade manual</strong>
+    </div>
+    <pre id="opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffTextV05857"></pre>
+  </div>`;
+}
+
+function hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffV05857(){
+  const target=$('#opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffTextV05857');
+  if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffV05857();
 }
