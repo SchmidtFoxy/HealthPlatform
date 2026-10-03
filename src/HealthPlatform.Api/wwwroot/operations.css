@@ -748,3 +748,16 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
   .ops-support-handoff-copy-verification-closure-handoff-head-v05839{align-items:flex-start;flex-direction:column}
   .ops-support-handoff-copy-verification-closure-handoff-v05839 pre{max-height:280px}
 }
+
+
+/* v0.58.40 — Production Operations Support Session Handoff Copy Verification Closure Continuity */
+.ops-support-handoff-copy-verification-closure-continuity-v05840{display:grid;gap:8px;padding:10px;border-radius:10px;border:1px solid rgba(98,217,172,.13);background:rgba(98,217,172,.02)}
+.ops-support-handoff-copy-verification-closure-continuity-v05840 strong{display:block;margin-top:4px;font-size:.78rem}
+.ops-support-handoff-copy-verification-closure-continuity-meta-v05840{display:grid;grid-template-columns:1fr 2fr;gap:8px}
+.ops-support-handoff-copy-verification-closure-continuity-meta-v05840 span{padding:9px;border-radius:9px;background:rgba(0,0,0,.13);border:1px solid rgba(255,255,255,.045)}
+.ops-support-handoff-copy-verification-closure-continuity-meta-v05840 small{display:block;font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;opacity:.55}
+.ops-support-handoff-copy-verification-closure-continuity-meta-v05840 b{display:block;margin-top:4px;font-size:.72rem;line-height:1.4;overflow-wrap:anywhere}
+.ops-support-handoff-copy-verification-closure-continuity-v05840>small{font-size:.68rem;line-height:1.4;opacity:.58}
+@media (max-width:680px){
+  .ops-support-handoff-copy-verification-closure-continuity-meta-v05840{grid-template-columns:1fr}
+}

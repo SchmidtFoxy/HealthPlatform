@@ -10195,3 +10195,16 @@ O fechamento da conferência agora apresenta um handoff local de continuidade co
 Nesta versão também foi normalizada a serialização dos blocos v0.58.38 em `app.js` e `operations.css`, eliminando sequências literais `\n` remanescentes.
 
 **Próxima etapa:** `v0.58.40 — Production Operations Support Session Handoff Copy Verification Closure Continuity`.
+
+
+---
+
+## v0.58.40 — Production Operations Support Session Handoff Copy Verification Closure Continuity
+
+Após o fechamento da conferência, o sistema agora mostra uma indicação compacta de continuidade com:
+- sessão de suporte **Ativa**;
+- próxima ação manual disponível.
+
+A indicação é somente informativa. Nenhuma ação é executada automaticamente, persistida ou enviada.
+
+**Próxima etapa:** `v0.58.41 — Production Operations Support Session Handoff Copy Verification Closure Continuity Summary`.
