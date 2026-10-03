@@ -10156,3 +10156,20 @@ A verificação pós-cópia agora apresenta um bloco local de handoff para conti
 O bloco é somente leitura e não executa ações automaticamente. Nenhum dado é persistido ou enviado.
 
 **Próxima etapa:** `v0.58.37 — Production Operations Support Session Handoff Copy Verification Closure`.
+
+
+---
+
+## v0.58.37 — Production Operations Support Session Handoff Copy Verification Closure
+
+Depois de uma verificação concluída, o operador pode usar **Encerrar conferência** para fechar somente o contexto visual da verificação.
+
+O fechamento:
+- é manual;
+- registra apenas horário e status final em memória;
+- não apaga a sessão de suporte;
+- não remove o handoff nem seus dados temporários;
+- não persiste nem envia informações;
+- não altera produção.
+
+**Próxima etapa:** `v0.58.38 — Production Operations Support Session Handoff Copy Verification Closure Summary`.

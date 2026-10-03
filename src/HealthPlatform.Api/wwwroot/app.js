@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.36';
+const HP_MVP_VERSION='0.58.37';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28474,6 +28474,7 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
     <div id="opsSupportSessionHandoffCopyConfirmationV05831" class="ops-support-handoff-copy-confirmation-v05831 hidden" aria-live="polite"></div>
     <div id="opsSupportSessionHandoffCopySummaryV05832" class="ops-support-handoff-copy-summary-v05832 hidden" aria-live="polite"></div>
     <div id="opsSupportSessionHandoffCopyVerificationV05833" class="ops-support-handoff-copy-verification-v05833 hidden" aria-live="polite"></div>
+    <div id="opsSupportSessionHandoffCopyVerificationClosureV05837" class="ops-support-handoff-copy-verification-closure-v05837 hidden" aria-live="polite"></div>
 
     <div class="ops-support-boundary-v05810">
       <p>A prévia usa somente o handoff local já preparado para continuidade do suporte.</p>
@@ -28503,6 +28504,7 @@ function hpOpenSupportSessionLifecycleHandoffPreviewV05827(){
   hpSupportSessionResetHandoffCopyConfirmationV05831();
   hpSupportSessionResetHandoffCopySummaryV05832();
   hpSupportSessionResetHandoffCopyVerificationV05833();
+  hpSupportSessionResetHandoffCopyVerificationClosureV05837();
 
   document.body.classList.add('ops-support-handoff-preview-open-v05827');
   backdrop.classList.remove('hidden');
@@ -28897,6 +28899,13 @@ function hpRenderSupportSessionHandoffCopyVerificationV05833(){
   const host=$('#opsSupportSessionHandoffCopyVerificationV05833');if(!host)return;
   const state=hpSupportSessionHandoffCopyVerificationStateV05833;
 
+  if(hpSupportSessionHandoffCopyVerificationClosureStateV05837.closedAt){
+    host.classList.add('hidden');
+    host.textContent='';
+    hpRenderSupportSessionHandoffCopyVerificationClosureV05837();
+    return;
+  }
+
   if(!state.verifiedAt||state.status==='idle'){
     host.classList.add('hidden');
     host.textContent='';
@@ -28924,10 +28933,12 @@ function hpRenderSupportSessionHandoffCopyVerificationV05833(){
   <small>Verificação local em ${esc(state.verifiedAt)}. O clipboard não é recapturado, nenhum conteúdo é alterado e nenhum evento é persistido.</small>
   ${hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state)}
   ${hpSupportSessionHandoffCopyVerificationSummaryMarkupV05835(state)}
-  ${hpSupportSessionHandoffCopyVerificationHandoffMarkupV05836(state)}`;
+  ${hpSupportSessionHandoffCopyVerificationHandoffMarkupV05836(state)}
+  ${hpSupportSessionHandoffCopyVerificationClosureActionMarkupV05837(state)}`;
 
   hpHydrateSupportSessionHandoffCopyVerificationSummaryV05835(state);
   hpHydrateSupportSessionHandoffCopyVerificationHandoffV05836(state);
+  hpBindSupportSessionHandoffCopyVerificationClosureV05837();
 }
 
 
@@ -29070,4 +29081,80 @@ function hpSupportSessionHandoffCopyVerificationHandoffMarkupV05836(state=hpSupp
 function hpHydrateSupportSessionHandoffCopyVerificationHandoffV05836(state=hpSupportSessionHandoffCopyVerificationStateV05833){
   const target=$('#opsSupportSessionHandoffCopyVerificationHandoffTextV05836');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationHandoffV05836(state);
+}
+
+
+// ===== v0.58.37 — Production Operations Support Session Handoff Copy Verification Closure =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_V05837='v0.58.37';
+
+const hpSupportSessionHandoffCopyVerificationClosureStateV05837={
+  closedAt:null,
+  statusAtClosure:null
+};
+
+function hpSupportSessionResetHandoffCopyVerificationClosureV05837(){
+  hpSupportSessionHandoffCopyVerificationClosureStateV05837.closedAt=null;
+  hpSupportSessionHandoffCopyVerificationClosureStateV05837.statusAtClosure=null;
+  hpRenderSupportSessionHandoffCopyVerificationClosureV05837();
+}
+
+function hpSupportSessionHandoffCopyVerificationClosureActionMarkupV05837(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  if(!state.verifiedAt||state.status==='idle')return '';
+  return `<div class="ops-support-handoff-copy-verification-closure-action-v05837">
+    <div>
+      <span class="eyebrow">FECHAMENTO LOCAL • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_V05837}</span>
+      <strong>Encerrar apenas a conferência visual</strong>
+      <small>A sessão de suporte, seus dados temporários e o conteúdo do handoff permanecem intactos.</small>
+    </div>
+    <button type="button" class="ghost" id="opsSupportSessionHandoffCopyVerificationCloseV05837">Encerrar conferência</button>
+  </div>`;
+}
+
+function hpSupportSessionCloseHandoffCopyVerificationV05837(){
+  const state=hpSupportSessionHandoffCopyVerificationStateV05833;
+  if(!state.verifiedAt||state.status==='idle'){
+    toast('Conclua a verificação antes de encerrar a conferência',true);
+    return;
+  }
+
+  hpSupportSessionHandoffCopyVerificationClosureStateV05837.closedAt=new Date().toISOString();
+  hpSupportSessionHandoffCopyVerificationClosureStateV05837.statusAtClosure=state.status;
+
+  const host=$('#opsSupportSessionHandoffCopyVerificationV05833');
+  if(host){
+    host.classList.add('hidden');
+    host.textContent='';
+  }
+
+  hpRenderSupportSessionHandoffCopyVerificationClosureV05837();
+  toast('Conferência visual encerrada');
+}
+
+function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
+  const host=$('#opsSupportSessionHandoffCopyVerificationClosureV05837');if(!host)return;
+  const state=hpSupportSessionHandoffCopyVerificationClosureStateV05837;
+
+  if(!state.closedAt){
+    host.classList.add('hidden');
+    host.textContent='';
+    return;
+  }
+
+  const label=state.statusAtClosure==='verified'?'Verificado':'Divergente';
+  host.className='ops-support-handoff-copy-verification-closure-v05837';
+  host.innerHTML=`<div>
+    <span class="eyebrow">CONFERÊNCIA ENCERRADA • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_V05837}</span>
+    <strong>Contexto visual da verificação encerrado</strong>
+  </div>
+  <div class="ops-support-handoff-copy-verification-closure-meta-v05837">
+    <span><small>Encerrado em</small><b>${esc(state.closedAt)}</b></span>
+    <span><small>Status no fechamento</small><b>${esc(label)}</b></span>
+    <span><small>Sessão de suporte</small><b>Permanece ativa</b></span>
+  </div>
+  <p>Fechamento local e transitório. Nenhum dado da sessão foi apagado, persistido, enviado ou alterado em produção.</p>`;
+}
+
+function hpBindSupportSessionHandoffCopyVerificationClosureV05837(){
+  const button=$('#opsSupportSessionHandoffCopyVerificationCloseV05837');
+  if(button)button.addEventListener('click',hpSupportSessionCloseHandoffCopyVerificationV05837,{once:true});
 }

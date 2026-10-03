@@ -1,3 +1,12 @@
+# v0.58.37 — Production Operations Support Session Handoff Copy Verification Closure
+
+- Adiciona fechamento manual da conferência pós-cópia.
+- Fecha somente o contexto visual da verificação.
+- Mantém sessão de suporte e dados temporários intactos.
+- Registra horário/status apenas em memória.
+- Reinicia o fechamento em nova prévia.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.36 — Production Operations Support Session Handoff Copy Verification Handoff
 
 - Adiciona bloco local de handoff da verificação pós-cópia.
