@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.30';
+const HP_MVP_VERSION='0.58.31';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28471,6 +28471,8 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
       <button type="button" class="secondary" id="opsSupportSessionLifecycleHandoffPreviewCopyV05827" disabled>Copiar handoff</button>
     </div>
 
+    <div id="opsSupportSessionHandoffCopyConfirmationV05831" class="ops-support-handoff-copy-confirmation-v05831 hidden" aria-live="polite"></div>
+
     <div class="ops-support-boundary-v05810">
       <p>A prévia usa somente o handoff local já preparado para continuidade do suporte.</p>
       <p>Nenhum conteúdo é copiado até a ação explícita “Copiar handoff”.</p>
@@ -28496,6 +28498,7 @@ function hpOpenSupportSessionLifecycleHandoffPreviewV05827(){
   hpSupportSessionHandoffPreviewStateV05827.content=hpSupportSessionLifecycleHandoffV05826();
   hpSupportSessionHandoffPreviewStateV05827.openedAt=new Date().toISOString();
   hpSupportSessionResetHandoffReviewReceiptV05829();
+  hpSupportSessionResetHandoffCopyConfirmationV05831();
 
   document.body.classList.add('ops-support-handoff-preview-open-v05827');
   backdrop.classList.remove('hidden');
@@ -28539,6 +28542,7 @@ async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
     area.remove();
   }
 
+  hpSupportSessionConfirmHandoffCopyV05831(Boolean(receipt));
   toast('Handoff conferido e copiado');
 }
 
@@ -28716,4 +28720,47 @@ function hpSupportSessionHandoffReviewReceiptPreviewMetaV05830(){
     charCount:receipt.length,
     operatorCollected:false
   };
+}
+
+
+// ===== v0.58.31 — Production Operations Support Session Handoff Copy Confirmation =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_CONFIRMATION_V05831='v0.58.31';
+
+const hpSupportSessionHandoffCopyConfirmationStateV05831={
+  copiedAt:null,
+  receiptAttached:false
+};
+
+function hpSupportSessionResetHandoffCopyConfirmationV05831(){
+  hpSupportSessionHandoffCopyConfirmationStateV05831.copiedAt=null;
+  hpSupportSessionHandoffCopyConfirmationStateV05831.receiptAttached=false;
+}
+
+function hpRenderSupportSessionHandoffCopyConfirmationV05831(){
+  const host=$('#opsSupportSessionHandoffCopyConfirmationV05831');if(!host)return;
+  const state=hpSupportSessionHandoffCopyConfirmationStateV05831;
+
+  if(!state.copiedAt){
+    host.classList.add('hidden');
+    host.textContent='';
+    return;
+  }
+
+  host.classList.remove('hidden');
+  host.innerHTML=`<div>
+    <span class="eyebrow">CÓPIA CONFIRMADA • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_CONFIRMATION_V05831}</span>
+    <strong>Handoff copiado para a área de transferência</strong>
+  </div>
+  <div class="ops-support-handoff-copy-confirmation-meta-v05831">
+    <span><small>Copiado em</small><b>${esc(state.copiedAt)}</b></span>
+    <span><small>Recibo anexado</small><b>${state.receiptAttached?'Sim':'Não'}</b></span>
+    <span><small>Operador</small><b>Não coletado</b></span>
+  </div>
+  <p>Confirmação local e transitória. Nenhum evento de cópia é persistido ou enviado automaticamente.</p>`;
+}
+
+function hpSupportSessionConfirmHandoffCopyV05831(receiptAttached){
+  hpSupportSessionHandoffCopyConfirmationStateV05831.copiedAt=new Date().toISOString();
+  hpSupportSessionHandoffCopyConfirmationStateV05831.receiptAttached=Boolean(receiptAttached);
+  hpRenderSupportSessionHandoffCopyConfirmationV05831();
 }

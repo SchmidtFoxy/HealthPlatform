@@ -10069,3 +10069,17 @@ A prévia mostra exatamente o texto que será anexado ao handoff, preservando o 
 A identificação do operador continua não sendo coletada, e nenhuma informação é persistida ou enviada automaticamente.
 
 **Próxima etapa:** `v0.58.31 — Production Operations Support Session Handoff Copy Confirmation`.
+
+
+---
+
+## v0.58.31 — Production Operations Support Session Handoff Copy Confirmation
+
+Depois de uma cópia concluída, a prévia do handoff agora mostra uma confirmação local com:
+- horário ISO da cópia;
+- indicação se o recibo foi anexado;
+- indicação de que o operador não é coletado.
+
+A confirmação existe somente na memória da página e é reiniciada ao abrir uma nova prévia. Nenhum evento de cópia é persistido ou enviado automaticamente.
+
+**Próxima etapa:** `v0.58.32 — Production Operations Support Session Handoff Copy Summary`.

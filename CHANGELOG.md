@@ -1,3 +1,12 @@
+# v0.58.31 — Production Operations Support Session Handoff Copy Confirmation
+
+- Adiciona confirmação local após a cópia do handoff.
+- Registra horário ISO da cópia somente em memória.
+- Mostra se o recibo foi anexado.
+- Não coleta identificação do operador.
+- Reinicia a confirmação em nova prévia.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview
 
 - Exibe o recibo de revisão completo antes da cópia.

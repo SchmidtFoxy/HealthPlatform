@@ -8777,3 +8777,25 @@ Exibir uma prévia textual completa do recibo de revisão do handoff antes da c�
 
 ### v0.58.31 — Production Operations Support Session Handoff Copy Confirmation
 Adicionar confirmação local pós-cópia do handoff, registrando apenas horário da cópia e status do recibo anexado, sem identificar o operador ou persistir o evento.
+
+
+## ✅ v0.58.31 — Production Operations Support Session Handoff Copy Confirmation — CONCLUÍDA
+
+**Entregue:**
+- confirmação local pós-cópia do handoff;
+- horário ISO da cópia registrado somente em memória;
+- status explícito informando se o recibo foi anexado;
+- identificação do operador explicitamente não coletada;
+- confirmação exibida apenas depois de uma cópia concluída;
+- confirmação reiniciada ao abrir uma nova prévia;
+- nenhuma gravação de evento de cópia;
+- nenhuma persistência;
+- nenhum envio automático;
+- nenhuma chamada à API;
+- nenhuma alteração em produção;
+- layout responsivo no desktop e mobile.
+
+## Próxima etapa
+
+### v0.58.32 — Production Operations Support Session Handoff Copy Summary
+Adicionar um resumo local pós-cópia com horário, status do recibo e tamanho do conteúdo copiado, permitindo conferência rápida sem persistir ou enviar o evento.
