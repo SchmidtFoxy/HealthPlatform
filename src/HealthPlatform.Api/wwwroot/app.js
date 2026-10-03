@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.5';
+const HP_MVP_VERSION='0.58.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26562,6 +26562,10 @@ async function hpLoadProductionOperationsV0582(){
       <div class="ops-filter-actions-v0584"><button type="submit" class="primary">Aplicar filtros</button><button type="button" class="secondary" id="opsClearFiltersV0584">Limpar</button></div>
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
+    <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><small>Leitura derivada do histórico, sem automação de deploy</small></div>
+      <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
+    </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
       <div class="ops-trends-head-v0585">
         <div><span class="eyebrow">TENDÊNCIAS</span><h3>Saúde operacional</h3></div>
@@ -26580,12 +26584,16 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsRefreshV0582')?.addEventListener('click',()=>hpFetchOperationsV0582().catch(e=>toast(e.message,true)));
   $('#opsFiltersV0584')?.addEventListener('submit',e=>{e.preventDefault();hpApplyOperationsFiltersV0584(e.currentTarget);});
   $('#opsClearFiltersV0584')?.addEventListener('click',hpClearOperationsFiltersV0584);
-  $('#opsTrendsDaysV0585')?.addEventListener('change',e=>hpFetchProductionTrendsV0585(Number(e.currentTarget.value)||30).catch(err=>toast(err.message,true)));
+  $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
+    const days=Number(e.currentTarget.value)||30;
+    Promise.all([hpFetchProductionTrendsV0585(days),hpFetchReliabilitySignalsV0586(days)]).catch(err=>toast(err.message,true));
+  });
   $('#opsPrevV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page>1){hpOperationsStateV0582.page--;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   $('#opsNextV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page<hpOperationsStateV0582.totalPages){hpOperationsStateV0582.page++;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   await Promise.all([
     hpFetchOperationsV0582(),
-    hpFetchProductionTrendsV0585(30)
+    hpFetchProductionTrendsV0585(30),
+    hpFetchReliabilitySignalsV0586(30)
   ]);
 }
 
@@ -26745,4 +26753,40 @@ async function hpFetchProductionTrendsV0585(days=30){
   const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
   const data=await api(`/api/operacoes-producao/deploys/trends?days=${safeDays}`);
   hpRenderProductionTrendsV0585(data);
+}
+
+
+// ===== v0.58.6 — Production Operations Reliability Signals =====
+const HP_PRODUCTION_OPERATIONS_RELIABILITY_V0586='v0.58.6';
+
+function hpOpsReliabilityDirectionV0586(direction){
+  const map={
+    improving:['ok','Melhorando'],
+    degrading:['bad','Piora relativa'],
+    stable:['neutral','Estável']
+  };
+  return map[direction]||['neutral','Sem classificação'];
+}
+function hpOpsReliabilityCardV0586(label,value,hint=''){
+  return `<article class="ops-reliability-card-v0586"><small>${esc(label)}</small><strong>${value}</strong>${hint?`<span>${esc(hint)}</span>`:''}</article>`;
+}
+function hpRenderReliabilitySignalsV0586(data){
+  const host=$('#opsReliabilityV0586');if(!host)return;
+  const [kind,directionLabel]=hpOpsReliabilityDirectionV0586(data?.stabilityDirection);
+  const rollbackHint=data?.lastRollbackAt?`${data.lastRollbackVersion||'Release'} • ${hpOpsDateV0582(data.lastRollbackAt)}`:'Nenhum no período';
+  const healthyApplyHint=data?.lastHealthyApplyAt?`${data.lastHealthyApplyVersion||'Release'} • ${hpOpsDateV0582(data.lastHealthyApplyAt)}`:'Nenhum apply saudável no período';
+  const delta=Number(data?.healthyPercentageDelta||0);
+  const deltaLabel=`${delta>0?'+':''}${delta.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})} p.p.`;
+
+  host.innerHTML=[
+    hpOpsReliabilityCardV0586('Sequência saudável',String(data?.currentHealthyStreak??0),'ciclo(s) consecutivo(s)'),
+    hpOpsReliabilityCardV0586('Último rollback',data?.lastRollbackVersion?esc(data.lastRollbackVersion):'Nenhum',rollbackHint),
+    hpOpsReliabilityCardV0586('Último apply saudável',data?.lastHealthyApplyVersion?esc(data.lastHealthyApplyVersion):'Nenhum',healthyApplyHint),
+    hpOpsReliabilityCardV0586('Estabilidade',`<span class="ops-status-v0582 ${kind}">${esc(directionLabel)}</span>`,deltaLabel)
+  ].join('');
+}
+async function hpFetchReliabilitySignalsV0586(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const data=await api(`/api/operacoes-producao/deploys/reliability?days=${safeDays}`);
+  hpRenderReliabilitySignalsV0586(data);
 }

@@ -9660,3 +9660,18 @@ São apresentados:
 O período pode ser alternado entre 7, 30, 90 e 180 dias. Os dados são derivados apenas do histórico operacional seguro.
 
 **Próxima etapa:** `v0.58.6 — Production Operations Reliability Signals`.
+
+
+---
+
+## v0.58.6 — Production Operations Reliability Signals
+
+A área **Operações** agora apresenta sinais derivados do histórico:
+- sequência de ciclos saudáveis;
+- último rollback;
+- último apply saudável;
+- direção de estabilidade.
+
+A direção compara a taxa saudável da metade mais recente do período com a metade anterior. Ela é apenas informativa e não executa ou recomenda deploy, rollback ou promoção automaticamente.
+
+**Próxima etapa:** `v0.58.7 — Production Operations Reliability Detail`.

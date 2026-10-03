@@ -120,6 +120,78 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/reliability")]
+    public async Task<ActionResult<ProductionReliabilitySignalsResponse>> GetReliabilitySignals(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 2 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 2 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .ToList();
+
+        var currentHealthyStreak = 0;
+        foreach (var item in periodItems)
+        {
+            if (!IsHealthy(item))
+            {
+                break;
+            }
+
+            currentHealthyStreak++;
+        }
+
+        var lastRollback = periodItems.FirstOrDefault(x => x.RollbackExecuted);
+        var lastHealthyApply = periodItems.FirstOrDefault(x =>
+            IsHealthy(x) &&
+            string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase));
+
+        var midpoint = from.AddTicks((now - from).Ticks / 2);
+        var previousHalf = periodItems.Where(x => x.RecordedAt < midpoint).ToList();
+        var recentHalf = periodItems.Where(x => x.RecordedAt >= midpoint).ToList();
+
+        var previousHealthyPercentage = Percentage(previousHalf.Count(IsHealthy), previousHalf.Count);
+        var recentHealthyPercentage = Percentage(recentHalf.Count(IsHealthy), recentHalf.Count);
+        var healthyPercentageDelta = Math.Round(
+            recentHealthyPercentage - previousHealthyPercentage,
+            1,
+            MidpointRounding.AwayFromZero);
+
+        var stabilityDirection =
+            healthyPercentageDelta >= 10m ? "improving" :
+            healthyPercentageDelta <= -10m ? "degrading" :
+            "stable";
+
+        var latest = periodItems.FirstOrDefault();
+
+        return Ok(new ProductionReliabilitySignalsResponse(
+            days,
+            from,
+            now,
+            periodItems.Count,
+            currentHealthyStreak,
+            lastRollback?.Version,
+            lastRollback?.RecordedAt,
+            lastHealthyApply?.Version,
+            lastHealthyApply?.RecordedAt,
+            previousHealthyPercentage,
+            recentHealthyPercentage,
+            healthyPercentageDelta,
+            stabilityDirection,
+            latest?.Version,
+            latest is not null && IsHealthy(latest)));
+    }
+
     [HttpGet("deploys/trends")]
     public async Task<ActionResult<ProductionDeployTrendsResponse>> GetDeployTrends(
         [FromQuery] int days = 30,
@@ -404,6 +476,23 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionReliabilitySignalsResponse(
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset To,
+    int TotalDeploys,
+    int CurrentHealthyStreak,
+    string? LastRollbackVersion,
+    DateTimeOffset? LastRollbackAt,
+    string? LastHealthyApplyVersion,
+    DateTimeOffset? LastHealthyApplyAt,
+    decimal PreviousHealthyPercentage,
+    decimal RecentHealthyPercentage,
+    decimal HealthyPercentageDelta,
+    string StabilityDirection,
+    string? LatestVersion,
+    bool LatestHealthy);
 
 public sealed record ProductionDeployTrendsResponse(
     int Days,

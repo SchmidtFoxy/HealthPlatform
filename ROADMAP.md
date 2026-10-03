@@ -8171,3 +8171,26 @@ Adicionar tendências operacionais derivadas do histórico: frequência de deplo
 
 ### v0.58.6 — Production Operations Reliability Signals
 Adicionar sinais operacionais derivados das tendências, como sequência de ciclos saudáveis, último rollback, última aplicação saudável e mudanças relevantes de estabilidade, sem automatizar decisões de deploy.
+
+
+## ✅ v0.58.6 — Production Operations Reliability Signals — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/reliability`;
+- período configurável de 2 a 365 dias;
+- sequência atual de ciclos saudáveis;
+- identificação do último rollback no período;
+- identificação do último `apply` saudável;
+- comparação de saúde entre metade anterior e metade recente do período;
+- delta em pontos percentuais;
+- sinal derivado `improving`, `stable` ou `degrading`;
+- referência da última release e indicação se o último ciclo foi saudável;
+- painel `Sinais operacionais` na UI;
+- leitura compartilhada com o seletor de 7/30/90/180 dias das tendências;
+- nenhum sinal automatiza decisão, promoção, rollback ou deploy;
+- nenhuma metadata interna, segredo ou evidência sensível é exposta.
+
+## Próxima etapa
+
+### v0.58.7 — Production Operations Reliability Detail
+Permitir detalhar como cada sinal de confiabilidade foi calculado, com janela comparativa, contagens e explicação operacional rastreável, sem transformar o indicador em decisão automática.

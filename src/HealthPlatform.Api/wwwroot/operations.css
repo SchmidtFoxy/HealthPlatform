@@ -133,3 +133,23 @@ body.ops-detail-open-v0583{overflow:hidden}
   .ops-trends-head-v0585 select{width:100%}
   .ops-trends-summary-v0585{grid-template-columns:1fr 1fr}
 }
+
+
+/* v0.58.6 — Production Operations Reliability Signals */
+.ops-reliability-v0586{display:grid;gap:12px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}
+.ops-reliability-head-v0586{display:flex;justify-content:space-between;gap:14px;align-items:flex-end}
+.ops-reliability-head-v0586 h3{margin:3px 0 0}
+.ops-reliability-head-v0586>small{opacity:.58;max-width:360px;text-align:right}
+.ops-reliability-grid-v0586{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ops-reliability-card-v0586{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.02);min-width:0}
+.ops-reliability-card-v0586 small{display:block;font-size:.67rem;text-transform:uppercase;letter-spacing:.06em;opacity:.58}
+.ops-reliability-card-v0586 strong{display:block;margin-top:6px;font-size:1.08rem;overflow-wrap:anywhere}
+.ops-reliability-card-v0586>span{display:block;margin-top:4px;font-size:.72rem;opacity:.62;overflow-wrap:anywhere}
+@media (max-width:900px){
+  .ops-reliability-grid-v0586{grid-template-columns:1fr 1fr}
+}
+@media (max-width:680px){
+  .ops-reliability-head-v0586{align-items:flex-start;flex-direction:column}
+  .ops-reliability-head-v0586>small{text-align:left}
+  .ops-reliability-grid-v0586{grid-template-columns:1fr}
+}

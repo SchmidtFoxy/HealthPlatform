@@ -1,3 +1,13 @@
+# v0.58.6 — Production Operations Reliability Signals
+
+- Adiciona endpoint de sinais de confiabilidade.
+- Calcula sequência saudável atual.
+- Expõe último rollback e último apply saudável.
+- Compara saúde recente vs período anterior.
+- Adiciona direção improving/stable/degrading.
+- Adiciona painel responsivo de sinais operacionais.
+- Preserva decisão humana e não automatiza deploy/rollback.
+
 # v0.58.5 — Production Operations Health Trends
 
 - Adiciona endpoint de tendências operacionais.
