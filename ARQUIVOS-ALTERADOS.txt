@@ -1,4 +1,4 @@
-HealthPlatform v0.58.21-r2 - Incremental
+HealthPlatform v0.58.22 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,33 +15,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Receipt Preview;
-- preview local do recibo antes do download;
-- horario + categorias + operador nao coletado;
-- voltar a revisao + baixar com recibo;
-- rechecagem do checklist;
-- proxima etapa v0.58.22 / Production Operations Support Session Closeout.
+- Production Operations Support Session Closeout;
+- closeout manual apos exportacao revisada;
+- nenhum auto-close no download;
+- limpeza de todo contexto local e drawers;
+- sem persistencia, API ou alteracao em producao;
+- proxima etapa v0.58.23 / Production Operations Support Session Lifecycle Status.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.21
-
-Hotfix cumulativo r1:
-- corrige o gate historico [5487/5497] da v0.58.17;
-- o gate anterior capturava todo o app.js a partir da funcao de abertura do preview;
-- a v0.58.21 adicionou um download legitimo mais adiante no arquivo, causando falso positivo;
-- agora o gate isola somente a funcao hpOpenSupportSessionSharePreviewV05817 ate o proximo marcador funcional;
-- codigo funcional da v0.58.21 permanece inalterado;
-- VERSION.txt permanece 0.58.21;
-- nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.21.
-
-Hotfix cumulativo r2:
-- corrige os gates historicos [5545/5559] e [5546/5559] da v0.58.20;
-- a v0.58.21 substituiu o fluxo antigo reviewedContent por finalContent apos introduzir a previa do recibo;
-- os gates agora validam semanticamente a preservacao do recibo e aceitam o fluxo evoluido da v0.58.21;
-- codigo funcional da v0.58.21 permanece inalterado;
-- VERSION.txt permanece 0.58.21;
-- inclui cumulativamente a correcao r1 do gate historico [5487/5497];
-- nao commitar/pushar -r2 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.21.
+Se aprovado, commit/push apenas: v0.58.22

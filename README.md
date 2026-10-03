@@ -9934,3 +9934,16 @@ A tela confirma:
 O download só acontece em **Baixar com recibo**. Se o checklist tiver mudado, o download é bloqueado e a revisão precisa ser refeita.
 
 **Próxima etapa:** `v0.58.22 — Production Operations Support Session Closeout`.
+
+
+---
+
+## v0.58.22 — Production Operations Support Session Closeout
+
+Após uma exportação revisada, a **Sessão suporte** habilita **Encerrar sessão**.
+
+O encerramento é sempre manual. O download não limpa a sessão automaticamente. Quando confirmado pela ação do operador, o contexto temporário em memória é removido e os painéis de sessão/revisão/recibo são fechados.
+
+Nenhuma chamada de produção é executada no fechamento.
+
+**Próxima etapa:** `v0.58.23 — Production Operations Support Session Lifecycle Status`.

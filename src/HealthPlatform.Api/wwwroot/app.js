@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.21';
+const HP_MVP_VERSION='0.58.22';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27410,6 +27410,7 @@ function hpRenderSupportSessionV05815(){
       <span class="ops-status-v0582 ${kind}">${esc(label)}</span>
       <button type="button" class="secondary" id="opsSupportSessionExportV05816">Exportar sessão</button>
       <button type="button" class="secondary" id="opsSupportSessionCopyV05815">Copiar resumo</button>
+      <button type="button" class="ghost" id="opsSupportSessionCloseoutV05822" ${hpSupportSessionCloseoutStateV05822.exported?'':'disabled'}>${hpSupportSessionCloseoutStateV05822.exported?'Encerrar sessão':'Encerrar após exportar'}</button>
       <button type="button" class="ghost" id="opsSupportSessionClearV05815">Limpar sessão</button>
     </div>
 
@@ -27446,6 +27447,7 @@ function hpRenderSupportSessionV05815(){
 
   $('#opsSupportSessionCloseV05815')?.addEventListener('click',hpCloseSupportSessionV05815);
   $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpOpenSupportSessionSharePreviewV05817().catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionCloseoutV05822')?.addEventListener('click',hpCloseoutSupportSessionV05822);
   $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
     hpSupportSessionResetV05815();
@@ -28081,9 +28083,44 @@ async function hpDownloadSupportSessionWithReceiptV05821(){
     const fileName=`aesyn-support-session-${stamp}.md`;
     const finalContent=`${String(state.content).replace(/\s+$/,'')}\n\n${state.receipt}\n`;
     hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',finalContent);
+    hpSupportSessionCloseoutStateV05822.exported=true;
+    hpSupportSessionCloseoutStateV05822.exportedAt=new Date().toISOString();
     hpCloseSupportSessionReceiptPreviewV05821();
+    hpRenderSupportSessionV05815();
     toast(`Sessão revisada exportada com recibo • ${hpSupportSessionStateV05815.evidences.length} evidência(s)`);
   }finally{
     if(button){button.disabled=false;button.textContent='Baixar com recibo'}
   }
+}
+
+
+// ===== v0.58.22 — Production Operations Support Session Closeout =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_CLOSEOUT_V05822='v0.58.22';
+
+const hpSupportSessionCloseoutStateV05822={
+  exported:false,
+  exportedAt:null
+};
+
+function hpSupportSessionResetCloseoutV05822(){
+  hpSupportSessionCloseoutStateV05822.exported=false;
+  hpSupportSessionCloseoutStateV05822.exportedAt=null;
+}
+
+function hpCloseoutSupportSessionV05822(){
+  if(!hpSupportSessionCloseoutStateV05822.exported){
+    toast('Exporte a sessão revisada antes de encerrar',true);
+    return;
+  }
+
+  const exportedAt=hpSupportSessionCloseoutStateV05822.exportedAt;
+  hpSupportSessionResetV05815();
+  hpSupportSessionResetReceiptPreviewV05821();
+  hpSupportSessionResetCloseoutV05822();
+
+  hpCloseSupportSessionReceiptPreviewV05821();
+  hpCloseSupportSessionSharePreviewV05817();
+  hpCloseSupportSessionV05815();
+
+  toast(`Sessão encerrada e contexto local limpo${exportedAt?` • exportada em ${hpOpsDateV0582(exportedAt)}`:''}`);
 }

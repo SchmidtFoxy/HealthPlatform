@@ -1,3 +1,13 @@
+# v0.58.22 — Production Operations Support Session Closeout
+
+- Adiciona fechamento explícito da sessão.
+- Libera Encerrar sessão somente após exportação revisada.
+- Não encerra automaticamente após download.
+- Limpa todo o contexto local somente por ação manual.
+- Fecha drawers de sessão, revisão e recibo.
+- Não persiste estado nem chama API.
+- Não altera produção.
+
 # v0.58.21 — Production Operations Support Session Receipt Preview
 
 - Adiciona prévia local do recibo antes do download.

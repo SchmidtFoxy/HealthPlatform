@@ -8555,3 +8555,25 @@ Exibir uma prévia local do recibo de revisão antes do download, permitindo ver
 
 ### v0.58.22 — Production Operations Support Session Closeout
 Adicionar fechamento explícito da sessão após exportação revisada, permitindo ao operador encerrar e limpar o contexto local de suporte somente por ação manual.
+
+
+## ✅ v0.58.22 — Production Operations Support Session Closeout — CONCLUÍDA
+
+**Entregue:**
+- fechamento explícito da sessão após exportação revisada;
+- estado local `exported` + horário da última exportação revisada;
+- botão `Encerrar sessão` liberado somente após exportação concluída;
+- antes da exportação, a ação permanece desabilitada;
+- nenhuma sessão é encerrada automaticamente após download;
+- encerramento ocorre somente por ação manual do operador;
+- ao encerrar, snapshot, contexto, timeline, evidências e estado de recibo são limpos da memória;
+- drawers de sessão, revisão e recibo são fechados;
+- nenhuma chamada à API é feita para encerrar;
+- nenhuma persistência é criada;
+- nenhuma alteração ocorre em produção;
+- feedback local confirma o encerramento e a limpeza do contexto.
+
+## Próxima etapa
+
+### v0.58.23 — Production Operations Support Session Lifecycle Status
+Adicionar um indicador local e compacto do ciclo da sessão (`ativa`, `revisada`, `exportada`, `pronta para encerrar`) para tornar o fluxo de suporte mais claro sem persistir estado.
