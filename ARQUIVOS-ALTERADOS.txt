@@ -1,4 +1,4 @@
-HealthPlatform v0.58.38-r1 - Incremental
+HealthPlatform v0.58.39-r1 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,21 +15,23 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Handoff Copy Verification Closure Summary;
-- resumo local do fechamento com horario, status final e preservacao da sessao/handoff;
+- Production Operations Support Session Handoff Copy Verification Closure Handoff;
+- handoff local do fechamento com resumo final e continuidade da sessao;
+- normalizacao preventiva dos blocos v0.58.38 em app.js e operations.css;
 - somente leitura;
 - sem clipboard read/write, handlers, API, persistencia ou alteracao em producao;
-- proxima etapa v0.58.39 / Production Operations Support Session Handoff Copy Verification Closure Handoff.
+- proxima etapa v0.58.40 / Production Operations Support Session Handoff Copy Verification Closure Continuity.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.38
+Se aprovado, commit/push apenas: v0.58.39
 
 Hotfix cumulativo r1:
-- corrige a serializacao do gate v0.58.38 em TESTAR.ps1;
-- sequencias literais `\n` foram normalizadas para quebras de linha reais;
-- corrige o erro de parser PowerShell `UnexpectedToken`;
-- nenhum codigo funcional da v0.58.38 foi alterado;
-- VERSION.txt permanece 0.58.38;
+- corrige gates historicos que ainda comparavam VERSION.txt com 0.58.38;
+- 52 comparacoes de versao corrente foram evoluidas para 0.58.39;
+- corrige a falha `VERSION.txt inesperado` iniciada no gate da linha 517;
+- nenhum codigo funcional da v0.58.39 foi alterado;
+- VERSION.txt permanece 0.58.39;
+- TESTAR.ps1 permanece UTF-8 com BOM;
 - nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.38.
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.39.

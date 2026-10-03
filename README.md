@@ -10184,3 +10184,14 @@ O fechamento manual da conferência agora apresenta um resumo textual local com 
 O resumo é somente leitura, usa apenas estado local e não persiste nem envia informações.
 
 **Próxima etapa:** `v0.58.39 — Production Operations Support Session Handoff Copy Verification Closure Handoff`.
+
+
+---
+
+## v0.58.39 — Production Operations Support Session Handoff Copy Verification Closure Handoff
+
+O fechamento da conferência agora apresenta um handoff local de continuidade com horário, status final, resumo do fechamento e confirmação de que a sessão de suporte permanece ativa.
+
+Nesta versão também foi normalizada a serialização dos blocos v0.58.38 em `app.js` e `operations.css`, eliminando sequências literais `\n` remanescentes.
+
+**Próxima etapa:** `v0.58.40 — Production Operations Support Session Handoff Copy Verification Closure Continuity`.
