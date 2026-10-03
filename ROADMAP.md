@@ -8339,3 +8339,25 @@ Adicionar uma timeline curta de suporte, derivada de releases e eventos operacio
 
 ### v0.58.13 — Production Operations Support Event Detail
 Adicionar detalhe seguro de um evento selecionado na timeline de suporte, reutilizando apenas dados operacionais públicos e explicando os gates relevantes do ciclo sem expor metadata interna.
+
+
+## ✅ v0.58.13 — Production Operations Support Event Detail — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/support-timeline/detail`;
+- seleção única por versão + `recordedAt`;
+- dados públicos seguros do evento;
+- estado operacional do ciclo;
+- explicação dos gates de backup, migration safety, promoção, runtime, version verification, rollback, recovery audit e closure;
+- cards da timeline clicáveis e acessíveis por teclado;
+- drawer de detalhe no desktop;
+- bottom sheet no mobile;
+- flags resumidas de runtime, versão, rollback, recovery e closure;
+- detalhe somente leitura;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais;
+- nenhuma ação operacional é executada, recomendada, autorizada ou automatizada.
+
+## Próxima etapa
+
+### v0.58.14 — Production Operations Support Evidence Pack
+Adicionar um pacote textual seguro por evento com resumo, gates e fatos públicos para compartilhamento técnico, preservando os limites de metadata interna.

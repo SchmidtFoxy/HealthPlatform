@@ -120,6 +120,113 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/support-timeline/detail")]
+    public async Task<ActionResult<ProductionSupportEventDetailResponse>> GetSupportTimelineDetail(
+        [FromQuery] string version,
+        [FromQuery] DateTimeOffset recordedAt,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            return BadRequest(new { message = "version e obrigatoria." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var item = allItems.FirstOrDefault(x =>
+            string.Equals(x.Version, version, StringComparison.OrdinalIgnoreCase) &&
+            x.RecordedAt.Equals(recordedAt));
+
+        if (item is null)
+        {
+            return NotFound(new { message = "Evento operacional nao encontrado no historico." });
+        }
+
+        var state = IsHealthy(item)
+            ? "healthy"
+            : item.RollbackExecuted
+                ? "rollback"
+                : item.ClosureComplete
+                    ? "attention"
+                    : "pending";
+
+        var gates = new[]
+        {
+            new ProductionSupportEventGate(
+                "backup",
+                "Backup PostgreSQL",
+                item.BackupValidated ? "passed" : "pending",
+                item.BackupValidated ? "Backup validado antes das mutacoes." : "Backup nao confirmado neste evento."),
+
+            new ProductionSupportEventGate(
+                "migration-safety",
+                "Migration Safety",
+                item.MigrationSafetyApproved && item.MigrationHashMatched && !item.DestructiveMigrationsAllowed ? "passed" : "attention",
+                item.MigrationSafetyApproved && item.MigrationHashMatched && !item.DestructiveMigrationsAllowed
+                    ? "Conjunto aprovado, hash conferido e migrations destrutivas bloqueadas."
+                    : "Nem todos os invariantes de migration safety foram confirmados."),
+
+            new ProductionSupportEventGate(
+                "promotion",
+                "Promocao",
+                item.PromotionApplied ? "applied" : "not-applied",
+                item.PromotionApplied ? "Release promovida no ciclo." : "Evento sem promocao aplicada."),
+
+            new ProductionSupportEventGate(
+                "runtime",
+                "Runtime",
+                item.RuntimeHealthy ? "passed" : "attention",
+                item.RuntimeHealthy ? "Runtime respondeu saudavel." : "Runtime nao foi confirmado como saudavel."),
+
+            new ProductionSupportEventGate(
+                "version",
+                "Version Verification",
+                item.VersionHealthy ? "passed" : "attention",
+                item.VersionHealthy
+                    ? $"Versao servida confirmada: {item.ServedVersion}."
+                    : "Versao servida nao foi confirmada no ciclo."),
+
+            new ProductionSupportEventGate(
+                "rollback",
+                "Rollback",
+                item.RollbackExecuted ? "executed" : "not-required",
+                item.RollbackExecuted ? "Rollback registrado neste ciclo." : "Rollback nao foi necessario."),
+
+            new ProductionSupportEventGate(
+                "recovery",
+                "Recovery Audit",
+                item.RecoveryAuditComplete ? "passed" : "pending",
+                item.RecoveryAuditComplete ? "Recovery audit concluido." : "Recovery audit nao concluido."),
+
+            new ProductionSupportEventGate(
+                "closure",
+                "Closure",
+                item.ClosureComplete ? "passed" : "pending",
+                item.ClosureComplete ? "Closure gate concluido." : "Closure gate pendente.")
+        };
+
+        var eventData = new ProductionSupportEventPublicData(
+            item.Version,
+            item.RecordedAt,
+            item.Mode,
+            item.OperationsStatus,
+            state,
+            item.RuntimeHealthy,
+            item.VersionHealthy,
+            item.ServedVersion,
+            item.RollbackExecuted,
+            item.RecoveryAuditComplete,
+            item.ClosureComplete);
+
+        return Ok(new ProductionSupportEventDetailResponse(
+            eventData,
+            gates,
+            "Detalhe operacional somente leitura baseado em dados publicos seguros.",
+            "Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.",
+            "O detalhe explica evidencias do ciclo e nao executa, recomenda, autoriza ou automatiza deploy, promocao ou rollback."));
+    }
+
     [HttpGet("deploys/support-timeline")]
     public async Task<ActionResult<ProductionSupportTimelineResponse>> GetSupportTimeline(
         [FromQuery] int days = 30,
@@ -1086,6 +1193,32 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionSupportEventDetailResponse(
+    ProductionSupportEventPublicData Event,
+    IReadOnlyList<ProductionSupportEventGate> Gates,
+    string SafetyNote,
+    string ExcludedMetadata,
+    string DecisionBoundary);
+
+public sealed record ProductionSupportEventPublicData(
+    string Version,
+    DateTimeOffset RecordedAt,
+    string Mode,
+    string OperationsStatus,
+    string State,
+    bool RuntimeHealthy,
+    bool VersionHealthy,
+    string ServedVersion,
+    bool RollbackExecuted,
+    bool RecoveryAuditComplete,
+    bool ClosureComplete);
+
+public sealed record ProductionSupportEventGate(
+    string Key,
+    string Label,
+    string State,
+    string Description);
 
 public sealed record ProductionSupportTimelineResponse(
     int Days,

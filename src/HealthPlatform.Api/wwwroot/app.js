@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.12';
+const HP_MVP_VERSION='0.58.13';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27186,7 +27186,7 @@ function hpRenderSupportTimelineV05812(data){
     </div>
 
     ${items.length?`<section class="ops-support-timeline-list-v05812">
-      ${items.map(item=>`<article class="ops-support-timeline-item-v05812 ${hpSupportTimelineKindV05812(item.state)}">
+      ${items.map(item=>`<article class="ops-support-timeline-item-v05812 ${hpSupportTimelineKindV05812(item.state)} ops-support-event-open-v05813" tabindex="0" role="button" data-support-event-version="${esc(item.version||'')}" data-support-event-recorded-at="${esc(item.recordedAt||'')}">
         <div class="ops-support-timeline-rail-v05812"><span></span></div>
         <div class="ops-support-timeline-content-v05812">
           <div class="ops-support-timeline-title-v05812">
@@ -27216,6 +27216,15 @@ function hpRenderSupportTimelineV05812(data){
     </div>
   </div>`;
   $('#opsSupportTimelineCloseV05812')?.addEventListener('click',hpCloseSupportTimelineV05812);
+  host.querySelectorAll('.ops-support-event-open-v05813').forEach(node=>{
+    const open=()=>{
+      const version=node.dataset.supportEventVersion||'';
+      const recordedAt=node.dataset.supportEventRecordedAt||'';
+      hpOpenSupportEventDetailV05813(version,recordedAt).catch(err=>toast(err.message,true));
+    };
+    node.addEventListener('click',open);
+    node.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();open();}});
+  });
 }
 function hpCloseSupportTimelineV05812(){
   $('#opsSupportTimelineBackdropV05812')?.classList.add('hidden');
@@ -27232,4 +27241,81 @@ async function hpOpenSupportTimelineV05812(days=30){
   host.innerHTML=hpUiState('loading','Montando timeline operacional');
   const data=await api(`/api/operacoes-producao/deploys/support-timeline?days=${safeDays}&limit=40`);
   hpRenderSupportTimelineV05812(data);
+}
+
+
+// ===== v0.58.13 — Production Operations Support Event Detail =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_EVENT_DETAIL_V05813='v0.58.13';
+
+function hpSupportEventGateKindV05813(state){
+  const map={
+    passed:'ok',
+    applied:'ok',
+    executed:'bad',
+    'not-required':'neutral',
+    'not-applied':'neutral',
+    pending:'warn',
+    attention:'warn'
+  };
+  return map[state]||'neutral';
+}
+function hpRenderSupportEventDetailV05813(data){
+  const host=$('#opsSupportEventDetailV05813');if(!host)return;
+  const item=data?.event||{};
+  const [kind,label]=hpSupportStateV05810(item.state);
+  host.innerHTML=`<div class="ops-support-event-detail-v05813">
+    <div class="ops-support-event-detail-head-v05813">
+      <div><span class="eyebrow">SUPPORT EVENT DETAIL • ${HP_PRODUCTION_OPERATIONS_SUPPORT_EVENT_DETAIL_V05813}</span><h3>${esc(item.version||'Evento operacional')}</h3><p>${hpOpsDateV0582(item.recordedAt)} • ${esc(item.mode||'—')}</p></div>
+      <button type="button" class="ghost" id="opsSupportEventDetailCloseV05813" aria-label="Fechar detalhe do evento">×</button>
+    </div>
+
+    <div class="ops-support-event-summary-v05813">
+      <span class="ops-status-v0582 ${kind}">${esc(label)}</span>
+      <div><small>Status operacional</small><strong>${esc(item.operationsStatus||'—')}</strong></div>
+      <div><small>Versão servida</small><strong>${esc(item.servedVersion||'—')}</strong></div>
+    </div>
+
+    <section class="ops-support-event-gates-v05813">
+      <span class="eyebrow">GATES DO CICLO</span>
+      ${(data?.gates||[]).map(gate=>`<article class="${hpSupportEventGateKindV05813(gate.state)}">
+        <span class="ops-support-event-gate-dot-v05813"></span>
+        <div>
+          <div class="ops-support-event-gate-title-v05813"><strong>${esc(gate.label||gate.key||'Gate')}</strong><span class="ops-status-v0582 ${hpSupportEventGateKindV05813(gate.state)}">${esc(gate.state||'unknown')}</span></div>
+          <p>${esc(gate.description||'')}</p>
+        </div>
+      </article>`).join('')}
+    </section>
+
+    <div class="ops-support-event-flags-v05813">
+      <span>${item.runtimeHealthy?'✓':'○'} Runtime</span>
+      <span>${item.versionHealthy?'✓':'○'} Versão</span>
+      <span>${item.rollbackExecuted?'✓':'○'} Rollback</span>
+      <span>${item.recoveryAuditComplete?'✓':'○'} Recovery</span>
+      <span>${item.closureComplete?'✓':'○'} Closure</span>
+    </div>
+
+    <div class="ops-support-boundary-v05810">
+      <p>${esc(data?.safetyNote||'Detalhe operacional somente leitura.')}</p>
+      <p>${esc(data?.excludedMetadata||'Metadata interna não exposta.')}</p>
+      <p>${esc(data?.decisionBoundary||'Sem automação de decisão operacional.')}</p>
+    </div>
+  </div>`;
+  $('#opsSupportEventDetailCloseV05813')?.addEventListener('click',hpCloseSupportEventDetailV05813);
+}
+function hpCloseSupportEventDetailV05813(){
+  $('#opsSupportEventDetailBackdropV05813')?.classList.add('hidden');
+  $('#opsSupportEventDetailPanelV05813')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-event-detail-open-v05813');
+}
+async function hpOpenSupportEventDetailV05813(version,recordedAt){
+  const panel=$('#opsSupportEventDetailPanelV05813'),backdrop=$('#opsSupportEventDetailBackdropV05813'),host=$('#opsSupportEventDetailV05813');
+  if(!panel||!backdrop||!host)return;
+  if(!version||!recordedAt)return;
+  document.body.classList.add('ops-support-event-detail-open-v05813');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Carregando detalhe do evento');
+  const query=new URLSearchParams({version:String(version),recordedAt:String(recordedAt)});
+  const data=await api(`/api/operacoes-producao/deploys/support-timeline/detail?${query.toString()}`);
+  hpRenderSupportEventDetailV05813(data);
 }

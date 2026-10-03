@@ -9771,3 +9771,24 @@ Cada evento mostra:
 A timeline é somente leitura e não expõe infraestrutura sensível.
 
 **Próxima etapa:** `v0.58.13 — Production Operations Support Event Detail`.
+
+
+---
+
+## v0.58.13 — Production Operations Support Event Detail
+
+Os eventos da **Timeline suporte** agora podem ser abertos individualmente.
+
+O detalhe mostra os gates do ciclo:
+- backup;
+- migration safety;
+- promoção;
+- runtime;
+- version verification;
+- rollback;
+- recovery audit;
+- closure.
+
+O conteúdo é somente leitura e usa apenas dados operacionais públicos seguros.
+
+**Próxima etapa:** `v0.58.14 — Production Operations Support Evidence Pack`.

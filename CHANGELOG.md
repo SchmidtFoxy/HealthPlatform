@@ -1,3 +1,13 @@
+# v0.58.13 — Production Operations Support Event Detail
+
+- Adiciona endpoint de detalhe de evento da timeline.
+- Identifica evento por versão + recordedAt.
+- Explica gates operacionais públicos do ciclo.
+- Torna cards da timeline clicáveis e acessíveis por teclado.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Mantém metadata interna fora da resposta.
+- Mantém o detalhe somente leitura.
+
 # v0.58.12 — Production Operations Support Timeline
 
 - Adiciona endpoint de timeline operacional para suporte.
