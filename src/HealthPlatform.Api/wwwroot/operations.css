@@ -596,3 +596,15 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
   .ops-support-handoff-checklist-head-v05828{align-items:flex-start;flex-direction:column}
   .ops-support-handoff-checklist-items-v05828{grid-template-columns:1fr}
 }
+
+
+/* v0.58.29 — Production Operations Support Session Handoff Review Receipt */
+.ops-support-handoff-review-receipt-v05829{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border-radius:10px;border:1px dashed rgba(255,255,255,.08);background:rgba(0,0,0,.12)}
+.ops-support-handoff-review-receipt-v05829 small{display:block;font-size:.64rem;letter-spacing:.06em;opacity:.55}
+.ops-support-handoff-review-receipt-v05829 strong{display:block;margin-top:3px;font-size:.76rem}
+.ops-support-handoff-review-receipt-v05829>span{font-size:.7rem;line-height:1.4;opacity:.62;text-align:right}
+.ops-support-handoff-review-receipt-v05829.ready{border-style:solid;border-color:rgba(98,217,172,.16);background:rgba(98,217,172,.025)}
+@media (max-width:680px){
+  .ops-support-handoff-review-receipt-v05829{align-items:flex-start;flex-direction:column}
+  .ops-support-handoff-review-receipt-v05829>span{text-align:left}
+}

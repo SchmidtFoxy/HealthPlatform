@@ -1,3 +1,13 @@
+# v0.58.29 — Production Operations Support Session Handoff Review Receipt
+
+- Adiciona recibo local da revisão do handoff.
+- Fixa horário da revisão ao completar 3/3.
+- Registra as três categorias confirmadas.
+- Não coleta identificação do operador ou destinatário.
+- Descarta o recibo se o checklist deixar de estar completo.
+- Anexa o recibo à cópia explícita do handoff.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.28 — Production Operations Support Session Handoff Review Checklist
 
 - Adiciona checklist 3/3 antes da cópia do handoff.

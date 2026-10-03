@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.28';
+const HP_MVP_VERSION='0.58.29';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28463,6 +28463,7 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
       </div>
 
       <p class="ops-support-handoff-checklist-note-v05828">O checklist registra apenas confirmações locais desta prévia. Nada é removido, alterado, persistido ou enviado automaticamente.</p>
+      <div id="opsSupportSessionHandoffReviewReceiptV05829" class="ops-support-handoff-review-receipt-v05829" aria-live="polite"></div>
     </section>
 
     <div class="ops-support-handoff-preview-actions-v05827">
@@ -28494,6 +28495,7 @@ function hpOpenSupportSessionLifecycleHandoffPreviewV05827(){
 
   hpSupportSessionHandoffPreviewStateV05827.content=hpSupportSessionLifecycleHandoffV05826();
   hpSupportSessionHandoffPreviewStateV05827.openedAt=new Date().toISOString();
+  hpSupportSessionResetHandoffReviewReceiptV05829();
 
   document.body.classList.add('ops-support-handoff-preview-open-v05827');
   backdrop.classList.remove('hidden');
@@ -28508,13 +28510,21 @@ function hpCloseSupportSessionLifecycleHandoffPreviewV05827(){
 }
 
 async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
-  const text=String(hpSupportSessionHandoffPreviewStateV05827.content||'');
-  if(!text)return;
+  const baseText=String(hpSupportSessionHandoffPreviewStateV05827.content||'');
+  if(!baseText)return;
   if(!hpSupportSessionHandoffChecklistCompleteV05828()){
     toast('Confirme os 3 itens do checklist antes da cópia',true);
     return;
   }
 
+  hpSupportSessionSyncHandoffReviewReceiptV05829(hpSupportSessionHandoffChecklistStateV05828());
+  const receipt=String(hpSupportSessionHandoffReviewReceiptStateV05829.receipt||'');
+  if(!receipt){
+    toast('Recibo da revisão indisponível. Revise o checklist novamente',true);
+    return;
+  }
+
+  const text=`${baseText.replace(/\s+$/,'')}\n\n${receipt}\n`;
   if(navigator.clipboard?.writeText){
     await navigator.clipboard.writeText(text);
   }else{
@@ -28564,6 +28574,8 @@ function hpSupportSessionRenderHandoffChecklistStatusV05828(){
     copy.disabled=!state.complete;
     copy.title=state.complete?'Checklist concluído':'Confirme os 3 itens do checklist antes da cópia';
   }
+
+  hpSupportSessionSyncHandoffReviewReceiptV05829(state);
 }
 
 function hpSupportSessionBindHandoffChecklistV05828(){
@@ -28581,4 +28593,93 @@ function hpSupportSessionResetHandoffChecklistV05828(){
 
 function hpSupportSessionHandoffChecklistCompleteV05828(){
   return hpSupportSessionHandoffChecklistStateV05828().complete;
+}
+
+
+// ===== v0.58.29 — Production Operations Support Session Handoff Review Receipt =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_RECEIPT_V05829='v0.58.29';
+
+const hpSupportSessionHandoffReviewReceiptStateV05829={
+  reviewedAt:null,
+  receipt:''
+};
+
+function hpSupportSessionResetHandoffReviewReceiptV05829(){
+  hpSupportSessionHandoffReviewReceiptStateV05829.reviewedAt=null;
+  hpSupportSessionHandoffReviewReceiptStateV05829.receipt='';
+}
+
+function hpSupportSessionHandoffReviewCategoriesV05829(){
+  const labels={
+    'minimum-context':'Contexto mínimo',
+    'no-secrets':'Ausência de segredos',
+    'recipient-fit':'Adequação ao destinatário'
+  };
+
+  return hpSupportSessionHandoffChecklistInputsV05828()
+    .filter(input=>input.checked)
+    .map(input=>({
+      key:String(input.dataset.handoffCheckV05828||''),
+      label:labels[String(input.dataset.handoffCheckV05828||'')]||'Categoria confirmada'
+    }));
+}
+
+function hpSupportSessionBuildHandoffReviewReceiptV05829(reviewedAt=new Date().toISOString()){
+  const categories=hpSupportSessionHandoffReviewCategoriesV05829();
+  const lines=[
+    '## Recibo de revisão do handoff',
+    `Versão do recibo: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_RECEIPT_V05829}`,
+    `Revisado em: ${reviewedAt}`,
+    'Identificação do operador: não coletada',
+    'Categorias confirmadas:'
+  ];
+
+  if(categories.length){
+    categories.forEach(item=>lines.push(`- ${item.label}`));
+  }else{
+    lines.push('- nenhuma');
+  }
+
+  lines.push(
+    '',
+    'Este recibo registra somente o horário e as categorias confirmadas localmente antes da cópia.',
+    'Nenhuma identidade do operador, credencial, segredo ou destinatário é coletado.',
+    'O recibo não é persistido nem enviado automaticamente.'
+  );
+
+  return lines.join('\n');
+}
+
+function hpRenderSupportSessionHandoffReviewReceiptV05829(){
+  const host=$('#opsSupportSessionHandoffReviewReceiptV05829');if(!host)return;
+  const state=hpSupportSessionHandoffReviewReceiptStateV05829;
+
+  if(!state.receipt){
+    host.className='ops-support-handoff-review-receipt-v05829 pending';
+    host.innerHTML='<small>RECIBO DE REVISÃO</small><span>Conclua 3/3 para gerar o recibo local antes da cópia.</span>';
+    return;
+  }
+
+  host.className='ops-support-handoff-review-receipt-v05829 ready';
+  host.innerHTML=`<div>
+    <small>RECIBO DE REVISÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_RECEIPT_V05829}</small>
+    <strong>Pronto para anexar à cópia</strong>
+  </div>
+  <span>${esc(state.reviewedAt||'—')} • 3 categorias confirmadas • operador não coletado</span>`;
+}
+
+function hpSupportSessionSyncHandoffReviewReceiptV05829(checklistState=hpSupportSessionHandoffChecklistStateV05828()){
+  if(!checklistState.complete){
+    hpSupportSessionResetHandoffReviewReceiptV05829();
+    hpRenderSupportSessionHandoffReviewReceiptV05829();
+    return;
+  }
+
+  if(!hpSupportSessionHandoffReviewReceiptStateV05829.reviewedAt){
+    hpSupportSessionHandoffReviewReceiptStateV05829.reviewedAt=new Date().toISOString();
+  }
+
+  hpSupportSessionHandoffReviewReceiptStateV05829.receipt=
+    hpSupportSessionBuildHandoffReviewReceiptV05829(hpSupportSessionHandoffReviewReceiptStateV05829.reviewedAt);
+  hpRenderSupportSessionHandoffReviewReceiptV05829();
 }

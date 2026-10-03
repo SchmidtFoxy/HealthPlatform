@@ -10040,3 +10040,19 @@ A prévia do handoff agora exige três confirmações antes da cópia:
 O botão **Copiar handoff** fica bloqueado até `3/3`. O checklist não altera o conteúdo e registra apenas confirmações locais da prévia.
 
 **Próxima etapa:** `v0.58.29 — Production Operations Support Session Handoff Review Receipt`.
+
+
+---
+
+## v0.58.29 — Production Operations Support Session Handoff Review Receipt
+
+Ao concluir o checklist `3/3`, a prévia do handoff agora gera um recibo local de revisão.
+
+O recibo registra somente:
+- horário ISO da revisão;
+- as três categorias confirmadas;
+- indicação de que a identificação do operador não é coletada.
+
+Se qualquer confirmação for desmarcada, o recibo é descartado. A cópia explícita do handoff anexa o mesmo recibo gerado localmente, sem alterar o conteúdo-base da prévia.
+
+**Próxima etapa:** `v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview`.

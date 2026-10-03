@@ -8727,3 +8727,28 @@ Adicionar checklist local e explícito antes da cópia do handoff, confirmando c
 
 ### v0.58.29 — Production Operations Support Session Handoff Review Receipt
 Adicionar um recibo local da revisão do handoff, registrando apenas horário e categorias confirmadas antes da cópia, sem identificar o operador nem persistir dados adicionais.
+
+
+## ✅ v0.58.29 — Production Operations Support Session Handoff Review Receipt — CONCLUÍDA
+
+**Entregue:**
+- recibo local da revisão do handoff;
+- horário ISO fixado quando o checklist chega a `3/3`;
+- registro das três categorias confirmadas;
+- identificação do operador explicitamente não coletada;
+- nenhum destinatário é coletado;
+- recibo exibido em estado `pendente` antes do checklist completo;
+- recibo exibido em estado `pronto` após `3/3`;
+- se qualquer confirmação for removida, o recibo é descartado e precisa ser gerado novamente;
+- a cópia final anexa exatamente o recibo local gerado;
+- nenhuma alteração automática no conteúdo-base do handoff;
+- nenhuma credencial ou segredo adicional;
+- nenhuma persistência;
+- nenhum envio automático;
+- nenhuma chamada à API;
+- nenhuma alteração em produção.
+
+## Próxima etapa
+
+### v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview
+Exibir uma prévia textual completa do recibo de revisão do handoff antes da cópia, permitindo conferir horário e categorias confirmadas sem identificar o operador ou persistir o recibo.
