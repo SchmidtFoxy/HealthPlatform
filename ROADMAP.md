@@ -8316,3 +8316,26 @@ Adicionar um handoff seguro para suporte técnico com resumo copiável, identifi
 
 ### v0.58.12 — Production Operations Support Timeline
 Adicionar uma timeline curta de suporte, derivada de releases e eventos operacionais seguros da janela selecionada, para facilitar investigação cronológica sem expor infraestrutura sensível.
+
+
+## ✅ v0.58.12 — Production Operations Support Timeline — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/support-timeline`;
+- janela configurável de 1 a 365 dias;
+- limite seguro de 1 a 100 eventos;
+- timeline cronológica reversa dos ciclos operacionais;
+- classificação visual `healthy`, `rollback`, `attention` ou `pending`;
+- título e descrição operacional por evento;
+- data, versão e modo;
+- flags de runtime, versão, rollback, recovery audit e closure;
+- botão `Timeline suporte` na área Operações;
+- drawer desktop e bottom sheet mobile;
+- estado vazio quando não houver eventos;
+- timeline somente leitura baseada em evidências públicas seguras;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.
+
+## Próxima etapa
+
+### v0.58.13 — Production Operations Support Event Detail
+Adicionar detalhe seguro de um evento selecionado na timeline de suporte, reutilizando apenas dados operacionais públicos e explicando os gates relevantes do ciclo sem expor metadata interna.

@@ -1,3 +1,13 @@
+# v0.58.12 — Production Operations Support Timeline
+
+- Adiciona endpoint de timeline operacional para suporte.
+- Adiciona janela e limite configuráveis.
+- Adiciona classificação de estado por evento.
+- Adiciona flags de runtime, versão, rollback, recovery e closure.
+- Adiciona botão Timeline suporte.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Mantém somente dados operacionais públicos seguros.
+
 # v0.58.11 — Production Operations Support Handoff
 
 - Adiciona endpoint de handoff técnico.

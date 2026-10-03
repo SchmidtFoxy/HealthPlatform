@@ -120,6 +120,81 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/support-timeline")]
+    public async Task<ActionResult<ProductionSupportTimelineResponse>> GetSupportTimeline(
+        [FromQuery] int days = 30,
+        [FromQuery] int limit = 40,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 1 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 1 e 365." });
+        }
+
+        if (limit < 1 || limit > 100)
+        {
+            return BadRequest(new { message = "limit deve ficar entre 1 e 100." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .Take(limit)
+            .ToList();
+
+        var events = new List<ProductionSupportTimelineItem>();
+
+        foreach (var item in periodItems)
+        {
+            var state = IsHealthy(item)
+                ? "healthy"
+                : item.RollbackExecuted
+                    ? "rollback"
+                    : item.ClosureComplete
+                        ? "attention"
+                        : "pending";
+
+            var title = item.RollbackExecuted
+                ? $"Rollback registrado em {item.Version}"
+                : string.Equals(item.Mode, "validate-only", StringComparison.OrdinalIgnoreCase)
+                    ? $"Validacao operacional {item.Version}"
+                    : $"Deploy operacional {item.Version}";
+
+            var description =
+                $"Modo {item.Mode}; status {item.OperationsStatus}; versao servida {item.ServedVersion}; " +
+                $"runtime {(item.RuntimeHealthy ? "saudavel" : "nao confirmado")}; " +
+                $"closure {(item.ClosureComplete ? "concluido" : "pendente")}.";
+
+            events.Add(new ProductionSupportTimelineItem(
+                item.RecordedAt,
+                item.Version,
+                item.Mode,
+                state,
+                title,
+                description,
+                item.RuntimeHealthy,
+                item.VersionHealthy,
+                item.RollbackExecuted,
+                item.RecoveryAuditComplete,
+                item.ClosureComplete));
+        }
+
+        return Ok(new ProductionSupportTimelineResponse(
+            days,
+            from,
+            now,
+            limit,
+            events.Count,
+            events,
+            "Timeline operacional somente leitura baseada em evidencias publicas seguras.",
+            "Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais."));
+    }
+
     [HttpGet("deploys/support-handoff")]
     public async Task<ActionResult<ProductionSupportHandoffResponse>> GetSupportHandoff(
         [FromQuery] int days = 30,
@@ -1011,6 +1086,29 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionSupportTimelineResponse(
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset To,
+    int Limit,
+    int TotalItems,
+    IReadOnlyList<ProductionSupportTimelineItem> Items,
+    string SafetyNote,
+    string ExcludedMetadata);
+
+public sealed record ProductionSupportTimelineItem(
+    DateTimeOffset RecordedAt,
+    string Version,
+    string Mode,
+    string State,
+    string Title,
+    string Description,
+    bool RuntimeHealthy,
+    bool VersionHealthy,
+    bool RollbackExecuted,
+    bool RecoveryAuditComplete,
+    bool ClosureComplete);
 
 public sealed record ProductionSupportHandoffResponse(
     string HandoffId,

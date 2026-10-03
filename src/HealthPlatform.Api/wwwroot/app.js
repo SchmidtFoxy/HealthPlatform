@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.11';
+const HP_MVP_VERSION='0.58.12';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportHandoffButtonV05811">Handoff suporte</button><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportTimelineButtonV05812">Timeline suporte</button><button type="button" class="secondary" id="opsSupportHandoffButtonV05811">Handoff suporte</button><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26603,6 +26603,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsSupportHandoffButtonV05811')?.addEventListener('click',()=>{
     const days=Number($('#opsTrendsDaysV0585')?.value)||30;
     hpOpenSupportHandoffV05811(days).catch(err=>toast(err.message,true));
+  });
+  $('#opsSupportTimelineButtonV05812')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpOpenSupportTimelineV05812(days).catch(err=>toast(err.message,true));
   });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
@@ -27157,4 +27161,75 @@ async function hpOpenSupportHandoffV05811(days=30){
   host.innerHTML=hpUiState('loading','Preparando handoff de suporte');
   const data=await api(`/api/operacoes-producao/deploys/support-handoff?days=${safeDays}`);
   hpRenderSupportHandoffV05811(data);
+}
+
+
+// ===== v0.58.12 — Production Operations Support Timeline =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_TIMELINE_V05812='v0.58.12';
+
+function hpSupportTimelineKindV05812(state){
+  const map={
+    healthy:'ok',
+    rollback:'bad',
+    attention:'warn',
+    pending:'neutral'
+  };
+  return map[state]||'neutral';
+}
+function hpRenderSupportTimelineV05812(data){
+  const host=$('#opsSupportTimelineV05812');if(!host)return;
+  const items=data?.items||[];
+  host.innerHTML=`<div class="ops-support-timeline-v05812">
+    <div class="ops-support-timeline-head-v05812">
+      <div><span class="eyebrow">SUPPORT TIMELINE • ${HP_PRODUCTION_OPERATIONS_SUPPORT_TIMELINE_V05812}</span><h3>Timeline operacional de suporte</h3><p>${esc(String(data?.days||0))} dias • até ${esc(String(data?.limit||0))} evento(s)</p></div>
+      <button type="button" class="ghost" id="opsSupportTimelineCloseV05812" aria-label="Fechar timeline de suporte">×</button>
+    </div>
+
+    ${items.length?`<section class="ops-support-timeline-list-v05812">
+      ${items.map(item=>`<article class="ops-support-timeline-item-v05812 ${hpSupportTimelineKindV05812(item.state)}">
+        <div class="ops-support-timeline-rail-v05812"><span></span></div>
+        <div class="ops-support-timeline-content-v05812">
+          <div class="ops-support-timeline-title-v05812">
+            <strong>${esc(item.title||item.version||'Evento operacional')}</strong>
+            <span class="ops-status-v0582 ${hpSupportTimelineKindV05812(item.state)}">${esc(item.state||'unknown')}</span>
+          </div>
+          <p>${esc(item.description||'')}</p>
+          <div class="ops-support-timeline-meta-v05812">
+            <span>${hpOpsDateV0582(item.recordedAt)}</span>
+            <span>${esc(item.mode||'—')}</span>
+            <span>${esc(item.version||'—')}</span>
+          </div>
+          <div class="ops-support-timeline-flags-v05812">
+            <span>${item.runtimeHealthy?'✓':'○'} Runtime</span>
+            <span>${item.versionHealthy?'✓':'○'} Versão</span>
+            <span>${item.rollbackExecuted?'✓':'○'} Rollback</span>
+            <span>${item.recoveryAuditComplete?'✓':'○'} Recovery</span>
+            <span>${item.closureComplete?'✓':'○'} Closure</span>
+          </div>
+        </div>
+      </article>`).join('')}
+    </section>`:'<div class="ops-empty-v0582">Nenhum evento operacional seguro na janela selecionada.</div>'}
+
+    <div class="ops-support-boundary-v05810">
+      <p>${esc(data?.safetyNote||'Timeline operacional somente leitura.')}</p>
+      <p>${esc(data?.excludedMetadata||'Metadata interna não exposta.')}</p>
+    </div>
+  </div>`;
+  $('#opsSupportTimelineCloseV05812')?.addEventListener('click',hpCloseSupportTimelineV05812);
+}
+function hpCloseSupportTimelineV05812(){
+  $('#opsSupportTimelineBackdropV05812')?.classList.add('hidden');
+  $('#opsSupportTimelinePanelV05812')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-timeline-open-v05812');
+}
+async function hpOpenSupportTimelineV05812(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const panel=$('#opsSupportTimelinePanelV05812'),backdrop=$('#opsSupportTimelineBackdropV05812'),host=$('#opsSupportTimelineV05812');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-support-timeline-open-v05812');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Montando timeline operacional');
+  const data=await api(`/api/operacoes-producao/deploys/support-timeline?days=${safeDays}&limit=40`);
+  hpRenderSupportTimelineV05812(data);
 }

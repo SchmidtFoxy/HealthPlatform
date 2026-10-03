@@ -9751,3 +9751,23 @@ O handoff reúne:
 O material é somente leitura e foi desenhado para ser compartilhado com suporte técnico sem carregar infraestrutura sensível.
 
 **Próxima etapa:** `v0.58.12 — Production Operations Support Timeline`.
+
+
+---
+
+## v0.58.12 — Production Operations Support Timeline
+
+A área **Operações** ganhou a **Timeline suporte**, uma visão cronológica curta dos ciclos operacionais seguros da janela selecionada.
+
+Cada evento mostra:
+- versão e modo;
+- estado;
+- runtime;
+- verificação de versão;
+- rollback;
+- recovery audit;
+- closure.
+
+A timeline é somente leitura e não expõe infraestrutura sensível.
+
+**Próxima etapa:** `v0.58.13 — Production Operations Support Event Detail`.
