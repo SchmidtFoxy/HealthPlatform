@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.33';
+const HP_MVP_VERSION='0.58.34';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28921,5 +28921,49 @@ function hpRenderSupportSessionHandoffCopyVerificationV05833(){
   <p>${verified
     ?'O tamanho esperado do handoff revisado coincide com o resumo local da cópia.'
     :'O resumo local da cópia não coincide com o tamanho esperado. Revise o conteúdo antes de uma nova ação manual.'}</p>
-  <small>Verificação local em ${esc(state.verifiedAt)}. O clipboard não é recapturado, nenhum conteúdo é alterado e nenhum evento é persistido.</small>`;
+  <small>Verificação local em ${esc(state.verifiedAt)}. O clipboard não é recapturado, nenhum conteúdo é alterado e nenhum evento é persistido.</small>
+  ${hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state)}`;
+}
+
+
+// ===== v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_GUIDANCE_V05834='v0.58.34';
+
+function hpSupportSessionHandoffCopyVerificationGuidanceV05834(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  if(!state.verifiedAt||state.status==='idle'){
+    return {
+      key:'idle',
+      title:'Verificação ainda não executada',
+      message:'Conclua uma cópia revisada para gerar a verificação local de tamanho.',
+      action:'Próxima ação manual disponível: concluir uma cópia revisada.'
+    };
+  }
+
+  if(state.status==='verified'){
+    return {
+      key:'verified',
+      title:'Verificação concluída',
+      message:'As contagens esperadas de caracteres e linhas coincidem com o resumo local da cópia.',
+      action:'Próxima ação manual disponível: encerrar a prévia ou continuar a conferência.'
+    };
+  }
+
+  return {
+    key:'divergent',
+    title:'Divergência detectada',
+    message:'As métricas locais não coincidem. O conteúdo não foi corrigido nem copiado novamente.',
+    action:'Próxima ação manual disponível: revisar o handoff e decidir se uma nova cópia deve ser feita.'
+  };
+}
+
+function hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  const guidance=hpSupportSessionHandoffCopyVerificationGuidanceV05834(state);
+  return `<div class="ops-support-handoff-copy-verification-guidance-v05834" data-copy-verification-guidance-v05834="${esc(guidance.key)}">
+    <div>
+      <span class="eyebrow">ORIENTAÇÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_GUIDANCE_V05834}</span>
+      <strong>${esc(guidance.title)}</strong>
+    </div>
+    <p>${esc(guidance.message)}</p>
+    <small>${esc(guidance.action)}</small>
+  </div>`;
 }

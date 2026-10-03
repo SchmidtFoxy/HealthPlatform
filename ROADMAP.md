@@ -8849,3 +8849,27 @@ Adicionar uma verificação local pós-cópia comparando o tamanho esperado do h
 
 ### v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance
 Adicionar orientação local curta para os estados `Verificado` e `Divergente`, indicando apenas a próxima ação manual disponível sem recapturar clipboard, corrigir conteúdo automaticamente ou persistir decisões.
+
+
+## ✅ v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance — CONCLUÍDA
+
+**Entregue:**
+- orientação local curta integrada à verificação pós-cópia;
+- orientação específica para estado `Verificado`;
+- orientação específica para estado `Divergente`;
+- orientação neutra para estado ainda não verificado;
+- indicação textual da próxima ação manual disponível;
+- nenhuma recaptura do clipboard;
+- nenhuma nova cópia automática;
+- nenhuma correção automática do conteúdo;
+- nenhuma persistência de decisão;
+- nenhum envio automático;
+- nenhuma chamada à API;
+- nenhuma alteração em produção;
+- conteúdo dinâmico escapado antes da renderização;
+- layout responsivo para desktop e mobile.
+
+## Próxima etapa
+
+### v0.58.35 — Production Operations Support Session Handoff Copy Verification Summary
+Adicionar um resumo textual local da verificação da cópia, reunindo status, horário, métricas esperadas, métricas registradas e próxima ação manual disponível sem persistir dados.

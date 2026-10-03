@@ -1,3 +1,12 @@
+# v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance
+
+- Adiciona orientação contextual à verificação pós-cópia.
+- Diferencia estados Verificado e Divergente.
+- Informa somente a próxima ação manual disponível.
+- Não recaptura clipboard nem refaz cópia.
+- Não corrige conteúdo automaticamente.
+- Não persiste decisões, não envia automaticamente e não chama API.
+
 # v0.58.33 — Production Operations Support Session Handoff Copy Verification
 
 - Adiciona verificação local do tamanho da cópia.

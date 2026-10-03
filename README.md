@@ -10114,3 +10114,14 @@ A verificação usa:
 O resultado é **Verificado** ou **Divergente**. A checagem não relê o clipboard, não refaz a cópia, não altera conteúdo e não persiste o evento.
 
 **Próxima etapa:** `v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance`.
+
+
+---
+
+## v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance
+
+A verificação pós-cópia agora apresenta orientação contextual curta para os estados **Verificado** e **Divergente**.
+
+A orientação indica somente a próxima ação manual disponível. Ela não relê o clipboard, não executa uma nova cópia, não corrige conteúdo automaticamente e não persiste decisões.
+
+**Próxima etapa:** `v0.58.35 — Production Operations Support Session Handoff Copy Verification Summary`.
