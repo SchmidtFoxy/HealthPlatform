@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.57';
+const HP_MVP_VERSION='0.58.58';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -29174,7 +29174,8 @@ function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceHandoffMarkupV05854()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureReceiptMarkupV05855()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureSummaryMarkupV05856()}
-  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffMarkupV05857()}`;
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffMarkupV05857()}
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityMarkupV05858()}`;
 
   hpHydrateSupportSessionHandoffCopyVerificationClosureSummaryV05838();
   hpHydrateSupportSessionHandoffCopyVerificationClosureHandoffV05839();
@@ -30104,4 +30105,41 @@ function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidance
 function hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffV05857(){
   const target=$('#opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffTextV05857');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffV05857();
+}
+
+// ===== v0.58.58 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_V05858='v0.58.58';
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityV05858(){
+  const state=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureStateV05855;
+  if(!state||!state.closedAt){
+    return {
+      available:false,
+      sessionState:'Ativa',
+      nextDecision:'Concluir manualmente o fechamento da orientação final.'
+    };
+  }
+
+  return {
+    available:true,
+    sessionState:'Ativa',
+    nextDecision:state.decisionAtClosure||'Continuar manualmente a sessão de suporte quando necessário.'
+  };
+}
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityMarkupV05858(){
+  const continuity=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityV05858();
+  if(!continuity.available)return '';
+
+  return `<div class="ops-support-handoff-copy-verification-closure-continuity-handoff-guidance-closure-continuity-handoff-guidance-closure-continuity-v05858">
+    <div>
+      <span class="eyebrow">CONTINUIDADE APÓS FECHAMENTO FINAL • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_V05858}</span>
+      <strong>Sessão de suporte ${esc(continuity.sessionState.toLowerCase())}</strong>
+    </div>
+    <div class="ops-support-handoff-copy-verification-closure-continuity-handoff-guidance-closure-continuity-handoff-guidance-closure-continuity-meta-v05858">
+      <span><small>Estado da sessão</small><b>${esc(continuity.sessionState)}</b></span>
+      <span><small>Próxima decisão manual preservada</small><b>${esc(continuity.nextDecision)}</b></span>
+    </div>
+    <small>Indicação local e informativa. Nenhuma ação é executada automaticamente.</small>
+  </div>`;
 }
