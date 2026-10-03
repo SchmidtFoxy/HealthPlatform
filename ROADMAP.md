@@ -8218,3 +8218,26 @@ Permitir detalhar como cada sinal de confiabilidade foi calculado, com janela co
 
 ### v0.58.8 — Production Operations Reliability Export
 Permitir exportar uma visão segura e legível dos sinais, janelas comparativas e histórico operacional para auditoria técnica, sem exportar segredos, caminhos internos ou dados sensíveis.
+
+
+## ✅ v0.58.8 — Production Operations Reliability Export — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/reliability/export`;
+- exportação Markdown UTF-8 para auditoria técnica;
+- sinais de confiabilidade no arquivo;
+- janela anterior e recente com contagens e percentuais;
+- delta saudável e direção de estabilidade;
+- histórico operacional seguro no mesmo arquivo;
+- campos exportados limitados a versão, modo, status, runtime, versão servida, rollback e closure;
+- exclusão explícita de hash de backup, staging path, target/host, caminhos internos, tokens, segredos e credenciais;
+- botão `Exportar auditoria` na área Operações;
+- download via `Blob` local no navegador;
+- nome de arquivo com timestamp;
+- seletor de período 7/30/90/180 dias compartilhado com tendências e confiabilidade;
+- exportação somente leitura, sem executar, recomendar, autorizar ou automatizar deploy, promoção ou rollback.
+
+## Próxima etapa
+
+### v0.58.9 — Production Operations Audit Snapshot
+Adicionar snapshot técnico resumido e compartilhável da situação operacional atual, com identificação da janela, indicadores essenciais e referência do último ciclo, mantendo o material seguro para suporte e auditoria.

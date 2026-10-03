@@ -188,3 +188,11 @@ body.ops-reliability-detail-open-v0587{overflow:hidden}
   .ops-reliability-windows-v0587{grid-template-columns:1fr}
   .ops-reliability-result-v0587{grid-template-columns:1fr}
 }
+
+
+/* v0.58.8 — Production Operations Reliability Export */
+.ops-reliability-buttons-v0588{display:flex;gap:8px;align-items:center}
+@media (max-width:680px){
+  .ops-reliability-buttons-v0588{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .ops-reliability-buttons-v0588 button{width:100%}
+}

@@ -1,3 +1,13 @@
+# v0.58.8 — Production Operations Reliability Export
+
+- Adiciona endpoint seguro de exportação de confiabilidade.
+- Gera arquivo Markdown UTF-8 para auditoria técnica.
+- Inclui sinais, janelas comparativas e histórico operacional seguro.
+- Exclui metadata interna, host/target, segredos e credenciais.
+- Adiciona botão Exportar auditoria.
+- Implementa download via Blob no navegador.
+- Mantém exportação somente leitura.
+
 # v0.58.7 — Production Operations Reliability Detail
 
 - Adiciona endpoint detalhado de confiabilidade.

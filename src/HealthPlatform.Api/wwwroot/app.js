@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.7';
+const HP_MVP_VERSION='0.58.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26587,6 +26587,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsReliabilityDetailButtonV0587')?.addEventListener('click',()=>{
     const days=Number($('#opsTrendsDaysV0585')?.value)||30;
     hpOpenReliabilityDetailV0587(days).catch(err=>toast(err.message,true));
+  });
+  $('#opsReliabilityExportButtonV0588')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpExportReliabilityV0588(days).catch(err=>toast(err.message,true));
   });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
@@ -26852,4 +26856,33 @@ async function hpOpenReliabilityDetailV0587(days=30){
   host.innerHTML=hpUiState('loading','Carregando cálculo dos sinais');
   const data=await api(`/api/operacoes-producao/deploys/reliability/detail?days=${safeDays}`);
   hpRenderReliabilityDetailV0587(data);
+}
+
+
+// ===== v0.58.8 — Production Operations Reliability Export =====
+const HP_PRODUCTION_OPERATIONS_RELIABILITY_EXPORT_V0588='v0.58.8';
+
+function hpDownloadTextFileV0588(fileName,contentType,content){
+  const blob=new Blob([String(content||'')],{type:contentType||'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const anchor=document.createElement('a');
+  anchor.href=url;
+  anchor.download=fileName||'aesyn-production-reliability.md';
+  anchor.rel='noopener';
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function hpExportReliabilityV0588(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const button=$('#opsReliabilityExportButtonV0588');
+  if(button){button.disabled=true;button.textContent='Exportando…'}
+  try{
+    const payload=await api(`/api/operacoes-producao/deploys/reliability/export?days=${safeDays}`);
+    hpDownloadTextFileV0588(payload?.fileName,payload?.contentType,payload?.content);
+    toast(`Auditoria operacional exportada • ${payload?.totalDeploys||0} deploy(s)`);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Exportar auditoria'}
+  }
 }

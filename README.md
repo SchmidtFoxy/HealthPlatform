@@ -9693,3 +9693,16 @@ O detalhe mostra:
 A visualização é somente leitura e explicativa. Não executa nem recomenda decisões de deploy, promoção ou rollback.
 
 **Próxima etapa:** `v0.58.8 — Production Operations Reliability Export`.
+
+
+---
+
+## v0.58.8 — Production Operations Reliability Export
+
+A área **Operações** ganhou **Exportar auditoria**.
+
+O arquivo Markdown inclui sinais de confiabilidade, janelas comparativas e histórico operacional seguro do período selecionado. Não são exportados hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.
+
+A exportação é somente leitura e não executa nem autoriza ações operacionais.
+
+**Próxima etapa:** `v0.58.9 — Production Operations Audit Snapshot`.

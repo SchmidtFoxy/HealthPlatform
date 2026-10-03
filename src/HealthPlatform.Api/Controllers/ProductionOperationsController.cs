@@ -120,6 +120,115 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/reliability/export")]
+    public async Task<ActionResult<ProductionReliabilityExportResponse>> GetReliabilityExport(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 2 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 2 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var midpoint = from.AddTicks((now - from).Ticks / 2);
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .ToList();
+
+        var previousHalf = periodItems.Where(x => x.RecordedAt < midpoint).ToList();
+        var recentHalf = periodItems.Where(x => x.RecordedAt >= midpoint).ToList();
+
+        var previousHealthy = previousHalf.Count(IsHealthy);
+        var recentHealthy = recentHalf.Count(IsHealthy);
+        var previousHealthyPercentage = Percentage(previousHealthy, previousHalf.Count);
+        var recentHealthyPercentage = Percentage(recentHealthy, recentHalf.Count);
+        var healthyPercentageDelta = Math.Round(
+            recentHealthyPercentage - previousHealthyPercentage,
+            1,
+            MidpointRounding.AwayFromZero);
+
+        var currentHealthyStreak = 0;
+        foreach (var item in periodItems)
+        {
+            if (!IsHealthy(item))
+            {
+                break;
+            }
+
+            currentHealthyStreak++;
+        }
+
+        var lastRollback = periodItems.FirstOrDefault(x => x.RollbackExecuted);
+        var lastHealthyApply = periodItems.FirstOrDefault(x =>
+            IsHealthy(x) &&
+            string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase));
+
+        var stabilityDirection =
+            healthyPercentageDelta >= 10m ? "improving" :
+            healthyPercentageDelta <= -10m ? "degrading" :
+            "stable";
+
+        static string Yn(bool value) => value ? "sim" : "nao";
+        static string Safe(string? value) =>
+            string.IsNullOrWhiteSpace(value)
+                ? "-"
+                : value.Replace("\r", " ", StringComparison.Ordinal)
+                       .Replace("\n", " ", StringComparison.Ordinal)
+                       .Replace("|", "/", StringComparison.Ordinal);
+
+        var lines = new List<string>
+        {
+            "# AESYN Performance - Production Reliability Export",
+            "",
+            $"Gerado em: {now:O}",
+            $"Janela: {from:O} ate {now:O} ({days} dias)",
+            "",
+            "## Sinais",
+            $"Sequencia saudavel atual: {currentHealthyStreak}",
+            $"Ultimo rollback: {(lastRollback is null ? "nenhum" : $"{Safe(lastRollback.Version)} em {lastRollback.RecordedAt:O}")}",
+            $"Ultimo apply saudavel: {(lastHealthyApply is null ? "nenhum" : $"{Safe(lastHealthyApply.Version)} em {lastHealthyApply.RecordedAt:O}")}",
+            $"Direcao de estabilidade: {stabilityDirection}",
+            $"Delta saudavel: {healthyPercentageDelta} p.p.",
+            "",
+            "## Janelas comparativas",
+            $"Anterior: {previousHealthy}/{previousHalf.Count} saudavel(is) ({previousHealthyPercentage}%) - {from:O} ate {midpoint:O}",
+            $"Recente: {recentHealthy}/{recentHalf.Count} saudavel(is) ({recentHealthyPercentage}%) - {midpoint:O} ate {now:O}",
+            "",
+            "## Historico operacional seguro",
+            "| RecordedAt | Version | Mode | Status | Runtime | VersionHealthy | ServedVersion | Rollback | Closure |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+        };
+
+        foreach (var item in periodItems)
+        {
+            lines.Add(
+                $"| {item.RecordedAt:O} | {Safe(item.Version)} | {Safe(item.Mode)} | {Safe(item.OperationsStatus)} | {Yn(item.RuntimeHealthy)} | {Yn(item.VersionHealthy)} | {Safe(item.ServedVersion)} | {Yn(item.RollbackExecuted)} | {Yn(item.ClosureComplete)} |");
+        }
+
+        lines.Add("");
+        lines.Add("## Limites e seguranca");
+        lines.Add("Este arquivo e somente leitura e serve para auditoria tecnica.");
+        lines.Add("Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.");
+        lines.Add("Nao executa, recomenda, autoriza ou automatiza deploy, promocao ou rollback.");
+
+        var content = string.Join(Environment.NewLine, lines);
+        var fileName = $"aesyn-production-reliability-{now:yyyyMMdd-HHmmss}.md";
+
+        return Ok(new ProductionReliabilityExportResponse(
+            fileName,
+            "text/markdown;charset=utf-8",
+            content,
+            days,
+            periodItems.Count,
+            now));
+    }
+
     [HttpGet("deploys/reliability/detail")]
     public async Task<ActionResult<ProductionReliabilityDetailResponse>> GetReliabilityDetail(
         [FromQuery] int days = 30,
@@ -591,6 +700,14 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionReliabilityExportResponse(
+    string FileName,
+    string ContentType,
+    string Content,
+    int Days,
+    int TotalDeploys,
+    DateTimeOffset GeneratedAt);
 
 public sealed record ProductionReliabilityDetailResponse(
     int Days,
