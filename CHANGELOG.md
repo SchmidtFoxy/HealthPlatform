@@ -1,3 +1,11 @@
+# v0.58.46 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure
+
+- Adiciona fechamento manual do contexto visual da orientação de continuidade.
+- Preserva sessão de suporte, handoff, dados temporários e próxima decisão manual.
+- Registra horário de fechamento apenas em memória.
+- Reinicia o fechamento ao abrir nova prévia.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.45 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Handoff
 
 - Adiciona handoff local final da orientação de continuidade.
