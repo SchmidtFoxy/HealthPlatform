@@ -1,3 +1,11 @@
+# v0.58.35 — Production Operations Support Session Handoff Copy Verification Summary
+
+- Adiciona resumo textual local da verificação pós-cópia.
+- Reúne status, horário, caracteres, linhas e próxima ação manual.
+- Renderiza conteúdo em modo somente leitura.
+- Não relê clipboard nem executa nova cópia.
+- Não altera conteúdo, não persiste decisões e não chama API.
+
 # v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance
 
 - Adiciona orientação contextual à verificação pós-cópia.

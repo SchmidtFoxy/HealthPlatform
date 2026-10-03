@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.34';
+const HP_MVP_VERSION='0.58.35';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28922,7 +28922,10 @@ function hpRenderSupportSessionHandoffCopyVerificationV05833(){
     ?'O tamanho esperado do handoff revisado coincide com o resumo local da cópia.'
     :'O resumo local da cópia não coincide com o tamanho esperado. Revise o conteúdo antes de uma nova ação manual.'}</p>
   <small>Verificação local em ${esc(state.verifiedAt)}. O clipboard não é recapturado, nenhum conteúdo é alterado e nenhum evento é persistido.</small>
-  ${hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state)}`;
+  ${hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state)}
+  ${hpSupportSessionHandoffCopyVerificationSummaryMarkupV05835(state)}`;
+
+  hpHydrateSupportSessionHandoffCopyVerificationSummaryV05835(state);
 }
 
 
@@ -28966,4 +28969,48 @@ function hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state=hpSup
     <p>${esc(guidance.message)}</p>
     <small>${esc(guidance.action)}</small>
   </div>`;
+}
+
+
+// ===== v0.58.35 — Production Operations Support Session Handoff Copy Verification Summary =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_SUMMARY_V05835='v0.58.35';
+
+function hpSupportSessionHandoffCopyVerificationSummaryV05835(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  const guidance=hpSupportSessionHandoffCopyVerificationGuidanceV05834(state);
+  const status=state.status==='verified'
+    ?'Verificado'
+    :state.status==='divergent'
+      ?'Divergente'
+      :'Ainda não verificado';
+
+  return [
+    'AESYN Performance - Support Session Handoff Copy Verification Summary',
+    `Versão: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_SUMMARY_V05835}`,
+    `Status: ${status}`,
+    `Verificado em: ${state.verifiedAt||'não registrado'}`,
+    `Caracteres esperados: ${state.expectedCharCount||0}`,
+    `Caracteres registrados: ${state.copiedCharCount||0}`,
+    `Linhas esperadas: ${state.expectedLineCount||0}`,
+    `Linhas registradas: ${state.copiedLineCount||0}`,
+    `Próxima ação manual: ${String(guidance.action||'').replace(/^Próxima ação manual disponível:\s*/,'')||'nenhuma'}`,
+    '',
+    'Resumo gerado localmente a partir do estado temporário da verificação.',
+    'Não relê o clipboard, não executa nova cópia, não altera conteúdo e não persiste decisões.'
+  ].join('\n');
+}
+
+function hpSupportSessionHandoffCopyVerificationSummaryMarkupV05835(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  if(!state.verifiedAt||state.status==='idle')return '';
+  return `<div class="ops-support-handoff-copy-verification-summary-v05835">
+    <div class="ops-support-handoff-copy-verification-summary-head-v05835">
+      <span class="eyebrow">RESUMO DA VERIFICAÇÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_SUMMARY_V05835}</span>
+      <strong>${state.status==='verified'?'Verificado':'Divergente'}</strong>
+    </div>
+    <pre id="opsSupportSessionHandoffCopyVerificationSummaryTextV05835"></pre>
+  </div>`;
+}
+
+function hpHydrateSupportSessionHandoffCopyVerificationSummaryV05835(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  const target=$('#opsSupportSessionHandoffCopyVerificationSummaryTextV05835');
+  if(target)target.textContent=hpSupportSessionHandoffCopyVerificationSummaryV05835(state);
 }

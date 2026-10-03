@@ -10125,3 +10125,19 @@ A verificação pós-cópia agora apresenta orientação contextual curta para o
 A orientação indica somente a próxima ação manual disponível. Ela não relê o clipboard, não executa uma nova cópia, não corrige conteúdo automaticamente e não persiste decisões.
 
 **Próxima etapa:** `v0.58.35 — Production Operations Support Session Handoff Copy Verification Summary`.
+
+
+---
+
+## v0.58.35 — Production Operations Support Session Handoff Copy Verification Summary
+
+A verificação pós-cópia agora inclui um resumo textual local com:
+- status da verificação;
+- horário;
+- caracteres esperados e registrados;
+- linhas esperadas e registradas;
+- próxima ação manual disponível.
+
+O resumo é somente leitura, usa apenas o estado temporário da página e não relê o clipboard, não executa nova cópia, não corrige conteúdo automaticamente e não persiste decisões.
+
+**Próxima etapa:** `v0.58.36 — Production Operations Support Session Handoff Copy Verification Handoff`.
