@@ -120,6 +120,87 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/audit-snapshot")]
+    public async Task<ActionResult<ProductionAuditSnapshotResponse>> GetAuditSnapshot(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 2 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 2 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .ToList();
+
+        var latest = periodItems.FirstOrDefault();
+        var healthyDeploys = periodItems.Count(IsHealthy);
+        var rollbackDeploys = periodItems.Count(x => x.RollbackExecuted);
+        var healthyPercentage = Percentage(healthyDeploys, periodItems.Count);
+
+        var currentHealthyStreak = 0;
+        foreach (var item in periodItems)
+        {
+            if (!IsHealthy(item))
+            {
+                break;
+            }
+
+            currentHealthyStreak++;
+        }
+
+        var lastRollback = periodItems.FirstOrDefault(x => x.RollbackExecuted);
+
+        var state =
+            latest is null ? "no-data" :
+            IsHealthy(latest) ? "healthy" :
+            latest.RollbackExecuted ? "rollback" :
+            "attention";
+
+        var indicators = new ProductionAuditSnapshotIndicators(
+            periodItems.Count,
+            healthyDeploys,
+            healthyPercentage,
+            rollbackDeploys,
+            currentHealthyStreak);
+
+        ProductionAuditSnapshotLatestCycle? latestCycle = latest is null
+            ? null
+            : new ProductionAuditSnapshotLatestCycle(
+                latest.Version,
+                latest.RecordedAt,
+                latest.Mode,
+                latest.OperationsStatus,
+                latest.RuntimeHealthy,
+                latest.VersionHealthy,
+                latest.ServedVersion,
+                latest.RollbackExecuted,
+                latest.ClosureComplete);
+
+        var summary = latest is null
+            ? $"AESYN Production Snapshot | janela {days} dias | sem ciclos operacionais registrados."
+            : $"AESYN Production Snapshot | janela {days} dias | estado {state} | ultimo ciclo {latest.Version} em {latest.RecordedAt:O} | saudaveis {healthyDeploys}/{periodItems.Count} ({healthyPercentage}%) | rollbacks {rollbackDeploys} | streak {currentHealthyStreak}.";
+
+        return Ok(new ProductionAuditSnapshotResponse(
+            days,
+            from,
+            now,
+            state,
+            indicators,
+            latestCycle,
+            lastRollback?.Version,
+            lastRollback?.RecordedAt,
+            summary,
+            "Snapshot tecnico somente leitura. Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais."));
+    }
+
     [HttpGet("deploys/reliability/export")]
     public async Task<ActionResult<ProductionReliabilityExportResponse>> GetReliabilityExport(
         [FromQuery] int days = 30,
@@ -700,6 +781,36 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionAuditSnapshotResponse(
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset To,
+    string State,
+    ProductionAuditSnapshotIndicators Indicators,
+    ProductionAuditSnapshotLatestCycle? LatestCycle,
+    string? LastRollbackVersion,
+    DateTimeOffset? LastRollbackAt,
+    string Summary,
+    string SafetyNote);
+
+public sealed record ProductionAuditSnapshotIndicators(
+    int TotalDeploys,
+    int HealthyDeploys,
+    decimal HealthyPercentage,
+    int RollbackDeploys,
+    int CurrentHealthyStreak);
+
+public sealed record ProductionAuditSnapshotLatestCycle(
+    string Version,
+    DateTimeOffset RecordedAt,
+    string Mode,
+    string OperationsStatus,
+    bool RuntimeHealthy,
+    bool VersionHealthy,
+    string ServedVersion,
+    bool RollbackExecuted,
+    bool ClosureComplete);
 
 public sealed record ProductionReliabilityExportResponse(
     string FileName,

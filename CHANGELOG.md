@@ -1,3 +1,13 @@
+# v0.58.9 — Production Operations Audit Snapshot
+
+- Adiciona endpoint de snapshot técnico operacional.
+- Resume estado, janela, indicadores e último ciclo.
+- Adiciona resumo textual compartilhável.
+- Adiciona botão Snapshot técnico.
+- Adiciona cópia via Clipboard API com fallback.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Mantém metadata sensível fora do snapshot.
+
 # v0.58.8 — Production Operations Reliability Export
 
 - Adiciona endpoint seguro de exportação de confiabilidade.

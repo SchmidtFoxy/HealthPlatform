@@ -9706,3 +9706,14 @@ O arquivo Markdown inclui sinais de confiabilidade, janelas comparativas e hist�
 A exportação é somente leitura e não executa nem autoriza ações operacionais.
 
 **Próxima etapa:** `v0.58.9 — Production Operations Audit Snapshot`.
+
+
+---
+
+## v0.58.9 — Production Operations Audit Snapshot
+
+A área **Operações** ganhou o **Snapshot técnico**, uma visão curta e compartilhável do estado operacional atual.
+
+Ele reúne indicadores essenciais, o último ciclo e um resumo textual copiável para suporte e auditoria. O conteúdo é somente leitura e não inclui metadata sensível de infraestrutura.
+
+**Próxima etapa:** `v0.58.10 — Production Operations Support Context`.

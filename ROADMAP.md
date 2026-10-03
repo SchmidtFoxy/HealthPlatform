@@ -8241,3 +8241,29 @@ Permitir exportar uma visão segura e legível dos sinais, janelas comparativas 
 
 ### v0.58.9 — Production Operations Audit Snapshot
 Adicionar snapshot técnico resumido e compartilhável da situação operacional atual, com identificação da janela, indicadores essenciais e referência do último ciclo, mantendo o material seguro para suporte e auditoria.
+
+
+## ✅ v0.58.9 — Production Operations Audit Snapshot — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/audit-snapshot`;
+- snapshot técnico resumido da janela operacional;
+- estado atual `healthy`, `attention`, `rollback` ou `no-data`;
+- total de deploys;
+- total e percentual de ciclos saudáveis;
+- quantidade de rollbacks;
+- sequência saudável atual;
+- referência segura do último ciclo;
+- versão, data, modo, status, runtime, versão servida, rollback e closure do último ciclo;
+- referência do último rollback;
+- resumo textual compartilhável;
+- botão `Snapshot técnico` na área Operações;
+- ação `Copiar resumo` com Clipboard API e fallback;
+- drawer desktop e bottom sheet mobile;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais;
+- snapshot somente leitura e destinado a suporte/auditoria.
+
+## Próxima etapa
+
+### v0.58.10 — Production Operations Support Context
+Adicionar contexto técnico seguro para suporte, correlacionando snapshot, última release, tendências e sinais de confiabilidade em uma visão única, sem expor infraestrutura sensível.

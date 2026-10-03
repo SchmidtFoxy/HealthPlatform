@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.8';
+const HP_MVP_VERSION='0.58.9';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26591,6 +26591,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsReliabilityExportButtonV0588')?.addEventListener('click',()=>{
     const days=Number($('#opsTrendsDaysV0585')?.value)||30;
     hpExportReliabilityV0588(days).catch(err=>toast(err.message,true));
+  });
+  $('#opsAuditSnapshotButtonV0589')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpOpenAuditSnapshotV0589(days).catch(err=>toast(err.message,true));
   });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
@@ -26885,4 +26889,86 @@ async function hpExportReliabilityV0588(days=30){
   }finally{
     if(button){button.disabled=false;button.textContent='Exportar auditoria'}
   }
+}
+
+
+// ===== v0.58.9 — Production Operations Audit Snapshot =====
+const HP_PRODUCTION_OPERATIONS_AUDIT_SNAPSHOT_V0589='v0.58.9';
+
+function hpAuditSnapshotStateV0589(state){
+  const map={
+    healthy:['ok','Saudável'],
+    rollback:['bad','Rollback'],
+    attention:['warn','Atenção'],
+    'no-data':['neutral','Sem dados']
+  };
+  return map[state]||['neutral','Indefinido'];
+}
+function hpRenderAuditSnapshotV0589(data){
+  const host=$('#opsAuditSnapshotV0589');if(!host)return;
+  const indicators=data?.indicators||{};
+  const latest=data?.latestCycle||null;
+  const [kind,label]=hpAuditSnapshotStateV0589(data?.state);
+  host.innerHTML=`<div class="ops-audit-snapshot-v0589">
+    <div class="ops-audit-snapshot-head-v0589">
+      <div><span class="eyebrow">AUDIT SNAPSHOT • ${HP_PRODUCTION_OPERATIONS_AUDIT_SNAPSHOT_V0589}</span><h3>Snapshot técnico operacional</h3><p>${esc(data?.days||0)} dias • ${hpOpsDateV0582(data?.from)} → ${hpOpsDateV0582(data?.to)}</p></div>
+      <button type="button" class="ghost" id="opsAuditSnapshotCloseV0589" aria-label="Fechar snapshot técnico">×</button>
+    </div>
+    <div class="ops-audit-snapshot-state-v0589"><span class="ops-status-v0582 ${kind}">${esc(label)}</span></div>
+    <div class="ops-audit-snapshot-metrics-v0589">
+      ${hpOpsMetricV0582('Deploys',String(indicators.totalDeploys??0))}
+      ${hpOpsMetricV0582('Saudáveis',hpOpsPercentV0585(indicators.healthyPercentage))}
+      ${hpOpsMetricV0582('Rollbacks',String(indicators.rollbackDeploys??0))}
+      ${hpOpsMetricV0582('Sequência saudável',String(indicators.currentHealthyStreak??0))}
+    </div>
+    <section class="ops-audit-latest-v0589">
+      <span class="eyebrow">ÚLTIMO CICLO</span>
+      ${latest?`<div class="ops-audit-latest-grid-v0589">
+        <div><small>Versão</small><strong>${esc(latest.version||'—')}</strong></div>
+        <div><small>Registrado</small><strong>${hpOpsDateV0582(latest.recordedAt)}</strong></div>
+        <div><small>Modo</small><strong>${esc(latest.mode||'—')}</strong></div>
+        <div><small>Versão servida</small><strong>${esc(latest.servedVersion||'—')}</strong></div>
+        <div><small>Runtime</small><strong>${latest.runtimeHealthy?'Saudável':'Não confirmado'}</strong></div>
+        <div><small>Closure</small><strong>${latest.closureComplete?'Concluído':'Pendente'}</strong></div>
+      </div>`:'<div class="ops-empty-v0582">Nenhum ciclo operacional na janela.</div>'}
+    </section>
+    <div class="ops-audit-summary-v0589"><strong>Resumo compartilhável</strong><p id="opsAuditSnapshotSummaryV0589">${esc(data?.summary||'')}</p><button type="button" class="secondary" id="opsAuditSnapshotCopyV0589">Copiar resumo</button></div>
+    <div class="ops-detail-safe-v0583">${esc(data?.safetyNote||'Snapshot somente leitura.')}</div>
+  </div>`;
+  $('#opsAuditSnapshotCloseV0589')?.addEventListener('click',hpCloseAuditSnapshotV0589);
+  $('#opsAuditSnapshotCopyV0589')?.addEventListener('click',()=>hpCopyAuditSnapshotV0589(data?.summary||''));
+}
+async function hpCopyAuditSnapshotV0589(text){
+  const value=String(text||'');
+  if(!value)return;
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(value);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=value;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  toast('Snapshot técnico copiado');
+}
+function hpCloseAuditSnapshotV0589(){
+  $('#opsAuditSnapshotBackdropV0589')?.classList.add('hidden');
+  $('#opsAuditSnapshotPanelV0589')?.classList.add('hidden');
+  document.body.classList.remove('ops-audit-snapshot-open-v0589');
+}
+async function hpOpenAuditSnapshotV0589(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const panel=$('#opsAuditSnapshotPanelV0589'),backdrop=$('#opsAuditSnapshotBackdropV0589'),host=$('#opsAuditSnapshotV0589');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-audit-snapshot-open-v0589');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Gerando snapshot técnico');
+  const data=await api(`/api/operacoes-producao/deploys/audit-snapshot?days=${safeDays}`);
+  hpRenderAuditSnapshotV0589(data);
 }
