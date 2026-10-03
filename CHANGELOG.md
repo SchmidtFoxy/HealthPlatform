@@ -1,3 +1,12 @@
+# v0.58.33 — Production Operations Support Session Handoff Copy Verification
+
+- Adiciona verificação local do tamanho da cópia.
+- Compara caracteres e linhas esperados com o resumo da cópia.
+- Exibe status Verificado ou Divergente.
+- Não recaptura clipboard.
+- Não altera conteúdo nem executa nova cópia.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.32 — Production Operations Support Session Handoff Copy Summary
 
 - Adiciona resumo local da última cópia concluída.

@@ -10099,3 +10099,18 @@ Após uma cópia concluída, a prévia do handoff agora apresenta um resumo loca
 As métricas são calculadas sobre o mesmo texto efetivamente enviado à área de transferência. O resumo é transitório, somente leitura e reiniciado em uma nova prévia.
 
 **Próxima etapa:** `v0.58.33 — Production Operations Support Session Handoff Copy Verification`.
+
+
+---
+
+## v0.58.33 — Production Operations Support Session Handoff Copy Verification
+
+Após a cópia, o sistema compara localmente o tamanho esperado do handoff revisado com as métricas registradas no resumo da cópia.
+
+A verificação usa:
+- caracteres esperados versus caracteres copiados;
+- linhas esperadas versus linhas copiadas.
+
+O resultado é **Verificado** ou **Divergente**. A checagem não relê o clipboard, não refaz a cópia, não altera conteúdo e não persiste o evento.
+
+**Próxima etapa:** `v0.58.34 — Production Operations Support Session Handoff Copy Verification Guidance`.

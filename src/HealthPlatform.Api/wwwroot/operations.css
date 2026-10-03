@@ -655,3 +655,22 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
   .ops-support-handoff-copy-summary-grid-v05832{grid-template-columns:1fr}
   .ops-support-handoff-copy-summary-v05832 pre{max-height:230px}
 }
+
+
+/* v0.58.33 — Production Operations Support Session Handoff Copy Verification */
+.ops-support-handoff-copy-verification-v05833{display:grid;gap:10px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.018)}
+.ops-support-handoff-copy-verification-v05833.hidden{display:none}
+.ops-support-handoff-copy-verification-v05833.verified{border-color:rgba(98,217,172,.16);background:rgba(98,217,172,.025)}
+.ops-support-handoff-copy-verification-v05833.divergent{border-color:rgba(255,190,92,.2);background:rgba(255,190,92,.025)}
+.ops-support-handoff-copy-verification-head-v05833{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-copy-verification-head-v05833 strong{display:block;margin-top:4px;font-size:.82rem}
+.ops-support-handoff-copy-verification-grid-v05833{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ops-support-handoff-copy-verification-grid-v05833 article{padding:9px;border-radius:9px;background:rgba(0,0,0,.14);border:1px solid rgba(255,255,255,.05)}
+.ops-support-handoff-copy-verification-grid-v05833 small{display:block;font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;opacity:.55}
+.ops-support-handoff-copy-verification-grid-v05833 strong{display:block;margin-top:4px;font-size:.78rem}
+.ops-support-handoff-copy-verification-v05833 p{margin:0;font-size:.72rem;line-height:1.45;opacity:.76}
+.ops-support-handoff-copy-verification-v05833>small{font-size:.68rem;line-height:1.4;opacity:.58}
+@media (max-width:680px){
+  .ops-support-handoff-copy-verification-head-v05833{align-items:flex-start;flex-direction:column}
+  .ops-support-handoff-copy-verification-grid-v05833{grid-template-columns:1fr 1fr}
+}

@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.32';
+const HP_MVP_VERSION='0.58.33';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28473,6 +28473,7 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
 
     <div id="opsSupportSessionHandoffCopyConfirmationV05831" class="ops-support-handoff-copy-confirmation-v05831 hidden" aria-live="polite"></div>
     <div id="opsSupportSessionHandoffCopySummaryV05832" class="ops-support-handoff-copy-summary-v05832 hidden" aria-live="polite"></div>
+    <div id="opsSupportSessionHandoffCopyVerificationV05833" class="ops-support-handoff-copy-verification-v05833 hidden" aria-live="polite"></div>
 
     <div class="ops-support-boundary-v05810">
       <p>A prévia usa somente o handoff local já preparado para continuidade do suporte.</p>
@@ -28501,6 +28502,7 @@ function hpOpenSupportSessionLifecycleHandoffPreviewV05827(){
   hpSupportSessionResetHandoffReviewReceiptV05829();
   hpSupportSessionResetHandoffCopyConfirmationV05831();
   hpSupportSessionResetHandoffCopySummaryV05832();
+  hpSupportSessionResetHandoffCopyVerificationV05833();
 
   document.body.classList.add('ops-support-handoff-preview-open-v05827');
   backdrop.classList.remove('hidden');
@@ -28545,6 +28547,7 @@ async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
   }
 
   hpSupportSessionCaptureHandoffCopySummaryV05832(text,Boolean(receipt));
+  hpSupportSessionVerifyHandoffCopyV05833(baseText,receipt);
   hpSupportSessionConfirmHandoffCopyV05831(Boolean(receipt));
   toast('Handoff conferido e copiado');
 }
@@ -28841,4 +28844,82 @@ function hpRenderSupportSessionHandoffCopySummaryV05832(){
 
   const preview=$('#opsSupportSessionHandoffCopySummaryTextV05832');
   if(preview)preview.textContent=hpSupportSessionHandoffCopySummaryTextV05832();
+}
+
+
+// ===== v0.58.33 — Production Operations Support Session Handoff Copy Verification =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_V05833='v0.58.33';
+
+const hpSupportSessionHandoffCopyVerificationStateV05833={
+  verifiedAt:null,
+  status:'idle',
+  expectedCharCount:0,
+  copiedCharCount:0,
+  expectedLineCount:0,
+  copiedLineCount:0
+};
+
+function hpSupportSessionResetHandoffCopyVerificationV05833(){
+  hpSupportSessionHandoffCopyVerificationStateV05833.verifiedAt=null;
+  hpSupportSessionHandoffCopyVerificationStateV05833.status='idle';
+  hpSupportSessionHandoffCopyVerificationStateV05833.expectedCharCount=0;
+  hpSupportSessionHandoffCopyVerificationStateV05833.copiedCharCount=0;
+  hpSupportSessionHandoffCopyVerificationStateV05833.expectedLineCount=0;
+  hpSupportSessionHandoffCopyVerificationStateV05833.copiedLineCount=0;
+  hpRenderSupportSessionHandoffCopyVerificationV05833();
+}
+
+function hpSupportSessionExpectedHandoffCopyTextV05833(baseText,receipt){
+  return `${String(baseText||'').replace(/\s+$/,'')}\n\n${String(receipt||'')}\n`;
+}
+
+function hpSupportSessionVerifyHandoffCopyV05833(baseText,receipt){
+  const expected=hpSupportSessionExpectedHandoffCopyTextV05833(baseText,receipt);
+  const summary=hpSupportSessionHandoffCopySummaryStateV05832;
+  const expectedCharCount=expected.length;
+  const expectedLineCount=expected?expected.split(/\r?\n/).length:0;
+  const copiedCharCount=Number(summary.charCount||0);
+  const copiedLineCount=Number(summary.lineCount||0);
+  const matches=Boolean(summary.copiedAt)
+    && expectedCharCount===copiedCharCount
+    && expectedLineCount===copiedLineCount;
+
+  hpSupportSessionHandoffCopyVerificationStateV05833.verifiedAt=new Date().toISOString();
+  hpSupportSessionHandoffCopyVerificationStateV05833.status=matches?'verified':'divergent';
+  hpSupportSessionHandoffCopyVerificationStateV05833.expectedCharCount=expectedCharCount;
+  hpSupportSessionHandoffCopyVerificationStateV05833.copiedCharCount=copiedCharCount;
+  hpSupportSessionHandoffCopyVerificationStateV05833.expectedLineCount=expectedLineCount;
+  hpSupportSessionHandoffCopyVerificationStateV05833.copiedLineCount=copiedLineCount;
+  hpRenderSupportSessionHandoffCopyVerificationV05833();
+}
+
+function hpRenderSupportSessionHandoffCopyVerificationV05833(){
+  const host=$('#opsSupportSessionHandoffCopyVerificationV05833');if(!host)return;
+  const state=hpSupportSessionHandoffCopyVerificationStateV05833;
+
+  if(!state.verifiedAt||state.status==='idle'){
+    host.classList.add('hidden');
+    host.textContent='';
+    return;
+  }
+
+  const verified=state.status==='verified';
+  host.className=`ops-support-handoff-copy-verification-v05833 ${verified?'verified':'divergent'}`;
+  host.innerHTML=`<div class="ops-support-handoff-copy-verification-head-v05833">
+    <div>
+      <span class="eyebrow">VERIFICAÇÃO DA CÓPIA • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_V05833}</span>
+      <strong>${verified?'Tamanho conferido':'Divergência de tamanho detectada'}</strong>
+    </div>
+    <span class="ops-status-v0582 ${verified?'ok':'warn'}">${verified?'Verificado':'Divergente'}</span>
+  </div>
+  <div class="ops-support-handoff-copy-verification-grid-v05833">
+    <article><small>Caracteres esperados</small><strong>${esc(String(state.expectedCharCount))}</strong></article>
+    <article><small>Caracteres no resumo</small><strong>${esc(String(state.copiedCharCount))}</strong></article>
+    <article><small>Linhas esperadas</small><strong>${esc(String(state.expectedLineCount))}</strong></article>
+    <article><small>Linhas no resumo</small><strong>${esc(String(state.copiedLineCount))}</strong></article>
+  </div>
+  <p>${verified
+    ?'O tamanho esperado do handoff revisado coincide com o resumo local da cópia.'
+    :'O resumo local da cópia não coincide com o tamanho esperado. Revise o conteúdo antes de uma nova ação manual.'}</p>
+  <small>Verificação local em ${esc(state.verifiedAt)}. O clipboard não é recapturado, nenhum conteúdo é alterado e nenhum evento é persistido.</small>`;
 }
