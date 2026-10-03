@@ -120,6 +120,113 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/support-timeline/evidence-pack")]
+    public async Task<ActionResult<ProductionSupportEvidencePackResponse>> GetSupportEvidencePack(
+        [FromQuery] string version,
+        [FromQuery] DateTimeOffset recordedAt,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            return BadRequest(new { message = "version e obrigatoria." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var item = allItems.FirstOrDefault(x =>
+            string.Equals(x.Version, version, StringComparison.OrdinalIgnoreCase) &&
+            x.RecordedAt.Equals(recordedAt));
+
+        if (item is null)
+        {
+            return NotFound(new { message = "Evento operacional nao encontrado no historico." });
+        }
+
+        var state = IsHealthy(item)
+            ? "healthy"
+            : item.RollbackExecuted
+                ? "rollback"
+                : item.ClosureComplete
+                    ? "attention"
+                    : "pending";
+
+        static string Yn(bool value) => value ? "sim" : "nao";
+        static string Safe(string? value) =>
+            string.IsNullOrWhiteSpace(value)
+                ? "-"
+                : value.Replace("\r", " ", StringComparison.Ordinal)
+                       .Replace("\n", " ", StringComparison.Ordinal)
+                       .Replace("|", "/", StringComparison.Ordinal);
+
+        var gates = new[]
+        {
+            new ProductionSupportEventGate("backup", "Backup PostgreSQL", item.BackupValidated ? "passed" : "pending",
+                item.BackupValidated ? "Backup validado antes das mutacoes." : "Backup nao confirmado neste evento."),
+            new ProductionSupportEventGate("migration-safety", "Migration Safety",
+                item.MigrationSafetyApproved && item.MigrationHashMatched && !item.DestructiveMigrationsAllowed ? "passed" : "attention",
+                item.MigrationSafetyApproved && item.MigrationHashMatched && !item.DestructiveMigrationsAllowed
+                    ? "Conjunto aprovado, hash conferido e migrations destrutivas bloqueadas."
+                    : "Nem todos os invariantes de migration safety foram confirmados."),
+            new ProductionSupportEventGate("promotion", "Promocao", item.PromotionApplied ? "applied" : "not-applied",
+                item.PromotionApplied ? "Release promovida no ciclo." : "Evento sem promocao aplicada."),
+            new ProductionSupportEventGate("runtime", "Runtime", item.RuntimeHealthy ? "passed" : "attention",
+                item.RuntimeHealthy ? "Runtime respondeu saudavel." : "Runtime nao foi confirmado como saudavel."),
+            new ProductionSupportEventGate("version", "Version Verification", item.VersionHealthy ? "passed" : "attention",
+                item.VersionHealthy ? $"Versao servida confirmada: {Safe(item.ServedVersion)}." : "Versao servida nao foi confirmada no ciclo."),
+            new ProductionSupportEventGate("rollback", "Rollback", item.RollbackExecuted ? "executed" : "not-required",
+                item.RollbackExecuted ? "Rollback registrado neste ciclo." : "Rollback nao foi necessario."),
+            new ProductionSupportEventGate("recovery", "Recovery Audit", item.RecoveryAuditComplete ? "passed" : "pending",
+                item.RecoveryAuditComplete ? "Recovery audit concluido." : "Recovery audit nao concluido."),
+            new ProductionSupportEventGate("closure", "Closure", item.ClosureComplete ? "passed" : "pending",
+                item.ClosureComplete ? "Closure gate concluido." : "Closure gate pendente.")
+        };
+
+        var lines = new List<string>
+        {
+            "# AESYN Performance - Support Evidence Pack",
+            "",
+            $"Evento: {Safe(item.Version)}",
+            $"RecordedAt: {item.RecordedAt:O}",
+            $"Estado: {state}",
+            $"Modo: {Safe(item.Mode)}",
+            $"Status operacional: {Safe(item.OperationsStatus)}",
+            $"Versao servida: {Safe(item.ServedVersion)}",
+            "",
+            "## Fatos publicos",
+            $"Runtime saudavel: {Yn(item.RuntimeHealthy)}",
+            $"Versao confirmada: {Yn(item.VersionHealthy)}",
+            $"Rollback executado: {Yn(item.RollbackExecuted)}",
+            $"Recovery audit concluido: {Yn(item.RecoveryAuditComplete)}",
+            $"Closure concluido: {Yn(item.ClosureComplete)}",
+            "",
+            "## Gates do ciclo"
+        };
+
+        foreach (var gate in gates)
+        {
+            lines.Add($"- {Safe(gate.Label)} [{Safe(gate.State)}]: {Safe(gate.Description)}");
+        }
+
+        lines.Add("");
+        lines.Add("## Limites e seguranca");
+        lines.Add("Pacote textual somente leitura para suporte tecnico.");
+        lines.Add("Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.");
+        lines.Add("Nao executa, recomenda, autoriza ou automatiza deploy, promocao ou rollback.");
+
+        var content = string.Join(Environment.NewLine, lines);
+        var fileName = $"aesyn-support-evidence-{Safe(item.Version)}-{item.RecordedAt:yyyyMMdd-HHmmss}.md";
+
+        return Ok(new ProductionSupportEvidencePackResponse(
+            fileName,
+            "text/markdown;charset=utf-8",
+            content,
+            item.Version,
+            item.RecordedAt,
+            state,
+            gates.Length));
+    }
+
     [HttpGet("deploys/support-timeline/detail")]
     public async Task<ActionResult<ProductionSupportEventDetailResponse>> GetSupportTimelineDetail(
         [FromQuery] string version,
@@ -1193,6 +1300,15 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionSupportEvidencePackResponse(
+    string FileName,
+    string ContentType,
+    string Content,
+    string Version,
+    DateTimeOffset RecordedAt,
+    string State,
+    int GateCount);
 
 public sealed record ProductionSupportEventDetailResponse(
     ProductionSupportEventPublicData Event,

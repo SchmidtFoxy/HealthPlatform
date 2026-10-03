@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.13';
+const HP_MVP_VERSION='0.58.14';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27294,6 +27294,10 @@ function hpRenderSupportEventDetailV05813(data){
       <span>${item.closureComplete?'✓':'○'} Closure</span>
     </div>
 
+    <div class="ops-support-evidence-actions-v05814">
+      <button type="button" class="secondary" id="opsSupportEvidencePackButtonV05814">Baixar pacote de evidências</button>
+    </div>
+
     <div class="ops-support-boundary-v05810">
       <p>${esc(data?.safetyNote||'Detalhe operacional somente leitura.')}</p>
       <p>${esc(data?.excludedMetadata||'Metadata interna não exposta.')}</p>
@@ -27301,6 +27305,9 @@ function hpRenderSupportEventDetailV05813(data){
     </div>
   </div>`;
   $('#opsSupportEventDetailCloseV05813')?.addEventListener('click',hpCloseSupportEventDetailV05813);
+  $('#opsSupportEvidencePackButtonV05814')?.addEventListener('click',()=>{
+    hpExportSupportEvidencePackV05814(item.version,item.recordedAt).catch(err=>toast(err.message,true));
+  });
 }
 function hpCloseSupportEventDetailV05813(){
   $('#opsSupportEventDetailBackdropV05813')?.classList.add('hidden');
@@ -27318,4 +27325,22 @@ async function hpOpenSupportEventDetailV05813(version,recordedAt){
   const query=new URLSearchParams({version:String(version),recordedAt:String(recordedAt)});
   const data=await api(`/api/operacoes-producao/deploys/support-timeline/detail?${query.toString()}`);
   hpRenderSupportEventDetailV05813(data);
+}
+
+
+// ===== v0.58.14 — Production Operations Support Evidence Pack =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_EVIDENCE_PACK_V05814='v0.58.14';
+
+async function hpExportSupportEvidencePackV05814(version,recordedAt){
+  if(!version||!recordedAt)return;
+  const button=$('#opsSupportEvidencePackButtonV05814');
+  if(button){button.disabled=true;button.textContent='Gerando pacote…'}
+  try{
+    const query=new URLSearchParams({version:String(version),recordedAt:String(recordedAt)});
+    const payload=await api(`/api/operacoes-producao/deploys/support-timeline/evidence-pack?${query.toString()}`);
+    hpDownloadTextFileV0588(payload?.fileName,payload?.contentType,payload?.content);
+    toast(`Pacote de evidências gerado • ${payload?.gateCount||0} gate(s)`);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Baixar pacote de evidências'}
+  }
 }

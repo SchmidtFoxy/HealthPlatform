@@ -350,3 +350,12 @@ body.ops-support-event-detail-open-v05813{overflow:hidden}
   .ops-support-event-summary-v05813{grid-template-columns:1fr}
   .ops-support-event-gate-title-v05813{align-items:flex-start;flex-direction:column}
 }
+
+
+/* v0.58.14 — Production Operations Support Evidence Pack */
+.ops-support-evidence-actions-v05814{display:flex;justify-content:flex-end}
+.ops-support-evidence-actions-v05814 button{min-width:220px}
+@media (max-width:680px){
+  .ops-support-evidence-actions-v05814{display:block}
+  .ops-support-evidence-actions-v05814 button{width:100%;min-width:0}
+}

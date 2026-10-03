@@ -8361,3 +8361,26 @@ Adicionar detalhe seguro de um evento selecionado na timeline de suporte, reutil
 
 ### v0.58.14 — Production Operations Support Evidence Pack
 Adicionar um pacote textual seguro por evento com resumo, gates e fatos públicos para compartilhamento técnico, preservando os limites de metadata interna.
+
+
+## ✅ v0.58.14 — Production Operations Support Evidence Pack — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/support-timeline/evidence-pack`;
+- identificação do evento por versão + `recordedAt`;
+- pacote textual Markdown UTF-8 por evento;
+- resumo do evento;
+- fatos públicos de runtime, versão, rollback, recovery audit e closure;
+- gates de backup, migration safety, promoção, runtime, version verification, rollback, recovery e closure;
+- botão `Baixar pacote de evidências` dentro do detalhe do evento;
+- download local via `Blob`;
+- nome de arquivo com versão + timestamp;
+- contagem de gates no retorno;
+- pacote somente leitura para suporte técnico;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais;
+- nenhuma ação de deploy, promoção ou rollback é executada, recomendada, autorizada ou automatizada.
+
+## Próxima etapa
+
+### v0.58.15 — Production Operations Support Session
+Adicionar uma sessão temporária de investigação na UI, permitindo reunir snapshot, contexto, timeline e evidências selecionadas em uma mesma sessão local de suporte, sem persistir segredos ou alterar produção.

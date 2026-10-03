@@ -1,3 +1,13 @@
+# v0.58.14 — Production Operations Support Evidence Pack
+
+- Adiciona endpoint de pacote de evidências por evento.
+- Gera Markdown UTF-8 seguro.
+- Inclui fatos públicos e gates do ciclo.
+- Adiciona botão Baixar pacote de evidências.
+- Reutiliza download local via Blob.
+- Mantém metadata interna fora do pacote.
+- Mantém o material somente leitura.
+
 # v0.58.13 — Production Operations Support Event Detail
 
 - Adiciona endpoint de detalhe de evento da timeline.

@@ -9792,3 +9792,20 @@ O detalhe mostra os gates do ciclo:
 O conteúdo é somente leitura e usa apenas dados operacionais públicos seguros.
 
 **Próxima etapa:** `v0.58.14 — Production Operations Support Evidence Pack`.
+
+
+---
+
+## v0.58.14 — Production Operations Support Evidence Pack
+
+O detalhe de evento da **Timeline suporte** ganhou **Baixar pacote de evidências**.
+
+O arquivo Markdown inclui:
+- identificação do evento;
+- estado, modo e versão servida;
+- fatos públicos do ciclo;
+- descrição dos gates operacionais seguros.
+
+O pacote é somente leitura e não contém metadata interna de infraestrutura.
+
+**Próxima etapa:** `v0.58.15 — Production Operations Support Session`.
