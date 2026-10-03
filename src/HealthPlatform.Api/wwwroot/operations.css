@@ -553,3 +553,29 @@ body.ops-support-receipt-preview-open-v05821{overflow:hidden}
   #opsSupportSessionLifecycleHandoffCopyV05826{width:100%}
   .ops-support-lifecycle-handoff-v05826 pre{max-height:280px}
 }
+
+
+/* v0.58.27 — Production Operations Support Session Handoff Preview */
+.ops-support-handoff-preview-backdrop-v05827{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(4px);z-index:1390}
+.ops-support-handoff-preview-panel-v05827{position:fixed;top:0;right:0;height:100dvh;width:min(760px,96vw);z-index:1400;background:#0f1514;border-left:1px solid rgba(255,255,255,.08);box-shadow:-20px 0 50px rgba(0,0,0,.34);overflow:auto}
+body.ops-support-handoff-preview-open-v05827{overflow:hidden}
+.ops-support-handoff-preview-v05827{padding:22px;display:grid;gap:18px}
+.ops-support-handoff-preview-head-v05827{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.ops-support-handoff-preview-head-v05827 h3{margin:4px 0 5px}
+.ops-support-handoff-preview-head-v05827 p{margin:0;opacity:.65}
+.ops-support-handoff-preview-meta-v05827{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.ops-support-handoff-preview-meta-v05827 article{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.02)}
+.ops-support-handoff-preview-meta-v05827 small{display:block;font-size:.67rem;text-transform:uppercase;letter-spacing:.06em;opacity:.58}
+.ops-support-handoff-preview-meta-v05827 strong{display:block;margin-top:5px;overflow-wrap:anywhere}
+.ops-support-handoff-preview-text-v05827{display:grid;gap:9px}
+.ops-support-handoff-preview-text-v05827>div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-preview-text-v05827 pre{margin:0;max-height:58dvh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(0,0,0,.22);font:500 .76rem/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+.ops-support-handoff-preview-actions-v05827{display:flex;justify-content:flex-end;gap:9px}
+@media (max-width:680px){
+  .ops-support-handoff-preview-panel-v05827{width:100%;top:auto;bottom:0;height:min(96dvh,960px);border-left:0;border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0}
+  .ops-support-handoff-preview-v05827{padding:18px 16px 26px}
+  .ops-support-handoff-preview-meta-v05827{grid-template-columns:1fr}
+  .ops-support-handoff-preview-actions-v05827{display:grid;grid-template-columns:1fr}
+  .ops-support-handoff-preview-actions-v05827 button{width:100%}
+  .ops-support-handoff-preview-text-v05827 pre{max-height:46dvh}
+}

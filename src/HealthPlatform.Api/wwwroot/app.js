@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.26';
+const HP_MVP_VERSION='0.58.27';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27453,7 +27453,7 @@ function hpRenderSupportSessionV05815(){
   $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpOpenSupportSessionSharePreviewV05817().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCloseoutV05822')?.addEventListener('click',hpCloseoutSupportSessionV05822);
   $('#opsSupportSessionLifecycleSummaryCopyV05825')?.addEventListener('click',()=>hpCopySupportSessionLifecycleSummaryV05825().catch(err=>toast(err.message,true)));
-  $('#opsSupportSessionLifecycleHandoffCopyV05826')?.addEventListener('click',()=>hpCopySupportSessionLifecycleHandoffV05826().catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionLifecycleHandoffCopyV05826')?.addEventListener('click',hpOpenSupportSessionLifecycleHandoffPreviewV05827);
   $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
     hpSupportSessionResetV05815();
@@ -28367,7 +28367,7 @@ function hpSupportSessionLifecycleHandoffMarkupV05826(lifecycle=hpSupportSession
         <span class="eyebrow">HANDOFF • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_HANDOFF_V05826}</span>
         <strong>Continuidade mínima do suporte</strong>
       </div>
-      <button type="button" class="ghost" id="opsSupportSessionLifecycleHandoffCopyV05826">Copiar handoff</button>
+      <button type="button" class="ghost" id="opsSupportSessionLifecycleHandoffCopyV05826">Conferir handoff</button>
     </div>
     <pre id="opsSupportSessionLifecycleHandoffTextV05826"></pre>
   </div>`;
@@ -28394,4 +28394,108 @@ async function hpCopySupportSessionLifecycleHandoffV05826(){
     area.remove();
   }
   toast('Handoff do ciclo copiado');
+}
+
+
+// ===== v0.58.27 — Production Operations Support Session Handoff Preview =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_PREVIEW_V05827='v0.58.27';
+
+const hpSupportSessionHandoffPreviewStateV05827={
+  content:'',
+  openedAt:null
+};
+
+function hpSupportSessionResetHandoffPreviewV05827(){
+  hpSupportSessionHandoffPreviewStateV05827.content='';
+  hpSupportSessionHandoffPreviewStateV05827.openedAt=null;
+}
+
+function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
+  const host=$('#opsSupportSessionLifecycleHandoffPreviewV05827');if(!host)return;
+  const state=hpSupportSessionHandoffPreviewStateV05827;
+  const content=String(state.content||'');
+  const lines=content?content.split(/\r?\n/).length:0;
+  const chars=content.length;
+
+  host.innerHTML=`<div class="ops-support-handoff-preview-v05827">
+    <div class="ops-support-handoff-preview-head-v05827">
+      <div>
+        <span class="eyebrow">HANDOFF PREVIEW • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_PREVIEW_V05827}</span>
+        <h3>Conferir handoff antes da cópia</h3>
+        <p>Prévia local do contexto mínimo que será compartilhado.</p>
+      </div>
+      <button type="button" class="ghost" id="opsSupportSessionLifecycleHandoffPreviewCloseV05827" aria-label="Fechar prévia do handoff">×</button>
+    </div>
+
+    <div class="ops-support-handoff-preview-meta-v05827">
+      <article><small>Aberto em</small><strong>${esc(state.openedAt||'—')}</strong></article>
+      <article><small>Linhas</small><strong>${esc(String(lines))}</strong></article>
+      <article><small>Caracteres</small><strong>${esc(String(chars))}</strong></article>
+    </div>
+
+    <section class="ops-support-handoff-preview-text-v05827">
+      <div><span class="eyebrow">CONTEÚDO QUE SERÁ COPIADO</span><small>Somente leitura</small></div>
+      <pre id="opsSupportSessionLifecycleHandoffPreviewTextV05827"></pre>
+    </section>
+
+    <div class="ops-support-handoff-preview-actions-v05827">
+      <button type="button" class="ghost" id="opsSupportSessionLifecycleHandoffPreviewBackV05827">Voltar à sessão</button>
+      <button type="button" class="secondary" id="opsSupportSessionLifecycleHandoffPreviewCopyV05827">Copiar handoff</button>
+    </div>
+
+    <div class="ops-support-boundary-v05810">
+      <p>A prévia usa somente o handoff local já preparado para continuidade do suporte.</p>
+      <p>Nenhum conteúdo é copiado até a ação explícita “Copiar handoff”.</p>
+      <p>A prévia não persiste nem envia automaticamente o conteúdo e não altera produção.</p>
+    </div>
+  </div>`;
+
+  const preview=$('#opsSupportSessionLifecycleHandoffPreviewTextV05827');
+  if(preview)preview.textContent=content;
+
+  $('#opsSupportSessionLifecycleHandoffPreviewCloseV05827')?.addEventListener('click',hpCloseSupportSessionLifecycleHandoffPreviewV05827);
+  $('#opsSupportSessionLifecycleHandoffPreviewBackV05827')?.addEventListener('click',hpCloseSupportSessionLifecycleHandoffPreviewV05827);
+  $('#opsSupportSessionLifecycleHandoffPreviewCopyV05827')?.addEventListener('click',()=>hpCopySupportSessionLifecycleHandoffFromPreviewV05827().catch(err=>toast(err.message,true)));
+}
+
+function hpOpenSupportSessionLifecycleHandoffPreviewV05827(){
+  const panel=$('#opsSupportSessionLifecycleHandoffPreviewPanelV05827');
+  const backdrop=$('#opsSupportSessionLifecycleHandoffPreviewBackdropV05827');
+  const host=$('#opsSupportSessionLifecycleHandoffPreviewV05827');
+  if(!panel||!backdrop||!host)return;
+
+  hpSupportSessionHandoffPreviewStateV05827.content=hpSupportSessionLifecycleHandoffV05826();
+  hpSupportSessionHandoffPreviewStateV05827.openedAt=new Date().toISOString();
+
+  document.body.classList.add('ops-support-handoff-preview-open-v05827');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  hpRenderSupportSessionLifecycleHandoffPreviewV05827();
+}
+
+function hpCloseSupportSessionLifecycleHandoffPreviewV05827(){
+  $('#opsSupportSessionLifecycleHandoffPreviewBackdropV05827')?.classList.add('hidden');
+  $('#opsSupportSessionLifecycleHandoffPreviewPanelV05827')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-handoff-preview-open-v05827');
+}
+
+async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
+  const text=String(hpSupportSessionHandoffPreviewStateV05827.content||'');
+  if(!text)return;
+
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=text;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+
+  toast('Handoff conferido e copiado');
 }

@@ -1,3 +1,13 @@
+# v0.58.27 — Production Operations Support Session Handoff Preview
+
+- Adiciona prévia local dedicada do handoff.
+- Substitui a cópia imediata por Conferir handoff.
+- Mostra horário, linhas e caracteres.
+- Exibe o handoff em texto somente leitura.
+- Adiciona Voltar à sessão e Copiar handoff.
+- A cópia usa exatamente o conteúdo da prévia.
+- Não copia, persiste ou envia automaticamente ao abrir.
+
 # v0.58.26 — Production Operations Support Session Lifecycle Handoff
 
 - Adiciona bloco local de handoff da sessão.

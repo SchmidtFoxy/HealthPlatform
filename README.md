@@ -10013,3 +10013,16 @@ O conteúdo reúne somente o contexto mínimo:
 A cópia é sempre explícita por **Copiar handoff**. Nenhum conteúdo é persistido ou enviado automaticamente.
 
 **Próxima etapa:** `v0.58.27 — Production Operations Support Session Handoff Preview`.
+
+
+---
+
+## v0.58.27 — Production Operations Support Session Handoff Preview
+
+A ação de handoff agora passa por uma pré-visualização dedicada antes da cópia.
+
+O operador abre **Conferir handoff**, visualiza exatamente o conteúdo que será compartilhado e somente então escolhe **Copiar handoff**. A prévia mostra horário, quantidade de linhas e caracteres e permanece inteiramente local.
+
+Nenhum conteúdo é copiado, persistido ou enviado automaticamente.
+
+**Próxima etapa:** `v0.58.28 — Production Operations Support Session Handoff Review Checklist`.

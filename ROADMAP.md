@@ -8676,3 +8676,28 @@ Adicionar um bloco local de handoff baseado no resumo do lifecycle, com contexto
 
 ### v0.58.27 — Production Operations Support Session Handoff Preview
 Adicionar uma pré-visualização local dedicada do handoff antes da cópia, permitindo conferir o conteúdo mínimo que será compartilhado sem persistir ou enviar automaticamente.
+
+
+## ✅ v0.58.27 — Production Operations Support Session Handoff Preview — CONCLUÍDA
+
+**Entregue:**
+- pré-visualização local dedicada do handoff antes da cópia;
+- abertura explícita por `Conferir handoff`;
+- snapshot do handoff fixado em memória ao abrir a prévia;
+- horário local ISO da abertura da prévia;
+- contagem de linhas e caracteres;
+- conteúdo exibido como texto somente leitura;
+- ação `Voltar à sessão`;
+- ação explícita `Copiar handoff`;
+- a cópia utiliza exatamente o conteúdo exibido na prévia;
+- nenhum conteúdo é copiado ao abrir a prévia;
+- nenhuma persistência automática;
+- nenhum envio automático;
+- nenhuma chamada à API;
+- nenhuma alteração em produção;
+- drawer desktop e bottom sheet mobile.
+
+## Próxima etapa
+
+### v0.58.28 — Production Operations Support Session Handoff Review Checklist
+Adicionar checklist local e explícito antes da cópia do handoff, confirmando contexto mínimo, ausência de segredos e adequação ao destinatário sem alterar automaticamente o conteúdo.
