@@ -8413,3 +8413,29 @@ Adicionar uma sessão temporária de investigação na UI, permitindo reunir sna
 
 ### v0.58.16 — Production Operations Support Session Export
 Permitir exportar a sessão temporária de suporte em um único pacote textual seguro, contendo resumo, contexto e referências das evidências selecionadas, sem persistência automática.
+
+
+## ✅ v0.58.16 — Production Operations Support Session Export — CONCLUÍDA
+
+**Entregue:**
+- ação `Exportar sessão` dentro da sessão temporária de suporte;
+- geração local de arquivo Markdown UTF-8;
+- resumo geral da sessão;
+- janela e horário de início;
+- indicadores do snapshot;
+- sinais e tendências do contexto operacional;
+- referência da última release;
+- timeline resumida;
+- referências das evidências selecionadas;
+- nome de arquivo com timestamp;
+- download local via `Blob`;
+- nenhuma persistência automática da sessão;
+- nenhuma inclusão do conteúdo bruto das evidências no export da sessão;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais;
+- nenhuma alteração em produção;
+- nenhuma ação de deploy, promoção ou rollback é executada, recomendada, autorizada ou automatizada.
+
+## Próxima etapa
+
+### v0.58.17 — Production Operations Support Session Share Preview
+Adicionar uma pré-visualização segura do conteúdo que será compartilhado/exportado pela sessão, permitindo revisão humana antes do download, sem persistir automaticamente o material.

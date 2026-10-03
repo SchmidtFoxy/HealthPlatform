@@ -1,4 +1,4 @@
-HealthPlatform v0.58.15 - Incremental
+HealthPlatform v0.58.16 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,14 +15,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session;
-- sessao temporaria em memoria;
-- snapshot + contexto + timeline;
-- evidencias selecionadas;
-- copiar resumo + limpar sessao;
-- drawer desktop + bottom sheet mobile;
-- proxima etapa v0.58.16 / Production Operations Support Session Export.
+- Production Operations Support Session Export;
+- exportacao Markdown UTF-8 local;
+- resumo + snapshot + contexto + ultima release;
+- timeline resumida + referencias de evidencias;
+- sem persistencia automatica;
+- proxima etapa v0.58.17 / Production Operations Support Session Share Preview.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.15
+Se aprovado, commit/push apenas: v0.58.16

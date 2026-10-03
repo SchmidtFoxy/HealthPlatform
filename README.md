@@ -9826,3 +9826,22 @@ A sessão reúne, apenas em memória da página:
 É possível adicionar e remover evidências, copiar um resumo e limpar a sessão. Nada é persistido em banco, arquivo, `localStorage` ou `sessionStorage`.
 
 **Próxima etapa:** `v0.58.16 — Production Operations Support Session Export`.
+
+
+---
+
+## v0.58.16 — Production Operations Support Session Export
+
+A **Sessão suporte** agora pode ser exportada em um único Markdown seguro.
+
+O arquivo reúne:
+- resumo da sessão;
+- snapshot;
+- contexto operacional;
+- última release;
+- timeline resumida;
+- referências das evidências selecionadas.
+
+A exportação é gerada localmente no navegador, não persiste automaticamente a sessão e não inclui metadata interna de infraestrutura.
+
+**Próxima etapa:** `v0.58.17 — Production Operations Support Session Share Preview`.

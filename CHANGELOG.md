@@ -1,3 +1,13 @@
+# v0.58.16 — Production Operations Support Session Export
+
+- Adiciona ação Exportar sessão.
+- Gera Markdown UTF-8 localmente.
+- Inclui resumo, snapshot, contexto, última release e timeline resumida.
+- Inclui referências das evidências selecionadas.
+- Reutiliza download via Blob.
+- Não persiste automaticamente a sessão.
+- Mantém infraestrutura sensível fora do arquivo.
+
 # v0.58.15 — Production Operations Support Session
 
 - Adiciona sessão temporária local de suporte.

@@ -393,3 +393,10 @@ body.ops-support-session-open-v05815{overflow:hidden}
   .ops-support-session-grid-v05815{grid-template-columns:1fr}
   .ops-support-session-timeline-v05815 article>div,.ops-support-session-evidence-v05815 article>div{align-items:flex-start;flex-direction:column}
 }
+
+
+/* v0.58.16 — Production Operations Support Session Export */
+.ops-support-session-toolbar-v05815 #opsSupportSessionExportV05816{min-width:138px}
+@media (max-width:680px){
+  .ops-support-session-toolbar-v05815 #opsSupportSessionExportV05816{width:100%;min-width:0}
+}

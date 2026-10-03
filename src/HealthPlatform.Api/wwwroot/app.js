@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.15';
+const HP_MVP_VERSION='0.58.16';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27408,6 +27408,7 @@ function hpRenderSupportSessionV05815(){
 
     <div class="ops-support-session-toolbar-v05815">
       <span class="ops-status-v0582 ${kind}">${esc(label)}</span>
+      <button type="button" class="secondary" id="opsSupportSessionExportV05816">Exportar sessão</button>
       <button type="button" class="secondary" id="opsSupportSessionCopyV05815">Copiar resumo</button>
       <button type="button" class="ghost" id="opsSupportSessionClearV05815">Limpar sessão</button>
     </div>
@@ -27444,6 +27445,7 @@ function hpRenderSupportSessionV05815(){
   </div>`;
 
   $('#opsSupportSessionCloseV05815')?.addEventListener('click',hpCloseSupportSessionV05815);
+  $('#opsSupportSessionExportV05816')?.addEventListener('click',()=>hpExportSupportSessionV05816().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
   $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
     hpSupportSessionResetV05815();
@@ -27544,4 +27546,103 @@ async function hpOpenSupportSessionV05815(days=30){
     await hpStartSupportSessionV05815(safeDays);
   }
   hpRenderSupportSessionV05815();
+}
+
+
+// ===== v0.58.16 — Production Operations Support Session Export =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_EXPORT_V05816='v0.58.16';
+
+function hpSupportSessionExportTextV05816(){
+  const s=hpSupportSessionStateV05815;
+  const snapshot=s.snapshot||{};
+  const context=s.context||{};
+  const timeline=s.timeline?.items||[];
+  const latest=snapshot.latestCycle||context.latestCycle||null;
+  const indicators=snapshot.indicators||{};
+  const signals=context.signals||{};
+  const trends=context.trends||{};
+
+  const lines=[
+    '# AESYN Performance - Support Session Export',
+    '',
+    `Versao da interface: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_EXPORT_V05816}`,
+    `Sessao iniciada: ${s.startedAt||'—'}`,
+    `Janela: ${s.days||0} dias`,
+    `Estado: ${snapshot.state||context.state||'no-data'}`,
+    '',
+    '## Resumo',
+    hpSupportSessionSummaryV05815(),
+    '',
+    '## Snapshot',
+    `Deploys: ${indicators.totalDeploys??0}`,
+    `Saudaveis: ${indicators.healthyDeploys??0}`,
+    `Percentual saudavel: ${indicators.healthyPercentage??0}%`,
+    `Rollbacks: ${indicators.rollbackDeploys??0}`,
+    `Sequencia saudavel: ${indicators.currentHealthyStreak??0}`,
+    '',
+    '## Contexto operacional',
+    `Direcao de estabilidade: ${signals.stabilityDirection||'—'}`,
+    `Delta saudavel: ${signals.healthyPercentageDelta??0} p.p.`,
+    `Ultimo rollback: ${signals.lastRollbackVersion||'nenhum'}`,
+    `Ultimo apply saudavel: ${signals.lastHealthyApplyVersion||'nenhum'}`,
+    `Apply: ${trends.applyDeploys??0}`,
+    `Validate-only: ${trends.validateOnlyDeploys??0}`,
+    '',
+    '## Ultima release',
+    `Versao: ${latest?.version||'—'}`,
+    `RecordedAt: ${latest?.recordedAt||'—'}`,
+    `Modo: ${latest?.mode||'—'}`,
+    `Status: ${latest?.operationsStatus||'—'}`,
+    `Versao servida: ${latest?.servedVersion||'—'}`,
+    '',
+    '## Timeline resumida'
+  ];
+
+  if(timeline.length){
+    timeline.slice(0,12).forEach(item=>{
+      lines.push(`- ${item.recordedAt||'—'} | ${item.version||'—'} | ${item.mode||'—'} | ${item.state||'unknown'} | ${item.title||''}`);
+    });
+  }else{
+    lines.push('- nenhum evento na janela');
+  }
+
+  lines.push('', '## Evidencias selecionadas');
+  if(s.evidences.length){
+    s.evidences.forEach(item=>{
+      lines.push(`- ${item.version||'—'} | ${item.recordedAt||'—'} | ${item.state||'unknown'} | ${item.gateCount||0} gate(s)`);
+    });
+  }else{
+    lines.push('- nenhuma evidencia selecionada');
+  }
+
+  lines.push(
+    '',
+    '## Limites e seguranca',
+    'Exportacao gerada localmente a partir da sessao temporaria em memoria.',
+    'Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.',
+    'Nao persiste automaticamente a sessao e nao altera producao.',
+    'Nao executa, recomenda, autoriza ou automatiza deploy, promocao ou rollback.'
+  );
+
+  return lines.join('\n');
+}
+
+async function hpExportSupportSessionV05816(){
+  if(!hpSupportSessionStateV05815.active){
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    await hpStartSupportSessionV05815(days);
+  }
+
+  const button=$('#opsSupportSessionExportV05816');
+  if(button){button.disabled=true;button.textContent='Exportando sessão…'}
+  try{
+    const startedAt=hpSupportSessionStateV05815.startedAt||new Date().toISOString();
+    const stamp=startedAt.replace(/[-:]/g,'').replace(/\..+$/,'').replace('T','-');
+    const fileName=`aesyn-support-session-${stamp}.md`;
+    const content=hpSupportSessionExportTextV05816();
+    hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',content);
+    toast(`Sessão exportada • ${hpSupportSessionStateV05815.evidences.length} evidência(s)`);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Exportar sessão'}
+  }
 }
