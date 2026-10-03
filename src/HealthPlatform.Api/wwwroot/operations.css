@@ -579,3 +579,20 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
   .ops-support-handoff-preview-actions-v05827 button{width:100%}
   .ops-support-handoff-preview-text-v05827 pre{max-height:46dvh}
 }
+
+
+/* v0.58.28 — Production Operations Support Session Handoff Review Checklist */
+.ops-support-handoff-checklist-v05828{display:grid;gap:10px;padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.018)}
+.ops-support-handoff-checklist-head-v05828{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-checklist-head-v05828 strong{display:block;margin-top:4px}
+.ops-support-handoff-checklist-items-v05828{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ops-support-handoff-checklist-items-v05828 label{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:flex-start;padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(255,255,255,.02);cursor:pointer}
+.ops-support-handoff-checklist-items-v05828 input{margin-top:3px;width:16px;height:16px;accent-color:currentColor}
+.ops-support-handoff-checklist-items-v05828 strong{display:block;font-size:.78rem}
+.ops-support-handoff-checklist-items-v05828 small{display:block;margin-top:4px;font-size:.7rem;line-height:1.4;opacity:.64}
+.ops-support-handoff-checklist-note-v05828{margin:0;font-size:.7rem;line-height:1.4;opacity:.6}
+#opsSupportSessionLifecycleHandoffPreviewCopyV05827:disabled{opacity:.46;cursor:not-allowed}
+@media (max-width:680px){
+  .ops-support-handoff-checklist-head-v05828{align-items:flex-start;flex-direction:column}
+  .ops-support-handoff-checklist-items-v05828{grid-template-columns:1fr}
+}

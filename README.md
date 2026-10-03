@@ -10026,3 +10026,17 @@ O operador abre **Conferir handoff**, visualiza exatamente o conteúdo que será
 Nenhum conteúdo é copiado, persistido ou enviado automaticamente.
 
 **Próxima etapa:** `v0.58.28 — Production Operations Support Session Handoff Review Checklist`.
+
+
+---
+
+## v0.58.28 — Production Operations Support Session Handoff Review Checklist
+
+A prévia do handoff agora exige três confirmações antes da cópia:
+- **Contexto mínimo**;
+- **Ausência de segredos**;
+- **Adequação ao destinatário**.
+
+O botão **Copiar handoff** fica bloqueado até `3/3`. O checklist não altera o conteúdo e registra apenas confirmações locais da prévia.
+
+**Próxima etapa:** `v0.58.29 — Production Operations Support Session Handoff Review Receipt`.

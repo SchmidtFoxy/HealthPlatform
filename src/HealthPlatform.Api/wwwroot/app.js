@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.27';
+const HP_MVP_VERSION='0.58.28';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28438,9 +28438,36 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
       <pre id="opsSupportSessionLifecycleHandoffPreviewTextV05827"></pre>
     </section>
 
+    <section class="ops-support-handoff-checklist-v05828">
+      <div class="ops-support-handoff-checklist-head-v05828">
+        <div>
+          <span class="eyebrow">REVIEW CHECKLIST • v0.58.28</span>
+          <strong>Confirmações antes da cópia</strong>
+        </div>
+        <span class="ops-status-v0582 warn" id="opsSupportSessionHandoffChecklistStatusV05828">0/3 confirmado(s)</span>
+      </div>
+
+      <div class="ops-support-handoff-checklist-items-v05828">
+        <label>
+          <input type="checkbox" data-handoff-check-v05828="minimum-context">
+          <span><strong>Contexto mínimo</strong><small>Confirme que o handoff contém somente o contexto necessário para continuidade do suporte.</small></span>
+        </label>
+        <label>
+          <input type="checkbox" data-handoff-check-v05828="no-secrets">
+          <span><strong>Ausência de segredos</strong><small>Confirme que não há credenciais, tokens, senhas ou outros segredos no conteúdo.</small></span>
+        </label>
+        <label>
+          <input type="checkbox" data-handoff-check-v05828="recipient-fit">
+          <span><strong>Adequação ao destinatário</strong><small>Confirme que o conteúdo é apropriado para a pessoa ou equipe que receberá o handoff.</small></span>
+        </label>
+      </div>
+
+      <p class="ops-support-handoff-checklist-note-v05828">O checklist registra apenas confirmações locais desta prévia. Nada é removido, alterado, persistido ou enviado automaticamente.</p>
+    </section>
+
     <div class="ops-support-handoff-preview-actions-v05827">
       <button type="button" class="ghost" id="opsSupportSessionLifecycleHandoffPreviewBackV05827">Voltar à sessão</button>
-      <button type="button" class="secondary" id="opsSupportSessionLifecycleHandoffPreviewCopyV05827">Copiar handoff</button>
+      <button type="button" class="secondary" id="opsSupportSessionLifecycleHandoffPreviewCopyV05827" disabled>Copiar handoff</button>
     </div>
 
     <div class="ops-support-boundary-v05810">
@@ -28455,6 +28482,7 @@ function hpRenderSupportSessionLifecycleHandoffPreviewV05827(){
 
   $('#opsSupportSessionLifecycleHandoffPreviewCloseV05827')?.addEventListener('click',hpCloseSupportSessionLifecycleHandoffPreviewV05827);
   $('#opsSupportSessionLifecycleHandoffPreviewBackV05827')?.addEventListener('click',hpCloseSupportSessionLifecycleHandoffPreviewV05827);
+  hpSupportSessionBindHandoffChecklistV05828();
   $('#opsSupportSessionLifecycleHandoffPreviewCopyV05827')?.addEventListener('click',()=>hpCopySupportSessionLifecycleHandoffFromPreviewV05827().catch(err=>toast(err.message,true)));
 }
 
@@ -28482,6 +28510,10 @@ function hpCloseSupportSessionLifecycleHandoffPreviewV05827(){
 async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
   const text=String(hpSupportSessionHandoffPreviewStateV05827.content||'');
   if(!text)return;
+  if(!hpSupportSessionHandoffChecklistCompleteV05828()){
+    toast('Confirme os 3 itens do checklist antes da cópia',true);
+    return;
+  }
 
   if(navigator.clipboard?.writeText){
     await navigator.clipboard.writeText(text);
@@ -28498,4 +28530,55 @@ async function hpCopySupportSessionLifecycleHandoffFromPreviewV05827(){
   }
 
   toast('Handoff conferido e copiado');
+}
+
+
+// ===== v0.58.28 — Production Operations Support Session Handoff Review Checklist =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_CHECKLIST_V05828='v0.58.28';
+
+function hpSupportSessionHandoffChecklistInputsV05828(){
+  return [...document.querySelectorAll('[data-handoff-check-v05828]')];
+}
+
+function hpSupportSessionHandoffChecklistStateV05828(){
+  const inputs=hpSupportSessionHandoffChecklistInputsV05828();
+  const confirmed=inputs.filter(input=>input.checked).length;
+  return {
+    total:inputs.length,
+    confirmed,
+    complete:inputs.length===3&&confirmed===3
+  };
+}
+
+function hpSupportSessionRenderHandoffChecklistStatusV05828(){
+  const state=hpSupportSessionHandoffChecklistStateV05828();
+  const status=$('#opsSupportSessionHandoffChecklistStatusV05828');
+  const copy=$('#opsSupportSessionLifecycleHandoffPreviewCopyV05827');
+
+  if(status){
+    status.className=`ops-status-v0582 ${state.complete?'ok':'warn'}`;
+    status.textContent=state.complete?'Revisão confirmada':`${state.confirmed}/${state.total} confirmado(s)`;
+  }
+
+  if(copy){
+    copy.disabled=!state.complete;
+    copy.title=state.complete?'Checklist concluído':'Confirme os 3 itens do checklist antes da cópia';
+  }
+}
+
+function hpSupportSessionBindHandoffChecklistV05828(){
+  hpSupportSessionHandoffChecklistInputsV05828().forEach(input=>{
+    input.checked=false;
+    input.addEventListener('change',hpSupportSessionRenderHandoffChecklistStatusV05828);
+  });
+  hpSupportSessionRenderHandoffChecklistStatusV05828();
+}
+
+function hpSupportSessionResetHandoffChecklistV05828(){
+  hpSupportSessionHandoffChecklistInputsV05828().forEach(input=>{input.checked=false;});
+  hpSupportSessionRenderHandoffChecklistStatusV05828();
+}
+
+function hpSupportSessionHandoffChecklistCompleteV05828(){
+  return hpSupportSessionHandoffChecklistStateV05828().complete;
 }

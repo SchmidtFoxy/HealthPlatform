@@ -1,3 +1,12 @@
+# v0.58.28 — Production Operations Support Session Handoff Review Checklist
+
+- Adiciona checklist 3/3 antes da cópia do handoff.
+- Confirma contexto mínimo, ausência de segredos e adequação ao destinatário.
+- Bloqueia Copiar handoff enquanto o checklist estiver incompleto.
+- Adiciona guarda lógica no fluxo de cópia.
+- Reinicia as confirmações ao abrir novamente a prévia.
+- Não altera conteúdo, não persiste e não envia automaticamente.
+
 # v0.58.27 — Production Operations Support Session Handoff Preview
 
 - Adiciona prévia local dedicada do handoff.
