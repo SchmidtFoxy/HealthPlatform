@@ -1,3 +1,12 @@
+# v0.58.24 — Production Operations Support Session Lifecycle Guidance
+
+- Adiciona orientação contextual por etapa do lifecycle.
+- Cobre sessão inativa, ativa, revisada, exportada e pronta para encerrar.
+- Exibe próxima ação disponível sem executá-la.
+- Não automatiza decisões operacionais.
+- Não chama API, não persiste estado e não altera produção.
+- Adiciona tratamento responsivo da orientação.
+
 # v0.58.23 — Production Operations Support Session Lifecycle Status
 
 - Adiciona indicador do ciclo da sessão.

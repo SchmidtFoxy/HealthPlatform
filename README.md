@@ -9964,3 +9964,14 @@ O estado é calculado apenas a partir do contexto local:
 Nada é persistido e nenhuma etapa é avançada por chamada de produção.
 
 **Próxima etapa:** `v0.58.24 — Production Operations Support Session Lifecycle Guidance`.
+
+
+---
+
+## v0.58.24 — Production Operations Support Session Lifecycle Guidance
+
+O indicador de lifecycle agora inclui uma orientação curta para o estado atual da sessão.
+
+A orientação descreve somente a **próxima ação disponível** no fluxo local, por exemplo revisar a exportação, conferir o recibo ou encerrar a sessão. Ela não executa ações, não toma decisões operacionais e não interfere em deploy, promoção ou rollback.
+
+**Próxima etapa:** `v0.58.25 — Production Operations Support Session Lifecycle Summary`.

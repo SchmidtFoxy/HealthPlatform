@@ -517,3 +517,15 @@ body.ops-support-receipt-preview-open-v05821{overflow:hidden}
   .ops-support-lifecycle-head-v05823{align-items:flex-start;flex-direction:column}
   .ops-support-lifecycle-steps-v05823{grid-template-columns:1fr 1fr}
 }
+
+
+/* v0.58.24 — Production Operations Support Session Lifecycle Guidance */
+.ops-support-lifecycle-guidance-v05824{display:grid;gap:6px;padding:10px 11px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.055)}
+.ops-support-lifecycle-guidance-v05824>div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-lifecycle-guidance-v05824 strong{font-size:.8rem}
+.ops-support-lifecycle-guidance-v05824 p{margin:0;font-size:.76rem;line-height:1.45;opacity:.76}
+.ops-support-lifecycle-guidance-v05824 small{font-size:.7rem;line-height:1.4;opacity:.58}
+.ops-support-lifecycle-guidance-v05824[data-lifecycle-guidance-v05824="ready-to-close"]{border-color:rgba(98,217,172,.16);background:rgba(98,217,172,.025)}
+@media (max-width:680px){
+  .ops-support-lifecycle-guidance-v05824>div{align-items:flex-start;flex-direction:column}
+}

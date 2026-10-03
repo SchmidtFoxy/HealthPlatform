@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.23';
+const HP_MVP_VERSION='0.58.24';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28188,5 +28188,67 @@ function hpSupportSessionLifecycleMarkupV05823(){
     <div class="ops-support-lifecycle-steps-v05823">
       ${steps.map(step=>`<span class="${step.done?'done':''}" data-lifecycle-step-v05823="${step.key}"><b>${step.done?'✓':'○'}</b>${esc(step.label)}</span>`).join('')}
     </div>
+    ${hpSupportSessionLifecycleGuidanceMarkupV05824(lifecycle)}
   </section>`;
+}
+
+
+// ===== v0.58.24 — Production Operations Support Session Lifecycle Guidance =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_GUIDANCE_V05824='v0.58.24';
+
+function hpSupportSessionLifecycleGuidanceV05824(lifecycle=hpSupportSessionLifecycleV05823()){
+  if(!lifecycle.active){
+    return {
+      key:'inactive',
+      title:'Sessão ainda não iniciada',
+      message:'Abra uma sessão de suporte para reunir snapshot, contexto, timeline e evidências temporárias.',
+      action:'Ação disponível: iniciar sessão.'
+    };
+  }
+
+  if(lifecycle.readyToClose){
+    return {
+      key:'ready-to-close',
+      title:'Exportação revisada concluída',
+      message:'O contexto local continua disponível para conferência. O encerramento só acontece por ação manual.',
+      action:'Ação disponível: encerrar sessão.'
+    };
+  }
+
+  if(lifecycle.exported){
+    return {
+      key:'exported',
+      title:'Sessão exportada',
+      message:'O arquivo revisado já foi baixado. O contexto permanece em memória até o encerramento manual.',
+      action:'Ação disponível: revisar novamente ou encerrar quando aplicável.'
+    };
+  }
+
+  if(lifecycle.reviewed){
+    return {
+      key:'reviewed',
+      title:'Revisão humana concluída',
+      message:'As quatro categorias do checklist foram confirmadas. O conteúdo ainda pode ser conferido antes do recibo e do download.',
+      action:'Ação disponível: abrir a prévia do recibo pelo fluxo de download revisado.'
+    };
+  }
+
+  return {
+    key:'active',
+    title:'Sessão ativa',
+    message:'O contexto de suporte está reunido em memória. Revise o conteúdo e confirme as quatro categorias antes do download.',
+    action:'Ação disponível: revisar exportação.'
+  };
+}
+
+function hpSupportSessionLifecycleGuidanceMarkupV05824(lifecycle=hpSupportSessionLifecycleV05823()){
+  const guidance=hpSupportSessionLifecycleGuidanceV05824(lifecycle);
+  return `<div class="ops-support-lifecycle-guidance-v05824" data-lifecycle-guidance-v05824="${esc(guidance.key)}">
+    <div>
+      <span class="eyebrow">ORIENTAÇÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_GUIDANCE_V05824}</span>
+      <strong>${esc(guidance.title)}</strong>
+    </div>
+    <p>${esc(guidance.message)}</p>
+    <small>${esc(guidance.action)}</small>
+  </div>`;
 }

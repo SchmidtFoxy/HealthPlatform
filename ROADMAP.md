@@ -8600,3 +8600,27 @@ Adicionar um indicador local e compacto do ciclo da sessão (`ativa`, `revisada`
 
 ### v0.58.24 — Production Operations Support Session Lifecycle Guidance
 Adicionar orientação contextual curta para cada etapa do ciclo da sessão, explicando a próxima ação disponível sem automatizar decisões ou alterar produção.
+
+
+## ✅ v0.58.24 — Production Operations Support Session Lifecycle Guidance — CONCLUÍDA
+
+**Entregue:**
+- orientação contextual curta integrada ao indicador de lifecycle;
+- orientação específica para sessão inativa;
+- orientação específica para sessão ativa;
+- orientação específica após revisão 4/4;
+- orientação específica após exportação;
+- orientação específica quando a sessão está pronta para encerrar;
+- indicação textual da próxima ação disponível, sem dispará-la automaticamente;
+- nenhuma recomendação de deploy, promoção ou rollback;
+- nenhuma decisão operacional automatizada;
+- nenhuma chamada à API;
+- nenhuma persistência;
+- nenhuma alteração em produção;
+- conteúdo escapado antes da renderização;
+- layout responsivo e compacto.
+
+## Próxima etapa
+
+### v0.58.25 — Production Operations Support Session Lifecycle Summary
+Adicionar um resumo textual local do ciclo atual da sessão, reunindo estado, última revisão, última exportação e próxima ação disponível para facilitar handoff sem persistir dados.
