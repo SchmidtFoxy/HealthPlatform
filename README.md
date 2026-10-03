@@ -9623,3 +9623,22 @@ O detalhe mostra uma timeline segura dos gates de backup, migration safety, prom
 A seleção usa `version + recordedAt`, permitindo diferenciar múltiplos ciclos da mesma versão. A UI funciona por clique ou teclado e adapta o detalhe para drawer no desktop e bottom sheet no mobile.
 
 **Próxima etapa:** `v0.58.4 — Production Operations Filters & Search`.
+
+
+---
+
+## v0.58.4 — Production Operations Filters & Search
+
+A área **Operações** agora permite localizar rapidamente deploys por:
+- busca de versão;
+- versão específica;
+- status operacional;
+- modo;
+- rollback;
+- período.
+
+Os filtros são aplicados no backend antes da paginação, portanto os totais apresentados refletem exatamente o conjunto filtrado.
+
+A UI exibe filtros ativos e permite limpar a consulta em um clique.
+
+**Próxima etapa:** `v0.58.5 — Production Operations Health Trends`.

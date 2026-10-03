@@ -27,6 +27,13 @@ public sealed class ProductionOperationsController : ControllerBase
     public async Task<ActionResult<ProductionDeployHistoryResponse>> GetDeployHistory(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = DefaultPageSize,
+        [FromQuery] string? q = null,
+        [FromQuery] string? version = null,
+        [FromQuery] string? status = null,
+        [FromQuery] string? mode = null,
+        [FromQuery] bool? rollback = null,
+        [FromQuery] DateTimeOffset? from = null,
+        [FromQuery] DateTimeOffset? to = null,
         CancellationToken cancellationToken = default)
     {
         if (page < 1)
@@ -39,10 +46,58 @@ public sealed class ProductionOperationsController : ControllerBase
             return BadRequest(new { message = $"pageSize deve ficar entre 1 e {MaxPageSize}." });
         }
 
+        if (from.HasValue && to.HasValue && from.Value > to.Value)
+        {
+            return BadRequest(new { message = "from nao pode ser posterior a to." });
+        }
+
         var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
         var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
 
-        var ordered = allItems
+        IEnumerable<ProductionDeployHistoryItem> filtered = allItems;
+
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            var term = q.Trim();
+            filtered = filtered.Where(x =>
+                x.Version.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                x.ServedVersion.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(version))
+        {
+            filtered = filtered.Where(x =>
+                x.Version.Contains(version.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            filtered = filtered.Where(x =>
+                string.Equals(x.OperationsStatus, status.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(mode))
+        {
+            filtered = filtered.Where(x =>
+                string.Equals(x.Mode, mode.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (rollback.HasValue)
+        {
+            filtered = filtered.Where(x => x.RollbackExecuted == rollback.Value);
+        }
+
+        if (from.HasValue)
+        {
+            filtered = filtered.Where(x => x.RecordedAt >= from.Value);
+        }
+
+        if (to.HasValue)
+        {
+            filtered = filtered.Where(x => x.RecordedAt <= to.Value);
+        }
+
+        var ordered = filtered
             .OrderByDescending(x => x.RecordedAt)
             .ThenByDescending(x => x.Version, StringComparer.Ordinal)
             .ToList();

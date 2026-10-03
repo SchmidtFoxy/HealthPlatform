@@ -1,4 +1,4 @@
-HealthPlatform v0.58.3-r2 - Incremental
+HealthPlatform v0.58.4-r3 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -16,34 +16,43 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Release Detail;
-- endpoint detail por version + recordedAt;
-- timeline dos gates;
-- resumo de health e rollback;
-- linhas/cards navegaveis;
-- drawer desktop + bottom sheet mobile;
-- acessibilidade por teclado;
-- proxima etapa v0.58.4 / Filters & Search.
+- Production Operations Filters & Search;
+- busca rapida por versao alvo/servida;
+- filtros por versao, status, modo, rollback e periodo;
+- filtros server-side antes da paginacao;
+- chips de filtros ativos;
+- limpar filtros;
+- layout responsivo;
+- proxima etapa v0.58.5 / Production Operations Health Trends.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.3
+Se aprovado, commit/push apenas: v0.58.4
 
 Hotfix cumulativo r1:
-- corrige o gate historico [5219/5223] da v0.58.2;
-- aceita operations.css versionado em v0.58.2 ou evoluido para v0.58.3;
-- preserva a validacao semantica das classes ops-latest-v0582 e ops-pagination-v0582;
-- codigo funcional da v0.58.3 permanece inalterado;
-- VERSION.txt permanece 0.58.3;
+- corrige o gate historico [5213/5223] da v0.58.2;
+- aceita a consulta direta original ou a estrategia evoluida da v0.58.4 com hpBuildOperationsHistoryUrlV0584;
+- preserva a exigencia de paginacao por pageSize e renderizacao por hpRenderOperationsRowsV0582;
+- codigo funcional da v0.58.4 permanece inalterado;
+- VERSION.txt permanece 0.58.4;
 - nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.3.
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.4.
 
 Hotfix cumulativo r2:
-- corrige o gate [5236/5240] de documentacao segura do Release Detail;
-- aceita a redacao real documentada: "sem SHA de backup, staging path, caminhos internos ou segredos";
-- preserva compatibilidade com a redacao anterior do gate;
-- preserva a exigencia de "evidências públicas seguras";
-- codigo funcional da v0.58.3 permanece inalterado;
-- VERSION.txt permanece 0.58.3;
+- corrige o gate [5248/5258] do periodo na UI;
+- evita expansao do template literal JavaScript pelo PowerShell 5.1;
+- usa tokens PowerShell de aspas simples com aspas internas escapadas;
+- preserva a verificacao exata dos templates `${value}T00:00:00-03:00` e `${value}T23:59:59-03:00`;
+- codigo funcional da v0.58.4 permanece inalterado;
+- VERSION.txt permanece 0.58.4;
 - nao commitar/pushar -r1 ou -r2 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.3.
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.4.
+
+Hotfix cumulativo r3:
+- corrige definitivamente o gate [5248/5258] do periodo na UI;
+- remove a dependencia de quoting exato entre PowerShell 5.1 e template literal JavaScript;
+- valida semanticamente from/to, params.set e os limites T00:00:00-03:00 / T23:59:59-03:00;
+- codigo funcional da v0.58.4 permanece inalterado;
+- VERSION.txt permanece 0.58.4;
+- nao commitar/pushar revisoes -rN individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.4.

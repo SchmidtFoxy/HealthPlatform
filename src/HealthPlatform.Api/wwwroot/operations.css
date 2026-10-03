@@ -82,3 +82,24 @@ body.ops-detail-open-v0583{overflow:hidden}
   .ops-detail-v0583{padding:18px 16px 26px}
   .ops-detail-health-v0583{grid-template-columns:1fr 1fr}
 }
+
+
+/* v0.58.4 — Production Operations Filters & Search */
+.ops-filters-v0584{display:grid;grid-template-columns:2fr repeat(6,minmax(120px,1fr));gap:10px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}
+.ops-filters-v0584 label{display:grid;gap:6px;min-width:0}
+.ops-filters-v0584 label span{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;opacity:.62}
+.ops-filters-v0584 input,.ops-filters-v0584 select{width:100%;min-height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:inherit;padding:0 11px}
+.ops-filter-actions-v0584{display:flex;gap:8px;grid-column:1/-1;justify-content:flex-end}
+.ops-active-filters-v0584{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.ops-active-filters-v0584>span:first-child{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;opacity:.58;margin-right:2px}
+.ops-filter-chip-v0584{font-size:.72rem;padding:5px 8px;border:1px solid rgba(98,217,172,.18);border-radius:999px;background:rgba(98,217,172,.055)}
+@media (max-width:1180px){
+  .ops-filters-v0584{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ops-search-v0584{grid-column:span 2}
+}
+@media (max-width:680px){
+  .ops-filters-v0584{grid-template-columns:1fr 1fr;padding:12px}
+  .ops-search-v0584{grid-column:1/-1}
+  .ops-filter-actions-v0584{grid-column:1/-1}
+  .ops-filter-actions-v0584 button{flex:1}
+}

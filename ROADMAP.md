@@ -8121,3 +8121,29 @@ Adicionar detalhe navegável por release/deploy com timeline dos gates, sinais d
 
 ### v0.58.4 — Production Operations Filters & Search
 Adicionar filtros por versão, status operacional, modo, rollback e período, além de busca rápida no histórico sem expor metadata interna.
+
+
+## ✅ v0.58.4 — Production Operations Filters & Search — CONCLUÍDA
+
+**Entregue:**
+- filtros server-side no histórico operacional;
+- busca rápida `q` por versão alvo ou versão servida;
+- filtro parcial por versão;
+- filtro exato por status operacional;
+- filtro exato por modo `apply` / `validate-only`;
+- filtro por rollback executado ou não executado;
+- período com `from` e `to`;
+- validação bloqueante quando `from > to`;
+- filtros aplicados antes de ordenação e paginação;
+- total de itens/páginas representa somente o conjunto filtrado;
+- formulário de filtros na UI de Operações;
+- chips de filtros ativos;
+- ação `Limpar`;
+- aplicação de filtros reinicia para página 1;
+- layout responsivo desktop/mobile;
+- pesquisa e filtros continuam restritos aos DTOs públicos seguros, sem metadata interna.
+
+## Próxima etapa
+
+### v0.58.5 — Production Operations Health Trends
+Adicionar tendências operacionais derivadas do histórico: frequência de deploy, percentual saudável, rollbacks, validate-only vs apply e evolução temporal, mantendo leitura operacional e sem criar alertas clínicos.

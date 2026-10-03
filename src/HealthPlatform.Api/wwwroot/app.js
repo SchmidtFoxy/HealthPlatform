@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.3';
+const HP_MVP_VERSION='0.58.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26451,7 +26451,10 @@ hpOpenSportsExpansionIV0260=async function(host){
 
 // ===== v0.58.2 — Production Operations Admin UI =====
 const HP_PRODUCTION_OPERATIONS_UI_V0582='v0.58.2';
-const hpOperationsStateV0582={page:1,pageSize:20,totalPages:0,loading:false};
+const hpOperationsStateV0582={
+  page:1,pageSize:20,totalPages:0,loading:false,
+  filters:{q:'',version:'',status:'',mode:'',rollback:'',from:'',to:''}
+};
 
 function hpOpsStatusV0582(item){
   if(item?.operationsStatus==='healthy'&&item?.runtimeHealthy&&item?.versionHealthy)return ['ok','Saudável'];
@@ -26530,7 +26533,7 @@ async function hpFetchOperationsV0582(){
   try{
     const [latestResult,history]=await Promise.all([
       api('/api/operacoes-producao/deploys/latest').catch(err=>String(err?.message||'').includes('materializado')?null:Promise.reject(err)),
-      api(`/api/operacoes-producao/deploys?page=${hpOperationsStateV0582.page}&pageSize=${hpOperationsStateV0582.pageSize}`)
+      api(hpBuildOperationsHistoryUrlV0584())
     ]);
     hpRenderOperationsLatestV0582(latestResult);
     hpRenderOperationsRowsV0582(history);
@@ -26548,6 +26551,17 @@ async function hpLoadProductionOperationsV0582(){
       <button type="button" class="secondary ops-refresh" id="opsRefreshV0582">Atualizar</button>
     </div>
     <div id="opsLatestV0582" class="ops-latest-v0582">${hpUiState('loading','Carregando estado atual')}</div>
+    <form id="opsFiltersV0584" class="ops-filters-v0584" autocomplete="off">
+      <label class="ops-search-v0584"><span>Busca rápida</span><input name="q" type="search" placeholder="Versão ou versão servida"></label>
+      <label><span>Versão</span><input name="version" placeholder="v0.58"></label>
+      <label><span>Status</span><select name="status"><option value="">Todos</option><option value="healthy">Saudável</option><option value="validated">Validado</option></select></label>
+      <label><span>Modo</span><select name="mode"><option value="">Todos</option><option value="apply">Apply</option><option value="validate-only">Validate-only</option></select></label>
+      <label><span>Rollback</span><select name="rollback"><option value="">Todos</option><option value="true">Executado</option><option value="false">Não executado</option></select></label>
+      <label><span>De</span><input name="from" type="date"></label>
+      <label><span>Até</span><input name="to" type="date"></label>
+      <div class="ops-filter-actions-v0584"><button type="submit" class="primary">Aplicar filtros</button><button type="button" class="secondary" id="opsClearFiltersV0584">Limpar</button></div>
+    </form>
+    <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-table-shell-v0582">
       <div class="ops-table-head-v0582"><div><span class="eyebrow">HISTÓRICO</span><h3>Deploys operacionais</h3></div><small>Mais recente primeiro</small></div>
       <table class="ops-table-v0582"><thead><tr><th>Release</th><th>Estado</th><th>Modo</th><th>Versão servida</th><th>Rollback</th><th>Gates</th></tr></thead><tbody id="opsRowsV0582"></tbody></table>
@@ -26556,6 +26570,8 @@ async function hpLoadProductionOperationsV0582(){
     </section>
   </section>`;
   $('#opsRefreshV0582')?.addEventListener('click',()=>hpFetchOperationsV0582().catch(e=>toast(e.message,true)));
+  $('#opsFiltersV0584')?.addEventListener('submit',e=>{e.preventDefault();hpApplyOperationsFiltersV0584(e.currentTarget);});
+  $('#opsClearFiltersV0584')?.addEventListener('click',hpClearOperationsFiltersV0584);
   $('#opsPrevV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page>1){hpOperationsStateV0582.page--;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   $('#opsNextV0582')?.addEventListener('click',()=>{if(hpOperationsStateV0582.page<hpOperationsStateV0582.totalPages){hpOperationsStateV0582.page++;hpFetchOperationsV0582().catch(e=>toast(e.message,true))}});
   await hpFetchOperationsV0582();
@@ -26620,4 +26636,54 @@ async function hpOpenProductionReleaseDetailV0583(version,recordedAt){
   host.innerHTML=hpUiState('loading','Carregando detalhe da release');
   const detail=await api(`/api/operacoes-producao/deploys/detail?version=${encodeURIComponent(version||'')}&recordedAt=${encodeURIComponent(recordedAt||'')}`);
   hpRenderProductionReleaseDetailV0583(detail);
+}
+
+
+// ===== v0.58.4 — Production Operations Filters & Search =====
+const HP_PRODUCTION_OPERATIONS_FILTERS_V0584='v0.58.4';
+
+function hpBuildOperationsHistoryUrlV0584(){
+  const stateFilters=hpOperationsStateV0582.filters||{};
+  const params=new URLSearchParams({
+    page:String(hpOperationsStateV0582.page),
+    pageSize:String(hpOperationsStateV0582.pageSize)
+  });
+  Object.entries(stateFilters).forEach(([key,value])=>{
+    if(value===null||value===undefined||String(value).trim()==='')return;
+    if(key==='from')params.set('from',`${value}T00:00:00-03:00`);
+    else if(key==='to')params.set('to',`${value}T23:59:59-03:00`);
+    else params.set(key,String(value).trim());
+  });
+  return `/api/operacoes-producao/deploys?${params.toString()}`;
+}
+function hpRenderActiveOperationsFiltersV0584(){
+  const host=$('#opsActiveFiltersV0584');if(!host)return;
+  const labels={q:'Busca',version:'Versão',status:'Status',mode:'Modo',rollback:'Rollback',from:'De',to:'Até'};
+  const values=Object.entries(hpOperationsStateV0582.filters||{}).filter(([,value])=>String(value||'').trim()!=='');
+  host.classList.toggle('hidden',values.length===0);
+  host.innerHTML=values.length
+    ? `<span>Filtros ativos</span>${values.map(([key,value])=>`<span class="ops-filter-chip-v0584">${esc(labels[key]||key)}: ${esc(String(value))}</span>`).join('')}`
+    : '';
+}
+function hpApplyOperationsFiltersV0584(form){
+  const fd=new FormData(form);
+  hpOperationsStateV0582.filters={
+    q:String(fd.get('q')||'').trim(),
+    version:String(fd.get('version')||'').trim(),
+    status:String(fd.get('status')||'').trim(),
+    mode:String(fd.get('mode')||'').trim(),
+    rollback:String(fd.get('rollback')||'').trim(),
+    from:String(fd.get('from')||'').trim(),
+    to:String(fd.get('to')||'').trim()
+  };
+  hpOperationsStateV0582.page=1;
+  hpRenderActiveOperationsFiltersV0584();
+  hpFetchOperationsV0582().catch(e=>toast(e.message,true));
+}
+function hpClearOperationsFiltersV0584(){
+  const form=$('#opsFiltersV0584');if(form)form.reset();
+  hpOperationsStateV0582.filters={q:'',version:'',status:'',mode:'',rollback:'',from:'',to:''};
+  hpOperationsStateV0582.page=1;
+  hpRenderActiveOperationsFiltersV0584();
+  hpFetchOperationsV0582().catch(e=>toast(e.message,true));
 }

@@ -1,3 +1,14 @@
+# v0.58.4 — Production Operations Filters & Search
+
+- Adiciona filtros server-side ao histórico operacional.
+- Adiciona busca por versão alvo/servida.
+- Adiciona filtros por versão, status, modo, rollback e período.
+- Valida intervalo de datas.
+- Adiciona formulário responsivo de filtros.
+- Adiciona chips de filtros ativos e ação Limpar.
+- Mantém paginação coerente com o resultado filtrado.
+- Mantém metadata interna fora da API/UI.
+
 # v0.58.3 — Production Operations Release Detail
 
 - Adiciona endpoint de detalhe de deploy.
