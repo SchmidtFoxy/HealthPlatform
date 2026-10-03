@@ -1,4 +1,4 @@
-HealthPlatform v0.58.48-r1 - Incremental
+HealthPlatform v0.58.49 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,24 +15,13 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Handoff;
-- handoff local com horario, sessao ativa, proxima decisao manual preservada e resumo final;
-- continuidade manual e preservacao do handoff/dados temporarios;
-- somente leitura;
+- Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity;
+- indicacao local e compacta apos o fechamento da orientacao;
+- sessao ativa e proxima decisao manual preservada;
+- somente informativa;
 - sem handlers, clipboard read/write, API, persistencia ou alteracao em producao;
-- proxima etapa v0.58.49 / Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity.
+- proxima etapa v0.58.50 / Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Summary.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.48
-
-Hotfix cumulativo r1:
-- corrige serializacao do gate v0.58.48 em TESTAR.ps1;
-- converte separadores literais `\n` em quebras fisicas de linha;
-- remove escapes `\"` indevidos das instrucoes PowerShell do gate;
-- corrige o UnexpectedToken na linha 19264;
-- nenhum codigo funcional da v0.58.48 foi alterado;
-- VERSION.txt permanece 0.58.48;
-- TESTAR.ps1 permanece UTF-8 com BOM;
-- nao commitar/pushar -r1 individualmente;
-- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.48.
+Se aprovado, commit/push apenas: v0.58.49
