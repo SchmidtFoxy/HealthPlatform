@@ -698,3 +698,14 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
   .ops-support-handoff-copy-verification-summary-head-v05835{align-items:flex-start;flex-direction:column}
   .ops-support-handoff-copy-verification-summary-v05835 pre{max-height:250px}
 }
+
+
+/* v0.58.36 — Production Operations Support Session Handoff Copy Verification Handoff */
+.ops-support-handoff-copy-verification-handoff-v05836{display:grid;gap:8px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.015)}
+.ops-support-handoff-copy-verification-handoff-head-v05836{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-copy-verification-handoff-head-v05836 strong{font-size:.78rem}
+.ops-support-handoff-copy-verification-handoff-v05836 pre{margin:0;max-height:240px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border-radius:9px;background:rgba(0,0,0,.17);font:500 .7rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;opacity:.8}
+@media (max-width:680px){
+  .ops-support-handoff-copy-verification-handoff-head-v05836{align-items:flex-start;flex-direction:column}
+  .ops-support-handoff-copy-verification-handoff-v05836 pre{max-height:280px}
+}

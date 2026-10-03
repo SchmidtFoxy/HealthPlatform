@@ -1,4 +1,4 @@
-HealthPlatform v0.58.35 - Incremental
+HealthPlatform v0.58.36 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,12 +15,12 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Handoff Copy Verification Summary;
-- resumo textual local com status, horario, metricas esperadas/registradas e proxima acao manual;
-- render seguro somente leitura;
+- Production Operations Support Session Handoff Copy Verification Handoff;
+- bloco local de handoff com status, horario, metricas, guidance e summary;
+- somente leitura e sem handlers;
 - sem clipboard read/write, API, persistencia ou alteracao em producao;
-- proxima etapa v0.58.36 / Production Operations Support Session Handoff Copy Verification Handoff.
+- proxima etapa v0.58.37 / Production Operations Support Session Handoff Copy Verification Closure.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.35
+Se aprovado, commit/push apenas: v0.58.36

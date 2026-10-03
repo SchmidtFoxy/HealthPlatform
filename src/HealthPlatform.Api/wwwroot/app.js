@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.35';
+const HP_MVP_VERSION='0.58.36';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28923,9 +28923,11 @@ function hpRenderSupportSessionHandoffCopyVerificationV05833(){
     :'O resumo local da cópia não coincide com o tamanho esperado. Revise o conteúdo antes de uma nova ação manual.'}</p>
   <small>Verificação local em ${esc(state.verifiedAt)}. O clipboard não é recapturado, nenhum conteúdo é alterado e nenhum evento é persistido.</small>
   ${hpSupportSessionHandoffCopyVerificationGuidanceMarkupV05834(state)}
-  ${hpSupportSessionHandoffCopyVerificationSummaryMarkupV05835(state)}`;
+  ${hpSupportSessionHandoffCopyVerificationSummaryMarkupV05835(state)}
+  ${hpSupportSessionHandoffCopyVerificationHandoffMarkupV05836(state)}`;
 
   hpHydrateSupportSessionHandoffCopyVerificationSummaryV05835(state);
+  hpHydrateSupportSessionHandoffCopyVerificationHandoffV05836(state);
 }
 
 
@@ -29013,4 +29015,59 @@ function hpSupportSessionHandoffCopyVerificationSummaryMarkupV05835(state=hpSupp
 function hpHydrateSupportSessionHandoffCopyVerificationSummaryV05835(state=hpSupportSessionHandoffCopyVerificationStateV05833){
   const target=$('#opsSupportSessionHandoffCopyVerificationSummaryTextV05835');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationSummaryV05835(state);
+}
+
+
+// ===== v0.58.36 — Production Operations Support Session Handoff Copy Verification Handoff =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_HANDOFF_V05836='v0.58.36';
+
+function hpSupportSessionHandoffCopyVerificationHandoffV05836(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  const guidance=hpSupportSessionHandoffCopyVerificationGuidanceV05834(state);
+  const summary=hpSupportSessionHandoffCopyVerificationSummaryV05835(state);
+  const status=state.status==='verified'
+    ?'Verificado'
+    :state.status==='divergent'
+      ?'Divergente'
+      :'Ainda não verificado';
+
+  return [
+    'AESYN Performance - Support Session Handoff Copy Verification Handoff',
+    `Versão: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_HANDOFF_V05836}`,
+    '',
+    '## Continuidade da verificação',
+    `Status: ${status}`,
+    `Verificado em: ${state.verifiedAt||'não registrado'}`,
+    `Caracteres esperados: ${state.expectedCharCount||0}`,
+    `Caracteres registrados: ${state.copiedCharCount||0}`,
+    `Linhas esperadas: ${state.expectedLineCount||0}`,
+    `Linhas registradas: ${state.copiedLineCount||0}`,
+    '',
+    '## Orientação atual',
+    `${guidance.title}: ${guidance.message}`,
+    `${guidance.action}`,
+    '',
+    '## Resumo da verificação',
+    summary,
+    '',
+    '## Limites',
+    'Handoff local e transitório para continuidade do suporte.',
+    'Não relê o clipboard, não executa nova cópia, não altera conteúdo e não persiste decisões.',
+    'Nenhum envio automático, nenhuma chamada à API e nenhuma alteração em produção.'
+  ].join('\n');
+}
+
+function hpSupportSessionHandoffCopyVerificationHandoffMarkupV05836(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  if(!state.verifiedAt||state.status==='idle')return '';
+  return `<div class="ops-support-handoff-copy-verification-handoff-v05836">
+    <div class="ops-support-handoff-copy-verification-handoff-head-v05836">
+      <span class="eyebrow">HANDOFF DA VERIFICAÇÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_HANDOFF_V05836}</span>
+      <strong>${state.status==='verified'?'Pronto para continuidade':'Requer revisão manual'}</strong>
+    </div>
+    <pre id="opsSupportSessionHandoffCopyVerificationHandoffTextV05836"></pre>
+  </div>`;
+}
+
+function hpHydrateSupportSessionHandoffCopyVerificationHandoffV05836(state=hpSupportSessionHandoffCopyVerificationStateV05833){
+  const target=$('#opsSupportSessionHandoffCopyVerificationHandoffTextV05836');
+  if(target)target.textContent=hpSupportSessionHandoffCopyVerificationHandoffV05836(state);
 }

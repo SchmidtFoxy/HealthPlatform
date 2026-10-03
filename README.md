@@ -10141,3 +10141,18 @@ A verificação pós-cópia agora inclui um resumo textual local com:
 O resumo é somente leitura, usa apenas o estado temporário da página e não relê o clipboard, não executa nova cópia, não corrige conteúdo automaticamente e não persiste decisões.
 
 **Próxima etapa:** `v0.58.36 — Production Operations Support Session Handoff Copy Verification Handoff`.
+
+
+---
+
+## v0.58.36 — Production Operations Support Session Handoff Copy Verification Handoff
+
+A verificação pós-cópia agora apresenta um bloco local de handoff para continuidade do suporte, reunindo:
+- status e horário;
+- métricas esperadas e registradas;
+- orientação atual;
+- resumo textual da verificação.
+
+O bloco é somente leitura e não executa ações automaticamente. Nenhum dado é persistido ou enviado.
+
+**Próxima etapa:** `v0.58.37 — Production Operations Support Session Handoff Copy Verification Closure`.
