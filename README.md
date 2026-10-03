@@ -10208,3 +10208,16 @@ Após o fechamento da conferência, o sistema agora mostra uma indicação compa
 A indicação é somente informativa. Nenhuma ação é executada automaticamente, persistida ou enviada.
 
 **Próxima etapa:** `v0.58.41 — Production Operations Support Session Handoff Copy Verification Closure Continuity Summary`.
+
+
+---
+
+## v0.58.41 — Production Operations Support Session Handoff Copy Verification Closure Continuity Summary
+
+A continuidade após o fechamento agora possui um resumo textual local e somente leitura com:
+- estado da sessão;
+- próxima ação manual disponível.
+
+O resumo usa apenas o estado local da continuidade e não executa, persiste ou envia ações.
+
+**Próxima etapa:** `v0.58.42 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff`.

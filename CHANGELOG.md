@@ -1,3 +1,11 @@
+# v0.58.41 — Production Operations Support Session Handoff Copy Verification Closure Continuity Summary
+
+- Adiciona resumo textual local da continuidade após o fechamento.
+- Reúne estado da sessão e próxima ação manual.
+- Renderiza conteúdo em modo somente leitura.
+- Não adiciona handlers ou automações.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.40 — Production Operations Support Session Handoff Copy Verification Closure Continuity
 
 - Adiciona indicação compacta de continuidade após o fechamento.
