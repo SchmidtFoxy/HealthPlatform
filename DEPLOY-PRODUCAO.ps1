@@ -53,7 +53,7 @@ $script:ProductionOperationsMetadata = $null
 function Write-DeployTitle([string]$Text) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor DarkGray
-    Write-Host (" AESYN DEPLOY PRODUCAO v0.58.60 | " + $Text) -ForegroundColor Cyan
+    Write-Host (" AESYN DEPLOY PRODUCAO v0.58.61 | " + $Text) -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor DarkGray
 }
 
@@ -1622,7 +1622,7 @@ function Show-FoundationBoundary {
 }
 
 # -------------------------------------------------------------------------
-# Fluxo v0.58.60
+# Fluxo v0.58.61
 # -------------------------------------------------------------------------
 Write-DeployTitle "INICIO"
 

@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.60';
+const HP_MVP_VERSION='0.58.61';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -29177,7 +29177,8 @@ function hpRenderSupportSessionHandoffCopyVerificationClosureV05837(){
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureHandoffMarkupV05857()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityMarkupV05858()}
   ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuitySummaryMarkupV05859()}
-  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffMarkupV05860()}`;
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffMarkupV05860()}
+  ${hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceMarkupV05861()}`;
 
   hpHydrateSupportSessionHandoffCopyVerificationClosureSummaryV05838();
   hpHydrateSupportSessionHandoffCopyVerificationClosureHandoffV05839();
@@ -30228,4 +30229,40 @@ function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidance
 function hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffV05860(){
   const target=$('#opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffTextV05860');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffV05860();
+}
+
+// ===== v0.58.61 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_V05861='v0.58.61';
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceV05861(){
+  const continuity=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityV05858();
+  if(!continuity.available){
+    return {
+      available:false,
+      title:'Continuidade final ainda indisponível',
+      message:'Conclua manualmente o fechamento da orientação final antes de seguir.',
+      decision:'Próxima decisão manual preservada: concluir o fechamento da orientação final.'
+    };
+  }
+
+  return {
+    available:true,
+    title:'Continuidade final pronta para decisão manual',
+    message:'A sessão de suporte permanece ativa e o handoff final está disponível apenas para consulta.',
+    decision:`Próxima decisão manual preservada: ${continuity.nextDecision}`
+  };
+}
+
+function hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceMarkupV05861(){
+  const guidance=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceV05861();
+  if(!guidance.available)return '';
+
+  return `<div class="ops-support-handoff-copy-verification-closure-continuity-handoff-guidance-closure-continuity-handoff-guidance-closure-continuity-handoff-guidance-v05861">
+    <div>
+      <span class="eyebrow">ORIENTAÇÃO DO HANDOFF FINAL • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_COPY_VERIFICATION_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_CLOSURE_CONTINUITY_HANDOFF_GUIDANCE_V05861}</span>
+      <strong>${esc(guidance.title)}</strong>
+    </div>
+    <p>${esc(guidance.message)}</p>
+    <small>${esc(guidance.decision)}</small>
+  </div>`;
 }
