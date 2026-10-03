@@ -10474,3 +10474,16 @@ Após o fechamento da orientação final, o sistema agora mostra uma indicação
 A indicação é somente informativa e usa apenas o estado local do fechamento. Nenhuma ação é executada, persistida ou enviada automaticamente.
 
 **Próxima etapa:** `v0.58.59 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Summary`.
+
+
+---
+
+## v0.58.59 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Summary
+
+A continuidade após o fechamento da orientação final agora possui um resumo textual local e somente leitura com:
+- sessão de suporte ativa;
+- próxima decisão manual preservada.
+
+O resumo deriva apenas da continuidade local da v0.58.58 e não executa, persiste ou envia ações.
+
+**Próxima etapa:** `v0.58.60 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Handoff`.
