@@ -9947,3 +9947,20 @@ O encerramento é sempre manual. O download não limpa a sessão automaticamente
 Nenhuma chamada de produção é executada no fechamento.
 
 **Próxima etapa:** `v0.58.23 — Production Operations Support Session Lifecycle Status`.
+
+
+---
+
+## v0.58.23 — Production Operations Support Session Lifecycle Status
+
+A **Sessão suporte** agora mostra uma trilha compacta do fluxo:
+`Ativa → Revisada → Exportada → Pronta para encerrar`.
+
+O estado é calculado apenas a partir do contexto local:
+- **Revisada** exige checklist `4/4`;
+- **Exportada** exige download revisado concluído;
+- **Pronta para encerrar** exige sessão ainda ativa após exportação.
+
+Nada é persistido e nenhuma etapa é avançada por chamada de produção.
+
+**Próxima etapa:** `v0.58.24 — Production Operations Support Session Lifecycle Guidance`.

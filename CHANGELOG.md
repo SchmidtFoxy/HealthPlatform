@@ -1,3 +1,13 @@
+# v0.58.23 — Production Operations Support Session Lifecycle Status
+
+- Adiciona indicador do ciclo da sessão.
+- Exibe Ativa, Revisada, Exportada e Pronta para encerrar.
+- Vincula Revisada ao checklist 4/4.
+- Vincula Exportada ao download revisado.
+- Reseta lifecycle em nova sessão e no closeout.
+- Mantém tudo somente em memória.
+- Adiciona visual desktop e mobile.
+
 # v0.58.22 — Production Operations Support Session Closeout
 
 - Adiciona fechamento explícito da sessão.

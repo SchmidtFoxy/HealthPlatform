@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.22';
+const HP_MVP_VERSION='0.58.23';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27406,6 +27406,8 @@ function hpRenderSupportSessionV05815(){
       <button type="button" class="ghost" id="opsSupportSessionCloseV05815" aria-label="Fechar sessão de suporte">×</button>
     </div>
 
+    ${hpSupportSessionLifecycleMarkupV05823()}
+
     <div class="ops-support-session-toolbar-v05815">
       <span class="ops-status-v0582 ${kind}">${esc(label)}</span>
       <button type="button" class="secondary" id="opsSupportSessionExportV05816">Exportar sessão</button>
@@ -27517,6 +27519,7 @@ async function hpSupportSessionAddEvidenceV05815(version,recordedAt){
 async function hpStartSupportSessionV05815(days=30){
   const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
   hpSupportSessionResetV05815();
+  hpSupportSessionResetLifecycleV05823();
   hpSupportSessionStateV05815.active=true;
   hpSupportSessionStateV05815.startedAt=new Date().toISOString();
   hpSupportSessionStateV05815.days=safeDays;
@@ -27894,6 +27897,11 @@ function hpSupportSessionRenderRedactionChecklistStatusV05819(){
     status.textContent=state.complete?'Revisão confirmada':`${state.confirmed}/${state.total} confirmado(s)`;
   }
 
+  hpSupportSessionLifecycleStateV05823.reviewed=state.complete;
+  hpSupportSessionLifecycleStateV05823.reviewedAt=state.complete
+    ? (hpSupportSessionLifecycleStateV05823.reviewedAt||new Date().toISOString())
+    : null;
+
   if(download){
     download.disabled=!state.complete;
     download.title=state.complete?'Checklist concluído':'Confirme os 4 itens do checklist antes do download';
@@ -28117,10 +28125,68 @@ function hpCloseoutSupportSessionV05822(){
   hpSupportSessionResetV05815();
   hpSupportSessionResetReceiptPreviewV05821();
   hpSupportSessionResetCloseoutV05822();
+  hpSupportSessionResetLifecycleV05823();
 
   hpCloseSupportSessionReceiptPreviewV05821();
   hpCloseSupportSessionSharePreviewV05817();
   hpCloseSupportSessionV05815();
 
   toast(`Sessão encerrada e contexto local limpo${exportedAt?` • exportada em ${hpOpsDateV0582(exportedAt)}`:''}`);
+}
+
+
+// ===== v0.58.23 — Production Operations Support Session Lifecycle Status =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_STATUS_V05823='v0.58.23';
+
+const hpSupportSessionLifecycleStateV05823={
+  reviewed:false,
+  reviewedAt:null
+};
+
+function hpSupportSessionResetLifecycleV05823(){
+  hpSupportSessionLifecycleStateV05823.reviewed=false;
+  hpSupportSessionLifecycleStateV05823.reviewedAt=null;
+}
+
+function hpSupportSessionLifecycleV05823(){
+  const active=Boolean(hpSupportSessionStateV05815.active);
+  const reviewed=Boolean(hpSupportSessionLifecycleStateV05823.reviewed);
+  const exported=Boolean(hpSupportSessionCloseoutStateV05822.exported);
+  const readyToClose=active&&exported;
+
+  let current='inativa';
+  if(active)current='ativa';
+  if(reviewed)current='revisada';
+  if(exported)current='exportada';
+  if(readyToClose)current='pronta para encerrar';
+
+  return {
+    current,
+    active,
+    reviewed,
+    exported,
+    readyToClose,
+    reviewedAt:hpSupportSessionLifecycleStateV05823.reviewedAt,
+    exportedAt:hpSupportSessionCloseoutStateV05822.exportedAt
+  };
+}
+
+function hpSupportSessionLifecycleMarkupV05823(){
+  const lifecycle=hpSupportSessionLifecycleV05823();
+  const steps=[
+    {key:'active',label:'Ativa',done:lifecycle.active},
+    {key:'reviewed',label:'Revisada',done:lifecycle.reviewed},
+    {key:'exported',label:'Exportada',done:lifecycle.exported},
+    {key:'readyToClose',label:'Pronta para encerrar',done:lifecycle.readyToClose}
+  ];
+
+  return `<section class="ops-support-lifecycle-v05823" aria-label="Ciclo da sessão de suporte">
+    <div class="ops-support-lifecycle-head-v05823">
+      <span class="eyebrow">CICLO DA SESSÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_LIFECYCLE_STATUS_V05823}</span>
+      <span class="ops-status-v0582 ${lifecycle.readyToClose?'ok':lifecycle.reviewed?'neutral':'warn'}">${esc(lifecycle.current)}</span>
+    </div>
+    <div class="ops-support-lifecycle-steps-v05823">
+      ${steps.map(step=>`<span class="${step.done?'done':''}" data-lifecycle-step-v05823="${step.key}"><b>${step.done?'✓':'○'}</b>${esc(step.label)}</span>`).join('')}
+    </div>
+  </section>`;
 }
