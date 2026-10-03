@@ -1,3 +1,12 @@
+# v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview
+
+- Exibe o recibo de revisão completo antes da cópia.
+- Usa exatamente o recibo já gerado em memória.
+- Preserva horário e categorias confirmadas.
+- Renderiza o recibo com textContent, em modo somente leitura.
+- Mantém conteúdo-base do handoff inalterado.
+- Não persiste, não envia automaticamente e não chama API.
+
 # v0.58.29 — Production Operations Support Session Handoff Review Receipt
 
 - Adiciona recibo local da revisão do handoff.

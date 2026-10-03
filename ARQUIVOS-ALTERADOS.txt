@@ -1,4 +1,4 @@
-HealthPlatform v0.58.29 - Incremental
+HealthPlatform v0.58.30-r2 - Incremental
 
 Arquivos alterados:
 - CHANGELOG.md
@@ -15,15 +15,34 @@ Arquivos alterados:
 - src/HealthPlatform.Api/wwwroot/operations.css
 
 Entrega funcional:
-- Production Operations Support Session Handoff Review Receipt;
-- recibo local ao concluir checklist 3/3;
-- horario ISO + 3 categorias confirmadas;
-- operador e destinatario nao coletados;
-- recibo descartado se checklist deixar de estar completo;
-- copia explicita anexa o mesmo recibo;
+- Production Operations Support Session Handoff Review Receipt Preview;
+- preview textual completo do recibo antes da copia;
+- mesmo horario e categorias do recibo em memoria;
+- render seguro somente leitura;
+- sem regeneracao silenciosa;
 - sem API, persistencia, envio automatico ou alteracao em producao;
-- proxima etapa v0.58.30 / Production Operations Support Session Handoff Review Receipt Preview.
+- proxima etapa v0.58.31 / Production Operations Support Session Handoff Copy Confirmation.
 
 Fluxo:
 PREPARAR -> RODAR -> TESTAR.
-Se aprovado, commit/push apenas: v0.58.29
+Se aprovado, commit/push apenas: v0.58.30
+
+Hotfix cumulativo r1:
+- corrige o gate historico [5727/5741] da v0.58.29;
+- a v0.58.30 evoluiu o texto visual de `Pronto para anexar à cópia` para `Prévia completa antes da cópia`;
+- o gate agora valida semanticamente o estado `ready` do recibo, que é o comportamento funcional estável;
+- codigo funcional da v0.58.30 permanece inalterado;
+- VERSION.txt permanece 0.58.30;
+- nao commitar/pushar -r1 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.30.
+
+Hotfix cumulativo r2:
+- preserva integralmente a correção da r1;
+- corrige o gate [5744/5761] da v0.58.30;
+- o gate referenciava um estado inexistente `hpSupportSessionHandoffReviewReceiptPreviewStateV05829`;
+- a implementação real reutiliza `hpSupportSessionHandoffReviewReceiptStateV05829.receipt`;
+- validação agora confere a mesma fonte efetivamente usada pela prévia;
+- código funcional permanece inalterado;
+- VERSION.txt permanece 0.58.30;
+- não commitar/pushar -r2 individualmente;
+- se PREPARAR + RODAR + TESTAR aprovarem, commit/push apenas v0.58.30.

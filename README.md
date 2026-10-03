@@ -10056,3 +10056,16 @@ O recibo registra somente:
 Se qualquer confirmação for desmarcada, o recibo é descartado. A cópia explícita do handoff anexa o mesmo recibo gerado localmente, sem alterar o conteúdo-base da prévia.
 
 **Próxima etapa:** `v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview`.
+
+
+---
+
+## v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview
+
+Ao concluir o checklist `3/3`, o recibo de revisão passa a ser exibido integralmente antes da cópia.
+
+A prévia mostra exatamente o texto que será anexado ao handoff, preservando o mesmo horário e as mesmas categorias confirmadas. O conteúdo é somente leitura e não é regenerado silenciosamente durante a visualização.
+
+A identificação do operador continua não sendo coletada, e nenhuma informação é persistida ou enviada automaticamente.
+
+**Próxima etapa:** `v0.58.31 — Production Operations Support Session Handoff Copy Confirmation`.

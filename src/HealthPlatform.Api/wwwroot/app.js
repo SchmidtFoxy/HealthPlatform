@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.29';
+const HP_MVP_VERSION='0.58.30';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -28661,11 +28661,19 @@ function hpRenderSupportSessionHandoffReviewReceiptV05829(){
   }
 
   host.className='ops-support-handoff-review-receipt-v05829 ready';
-  host.innerHTML=`<div>
-    <small>RECIBO DE REVISÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_RECEIPT_V05829}</small>
-    <strong>Pronto para anexar à cópia</strong>
+  host.innerHTML=`<div class="ops-support-handoff-review-receipt-head-v05830">
+    <div>
+      <small>RECIBO DE REVISÃO • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_RECEIPT_V05829}</small>
+      <strong>Prévia completa antes da cópia</strong>
+    </div>
+    <span>${esc(state.reviewedAt||'—')} • 3 categorias confirmadas • operador não coletado</span>
   </div>
-  <span>${esc(state.reviewedAt||'—')} • 3 categorias confirmadas • operador não coletado</span>`;
+  <div class="ops-support-handoff-review-receipt-preview-v05830">
+    <div><span class="eyebrow">RECIBO QUE SERÁ ANEXADO</span><small>Somente leitura</small></div>
+    <pre id="opsSupportSessionHandoffReviewReceiptPreviewTextV05830"></pre>
+  </div>`;
+
+  hpHydrateSupportSessionHandoffReviewReceiptPreviewV05830();
 }
 
 function hpSupportSessionSyncHandoffReviewReceiptV05829(checklistState=hpSupportSessionHandoffChecklistStateV05828()){
@@ -28682,4 +28690,30 @@ function hpSupportSessionSyncHandoffReviewReceiptV05829(checklistState=hpSupport
   hpSupportSessionHandoffReviewReceiptStateV05829.receipt=
     hpSupportSessionBuildHandoffReviewReceiptV05829(hpSupportSessionHandoffReviewReceiptStateV05829.reviewedAt);
   hpRenderSupportSessionHandoffReviewReceiptV05829();
+}
+
+
+// ===== v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_HANDOFF_REVIEW_RECEIPT_PREVIEW_V05830='v0.58.30';
+
+function hpSupportSessionHandoffReviewReceiptPreviewV05830(){
+  return String(hpSupportSessionHandoffReviewReceiptStateV05829.receipt||'');
+}
+
+function hpHydrateSupportSessionHandoffReviewReceiptPreviewV05830(){
+  const target=$('#opsSupportSessionHandoffReviewReceiptPreviewTextV05830');
+  if(target)target.textContent=hpSupportSessionHandoffReviewReceiptPreviewV05830();
+}
+
+function hpSupportSessionHandoffReviewReceiptPreviewMetaV05830(){
+  const receipt=hpSupportSessionHandoffReviewReceiptPreviewV05830();
+  const categories=hpSupportSessionHandoffReviewCategoriesV05829();
+  return {
+    ready:Boolean(receipt),
+    reviewedAt:hpSupportSessionHandoffReviewReceiptStateV05829.reviewedAt,
+    categories:categories.map(item=>item.label),
+    lineCount:receipt?receipt.split(/\r?\n/).length:0,
+    charCount:receipt.length,
+    operatorCollected:false
+  };
 }

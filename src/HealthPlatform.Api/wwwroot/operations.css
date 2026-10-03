@@ -608,3 +608,17 @@ body.ops-support-handoff-preview-open-v05827{overflow:hidden}
   .ops-support-handoff-review-receipt-v05829{align-items:flex-start;flex-direction:column}
   .ops-support-handoff-review-receipt-v05829>span{text-align:left}
 }
+
+
+/* v0.58.30 — Production Operations Support Session Handoff Review Receipt Preview */
+.ops-support-handoff-review-receipt-v05829.ready{display:grid;gap:9px}
+.ops-support-handoff-review-receipt-head-v05830{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-review-receipt-head-v05830>span{font-size:.7rem;line-height:1.4;opacity:.62;text-align:right}
+.ops-support-handoff-review-receipt-preview-v05830{display:grid;gap:7px}
+.ops-support-handoff-review-receipt-preview-v05830>div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-handoff-review-receipt-preview-v05830 pre{margin:0;max-height:220px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border-radius:9px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.055);font:500 .71rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+@media (max-width:680px){
+  .ops-support-handoff-review-receipt-head-v05830{align-items:flex-start;flex-direction:column}
+  .ops-support-handoff-review-receipt-head-v05830>span{text-align:left}
+  .ops-support-handoff-review-receipt-preview-v05830 pre{max-height:260px}
+}
