@@ -9901,3 +9901,19 @@ O botão **Baixar revisado** fica bloqueado até `4/4`. Qualquer edição do con
 As confirmações existem apenas na memória da prévia e não são enviadas ou persistidas.
 
 **Próxima etapa:** `v0.58.20 — Production Operations Support Session Review Receipt`.
+
+
+---
+
+## v0.58.20 — Production Operations Support Session Review Receipt
+
+O arquivo exportado pela **Sessão suporte** agora recebe um **recibo de revisão humana** no momento do download.
+
+O recibo registra somente:
+- horário da revisão;
+- versão do recibo;
+- categorias confirmadas no checklist.
+
+Ele declara explicitamente que a identificação do operador **não é coletada**. O recibo não é persistido nem enviado automaticamente.
+
+**Próxima etapa:** `v0.58.21 — Production Operations Support Session Receipt Preview`.

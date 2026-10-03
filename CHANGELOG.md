@@ -1,3 +1,12 @@
+# v0.58.20 — Production Operations Support Session Review Receipt
+
+- Adiciona recibo de revisão ao Markdown exportado.
+- Registra horário ISO e categorias confirmadas.
+- Não coleta identificação do operador.
+- Não adiciona credenciais ou metadata interna.
+- Gera o recibo somente no download explícito.
+- Não persiste nem envia o recibo automaticamente.
+
 # v0.58.19 — Production Operations Support Session Redaction Checklist
 
 - Adiciona checklist explícito de revisão antes do download.

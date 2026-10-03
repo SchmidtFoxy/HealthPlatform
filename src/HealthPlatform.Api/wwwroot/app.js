@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.19';
+const HP_MVP_VERSION='0.58.20';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27785,7 +27785,8 @@ async function hpDownloadReviewedSupportSessionV05817(content){
     const startedAt=hpSupportSessionStateV05815.startedAt||new Date().toISOString();
     const stamp=startedAt.replace(/[-:]/g,'').replace(/\..+$/,'').replace('T','-');
     const fileName=`aesyn-support-session-${stamp}.md`;
-    hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',text);
+    const reviewedContent=hpSupportSessionAppendReviewReceiptV05820(text);
+    hpDownloadTextFileV0588(fileName,'text/markdown;charset=utf-8',reviewedContent);
     toast(`Sessão revisada exportada • ${hpSupportSessionStateV05815.evidences.length} evidência(s)`);
   }finally{
     if(button){button.disabled=false;button.textContent='Baixar revisado'}
@@ -27923,4 +27924,56 @@ function hpSupportSessionResetRedactionChecklistV05819(){
 
 function hpSupportSessionRedactionChecklistCompleteV05819(){
   return hpSupportSessionRedactionChecklistStateV05819().complete;
+}
+
+
+// ===== v0.58.20 — Production Operations Support Session Review Receipt =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_REVIEW_RECEIPT_V05820='v0.58.20';
+
+function hpSupportSessionReviewReceiptCategoriesV05820(){
+  const labels={
+    credentials:'Credenciais e segredos',
+    paths:'Caminhos e infraestrutura',
+    personal:'Dados pessoais',
+    context:'Contexto operacional'
+  };
+
+  return hpSupportSessionRedactionChecklistInputsV05819()
+    .filter(input=>input.checked)
+    .map(input=>({
+      key:String(input.dataset.redactionCheckV05819||''),
+      label:labels[String(input.dataset.redactionCheckV05819||'')]||'Categoria revisada'
+    }));
+}
+
+function hpSupportSessionBuildReviewReceiptV05820(reviewedAt=new Date().toISOString()){
+  const categories=hpSupportSessionReviewReceiptCategoriesV05820();
+  const lines=[
+    '## Recibo de revisão humana',
+    `Versão do recibo: ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_REVIEW_RECEIPT_V05820}`,
+    `Revisado em: ${reviewedAt}`,
+    'Identificação do operador: não coletada',
+    'Categorias confirmadas:'
+  ];
+
+  if(categories.length){
+    categories.forEach(item=>lines.push(`- ${item.label}`));
+  }else{
+    lines.push('- nenhuma');
+  }
+
+  lines.push(
+    '',
+    'Este recibo registra somente as categorias confirmadas localmente e o horário da revisão.',
+    'Nenhuma identidade do operador, credencial ou metadata adicional é coletada.',
+    'As confirmações não são persistidas nem enviadas automaticamente.'
+  );
+
+  return lines.join('\n');
+}
+
+function hpSupportSessionAppendReviewReceiptV05820(content){
+  const text=String(content||'').replace(/\s+$/,'');
+  const receipt=hpSupportSessionBuildReviewReceiptV05820();
+  return `${text}\n\n${receipt}\n`;
 }

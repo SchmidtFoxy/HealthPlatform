@@ -465,3 +465,7 @@ body.ops-support-share-preview-open-v05817{overflow:hidden}
   .ops-support-redaction-checklist-head-v05819{align-items:flex-start;flex-direction:column}
   .ops-support-redaction-checklist-items-v05819{grid-template-columns:1fr}
 }
+
+
+/* v0.58.20 — Production Operations Support Session Review Receipt */
+.ops-support-redaction-checklist-v05819:has(#opsSupportRedactionChecklistStatusV05819.ok){border-color:rgba(98,217,172,.2);background:rgba(98,217,172,.025)}

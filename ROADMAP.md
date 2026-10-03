@@ -8509,3 +8509,25 @@ Adicionar checklist explícito de revisão antes do download, permitindo ao oper
 
 ### v0.58.20 — Production Operations Support Session Review Receipt
 Adicionar recibo local da revisão humana ao arquivo exportado, registrando apenas quais categorias foram confirmadas e o horário da revisão, sem identificar o operador ou persistir dados adicionais.
+
+
+## ✅ v0.58.20 — Production Operations Support Session Review Receipt — CONCLUÍDA
+
+**Entregue:**
+- recibo local de revisão humana anexado ao arquivo exportado;
+- horário ISO da revisão;
+- versão do recibo;
+- registro das quatro categorias confirmadas pelo checklist;
+- nenhuma identificação do operador é coletada;
+- nenhuma credencial ou metadata adicional é adicionada ao recibo;
+- recibo gerado apenas no momento do download explícito;
+- conteúdo da prévia continua sem alteração automática;
+- confirmações continuam apenas em memória;
+- nenhuma confirmação ou recibo é persistido automaticamente;
+- nenhum dado do recibo é enviado para API ou terceiros;
+- arquivo final permanece Markdown UTF-8.
+
+## Próxima etapa
+
+### v0.58.21 — Production Operations Support Session Receipt Preview
+Exibir uma prévia local do recibo de revisão antes do download, permitindo verificar horário e categorias confirmadas sem identificar o operador ou persistir o recibo.
