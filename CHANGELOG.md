@@ -1,3 +1,14 @@
+# v0.58.15 — Production Operations Support Session
+
+- Adiciona sessão temporária local de suporte.
+- Reúne snapshot, contexto, timeline e evidências selecionadas.
+- Mantém o estado apenas em memória da página.
+- Adiciona botão Sessão suporte.
+- Adiciona Adicionar à sessão no detalhe de evento.
+- Adiciona remoção de evidências, copiar resumo e limpar sessão.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Não persiste dados nem altera produção.
+
 # v0.58.14 — Production Operations Support Evidence Pack
 
 - Adiciona endpoint de pacote de evidências por evento.

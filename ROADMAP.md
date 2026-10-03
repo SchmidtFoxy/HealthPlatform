@@ -8384,3 +8384,32 @@ Adicionar um pacote textual seguro por evento com resumo, gates e fatos público
 
 ### v0.58.15 — Production Operations Support Session
 Adicionar uma sessão temporária de investigação na UI, permitindo reunir snapshot, contexto, timeline e evidências selecionadas em uma mesma sessão local de suporte, sem persistir segredos ou alterar produção.
+
+
+## ✅ v0.58.15 — Production Operations Support Session — CONCLUÍDA
+
+**Entregue:**
+- sessão temporária de investigação totalmente local na UI;
+- estado da sessão mantido apenas em memória da página;
+- carregamento conjunto de snapshot, contexto e timeline;
+- janela compartilhada de 7/30/90/180 dias;
+- resumo da sessão;
+- última release;
+- indicadores do snapshot;
+- estabilidade e sequência saudável do contexto;
+- até 40 eventos seguros da timeline;
+- seleção de evidências por evento;
+- ação `Adicionar à sessão` dentro do detalhe do evento;
+- remoção individual de evidências;
+- ação `Copiar resumo`;
+- ação `Limpar sessão`;
+- drawer desktop e bottom sheet mobile;
+- nenhuma persistência em banco, arquivo, localStorage ou sessionStorage;
+- nenhum segredo ou metadata interna é armazenado;
+- nenhuma alteração em produção;
+- nenhuma ação de deploy, promoção ou rollback é automatizada.
+
+## Próxima etapa
+
+### v0.58.16 — Production Operations Support Session Export
+Permitir exportar a sessão temporária de suporte em um único pacote textual seguro, contendo resumo, contexto e referências das evidências selecionadas, sem persistência automática.

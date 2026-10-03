@@ -9809,3 +9809,20 @@ O arquivo Markdown inclui:
 O pacote é somente leitura e não contém metadata interna de infraestrutura.
 
 **Próxima etapa:** `v0.58.15 — Production Operations Support Session`.
+
+
+---
+
+## v0.58.15 — Production Operations Support Session
+
+A área **Operações** ganhou **Sessão suporte**.
+
+A sessão reúne, apenas em memória da página:
+- snapshot;
+- contexto operacional;
+- timeline;
+- evidências selecionadas.
+
+É possível adicionar e remover evidências, copiar um resumo e limpar a sessão. Nada é persistido em banco, arquivo, `localStorage` ou `sessionStorage`.
+
+**Próxima etapa:** `v0.58.16 — Production Operations Support Session Export`.

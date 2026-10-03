@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.14';
+const HP_MVP_VERSION='0.58.15';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportTimelineButtonV05812">Timeline suporte</button><button type="button" class="secondary" id="opsSupportHandoffButtonV05811">Handoff suporte</button><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportSessionButtonV05815">Sessão suporte</button><button type="button" class="secondary" id="opsSupportTimelineButtonV05812">Timeline suporte</button><button type="button" class="secondary" id="opsSupportHandoffButtonV05811">Handoff suporte</button><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26607,6 +26607,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsSupportTimelineButtonV05812')?.addEventListener('click',()=>{
     const days=Number($('#opsTrendsDaysV0585')?.value)||30;
     hpOpenSupportTimelineV05812(days).catch(err=>toast(err.message,true));
+  });
+  $('#opsSupportSessionButtonV05815')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpOpenSupportSessionV05815(days).catch(err=>toast(err.message,true));
   });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
@@ -27295,6 +27299,7 @@ function hpRenderSupportEventDetailV05813(data){
     </div>
 
     <div class="ops-support-evidence-actions-v05814">
+      <button type="button" class="secondary" id="opsSupportSessionAddEvidenceV05815">Adicionar à sessão</button>
       <button type="button" class="secondary" id="opsSupportEvidencePackButtonV05814">Baixar pacote de evidências</button>
     </div>
 
@@ -27307,6 +27312,9 @@ function hpRenderSupportEventDetailV05813(data){
   $('#opsSupportEventDetailCloseV05813')?.addEventListener('click',hpCloseSupportEventDetailV05813);
   $('#opsSupportEvidencePackButtonV05814')?.addEventListener('click',()=>{
     hpExportSupportEvidencePackV05814(item.version,item.recordedAt).catch(err=>toast(err.message,true));
+  });
+  $('#opsSupportSessionAddEvidenceV05815')?.addEventListener('click',()=>{
+    hpSupportSessionAddEvidenceV05815(item.version,item.recordedAt).catch(err=>toast(err.message,true));
   });
 }
 function hpCloseSupportEventDetailV05813(){
@@ -27343,4 +27351,197 @@ async function hpExportSupportEvidencePackV05814(version,recordedAt){
   }finally{
     if(button){button.disabled=false;button.textContent='Baixar pacote de evidências'}
   }
+}
+
+
+// ===== v0.58.15 — Production Operations Support Session =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_V05815='v0.58.15';
+
+const hpSupportSessionStateV05815={
+  active:false,
+  startedAt:null,
+  days:30,
+  snapshot:null,
+  context:null,
+  timeline:null,
+  evidences:[]
+};
+
+function hpSupportSessionResetV05815(){
+  hpSupportSessionStateV05815.active=false;
+  hpSupportSessionStateV05815.startedAt=null;
+  hpSupportSessionStateV05815.days=30;
+  hpSupportSessionStateV05815.snapshot=null;
+  hpSupportSessionStateV05815.context=null;
+  hpSupportSessionStateV05815.timeline=null;
+  hpSupportSessionStateV05815.evidences=[];
+}
+
+function hpSupportSessionSummaryV05815(){
+  const s=hpSupportSessionStateV05815;
+  const latest=s.snapshot?.latestCycle||s.context?.latestCycle||null;
+  return [
+    `AESYN Support Session ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_V05815}`,
+    `Iniciada: ${s.startedAt||'—'}`,
+    `Janela: ${s.days} dias`,
+    `Estado: ${s.snapshot?.state||s.context?.state||'no-data'}`,
+    `Último ciclo: ${latest?.version||'—'}${latest?.recordedAt?` • ${latest.recordedAt}`:''}`,
+    `Timeline: ${(s.timeline?.items||[]).length} evento(s)`,
+    `Evidências selecionadas: ${s.evidences.length}`
+  ].join('\n');
+}
+
+function hpRenderSupportSessionV05815(){
+  const host=$('#opsSupportSessionV05815');if(!host)return;
+  const s=hpSupportSessionStateV05815;
+  const snapshot=s.snapshot||{};
+  const context=s.context||{};
+  const timeline=s.timeline?.items||[];
+  const latest=snapshot.latestCycle||context.latestCycle||null;
+  const [kind,label]=hpSupportStateV05810(snapshot.state||context.state||'no-data');
+
+  host.innerHTML=`<div class="ops-support-session-v05815">
+    <div class="ops-support-session-head-v05815">
+      <div><span class="eyebrow">SUPPORT SESSION • ${HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_V05815}</span><h3>Sessão temporária de investigação</h3><p>${esc(String(s.days||0))} dias • somente memória desta página</p></div>
+      <button type="button" class="ghost" id="opsSupportSessionCloseV05815" aria-label="Fechar sessão de suporte">×</button>
+    </div>
+
+    <div class="ops-support-session-toolbar-v05815">
+      <span class="ops-status-v0582 ${kind}">${esc(label)}</span>
+      <button type="button" class="secondary" id="opsSupportSessionCopyV05815">Copiar resumo</button>
+      <button type="button" class="ghost" id="opsSupportSessionClearV05815">Limpar sessão</button>
+    </div>
+
+    <div class="ops-support-session-grid-v05815">
+      <article><small>Snapshot</small><strong>${esc(snapshot.state||'sem dados')}</strong><span>${esc(String(snapshot.indicators?.healthyDeploys??0))}/${esc(String(snapshot.indicators?.totalDeploys??0))} ciclo(s) saudáveis</span></article>
+      <article><small>Contexto</small><strong>${esc(context.signals?.stabilityDirection||'sem classificação')}</strong><span>${esc(String(context.signals?.currentHealthyStreak??0))} ciclo(s) na sequência saudável</span></article>
+      <article><small>Última release</small><strong>${esc(latest?.version||'—')}</strong><span>${latest?.recordedAt?hpOpsDateV0582(latest.recordedAt):'Sem ciclo na janela'}</span></article>
+      <article><small>Evidências</small><strong>${esc(String(s.evidences.length))}</strong><span>selecionada(s) nesta sessão</span></article>
+    </div>
+
+    <section class="ops-support-session-timeline-v05815">
+      <div class="ops-support-session-section-title-v05815"><span class="eyebrow">TIMELINE</span><small>${esc(String(timeline.length))} evento(s)</small></div>
+      ${timeline.length?timeline.slice(0,8).map(item=>`<article>
+        <div><strong>${esc(item.version||'Evento')}</strong><span>${hpOpsDateV0582(item.recordedAt)}</span></div>
+        <p>${esc(item.title||item.description||'')}</p>
+        <button type="button" class="ghost ops-support-session-add-v05815" data-session-version="${esc(item.version||'')}" data-session-recorded-at="${esc(item.recordedAt||'')}">Adicionar evidência</button>
+      </article>`).join(''):'<div class="ops-empty-v0582">Nenhum evento na janela.</div>'}
+    </section>
+
+    <section class="ops-support-session-evidence-v05815">
+      <div class="ops-support-session-section-title-v05815"><span class="eyebrow">EVIDÊNCIAS SELECIONADAS</span><small>${esc(String(s.evidences.length))} item(ns)</small></div>
+      ${s.evidences.length?s.evidences.map((item,index)=>`<article>
+        <div><strong>${esc(item.version||'Evento')}</strong><span>${hpOpsDateV0582(item.recordedAt)}</span></div>
+        <p>${esc(item.state||'unknown')} • ${esc(String(item.gateCount||0))} gate(s)</p>
+        <button type="button" class="ghost ops-support-session-remove-v05815" data-session-index="${index}">Remover</button>
+      </article>`).join(''):'<div class="ops-empty-v0582">Nenhuma evidência selecionada.</div>'}
+    </section>
+
+    <div class="ops-support-boundary-v05810">
+      <p>Sessão local e temporária: dados mantidos apenas em memória desta página.</p>
+      <p>Não persiste segredos, não altera produção e não automatiza deploy, promoção ou rollback.</p>
+    </div>
+  </div>`;
+
+  $('#opsSupportSessionCloseV05815')?.addEventListener('click',hpCloseSupportSessionV05815);
+  $('#opsSupportSessionCopyV05815')?.addEventListener('click',()=>hpCopySupportSessionV05815().catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionClearV05815')?.addEventListener('click',()=>{
+    hpSupportSessionResetV05815();
+    hpCloseSupportSessionV05815();
+    toast('Sessão de suporte limpa');
+  });
+  host.querySelectorAll('.ops-support-session-add-v05815').forEach(button=>{
+    button.addEventListener('click',()=>{
+      hpSupportSessionAddEvidenceV05815(button.dataset.sessionVersion||'',button.dataset.sessionRecordedAt||'').catch(err=>toast(err.message,true));
+    });
+  });
+  host.querySelectorAll('.ops-support-session-remove-v05815').forEach(button=>{
+    button.addEventListener('click',()=>{
+      const index=Number(button.dataset.sessionIndex);
+      if(Number.isInteger(index)&&index>=0){
+        hpSupportSessionStateV05815.evidences.splice(index,1);
+        hpRenderSupportSessionV05815();
+      }
+    });
+  });
+}
+
+async function hpCopySupportSessionV05815(){
+  const s=hpSupportSessionStateV05815;
+  const evidenceLines=s.evidences.map(item=>`- ${item.version} • ${item.recordedAt} • ${item.state} • ${item.gateCount} gate(s)`).join('\n');
+  const text=[hpSupportSessionSummaryV05815(),'','Evidências:',evidenceLines||'- nenhuma','','Sessão temporária em memória; sem segredos e sem alterações em produção.'].join('\n');
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+  }else{
+    const area=document.createElement('textarea');
+    area.value=text;
+    area.setAttribute('readonly','');
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  toast('Resumo da sessão copiado');
+}
+
+async function hpSupportSessionAddEvidenceV05815(version,recordedAt){
+  if(!version||!recordedAt)return;
+  if(!hpSupportSessionStateV05815.active){
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    await hpStartSupportSessionV05815(days);
+  }
+  const exists=hpSupportSessionStateV05815.evidences.some(item=>item.version===version&&item.recordedAt===recordedAt);
+  if(exists){
+    toast('Evidência já está na sessão');
+    return;
+  }
+  const query=new URLSearchParams({version:String(version),recordedAt:String(recordedAt)});
+  const payload=await api(`/api/operacoes-producao/deploys/support-timeline/evidence-pack?${query.toString()}`);
+  hpSupportSessionStateV05815.evidences.push({
+    version:payload?.version||version,
+    recordedAt:payload?.recordedAt||recordedAt,
+    state:payload?.state||'unknown',
+    gateCount:Number(payload?.gateCount||0),
+    content:String(payload?.content||'')
+  });
+  hpRenderSupportSessionV05815();
+  toast('Evidência adicionada à sessão');
+}
+
+async function hpStartSupportSessionV05815(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  hpSupportSessionResetV05815();
+  hpSupportSessionStateV05815.active=true;
+  hpSupportSessionStateV05815.startedAt=new Date().toISOString();
+  hpSupportSessionStateV05815.days=safeDays;
+  const [snapshot,context,timeline]=await Promise.all([
+    api(`/api/operacoes-producao/deploys/audit-snapshot?days=${safeDays}`),
+    api(`/api/operacoes-producao/deploys/support-context?days=${safeDays}`),
+    api(`/api/operacoes-producao/deploys/support-timeline?days=${safeDays}&limit=40`)
+  ]);
+  hpSupportSessionStateV05815.snapshot=snapshot;
+  hpSupportSessionStateV05815.context=context;
+  hpSupportSessionStateV05815.timeline=timeline;
+}
+
+function hpCloseSupportSessionV05815(){
+  $('#opsSupportSessionBackdropV05815')?.classList.add('hidden');
+  $('#opsSupportSessionPanelV05815')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-session-open-v05815');
+}
+
+async function hpOpenSupportSessionV05815(days=30){
+  const panel=$('#opsSupportSessionPanelV05815'),backdrop=$('#opsSupportSessionBackdropV05815'),host=$('#opsSupportSessionV05815');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-support-session-open-v05815');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Montando sessão temporária de suporte');
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  if(!hpSupportSessionStateV05815.active||hpSupportSessionStateV05815.days!==safeDays){
+    await hpStartSupportSessionV05815(safeDays);
+  }
+  hpRenderSupportSessionV05815();
 }
