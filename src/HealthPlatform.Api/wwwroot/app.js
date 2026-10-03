@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.17';
+const HP_MVP_VERSION='0.58.18';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -27688,6 +27688,17 @@ function hpRenderSupportSessionSharePreviewV05817(content){
       <p>Confira o conteúdo abaixo antes do download. A prévia não salva, envia ou compartilha nada automaticamente.</p>
     </div>
 
+    <section class="ops-support-redaction-review-v05818">
+      <div class="ops-support-redaction-head-v05818">
+        <div><span class="eyebrow">REDACTION REVIEW • v0.58.18</span><strong>Revisão local de termos sensíveis</strong></div>
+        <span class="ops-status-v0582 neutral" id="opsSupportRedactionStatusV05818">Analisando</span>
+      </div>
+      <div id="opsSupportRedactionFindingsV05818"></div>
+      <label class="ops-support-redaction-editor-label-v05818" for="opsSupportSessionRedactionEditorV05818">Conteúdo revisável manualmente</label>
+      <textarea id="opsSupportSessionRedactionEditorV05818" class="ops-support-redaction-editor-v05818" spellcheck="false" aria-label="Conteúdo da sessão para revisão manual"></textarea>
+      <small>A análise apenas sinaliza possíveis riscos. Nada é removido ou alterado automaticamente.</small>
+    </section>
+
     <section class="ops-support-share-preview-content-v05817">
       <div class="ops-support-share-preview-title-v05817">
         <span class="eyebrow">CONTEÚDO DO ARQUIVO</span>
@@ -27711,9 +27722,16 @@ function hpRenderSupportSessionSharePreviewV05817(content){
   const preview=$('#opsSupportSessionSharePreviewTextV05817');
   if(preview)preview.textContent=text;
 
+  const editor=$('#opsSupportSessionRedactionEditorV05818');
+  if(editor){
+    editor.value=text;
+    hpRenderSupportSessionRedactionReviewV05818(text);
+    editor.addEventListener('input',()=>hpRenderSupportSessionRedactionReviewV05818(editor.value));
+  }
+
   $('#opsSupportSessionSharePreviewCloseV05817')?.addEventListener('click',hpCloseSupportSessionSharePreviewV05817);
-  $('#opsSupportSessionSharePreviewCopyV05817')?.addEventListener('click',()=>hpCopySupportSessionSharePreviewV05817(text).catch(err=>toast(err.message,true)));
-  $('#opsSupportSessionSharePreviewDownloadV05817')?.addEventListener('click',()=>hpDownloadReviewedSupportSessionV05817(text).catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionSharePreviewCopyV05817')?.addEventListener('click',()=>hpCopySupportSessionSharePreviewV05817(hpSupportSessionReviewedTextV05818(text)).catch(err=>toast(err.message,true)));
+  $('#opsSupportSessionSharePreviewDownloadV05817')?.addEventListener('click',()=>hpDownloadReviewedSupportSessionV05817(hpSupportSessionReviewedTextV05818(text)).catch(err=>toast(err.message,true)));
 }
 
 async function hpCopySupportSessionSharePreviewV05817(content){
@@ -27773,4 +27791,62 @@ async function hpOpenSupportSessionSharePreviewV05817(){
   backdrop.classList.remove('hidden');
   panel.classList.remove('hidden');
   hpRenderSupportSessionSharePreviewV05817(content);
+}
+
+
+// ===== v0.58.18 — Production Operations Support Session Redaction Review =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_SESSION_REDACTION_REVIEW_V05818='v0.58.18';
+
+function hpSupportSessionReviewedTextV05818(fallback=''){
+  const editor=$('#opsSupportSessionRedactionEditorV05818');
+  return editor?String(editor.value||''):String(fallback||'');
+}
+
+function hpSupportSessionRedactionRulesV05818(){
+  return [
+    {key:'credential-assignment',label:'Credencial ou segredo com valor',pattern:/(?:password|senha|token|secret|segredo|credential|credencial|api[_-]?key)\s*[:=]\s*[^\s|]+/gi},
+    {key:'authorization',label:'Cabeçalho ou bearer token',pattern:/(?:authorization\s*:\s*(?:bearer|basic)\s+[^\s]+|bearer\s+[a-z0-9._~+/-]+=*)/gi},
+    {key:'private-key',label:'Chave privada',pattern:/-----BEGIN\s+(?:RSA\s+|EC\s+|OPENSSH\s+)?PRIVATE KEY-----/gi},
+    {key:'windows-path',label:'Caminho local Windows',pattern:/\b[A-Za-z]:\\(?:[^\\\r\n]+\\)*[^\\\r\n|]*/g},
+    {key:'unix-path',label:'Caminho interno Linux',pattern:/(?:^|\s)(\/(?:opt|home|root|etc|var)\/[^\s|]+)/gm},
+    {key:'ipv4',label:'Endereço IPv4',pattern:/\b(?:\d{1,3}\.){3}\d{1,3}\b/g},
+    {key:'email',label:'Endereço de e-mail',pattern:/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi},
+    {key:'url-auth',label:'URL com credencial embutida',pattern:/https?:\/\/[^\s/:]+:[^@\s]+@[^\s]+/gi}
+  ];
+}
+
+function hpSupportSessionRedactionScanV05818(content){
+  const text=String(content||'');
+  const findings=[];
+  hpSupportSessionRedactionRulesV05818().forEach(rule=>{
+    const matches=[...text.matchAll(rule.pattern)];
+    if(!matches.length)return;
+    const samples=[...new Set(matches.slice(0,3).map(match=>String(match[0]||'').trim()).filter(Boolean))];
+    findings.push({
+      key:rule.key,
+      label:rule.label,
+      count:matches.length,
+      samples
+    });
+  });
+  return findings;
+}
+
+function hpRenderSupportSessionRedactionReviewV05818(content){
+  const findings=hpSupportSessionRedactionScanV05818(content);
+  const status=$('#opsSupportRedactionStatusV05818');
+  const host=$('#opsSupportRedactionFindingsV05818');
+
+  if(status){
+    status.className=`ops-status-v0582 ${findings.length?'warn':'ok'}`;
+    status.textContent=findings.length?`${findings.reduce((sum,item)=>sum+item.count,0)} alerta(s)`:'Nenhum alerta';
+  }
+
+  if(!host)return;
+  host.innerHTML=findings.length
+    ? `<div class="ops-support-redaction-findings-v05818">${findings.map(item=>`<article>
+        <div><strong>${esc(item.label)}</strong><span>${esc(String(item.count))} ocorrência(s)</span></div>
+        ${item.samples.length?`<small>${item.samples.map(sample=>esc(sample)).join(' • ')}</small>`:''}
+      </article>`).join('')}</div>`
+    : `<div class="ops-support-redaction-empty-v05818">Nenhum padrão sensível conhecido foi detectado. Ainda assim, faça revisão humana antes de compartilhar.</div>`;
 }

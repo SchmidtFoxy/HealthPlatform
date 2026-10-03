@@ -8463,3 +8463,25 @@ Adicionar uma pré-visualização segura do conteúdo que será compartilhado/ex
 
 ### v0.58.18 — Production Operations Support Session Redaction Review
 Adicionar revisão de termos sensíveis e alertas locais antes do compartilhamento, destacando possíveis conteúdos que mereçam remoção manual sem alterar automaticamente o texto.
+
+
+## ✅ v0.58.18 — Production Operations Support Session Redaction Review — CONCLUÍDA
+
+**Entregue:**
+- revisão local de possíveis termos sensíveis antes do compartilhamento;
+- regras locais para credenciais com valor, authorization/bearer, chave privada, caminhos Windows/Linux, IPv4, e-mail e URL com autenticação;
+- contagem de alertas;
+- exemplos locais das ocorrências detectadas;
+- estado `Nenhum alerta` quando nenhuma regra conhecida é acionada;
+- editor manual do conteúdo da sessão;
+- nenhuma remoção ou alteração automática;
+- `Copiar prévia` e `Baixar revisado` passam a usar o conteúdo revisado manualmente;
+- reanálise automática enquanto o operador edita;
+- nenhum envio do conteúdo para API ou terceiro;
+- nenhuma persistência automática;
+- revisão continua obrigatoriamente humana antes do compartilhamento.
+
+## Próxima etapa
+
+### v0.58.19 — Production Operations Support Session Redaction Checklist
+Adicionar checklist explícito de revisão antes do download, permitindo ao operador confirmar itens como credenciais, caminhos internos, dados pessoais e contexto operacional antes de liberar o arquivo.

@@ -1,3 +1,13 @@
+# v0.58.18 — Production Operations Support Session Redaction Review
+
+- Adiciona scanner local de possíveis conteúdos sensíveis.
+- Adiciona alertas por categoria e contagem.
+- Adiciona editor manual dentro da prévia.
+- Reanalisa o conteúdo durante a edição.
+- Não remove ou substitui texto automaticamente.
+- Copiar prévia e Baixar revisado usam o conteúdo editado.
+- Não envia ou persiste automaticamente o conteúdo.
+
 # v0.58.17 — Production Operations Support Session Share Preview
 
 - Adiciona pré-visualização antes do download da sessão.

@@ -428,3 +428,23 @@ body.ops-support-share-preview-open-v05817{overflow:hidden}
   .ops-support-share-preview-actions-v05817{display:grid;grid-template-columns:1fr}
   .ops-support-share-preview-actions-v05817 button{width:100%}
 }
+
+
+/* v0.58.18 — Production Operations Support Session Redaction Review */
+.ops-support-redaction-review-v05818{display:grid;gap:10px;padding:14px;border:1px solid rgba(239,198,108,.18);border-radius:14px;background:rgba(239,198,108,.035)}
+.ops-support-redaction-head-v05818{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.ops-support-redaction-head-v05818 strong{display:block;margin-top:4px}
+.ops-support-redaction-findings-v05818{display:grid;gap:8px}
+.ops-support-redaction-findings-v05818 article{padding:10px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.02)}
+.ops-support-redaction-findings-v05818 article>div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ops-support-redaction-findings-v05818 article span{font-size:.72rem;opacity:.7}
+.ops-support-redaction-findings-v05818 small{display:block;margin-top:6px;opacity:.63;overflow-wrap:anywhere}
+.ops-support-redaction-empty-v05818{padding:10px;border-radius:10px;background:rgba(98,217,172,.04);font-size:.8rem;line-height:1.45;opacity:.82}
+.ops-support-redaction-editor-label-v05818{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;opacity:.68}
+.ops-support-redaction-editor-v05818{width:100%;min-height:190px;resize:vertical;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:11px;background:rgba(0,0,0,.22);color:var(--text,#f4f7f6);font:500 .75rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.ops-support-redaction-review-v05818>small{font-size:.72rem;line-height:1.4;opacity:.62}
+@media (max-width:680px){
+  .ops-support-redaction-head-v05818{align-items:flex-start;flex-direction:column}
+  .ops-support-redaction-findings-v05818 article>div{align-items:flex-start;flex-direction:column}
+  .ops-support-redaction-editor-v05818{min-height:230px}
+}

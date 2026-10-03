@@ -9864,3 +9864,23 @@ Ao tocar em **Exportar sessão**, o sistema abre uma prévia local com:
 Abrir a prévia não baixa, salva ou envia o conteúdo automaticamente.
 
 **Próxima etapa:** `v0.58.18 — Production Operations Support Session Redaction Review`.
+
+
+---
+
+## v0.58.18 — Production Operations Support Session Redaction Review
+
+A prévia da **Sessão suporte** ganhou uma revisão local de possíveis conteúdos sensíveis.
+
+São sinalizados padrões como:
+- credenciais com valor;
+- authorization/bearer;
+- chaves privadas;
+- caminhos locais;
+- endereços IPv4;
+- e-mails;
+- URLs com autenticação.
+
+O sistema **não remove nada automaticamente**. O operador pode revisar manualmente o texto e os botões **Copiar prévia** e **Baixar revisado** usam exatamente a versão editada.
+
+**Próxima etapa:** `v0.58.19 — Production Operations Support Session Redaction Checklist`.
