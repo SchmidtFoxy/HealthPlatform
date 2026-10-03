@@ -8267,3 +8267,29 @@ Adicionar snapshot técnico resumido e compartilhável da situação operacional
 
 ### v0.58.10 — Production Operations Support Context
 Adicionar contexto técnico seguro para suporte, correlacionando snapshot, última release, tendências e sinais de confiabilidade em uma visão única, sem expor infraestrutura sensível.
+
+
+## ✅ v0.58.10 — Production Operations Support Context — CONCLUÍDA
+
+**Entregue:**
+- endpoint autenticado `GET /api/operacoes-producao/deploys/support-context`;
+- correlação segura entre snapshot, última release, tendências e sinais de confiabilidade;
+- janela operacional configurável de 2 a 365 dias;
+- estado de suporte `healthy`, `attention`, `rollback` ou `no-data`;
+- total, saudáveis, percentual saudável, rollbacks, apply e validate-only;
+- comparação metade anterior vs metade recente;
+- direção de estabilidade e delta em pontos percentuais;
+- sequência saudável atual;
+- último rollback e último `apply` saudável;
+- referência segura da última release;
+- fatos correlacionados em formato legível para suporte;
+- botão `Contexto suporte` na área Operações;
+- drawer desktop e bottom sheet mobile;
+- resposta somente leitura;
+- nenhuma exposição de hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais;
+- nenhuma ação de deploy, promoção ou rollback é executada, recomendada, autorizada ou automatizada.
+
+## Próxima etapa
+
+### v0.58.11 — Production Operations Support Handoff
+Adicionar um handoff seguro para suporte técnico com resumo copiável, identificador da janela, fatos correlacionados e checklist de investigação, sem incluir infraestrutura sensível ou automatizar ações.

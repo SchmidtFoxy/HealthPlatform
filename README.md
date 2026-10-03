@@ -9717,3 +9717,19 @@ A área **Operações** ganhou o **Snapshot técnico**, uma visão curta e compa
 Ele reúne indicadores essenciais, o último ciclo e um resumo textual copiável para suporte e auditoria. O conteúdo é somente leitura e não inclui metadata sensível de infraestrutura.
 
 **Próxima etapa:** `v0.58.10 — Production Operations Support Context`.
+
+
+---
+
+## v0.58.10 — Production Operations Support Context
+
+A área **Operações** ganhou **Contexto suporte**, uma visão única que correlaciona:
+- snapshot atual;
+- última release;
+- tendências;
+- sinais de confiabilidade;
+- fatos técnicos seguros da janela selecionada.
+
+O contexto é somente leitura e foi desenhado para acelerar diagnóstico e comunicação de suporte sem expor infraestrutura sensível.
+
+**Próxima etapa:** `v0.58.11 — Production Operations Support Handoff`.

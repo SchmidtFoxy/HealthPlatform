@@ -120,6 +120,145 @@ public sealed class ProductionOperationsController : ControllerBase
             items));
     }
 
+    [HttpGet("deploys/support-context")]
+    public async Task<ActionResult<ProductionSupportContextResponse>> GetSupportContext(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        if (days < 2 || days > 365)
+        {
+            return BadRequest(new { message = "days deve ficar entre 2 e 365." });
+        }
+
+        var historyPath = Path.Combine(_operationsDirectory, "production-deploy-history.jsonl");
+        var allItems = await ReadJsonLinesAsync(historyPath, cancellationToken);
+
+        var now = DateTimeOffset.UtcNow;
+        var from = now.AddDays(-days);
+        var midpoint = from.AddTicks((now - from).Ticks / 2);
+
+        var periodItems = allItems
+            .Where(x => x.RecordedAt >= from && x.RecordedAt <= now)
+            .OrderByDescending(x => x.RecordedAt)
+            .ToList();
+
+        var latest = periodItems.FirstOrDefault();
+        var healthyDeploys = periodItems.Count(IsHealthy);
+        var rollbackDeploys = periodItems.Count(x => x.RollbackExecuted);
+        var applyDeploys = periodItems.Count(x =>
+            string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase));
+        var validateOnlyDeploys = periodItems.Count(x =>
+            string.Equals(x.Mode, "validate-only", StringComparison.OrdinalIgnoreCase));
+        var healthyPercentage = Percentage(healthyDeploys, periodItems.Count);
+
+        var currentHealthyStreak = 0;
+        foreach (var item in periodItems)
+        {
+            if (!IsHealthy(item))
+            {
+                break;
+            }
+
+            currentHealthyStreak++;
+        }
+
+        var previousHalf = periodItems.Where(x => x.RecordedAt < midpoint).ToList();
+        var recentHalf = periodItems.Where(x => x.RecordedAt >= midpoint).ToList();
+        var previousHealthyPercentage = Percentage(previousHalf.Count(IsHealthy), previousHalf.Count);
+        var recentHealthyPercentage = Percentage(recentHalf.Count(IsHealthy), recentHalf.Count);
+        var healthyPercentageDelta = Math.Round(
+            recentHealthyPercentage - previousHealthyPercentage,
+            1,
+            MidpointRounding.AwayFromZero);
+
+        var stabilityDirection =
+            healthyPercentageDelta >= 10m ? "improving" :
+            healthyPercentageDelta <= -10m ? "degrading" :
+            "stable";
+
+        var lastRollback = periodItems.FirstOrDefault(x => x.RollbackExecuted);
+        var lastHealthyApply = periodItems.FirstOrDefault(x =>
+            IsHealthy(x) &&
+            string.Equals(x.Mode, "apply", StringComparison.OrdinalIgnoreCase));
+
+        var supportState =
+            latest is null ? "no-data" :
+            IsHealthy(latest) && stabilityDirection != "degrading" ? "healthy" :
+            latest.RollbackExecuted ? "rollback" :
+            "attention";
+
+        ProductionSupportLatestCycle? latestCycle = latest is null
+            ? null
+            : new ProductionSupportLatestCycle(
+                latest.Version,
+                latest.RecordedAt,
+                latest.Mode,
+                latest.OperationsStatus,
+                latest.RuntimeHealthy,
+                latest.VersionHealthy,
+                latest.ServedVersion,
+                latest.RollbackExecuted,
+                latest.RecoveryAuditComplete,
+                latest.ClosureComplete);
+
+        var signals = new ProductionSupportSignals(
+            currentHealthyStreak,
+            stabilityDirection,
+            healthyPercentageDelta,
+            lastRollback?.Version,
+            lastRollback?.RecordedAt,
+            lastHealthyApply?.Version,
+            lastHealthyApply?.RecordedAt);
+
+        var trends = new ProductionSupportTrends(
+            periodItems.Count,
+            healthyDeploys,
+            healthyPercentage,
+            rollbackDeploys,
+            applyDeploys,
+            validateOnlyDeploys,
+            previousHealthyPercentage,
+            recentHealthyPercentage);
+
+        var facts = new List<ProductionSupportFact>
+        {
+            new("window", "Janela analisada", $"{days} dias ({from:O} ate {now:O})"),
+            new("health", "Saude operacional", $"{healthyDeploys}/{periodItems.Count} ciclo(s) saudavel(is) ({healthyPercentage}%)."),
+            new("modes", "Modos de execucao", $"{applyDeploys} apply / {validateOnlyDeploys} validate-only."),
+            new("stability", "Estabilidade", $"{stabilityDirection}; delta {healthyPercentageDelta} p.p. entre metade recente e anterior."),
+            new("streak", "Sequencia saudavel", $"{currentHealthyStreak} ciclo(s) consecutivo(s).")
+        };
+
+        if (latest is not null)
+        {
+            facts.Add(new ProductionSupportFact(
+                "latest",
+                "Ultimo ciclo",
+                $"{latest.Version} em {latest.RecordedAt:O}; modo {latest.Mode}; status {latest.OperationsStatus}; versao servida {latest.ServedVersion}."));
+        }
+
+        if (lastRollback is not null)
+        {
+            facts.Add(new ProductionSupportFact(
+                "rollback",
+                "Ultimo rollback",
+                $"{lastRollback.Version} em {lastRollback.RecordedAt:O}."));
+        }
+
+        return Ok(new ProductionSupportContextResponse(
+            days,
+            from,
+            midpoint,
+            now,
+            supportState,
+            latestCycle,
+            trends,
+            signals,
+            facts,
+            "Contexto tecnico somente leitura para suporte. Nao inclui hash de backup, staging path, target/host, caminhos internos, tokens, segredos ou credenciais.",
+            "O contexto nao executa, recomenda, autoriza ou automatiza deploy, promocao ou rollback."));
+    }
+
     [HttpGet("deploys/audit-snapshot")]
     public async Task<ActionResult<ProductionAuditSnapshotResponse>> GetAuditSnapshot(
         [FromQuery] int days = 30,
@@ -781,6 +920,55 @@ public sealed class ProductionOperationsController : ControllerBase
             : DateTimeOffset.MinValue;
     }
 }
+
+public sealed record ProductionSupportContextResponse(
+    int Days,
+    DateTimeOffset From,
+    DateTimeOffset Midpoint,
+    DateTimeOffset To,
+    string State,
+    ProductionSupportLatestCycle? LatestCycle,
+    ProductionSupportTrends Trends,
+    ProductionSupportSignals Signals,
+    IReadOnlyList<ProductionSupportFact> Facts,
+    string SafetyNote,
+    string DecisionBoundary);
+
+public sealed record ProductionSupportLatestCycle(
+    string Version,
+    DateTimeOffset RecordedAt,
+    string Mode,
+    string OperationsStatus,
+    bool RuntimeHealthy,
+    bool VersionHealthy,
+    string ServedVersion,
+    bool RollbackExecuted,
+    bool RecoveryAuditComplete,
+    bool ClosureComplete);
+
+public sealed record ProductionSupportTrends(
+    int TotalDeploys,
+    int HealthyDeploys,
+    decimal HealthyPercentage,
+    int RollbackDeploys,
+    int ApplyDeploys,
+    int ValidateOnlyDeploys,
+    decimal PreviousHealthyPercentage,
+    decimal RecentHealthyPercentage);
+
+public sealed record ProductionSupportSignals(
+    int CurrentHealthyStreak,
+    string StabilityDirection,
+    decimal HealthyPercentageDelta,
+    string? LastRollbackVersion,
+    DateTimeOffset? LastRollbackAt,
+    string? LastHealthyApplyVersion,
+    DateTimeOffset? LastHealthyApplyAt);
+
+public sealed record ProductionSupportFact(
+    string Key,
+    string Label,
+    string Value);
 
 public sealed record ProductionAuditSnapshotResponse(
     int Days,

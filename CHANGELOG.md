@@ -1,3 +1,13 @@
+# v0.58.10 — Production Operations Support Context
+
+- Adiciona endpoint de contexto técnico para suporte.
+- Correlaciona snapshot, última release, tendências e sinais.
+- Adiciona fatos técnicos seguros e janela comparativa.
+- Adiciona botão Contexto suporte.
+- Adiciona drawer desktop e bottom sheet mobile.
+- Mantém infraestrutura sensível fora da resposta.
+- Mantém todo o contexto somente leitura.
+
 # v0.58.9 — Production Operations Audit Snapshot
 
 - Adiciona endpoint de snapshot técnico operacional.

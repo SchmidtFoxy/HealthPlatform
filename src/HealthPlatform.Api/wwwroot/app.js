@@ -20548,7 +20548,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.58.9';
+const HP_MVP_VERSION='0.58.10';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -26563,7 +26563,7 @@ async function hpLoadProductionOperationsV0582(){
     </form>
     <div id="opsActiveFiltersV0584" class="ops-active-filters-v0584 hidden"></div>
     <section class="ops-reliability-v0586" aria-label="Sinais de confiabilidade operacional">
-      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
+      <div class="ops-reliability-head-v0586"><div><span class="eyebrow">RELIABILITY</span><h3>Sinais operacionais</h3></div><div class="ops-reliability-actions-v0587"><small>Leitura derivada do histórico, sem automação de deploy</small><div class="ops-reliability-buttons-v0588"><button type="button" class="secondary" id="opsSupportContextButtonV05810">Contexto suporte</button><button type="button" class="secondary" id="opsAuditSnapshotButtonV0589">Snapshot técnico</button><button type="button" class="secondary" id="opsReliabilityExportButtonV0588">Exportar auditoria</button><button type="button" class="secondary" id="opsReliabilityDetailButtonV0587">Como foi calculado</button></div></div></div>
       <div id="opsReliabilityV0586" class="ops-reliability-grid-v0586">${hpUiState('loading','Calculando confiabilidade')}</div>
     </section>
     <section class="ops-trends-v0585" aria-label="Tendências operacionais">
@@ -26595,6 +26595,10 @@ async function hpLoadProductionOperationsV0582(){
   $('#opsAuditSnapshotButtonV0589')?.addEventListener('click',()=>{
     const days=Number($('#opsTrendsDaysV0585')?.value)||30;
     hpOpenAuditSnapshotV0589(days).catch(err=>toast(err.message,true));
+  });
+  $('#opsSupportContextButtonV05810')?.addEventListener('click',()=>{
+    const days=Number($('#opsTrendsDaysV0585')?.value)||30;
+    hpOpenSupportContextV05810(days).catch(err=>toast(err.message,true));
   });
   $('#opsTrendsDaysV0585')?.addEventListener('change',e=>{
     const days=Number(e.currentTarget.value)||30;
@@ -26971,4 +26975,90 @@ async function hpOpenAuditSnapshotV0589(days=30){
   host.innerHTML=hpUiState('loading','Gerando snapshot técnico');
   const data=await api(`/api/operacoes-producao/deploys/audit-snapshot?days=${safeDays}`);
   hpRenderAuditSnapshotV0589(data);
+}
+
+
+// ===== v0.58.10 — Production Operations Support Context =====
+const HP_PRODUCTION_OPERATIONS_SUPPORT_CONTEXT_V05810='v0.58.10';
+
+function hpSupportStateV05810(state){
+  const map={
+    healthy:['ok','Saudável'],
+    rollback:['bad','Rollback'],
+    attention:['warn','Atenção'],
+    'no-data':['neutral','Sem dados']
+  };
+  return map[state]||['neutral','Indefinido'];
+}
+function hpRenderSupportContextV05810(data){
+  const host=$('#opsSupportContextV05810');if(!host)return;
+  const latest=data?.latestCycle||null;
+  const trends=data?.trends||{};
+  const signals=data?.signals||{};
+  const [kind,label]=hpSupportStateV05810(data?.state);
+  const direction=hpOpsReliabilityDirectionV0586(signals.stabilityDirection);
+  const delta=Number(signals.healthyPercentageDelta||0);
+  const deltaText=`${delta>0?'+':''}${delta.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})} p.p.`;
+
+  host.innerHTML=`<div class="ops-support-context-v05810">
+    <div class="ops-support-head-v05810">
+      <div><span class="eyebrow">SUPPORT CONTEXT • ${HP_PRODUCTION_OPERATIONS_SUPPORT_CONTEXT_V05810}</span><h3>Contexto técnico para suporte</h3><p>${esc(data?.days||0)} dias • ${hpOpsDateV0582(data?.from)} → ${hpOpsDateV0582(data?.to)}</p></div>
+      <button type="button" class="ghost" id="opsSupportContextCloseV05810" aria-label="Fechar contexto de suporte">×</button>
+    </div>
+
+    <div class="ops-support-status-v05810"><span class="ops-status-v0582 ${kind}">${esc(label)}</span></div>
+
+    <div class="ops-support-metrics-v05810">
+      ${hpOpsMetricV0582('Deploys',String(trends.totalDeploys??0))}
+      ${hpOpsMetricV0582('Saudáveis',hpOpsPercentV0585(trends.healthyPercentage))}
+      ${hpOpsMetricV0582('Rollbacks',String(trends.rollbackDeploys??0))}
+      ${hpOpsMetricV0582('Streak',String(signals.currentHealthyStreak??0))}
+    </div>
+
+    <section class="ops-support-correlation-v05810">
+      <article><small>Estabilidade</small><strong><span class="ops-status-v0582 ${direction[0]}">${esc(direction[1])}</span></strong><span>${esc(deltaText)}</span></article>
+      <article><small>Apply / Validate-only</small><strong>${esc(String(trends.applyDeploys??0))} / ${esc(String(trends.validateOnlyDeploys??0))}</strong><span>na janela selecionada</span></article>
+      <article><small>Metade anterior</small><strong>${hpOpsPercentV0585(trends.previousHealthyPercentage)}</strong><span>ciclos saudáveis</span></article>
+      <article><small>Metade recente</small><strong>${hpOpsPercentV0585(trends.recentHealthyPercentage)}</strong><span>ciclos saudáveis</span></article>
+    </section>
+
+    <section class="ops-support-latest-v05810">
+      <span class="eyebrow">ÚLTIMA RELEASE</span>
+      ${latest?`<div class="ops-support-latest-grid-v05810">
+        <div><small>Versão</small><strong>${esc(latest.version||'—')}</strong></div>
+        <div><small>Registrado</small><strong>${hpOpsDateV0582(latest.recordedAt)}</strong></div>
+        <div><small>Modo</small><strong>${esc(latest.mode||'—')}</strong></div>
+        <div><small>Status</small><strong>${esc(latest.operationsStatus||'—')}</strong></div>
+        <div><small>Versão servida</small><strong>${esc(latest.servedVersion||'—')}</strong></div>
+        <div><small>Closure</small><strong>${latest.closureComplete?'Concluído':'Pendente'}</strong></div>
+      </div>`:'<div class="ops-empty-v0582">Nenhuma release na janela.</div>'}
+    </section>
+
+    <section class="ops-support-facts-v05810">
+      <span class="eyebrow">FATOS CORRELACIONADOS</span>
+      ${(data?.facts||[]).map(item=>`<article><strong>${esc(item.label||item.key||'Fato')}</strong><p>${esc(item.value||'')}</p></article>`).join('')}
+    </section>
+
+    <div class="ops-support-boundary-v05810">
+      <p>${esc(data?.safetyNote||'Contexto técnico seguro.')}</p>
+      <p>${esc(data?.decisionBoundary||'Somente leitura.')}</p>
+    </div>
+  </div>`;
+  $('#opsSupportContextCloseV05810')?.addEventListener('click',hpCloseSupportContextV05810);
+}
+function hpCloseSupportContextV05810(){
+  $('#opsSupportContextBackdropV05810')?.classList.add('hidden');
+  $('#opsSupportContextPanelV05810')?.classList.add('hidden');
+  document.body.classList.remove('ops-support-context-open-v05810');
+}
+async function hpOpenSupportContextV05810(days=30){
+  const safeDays=[7,30,90,180].includes(Number(days))?Number(days):30;
+  const panel=$('#opsSupportContextPanelV05810'),backdrop=$('#opsSupportContextBackdropV05810'),host=$('#opsSupportContextV05810');
+  if(!panel||!backdrop||!host)return;
+  document.body.classList.add('ops-support-context-open-v05810');
+  backdrop.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  host.innerHTML=hpUiState('loading','Correlacionando contexto operacional');
+  const data=await api(`/api/operacoes-producao/deploys/support-context?days=${safeDays}`);
+  hpRenderSupportContextV05810(data);
 }
