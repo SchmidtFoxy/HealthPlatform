@@ -1,3 +1,13 @@
+# v0.59.0 — Nutrition Builder Live Balance & Unit Integrity
+
+- Corrige a conversão de unidade no builder nutricional preservando a massa canônica em gramas ao trocar a forma de medida.
+- Evita o erro em que `2 unidades = 120 g` podia virar `2 g` ao trocar a unidade para gramas.
+- Atualiza imediatamente calorias e macros do item e do plano após alterações de alimento, quantidade, unidade, fator de medida ou gramas.
+- Adiciona saldo diário ao vivo para calorias, proteínas, carboidratos, gorduras e fibras: `restam` ou `acima da meta`.
+- Compacta os cards do plano alimentar profissional e melhora a densidade visual em desktop e PWA.
+- Adiciona gates de regressão para integridade de unidade, metas ao vivo, layout responsivo em 760/430 px e identidade pública v0.59.0.
+- Encerra a espiral de microversões de Operations/Handoff e inaugura a fase funcional Nutrition & Communication Experience.
+
 # v0.58.63 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Handoff
 
 - Adiciona handoff local final da orientação do handoff da continuidade após o fechamento da orientação final.

@@ -9596,7 +9596,61 @@ Adicionar um handoff local final da orientação do handoff da continuidade apó
 - nenhuma alteração em produção;
 - layout responsivo para desktop e mobile.
 
-## Próxima etapa
+## Transição de fase — Product Brain
 
-### v0.58.64 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure
-Adicionar um fechamento local da orientação final do handoff da continuidade após o fechamento da orientação final, permitindo encerrar apenas esse contexto visual após decisão manual, sem apagar a sessão de suporte, persistir dados ou alterar produção.
+A sequência planejada para `v0.58.64` foi **consolidada e encerrada sem nova microversão funcional**. As versões finais da série v0.58.x passaram a repetir `handoff / guidance / closure / continuity` sem entregar valor proporcional ao produto. O Product Brain deve tratar esse padrão como **Anti-Roadmap-Loop**: consolidar o que já existe e redirecionar a evolução para necessidades reais de pacientes e profissionais.
+
+# FASE v0.59.x — Nutrition & Communication Experience
+
+Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente rápidas, agradáveis e confiáveis no desktop e no PWA. Sempre que uma tela desta fase for tocada, aplicar o **Touched Surface Quality Gate** e validar mobile em aproximadamente 360/390/430 px.
+
+## ✅ v0.59.0 — Nutrition Builder Live Balance & Unit Integrity — IMPLEMENTADA
+
+- preservar `QuantidadeGramas` como massa nutricional canônica ao trocar a unidade de medida;
+- converter a quantidade exibida sem alterar calorias/macros por acidente;
+- atualizar preview do item e totais do plano imediatamente;
+- mostrar `meta / prescrito / restante` para calorias e macros durante a montagem;
+- indicar claramente quando o plano ultrapassar uma meta;
+- compactar cards da tela de plano alimentar;
+- garantir reorganização responsiva em PWA;
+- adicionar regressão automática para o bug de unidade.
+
+## Próximas etapas priorizadas
+
+### v0.59.1 — Meal Templates Quick Apply
+Permitir aplicar rapidamente templates de refeições prontas no builder — café da manhã, almoço, jantar, pré-treino, pós-treino e modelos personalizados — reaproveitando a biblioteca de refeições existente sem duplicar conceitos.
+
+### v0.59.2 — Nutrition Target Guidance 2.0
+Evoluir o saldo diário para leitura por refeição, distribuição percentual, alertas visuais não prescritivos e troca/remoção de alimentos com recalculo imediato.
+
+### v0.59.3 — Supplement Catalog Foundation
+Criar catálogo estruturado de suplementação: proteínas, creatina, pré-treinos, barras proteicas, eletrólitos, vitaminas/minerais e itens personalizados, com porção, composição, fabricante opcional, observações, status e isolamento por organização.
+
+### v0.59.4 — Supplement Scheduling & Nutrition Integration
+Permitir adicionar suplementos ao plano alimentar e cronograma diário, com horário/contexto (`café`, `pré-treino`, `pós-treino`, `antes de dormir`, etc.) e visualização integrada ao paciente.
+
+### v0.59.5 — Supplement Training Context
+Relacionar suplementação a sessões/treinos quando o profissional desejar, sem prescrever automaticamente dose, indicação ou necessidade clínica.
+
+### v0.59.6 — Professional Chat Inbox
+Adicionar `Chat` ao menu lateral profissional com inbox unificada, todas as conversas, última mensagem, horário, paciente, ordenação por atividade e contador persistente de não lidas.
+
+### v0.59.7 — Chat Read State & Attention Queue
+Persistir estado de leitura por usuário, badges, filtros de não lidas e integração com a fila de atenção do profissional (`pacientes aguardando resposta`).
+
+### v0.59.8 — Chat Attachments
+Permitir anexar fotos e documentos com validação de tipo/tamanho, preview seguro, histórico e vínculo explícito com a conversa/paciente.
+
+### v0.59.9 — PWA Messaging Notifications
+Adicionar Web Push para novas mensagens, deep-link para a conversa correta, fallback interno quando push não estiver disponível e sincronização do badge de não lidas.
+
+### v0.59.10 — Messaging Mobile Polish
+Revisar inbox e conversa em 360/390/430 px: composer fixo sem cobrir conteúdo, safe-area de iPhone, câmera/galeria/arquivo, scroll estável, estados de envio/erro/retry e transição lista → conversa com comportamento de app.
+
+## Regras permanentes desta fase
+
+1. Chat não pode depender exclusivamente de push: não lidas e pendências devem persistir no sistema.
+2. Suplementação apoia organização profissional; não deve inferir necessidade, dose ou indicação clínica automaticamente.
+3. Qualquer mudança em alimento, quantidade, unidade ou suplemento deve recalcular imediatamente refeição, dia e saldo das metas quando aplicável.
+4. Uma tela desktop apenas comprimida não passa no gate mobile/PWA.
+5. Se uma versão tocar uma superfície visual, ela deve sair mais clara, rápida e agradável do que entrou.

@@ -13,6 +13,15 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# v0.59.0 - Product Brain gate: a fase funcional substitui a espiral de microversoes de handoff.
+$versionAtual0590 = (Get-Content -Encoding UTF8 (Join-Path $root "VERSION.txt") -Raw).Trim()
+if ($versionAtual0590 -ne "0.59.0") { throw "VERSION.txt esperado 0.59.0; atual: $versionAtual0590" }
+$roadmapAtual0590 = Get-Content -Encoding UTF8 (Join-Path $root "ROADMAP.md") -Raw
+foreach ($token0590 in @("Anti-Roadmap-Loop", "Nutrition & Communication Experience", "v0.59.1 — Meal Templates Quick Apply")) {
+    if (-not $roadmapAtual0590.Contains($token0590)) { throw "Roadmap v0.59.0 incompleto: $token0590" }
+}
+Write-Host "[Produto] v0.59.0 / Nutrition & Communication Experience: roadmap vivo OK." -ForegroundColor DarkCyan
+
 # v0.27.5-r6: limpa residuos criados pelos hotfixes r1-r5 empacotados sem a raiz HealthPlatform/.
 # O AESYN AUTO v10 trata uma unica pasta de topo como raiz do pacote; por isso "src/" e
 # "scripts/" isolados foram copiados um nivel acima do destino correto.

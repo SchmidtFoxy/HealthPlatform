@@ -1,3 +1,19 @@
+# AESYN Performance — v0.59.0
+
+## Nutrition Builder Live Balance & Unit Integrity
+
+A v0.59.0 volta a priorizar valor funcional e experiência de uso. O builder de dieta passa a preservar a massa nutricional em gramas durante trocas de unidade, recalcular macros imediatamente e mostrar quanto falta — ou quanto excedeu — cada meta diária enquanto o profissional monta o plano.
+
+### Qualidade de produto
+- **Unidade sem surpresa:** trocar `unidade`, `g`, `fatia` ou outra forma de medida não deve alterar a massa nutricional por acidente.
+- **Metas vivas:** calorias, proteína, carboidratos, gorduras e fibras mostram consumido/meta e saldo restante em tempo real.
+- **Plano mais compacto:** cards profissionais usam menos altura e ações mais densas, preservando legibilidade.
+- **PWA first:** o painel de metas e ações reorganiza em 760 px e 430 px sem overflow horizontal.
+
+**Próxima etapa planejada:** `v0.59.1 — Meal Templates Quick Apply`.
+
+---
+
 ## v0.27.5 — Periodization 3.0
 
 A camada de Workout Intelligence passa a organizar o planejamento temporal já registrado, sem criar periodização automática.
