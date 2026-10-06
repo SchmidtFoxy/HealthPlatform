@@ -17,4 +17,5 @@ public class RefeicaoPlanoAlimentar : BaseEntity
 
     public PlanoAlimentar PlanoAlimentar { get; set; } = null!;
     public ICollection<ItemRefeicaoPlano> Itens { get; set; } = new List<ItemRefeicaoPlano>();
+    public ICollection<SuplementoPlanoAlimentar> Suplementos { get; set; } = new List<SuplementoPlanoAlimentar>();
 }

@@ -13,9 +13,30 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# v0.59.4 - Supplement Scheduling & Nutrition Integration.
+$versionAtual0594 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
+if ($versionAtual0594 -ne "0.59.4") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
+$roadmapAtual0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+foreach ($token0594 in @("Anti-Roadmap-Loop", "v0.59.4 — Supplement Scheduling & Nutrition Integration", "v0.59.5 — Supplement Training Context")) {
+    if (-not $roadmapAtual0594.Contains($token0594)) { throw "Roadmap v0.59.4 incompleto: $token0594" }
+}
+foreach ($rel0594 in @(
+    'src/HealthPlatform.Domain/Entities/SuplementoPlanoAlimentar.cs',
+    'src/HealthPlatform.Infrastructure/Migrations/20261006150000_V0594SupplementScheduling.cs',
+    'src/HealthPlatform.Api/Contracts/PlanosAlimentares/PlanoAlimentarContracts.cs'
+)) { if (-not (Test-Path (Join-Path $PSScriptRoot $rel0594))) { throw "Supplement Scheduling v0.59.4 incompleto: arquivo ausente $rel0594" } }
+$planController0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/PlanosAlimentaresController.cs') -Raw
+$appJs0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
+foreach ($token0594Api in @('MontarSuplementos','SuplementosPlanoAlimentar','CalcularSuplemento','QuantidadePorcoes','RefeicaoOrdem')) { if (-not $planController0594.Contains($token0594Api)) { throw "Supplement Scheduling API v0.59.4 incompleta: $token0594Api" } }
+foreach ($token0594Ui in @("HP_SUPPLEMENT_SCHEDULING_V0594='v0.59.4'",'supplementScheduleListV0594','suppMealOrder','suppContext','supplement-schedule-builder-v0594')) { if (-not $appJs0594.Contains($token0594Ui)) { throw "Supplement Scheduling UI v0.59.4 incompleta: $token0594Ui" } }
+
+$migrationFile0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Infrastructure/Migrations/20261006150000_V0594SupplementScheduling.cs') -Raw
+foreach ($token0594Migration in @('[DbContext(typeof(AppDbContext))]','[Migration("20261006150000_V0594SupplementScheduling")]')) { if (-not $migrationFile0594.Contains($token0594Migration)) { throw "Migration EF Core v0.59.4 invisivel: $token0594Migration" } }
+Write-Host "[Produto] v0.59.4 / Supplement Scheduling & Nutrition Integration: OK." -ForegroundColor DarkCyan
+
 # v0.59.3 - Product Brain gate: Supplement Catalog Foundation + proxima etapa funcional.
 $versionAtual0593 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0593 -ne "0.59.3") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
+if ($versionAtual0593 -ne "0.59.4") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
 $roadmapAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0593 in @("Anti-Roadmap-Loop", "v0.59.3 — Supplement Catalog Foundation", "v0.59.4 — Supplement Scheduling & Nutrition Integration")) {
     if (-not $roadmapAtual0593.Contains($token0593)) { throw "Roadmap v0.59.3 incompleto: $token0593" }
@@ -37,7 +58,7 @@ Write-Host "[Produto] v0.59.3 / entidade + API + migration: OK." -ForegroundColo
 
 # v0.59.2 - Product Brain gate: Nutrition Target Guidance 2.0 + proxima etapa funcional.
 $versionAtual0592 = (Get-Content (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0592 -ne "0.59.3") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
+if ($versionAtual0592 -ne "0.59.4") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
 $roadmapAtual0592 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0592 in @("Anti-Roadmap-Loop", "v0.59.2 — Nutrition Target Guidance 2.0", "v0.59.3 — Supplement Catalog Foundation")) {
     if (-not $roadmapAtual0592.Contains($token0592)) { throw "Roadmap v0.59.2 incompleto: $token0592" }

@@ -9650,8 +9650,19 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.4 — Supplement Scheduling & Nutrition Integration`.
 
-### v0.59.4 — Supplement Scheduling & Nutrition Integration
-Permitir adicionar suplementos ao plano alimentar e cronograma diário, com horário/contexto (`café`, `pré-treino`, `pós-treino`, `antes de dormir`, etc.) e visualização integrada ao paciente.
+### ✅ v0.59.4 — Supplement Scheduling & Nutrition Integration — IMPLEMENTADA
+- suplementos do catálogo agora podem ser incluídos diretamente no plano alimentar;
+- quantidade em porções, horário, contexto e observação definidos pelo profissional;
+- vínculo opcional com uma refeição do plano sem duplicar cadastro;
+- macros/calorias do suplemento entram nos totais do plano e no saldo de metas quando cadastrados no catálogo;
+- suplementos sem macros continuam visíveis no cronograma sem inventar energia nutricional;
+- cronograma aparece para o paciente na área de alimentação;
+- duplicação/progressão do plano preserva a programação de suplementos;
+- migration `20261006150000_V0594SupplementScheduling`;
+- guardrail: o AESYN organiza a prescrição informada, mas não escolhe produto, dose, necessidade ou indicação;
+- PWA Creamy Gate aplicado ao builder e ao cronograma do paciente.
+
+**Próxima etapa funcional:** `v0.59.5 — Supplement Training Context`.
 
 ### v0.59.5 — Supplement Training Context
 Relacionar suplementação a sessões/treinos quando o profissional desejar, sem prescrever automaticamente dose, indicação ou necessidade clínica.

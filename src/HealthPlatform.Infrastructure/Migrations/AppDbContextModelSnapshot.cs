@@ -171,6 +171,25 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("Suplementos", (string)null);
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.SuplementoPlanoAlimentar", b =>
+                {
+                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("uuid");
+                    b.Property<string>("Contexto").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                    b.Property<DateTime>("CreatedAtUtc").HasColumnType("timestamp with time zone");
+                    b.Property<TimeOnly?>("Horario").HasColumnType("time without time zone");
+                    b.Property<string>("Observacoes").HasMaxLength(1000).HasColumnType("character varying(1000)");
+                    b.Property<Guid>("PlanoAlimentarId").HasColumnType("uuid");
+                    b.Property<decimal>("QuantidadePorcoes").HasPrecision(10, 3).HasColumnType("numeric(10,3)");
+                    b.Property<Guid?>("RefeicaoPlanoAlimentarId").HasColumnType("uuid");
+                    b.Property<Guid>("SuplementoId").HasColumnType("uuid");
+                    b.Property<DateTime?>("UpdatedAtUtc").HasColumnType("timestamp with time zone");
+                    b.HasKey("Id");
+                    b.HasIndex("PlanoAlimentarId", "Horario");
+                    b.HasIndex("RefeicaoPlanoAlimentarId");
+                    b.HasIndex("SuplementoId");
+                    b.ToTable("SuplementosPlanoAlimentar", (string)null);
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Anamnese", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3460,6 +3479,27 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Organizacao");
+                });
+
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.SuplementoPlanoAlimentar", b =>
+                {
+                    b.HasOne("HealthPlatform.Domain.Entities.PlanoAlimentar", "PlanoAlimentar")
+                        .WithMany("Suplementos")
+                        .HasForeignKey("PlanoAlimentarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                    b.HasOne("HealthPlatform.Domain.Entities.RefeicaoPlanoAlimentar", "RefeicaoPlanoAlimentar")
+                        .WithMany("Suplementos")
+                        .HasForeignKey("RefeicaoPlanoAlimentarId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("HealthPlatform.Domain.Entities.Suplemento", "Suplemento")
+                        .WithMany("PrescricoesPlanoAlimentar")
+                        .HasForeignKey("SuplementoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                    b.Navigation("PlanoAlimentar");
+                    b.Navigation("RefeicaoPlanoAlimentar");
+                    b.Navigation("Suplemento");
                 });
 
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Anamnese", b =>

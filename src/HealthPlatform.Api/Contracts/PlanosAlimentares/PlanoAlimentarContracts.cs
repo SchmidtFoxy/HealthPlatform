@@ -13,6 +13,8 @@ public record RefeicaoPlanoRequest(
     decimal? MetaGordurasG,
     decimal? MetaFibrasG,
     IReadOnlyCollection<ItemRefeicaoPlanoRequest> Itens);
+public record SuplementoPlanoRequest(Guid SuplementoId, int? RefeicaoOrdem, decimal QuantidadePorcoes, TimeOnly? Horario, string Contexto, string? Observacoes);
+
 public record UpsertPlanoAlimentarRequest(
     string Nome,
     DateOnly DataInicio,
@@ -24,7 +26,8 @@ public record UpsertPlanoAlimentarRequest(
     decimal? MetaCarboidratosG,
     decimal? MetaGordurasG,
     decimal? MetaFibrasG,
-    IReadOnlyCollection<RefeicaoPlanoRequest> Refeicoes);
+    IReadOnlyCollection<RefeicaoPlanoRequest> Refeicoes,
+    IReadOnlyCollection<SuplementoPlanoRequest>? Suplementos);
 
 public record AtualizarMetasNutricionaisRequest(
     decimal? MetaCalorias,
@@ -72,4 +75,5 @@ public record RefeicaoPlanoResponse(
     DesviosNutricionaisResponse Desvios,
     TotaisNutricionaisResponse Totais,
     IReadOnlyCollection<ItemRefeicaoPlanoResponse> Itens);
-public record PlanoAlimentarResponse(Guid Id, Guid PacienteId, Guid ProfissionalId, string ProfissionalNome, string Nome, DateOnly DataInicio, DateOnly? DataFim, string Status, string? Observacoes, Guid? PlanoOrigemId, int Versao, decimal AjustePercentual, decimal? MetaCalorias, decimal? MetaProteinasG, decimal? MetaCarboidratosG, decimal? MetaGordurasG, decimal? MetaFibrasG, TotaisNutricionaisResponse TotaisDiarios, IReadOnlyCollection<RefeicaoPlanoResponse> Refeicoes, DateTime CreatedAtUtc, DateTime? UpdatedAtUtc);
+public record SuplementoPlanoResponse(Guid Id, Guid SuplementoId, string SuplementoNome, string? Marca, string Categoria, decimal QuantidadePorcoes, decimal PorcaoQuantidade, string PorcaoUnidade, TimeOnly? Horario, string Contexto, Guid? RefeicaoId, string? RefeicaoNome, string? Observacoes, TotaisNutricionaisResponse Totais);
+public record PlanoAlimentarResponse(Guid Id, Guid PacienteId, Guid ProfissionalId, string ProfissionalNome, string Nome, DateOnly DataInicio, DateOnly? DataFim, string Status, string? Observacoes, Guid? PlanoOrigemId, int Versao, decimal AjustePercentual, decimal? MetaCalorias, decimal? MetaProteinasG, decimal? MetaCarboidratosG, decimal? MetaGordurasG, decimal? MetaFibrasG, TotaisNutricionaisResponse TotaisDiarios, IReadOnlyCollection<RefeicaoPlanoResponse> Refeicoes, IReadOnlyCollection<SuplementoPlanoResponse> Suplementos, DateTime CreatedAtUtc, DateTime? UpdatedAtUtc);

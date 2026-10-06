@@ -25,4 +25,5 @@ public class Suplemento : BaseEntity
     public bool Ativo { get; set; } = true;
 
     public Organizacao Organizacao { get; set; } = null!;
+    public ICollection<SuplementoPlanoAlimentar> PrescricoesPlanoAlimentar { get; set; } = new List<SuplementoPlanoAlimentar>();
 }

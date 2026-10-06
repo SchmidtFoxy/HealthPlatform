@@ -1,4 +1,18 @@
-# v0.59.3 — Supplement Catalog Foundation
+# v0.59.4 — Supplement Scheduling & Nutrition Integration
+
+### v0.59.4-r1 — EF Migration Discovery Hotfix
+- Corrige a migration `20261006150000_V0594SupplementScheduling` para ser descoberta pelo EF Core em runtime.
+- Adiciona `[DbContext(typeof(AppDbContext))]` e `[Migration("20261006150000_V0594SupplementScheduling")]`.
+- Adiciona Regression Memory em PREPARAR/TESTAR para impedir migrations manuais invisiveis ao `MigrateAsync()`.
+- adiciona persistência `SuplementosPlanoAlimentar` e migration `20261006150000_V0594SupplementScheduling`;
+- integra suplementos ao create/update/duplicate de planos alimentares;
+- adiciona porções, horário, contexto, refeição opcional e observações;
+- inclui macros/calorias dos suplementos nos totais nutricionais;
+- exibe cronograma integrado ao paciente e resumo no fluxo profissional;
+- aplica PWA Creamy Gate ao builder e à visualização do cronograma;
+- preserva guardrail clínico: o sistema não escolhe dose, necessidade ou indicação.
+
+## v0.59.3 — Supplement Catalog Foundation
 - Adiciona tabela `Suplementos` com isolamento por organização e auditoria.
 - Adiciona CRUD autenticado em `/api/suplementos` com busca, filtro por categoria, inativação e reativação.
 - Estrutura porção, macros/calorias, cafeína, composição, fabricante, apresentação, instruções e observações.

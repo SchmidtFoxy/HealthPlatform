@@ -26,6 +26,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<RelatorioClinico> RelatoriosClinicos => Set<RelatorioClinico>();
     public DbSet<Alimento> Alimentos => Set<Alimento>();
     public DbSet<Suplemento> Suplementos => Set<Suplemento>();
+    public DbSet<SuplementoPlanoAlimentar> SuplementosPlanoAlimentar => Set<SuplementoPlanoAlimentar>();
     public DbSet<PlanoAlimentar> PlanosAlimentares => Set<PlanoAlimentar>();
     public DbSet<ProgramacaoNutricionalDia> ProgramacoesNutricionaisDia => Set<ProgramacaoNutricionalDia>();
     public DbSet<FaseNutricional> FasesNutricionais => Set<FaseNutricional>();
@@ -256,6 +257,19 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.HasIndex(x => new { x.OrganizacaoId, x.NomeNormalizado, x.MarcaNormalizada }).IsUnique();
             entity.HasIndex(x => new { x.OrganizacaoId, x.Categoria, x.Ativo });
             entity.HasOne(x => x.Organizacao).WithMany(x => x.Suplementos).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<SuplementoPlanoAlimentar>(entity =>
+        {
+            entity.ToTable("SuplementosPlanoAlimentar");
+            entity.Property(x => x.QuantidadePorcoes).HasPrecision(10, 3);
+            entity.Property(x => x.Contexto).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.Observacoes).HasMaxLength(1000);
+            entity.HasIndex(x => new { x.PlanoAlimentarId, x.Horario });
+            entity.HasIndex(x => x.SuplementoId);
+            entity.HasOne(x => x.PlanoAlimentar).WithMany(x => x.Suplementos).HasForeignKey(x => x.PlanoAlimentarId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Suplemento).WithMany(x => x.PrescricoesPlanoAlimentar).HasForeignKey(x => x.SuplementoId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.RefeicaoPlanoAlimentar).WithMany(x => x.Suplementos).HasForeignKey(x => x.RefeicaoPlanoAlimentarId).OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<ModeloPlanoAlimentar>(entity =>

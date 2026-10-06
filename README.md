@@ -1,8 +1,8 @@
-# AESYN Performance — v0.59.3
+# AESYN Performance — v0.59.4
 
-## Supplement Catalog Foundation
+## Supplement Scheduling & Nutrition Integration
 
-A v0.59.3 cria a base estruturada de suplementação do AESYN. O profissional passa a ter um catálogo reutilizável e isolado por organização para proteínas, creatina, pré-treinos, barrinhas proteicas, eletrólitos, vitaminas/minerais e itens personalizados.
+A v0.59.4 integra a base estruturada de suplementação ao plano alimentar e ao cronograma diário. A v0.59.3 permanece como fundação do catálogo. O profissional passa a ter um catálogo reutilizável e isolado por organização para proteínas, creatina, pré-treinos, barrinhas proteicas, eletrólitos, vitaminas/minerais e itens personalizados.
 
 ### Entregas
 - cadastro com nome, fabricante, categoria, apresentação e porção;
@@ -17,7 +17,7 @@ A v0.59.3 cria a base estruturada de suplementação do AESYN. O profissional pa
 ### Guardrail
 O catálogo organiza dados informados pelo profissional. O AESYN **não recomenda suplemento, não infere necessidade clínica e não escolhe dose ou indicação automaticamente**.
 
-**Próxima etapa planejada:** `v0.59.4 — Supplement Scheduling & Nutrition Integration`.
+**Próxima etapa planejada:** `v0.59.5 — Supplement Training Context`.
 
 ---
 
@@ -10568,3 +10568,12 @@ A orientação do handoff da continuidade após o fechamento da orientação fin
 O handoff é somente leitura e não executa, persiste ou envia ações.
 
 **Próxima etapa:** `v0.58.64 — Production Operations Support Session Handoff Copy Verification Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure Continuity Handoff Guidance Closure`.
+
+
+## v0.59.4 — Supplement Scheduling & Nutrition Integration
+
+A suplementação saiu do catálogo e passou a integrar o plano alimentar e o cronograma diário do paciente. O profissional pode selecionar um suplemento já cadastrado, definir quantidade em porções, horário, contexto (com refeição, pré/pós-treino, ao acordar, antes de dormir, entre refeições ou outro), observação e vínculo opcional com uma refeição.
+
+Quando o catálogo possui calorias/macros, esses valores entram nos totais do plano e no saldo nutricional. Itens sem macros continuam no cronograma sem criar calorias artificiais. A decisão clínica continua humana: o AESYN **não escolhe dose, produto, necessidade ou indicação** automaticamente.
+
+No PWA, o cronograma usa uma coluna em telas estreitas e mantém ações confortáveis em aproximadamente 360/390/430 px.

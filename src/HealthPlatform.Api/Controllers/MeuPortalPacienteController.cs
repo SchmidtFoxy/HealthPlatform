@@ -568,6 +568,10 @@ public sealed class MeuPortalPacienteController(
                 .ThenInclude(x => x.Itens)
                     .ThenInclude(x => x.Substituicoes)
                         .ThenInclude(x => x.Alimento)
+            .Include(x => x.Suplementos)
+                .ThenInclude(x => x.Suplemento)
+            .Include(x => x.Suplementos)
+                .ThenInclude(x => x.RefeicaoPlanoAlimentar)
             .Where(x => x.PacienteId == pacienteId.Value &&
                         x.Status == "Ativo" &&
                         x.DataInicio <= dia &&
@@ -629,6 +633,31 @@ public sealed class MeuPortalPacienteController(
         var totalCarboidratos = itensPlano.Sum(i => i.Alimento.CarboidratosPor100g * i.QuantidadeGramas / 100m);
         var totalGorduras = itensPlano.Sum(i => i.Alimento.GordurasPor100g * i.QuantidadeGramas / 100m);
         var totalFibras = itensPlano.Sum(i => i.Alimento.FibrasPor100g * i.QuantidadeGramas / 100m);
+        var suplementos = plano.Suplementos.OrderBy(x => x.Horario ?? TimeOnly.MaxValue).ThenBy(x => x.Contexto).Select(x => new
+        {
+            x.Id,
+            x.SuplementoId,
+            nome = x.Suplemento.Nome,
+            marca = x.Suplemento.Marca,
+            categoria = x.Suplemento.Categoria,
+            x.QuantidadePorcoes,
+            porcaoQuantidade = x.Suplemento.PorcaoQuantidade,
+            porcaoUnidade = x.Suplemento.PorcaoUnidade,
+            x.Horario,
+            x.Contexto,
+            refeicao = x.RefeicaoPlanoAlimentar != null ? x.RefeicaoPlanoAlimentar.Nome : null,
+            x.Observacoes,
+            calorias = Math.Round(x.Suplemento.CaloriasPorPorcao * x.QuantidadePorcoes, 1),
+            proteinas = Math.Round(x.Suplemento.ProteinasGPorPorcao * x.QuantidadePorcoes, 1),
+            carboidratos = Math.Round(x.Suplemento.CarboidratosGPorPorcao * x.QuantidadePorcoes, 1),
+            gorduras = Math.Round(x.Suplemento.GordurasGPorPorcao * x.QuantidadePorcoes, 1),
+            fibras = Math.Round(x.Suplemento.FibrasGPorPorcao * x.QuantidadePorcoes, 1)
+        }).ToList();
+        totalCalorias += suplementos.Sum(x => x.calorias);
+        totalProteinas += suplementos.Sum(x => x.proteinas);
+        totalCarboidratos += suplementos.Sum(x => x.carboidratos);
+        totalGorduras += suplementos.Sum(x => x.gorduras);
+        totalFibras += suplementos.Sum(x => x.fibras);
 
         return Ok(new
         {
@@ -642,6 +671,7 @@ public sealed class MeuPortalPacienteController(
                 plano.Observacoes,
                 profissional = plano.Profissional.Nome,
                 refeicoes,
+                suplementos,
                 totais = new
                 {
                     calorias = Math.Round(totalCalorias, 1),

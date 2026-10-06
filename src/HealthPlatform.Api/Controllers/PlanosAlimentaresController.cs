@@ -49,7 +49,7 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
             MetaGordurasG = request.MetaGordurasG,
             MetaFibrasG = request.MetaFibrasG
         };
-        await MontarRefeicoes(item, request.Refeicoes, ct); db.PlanosAlimentares.Add(item); Auditar("CREATE", item, null, Snapshot(item)); await db.SaveChangesAsync(ct);
+        await MontarRefeicoes(item, request.Refeicoes, ct); await MontarSuplementos(item, request.Suplementos, ct); db.PlanosAlimentares.Add(item); Auditar("CREATE", item, null, Snapshot(item)); await db.SaveChangesAsync(ct);
         var criado = await QueryCompleta().FirstAsync(x => x.Id == item.Id, ct); return CreatedAtAction(nameof(GetById), new { id = item.Id }, ToResponse(criado));
     }
 
@@ -71,7 +71,7 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         item.MetaGordurasG = request.MetaGordurasG;
         item.MetaFibrasG = request.MetaFibrasG;
         item.UpdatedAtUtc = DateTime.UtcNow;
-        db.RefeicoesPlanoAlimentar.RemoveRange(item.Refeicoes); item.Refeicoes.Clear(); await MontarRefeicoes(item, request.Refeicoes, ct); Auditar("UPDATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct);
+        db.SuplementosPlanoAlimentar.RemoveRange(item.Suplementos); item.Suplementos.Clear(); db.RefeicoesPlanoAlimentar.RemoveRange(item.Refeicoes); item.Refeicoes.Clear(); await MontarRefeicoes(item, request.Refeicoes, ct); await MontarSuplementos(item, request.Suplementos, ct); Auditar("UPDATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct);
         var atualizado = await QueryCompleta().FirstAsync(x => x.Id == id, ct); return Ok(ToResponse(atualizado));
     }
 
@@ -437,6 +437,26 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
             novo.Refeicoes.Add(refeicao);
         }
 
+        var refeicoesNovasPorOrdem = novo.Refeicoes.ToDictionary(x => x.Ordem);
+        foreach (var suplementoOrigem in origem.Suplementos)
+        {
+            RefeicaoPlanoAlimentar? refeicaoNova = null;
+            if (suplementoOrigem.RefeicaoPlanoAlimentar is not null)
+                refeicoesNovasPorOrdem.TryGetValue(suplementoOrigem.RefeicaoPlanoAlimentar.Ordem, out refeicaoNova);
+            novo.Suplementos.Add(new SuplementoPlanoAlimentar
+            {
+                PlanoAlimentarId = novo.Id,
+                SuplementoId = suplementoOrigem.SuplementoId,
+                Suplemento = suplementoOrigem.Suplemento,
+                RefeicaoPlanoAlimentarId = refeicaoNova?.Id,
+                RefeicaoPlanoAlimentar = refeicaoNova,
+                QuantidadePorcoes = suplementoOrigem.QuantidadePorcoes,
+                Horario = suplementoOrigem.Horario,
+                Contexto = suplementoOrigem.Contexto,
+                Observacoes = suplementoOrigem.Observacoes
+            });
+        }
+
         if (request.ConcluirPlanoAnterior)
         {
             origem.Status = "Concluido";
@@ -503,6 +523,16 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         var ids = itens.Select(x => x.AlimentoId).Concat(subs.Select(x => x.AlimentoId)).Distinct().ToArray();
         var validos = await db.Alimentos.CountAsync(x => ids.Contains(x.Id) && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
         if (validos != ids.Length) return "Um ou mais alimentos nao existem, pertencem a outra organizacao ou estao inativos.";
+        var suplementos = request.Suplementos ?? Array.Empty<SuplementoPlanoRequest>();
+        if (suplementos.Any(x => x.QuantidadePorcoes <= 0 || string.IsNullOrWhiteSpace(x.Contexto))) return "Suplementos devem possuir quantidade de porcoes maior que zero e contexto.";
+        var ordens = request.Refeicoes.Select(x => x.Ordem).ToHashSet();
+        if (suplementos.Any(x => x.RefeicaoOrdem.HasValue && !ordens.Contains(x.RefeicaoOrdem.Value))) return "Suplemento referencia uma refeicao inexistente no plano.";
+        var suplementoIds = suplementos.Select(x => x.SuplementoId).Distinct().ToArray();
+        if (suplementoIds.Length > 0)
+        {
+            var suplementosValidos = await db.Suplementos.CountAsync(x => suplementoIds.Contains(x.Id) && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+            if (suplementosValidos != suplementoIds.Length) return "Um ou mais suplementos nao existem, pertencem a outra organizacao ou estao inativos.";
+        }
         return null;
     }
 
@@ -535,14 +565,44 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         }
     }
 
-    private IQueryable<PlanoAlimentar> QueryCompleta() => db.PlanosAlimentares.AsNoTracking().Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento);
-    private IQueryable<PlanoAlimentar> QueryCompletaTracking() => db.PlanosAlimentares.Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento);
+    private async Task MontarSuplementos(PlanoAlimentar plano, IReadOnlyCollection<SuplementoPlanoRequest>? requests, CancellationToken ct)
+    {
+        if (requests is null || requests.Count == 0) return;
+        var ids = requests.Select(x => x.SuplementoId).Distinct().ToArray();
+        var suplementos = await db.Suplementos.Where(x => ids.Contains(x.Id) && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo).ToDictionaryAsync(x => x.Id, ct);
+        var refeicoesPorOrdem = plano.Refeicoes.ToDictionary(x => x.Ordem);
+        foreach (var r in requests)
+        {
+            refeicoesPorOrdem.TryGetValue(r.RefeicaoOrdem ?? int.MinValue, out var refeicao);
+            plano.Suplementos.Add(new SuplementoPlanoAlimentar
+            {
+                PlanoAlimentarId = plano.Id,
+                SuplementoId = r.SuplementoId,
+                Suplemento = suplementos[r.SuplementoId],
+                RefeicaoPlanoAlimentarId = refeicao?.Id,
+                RefeicaoPlanoAlimentar = refeicao,
+                QuantidadePorcoes = r.QuantidadePorcoes,
+                Horario = r.Horario,
+                Contexto = r.Contexto.Trim(),
+                Observacoes = Limpar(r.Observacoes)
+            });
+        }
+    }
+
+    private IQueryable<PlanoAlimentar> QueryCompleta() => db.PlanosAlimentares.AsNoTracking().Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento).Include(x => x.Suplementos).ThenInclude(x => x.Suplemento).Include(x => x.Suplementos).ThenInclude(x => x.RefeicaoPlanoAlimentar);
+    private IQueryable<PlanoAlimentar> QueryCompletaTracking() => db.PlanosAlimentares.Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento).Include(x => x.Suplementos).ThenInclude(x => x.Suplemento).Include(x => x.Suplementos).ThenInclude(x => x.RefeicaoPlanoAlimentar);
     private async Task<Profissional?> GetProfissionalAtual(CancellationToken ct) => await db.Profissionais.FirstOrDefaultAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
     private async Task<bool> PacienteExiste(Guid id, CancellationToken ct) => await db.Pacientes.AnyAsync(x => x.Id == id && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
     private void Auditar(string acao, PlanoAlimentar item, object? antes, object? depois) => db.AuditLogs.Add(new AuditLog { OrganizacaoId = currentUser.OrganizationId, UsuarioId = currentUser.UserId, Acao = acao, Entidade = nameof(PlanoAlimentar), EntidadeId = item.Id.ToString(), DadosAnterioresJson = antes is null ? null : JsonSerializer.Serialize(antes), DadosNovosJson = depois is null ? null : JsonSerializer.Serialize(depois), IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() });
-    private static object Snapshot(PlanoAlimentar x) => new { x.Id, x.PacienteId, x.ProfissionalId, x.Nome, x.DataInicio, x.DataFim, x.Status, x.PlanoOrigemId, x.Versao, x.AjustePercentual, x.MetaCalorias, x.MetaProteinasG, x.MetaCarboidratosG, x.MetaGordurasG, x.MetaFibrasG, Refeicoes = x.Refeicoes.Select(r => new { r.Nome, r.Horario, r.Ordem, r.MetaCalorias, r.MetaProteinasG, r.MetaCarboidratosG, r.MetaGordurasG, r.MetaFibrasG, Itens = r.Itens.Select(i => new { i.AlimentoId, i.Quantidade, i.Unidade, i.QuantidadeGramas, Substituicoes = i.Substituicoes.Select(s => new { s.AlimentoId, s.Quantidade, s.Unidade, s.QuantidadeGramas }) }) }) };
+    private static object Snapshot(PlanoAlimentar x) => new { x.Id, x.PacienteId, x.ProfissionalId, x.Nome, x.DataInicio, x.DataFim, x.Status, x.PlanoOrigemId, x.Versao, x.AjustePercentual, x.MetaCalorias, x.MetaProteinasG, x.MetaCarboidratosG, x.MetaGordurasG, x.MetaFibrasG, Refeicoes = x.Refeicoes.Select(r => new { r.Nome, r.Horario, r.Ordem, r.MetaCalorias, r.MetaProteinasG, r.MetaCarboidratosG, r.MetaGordurasG, r.MetaFibrasG, Itens = r.Itens.Select(i => new { i.AlimentoId, i.Quantidade, i.Unidade, i.QuantidadeGramas, Substituicoes = i.Substituicoes.Select(s => new { s.AlimentoId, s.Quantidade, s.Unidade, s.QuantidadeGramas }) }) }), Suplementos = x.Suplementos.Select(s => new { s.SuplementoId, s.RefeicaoPlanoAlimentarId, s.QuantidadePorcoes, s.Horario, s.Contexto, s.Observacoes }) };
     private static PlanoAlimentarResponse ToResponse(PlanoAlimentar x)
     {
+        var suplementos = x.Suplementos.OrderBy(s => s.Horario ?? TimeOnly.MaxValue).ThenBy(s => s.Contexto).Select(s =>
+        {
+            var total = CalcularSuplemento(s.Suplemento, s.QuantidadePorcoes);
+            return new SuplementoPlanoResponse(s.Id, s.SuplementoId, s.Suplemento.Nome, s.Suplemento.Marca, s.Suplemento.Categoria, s.QuantidadePorcoes, s.Suplemento.PorcaoQuantidade, s.Suplemento.PorcaoUnidade, s.Horario, s.Contexto, s.RefeicaoPlanoAlimentarId, s.RefeicaoPlanoAlimentar?.Nome, s.Observacoes, total);
+        }).ToList();
+
         var refeicoes = x.Refeicoes.OrderBy(r => r.Ordem).Select(r =>
         {
             var itens = r.Itens.Select(i =>
@@ -551,32 +611,20 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
                 var subs = i.Substituicoes.Select(s => new SubstituicaoPlanoResponse(
                     s.Id, s.AlimentoId, s.Alimento.Nome, s.Quantidade, s.Unidade,
                     s.QuantidadeGramas, s.Observacao, Calcular(s.Alimento, s.QuantidadeGramas))).ToList();
-                return new ItemRefeicaoPlanoResponse(
-                    i.Id, i.AlimentoId, i.Alimento.Nome, i.Quantidade, i.Unidade,
-                    i.QuantidadeGramas, i.Observacao, total, subs);
+                return new ItemRefeicaoPlanoResponse(i.Id, i.AlimentoId, i.Alimento.Nome, i.Quantidade, i.Unidade, i.QuantidadeGramas, i.Observacao, total, subs);
             }).ToList();
 
-            var totalRefeicao = Somar(itens.Select(i => i.Totais));
-            var metas = new MetasNutricionaisResponse(
-                r.MetaCalorias,
-                r.MetaProteinasG,
-                r.MetaCarboidratosG,
-                r.MetaGordurasG,
-                r.MetaFibrasG);
-            var desvios = new DesviosNutricionaisResponse(
-                Desvio(totalRefeicao.Calorias, r.MetaCalorias),
-                Desvio(totalRefeicao.ProteinasG, r.MetaProteinasG),
-                Desvio(totalRefeicao.CarboidratosG, r.MetaCarboidratosG),
-                Desvio(totalRefeicao.GordurasG, r.MetaGordurasG),
-                Desvio(totalRefeicao.FibrasG, r.MetaFibrasG));
-
-            return new RefeicaoPlanoResponse(
-                r.Id, r.Nome, r.Horario, r.Ordem, r.Observacoes,
-                metas, desvios, totalRefeicao, itens);
+            var totalRefeicao = Somar(itens.Select(i => i.Totais).Concat(suplementos.Where(s => s.RefeicaoId == r.Id).Select(s => s.Totais)));
+            var metas = new MetasNutricionaisResponse(r.MetaCalorias, r.MetaProteinasG, r.MetaCarboidratosG, r.MetaGordurasG, r.MetaFibrasG);
+            var desvios = new DesviosNutricionaisResponse(Desvio(totalRefeicao.Calorias, r.MetaCalorias), Desvio(totalRefeicao.ProteinasG, r.MetaProteinasG), Desvio(totalRefeicao.CarboidratosG, r.MetaCarboidratosG), Desvio(totalRefeicao.GordurasG, r.MetaGordurasG), Desvio(totalRefeicao.FibrasG, r.MetaFibrasG));
+            return new RefeicaoPlanoResponse(r.Id, r.Nome, r.Horario, r.Ordem, r.Observacoes, metas, desvios, totalRefeicao, itens);
         }).ToList();
-        return new PlanoAlimentarResponse(x.Id, x.PacienteId, x.ProfissionalId, x.Profissional.Nome, x.Nome, x.DataInicio, x.DataFim, x.Status, x.Observacoes, x.PlanoOrigemId, x.Versao, x.AjustePercentual, x.MetaCalorias, x.MetaProteinasG, x.MetaCarboidratosG, x.MetaGordurasG, x.MetaFibrasG, Somar(refeicoes.Select(r => r.Totais)), refeicoes, x.CreatedAtUtc, x.UpdatedAtUtc);
+
+        var totaisDiarios = Somar(refeicoes.Select(r => r.Totais).Concat(suplementos.Where(s => !s.RefeicaoId.HasValue).Select(s => s.Totais)));
+        return new PlanoAlimentarResponse(x.Id, x.PacienteId, x.ProfissionalId, x.Profissional.Nome, x.Nome, x.DataInicio, x.DataFim, x.Status, x.Observacoes, x.PlanoOrigemId, x.Versao, x.AjustePercentual, x.MetaCalorias, x.MetaProteinasG, x.MetaCarboidratosG, x.MetaGordurasG, x.MetaFibrasG, totaisDiarios, refeicoes, suplementos, x.CreatedAtUtc, x.UpdatedAtUtc);
     }
     private static TotaisNutricionaisResponse Calcular(Alimento a, decimal gramas) { var f = gramas / 100m; return new(Math.Round(a.CaloriasPor100g * f, 2), Math.Round(a.ProteinasPor100g * f, 2), Math.Round(a.CarboidratosPor100g * f, 2), Math.Round(a.GordurasPor100g * f, 2), Math.Round(a.FibrasPor100g * f, 2)); }
+    private static TotaisNutricionaisResponse CalcularSuplemento(Suplemento s, decimal porcoes) => new(Math.Round(s.CaloriasPorPorcao * porcoes, 2), Math.Round(s.ProteinasGPorPorcao * porcoes, 2), Math.Round(s.CarboidratosGPorPorcao * porcoes, 2), Math.Round(s.GordurasGPorPorcao * porcoes, 2), Math.Round(s.FibrasGPorPorcao * porcoes, 2));
     private static TotaisNutricionaisResponse Somar(IEnumerable<TotaisNutricionaisResponse> t) => new(Math.Round(t.Sum(x => x.Calorias), 2), Math.Round(t.Sum(x => x.ProteinasG), 2), Math.Round(t.Sum(x => x.CarboidratosG), 2), Math.Round(t.Sum(x => x.GordurasG), 2), Math.Round(t.Sum(x => x.FibrasG), 2));
     private static string? ValidarMetas(
         decimal? calorias,
