@@ -10585,3 +10585,7 @@ Suplementos programados em planos alimentares podem ser vinculados opcionalmente
 
 O Connected Care permite anexar PDF, JPEG, PNG, WebP, DOC e DOCX diretamente no composer do chat. O anexo usa a mesma biblioteca segura do paciente (até 15 MB, auditoria e isolamento por organização), aparece como referência na conversa e evita notificação duplicada de arquivo quando o envio nasceu no chat. Imagens/PDF podem ser abertos em preview autenticado; DOC/DOCX são baixados de forma autenticada.
 
+
+### Messaging PWA — v0.59.9
+O chat possui notificação interna persistente e Web Push opcional por dispositivo. Push de mensagem usa deep-link para a conversa correta; se o app estiver fechado, o Service Worker abre o AESYN e preserva o destino até a autenticação. O retorno ao app sincroniza badges. Push nunca é a única fonte de estado: inbox e não lidas permanecem persistidas no sistema.
+

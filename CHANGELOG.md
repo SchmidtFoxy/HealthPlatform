@@ -1,3 +1,12 @@
+## v0.59.9 — PWA Messaging Notifications
+- Mensagens usam deep-link por conversa no Web Push.
+- Profissional abre diretamente o chat do paciente; paciente abre o próprio chat.
+- Deep-link recebido antes da sessão é preservado até a autenticação.
+- Service Worker agrupa notificações por conversa.
+- Notificação interna permanece como fallback persistente quando push não estiver disponível.
+- Badges são sincronizados ao abrir push, recuperar foco ou retornar ao app.
+- Sem migration.
+
 ## v0.59.8 — Chat Attachments
 - Adiciona anexo direto no composer para paciente e profissional.
 - Reutiliza a biblioteca segura do paciente e mantém uma única fonte de verdade para arquivos.

@@ -9710,8 +9710,16 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.9 — PWA Messaging Notifications`.
 
-### v0.59.9 — PWA Messaging Notifications
-Adicionar Web Push para novas mensagens, deep-link para a conversa correta, fallback interno quando push não estiver disponível e sincronização do badge de não lidas.
+### ✅ v0.59.9 — PWA Messaging Notifications — IMPLEMENTADA
+- novas mensagens continuam gerando notificação interna persistente como fallback, independentemente de Web Push;
+- push do paciente para o profissional carrega deep-link `chat-profissional:<pacienteId>` e abre diretamente a conversa correta;
+- push para o paciente abre diretamente o próprio chat;
+- clique funciona com PWA fechado ou já aberto, inclusive após autenticação quando o deep-link chegou antes da sessão;
+- Service Worker agrupa notificações por conversa para reduzir ruído de múltiplas mensagens do mesmo chat;
+- retorno ao app sincroniza badges de notificações e mensagens não lidas;
+- nenhuma migration foi necessária.
+
+**Próxima etapa funcional:** `v0.59.10 — Messaging Mobile Polish`.
 
 ### v0.59.10 — Messaging Mobile Polish
 Revisar inbox e conversa em 360/390/430 px: composer fixo sem cobrir conteúdo, safe-area de iPhone, câmera/galeria/arquivo, scroll estável, estados de envio/erro/retry e transição lista → conversa com comportamento de app.

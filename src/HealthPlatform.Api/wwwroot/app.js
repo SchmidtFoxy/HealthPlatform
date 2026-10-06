@@ -20654,7 +20654,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.8';
+const HP_MVP_VERSION='0.59.9';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -30849,3 +30849,71 @@ loadPatientChat=async function(){
 loadProfessionalPatientChat=async function(patient,host=$('#patientTabContent')){
   try{const data=await api(`/api/chat/pacientes/${patient.id}`);host.innerHTML=hpChatShell(data,{professional:true,patient});const url=`/api/chat/pacientes/${patient.id}/mensagens`;hpBindChatForm(url,()=>loadProfessionalPatientChat(patient,host));hpBindChatAttachmentsV0598(url,()=>loadProfessionalPatientChat(patient,host));host.querySelector('[data-chat-open-files]')?.addEventListener('click',()=>{state.patientTab='arquivos';loadProfessionalPatientFilesV01934(patient,host).catch(e=>toast(e.message,true))});setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},20);await hpRefreshChatBadgeV01935(patient.id)}catch(err){host.innerHTML=hpChatErrorV01935(err.message);host.querySelector('[data-chat-retry]')?.addEventListener('click',()=>loadProfessionalPatientChat(patient,host))}
 };
+
+
+// ===== v0.59.9 — PWA Messaging Notifications =====
+const HP_PWA_MESSAGING_NOTIFICATIONS_V0599='v0.59.9';
+const HP_PUSH_PENDING_LINK_V0599='aesyn.push.pending.v0599';
+
+function hpStorePushLinkV0599(link){
+  const value=String(link||'').trim();
+  if(!value)return;
+  try{sessionStorage.setItem(HP_PUSH_PENDING_LINK_V0599,value)}catch{}
+}
+function hpTakePushLinkV0599(){
+  try{const value=sessionStorage.getItem(HP_PUSH_PENDING_LINK_V0599)||'';sessionStorage.removeItem(HP_PUSH_PENDING_LINK_V0599);return value}catch{return ''}
+}
+async function hpRefreshMessagingBadgesV0599(){
+  try{await refreshNotifications(true)}catch{}
+  try{if(typeof hpRefreshChatBadgeV01935==='function')await hpRefreshChatBadgeV01935()}catch{}
+  try{if(state.user?.tipoUsuario!=='Paciente'&&typeof hpRefreshProfessionalChatBadgeV0596==='function')await hpRefreshProfessionalChatBadgeV0596()}catch{}
+}
+function hpOpenMessagingDeepLinkV0599(link){
+  const value=String(link||'').trim();
+  if(!value)return false;
+  if(!state.token){hpStorePushLinkV0599(value);return false}
+  if(value==='chat'){
+    if(state.user?.tipoUsuario==='Paciente'&&typeof openPatientView==='function'){openPatientView('chat');hpRefreshMessagingBadgesV0599();return true}
+    if(state.user?.tipoUsuario!=='Paciente'){navigate('chat-profissional');hpRefreshMessagingBadgesV0599();return true}
+  }
+  if(value==='chat-profissional'){
+    if(state.user?.tipoUsuario!=='Paciente'){navigate('chat-profissional');hpRefreshMessagingBadgesV0599();return true}
+    return false;
+  }
+  if(value.startsWith('chat-profissional:')){
+    const pacienteId=value.slice('chat-profissional:'.length).trim();
+    if(pacienteId&&state.user?.tipoUsuario!=='Paciente'){
+      state.patientId=pacienteId;
+      state.patientTab='chat';
+      navigate('paciente');
+      hpRefreshMessagingBadgesV0599();
+      return true;
+    }
+  }
+  return false;
+}
+function hpConsumePendingPushV0599(){
+  const value=hpTakePushLinkV0599();
+  if(value)hpOpenMessagingDeepLinkV0599(value);
+}
+const hpPushParamsV0599=new URLSearchParams(location.search);
+const hpInitialPushLinkV0599=hpPushParamsV0599.get('aesynPushLink')||'';
+if(hpInitialPushLinkV0599){
+  hpStorePushLinkV0599(hpInitialPushLinkV0599);
+  hpPushParamsV0599.delete('aesynPushLink');
+  const query=hpPushParamsV0599.toString();
+  history.replaceState({},'',`${location.pathname}${query?`?${query}`:''}${location.hash||''}`);
+}
+navigator.serviceWorker?.addEventListener('message',event=>{
+  if(event.data?.type!=='AESYN_PUSH_OPEN')return;
+  const link=String(event.data.link||'');
+  if(!hpOpenMessagingDeepLinkV0599(link))hpStorePushLinkV0599(link);
+});
+const __showApp_v0599=showApp;
+showApp=function(){
+  __showApp_v0599();
+  setTimeout(()=>{hpConsumePendingPushV0599();hpRefreshMessagingBadgesV0599()},280);
+};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&state.token)hpRefreshMessagingBadgesV0599()});
+window.addEventListener('focus',()=>{if(state.token)hpRefreshMessagingBadgesV0599()});
+if(state.token)setTimeout(()=>{hpConsumePendingPushV0599();hpRefreshMessagingBadgesV0599()},450);

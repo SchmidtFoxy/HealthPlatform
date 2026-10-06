@@ -278,7 +278,7 @@ public sealed class ChatAcompanhamentoController(
                 OrigemId = item.Id,
                 OrigemChave = $"CHAT:{item.Id}",
                 DataEventoUtc = agora,
-                Link = autor == "Paciente" ? "pacientes" : "chat",
+                Link = autor == "Paciente" ? $"chat-profissional:{paciente.Id}" : "chat",
                 CreatedAtUtc = agora,
                 UpdatedAtUtc = agora,
                 Ativa = true
@@ -289,7 +289,8 @@ public sealed class ChatAcompanhamentoController(
         if (destinatarioUsuarioId.HasValue)
         {
             var pushTitulo = autor == "Paciente" ? $"Nova mensagem de {paciente.Nome}" : $"Nova mensagem de {profissional.Nome}";
-            await push.EnviarAsync(destinatarioUsuarioId.Value, "mensagem", pushTitulo, $"{RotuloContexto(contexto)} • {Resumir(mensagem, 120)}", autor == "Paciente" ? "pacientes" : "chat", ct);
+            var pushLink = autor == "Paciente" ? $"chat-profissional:{paciente.Id}" : "chat";
+            await push.EnviarAsync(destinatarioUsuarioId.Value, "mensagem", pushTitulo, $"{RotuloContexto(contexto)} • {Resumir(mensagem, 120)}", pushLink, ct);
         }
         return Ok(new
         {

@@ -1,4 +1,4 @@
-const HP_SW_CACHE = 'aesyn-static-v0.59.8';
+const HP_SW_CACHE = 'aesyn-static-v0.59.9';
 const HP_SW_ASSETS = ['/', '/manifest.webmanifest', '/app.css?v=0.56.1', '/app.js?v=0.56.1', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
 self.addEventListener('install', event => { event.waitUntil(caches.open(HP_SW_CACHE).then(cache => cache.addAll(HP_SW_ASSETS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', event => { event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('aesyn-static-') && key !== HP_SW_CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())); });
@@ -17,7 +17,9 @@ self.addEventListener('fetch', event => {
 self.addEventListener('push', event => {
   let payload={title:'AESYN Performance',body:'Você tem uma nova atualização.',icon:'/icons/icon-192.png',badge:'/icons/icon-192.png',data:{link:''}};
   try { if(event.data) payload={...payload,...event.data.json()}; } catch { if(event.data) payload.body=event.data.text(); }
-  const options={body:payload.body,icon:payload.icon||'/icons/icon-192.png',badge:payload.badge||'/icons/icon-192.png',tag:payload.tag||'aesyn-update',renotify:false,data:payload.data||{}};
+  const link=String(payload.data?.link||'');
+  const chatTag=link.startsWith('chat')?`aesyn-${link.replace(/[^a-zA-Z0-9:_-]/g,'')}`:'';
+  const options={body:payload.body,icon:payload.icon||'/icons/icon-192.png',badge:payload.badge||'/icons/icon-192.png',tag:payload.tag||chatTag||'aesyn-update',renotify:false,data:payload.data||{}};
   event.waitUntil(self.registration.showNotification(payload.title||'AESYN Performance',options));
 });
 self.addEventListener('notificationclick', event => {
