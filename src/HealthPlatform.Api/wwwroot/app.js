@@ -121,11 +121,38 @@ function hpInstallConnectivityV01942(){
   connection?.addEventListener?.('change',inspect);inspect();
   document.querySelector('[data-connectivity-retry]')?.addEventListener('click',()=>{if(navigator.onLine){hpSetConnectivityV01942(true,false);hpFlushOfflineQueueV01942().catch(()=>{});location.reload()}else toast('Ainda estamos sem conexão.',true)});
 }
+const HP_PWA_SESSION_MOBILE_SEARCH_V0600='v0.60.0';
+let hpSessionRefreshPromiseV0600=null;
+async function hpTryRefreshSessionV0600(){
+  if(!state.token)return {ok:false,terminal:true};
+  if(hpSessionRefreshPromiseV0600)return hpSessionRefreshPromiseV0600;
+  const activeToken=state.token;
+  const attempt=(async()=>{
+    try{
+      const response=await fetch('/api/auth/renovar',{
+        method:'POST',
+        headers:{'Content-Type':'application/json',Authorization:`Bearer ${activeToken}`}
+      });
+      if(response.status===401||response.status===403)return {ok:false,terminal:true};
+      if(!response.ok)return {ok:false,terminal:false};
+      const data=await response.json();
+      if(!data?.accessToken)return {ok:false,terminal:false};
+      hpStoreSession(data);
+      return {ok:true,terminal:false};
+    }catch(err){
+      console.warn('Renovação de sessão temporariamente indisponível:',err?.message||err);
+      return {ok:false,terminal:false};
+    }
+  })();
+  hpSessionRefreshPromiseV0600=attempt;
+  try{return await attempt}
+  finally{if(hpSessionRefreshPromiseV0600===attempt)hpSessionRefreshPromiseV0600=null}
+}
 async function api(path,options={}){
   if(options.dedupeKey&&!options.__dedupeActive)return hpRunOnceV01942(options.dedupeKey,()=>api(path,{...options,__dedupeActive:true}));
   if(!navigator.onLine&&!options.skipOfflineQueue)return hpQueueSafeRequestV01942(path,options);
   const headers={'Content-Type':'application/json',...(options.headers||{})};if(state.token)headers.Authorization=`Bearer ${state.token}`;const started=performance.now();
-  try{const r=await fetch(path,{...options,headers});const elapsed=performance.now()-started;if(elapsed>6000)hpSetConnectivityV01942(true,true);else if(navigator.onLine&&hpConnectivityV01942.slow)hpSetConnectivityV01942(true,false);const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){logout({notifyServer:false});throw new Error(d?.message||'Sua sessão expirou.')}if(r.status===403)throw new Error(d?.message||'Você não tem permissão para executar esta ação.');if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}catch(err){if(hpIsNetworkErrorV01942(err)){hpSetConnectivityV01942(navigator.onLine,navigator.onLine);if(options.queueIfOffline&&!options.skipOfflineQueue)return hpQueueSafeRequestV01942(path,options);throw new Error('Conexão indisponível ou instável. O que você digitou foi preservado; tente novamente quando a internet voltar.')}throw err}
+  try{const r=await fetch(path,{...options,headers});const elapsed=performance.now()-started;if(elapsed>6000)hpSetConnectivityV01942(true,true);else if(navigator.onLine&&hpConnectivityV01942.slow)hpSetConnectivityV01942(true,false);const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(r.status===401&&path!=='/api/auth/login'){if(path!=='/api/auth/renovar'&&!options.__sessionRetry){const renewal=await hpTryRefreshSessionV0600();if(renewal.ok)return api(path,{...options,__sessionRetry:true,skipOfflineQueue:true});if(!renewal.terminal)throw new Error('Não foi possível validar sua sessão agora. Sua conta continua conectada; tente novamente.')}logout({notifyServer:false});throw new Error(d?.message||'Sua sessão expirou.')}if(r.status===403)throw new Error(d?.message||'Você não tem permissão para executar esta ação.');if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d}catch(err){if(hpIsNetworkErrorV01942(err)){hpSetConnectivityV01942(navigator.onLine,navigator.onLine);if(options.queueIfOffline&&!options.skipOfflineQueue)return hpQueueSafeRequestV01942(path,options);throw new Error('Conexão indisponível ou instável. O que você digitou foi preservado; tente novamente quando a internet voltar.')}throw err}
 }
 async function hpUploadFile(path,file){
   const form=new FormData();form.append('file',file);
@@ -284,7 +311,7 @@ function showApp(){
     $('#patientAppView').classList.remove('hidden');
     $('#patientUserName').textContent=u.nome||'Paciente';
     $('#patientAvatar').textContent=initials(u.nome);
-    loadPatientSection('inicio').catch(e=>{toast(e.message,true);if(String(e.message).includes('sessão'))logout()});
+    loadPatientSection('inicio').catch(e=>{toast(e.message,true)});
     return;
   }
   $('#patientAppView').classList.add('hidden');
@@ -309,8 +336,8 @@ function hpStoreSession(d){
 }
 async function hpRenewSession(){
   if(!state.token)return;
-  try{const d=await api('/api/auth/renovar',{method:'POST'});hpStoreSession(d)}
-  catch(e){console.warn('Sessão não pôde ser renovada:',e?.message||e)}
+  const result=await hpTryRefreshSessionV0600();
+  if(!result.ok&&result.terminal)logout({notifyServer:false});
 }
 function hpScheduleSessionRenewal(){
   hpClearSessionRenewal();
@@ -3206,7 +3233,7 @@ function openEditPatientForm(p){
 
 function clinical(label,value){return `<div class="clinical-field"><small>${label}</small><p>${esc(value||'—')}</p></div>`}function diaryIcon(t){return ({sono:'☾',hidratacao:'💧',alimentacao:'◉',treino:'↗',sintoma:'!',humor:'☺'}[String(t||'').toLowerCase()]||'•')}
 async function loadAgenda(){const iso=todayISO(state.selectedDate),d=await api(`/api/agenda?data=${iso}&offsetMinutos=${state.offset}`),label=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(state.selectedDate);content.innerHTML=`<div class="agenda-header"><div><h3>Agenda</h3><p>${d.total} atendimento(s) neste dia.</p></div><div class="date-nav"><button class="secondary" id="prevDay">←</button><div class="date-title">${label}</div><button class="secondary" id="nextDay">→</button></div></div><div class="stats-grid agenda-stats">${stat('Total',d.total,'consultas')}${stat('Agendadas',d.agendadas,'aguardando')}${stat('Confirmadas',d.confirmadas,'confirmadas')}${stat('Realizadas',d.realizadas,'concluídas')}${stat('Faltas',d.faltas,'não compareceu')}</div><div class="agenda-list">${d.consultas.length?d.consultas.map(c=>`<div class="agenda-item"><div class="agenda-time">${fmtTime(c.dataHoraLocal)}</div><div class="agenda-bar"></div><div class="agenda-person clickable" data-patient="${c.pacienteId}"><strong>${esc(c.pacienteNome)}</strong><small>${esc(c.motivo||'Consulta')} • ${esc(c.telefone||c.email||'sem contato')}</small></div><div class="agenda-actions"><span class="pill ${esc(c.status)}">${esc(c.status)}</span>${c.status==='Agendada'?`<button class="secondary confirm" data-id="${c.id}">Confirmar</button>`:''}</div></div>`).join(''):'<div class="card empty">Nenhuma consulta neste dia.</div>'}</div>`;$('#prevDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()-1);loadAgenda()};$('#nextDay').onclick=()=>{state.selectedDate.setDate(state.selectedDate.getDate()+1);loadAgenda()};$$('[data-patient]').forEach(x=>x.onclick=()=>openPatient(x.dataset.patient));$$('.confirm').forEach(x=>x.onclick=async()=>{try{await api(`/api/agenda/consultas/${x.dataset.id}/status?offsetMinutos=${state.offset}`,{method:'PATCH',body:JSON.stringify({status:'Confirmada'})});toast('Consulta confirmada.');loadAgenda()}catch(e){toast(e.message,true)}})}
-if(state.token){hpScheduleSessionRenewal();showApp();hpPrepareThemeAfterLogin().catch(()=>hpMaybeOpenThemeChoice());}
+if(state.token){hpBootstrapSessionV0600();}
 
 /* v0.3.27 - edição clínica + agenda operacional */
 const __renderPatientTab_v024 = renderPatientTab;
@@ -18542,15 +18569,17 @@ function hpEnsureGlobalSearchModal(){
   modal.className='global-search-overlay hidden';
   modal.innerHTML=`<div class="global-search-dialog">
     <div class="global-search-input-wrap">
-      <span>⌕</span>
-      <input id="globalSearchInput" autocomplete="off" placeholder="Paciente, consulta, pendência, follow-up...">
+      <span class="global-search-glyph-v0600" aria-hidden="true">⌕</span>
+      <input id="globalSearchInput" autocomplete="off" inputmode="search" enterkeyhint="search" aria-label="Buscar no AESYN" placeholder="Paciente, consulta, pendência, follow-up...">
       <kbd>Esc</kbd>
+      <button class="global-search-close-v0600" type="button" data-search-close-v0600 aria-label="Fechar busca">×</button>
     </div>
     <div id="globalSearchMeta" class="global-search-meta">Digite pelo menos 2 caracteres.</div>
     <div id="globalSearchResults" class="global-search-results"></div>
   </div>`;
   document.body.appendChild(modal);
 
+  modal.querySelector('[data-search-close-v0600]')?.addEventListener('click',hpCloseGlobalSearch);
   modal.addEventListener('click',e=>{if(e.target===modal)hpCloseGlobalSearch()});
   $('#globalSearchInput').addEventListener('input',()=>{
     clearTimeout(hpGlobalSearchTimer);
@@ -18568,6 +18597,8 @@ function hpEnsureGlobalSearchModal(){
 function hpOpenGlobalSearch(){
   const modal=hpEnsureGlobalSearchModal();
   modal.classList.remove('hidden');
+  document.body.classList.add('hp-global-search-open-v0600');
+  hpSyncMobileViewportV0600();
   const input=$('#globalSearchInput');
   input.value='';
   $('#globalSearchResults').innerHTML='';
@@ -18578,6 +18609,7 @@ function hpOpenGlobalSearch(){
 function hpCloseGlobalSearch(){
   const modal=$('#globalSearchModal');
   if(modal)modal.classList.add('hidden');
+  document.body.classList.remove('hp-global-search-open-v0600');
 }
 
 function hpSearchIcon(tipo){
@@ -20654,7 +20686,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.11';
+const HP_MVP_VERSION='0.60.0';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -31020,4 +31052,36 @@ document.addEventListener('visibilitychange',()=>{
 window.addEventListener('focus',()=>hpRefreshChatReceiptsV05911());
 window.addEventListener('hashchange',()=>{
   if(!document.querySelector('.care-chat-shell-v05911'))hpStopChatReceiptRefreshV05911();
+});
+// ===== v0.60.0 — PWA Session & Mobile Search Reliability =====
+function hpSyncMobileViewportV0600(){
+  const viewport=window.visualViewport;
+  const height=Math.round(viewport?.height||window.innerHeight);
+  document.documentElement.style.setProperty('--hp-mobile-viewport-height-v0600',`${height}px`);
+}
+async function hpBootstrapSessionV0600(){
+  if(!state.token)return;
+  state.expiresAtUtc=state.expiresAtUtc||localStorage.getItem('hp_expires_at')||null;
+  const expires=Date.parse(state.expiresAtUtc||'');
+  if(Number.isFinite(expires)&&expires-Date.now()<30000){
+    const renewal=await hpTryRefreshSessionV0600();
+    if(!renewal.ok&&renewal.terminal){
+      logout({notifyServer:false});
+      return;
+    }
+  }
+  hpScheduleSessionRenewal();
+  showApp();
+  hpPrepareThemeAfterLogin().catch(()=>hpMaybeOpenThemeChoice());
+}
+window.visualViewport?.addEventListener('resize',hpSyncMobileViewportV0600);
+window.visualViewport?.addEventListener('scroll',hpSyncMobileViewportV0600);
+window.addEventListener('resize',hpSyncMobileViewportV0600);
+document.addEventListener('DOMContentLoaded',()=>{
+  hpSyncMobileViewportV0600();
+  const searchButton=document.querySelector('#globalSearchButton');
+  if(searchButton){
+    searchButton.setAttribute('aria-label','Buscar no AESYN');
+    searchButton.setAttribute('title','Buscar');
+  }
 });

@@ -1,4 +1,4 @@
-# AESYN Performance — v0.59.4
+﻿# AESYN Performance — v0.59.4
 
 ## Supplement Scheduling & Nutrition Integration
 
@@ -10599,4 +10599,15 @@ O chat diferencia Enviada, Entregue e Lida usando recibos persistidos pelo AESYN
 
 ### Lista 04
 A fase v0.59.x foi concluída em v0.59.11 com 12/12 etapas. A próxima série funcional deve ser definida a partir da Lista 05 fornecida pelo usuário, em vez de prolongar artificialmente a v0.59.x.
+## v0.60.0 — PWA Session & Mobile Search Reliability
 
+A abertura da Lista 05 prioriza confiabilidade de entrada e ergonomia mobile:
+- 401 tenta renovar sessão uma vez antes de logout;
+- falhas transitórias de validação não apagam a sessão imediatamente;
+- boot do PWA trata sessão próxima do vencimento;
+- Service Worker e cache-busting usam `0.60.0`;
+- busca mobile tem botão X explícito, teclado de busca, safe areas e viewport dinâmico;
+- lupa volta a ter contraste no tema claro;
+- shell mobile impede deslocamento horizontal involuntário.
+
+Próxima entrega: `v0.60.1 — Patient Files Mobile Recovery`.

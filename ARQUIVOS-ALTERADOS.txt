@@ -1,22 +1,13 @@
-v0.59.3 — Supplement Catalog Foundation
-
-Arquivos alterados neste pacote incremental:
-- CHANGELOG.md
-- PREPARAR.ps1
-- README.md
-- ROADMAP.md
-- TESTAR.ps1
-- VERSION.txt
-- src/HealthPlatform.Api/Contracts/Suplementos/SuplementoContracts.cs
-- src/HealthPlatform.Api/Controllers/HealthController.cs
-- src/HealthPlatform.Api/Controllers/SuplementosController.cs
-- src/HealthPlatform.Api/Program.cs
-- src/HealthPlatform.Api/wwwroot/app.css
-- src/HealthPlatform.Api/wwwroot/app.js
-- src/HealthPlatform.Api/wwwroot/index.html
-- src/HealthPlatform.Api/wwwroot/sw.js
-- src/HealthPlatform.Domain/Entities/Organizacao.cs
-- src/HealthPlatform.Domain/Entities/Suplemento.cs
-- src/HealthPlatform.Infrastructure/Data/AppDbContext.cs
-- src/HealthPlatform.Infrastructure/Migrations/20261006143000_V0593SupplementCatalog.cs
-- src/HealthPlatform.Infrastructure/Migrations/AppDbContextModelSnapshot.cs
+﻿VERSION.txt
+ROADMAP.md
+ROADMAP-LISTA-05.md
+CHANGELOG.md
+README.md
+PREPARAR.ps1
+TESTAR.ps1
+src/HealthPlatform.Api/Controllers/HealthController.cs
+src/HealthPlatform.Api/Program.cs
+src/HealthPlatform.Api/wwwroot/index.html
+src/HealthPlatform.Api/wwwroot/app.js
+src/HealthPlatform.Api/wwwroot/app.css
+src/HealthPlatform.Api/wwwroot/sw.js

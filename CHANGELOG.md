@@ -1,4 +1,4 @@
-## v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure
+﻿## v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure
 - Recibos do chat exibem `Enviada`, `Entregue` e `Lida` usando o estado real já persistido.
 - Mensagens lidas mostram o horário real de leitura.
 - Conversa exibe atividade baseada em recibos reais, sem simular presença online.
@@ -8691,3 +8691,14 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - adiciona migration EF Core descoberta `20261006154500_V0595SupplementTrainingContext`;
 - adiciona gates de ownership, migration, PWA e Regression Memory;
 - o AESYN organiza o contexto informado pelo profissional e não prescreve automaticamente suplemento, dose ou indicação.
+## v0.60.0 — PWA Session & Mobile Search Reliability — 2026-10-06
+- Corrigida expulsão prematura do PWA: respostas 401 agora tentam renovar a sessão antes de logout.
+- Diferenciada falha transitória de renovação de sessão de expiração/revogação real.
+- Removido logout duplicado no primeiro carregamento do portal do paciente.
+- Boot de sessão próximo do vencimento passou a renovar antes da jornada.
+- Busca mobile ganhou fechamento por X, input apropriado, safe areas e altura com `visualViewport`.
+- Lupa recebeu contraste explícito no tema claro.
+- Shell PWA passou a impedir deslocamento horizontal involuntário.
+- Cache do Service Worker e cache-busting atualizados para `0.60.0`.
+- Lista 05 consolidada no ROADMAP.md vivo, incluindo Diet Model Builder.
+- Sem migration de banco.

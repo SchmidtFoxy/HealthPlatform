@@ -6367,3 +6367,123 @@ html[data-theme="light"] .sports-expansion-ii-v0260{background:#fff}
 @media(max-width:430px){
   .care-chat-presence-v05911{margin-inline:1px}
 }
+/* ===== v0.60.0 — PWA Session & Mobile Search Reliability ===== */
+:root{
+  --hp-mobile-viewport-height-v0600:100dvh;
+}
+html,body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  overscroll-behavior-x:none;
+}
+@supports (overflow:clip){
+  html,body{overflow-x:clip}
+}
+#patientAppView,.patient-portal-shell,.patient-portal-content,.app-shell,.main,.content{
+  min-width:0;
+  max-width:100%;
+}
+body.hp-global-search-open-v0600{overflow:hidden!important}
+.global-search-glyph-v0600{
+  display:inline-grid;
+  place-items:center;
+  width:24px;
+  min-width:24px;
+  font-size:1.35rem;
+  line-height:1;
+  color:currentColor;
+  opacity:1;
+}
+.global-search-close-v0600{
+  width:38px;
+  min-width:38px;
+  height:38px;
+  border-radius:12px;
+  border:1px solid var(--line,#dfe4ea);
+  background:transparent;
+  color:inherit;
+  font-size:1.45rem;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+html[data-theme='light'] .patient-portal-user .global-search-button{
+  color:#0b3b36!important;
+  background:#f4fbf8!important;
+  border-color:rgba(11,59,54,.16)!important;
+}
+html[data-theme='light'] .patient-portal-user .global-search-button .global-search-glyph-v0600,
+html[data-theme='light'] #globalSearchButton{
+  color:#0b3b36!important;
+  opacity:1!important;
+}
+html[data-theme='dark'] .patient-portal-user .global-search-button{
+  color:#eafff8!important;
+}
+@media(max-width:720px){
+  .global-search-overlay{
+    inset:0;
+    padding:0!important;
+    align-items:stretch!important;
+    justify-content:stretch!important;
+    background:rgba(4,18,22,.72)!important;
+  }
+  .global-search-dialog{
+    width:100%!important;
+    max-width:none!important;
+    height:var(--hp-mobile-viewport-height-v0600,100dvh)!important;
+    max-height:none!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  .global-search-input-wrap{
+    grid-template-columns:auto minmax(0,1fr) auto!important;
+    gap:10px!important;
+    padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 12px max(12px,env(safe-area-inset-left))!important;
+  }
+  .global-search-input-wrap kbd{display:none!important}
+  .global-search-close-v0600{
+    display:grid!important;
+    min-width:44px;
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    color:#0b3b36;
+    background:rgba(11,59,54,.08);
+    border-color:rgba(11,59,54,.14);
+  }
+  html[data-theme='dark'] .global-search-close-v0600{
+    color:#eafff8;
+    background:rgba(255,255,255,.07);
+    border-color:rgba(255,255,255,.1);
+  }
+  .global-search-input-wrap input{
+    min-height:44px;
+    font-size:16px!important;
+  }
+  .global-search-meta{
+    padding:10px max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left))!important;
+  }
+  .global-search-results{
+    padding:8px max(8px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important;
+    overscroll-behavior:contain;
+  }
+  .global-search-result{
+    min-height:56px;
+    padding:12px!important;
+  }
+  .patient-portal-shell{
+    overflow-x:hidden!important;
+    overscroll-behavior-x:none;
+  }
+}
+@media(max-width:430px){
+  .patient-portal-user .global-search-button{
+    display:grid!important;
+    place-items:center!important;
+  }
+  .patient-portal-user .global-search-button>span:not(.global-search-glyph-v0600),
+  .patient-portal-user .global-search-button>kbd{display:none!important}
+}
