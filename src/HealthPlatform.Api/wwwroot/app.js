@@ -20654,7 +20654,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.10';
+const HP_MVP_VERSION='0.59.11';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -30933,3 +30933,91 @@ hpBindChatForm=function(url,reload){const form=$('#careChatForm');if(!form)retur
 const __hpBindChatAttachmentsV05910=hpBindChatAttachmentsV0598;
 hpBindChatAttachmentsV0598=function(url,reload){__hpBindChatAttachmentsV05910(url,reload);const shell=$('.care-chat-shell-v05910');if(!shell)return;const form=shell.querySelector('#careChatForm');const cameraInput=shell.querySelector('[data-chat-camera-input-v05910]');const cameraButton=shell.querySelector('[data-chat-camera-v05910]');const professional=shell.getAttribute('data-chat-professional-v0598')==='true';const patientId=shell.getAttribute('data-chat-patient-id-v0598')||'';const sendAttachment=async(file,button)=>{if(!file)return;const original=button?.innerHTML||'';if(button){button.disabled=true;button.innerHTML='…'}hpChatComposeStatusV05910(form,`Enviando ${file.name||'anexo'}…`,'sending');try{await hpSendChatAttachmentV0598(file,url,reload,professional,patientId,val(form,'contexto'));hpChatComposeStatusV05910(form,'Anexo enviado.','success');setTimeout(()=>hpChatScrollBottomV05910({force:true}),40)}catch(err){hpChatComposeStatusV05910(form,`${err.message||'Falha ao enviar anexo.'} Selecione o arquivo novamente para tentar de novo.`,'error')}finally{if(button){button.disabled=false;button.innerHTML=original}if(cameraInput)cameraInput.value=''}};if(cameraButton&&cameraInput){cameraButton.onclick=()=>cameraInput.click();cameraInput.onchange=()=>sendAttachment(cameraInput.files?.[0],cameraButton)}shell.querySelector('[data-chat-back-inbox-v05910]')?.addEventListener('click',()=>{state.chatInboxModeV0597=state.chatInboxModeV0597||'all';navigate('chat-profissional')});hpChatSyncKeyboardV05910();setTimeout(()=>hpChatScrollBottomV05910({force:true}),20)};
 document.addEventListener('focusin',e=>{if(e.target?.closest?.('.care-chat-shell-v05910'))setTimeout(hpChatSyncKeyboardV05910,0)});document.addEventListener('focusout',e=>{if(e.target?.closest?.('.care-chat-shell-v05910'))setTimeout(hpChatSyncKeyboardV05910,120)});
+
+
+// ===== v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure =====
+const HP_MESSAGING_PRESENCE_DELIVERY_V05911='v0.59.11';
+let hpChatReceiptTimerV05911=null;
+let hpChatReceiptUrlV05911='';
+
+function hpChatReceiptTextV05911(m){
+  if(!m?.me)return '';
+  const status=String(m.status||'Enviada');
+  const icon=status==='Lida'?'✓✓':status==='Entregue'?'✓✓':'✓';
+  const detail=status==='Lida'&&m.lidaEmUtc?` • ${fmtDateTime(m.lidaEmUtc)}`:'';
+  return `${icon} ${status}${detail}`;
+}
+function hpChatStatusV01935(m){
+  if(!m?.me)return '';
+  const status=String(m.status||'Enviada');
+  const cls=status.toLowerCase();
+  const title=status==='Lida'&&m.lidaEmUtc?`Lida em ${fmtDateTime(m.lidaEmUtc)}`:`Status: ${status}`;
+  return `<span class="care-chat-status-v01935 care-chat-status-v05911 ${esc(cls)}" data-chat-receipt-v05911="${esc(m.id||'')}" title="${esc(title)}">${esc(hpChatReceiptTextV05911(m))}</span>`;
+}
+function hpChatConversationActivityV05911(items=[]){
+  const myRead=items.filter(m=>m?.me&&m?.lidaEmUtc).sort((a,b)=>new Date(b.lidaEmUtc)-new Date(a.lidaEmUtc));
+  if(myRead.length){
+    return `<div class="care-chat-presence-v05911" data-chat-presence-v05911><span class="care-chat-presence-dot-v05911 read" aria-hidden="true"></span><span><strong>Visto recentemente</strong><small>Última confirmação de leitura: ${fmtDateTime(myRead[0].lidaEmUtc)}</small></span></div>`;
+  }
+  const myDelivered=items.some(m=>m?.me&&String(m.status)==='Entregue');
+  return `<div class="care-chat-presence-v05911" data-chat-presence-v05911><span class="care-chat-presence-dot-v05911 ${myDelivered?'delivered':'quiet'}" aria-hidden="true"></span><span><strong>${myDelivered?'Mensagem entregue':'Conversa disponível'}</strong><small>${myDelivered?'Ainda sem confirmação de leitura.':'O AESYN não exibe presença online estimada.'}</small></span></div>`;
+}
+const __hpChatShellV05911=hpChatShell;
+hpChatShell=function(data,opts={}){
+  let html=__hpChatShellV05911(data,opts);
+  const presence=hpChatConversationActivityV05911(data?.mensagens||[]);
+  html=html.replace('<div class="care-chat-safety">',`${presence}<div class="care-chat-safety">`);
+  return html.replace('care-chat-shell-v05910','care-chat-shell-v05910 care-chat-shell-v05911');
+};
+function hpPatchChatReceiptsV05911(data){
+  const items=Array.isArray(data?.mensagens)?data.mensagens:[];
+  items.filter(m=>m?.me).forEach(m=>{
+    const node=document.querySelector(`[data-chat-receipt-v05911="${CSS.escape(String(m.id||''))}"]`);
+    if(!node)return;
+    node.textContent=hpChatReceiptTextV05911(m);
+    const status=String(m.status||'Enviada');
+    node.classList.remove('enviada','entregue','lida');
+    node.classList.add(status.toLowerCase());
+    node.title=status==='Lida'&&m.lidaEmUtc?`Lida em ${fmtDateTime(m.lidaEmUtc)}`:`Status: ${status}`;
+  });
+  const presence=document.querySelector('[data-chat-presence-v05911]');
+  if(presence){
+    const holder=document.createElement('div');
+    holder.innerHTML=hpChatConversationActivityV05911(items);
+    presence.replaceWith(holder.firstElementChild);
+  }
+}
+async function hpRefreshChatReceiptsV05911(){
+  if(!hpChatReceiptUrlV05911||document.visibilityState==='hidden'||!document.querySelector('.care-chat-shell-v05911'))return;
+  try{
+    const data=await api(hpChatReceiptUrlV05911);
+    hpPatchChatReceiptsV05911(data);
+  }catch{}
+}
+function hpStartChatReceiptRefreshV05911(url){
+  hpChatReceiptUrlV05911=String(url||'');
+  if(hpChatReceiptTimerV05911)clearInterval(hpChatReceiptTimerV05911);
+  hpChatReceiptTimerV05911=setInterval(hpRefreshChatReceiptsV05911,20000);
+}
+function hpStopChatReceiptRefreshV05911(){
+  if(hpChatReceiptTimerV05911)clearInterval(hpChatReceiptTimerV05911);
+  hpChatReceiptTimerV05911=null;
+  hpChatReceiptUrlV05911='';
+}
+const __loadPatientChatV05911=loadPatientChat;
+loadPatientChat=async function(){
+  await __loadPatientChatV05911();
+  if(document.querySelector('.care-chat-shell-v05911'))hpStartChatReceiptRefreshV05911('/api/chat/me');
+};
+const __loadProfessionalPatientChatV05911=loadProfessionalPatientChat;
+loadProfessionalPatientChat=async function(patient,host=$('#patientTabContent')){
+  await __loadProfessionalPatientChatV05911(patient,host);
+  if(document.querySelector('.care-chat-shell-v05911'))hpStartChatReceiptRefreshV05911(`/api/chat/pacientes/${patient.id}`);
+};
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible')hpRefreshChatReceiptsV05911();
+});
+window.addEventListener('focus',()=>hpRefreshChatReceiptsV05911());
+window.addEventListener('hashchange',()=>{
+  if(!document.querySelector('.care-chat-shell-v05911'))hpStopChatReceiptRefreshV05911();
+});

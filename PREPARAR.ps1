@@ -1,6 +1,6 @@
 ﻿# v0.59.8 - Chat Attachments.
 $versionAtual0598 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0598 -ne "0.59.10") { throw "VERSION.txt esperado 0.59.10; atual: $versionAtual0598" }
+if ($versionAtual0598 -ne "0.59.11") { throw "VERSION.txt esperado 0.59.11; atual: $versionAtual0598" }
 $roadmapAtual0598 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0598 in @("v0.59.8 — Chat Attachments", "v0.59.9 — PWA Messaging Notifications")) { if (-not $roadmapAtual0598.Contains($token0598)) { throw "Roadmap v0.59.8 incompleto: $token0598" } }
 $filesController0598 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ArquivosPacienteController.cs') -Raw
@@ -13,7 +13,7 @@ Write-Host "[Produto] v0.59.8 / Chat Attachments: OK." -ForegroundColor DarkCyan
 
 # v0.59.7 - Chat Read State & Attention Queue.
 $versionAtual0597 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0597 -ne "0.59.10") { throw "VERSION.txt esperado 0.59.7; atual: $versionAtual0597" }
+if ($versionAtual0597 -ne "0.59.11") { throw "VERSION.txt esperado 0.59.7; atual: $versionAtual0597" }
 $roadmapAtual0597 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0597 in @("v0.59.7 — Chat Read State & Attention Queue", "v0.59.8 — Chat Attachments")) { if (-not $roadmapAtual0597.Contains($token0597)) { throw "Roadmap v0.59.7 incompleto: $token0597" } }
 $chatController0597 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ChatAcompanhamentoController.cs') -Raw
@@ -41,7 +41,7 @@ Set-Location $root
 
 # v0.59.6 - Professional Chat Inbox.
 $versionAtual0596 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0596 -ne "0.59.10") { throw "VERSION.txt esperado 0.59.6; atual: $versionAtual0596" }
+if ($versionAtual0596 -ne "0.59.11") { throw "VERSION.txt esperado 0.59.6; atual: $versionAtual0596" }
 $roadmapAtual0596 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0596 in @("Anti-Roadmap-Loop", "v0.59.6 — Professional Chat Inbox", "v0.59.7 — Chat Read State & Attention Queue")) { if (-not $roadmapAtual0596.Contains($token0596)) { throw "Roadmap v0.59.6 incompleto: $token0596" } }
 $chatController0596 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ChatAcompanhamentoController.cs') -Raw
@@ -55,7 +55,7 @@ Write-Host "[Produto] v0.59.6 / Professional Chat Inbox: OK." -ForegroundColor D
 
 # v0.59.5 - Supplement Training Context.
 $versionAtual0595 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0595 -ne "0.59.10") { throw "VERSION.txt corrente esperado 0.59.6 durante gate v0.59.5; atual: $versionAtual0595" }
+if ($versionAtual0595 -ne "0.59.11") { throw "VERSION.txt corrente esperado 0.59.6 durante gate v0.59.5; atual: $versionAtual0595" }
 $roadmapAtual0595 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0595 in @("Anti-Roadmap-Loop", "v0.59.5 — Supplement Training Context", "v0.59.6 — Professional Chat Inbox")) { if (-not $roadmapAtual0595.Contains($token0595)) { throw "Roadmap v0.59.5 incompleto: $token0595" } }
 foreach ($rel0595 in @(
@@ -69,7 +69,7 @@ Write-Host "[Produto] v0.59.5 / Supplement Training Context: OK." -ForegroundCol
 
 # v0.59.4 - Supplement Scheduling & Nutrition Integration.
 $versionAtual0594 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0594 -ne "0.59.10") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
+if ($versionAtual0594 -ne "0.59.11") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
 $roadmapAtual0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0594 in @("Anti-Roadmap-Loop", "v0.59.4 — Supplement Scheduling & Nutrition Integration", "v0.59.5 — Supplement Training Context")) {
     if (-not $roadmapAtual0594.Contains($token0594)) { throw "Roadmap v0.59.4 incompleto: $token0594" }
@@ -90,7 +90,7 @@ Write-Host "[Produto] v0.59.4 / Supplement Scheduling & Nutrition Integration: O
 
 # v0.59.3 - Product Brain gate: Supplement Catalog Foundation + proxima etapa funcional.
 $versionAtual0593 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0593 -ne "0.59.10") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
+if ($versionAtual0593 -ne "0.59.11") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
 $roadmapAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0593 in @("Anti-Roadmap-Loop", "v0.59.3 — Supplement Catalog Foundation", "v0.59.4 — Supplement Scheduling & Nutrition Integration")) {
     if (-not $roadmapAtual0593.Contains($token0593)) { throw "Roadmap v0.59.3 incompleto: $token0593" }
@@ -112,7 +112,7 @@ Write-Host "[Produto] v0.59.3 / entidade + API + migration: OK." -ForegroundColo
 
 # v0.59.2 - Product Brain gate: Nutrition Target Guidance 2.0 + proxima etapa funcional.
 $versionAtual0592 = (Get-Content (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0592 -ne "0.59.10") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
+if ($versionAtual0592 -ne "0.59.11") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
 $roadmapAtual0592 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0592 in @("Anti-Roadmap-Loop", "v0.59.2 — Nutrition Target Guidance 2.0", "v0.59.3 — Supplement Catalog Foundation")) {
     if (-not $roadmapAtual0592.Contains($token0592)) { throw "Roadmap v0.59.2 incompleto: $token0592" }
@@ -423,7 +423,7 @@ Write-Host "    v0.59.9 / PWA Messaging Notifications: OK." -ForegroundColor Gre
 # ===== v0.59.10 — Messaging Mobile Polish =====
 Write-Host "[v0.59.10] Validando Messaging Mobile Polish..." -ForegroundColor Cyan
 $version05910 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($version05910 -ne '0.59.10') { throw "VERSION.txt inesperado na v0.59.10: $version05910" }
+if ($version05910 -ne '0.59.11') { throw "VERSION.txt inesperado na v0.59.10: $version05910" }
 $app05910 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
 $css05910 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
 $roadmap05910 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
@@ -431,3 +431,16 @@ foreach ($token05910 in @('HP_MESSAGING_MOBILE_POLISH_V05910','hpChatSyncKeyboar
 foreach ($token05910 in @('care-chat-shell-v05910','safe-area-inset-bottom','hp-chat-keyboard-open-v05910','@media(max-width:760px)','@media(max-width:430px)')) { if (-not $css05910.Contains($token05910)) { throw "Messaging Mobile CSS v0.59.10 incompleto: $token05910" } }
 foreach ($token05910 in @('v0.59.10 — Messaging Mobile Polish — IMPLEMENTADA','v0.59.11 — Messaging Presence & Delivery Polish')) { if (-not $roadmap05910.Contains($token05910)) { throw "ROADMAP v0.59.10 incompleto: $token05910" } }
 Write-Host "    v0.59.10 / Messaging Mobile Polish: OK." -ForegroundColor Green
+
+
+# ===== v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure =====
+Write-Host "[v0.59.11] Validando Messaging Presence & Delivery Polish..." -ForegroundColor Cyan
+$version05911 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
+if ($version05911 -ne '0.59.11') { throw "VERSION.txt inesperado na v0.59.11: $version05911" }
+$app05911 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
+$css05911 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
+$roadmap05911 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+foreach ($token05911 in @('HP_MESSAGING_PRESENCE_DELIVERY_V05911','hpChatReceiptTextV05911','hpChatConversationActivityV05911','hpRefreshChatReceiptsV05911','setInterval(hpRefreshChatReceiptsV05911,20000)','O AESYN não exibe presença online estimada.')) { if (-not $app05911.Contains($token05911)) { throw "Messaging Presence v0.59.11 incompleta: $token05911" } }
+foreach ($token05911 in @('care-chat-presence-v05911','care-chat-status-v05911','@media(max-width:760px)','@media(max-width:430px)')) { if (-not $css05911.Contains($token05911)) { throw "Messaging Presence CSS v0.59.11 incompleto: $token05911" } }
+foreach ($token05911 in @('v0.59.11 — Messaging Presence & Delivery Polish — IMPLEMENTADA','LISTA 04 — CONCLUÍDA','12/12 etapas concluídas','Lista 05 fornecida pelo usuário')) { if (-not $roadmap05911.Contains($token05911)) { throw "Fechamento Lista 04 incompleto: $token05911" } }
+Write-Host "    v0.59.11 / Messaging Presence & Delivery Polish / Lista 04: OK." -ForegroundColor Green

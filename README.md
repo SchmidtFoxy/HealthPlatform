@@ -10593,3 +10593,10 @@ O chat possui notificação interna persistente e Web Push opcional por disposit
 ### Chat mobile — v0.59.10
 A conversa foi otimizada para uso como PWA: composer sticky respeitando safe-area, teclado acompanhado por Visual Viewport, textarea autoajustável, feedback inline de envio/erro, ações separadas para câmera e arquivo e retorno explícito para a Inbox no fluxo profissional. O texto da mensagem é preservado quando o envio falha para permitir retry sem retrabalho.
 
+
+### Messaging delivery — v0.59.11
+O chat diferencia Enviada, Entregue e Lida usando recibos persistidos pelo AESYN. Quando há confirmação de leitura, o horário real é exibido; o sistema não inventa presença online. Enquanto a conversa está aberta, os recibos são atualizados de forma leve sem substituir o composer ou apagar rascunhos.
+
+### Lista 04
+A fase v0.59.x foi concluída em v0.59.11 com 12/12 etapas. A próxima série funcional deve ser definida a partir da Lista 05 fornecida pelo usuário, em vez de prolongar artificialmente a v0.59.x.
+

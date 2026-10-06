@@ -1,3 +1,12 @@
+## v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure
+- Recibos do chat exibem `Enviada`, `Entregue` e `Lida` usando o estado real já persistido.
+- Mensagens lidas mostram o horário real de leitura.
+- Conversa exibe atividade baseada em recibos reais, sem simular presença online.
+- Recibos são sincronizados de forma leve enquanto o chat está aberto, sem recarregar o composer.
+- Polish visual aplicado a desktop e PWA 360/390/430 px.
+- Lista 04 / fase v0.59.x concluída em 12/12 etapas; próxima série aguardará a Lista 05 do usuário.
+- Sem migration.
+
 ## v0.59.10 — Messaging Mobile Polish
 - Composer do chat otimizado para PWA/mobile com sticky bottom, safe-area e adaptação ao teclado via Visual Viewport.
 - Textarea autoajustável, feedback inline de envio/sucesso/erro e preservação do texto para retry.

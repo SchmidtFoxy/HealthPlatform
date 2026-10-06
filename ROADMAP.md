@@ -9730,7 +9730,24 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 - layout foi revisado para 360/390/430 px com alvos de toque de pelo menos 44–48 px;
 - nenhuma migration foi necessária.
 
-**Próxima etapa funcional:** `v0.59.11 — Messaging Presence & Delivery Polish`.
+### ✅ v0.59.11 — Messaging Presence & Delivery Polish — IMPLEMENTADA
+- recibos de mensagem usam apenas estado persistido real: `Enviada`, `Entregue` e `Lida`;
+- mensagens lidas exibem horário real da confirmação de leitura;
+- cabeçalho da conversa mostra atividade baseada em recibos reais (`Visto recentemente` / `Mensagem entregue`), sem inventar presença online;
+- recibos são atualizados em segundo plano a cada 20 segundos enquanto a conversa está aberta e o app visível, sem recarregar o composer nem apagar rascunho;
+- atualização também ocorre ao recuperar foco/visibilidade;
+- identidade visual dos recibos foi refinada em desktop e PWA 360/390/430 px;
+- nenhuma migration foi necessária.
+
+## ✅ LISTA 04 — CONCLUÍDA
+
+A fase `v0.59.x — Nutrition & Communication Experience` está funcionalmente concluída em `v0.59.11`.
+
+- **12/12 etapas concluídas**;
+- Nutrição: balanceamento ao vivo, templates, orientação de metas e suplementação contextual;
+- Comunicação: inbox profissional, fila de resposta/SLA, anexos, push/deep-link, experiência mobile e recibos de entrega/leitura;
+- não criar `v0.59.12+` apenas para prolongar o ciclo;
+- **próxima evolução aguardará a Lista 05 fornecida pelo usuário**, que será incorporada ao ROADMAP vivo antes de abrir a próxima série funcional.
 
 ## Regras permanentes desta fase
 
