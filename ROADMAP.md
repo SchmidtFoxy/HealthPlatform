@@ -1,4 +1,4 @@
-﻿# AESYN Performance — Roadmap Mestre
+# AESYN Performance — Roadmap Mestre
 
 > **Hotfix local v0.22.1-r2:** alinha o gate histórico do guia do Morning Check-in à UX atual. O teste deixa de exigir a cópia antiga `Leva menos de 1 minuto.` e passa a aceitar a mensagem atual de aproximadamente 30 segundos. Revisão local; sem commit individual.
 
@@ -9820,9 +9820,19 @@ Corrigida a jornada Arquivos no paciente e no contexto profissional:
 ### v0.60.2 — Mobile Navigation & Profile/More 2.0
 Perfil/Mais limpo no topo, funções secundárias separadas, sem `•••`; X para fechar/sair e seta apenas para voltar hierarquicamente.
 
-### v0.60.3 — Athlete Interests Discovery 2.0
-Interesses esportivos descobríveis por aba/sugestões, sem depender de conteúdo no fim da página.
+### ✅ v0.60.3 — Athlete Interests Discovery 2.0 — IMPLEMENTADA
+Interesses esportivos deixam de depender de conteúdo no fim da página:
+- descoberta promovida para o topo do AESYN Explore;
+- abas **Sugestões / Meus interesses** com semântica acessível;
+- sugestões usam somente modalidades já fornecidas pelo Interest Engine existente;
+- tocar em uma sugestão declara o interesse localmente, abre o editor e exige confirmação em **Salvar meus interesses**;
+- o editor completo é movido para junto da descoberta e fica recolhido até ser solicitado;
+- seleção continua explicitamente declarada pelo atleta e não altera prescrição profissional;
+- layout pensado para 360/390/430 px, sem overflow horizontal e com alvos de toque adequados;
+- cache frontend/PWA atualizado para `v0.60.3`;
+- Regression Memory adicionada ao TESTAR.ps1.
 
+**Próxima etapa:** `v0.60.4 — Workout Selection Before Start`.
 ### v0.60.4 — Workout Selection Before Start
 Abrir detalhes e selecionar treino A/B/C/etc. antes de iniciar; CTA só inicia o treino escolhido.
 

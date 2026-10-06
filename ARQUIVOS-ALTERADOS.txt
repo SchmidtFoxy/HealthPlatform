@@ -1,12 +1,22 @@
-﻿VERSION.txt
-ROADMAP.md
-CHANGELOG.md
-README.md
-PREPARAR.ps1
-TESTAR.ps1
-src/HealthPlatform.Api/Controllers/HealthController.cs
-src/HealthPlatform.Api/Program.cs
-src/HealthPlatform.Api/wwwroot/index.html
-src/HealthPlatform.Api/wwwroot/app.js
-src/HealthPlatform.Api/wwwroot/app.css
-src/HealthPlatform.Api/wwwroot/sw.js
+AESYN Performance — v0.60.3-r5 — Exact ROADMAP UTF8 Gate Signature
+
+Hotfix da mesma versão funcional v0.60.3.
+O r4 preservou o comportamento UTF-8, mas o gate histórico v0.59.2 exige
+literalmente esta assinatura no PREPARAR.ps1:
+
+Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+
+O r5 usa exatamente essa forma, com:
+- $PSScriptRoot;
+- ordem exata Get-Content -Encoding UTF8 (...) -Raw;
+- exatamente um BOM UTF-8;
+- validação da feature Athlete Interests Discovery;
+- validação da identidade completa v0.60.3;
+- nenhuma alteração funcional adicional.
+
+Arquivos:
+- PREPARAR.ps1
+- VERSION.txt
+- ARQUIVOS-ALTERADOS.txt
+
+Sem commit individual de -r5.

@@ -1,4 +1,4 @@
-﻿## v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure
+## v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure
 - Recibos do chat exibem `Enviada`, `Entregue` e `Lida` usando o estado real já persistido.
 - Mensagens lidas mostram o horário real de leitura.
 - Conversa exibe atividade baseada em recibos reais, sem simular presença online.
@@ -8720,3 +8720,10 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - X verde-escuro usado como semântica de fechar; navegação hierárquica preserva voltar.
 - Foco e Escape tratados no sheet; estado ativo indica áreas secundárias.
 - Sem migration de banco.
+
+## v0.60.3 — Athlete Interests Discovery 2.0
+- Promove interesses esportivos para o topo do AESYN Explore.
+- Adiciona abas Sugestões / Meus interesses sem inferir preferências.
+- Reaproveita o Interest Engine existente e mantém confirmação explícita antes de persistir.
+- Move o editor para perto da descoberta, reduzindo rolagem e perda de contexto no PWA.
+- Adiciona responsividade 360/390/430 e gates de regressão.

@@ -20686,7 +20686,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.2';
+const HP_MVP_VERSION='0.60.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -25987,6 +25987,102 @@ loadMyPatientPortal=async function(){
 
 
 // ===== v0.25.0 — Sports Expansion I Foundation =====
+
+// ===== v0.60.3 — Athlete Interests Discovery 2.0 =====
+const HP_ATHLETE_INTERESTS_DISCOVERY_V0603='v0.60.3';
+
+function hpInterestCardMetaV0603(engine){
+  return [...engine.querySelectorAll('[data-interest-option-v0249]')].map(card=>{
+    const code=card.dataset.interestOptionV0249||'';
+    const check=card.querySelector('[data-interest-check-v0249]');
+    return {code,name:card.querySelector('b')?.textContent?.trim()||code,selected:Boolean(check?.checked),check};
+  });
+}
+function hpShowInterestTabV0603(discovery,engine,tab='suggestions'){
+  const showMine=tab==='mine';
+  discovery.querySelectorAll('[data-interest-tab-v0603]').forEach(btn=>{
+    const active=btn.dataset.interestTabV0603===tab;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-selected',active?'true':'false');
+  });
+  const suggestions=discovery.querySelector('[data-interest-suggestions-v0603]');
+  if(suggestions)suggestions.hidden=showMine;
+  engine.hidden=!showMine;
+  if(showMine){
+    window.setTimeout(()=>engine.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'}),0);
+  }
+}
+function hpEnhanceAthleteInterestsV0603(){
+  const portal=$('#patientPortalContent');
+  const explore=portal?.querySelector('[data-aesyn-explore-v0240]');
+  const engine=portal?.querySelector('[data-interest-engine-v0249]');
+  if(!portal||!explore||!engine)return;
+
+  portal.querySelector('[data-athlete-interests-discovery-v0603]')?.remove();
+  const items=hpInterestCardMetaV0603(engine);
+  const selected=items.filter(x=>x.selected);
+  const suggestions=items.filter(x=>!x.selected).slice(0,6);
+  const discovery=document.createElement('section');
+  discovery.className='athlete-interests-discovery-v0603';
+  discovery.dataset.athleteInterestsDiscoveryV0603=HP_ATHLETE_INTERESTS_DISCOVERY_V0603;
+  discovery.setAttribute('aria-labelledby','athleteInterestsTitleV0603');
+  discovery.innerHTML=`
+    <div class="athlete-interests-head-v0603">
+      <div>
+        <span class="eyebrow">MEUS ESPORTES • DESCOBERTA</span>
+        <h3 id="athleteInterestsTitleV0603">O que você gostaria de explorar?</h3>
+        <p>Interesse é escolha sua. O AESYN sugere caminhos, mas nunca transforma curiosidade em prescrição.</p>
+      </div>
+      <span>${selected.length} escolhido(s)</span>
+    </div>
+    <div class="athlete-interests-tabs-v0603" role="tablist" aria-label="Interesses esportivos">
+      <button type="button" class="active" role="tab" aria-selected="true" data-interest-tab-v0603="suggestions">Sugestões</button>
+      <button type="button" role="tab" aria-selected="false" data-interest-tab-v0603="mine">Meus interesses${selected.length?` · ${selected.length}`:''}</button>
+    </div>
+    <div class="athlete-interests-suggestions-v0603" data-interest-suggestions-v0603>
+      ${selected.length?`<div class="athlete-interests-current-v0603"><span>JÁ ESCOLHIDOS</span><div>${selected.slice(0,5).map(x=>`<b>${esc(x.name)}</b>`).join('')}</div></div>`:''}
+      <div class="athlete-interests-suggestion-copy-v0603">
+        <strong>${suggestions.length?'Talvez faça sentido conhecer':'Seus interesses já estão bem preenchidos'}</strong>
+        <small>${suggestions.length?'Toque em uma modalidade para declarar interesse e escolher sua intenção.':'Você pode revisar intenção ou remover interesses na aba ao lado.'}</small>
+      </div>
+      <div class="athlete-interests-chips-v0603">
+        ${suggestions.map(x=>`<button type="button" data-interest-suggest-v0603="${esc(x.code)}"><span>+</span>${esc(x.name)}</button>`).join('')}
+      </div>
+      <button type="button" class="secondary athlete-interests-edit-v0603" data-interest-edit-v0603>Revisar todos os interesses</button>
+    </div>`;
+  const head=explore.querySelector('.aesyn-explore-head-v0240');
+  if(head)head.insertAdjacentElement('afterend',discovery);
+  else explore.insertAdjacentElement('afterbegin',discovery);
+
+  discovery.insertAdjacentElement('afterend',engine);
+  engine.hidden=true;
+
+  discovery.querySelectorAll('[data-interest-tab-v0603]').forEach(btn=>{
+    btn.onclick=()=>hpShowInterestTabV0603(discovery,engine,btn.dataset.interestTabV0603);
+  });
+  discovery.querySelector('[data-interest-edit-v0603]')?.addEventListener('click',()=>hpShowInterestTabV0603(discovery,engine,'mine'));
+  discovery.querySelectorAll('[data-interest-suggest-v0603]').forEach(btn=>{
+    btn.onclick=()=>{
+      const code=btn.dataset.interestSuggestV0603;
+      const check=engine.querySelector(`[data-interest-check-v0249="${CSS.escape(code)}"]`);
+      if(check&&!check.checked){check.checked=true;check.dispatchEvent(new Event('change',{bubbles:true}));}
+      const status=engine.querySelector('#interestEngineStatusV0249');
+      if(status)status.textContent='Interesse adicionado. Escolha a intenção e salve.';
+      hpShowInterestTabV0603(discovery,engine,'mine');
+      engine.querySelector(`[data-interest-intent-v0249="${CSS.escape(code)}"]`)?.focus();
+    };
+  });
+}
+const __hpRefreshExploreInterestsV0603=hpRefreshExploreInterestsV0249;
+hpRefreshExploreInterestsV0249=async function(){
+  await __hpRefreshExploreInterestsV0603();
+  hpEnhanceAthleteInterestsV0603();
+};
+const __loadMyPatientPortal_v0603=loadMyPatientPortal;
+loadMyPatientPortal=async function(){
+  await __loadMyPatientPortal_v0603();
+  hpEnhanceAthleteInterestsV0603();
+};
 const HP_SPORTS_EXPANSION_I_V0250='v0.25.0';
 
 function hpSportsExpansionIV0250(data){

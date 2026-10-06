@@ -1,4 +1,4 @@
-﻿# AESYN Performance — v0.59.4
+# AESYN Performance — v0.59.4
 
 ## Supplement Scheduling & Nutrition Integration
 
@@ -10629,3 +10629,6 @@ Próxima entrega: `v0.60.2 — Mobile Navigation & Profile/More 2.0`.
 - O sheet gerencia foco, Escape e estado ativo das áreas secundárias.
 
 Próxima entrega: `v0.60.3 — Athlete Interests Discovery 2.0`.
+
+### v0.60.3 — Athlete Interests Discovery 2.0
+No portal do paciente, o AESYN Explore agora apresenta interesses esportivos como uma ação encontrável no topo, com Sugestões e Meus interesses. As sugestões usam apenas opções reais do catálogo retornado pelo backend e nunca viram prescrição automaticamente.
