@@ -1,32 +1,28 @@
 ﻿$ErrorActionPreference = "Stop"
 Write-Host "============================================================" -ForegroundColor DarkGreen
-Write-Host " AESYN v0.60.4 | WORKOUT SELECTION BEFORE START" -ForegroundColor Green
+Write-Host " AESYN v0.60.5 | WORKOUT EXECUTION READABILITY" -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor DarkGreen
 
 $version = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
 $app = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
 $css = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
+$health = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/HealthController.cs') -Raw
 $roadmap = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 
-if ($version -ne '0.60.4') { throw "VERSION.txt esperado 0.60.4; atual: $version" }
+if ($version -ne '0.60.5') { throw "VERSION.txt esperado 0.60.5; atual: $version" }
 foreach ($token in @(
-    'HP_WORKOUT_SELECTION_BEFORE_START_V0604',
-    'hpOpenWorkoutSelectorV0604',
-    'data-start-workout-v0604',
-    'Iniciar treino escolhido',
-    'Ver treino'
+    'HP_WORKOUT_EXECUTION_READABILITY_V0605',
+    'hpWorkoutPrescriptionChipsV0605',
+    'hpUpdateWorkoutExecutionProgressV0605',
+    'data-workout-execution-feedback-v0605'
 )) {
-    if (-not $app.Contains($token)) { throw "PREPARAR v0.60.4 incompleto: $token" }
+    if (-not $app.Contains($token)) { throw "PREPARAR v0.60.5 incompleto: $token" }
 }
-foreach ($token in @(
-    '.workout-selection-layout-v0604',
-    '.workout-selection-preview-v0604',
-    '@media(max-width:430px)'
-)) {
-    if (-not $css.Contains($token)) { throw "PREPARAR CSS v0.60.4 incompleto: $token" }
+if ([regex]::Matches($health,'version = "0.60.5"').Count -lt 2) {
+    throw 'HealthController nao anuncia 0.60.5 nos dois payloads.'
 }
-if (-not $roadmap.Contains('v0.60.5')) { throw 'ROADMAP sem proxima etapa v0.60.5.' }
+if (-not $roadmap.Contains('v0.60.6')) { throw 'ROADMAP sem proxima etapa v0.60.6.' }
 
-Write-Host "    Workout Selection Before Start: OK." -ForegroundColor Green
-Write-Host "    Gate HealthController PowerShell 5.1: OK." -ForegroundColor Green
-Write-Host "    Proxima etapa: v0.60.5 / Workout Execution Readability" -ForegroundColor DarkCyan
+Write-Host "    Workout Execution Readability: OK." -ForegroundColor Green
+Write-Host "    Gates estaticos de Health corrente alinhados para v0.60.5: OK." -ForegroundColor Green
+Write-Host "    Proxima etapa: v0.60.6 / Workout Series Blocks / Sub-series Builder" -ForegroundColor DarkCyan

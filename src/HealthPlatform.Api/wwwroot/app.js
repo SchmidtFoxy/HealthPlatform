@@ -188,6 +188,7 @@ function hpApplyTheme(theme){
 function hpOpenThemeChoice(){
   const modal=$('#themeChoiceModal');
   if(!modal)return;
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   document.body.classList.add('theme-choice-open');
   modal.querySelector('[data-theme-choice]')?.focus();
@@ -690,7 +691,9 @@ async function openPatientIntake(patient){
   $('#intakeLater').onclick=()=>{closeClinicalAction();openPatient(p.id)};
   $('#intakeEditPatient').onclick=()=>{closeClinicalAction();openEditPatientForm(p)};
   $('#patientIntakeBodyForm').onsubmit=async e=>{
-    e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');b.disabled=true;b.textContent='Salvando...';
+    e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');
+    hpWorkoutExecutionFeedbackV0605(f,'','');
+    hpSetActionPending(b,true,'Concluindo...');
     try{
       const body={consultaId:null,dataUtc:val(f,'dataUtc')?new Date(val(f,'dataUtc')).toISOString():null,pesoKg:dec(f,'pesoKg'),alturaM:dec(f,'alturaM'),percentualGordura:dec(f,'percentualGordura'),massaMagraKg:dec(f,'massaMagraKg'),massaGordaKg:dec(f,'massaGordaKg'),cinturaCm:dec(f,'cinturaCm'),abdomenCm:dec(f,'abdomenCm'),quadrilCm:dec(f,'quadrilCm'),pressaoSistolica:integer(f,'pressaoSistolica'),pressaoDiastolica:integer(f,'pressaoDiastolica'),frequenciaCardiaca:integer(f,'frequenciaCardiaca')};
       await api(`/api/pacientes/${p.id}/avaliacoes`,{method:'POST',body:JSON.stringify(body)});
@@ -4415,6 +4418,7 @@ function openQuickPatientRecord(ds){
 
 function patientPortalModal(title,body,onSubmit){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   modal.classList.add('patient-action-sheet');
   document.body.classList.add('patient-sheet-open');
@@ -17094,6 +17098,7 @@ function openWorkoutSessionReview(execution){
   const completed=items.filter(x=>x.concluido).length;
   const duration=execution?.duracaoMinutos!=null?`${execution.duracaoMinutos} min`:'—';
   const rpe=execution?.esforcoPercebido!=null?`${execution.esforcoPercebido}/10`:'—';
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   modal.classList.add('workout-session-review-modal');
   box.innerHTML=`<section class="workout-session-review" aria-labelledby="workoutSessionReviewTitle">
@@ -17117,6 +17122,7 @@ function openWorkoutSessionReview(execution){
 
 function openPostWorkoutSummary({sessaoNome,duracaoMinutos,esforcoPercebido}){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   modal.classList.add('workout-complete-modal');
   const duration=duracaoMinutos!=null&&duracaoMinutos!==''?`${duracaoMinutos} min`:'Registrado';
@@ -17183,19 +17189,60 @@ async function hpLoadExerciseAlternatives(row){
   finally{if(btn){btn.disabled=false;btn.textContent='Ver alternativas'}}
 }
 
+
+// ===== v0.60.5 — Workout Execution Readability =====
+const HP_WORKOUT_EXECUTION_READABILITY_V0605='v0.60.5';
+
+function hpWorkoutPrescriptionChipsV0605(item){
+  const chips=[
+    ['Séries',item.series??'—'],
+    ['Reps',item.repeticoes||'—'],
+    item.carga!=null?['Carga',`${num(item.carga)} ${item.unidadeCarga||'kg'}`]:null,
+    item.descansoSegundos!=null?['Descanso',`${item.descansoSegundos}s`]:null
+  ].filter(Boolean);
+  return `<div class="execution-prescription-v0605" aria-label="Prescrição">${chips.map(([k,v])=>`<span><small>${esc(k)}</small><b>${esc(v)}</b></span>`).join('')}</div>`;
+}
+function hpUpdateWorkoutExecutionProgressV0605(form){
+  if(!form)return;
+  const rows=[...form.querySelectorAll('.execution-item')];
+  const done=rows.filter(row=>row.querySelector('[name=done]')?.checked).length;
+  const total=rows.length;
+  const pct=total?Math.round((done/total)*100):0;
+  const host=form.querySelector('[data-workout-progress-v0605]');
+  if(host){
+    host.querySelector('[data-workout-progress-label-v0605]').textContent=`${done} de ${total} concluído${total===1?'':'s'}`;
+    const bar=host.querySelector('[data-workout-progress-bar-v0605]');
+    if(bar)bar.style.width=`${pct}%`;
+    host.setAttribute('aria-valuenow',String(pct));
+  }
+  rows.forEach(row=>row.classList.toggle('is-done-v0605',Boolean(row.querySelector('[name=done]')?.checked)));
+}
+function hpWorkoutExecutionFeedbackV0605(form,kind,message){
+  const host=form?.querySelector('[data-workout-execution-feedback-v0605]');
+  if(!host)return;
+  host.className=`workout-execution-feedback-v0605 ${kind||''}`.trim();
+  host.textContent=message||'';
+  host.hidden=!message;
+}
 function openWorkoutExecutionForm(sessao){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
-  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">EXECUÇÃO</span><h2>${esc(sessao.nome)}</h2><p>Registre o que você realmente executou hoje.</p></div>
-    <div class="training-execution-journey"><span class="done"><i>✓</i> Contexto</span><span class="active"><i>2</i> Executar</span><span><i>3</i> Fechar</span></div><form id="workoutExecutionForm" class="clinical-form workout-execution-form">
+  box.innerHTML=`<div class="modal-heading workout-execution-heading-v0605"><span class="eyebrow">WORKOUT FOCUS</span><h2>${esc(sessao.nome)}</h2><p>Leia a prescrição, registre o que realmente fez e marque cada exercício conforme avança.</p></div>
+    <div class="training-execution-journey"><span class="done"><i>✓</i> Contexto</span><span class="active"><i>2</i> Executar</span><span><i>3</i> Fechar</span></div><form id="workoutExecutionForm" class="clinical-form workout-execution-form workout-execution-form-v0605">
+      <section class="workout-execution-progress-v0605" data-workout-progress-v0605 role="progressbar" aria-label="Progresso do treino" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+        <div><strong>Progresso do treino</strong><span data-workout-progress-label-v0605>${(sessao.itens||[]).length} de ${(sessao.itens||[]).length} concluídos</span></div>
+        <i><b data-workout-progress-bar-v0605 style="width:100%"></b></i>
+      </section>
       <div class="form-grid three workout-execution-meta">
         ${field('Duração (min)','duracao','number','min="0"')}
         ${field('Esforço geral (0-10)','rpe','number','min="0" max="10"')}
         ${field('Horário de início','inicio','datetime-local',`value="${new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)}"`)}
       </div>
-      <div class="execution-items">${(sessao.itens||[]).map(i=>`
-        <div class="execution-item ${hpWorkoutTechniqueClass(i)}" data-item="${i.id}" data-exercise-id="${i.exercicioId||''}" data-original-exercise="${esc(i.exercicio)}">
-          <div class="execution-item-head"><div><strong>${esc(i.exercicio)}</strong>${hpWorkoutTechniqueBadge(i)}</div><small>Prescrito: ${i.series} × ${esc(i.repeticoes)}${i.carga!=null?' • '+num(i.carga)+' '+esc(i.unidadeCarga||'kg'):''}</small></div>
+      <div class="execution-items">${(sessao.itens||[]).map((i,idx)=>`
+        <div class="execution-item ${hpWorkoutTechniqueClass(i)} is-done-v0605" data-item="${i.id}" data-exercise-id="${i.exercicioId||''}" data-original-exercise="${esc(i.exercicio)}">
+          <div class="execution-item-head execution-item-head-v0605"><span class="execution-order-v0605">${idx+1}</span><div><strong>${esc(i.exercicio)}</strong>${hpWorkoutTechniqueBadge(i)}<small>Prescrição do profissional</small></div><span class="execution-status-v0605">Feito</span></div>
+          ${hpWorkoutPrescriptionChipsV0605(i)}
           ${hpWorkoutTechniqueGuidance(i)}
           <div class="exercise-alternative-tools">
             <div><label>Precisa adaptar?<select name="alternativeReason"><option value="EquipamentoOcupado">Equipamento ocupado</option><option value="SemEquipamento">Sem equipamento disponível</option><option value="Preferencia">Prefiro outra opção</option><option value="DorDesconforto">Dor ou desconforto</option><option value="Outro">Outro motivo</option></select></label><button type="button" class="ghost exercise-alternative-open">Ver alternativas</button></div>
@@ -17208,12 +17255,18 @@ function openWorkoutExecutionForm(sessao){
           <label class="check-line execution-done"><input name="done" type="checkbox" checked><span>Feito</span></label>
         </div>`).join('')}</div>
       ${area('Observação geral','observacoes')}
+      <div class="workout-execution-feedback-v0605" data-workout-execution-feedback-v0605 role="status" aria-live="polite" hidden></div>
       <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Concluir treino</button></div>
     </form>`;
   $('[data-close-clinical-form]').onclick=closeClinicalAction;
   $$('.exercise-alternative-open').forEach(btn=>btn.onclick=()=>hpLoadExerciseAlternatives(btn.closest('.execution-item')));
-  $('#workoutExecutionForm').onsubmit=async e=>{
-    e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');b.disabled=true;b.textContent='Salvando...';
+  const executionFormV0605=$('#workoutExecutionForm');
+  executionFormV0605?.querySelectorAll('[name=done]').forEach(check=>check.addEventListener('change',()=>hpUpdateWorkoutExecutionProgressV0605(executionFormV0605)));
+  hpUpdateWorkoutExecutionProgressV0605(executionFormV0605);
+  executionFormV0605.onsubmit=async e=>{
+    e.preventDefault();const f=e.target,b=f.querySelector('button[type=submit]');
+    hpWorkoutExecutionFeedbackV0605(f,'','');
+    hpSetActionPending(b,true,'Concluindo...');
     try{
       const inicioLocal=val(f,'inicio');
       const itens=[...f.querySelectorAll('.execution-item')].map(r=>({
@@ -17241,8 +17294,11 @@ function openWorkoutExecutionForm(sessao){
       })});
       await loadPatientWorkout();
       openPostWorkoutSummary({sessaoNome:sessao.nome,duracaoMinutos,esforcoPercebido});
-    }catch(err){toast(err.message,true)}
-    finally{b.disabled=false;b.textContent='Concluir treino'}
+    }catch(err){
+      hpWorkoutExecutionFeedbackV0605(f,'error',err.message||'Não foi possível concluir o treino. Seus registros continuam na tela.');
+      toast(err.message,true);
+    }
+    finally{hpSetActionPending(b,false)}
   };
 }
 
@@ -17763,6 +17819,7 @@ async function loadPendencias(status='abertas'){
 
 function pendingModal(title,body,onSave){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading"><span class="eyebrow">PENDÊNCIA</span><h2>${esc(title)}</h2></div>
     <form id="pendingActionForm" class="clinical-form">${body}<div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Salvar</button></div></form>`;
@@ -18122,6 +18179,7 @@ loadDashboard=async function(){
 // ===== v0.3.27 — Follow-up + ações rápidas da carteira =====
 function portfolioActionModal(eyebrow,title,subtitle,body,onSubmit,submitText='Salvar'){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading"><span class="eyebrow">${esc(eyebrow)}</span><h2>${esc(title)}</h2><p>${esc(subtitle||'')}</p></div>
     <form id="portfolioActionForm" class="clinical-form">${body}<div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">${esc(submitText)}</button></div></form>`;
@@ -18594,6 +18652,7 @@ function hpEnsureGlobalSearchModal(){
 
 function hpOpenGlobalSearch(){
   const modal=hpEnsureGlobalSearchModal();
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   document.body.classList.add('hp-global-search-open-v0600');
   hpSyncMobileViewportV0600();
@@ -20637,6 +20696,7 @@ function hpCalendarContextLabel(value){return ({Padrao:'Padrão',Treino:'Dia de 
 async function openNutritionCalendar(patient,plans){
   if(!patient?.id)return toast('Paciente não identificado.',true);
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');modal.classList.add('nutrition-modal-open','nutrition-calendar-modal');
   let month=new Date();month=new Date(month.getFullYear(),month.getMonth(),1);
   let selectedIso=hpCalendarIso(new Date());
@@ -20684,7 +20744,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.4';
+const HP_MVP_VERSION='0.60.5';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -20775,6 +20835,7 @@ function hpMvpChecklistItem(icon,title,text){
 function openMvpGuide(){
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
   if(!modal||!box)return;
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading">
       <span class="eyebrow">CENTRAL DE AJUDA AESYN</span>
@@ -21555,6 +21616,7 @@ async function hpOpenNutritionTemplates2(patient=null,initialTab='plans'){
   const box=$('#clinicalActionContent');
   const modal=$('#clinicalActionModal');
   modal.classList.add('nutrition-modal-open');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading"><span class="eyebrow">BIBLIOTECA PROFISSIONAL DE NUTRIÇÃO</span><h2>Biblioteca profissional de nutrição</h2><p>${patient?`Paciente: <b>${esc(patient.nome)}</b> • escolha um modelo e aplique uma cópia independente.`:'Organize dietas e refeições reutilizáveis para acelerar a prescrição.'}</p></div><div class="empty">Carregando modelos...</div>`;
 
@@ -21747,6 +21809,7 @@ async function hpOpenNutritionReviewPublish2(patient,preferredPlanId=null){
   const p=typeof patient==='string'?await api(`/api/pacientes/${patient}`):patient;
   if(!p?.id){toast('Paciente não identificado para revisão nutricional.',true);return}
   const modal=$('#clinicalActionModal');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   modal.classList.add('nutrition-modal-open');
   const box=$('#clinicalActionContent');
@@ -22426,6 +22489,7 @@ function hpOpenWorkoutSelectorV0604(planos=[],selectedPlanId='',selectedSessionI
   const options=hpWorkoutSelectionItemsV0604(planos);
   if(!modal||!box)return;
   modal.classList.add('workout-modal-open','workout-selection-modal-v0604');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
 
   if(!options.length){
@@ -23106,6 +23170,7 @@ function hpProfessionalActionCenterV0208(patient,context=null){
   const p=patient||{};
   if(!p.id){toast('Paciente não identificado para o Action Center.',true);return}
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   const contextTitle=context?.titulo||'Acompanhamento do paciente';
   const contextDetail=context?.detalhe||'Escolha uma ação explícita. Nenhuma conduta clínica é executada automaticamente.';
@@ -24950,6 +25015,7 @@ function hpMovementQueryV0231(filters){
 async function openMovementLibraryV0230(){
   const box=$('#clinicalActionContent');
   const modal=$('#clinicalActionModal');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   modal.classList.add('movement-library-modal-v0230','movement-library-modal-v0231');
   box.className='clinical-action-shell movement-library-shell-v0230 movement-library-shell-v0231';
@@ -31335,6 +31401,7 @@ async function hpOpenSecureFileV0601(path,name){
 function hpPatientFileUploadModalV0601({professional=false,patientId=null,onDone}){
   const target=professional?`/api/pacientes/${patientId}/arquivos/upload`:'/api/arquivos/me/upload';
   const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.add('workout-modal-open','workout-execution-readable-v0605');
   modal.classList.remove('hidden');
   modal.classList.add('patient-action-sheet','patient-file-upload-sheet-v0601');
   document.body.classList.add('patient-sheet-open');

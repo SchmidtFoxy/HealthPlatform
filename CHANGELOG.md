@@ -8733,3 +8733,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Exibe plano, dias, exercícios e prescrição antes da confirmação.
 - Apenas “Iniciar treino escolhido” abre a execução.
 - Inclui PWA/mobile 360/390/430, safe area e Regression Memory.
+## v0.60.5 — Workout Execution Readability
+- Cria Workout Focus Mode escuro para a execução real do treino.
+- Reorganiza exercício, prescrição, séries/reps/carga/descanso e status concluído.
+- Adiciona progresso em tempo real e feedback inline de erro.
+- Melhora contraste, foco, touch targets e safe areas em 360/390/430 px.
+- Usa pending state compartilhado no envio e adiciona Regression Memory.

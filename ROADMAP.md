@@ -9847,9 +9847,20 @@ A jornada de treino passa a separar claramente **ver/escolher** de **iniciar**:
 - identidade pública/PWA alinhada para `v0.60.4`.
 
 **Próxima etapa:** `v0.60.5 — Workout Execution Readability`.
-### v0.60.5 — Workout Execution Readability
-Contraste, hierarquia, campos e feedback de execução mais legíveis em claro/escuro e mobile.
+### ✅ v0.60.5 — Workout Execution Readability — IMPLEMENTADA
+Execução vira uma superfície de foco legível durante o treino:
+- Workout Focus Mode com painel escuro, texto branco e estados/prescrição em verde;
+- exercício numerado e hierarquia visual clara entre nome, técnica e prescrição;
+- chips separados para séries, repetições, carga e descanso;
+- progresso de exercícios concluídos atualizado ao marcar/desmarcar **Feito**;
+- cards concluídos recebem estado visual sem esconder os dados;
+- inputs mantêm alto contraste, foco visível e tamanho adequado para teclado mobile;
+- erro de conclusão aparece dentro do formulário e preserva os registros na tela;
+- CTA de conclusão usa pending state compartilhado, evitando duplo envio;
+- layout validável em 360/390/430 px, safe area, reduced motion e desktop;
+- Regression Memory cobre estrutura, contraste, progresso e identidade `v0.60.5`.
 
+**Próxima etapa:** `v0.60.6 — Workout Series Blocks / Sub-series Builder`.
 ### v0.60.6 — Workout Series Blocks / Sub-series Builder
 `+` para blocos/subséries com repetições diferentes, preservando ordem, técnicas avançadas e leitura do paciente.
 

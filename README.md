@@ -10634,3 +10634,5 @@ Próxima entrega: `v0.60.3 — Athlete Interests Discovery 2.0`.
 No portal do paciente, o AESYN Explore agora apresenta interesses esportivos como uma ação encontrável no topo, com Sugestões e Meus interesses. As sugestões usam apenas opções reais do catálogo retornado pelo backend e nunca viram prescrição automaticamente.
 ### v0.60.4 — Workout Selection Before Start
 Na área de Treino do paciente, tocar em um treino agora abre primeiro a seleção e revisão da sessão. A execução só começa após confirmação explícita em **Iniciar treino escolhido**, reduzindo início acidental e permitindo escolher A/B/C ou sessões de outros planos ativos com contexto.
+### v0.60.5 — Workout Execution Readability
+A execução de treino do paciente usa um Workout Focus Mode de alto contraste: exercício em branco, prescrição em verde, chips de séries/reps/carga/descanso, progresso de concluídos e feedback inline. A tela prioriza leitura rápida durante o exercício sem perder os campos de registro.

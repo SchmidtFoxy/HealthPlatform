@@ -1,25 +1,26 @@
-AESYN Performance — v0.60.4-r6 — PowerShell Matches Gate Fix
+AESYN Performance — v0.60.5-r3 — Static Health Current Version Gate Alignment
 
-Hotfix da mesma versão funcional v0.60.4.
+Hotfix da mesma versão funcional v0.60.5.
 
-Causa:
-- gate de identidade criado na v0.60.3 ainda usava
-  ($identityHealth0603 | Select-String ... -AllMatches).Matches.Count;
-- no Windows PowerShell 5.1 / StrictMode, Select-String pode retornar array
-  e o array não possui propriedade Matches;
-- o mesmo gate ainda podia procurar version = "0.60.3".
+Diagnóstico confirmado:
+- o erro não vinha do endpoint em execução;
+- gates históricos como Rowing/Trekking carregam HealthController.cs em variáveis
+  $health0264, $health0265 etc.;
+- as condições ainda faziam .Contains('0.60.4');
+- o r2 corrigiu corretamente HealthController.cs para 0.60.5, fazendo essas condições
+  antigas falharem.
 
 Correção:
-- troca por [regex]::Matches($identityHealth0603, 'version = "0.60.4"').Count;
-- alinha mensagem do gate para identidade v0.60.4;
-- valida somente o bloco Current Identity Alignment Regression Memory;
-- nenhuma alteração funcional em app.js/CSS/API;
-- exatamente um BOM UTF-8.
+- atualiza SOMENTE padrões $health*.Contains('0.60.4') -> 0.60.5;
+- preserva marcadores históricos de features/releases;
+- não enfraquece o runtime gate $health.version;
+- valida que HealthController.cs contém 0.60.5 nos dois payloads;
+- preserva exatamente um BOM UTF-8.
 
 Arquivos:
 - PREPARAR.ps1
 - VERSION.txt
 - ARQUIVOS-ALTERADOS.txt
 
-O PREPARAR ajusta TESTAR.ps1 e se substitui pelo PREPARAR final idempotente.
-Sem commit individual de -r6.
+O PREPARAR altera TESTAR.ps1 e se substitui pelo PREPARAR final idempotente.
+Sem commit individual de -r3.
