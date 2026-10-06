@@ -1,3 +1,12 @@
+## v0.59.10 — Messaging Mobile Polish
+- Composer do chat otimizado para PWA/mobile com sticky bottom, safe-area e adaptação ao teclado via Visual Viewport.
+- Textarea autoajustável, feedback inline de envio/sucesso/erro e preservação do texto para retry.
+- Ações separadas de câmera e arquivo/galeria reutilizam o pipeline seguro de anexos.
+- Thread ganhou scroll estável/overscroll contido e comportamento previsível ao enviar mensagens.
+- Profissional pode voltar diretamente da conversa para a Inbox do Chat.
+- Superfície revisada para 360/390/430 px, com alvos touch-friendly.
+- Sem migration.
+
 ## v0.59.9 — PWA Messaging Notifications
 - Mensagens usam deep-link por conversa no Web Push.
 - Profissional abre diretamente o chat do paciente; paciente abre o próprio chat.

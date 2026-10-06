@@ -9721,8 +9721,16 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.10 — Messaging Mobile Polish`.
 
-### v0.59.10 — Messaging Mobile Polish
-Revisar inbox e conversa em 360/390/430 px: composer fixo sem cobrir conteúdo, safe-area de iPhone, câmera/galeria/arquivo, scroll estável, estados de envio/erro/retry e transição lista → conversa com comportamento de app.
+### ✅ v0.59.10 — Messaging Mobile Polish — IMPLEMENTADA
+- composer mobile sticky respeita `safe-area` e adapta altura com `visualViewport`, sem encobrir a conversa quando o teclado abre;
+- textarea cresce até um limite confortável, preserva o texto em falha e exibe feedback inline de envio/sucesso/erro com retry pelo próprio botão Enviar;
+- thread usa scroll estável, overscroll contido e retorno automático ao fim quando apropriado;
+- composer oferece ações separadas para câmera e arquivo/galeria, reaproveitando o pipeline seguro da v0.59.8;
+- conversa profissional ganhou retorno explícito para a Inbox do Chat;
+- layout foi revisado para 360/390/430 px com alvos de toque de pelo menos 44–48 px;
+- nenhuma migration foi necessária.
+
+**Próxima etapa funcional:** `v0.59.11 — Messaging Presence & Delivery Polish`.
 
 ## Regras permanentes desta fase
 

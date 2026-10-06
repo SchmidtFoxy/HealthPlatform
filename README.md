@@ -10589,3 +10589,7 @@ O Connected Care permite anexar PDF, JPEG, PNG, WebP, DOC e DOCX diretamente no 
 ### Messaging PWA — v0.59.9
 O chat possui notificação interna persistente e Web Push opcional por dispositivo. Push de mensagem usa deep-link para a conversa correta; se o app estiver fechado, o Service Worker abre o AESYN e preserva o destino até a autenticação. O retorno ao app sincroniza badges. Push nunca é a única fonte de estado: inbox e não lidas permanecem persistidas no sistema.
 
+
+### Chat mobile — v0.59.10
+A conversa foi otimizada para uso como PWA: composer sticky respeitando safe-area, teclado acompanhado por Visual Viewport, textarea autoajustável, feedback inline de envio/erro, ações separadas para câmera e arquivo e retorno explícito para a Inbox no fluxo profissional. O texto da mensagem é preservado quando o envio falha para permitir retry sem retrabalho.
+
