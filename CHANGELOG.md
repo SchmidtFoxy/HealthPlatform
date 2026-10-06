@@ -8727,3 +8727,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Reaproveita o Interest Engine existente e mantém confirmação explícita antes de persistir.
 - Move o editor para perto da descoberta, reduzindo rolagem e perda de contexto no PWA.
 - Adiciona responsividade 360/390/430 e gates de regressão.
+## v0.60.4 — Workout Selection Before Start
+- Separa escolha/revisão de sessão do início efetivo do treino.
+- Training Day Flow, cards A/B/C e sessões expandidas abrem um seletor único.
+- Exibe plano, dias, exercícios e prescrição antes da confirmação.
+- Apenas “Iniciar treino escolhido” abre a execução.
+- Inclui PWA/mobile 360/390/430, safe area e Regression Memory.

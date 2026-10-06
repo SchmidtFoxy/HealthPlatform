@@ -9833,9 +9833,20 @@ Interesses esportivos deixam de depender de conteúdo no fim da página:
 - Regression Memory adicionada ao TESTAR.ps1.
 
 **Próxima etapa:** `v0.60.4 — Workout Selection Before Start`.
-### v0.60.4 — Workout Selection Before Start
-Abrir detalhes e selecionar treino A/B/C/etc. antes de iniciar; CTA só inicia o treino escolhido.
+### ✅ v0.60.4 — Workout Selection Before Start — IMPLEMENTADA
+A jornada de treino passa a separar claramente **ver/escolher** de **iniciar**:
+- Training Day Flow não inicia mais silenciosamente a primeira sessão do primeiro plano;
+- cards A/B/C e sessões expandidas abrem o seletor em vez de iniciar execução;
+- seletor lista todos os planos/sessões publicados, com pré-seleção contextual;
+- atleta revisa dias, quantidade de exercícios, observações e prescrição antes de começar;
+- somente o CTA explícito **Iniciar treino escolhido** chama a execução;
+- trocar a seleção não altera a prescrição profissional;
+- sessão sem exercícios não pode ser iniciada;
+- sheet/modal adaptado para 360/390/430 px, safe area, scroll interno e desktop produtivo;
+- Regression Memory cobre ausência de bypass pelos atalhos principais;
+- identidade pública/PWA alinhada para `v0.60.4`.
 
+**Próxima etapa:** `v0.60.5 — Workout Execution Readability`.
 ### v0.60.5 — Workout Execution Readability
 Contraste, hierarquia, campos e feedback de execução mais legíveis em claro/escuro e mobile.
 

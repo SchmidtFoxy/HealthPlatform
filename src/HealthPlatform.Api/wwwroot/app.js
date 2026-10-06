@@ -17003,7 +17003,7 @@ function hpPatientWorkoutAccessHub(plano){
     <div class="patient-workout-access-grid">${sessoes.map((s,index)=>`<button type="button" class="patient-workout-access-card" data-access-session="${s.id}">
       <span class="patient-workout-access-letter">${hpWorkoutLetter(index)}</span>
       <span class="patient-workout-access-copy"><small>TREINO ${hpWorkoutLetter(index)}</small><strong>${esc(s.nome)}</strong><em>${(s.itens||[]).length} exercício(s)${s.diasSemana?` • ${esc(s.diasSemana)}`:''}</em></span>
-      <span class="patient-workout-access-action">Iniciar ›</span>
+      <span class="patient-workout-access-action">Ver treino ›</span>
     </button>`).join('')}</div>
   </section>`;
 }
@@ -17036,7 +17036,7 @@ loadPatientWorkout = async function(){
     ${p.observacoes?`<article class="card workout-guidance"><strong>Orientações</strong><p>${esc(p.observacoes)}</p></article>`:''}
     <div class="patient-workout-list">${(p.sessoes||[]).map(s=>`
       <article class="card patient-workout-session" id="patient-session-${s.id}" data-full-session="${s.id}">
-        <div class="card-head"><div><span class="eyebrow">${esc(s.diasSemana||'DIAS LIVRES')}</span><h3>${esc(s.nome)}</h3></div><button class="primary start-workout" data-session="${s.id}">Registrar treino</button></div>
+        <div class="card-head"><div><span class="eyebrow">${esc(s.diasSemana||'DIAS LIVRES')}</span><h3>${esc(s.nome)}</h3></div><button class="primary start-workout" data-session="${s.id}">Ver treino</button></div>
         ${s.observacoes?`<p class="muted">${esc(s.observacoes)}</p>`:''}
         <div class="patient-exercise-list">${(s.itens||[]).map((i,idx)=>`
           <div class="patient-exercise-card ${hpWorkoutTechniqueClass(i)}" data-item-id="${i.id}" data-exercise-id="${i.exercicioId||''}">
@@ -17065,11 +17065,10 @@ loadPatientWorkout = async function(){
     if(execution){openWorkoutSessionReview(execution);return;}
     if(!readiness){openDailyReadiness(readiness);return;}
     const sessao=hpWorkoutTodaySession(p);
-    if(sessao)openWorkoutExecutionForm(sessao);
+    hpOpenWorkoutSelectorV0604([p],p.id,sessao?.id);
   };
   $$('.patient-workout-access-card').forEach(b=>b.onclick=()=>{
-    const sessao=(p.sessoes||[]).find(x=>String(x.id)===String(b.dataset.accessSession));
-    if(sessao)openWorkoutExecutionForm(sessao);
+    hpOpenWorkoutSelectorV0604([p],p.id,b.dataset.accessSession);
   });
   $$('.patient-weekly-workout-card').forEach(b=>b.onclick=()=>{
     const target=document.getElementById(`patient-session-${b.dataset.weekSession}`);
@@ -17080,8 +17079,7 @@ loadPatientWorkout = async function(){
     }
   });
   $$('.start-workout').forEach(b=>b.onclick=()=>{
-    const sessao=(p.sessoes||[]).find(x=>String(x.id)===String(b.dataset.session));
-    if(sessao)openWorkoutExecutionForm(sessao);
+    hpOpenWorkoutSelectorV0604([p],p.id,b.dataset.session);
   });
   $$('.workout-execution-review').forEach(b=>b.onclick=()=>{
     const execution=(h.execucoes||[]).find(x=>String(x.id)===String(b.dataset.executionId));
@@ -20686,7 +20684,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.3';
+const HP_MVP_VERSION='0.60.4';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -22400,6 +22398,82 @@ hpRenderWorkoutProfessionalFlow=function(d){
   hpInjectProfessionalWorkoutProgressionEngine(patient,treinos).catch(x=>console.warn('Workout Progression Engine:',x));
 };
 
+
+// ===== v0.60.4 — Workout Selection Before Start =====
+const HP_WORKOUT_SELECTION_BEFORE_START_V0604='v0.60.4';
+
+function hpWorkoutSelectionItemsV0604(planos=[]){
+  return (planos||[]).flatMap((plan,pidx)=>(plan.sessoes||[]).map((session,sidx)=>({
+    plan,session,pidx,sidx,
+    label:`Treino ${hpWorkoutLetter(sidx)}`
+  })));
+}
+function hpWorkoutSelectionPreviewV0604(item){
+  const session=item?.session||{},plan=item?.plan||{},items=session.itens||[];
+  return `<section class="workout-selection-preview-v0604" aria-live="polite">
+    <div class="workout-selection-preview-head-v0604">
+      <div><span class="eyebrow">${esc(item?.label||'TREINO')} • ${esc(plan.nome||'Plano ativo')}</span><h3>${esc(session.nome||item?.label||'Treino')}</h3><p>${esc(session.diasSemana||'Dias livres')} • ${items.length} exercício(s)</p></div>
+      <span class="pill Ativa">Selecionado</span>
+    </div>
+    ${session.observacoes?`<p class="workout-selection-note-v0604">${esc(session.observacoes)}</p>`:''}
+    <div class="workout-selection-exercises-v0604">
+      ${items.length?items.map((x,idx)=>`<article><i>${idx+1}</i><div><strong>${esc(x.exercicio||'Exercício')}</strong><span>${x.series||'—'} × ${esc(x.repeticoes||'—')}${x.carga!=null?` • ${num(x.carga)} ${esc(x.unidadeCarga||'kg')}`:''}${x.descansoSegundos!=null?` • ${x.descansoSegundos}s descanso`:''}</span></div></article>`).join(''):'<div class="empty compact">Esta sessão ainda não possui exercícios publicados.</div>'}
+    </div>
+  </section>`;
+}
+function hpOpenWorkoutSelectorV0604(planos=[],selectedPlanId='',selectedSessionId=''){
+  const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  const options=hpWorkoutSelectionItemsV0604(planos);
+  if(!modal||!box)return;
+  modal.classList.add('workout-modal-open','workout-selection-modal-v0604');
+  modal.classList.remove('hidden');
+
+  if(!options.length){
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">TREINO</span><h2>Nenhuma sessão disponível</h2><p>Seu profissional ainda não publicou uma sessão que possa ser iniciada.</p></div><div class="form-actions"><button type="button" class="secondary" data-close-workout-selection-v0604>Fechar</button></div>`;
+    $('[data-close-workout-selection-v0604]',box).onclick=closeClinicalAction;
+    return;
+  }
+
+  let selected=options.find(x=>String(x.plan.id)===String(selectedPlanId)&&String(x.session.id)===String(selectedSessionId))
+    || options.find(x=>String(x.session.id)===String(selectedSessionId))
+    || options[0];
+
+  const render=()=>{
+    box.innerHTML=`<div class="modal-heading workout-selection-heading-v0604">
+      <span class="eyebrow">ESCOLHER ANTES DE INICIAR</span>
+      <h2>Qual treino você vai fazer?</h2>
+      <p>Abra, confira exercícios e prescrição, então inicie somente a sessão escolhida.</p>
+    </div>
+    <div class="workout-selection-layout-v0604">
+      <div class="workout-selection-list-v0604" role="listbox" aria-label="Treinos disponíveis">
+        ${options.map(x=>`<button type="button" role="option" aria-selected="${x===selected?'true':'false'}" class="workout-selection-option-v0604 ${x===selected?'active':''}" data-select-workout-v0604="${esc(x.session.id)}" data-select-plan-v0604="${esc(x.plan.id)}">
+          <span>${hpWorkoutLetter(x.sidx)}</span>
+          <div><small>${esc(x.plan.nome||`Plano ${x.pidx+1}`)}</small><strong>${esc(x.session.nome||x.label)}</strong><em>${(x.session.itens||[]).length} exercício(s)${x.session.diasSemana?` • ${esc(x.session.diasSemana)}`:''}</em></div>
+          <b>${x===selected?'✓':'›'}</b>
+        </button>`).join('')}
+      </div>
+      ${hpWorkoutSelectionPreviewV0604(selected)}
+    </div>
+    <div class="workout-selection-safety-v0604"><strong>Antes de começar</strong><span>Confirme que escolheu a sessão certa. Trocar de opção aqui não altera sua prescrição.</span></div>
+    <div class="form-actions workout-selection-actions-v0604">
+      <button type="button" class="secondary" data-close-workout-selection-v0604>Fechar</button>
+      <button type="button" class="primary" data-start-workout-v0604 ${!(selected.session.itens||[]).length?'disabled':''}>Iniciar treino escolhido</button>
+    </div>`;
+
+    $$('[data-select-workout-v0604]',box).forEach(btn=>btn.onclick=()=>{
+      const next=options.find(x=>String(x.plan.id)===String(btn.dataset.selectPlanV0604)&&String(x.session.id)===String(btn.dataset.selectWorkoutV0604));
+      if(next){selected=next;render();}
+    });
+    $('[data-close-workout-selection-v0604]',box).onclick=closeClinicalAction;
+    $('[data-start-workout-v0604]',box).onclick=()=>{
+      const session=selected?.session;
+      if(!session)return;
+      closeClinicalAction();
+      window.setTimeout(()=>openWorkoutExecutionForm(session),0);
+    };
+  };
+  render();
+}
 async function loadPatientWorkoutV01933(){
   const host=$('#patientPortalContent');
   const [d,h,home]=await Promise.all([
@@ -22428,7 +22502,7 @@ async function loadPatientWorkoutV01933(){
           <div class="patient-workout-access-grid">${(p.sessoes||[]).map((s,index)=>`<button type="button" class="patient-workout-access-card workout-start-any-v01933" data-plan="${p.id}" data-session="${s.id}">
             <span class="patient-workout-access-letter">${hpWorkoutLetter(index)}</span>
             <span class="patient-workout-access-copy"><small>${esc(p.nome)}</small><strong>${esc(s.nome||`Treino ${hpWorkoutLetter(index)}`)}</strong><em>${(s.itens||[]).length} exercício(s)${s.diasSemana?` • ${esc(s.diasSemana)}`:''}</em></span>
-            <span class="patient-workout-access-action">Iniciar ›</span>
+            <span class="patient-workout-access-action">Ver treino ›</span>
           </button>`).join('')||'<div class="empty compact">Sem sessões disponíveis.</div>'}</div>
         </article>`).join('')}</div>
     </section>
@@ -22441,13 +22515,11 @@ async function loadPatientWorkoutV01933(){
     const execution=(h.execucoes||[]).find(x=>String(x.dataHoraInicioUtc||'').slice(0,10)===today);
     if(execution){openWorkoutSessionReview(execution);return}
     if(!readiness){openDailyReadiness(readiness);return}
-    const sessao=(principal.sessoes||[])[0];
-    if(sessao)openWorkoutExecutionForm(sessao);
+    const suggested=hpWorkoutTodaySession(principal);
+    hpOpenWorkoutSelectorV0604(planos,principal.id,suggested?.id);
   };
   $$('.workout-start-any-v01933').forEach(b=>b.onclick=()=>{
-    const plan=planos.find(x=>String(x.id)===String(b.dataset.plan));
-    const sessao=(plan?.sessoes||[]).find(x=>String(x.id)===String(b.dataset.session));
-    if(sessao)openWorkoutExecutionForm(sessao);
+    hpOpenWorkoutSelectorV0604(planos,b.dataset.plan,b.dataset.session);
   });
   $$('.workout-execution-review').forEach(b=>b.onclick=()=>{const x=(h.execucoes||[]).find(e=>String(e.id)===String(b.dataset.executionId));if(x)openWorkoutSessionReview(x)});
 }

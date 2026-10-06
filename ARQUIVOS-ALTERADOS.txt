@@ -1,22 +1,25 @@
-AESYN Performance — v0.60.3-r5 — Exact ROADMAP UTF8 Gate Signature
+AESYN Performance — v0.60.4-r6 — PowerShell Matches Gate Fix
 
-Hotfix da mesma versão funcional v0.60.3.
-O r4 preservou o comportamento UTF-8, mas o gate histórico v0.59.2 exige
-literalmente esta assinatura no PREPARAR.ps1:
+Hotfix da mesma versão funcional v0.60.4.
 
-Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+Causa:
+- gate de identidade criado na v0.60.3 ainda usava
+  ($identityHealth0603 | Select-String ... -AllMatches).Matches.Count;
+- no Windows PowerShell 5.1 / StrictMode, Select-String pode retornar array
+  e o array não possui propriedade Matches;
+- o mesmo gate ainda podia procurar version = "0.60.3".
 
-O r5 usa exatamente essa forma, com:
-- $PSScriptRoot;
-- ordem exata Get-Content -Encoding UTF8 (...) -Raw;
-- exatamente um BOM UTF-8;
-- validação da feature Athlete Interests Discovery;
-- validação da identidade completa v0.60.3;
-- nenhuma alteração funcional adicional.
+Correção:
+- troca por [regex]::Matches($identityHealth0603, 'version = "0.60.4"').Count;
+- alinha mensagem do gate para identidade v0.60.4;
+- valida somente o bloco Current Identity Alignment Regression Memory;
+- nenhuma alteração funcional em app.js/CSS/API;
+- exatamente um BOM UTF-8.
 
 Arquivos:
 - PREPARAR.ps1
 - VERSION.txt
 - ARQUIVOS-ALTERADOS.txt
 
-Sem commit individual de -r5.
+O PREPARAR ajusta TESTAR.ps1 e se substitui pelo PREPARAR final idempotente.
+Sem commit individual de -r6.
