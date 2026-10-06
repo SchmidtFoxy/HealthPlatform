@@ -1,49 +1,44 @@
 ﻿$ErrorActionPreference = "Stop"
 Write-Host "============================================================" -ForegroundColor DarkGreen
-Write-Host " AESYN v0.60.6 | WORKOUT SERIES BLOCKS / SUB-SERIES BUILDER" -ForegroundColor Green
+Write-Host " AESYN v0.60.7 | PATIENT PLAN COMPACT EXPERIENCE" -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor DarkGreen
 
 $version = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
 $app = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
 $css = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
-$controller = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ModelosPlanosTreinoController.cs') -Raw
 $roadmap = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 
-if ($version -ne '0.60.6') { throw "VERSION.txt esperado 0.60.6; atual: $version" }
+if ($version -ne '0.60.7') { throw "VERSION.txt esperado 0.60.7; atual: $version" }
 
 foreach ($token in @(
-    'HP_WORKOUT_SERIES_BLOCKS_V0606',
-    'hpBindSeriesBlocksEditorV0606',
-    'hpWorkoutSeriesBlocksPatientHtmlV0606'
+  'HP_PATIENT_PLAN_COMPACT_V0607',
+  'patient-plan-summary-v0607',
+  'patient-meal-time-v0607',
+  'food-substitutions-v0607',
+  'patient-plan-supplements-v0607',
+  'patient-supplement-schedule-v0594',
+  'patient-supplement-item-v0594',
+  'supplement-training-context-v0595',
+  'Meu cronograma de suplementos'
 )) {
-    if (-not $app.Contains($token)) { throw "PREPARAR v0.60.6 incompleto: $token" }
-}
-
-foreach ($token in @(
-    'TemplateBlocoSerie',
-    'BlocosSeriesPrefixo',
-    'ExtrairBlocosSeries',
-    '?? new List<TemplateBlocoSerie>();'
-)) {
-    if (-not $controller.Contains($token)) { throw "PREPARAR backend v0.60.6 incompleto: $token" }
-}
-
-if ($controller.Contains('?? Array.Empty<TemplateBlocoSerie>();')) {
-    throw 'Regression: fallback List/Array incompatível voltou ao backend.'
+  if (-not $app.Contains($token)) { throw "PREPARAR v0.60.7 incompleto: $token" }
 }
 
 foreach ($token in @(
-    '.series-blocks-editor-v0606',
-    '.patient-series-blocks-v0606',
-    '@media(max-width:430px)'
+  '.patient-plan-compact-v0607',
+  '.patient-plan-meals-v0607',
+  '.patient-plan-supplements-v0607',
+  '@media(max-width:430px)',
+  '@media(max-width:360px)'
 )) {
-    if (-not $css.Contains($token)) { throw "PREPARAR CSS v0.60.6 incompleto: $token" }
+  if (-not $css.Contains($token)) { throw "PREPARAR CSS v0.60.7 incompleto: $token" }
 }
 
-if (-not $roadmap.Contains('v0.60.7')) {
-    throw 'ROADMAP sem proxima etapa v0.60.7.'
+if (-not $roadmap.Contains('v0.60.8')) {
+    throw 'ROADMAP sem proxima etapa v0.60.8.'
 }
 
-Write-Host "    Workout Series Blocks / Sub-series Builder: OK." -ForegroundColor Green
-Write-Host "    Backend compile fallback List: OK." -ForegroundColor Green
-Write-Host "    Proxima etapa: v0.60.7 / Patient Plan Compact Experience" -ForegroundColor DarkCyan
+Write-Host "    Patient Plan Compact Experience: OK." -ForegroundColor Green
+Write-Host "    Regression gate loadPatientPlan escopado: OK." -ForegroundColor Green
+Write-Host "    Compatibilidade suplemento v0.59.4/v0.59.5: OK." -ForegroundColor Green
+Write-Host "    Proxima etapa: v0.60.8 / Professional Chat Identity & Global Inbox Consolidation" -ForegroundColor DarkCyan

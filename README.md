@@ -10638,3 +10638,5 @@ Na área de Treino do paciente, tocar em um treino agora abre primeiro a seleç�
 A execução de treino do paciente usa um Workout Focus Mode de alto contraste: exercício em branco, prescrição em verde, chips de séries/reps/carga/descanso, progresso de concluídos e feedback inline. A tela prioriza leitura rápida durante o exercício sem perder os campos de registro.
 ### v0.60.6 — Workout Series Blocks / Sub-series Builder
 O Workout Builder profissional aceita múltiplos blocos de séries dentro do mesmo exercício. Um exercício pode, por exemplo, ter um bloco de aquecimento `1×10–15` e depois um bloco principal `2×3×10`, preservando ordem, carga, descanso e observações específicas. Modelos antigos continuam válidos sem blocos.
+### v0.60.7 — Patient Plan Compact Experience
+A tela Plano do paciente prioriza leitura rápida do dia: energia e macros ficam compactos no topo, refeições aproveitam melhor a largura, horários têm destaque visual e substituições podem ser expandidas sob demanda. Nenhuma informação prescrita é removida.

@@ -8745,3 +8745,11 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Preserva blocos no JSON do treino-modelo e no round-trip modelo → paciente → modelo.
 - Paciente visualiza blocos na ficha e na execução de treino.
 - Mantém compatibilidade com treinos antigos e técnicas avançadas.
+## v0.60.7 — Patient Plan Compact Experience
+- Compacta o plano alimentar do paciente sem ocultar dados.
+- Energia ganha destaque central azul; macros passam para faixa compacta.
+- Refeições usam duas colunas no desktop e cards densos no mobile.
+- Horário vira bolha azul centralizada por refeição.
+- Substituições usam details/summary acessível e recolhível.
+- Cronograma de suplementos acompanha a nova densidade visual.
+- PWA validável em 360/390/430 px, sem overflow.

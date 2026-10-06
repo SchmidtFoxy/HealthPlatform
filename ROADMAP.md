@@ -9880,9 +9880,22 @@ O Workout Builder passa a suportar blocos/sub-séries estruturados dentro do mes
 - Regression Memory cobre contrato backend, builder, render do paciente e identidade `v0.60.6`.
 
 **Próxima etapa:** `v0.60.7 — Patient Plan Compact Experience`.
-### v0.60.7 — Patient Plan Compact Experience
-Plano mais compacto, texto centralizado nos destaques, melhor uso da largura e menos rolagem sem esconder informação.
+### ✅ v0.60.7 — Patient Plan Compact Experience — IMPLEMENTADA
+O plano alimentar do paciente passa a usar melhor a largura e exigir menos rolagem sem esconder informação:
+- resumo nutricional compacto com energia em destaque central azul e macros em faixa;
+- quantidade de refeições visível no desktop sem criar card extra no mobile;
+- refeições em duas colunas no desktop e uma coluna densa no PWA;
+- horário ganha bolha azul centralizada no cabeçalho de cada refeição;
+- alimentos usam linha compacta com porção e macros de leitura rápida;
+- substituições viram `<details>` acessível, recolhido por padrão e expansível sem perder conteúdo;
+- observações continuam visíveis no cabeçalho da refeição;
+- suplementos ganham cronograma compacto alinhado à mesma linguagem visual;
+- dark theme preserva superfícies escuras, sem grandes cards brancos;
+- 360/390/430 px sem overflow horizontal;
+- empty state existente permanece intacto;
+- Regression Memory cobre estrutura, responsividade e identidade `v0.60.7`.
 
+**Próxima etapa:** `v0.60.8 — Professional Chat Identity & Global Inbox Consolidation`.
 ### v0.60.8 — Professional Chat Identity & Global Inbox Consolidation
 Consolidar Chat da sidebar para todos os pacientes autorizados; identidade de demo “Dr Raphael”; badges, busca e fila de resposta coerentes.
 

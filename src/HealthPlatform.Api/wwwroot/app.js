@@ -4685,6 +4685,22 @@ function patientPlanEmptyState(){
   </section>`;
 }
 
+
+// ===== v0.60.7 — Patient Plan Compact Experience =====
+const HP_PATIENT_PLAN_COMPACT_V0607='v0.60.7';
+function hpPatientPlanMetricV0607(label,value,unit=''){
+  return `<span class="patient-plan-macro-v0607"><small>${esc(label)}</small><strong>${esc(value)}${unit?` <i>${esc(unit)}</i>`:''}</strong></span>`;
+}
+function hpPatientFoodMacroV0607(i){
+  return `<span class="patient-food-macro-v0607">${num(i.nutrientes?.calorias,1)} kcal <b>•</b> P ${num(i.nutrientes?.proteinas,1)} <b>•</b> C ${num(i.nutrientes?.carboidratos,1)} <b>•</b> G ${num(i.nutrientes?.gorduras,1)}</span>`;
+}
+function hpPatientSubstitutionsV0607(items=[]){
+  if(!items.length)return '';
+  return `<details class="food-substitutions-v0607">
+    <summary><span>Substituições</span><small>${items.length} opção(ões)</small></summary>
+    <div>${items.map(s=>`<span>${esc(s.alimento)} <b>— ${num(s.quantidade)} ${esc(s.unidade)}</b></span>`).join('')}</div>
+  </details>`;
+}
 async function loadPatientPlan(){
   const host=$('#patientPortalContent'),d=await api('/api/portal/me/plano'),p=d.plano;
   if(!p){
@@ -4693,28 +4709,53 @@ async function loadPatientPlan(){
     return;
   }
   const totals=p.totais||{};
-  host.innerHTML=patientPageHeader('ALIMENTAÇÃO',esc(p.nome),`Plano de ${fmtDate(p.dataInicio)}${p.dataFim?' até '+fmtDate(p.dataFim):''} • ${esc(p.profissional)}`)+`
-    <div class="patient-plan-totals">
-      ${metric(num(totals.calorias,1),' kcal','Energia')}
-      ${metric(num(totals.proteinas,1),' g','Proteínas')}
-      ${metric(num(totals.carboidratos,1),' g','Carboidratos')}
-      ${metric(num(totals.gorduras,1),' g','Gorduras')}
-      ${metric(num(totals.fibras,1),' g','Fibras')}
-    </div>
-    <div class="patient-meal-list">${(p.refeicoes||[]).map(r=>`
-      <article class="card patient-meal-card">
-        <div class="card-head"><div><span class="eyebrow">${r.horario?String(r.horario).slice(0,5):'SEM HORÁRIO'}</span><h3>${esc(r.nome)}</h3></div></div>
-        ${r.observacoes?`<p class="muted">${esc(r.observacoes)}</p>`:''}
-        <div class="patient-food-list">${(r.itens||[]).map(i=>`
-          <div class="patient-food-item">
-            <div><strong>${esc(i.alimento)}</strong><span>${num(i.quantidade)} ${esc(i.unidade)}${i.observacao?' • '+esc(i.observacao):''}</span></div>
-            <small>${num(i.nutrientes?.calorias,1)} kcal • P ${num(i.nutrientes?.proteinas,1)} g • C ${num(i.nutrientes?.carboidratos,1)} g • G ${num(i.nutrientes?.gorduras,1)} g</small>
-            ${(i.substituicoes||[]).length?`<div class="food-substitutions"><b>Substituições</b>${i.substituicoes.map(s=>`<span>${esc(s.alimento)} — ${num(s.quantidade)} ${esc(s.unidade)}</span>`).join('')}</div>`:''}
-          </div>`).join('')}</div>
-      </article>`).join('')}</div>
-    ${(p.suplementos||[]).length?`<section class="card patient-supplement-schedule-v0594"><div class="card-head"><div><span class="eyebrow">SUPLEMENTAÇÃO</span><h3>Meu cronograma de suplementos</h3></div></div><div class="patient-supplement-list-v0594">${p.suplementos.map(x=>`<div class="patient-supplement-item-v0594"><time>${x.horario?String(x.horario).slice(0,5):'—'}</time><div><strong>${esc(x.nome)}</strong><span>${num(x.quantidadePorcoes)} porção(ões) • ${esc(x.contexto)}${x.refeicao?' • '+esc(x.refeicao):''}${x.sessaoTreino?' • '+esc(x.sessaoTreino):''}</span>${x.planoTreino?`<small class="supplement-training-context-v0595">Treino: ${esc(x.planoTreino)}${x.sessaoTreino?' • '+esc(x.sessaoTreino):''}</small>`:''}${x.observacoes?`<small>${esc(x.observacoes)}</small>`:''}</div></div>`).join('')}</div></section>`:''}`;
-}
+  const meals=p.refeicoes||[];
+  const supplements=p.suplementos||[];
+  host.innerHTML=`<div class="patient-plan-compact-v0607">
+    ${patientPageHeader('ALIMENTAÇÃO',esc(p.nome),`Plano de ${fmtDate(p.dataInicio)}${p.dataFim?' até '+fmtDate(p.dataFim):''} • ${esc(p.profissional)}`)}
+    <section class="patient-plan-summary-v0607" aria-label="Resumo nutricional do plano">
+      <div class="patient-plan-energy-v0607">
+        <small>ENERGIA DO PLANO</small>
+        <strong>${num(totals.calorias,0)}</strong>
+        <span>kcal</span>
+      </div>
+      <div class="patient-plan-macros-v0607">
+        ${hpPatientPlanMetricV0607('Proteínas',num(totals.proteinas,1),'g')}
+        ${hpPatientPlanMetricV0607('Carboidratos',num(totals.carboidratos,1),'g')}
+        ${hpPatientPlanMetricV0607('Gorduras',num(totals.gorduras,1),'g')}
+        ${hpPatientPlanMetricV0607('Fibras',num(totals.fibras,1),'g')}
+      </div>
+      <div class="patient-plan-day-count-v0607"><strong>${meals.length}</strong><span>refeição(ões)</span></div>
+    </section>
 
+    <section class="patient-plan-meals-v0607" aria-label="Refeições do plano">
+      ${meals.map((r,index)=>`
+        <article class="patient-meal-compact-v0607">
+          <header>
+            <div class="patient-meal-time-v0607">${r.horario?String(r.horario).slice(0,5):'Livre'}</div>
+            <div><small>REFEIÇÃO ${index+1}</small><h3>${esc(r.nome)}</h3>${r.observacoes?`<p>${esc(r.observacoes)}</p>`:''}</div>
+            <span class="patient-meal-count-v0607">${(r.itens||[]).length} item(ns)</span>
+          </header>
+          <div class="patient-food-list-v0607">${(r.itens||[]).map(i=>`
+            <div class="patient-food-item-v0607">
+              <div class="patient-food-main-v0607"><strong>${esc(i.alimento)}</strong><span>${num(i.quantidade)} ${esc(i.unidade)}${i.observacao?' • '+esc(i.observacao):''}</span></div>
+              ${hpPatientFoodMacroV0607(i)}
+              ${hpPatientSubstitutionsV0607(i.substituicoes||[])}
+            </div>`).join('')||`<div class="patient-plan-inline-empty-v0607">Nenhum item publicado nesta refeição.</div>`}
+          </div>
+        </article>`).join('')}
+    </section>
+
+    ${supplements.length?`<section class="patient-plan-supplements-v0607 patient-supplement-schedule-v0594">
+      <div class="patient-plan-section-head-v0607"><div><span class="eyebrow">SUPLEMENTAÇÃO</span><h3>Meu cronograma de suplementos</h3></div><small>${supplements.length} item(ns)</small></div>
+      <div class="patient-supplement-list-v0607">${supplements.map(x=>`
+        <article class="patient-supplement-item-v0594">
+          <time>${x.horario?String(x.horario).slice(0,5):'—'}</time>
+          <div><strong>${esc(x.nome)}</strong><span class="supplement-training-context-v0595">${num(x.quantidadePorcoes)} porção(ões) • ${esc(x.contexto)}${x.refeicao?' • '+esc(x.refeicao):''}${x.sessaoTreino?' • '+esc(x.sessaoTreino):''}</span>${x.planoTreino?`<small>Treino: ${esc(x.planoTreino)}${x.sessaoTreino?' • '+esc(x.sessaoTreino):''}</small>`:''}${x.observacoes?`<small>${esc(x.observacoes)}</small>`:''}</div>
+        </article>`).join('')}</div>
+    </section>`:''}
+  </div>`;
+}
 async function loadPatientGoals(){
   const host=$('#patientPortalContent'),d=await api('/api/portal/me/metas?dias=30');
   host.innerHTML=patientPageHeader('HÁBITOS','Minhas metas','Acompanhe seu progresso dos últimos 30 dias.')+`
@@ -20862,7 +20903,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.6';
+const HP_MVP_VERSION='0.60.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

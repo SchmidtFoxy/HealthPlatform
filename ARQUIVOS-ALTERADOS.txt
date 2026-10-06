@@ -1,28 +1,31 @@
-AESYN Performance — v0.60.6-r3 — Series Blocks Backend Compile Fix
+AESYN Performance — v0.60.7-r6 — Scoped Patient Plan Regression Gate
 
-Hotfix da mesma versão funcional v0.60.6.
+Hotfix da mesma versão funcional v0.60.7.
 
 Causa:
-- ExtrairBlocosSeries retornava:
-  List<TemplateBlocoSerie> ?? TemplateBlocoSerie[]
-- o operador ?? nao aceita List<T> de um lado e T[] do outro;
-- a API nao compilava/subia e o AESYN AUTO expirava aguardando
-  http://127.0.0.1:5180.
+- o Regression Memory v0.60.7 procurava globalmente:
+  class="patient-plan-totals"
+- esse marcador legado ainda existe em outro trecho histórico do app.js;
+- a nova loadPatientPlan compacta estava correta, mas o gate gerava falso positivo.
 
 Correção:
-- troca somente o fallback do deserialize:
-  ?? Array.Empty<TemplateBlocoSerie>()
-  por
-  ?? new List<TemplateBlocoSerie>()
-- adiciona dotnet build -c Release no PREPARAR do hotfix;
-- se houver outra falha de compilacao, ela aparece antes do RODAR;
-- PREPARAR final mantém Regression Memory textual contra o bug;
-- nenhuma mudança de escopo funcional;
+- remove a checagem global;
+- isola estruturalmente apenas async function loadPatientPlan(){ ... };
+- encerra no próximo async function de nível superior;
+- verifica `patient-plan-totals` somente dentro desse bloco;
+- também exige dentro do bloco:
+  - patient-plan-summary-v0607
+  - patient-plan-energy-v0607
+  - patient-plan-meals-v0607
+  - patient-meal-time-v0607
+- preserva todos os gates históricos de suplementos;
+- não altera UI funcional;
 - exatamente um BOM UTF-8.
 
-Arquivos do pacote:
+Arquivos:
 - PREPARAR.ps1
 - VERSION.txt
 - ARQUIVOS-ALTERADOS.txt
 
-Sem commit individual de -r3.
+O PREPARAR altera TESTAR.ps1 e se substitui pelo PREPARAR final idempotente.
+Sem commit individual de -r6.
