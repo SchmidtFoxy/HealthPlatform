@@ -10577,3 +10577,7 @@ A suplementação saiu do catálogo e passou a integrar o plano alimentar e o cr
 Quando o catálogo possui calorias/macros, esses valores entram nos totais do plano e no saldo nutricional. Itens sem macros continuam no cronograma sem criar calorias artificiais. A decisão clínica continua humana: o AESYN **não escolhe dose, produto, necessidade ou indicação** automaticamente.
 
 No PWA, o cronograma usa uma coluna em telas estreitas e mantém ações confortáveis em aproximadamente 360/390/430 px.
+
+
+## v0.59.5 — Supplement Training Context
+Suplementos programados em planos alimentares podem ser vinculados opcionalmente a sessões de treino do mesmo paciente. O vínculo serve para contexto e cronograma (por exemplo, pré/pós-treino) e não prescreve automaticamente produto, dose, indicação ou necessidade clínica. O portal do paciente mostra o treino/sessão relacionado quando houver.

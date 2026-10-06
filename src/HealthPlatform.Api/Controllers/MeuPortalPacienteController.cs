@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using HealthPlatform.Api.Contracts.Diario;
 using HealthPlatform.Api.Contracts.Metas;
 using HealthPlatform.Api.Contracts.Portal;
@@ -572,6 +572,9 @@ public sealed class MeuPortalPacienteController(
                 .ThenInclude(x => x.Suplemento)
             .Include(x => x.Suplementos)
                 .ThenInclude(x => x.RefeicaoPlanoAlimentar)
+            .Include(x => x.Suplementos)
+                .ThenInclude(x => x.SessaoTreino)
+                    .ThenInclude(x => x.PlanoTreino)
             .Where(x => x.PacienteId == pacienteId.Value &&
                         x.Status == "Ativo" &&
                         x.DataInicio <= dia &&
@@ -646,6 +649,9 @@ public sealed class MeuPortalPacienteController(
             x.Horario,
             x.Contexto,
             refeicao = x.RefeicaoPlanoAlimentar != null ? x.RefeicaoPlanoAlimentar.Nome : null,
+            sessaoTreinoId = x.SessaoTreinoId,
+            sessaoTreino = x.SessaoTreino != null ? x.SessaoTreino.Nome : null,
+            planoTreino = x.SessaoTreino != null ? x.SessaoTreino.PlanoTreino.Nome : null,
             x.Observacoes,
             calorias = Math.Round(x.Suplemento.CaloriasPorPorcao * x.QuantidadePorcoes, 1),
             proteinas = Math.Round(x.Suplemento.ProteinasGPorPorcao * x.QuantidadePorcoes, 1),

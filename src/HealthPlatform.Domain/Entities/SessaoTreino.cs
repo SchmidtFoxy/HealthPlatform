@@ -12,4 +12,5 @@ public class SessaoTreino : BaseEntity
 
     public PlanoTreino PlanoTreino { get; set; } = null!;
     public ICollection<ItemTreino> Itens { get; set; } = new List<ItemTreino>();
+    public ICollection<SuplementoPlanoAlimentar> SuplementosPlanoAlimentar { get; set; } = new List<SuplementoPlanoAlimentar>();
 }

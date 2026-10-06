@@ -7,6 +7,7 @@ public class SuplementoPlanoAlimentar : BaseEntity
     public Guid PlanoAlimentarId { get; set; }
     public Guid SuplementoId { get; set; }
     public Guid? RefeicaoPlanoAlimentarId { get; set; }
+    public Guid? SessaoTreinoId { get; set; }
     public decimal QuantidadePorcoes { get; set; } = 1m;
     public TimeOnly? Horario { get; set; }
     public string Contexto { get; set; } = "Outro";
@@ -15,4 +16,5 @@ public class SuplementoPlanoAlimentar : BaseEntity
     public PlanoAlimentar PlanoAlimentar { get; set; } = null!;
     public Suplemento Suplemento { get; set; } = null!;
     public RefeicaoPlanoAlimentar? RefeicaoPlanoAlimentar { get; set; }
+    public SessaoTreino? SessaoTreino { get; set; }
 }

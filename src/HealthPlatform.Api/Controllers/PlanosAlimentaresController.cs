@@ -527,6 +527,12 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         if (suplementos.Any(x => x.QuantidadePorcoes <= 0 || string.IsNullOrWhiteSpace(x.Contexto))) return "Suplementos devem possuir quantidade de porcoes maior que zero e contexto.";
         var ordens = request.Refeicoes.Select(x => x.Ordem).ToHashSet();
         if (suplementos.Any(x => x.RefeicaoOrdem.HasValue && !ordens.Contains(x.RefeicaoOrdem.Value))) return "Suplemento referencia uma refeicao inexistente no plano.";
+        var sessaoTreinoIds = suplementos.Where(x => x.SessaoTreinoId.HasValue).Select(x => x.SessaoTreinoId!.Value).Distinct().ToArray();
+        if (sessaoTreinoIds.Length > 0)
+        {
+            var sessoesValidas = await db.SessoesTreino.CountAsync(x => sessaoTreinoIds.Contains(x.Id) && x.PlanoTreino.PacienteId == pacienteId && x.PlanoTreino.Paciente.OrganizacaoId == currentUser.OrganizationId, ct);
+            if (sessoesValidas != sessaoTreinoIds.Length) return "Suplemento referencia uma sessao de treino inexistente, de outro paciente ou organizacao.";
+        }
         var suplementoIds = suplementos.Select(x => x.SuplementoId).Distinct().ToArray();
         if (suplementoIds.Length > 0)
         {
@@ -570,6 +576,8 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         if (requests is null || requests.Count == 0) return;
         var ids = requests.Select(x => x.SuplementoId).Distinct().ToArray();
         var suplementos = await db.Suplementos.Where(x => ids.Contains(x.Id) && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo).ToDictionaryAsync(x => x.Id, ct);
+        var sessaoIds = requests.Where(x => x.SessaoTreinoId.HasValue).Select(x => x.SessaoTreinoId!.Value).Distinct().ToArray();
+        var sessoes = sessaoIds.Length == 0 ? new Dictionary<Guid, SessaoTreino>() : await db.SessoesTreino.Include(x => x.PlanoTreino).Where(x => sessaoIds.Contains(x.Id) && x.PlanoTreino.PacienteId == plano.PacienteId && x.PlanoTreino.Paciente.OrganizacaoId == currentUser.OrganizationId).ToDictionaryAsync(x => x.Id, ct);
         var refeicoesPorOrdem = plano.Refeicoes.ToDictionary(x => x.Ordem);
         foreach (var r in requests)
         {
@@ -581,6 +589,8 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
                 Suplemento = suplementos[r.SuplementoId],
                 RefeicaoPlanoAlimentarId = refeicao?.Id,
                 RefeicaoPlanoAlimentar = refeicao,
+                SessaoTreinoId = r.SessaoTreinoId,
+                SessaoTreino = r.SessaoTreinoId.HasValue ? sessoes[r.SessaoTreinoId.Value] : null,
                 QuantidadePorcoes = r.QuantidadePorcoes,
                 Horario = r.Horario,
                 Contexto = r.Contexto.Trim(),
@@ -589,18 +599,18 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         }
     }
 
-    private IQueryable<PlanoAlimentar> QueryCompleta() => db.PlanosAlimentares.AsNoTracking().Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento).Include(x => x.Suplementos).ThenInclude(x => x.Suplemento).Include(x => x.Suplementos).ThenInclude(x => x.RefeicaoPlanoAlimentar);
-    private IQueryable<PlanoAlimentar> QueryCompletaTracking() => db.PlanosAlimentares.Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento).Include(x => x.Suplementos).ThenInclude(x => x.Suplemento).Include(x => x.Suplementos).ThenInclude(x => x.RefeicaoPlanoAlimentar);
+    private IQueryable<PlanoAlimentar> QueryCompleta() => db.PlanosAlimentares.AsNoTracking().Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento).Include(x => x.Suplementos).ThenInclude(x => x.Suplemento).Include(x => x.Suplementos).ThenInclude(x => x.RefeicaoPlanoAlimentar).Include(x => x.Suplementos).ThenInclude(x => x.SessaoTreino).ThenInclude(x => x.PlanoTreino);
+    private IQueryable<PlanoAlimentar> QueryCompletaTracking() => db.PlanosAlimentares.Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Alimento).Include(x => x.Refeicoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Substituicoes).ThenInclude(x => x.Alimento).Include(x => x.Suplementos).ThenInclude(x => x.Suplemento).Include(x => x.Suplementos).ThenInclude(x => x.RefeicaoPlanoAlimentar).Include(x => x.Suplementos).ThenInclude(x => x.SessaoTreino).ThenInclude(x => x.PlanoTreino);
     private async Task<Profissional?> GetProfissionalAtual(CancellationToken ct) => await db.Profissionais.FirstOrDefaultAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
     private async Task<bool> PacienteExiste(Guid id, CancellationToken ct) => await db.Pacientes.AnyAsync(x => x.Id == id && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
     private void Auditar(string acao, PlanoAlimentar item, object? antes, object? depois) => db.AuditLogs.Add(new AuditLog { OrganizacaoId = currentUser.OrganizationId, UsuarioId = currentUser.UserId, Acao = acao, Entidade = nameof(PlanoAlimentar), EntidadeId = item.Id.ToString(), DadosAnterioresJson = antes is null ? null : JsonSerializer.Serialize(antes), DadosNovosJson = depois is null ? null : JsonSerializer.Serialize(depois), IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() });
-    private static object Snapshot(PlanoAlimentar x) => new { x.Id, x.PacienteId, x.ProfissionalId, x.Nome, x.DataInicio, x.DataFim, x.Status, x.PlanoOrigemId, x.Versao, x.AjustePercentual, x.MetaCalorias, x.MetaProteinasG, x.MetaCarboidratosG, x.MetaGordurasG, x.MetaFibrasG, Refeicoes = x.Refeicoes.Select(r => new { r.Nome, r.Horario, r.Ordem, r.MetaCalorias, r.MetaProteinasG, r.MetaCarboidratosG, r.MetaGordurasG, r.MetaFibrasG, Itens = r.Itens.Select(i => new { i.AlimentoId, i.Quantidade, i.Unidade, i.QuantidadeGramas, Substituicoes = i.Substituicoes.Select(s => new { s.AlimentoId, s.Quantidade, s.Unidade, s.QuantidadeGramas }) }) }), Suplementos = x.Suplementos.Select(s => new { s.SuplementoId, s.RefeicaoPlanoAlimentarId, s.QuantidadePorcoes, s.Horario, s.Contexto, s.Observacoes }) };
+    private static object Snapshot(PlanoAlimentar x) => new { x.Id, x.PacienteId, x.ProfissionalId, x.Nome, x.DataInicio, x.DataFim, x.Status, x.PlanoOrigemId, x.Versao, x.AjustePercentual, x.MetaCalorias, x.MetaProteinasG, x.MetaCarboidratosG, x.MetaGordurasG, x.MetaFibrasG, Refeicoes = x.Refeicoes.Select(r => new { r.Nome, r.Horario, r.Ordem, r.MetaCalorias, r.MetaProteinasG, r.MetaCarboidratosG, r.MetaGordurasG, r.MetaFibrasG, Itens = r.Itens.Select(i => new { i.AlimentoId, i.Quantidade, i.Unidade, i.QuantidadeGramas, Substituicoes = i.Substituicoes.Select(s => new { s.AlimentoId, s.Quantidade, s.Unidade, s.QuantidadeGramas }) }) }), Suplementos = x.Suplementos.Select(s => new { s.SuplementoId, s.RefeicaoPlanoAlimentarId, s.SessaoTreinoId, s.QuantidadePorcoes, s.Horario, s.Contexto, s.Observacoes }) };
     private static PlanoAlimentarResponse ToResponse(PlanoAlimentar x)
     {
         var suplementos = x.Suplementos.OrderBy(s => s.Horario ?? TimeOnly.MaxValue).ThenBy(s => s.Contexto).Select(s =>
         {
             var total = CalcularSuplemento(s.Suplemento, s.QuantidadePorcoes);
-            return new SuplementoPlanoResponse(s.Id, s.SuplementoId, s.Suplemento.Nome, s.Suplemento.Marca, s.Suplemento.Categoria, s.QuantidadePorcoes, s.Suplemento.PorcaoQuantidade, s.Suplemento.PorcaoUnidade, s.Horario, s.Contexto, s.RefeicaoPlanoAlimentarId, s.RefeicaoPlanoAlimentar?.Nome, s.Observacoes, total);
+            return new SuplementoPlanoResponse(s.Id, s.SuplementoId, s.Suplemento.Nome, s.Suplemento.Marca, s.Suplemento.Categoria, s.QuantidadePorcoes, s.Suplemento.PorcaoQuantidade, s.Suplemento.PorcaoUnidade, s.Horario, s.Contexto, s.RefeicaoPlanoAlimentarId, s.RefeicaoPlanoAlimentar?.Nome, s.SessaoTreinoId, s.SessaoTreino?.Nome, s.SessaoTreino?.PlanoTreino?.Nome, s.Observacoes, total);
         }).ToList();
 
         var refeicoes = x.Refeicoes.OrderBy(r => r.Ordem).Select(r =>

@@ -8629,3 +8629,13 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Migration `20260930083000_V0273AdvancedTechniques`.
 - Guardrail: o AESYN não escolhe, combina ou aplica técnicas automaticamente.
 - Próxima etapa: v0.27.4 — Progression & Regression 3.0.
+
+
+## v0.59.5 — Supplement Training Context
+- adiciona `SessaoTreinoId` opcional à suplementação do plano alimentar;
+- valida que a sessão pertence ao mesmo paciente e organização;
+- integra sessão/treino ao Nutrition Builder e ao portal do paciente;
+- preserva o vínculo em duplicação/progressão da dieta;
+- adiciona migration EF Core descoberta `20261006154500_V0595SupplementTrainingContext`;
+- adiciona gates de ownership, migration, PWA e Regression Memory;
+- o AESYN organiza o contexto informado pelo profissional e não prescreve automaticamente suplemento, dose ou indicação.

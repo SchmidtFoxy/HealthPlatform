@@ -181,11 +181,13 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<Guid>("PlanoAlimentarId").HasColumnType("uuid");
                     b.Property<decimal>("QuantidadePorcoes").HasPrecision(10, 3).HasColumnType("numeric(10,3)");
                     b.Property<Guid?>("RefeicaoPlanoAlimentarId").HasColumnType("uuid");
+                    b.Property<Guid?>("SessaoTreinoId").HasColumnType("uuid");
                     b.Property<Guid>("SuplementoId").HasColumnType("uuid");
                     b.Property<DateTime?>("UpdatedAtUtc").HasColumnType("timestamp with time zone");
                     b.HasKey("Id");
                     b.HasIndex("PlanoAlimentarId", "Horario");
                     b.HasIndex("RefeicaoPlanoAlimentarId");
+                    b.HasIndex("SessaoTreinoId");
                     b.HasIndex("SuplementoId");
                     b.ToTable("SuplementosPlanoAlimentar", (string)null);
                 });
@@ -3492,6 +3494,10 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .WithMany("Suplementos")
                         .HasForeignKey("RefeicaoPlanoAlimentarId")
                         .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("HealthPlatform.Domain.Entities.SessaoTreino", "SessaoTreino")
+                        .WithMany("SuplementosPlanoAlimentar")
+                        .HasForeignKey("SessaoTreinoId")
+                        .OnDelete(DeleteBehavior.SetNull);
                     b.HasOne("HealthPlatform.Domain.Entities.Suplemento", "Suplemento")
                         .WithMany("PrescricoesPlanoAlimentar")
                         .HasForeignKey("SuplementoId")
@@ -3499,6 +3505,7 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .IsRequired();
                     b.Navigation("PlanoAlimentar");
                     b.Navigation("RefeicaoPlanoAlimentar");
+                    b.Navigation("SessaoTreino");
                     b.Navigation("Suplemento");
                 });
 

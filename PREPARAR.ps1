@@ -13,9 +13,23 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# v0.59.5 - Supplement Training Context.
+$versionAtual0595 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
+if ($versionAtual0595 -ne "0.59.5") { throw "VERSION.txt esperado 0.59.5; atual: $versionAtual0595" }
+$roadmapAtual0595 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+foreach ($token0595 in @("Anti-Roadmap-Loop", "v0.59.5 — Supplement Training Context", "v0.59.6 — Professional Chat Inbox")) { if (-not $roadmapAtual0595.Contains($token0595)) { throw "Roadmap v0.59.5 incompleto: $token0595" } }
+foreach ($rel0595 in @(
+ 'src/HealthPlatform.Infrastructure/Migrations/20261006154500_V0595SupplementTrainingContext.cs',
+ 'src/HealthPlatform.Domain/Entities/SuplementoPlanoAlimentar.cs',
+ 'src/HealthPlatform.Api/Contracts/PlanosAlimentares/PlanoAlimentarContracts.cs'
+)) { if (-not (Test-Path (Join-Path $PSScriptRoot $rel0595))) { throw "Supplement Training Context v0.59.5 incompleto: arquivo ausente $rel0595" } }
+$migrationFile0595 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Infrastructure/Migrations/20261006154500_V0595SupplementTrainingContext.cs') -Raw
+foreach ($token0595Migration in @('[DbContext(typeof(AppDbContext))]','[Migration("20261006154500_V0595SupplementTrainingContext")]','SessaoTreinoId')) { if (-not $migrationFile0595.Contains($token0595Migration)) { throw "Migration EF Core v0.59.5 incompleta/invisivel: $token0595Migration" } }
+Write-Host "[Produto] v0.59.5 / Supplement Training Context: OK." -ForegroundColor DarkCyan
+
 # v0.59.4 - Supplement Scheduling & Nutrition Integration.
 $versionAtual0594 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0594 -ne "0.59.4") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
+if ($versionAtual0594 -ne "0.59.5") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
 $roadmapAtual0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0594 in @("Anti-Roadmap-Loop", "v0.59.4 — Supplement Scheduling & Nutrition Integration", "v0.59.5 — Supplement Training Context")) {
     if (-not $roadmapAtual0594.Contains($token0594)) { throw "Roadmap v0.59.4 incompleto: $token0594" }
@@ -36,7 +50,7 @@ Write-Host "[Produto] v0.59.4 / Supplement Scheduling & Nutrition Integration: O
 
 # v0.59.3 - Product Brain gate: Supplement Catalog Foundation + proxima etapa funcional.
 $versionAtual0593 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0593 -ne "0.59.4") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
+if ($versionAtual0593 -ne "0.59.5") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
 $roadmapAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0593 in @("Anti-Roadmap-Loop", "v0.59.3 — Supplement Catalog Foundation", "v0.59.4 — Supplement Scheduling & Nutrition Integration")) {
     if (-not $roadmapAtual0593.Contains($token0593)) { throw "Roadmap v0.59.3 incompleto: $token0593" }
@@ -58,7 +72,7 @@ Write-Host "[Produto] v0.59.3 / entidade + API + migration: OK." -ForegroundColo
 
 # v0.59.2 - Product Brain gate: Nutrition Target Guidance 2.0 + proxima etapa funcional.
 $versionAtual0592 = (Get-Content (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0592 -ne "0.59.4") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
+if ($versionAtual0592 -ne "0.59.5") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
 $roadmapAtual0592 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0592 in @("Anti-Roadmap-Loop", "v0.59.2 — Nutrition Target Guidance 2.0", "v0.59.3 — Supplement Catalog Foundation")) {
     if (-not $roadmapAtual0592.Contains($token0592)) { throw "Roadmap v0.59.2 incompleto: $token0592" }

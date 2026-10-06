@@ -9664,8 +9664,16 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.5 — Supplement Training Context`.
 
-### v0.59.5 — Supplement Training Context
-Relacionar suplementação a sessões/treinos quando o profissional desejar, sem prescrever automaticamente dose, indicação ou necessidade clínica.
+### ✅ v0.59.5 — Supplement Training Context — IMPLEMENTADA
+- vínculo opcional entre suplemento do plano alimentar e uma sessão específica de treino do mesmo paciente/organização;
+- contexto de pré/pós-treino continua definido pelo profissional, sem sugestão automática de produto ou dose;
+- builder carrega os planos/sessões do paciente e permite selecionar uma sessão sem duplicar cadastro;
+- portal do paciente exibe o plano e a sessão vinculados no cronograma de suplementação;
+- vínculo é preservado ao duplicar/progredir o plano alimentar;
+- migration `20261006154500_V0595SupplementTrainingContext`;
+- PWA Creamy Gate aplicado ao seletor e contexto de treino em 360/390/430 px.
+
+**Próxima etapa funcional:** `v0.59.6 — Professional Chat Inbox`.
 
 ### v0.59.6 — Professional Chat Inbox
 Adicionar `Chat` ao menu lateral profissional com inbox unificada, todas as conversas, última mensagem, horário, paciente, ordenação por atividade e contador persistente de não lidas.

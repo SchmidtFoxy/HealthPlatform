@@ -6307,3 +6307,8 @@ html[data-theme="light"] .sports-expansion-ii-v0260{background:#fff}
 .patient-supplement-item-v0594 span,.patient-supplement-item-v0594 small{color:var(--muted)}
 @media(max-width:760px){.supplement-schedule-row-v0594{grid-template-columns:1fr 1fr}.supplement-note-v0594{grid-column:1/-1}.supplement-schedule-row-v0594 .remove-supplement-v0594{grid-column:1/-1;min-height:44px}.supplement-plan-item-v0594{display:grid}.supplement-plan-item-v0594 span{text-align:left}}
 @media(max-width:430px){.supplement-schedule-builder-v0594{padding:12px;margin-inline:-2px}.supplement-schedule-row-v0594{grid-template-columns:1fr;padding:10px}.supplement-note-v0594,.supplement-schedule-row-v0594 .remove-supplement-v0594{grid-column:auto}.supplement-clinical-guard-v0594{display:grid}.patient-supplement-item-v0594{grid-template-columns:52px 1fr}.supplement-plan-summary-head-v0594{display:grid}}
+
+/* v0.59.5 — Supplement Training Context */
+.supplement-training-v0595{min-width:0}.supplement-training-v0595 small,.supplement-training-context-v0595{display:block;color:var(--muted);font-size:.78rem;margin-top:.3rem}.supplement-schedule-row-v0594:has([name="suppWorkoutSessionId"]){align-items:end}
+@media(max-width:760px){.supplement-training-v0595{grid-column:1/-1}}
+@media(max-width:430px){.supplement-training-v0595 select{min-height:44px;width:100%}.supplement-training-context-v0595{line-height:1.35}}

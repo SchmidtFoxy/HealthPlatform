@@ -267,9 +267,11 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.Observacoes).HasMaxLength(1000);
             entity.HasIndex(x => new { x.PlanoAlimentarId, x.Horario });
             entity.HasIndex(x => x.SuplementoId);
+            entity.HasIndex(x => x.SessaoTreinoId);
             entity.HasOne(x => x.PlanoAlimentar).WithMany(x => x.Suplementos).HasForeignKey(x => x.PlanoAlimentarId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(x => x.Suplemento).WithMany(x => x.PrescricoesPlanoAlimentar).HasForeignKey(x => x.SuplementoId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.RefeicaoPlanoAlimentar).WithMany(x => x.Suplementos).HasForeignKey(x => x.RefeicaoPlanoAlimentarId).OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.SessaoTreino).WithMany(x => x.SuplementosPlanoAlimentar).HasForeignKey(x => x.SessaoTreinoId).OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<ModeloPlanoAlimentar>(entity =>
