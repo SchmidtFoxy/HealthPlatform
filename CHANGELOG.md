@@ -8711,3 +8711,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Cards e ações reorganizados para 360/390/430 px, sem overflow.
 - Ações exibem pending state e o sheet respeita viewport/safe area/teclado.
 - Sem migration de banco.
+## v0.60.2 — Mobile Navigation & Profile/More 2.0 — 2026-10-06
+- Removido `•••` do dock inferior do paciente.
+- Adicionado Perfil/Mais explícito ao app bar.
+- Dock mobile simplificado para cinco destinos de uso diário.
+- Menu secundário reorganizado por grupos de perfil, acompanhamento e conta/app.
+- Tema, instalação e saída concentrados no menu secundário em mobile.
+- X verde-escuro usado como semântica de fechar; navegação hierárquica preserva voltar.
+- Foco e Escape tratados no sheet; estado ativo indica áreas secundárias.
+- Sem migration de banco.

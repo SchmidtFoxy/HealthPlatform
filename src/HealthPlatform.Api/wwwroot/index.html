@@ -15,8 +15,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.56.1" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.56.1" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.56.1" />
-  <link rel="stylesheet" href="/app.css?v=0.60.1" />
-  <link rel="stylesheet" href="/operations.css?v=0.60.1">
+  <link rel="stylesheet" href="/app.css?v=0.60.2" />
+  <link rel="stylesheet" href="/operations.css?v=0.60.2">
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
@@ -160,7 +160,8 @@
       <div class="brand"><span class="brand-mark aesyn-mark">A</span><span class="brand-word">AESYN<small>PERFORMANCE</small></span></div>
       <div class="patient-portal-user">
         <div class="avatar" id="patientAvatar">PA</div>
-        <div><strong id="patientUserName">Paciente</strong><small>Meu acompanhamento</small></div>
+        <div class="patient-portal-identity-v0602"><strong id="patientUserName">Paciente</strong><small>Meu acompanhamento</small></div>
+        <button id="patientMoreTrigger" class="patient-profile-more-trigger-v0602" type="button" aria-expanded="false" aria-controls="patientMoreSheet" aria-label="Abrir Perfil e Mais"><span class="patient-profile-more-icon-v0602" aria-hidden="true">♙</span><span class="patient-profile-more-label-v0602">Perfil</span></button>
         <button id="globalSearchButton" class="global-search-button" type="button" aria-label="Buscar no AESYN" title="Buscar"><span class="global-search-glyph-v0600" aria-hidden="true">⌕</span><span>Buscar</span><kbd>Ctrl K</kbd></button>
         <button class="notification-button" id="patientNotificationButton" type="button" aria-label="Notificações">🔔<span class="notification-badge hidden" id="patientNotificationBadge">0</span></button>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Alternar tema" title="Alternar tema">◐ <span>Tema</span></button>
@@ -182,7 +183,7 @@
       <button class="patient-secondary-nav" data-patient-view="solicitacoes">Solicitações</button>
       <button class="patient-secondary-nav" data-patient-view="medicamentos">Medicamentos</button>
       <button class="patient-secondary-nav" data-patient-view="jornada">Jornada</button>
-      <button class="patient-more-trigger" id="patientMoreTrigger" type="button" aria-expanded="false" aria-controls="patientMoreSheet">Mais</button>
+      
     </nav>
     <main id="patientPortalContent" class="patient-portal-content" tabindex="-1"></main>
     <button id="patientTutorialTrigger" class="patient-tutorial-trigger" type="button" aria-label="Abrir tutorial" title="Ajuda e tutorial">?</button>
@@ -202,20 +203,27 @@
     <div id="patientMoreBackdrop" class="patient-more-backdrop hidden"></div>
     <aside id="patientMoreSheet" class="patient-more-sheet" aria-hidden="true">
       <div class="patient-more-handle"></div>
-      <div class="patient-more-head"><div><span class="eyebrow">NAVEGAÇÃO</span><h3>Mais do seu acompanhamento</h3></div><button id="patientMoreClose" class="ghost" type="button" aria-label="Fechar">×</button></div>
-      <div class="patient-more-grid">
-        <button data-patient-more-view="atleta"><span>↗</span><b>Dados para atletas</b><small>Performance, carga e recuperação</small></button>
-        <button data-patient-more-view="metas"><span>◎</span><b>Metas</b><small>Objetivos do dia</small></button>
-        <button data-patient-more-view="diario"><span>✎</span><b>Diário</b><small>Registros e sintomas</small></button>
-        <button data-patient-more-view="saude"><span>✚</span><b>Saúde</b><small>Exames, monitoramento e recuperação</small></button>
-        <button data-patient-more-view="exames"><span>◇</span><b>Exames</b><small>Resultados recentes</small></button>
-        <button data-patient-more-view="arquivos"><span>▣</span><b>Arquivos</b><small>Exames, laudos, fotos e PDFs</small></button>
-        <button data-patient-more-view="solicitacoes"><span>⇄</span><b>Solicitações</b><small>Pendências do cuidado</small></button>
-        <button data-patient-more-view="medicamentos"><span>✚</span><b>Medicamentos</b><small>Rotina acompanhada</small></button>
-        <button data-patient-more-view="jornada"><span>◌</span><b>Jornada</b><small>Sua evolução completa</small></button>
-        <button data-patient-more-view="chat"><span>✉</span><b>Chat</b><small>Fale com seu profissional</small></button>
-        <button data-patient-more-view="perfil"><span>♙</span><b>Meu perfil</b><small>Identidade e momento esportivo</small></button>
-        <button id="patientPwaInstallButton" class="pwa-install-entry-v01938" type="button"><span>⇩</span><b>Instalar AESYN</b><small>Adicionar à tela inicial</small></button>
+      <div class="patient-more-head patient-more-head-v0602"><div><span class="eyebrow">PERFIL & MAIS</span><h3>Seu espaço no AESYN</h3><p>Acesso rápido ao que não precisa ocupar sua navegação diária.</p></div><button id="patientMoreClose" class="ghost patient-more-close-v0602" type="button" aria-label="Fechar Perfil e Mais">×</button></div>
+      <div class="patient-more-groups-v0602">
+        <section class="patient-more-group-v0602" aria-labelledby="patientMoreProfileTitleV0602"><h4 id="patientMoreProfileTitleV0602">Perfil e evolução</h4><div class="patient-more-grid patient-more-grid-v0602">
+          <button data-patient-more-view="perfil"><span>♙</span><b>Meu perfil</b><small>Identidade e momento esportivo</small></button>
+          <button data-patient-more-view="atleta"><span>↗</span><b>Dados para atletas</b><small>Performance, carga e recuperação</small></button>
+          <button data-patient-more-view="evolucao"><span>◔</span><b>Evolução</b><small>Histórico e progresso</small></button>
+          <button data-patient-more-view="jornada"><span>◌</span><b>Jornada</b><small>Sua evolução completa</small></button>
+        </div></section>
+        <section class="patient-more-group-v0602" aria-labelledby="patientMoreCareTitleV0602"><h4 id="patientMoreCareTitleV0602">Acompanhamento</h4><div class="patient-more-grid patient-more-grid-v0602">
+          <button data-patient-more-view="metas"><span>◎</span><b>Metas</b><small>Objetivos do dia</small></button>
+          <button data-patient-more-view="diario"><span>✎</span><b>Diário</b><small>Registros e sintomas</small></button>
+          <button data-patient-more-view="exames"><span>◇</span><b>Exames</b><small>Resultados recentes</small></button>
+          <button data-patient-more-view="arquivos"><span>▣</span><b>Arquivos</b><small>Exames, laudos, fotos e PDFs</small></button>
+          <button data-patient-more-view="solicitacoes"><span>⇄</span><b>Solicitações</b><small>Pendências do cuidado</small></button>
+          <button data-patient-more-view="medicamentos"><span>✚</span><b>Medicamentos</b><small>Rotina acompanhada</small></button>
+        </div></section>
+        <section class="patient-more-group-v0602 patient-more-account-v0602" aria-labelledby="patientMoreAccountTitleV0602"><h4 id="patientMoreAccountTitleV0602">Conta e aplicativo</h4><div class="patient-more-grid patient-more-grid-v0602">
+          <button id="patientMoreThemeV0602" type="button" data-theme-toggle><span>◐</span><b>Tema</b><small>Claro ou escuro</small></button>
+          <button id="patientPwaInstallButton" class="pwa-install-entry-v01938" type="button"><span>⇩</span><b>Instalar AESYN</b><small>Adicionar à tela inicial</small></button>
+          <button id="patientMoreLogoutV0602" class="patient-more-logout-v0602" type="button"><span>↪</span><b>Sair</b><small>Encerrar esta sessão</small></button>
+        </div></section>
       </div>
     </aside>
   </div>
@@ -415,6 +423,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.60.1"></script>
+  <script src="/app.js?v=0.60.2"></script>
 </body>
 </html>

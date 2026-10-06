@@ -9852,3 +9852,13 @@ Adicionar entradas **Montar dieta modelo** e **Nova dieta**:
 ### v0.60.10 — Lista 05 Integrated Quality Pass & Closure
 Passagem integrada real das jornadas tocadas, regressões, claro/escuro, 360/390/430/desktop, acessibilidade, empty/loading/error/retry e fechamento explícito da Lista 05.
 Não criar cadeia artificial de “closure/handoff/summary” depois desse ponto.
+### ✅ v0.60.2 — Mobile Navigation & Profile/More 2.0 — IMPLEMENTADA
+- Perfil/Mais saiu do dock inferior e virou acesso explícito no app bar do paciente;
+- dock mobile permanece focado em Hoje, Treino, Plano, Saúde e Chat;
+- sheet secundário foi agrupado em Perfil e evolução, Acompanhamento e Conta e aplicativo;
+- Tema, instalação do PWA e Sair ficam disponíveis no Perfil/Mais no mobile, reduzindo ruído do topo;
+- fechamento usa X verde-escuro e restaura foco; Escape é conveniência de teclado, não requisito mobile;
+- seta permanece reservada para navegação hierárquica real;
+- estado ativo do Perfil/Mais identifica quando o paciente está em uma área secundária;
+- validado conceitualmente para 360/390/430 px, safe area, touch, foco e reduced motion.
+**Próxima etapa funcional:** `v0.60.3 — Athlete Interests Discovery 2.0`.

@@ -20686,7 +20686,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.1';
+const HP_MVP_VERSION='0.60.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -31256,3 +31256,29 @@ hpPatientFileUploadModalV01934=hpPatientFileUploadModalV0601;
 hpBindPatientFilesV01934=hpBindPatientFilesV0601;
 loadProfessionalPatientFilesV01934=loadProfessionalPatientFilesV0601;
 loadPatientFilesV01934=loadPatientFilesV0601;
+// ===== v0.60.2 — Mobile Navigation & Profile/More 2.0 =====
+const HP_MOBILE_NAV_PROFILE_MORE_V0602='v0.60.2';
+let hpPatientMoreReturnFocusV0602=null;
+const hpPatientPrimaryViewsV0602=new Set(['inicio','treino','plano','saude','chat']);
+const hpOpenPatientMoreLegacyV0602=openPatientMoreSheet;
+openPatientMoreSheet=function(){
+  hpPatientMoreReturnFocusV0602=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  hpOpenPatientMoreLegacyV0602();
+  document.body.classList.add('patient-more-open-v0602');
+  window.setTimeout(()=>($('#patientMoreClose')||$('#patientMoreSheet')?.querySelector('button'))?.focus(),0);
+};
+const hpClosePatientMoreLegacyV0602=closePatientMoreSheet;
+closePatientMoreSheet=function(options={}){
+  hpClosePatientMoreLegacyV0602();
+  document.body.classList.remove('patient-more-open-v0602');
+  if(options.restoreFocus!==false)window.setTimeout(()=>hpPatientMoreReturnFocusV0602?.focus?.(),0);
+};
+const hpLoadPatientSectionLegacyV0602=loadPatientSection;
+loadPatientSection=async function(view='inicio'){
+  const result=await hpLoadPatientSectionLegacyV0602(view);
+  const trigger=$('#patientMoreTrigger'),secondary=!hpPatientPrimaryViewsV0602.has(view);
+  if(trigger){trigger.classList.toggle('active',secondary);if(secondary)trigger.setAttribute('aria-current','page');else trigger.removeAttribute('aria-current')}
+  return result;
+};
+$('#patientMoreLogoutV0602')?.addEventListener('click',()=>{closePatientMoreSheet({restoreFocus:false});logout()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#patientMoreSheet')?.classList.contains('open')){e.preventDefault();closePatientMoreSheet()}});

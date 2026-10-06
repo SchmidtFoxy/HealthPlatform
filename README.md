@@ -10620,3 +10620,12 @@ Próxima entrega: `v0.60.1 — Patient Files Mobile Recovery`.
 - cards, ações e sheet revisados para 360, 390 e 430 px.
 
 Próxima entrega: `v0.60.2 — Mobile Navigation & Profile/More 2.0`.
+## v0.60.2 — Mobile Navigation & Profile/More 2.0
+- Perfil/Mais foi movido do dock diário para o topo do app do paciente.
+- A navegação principal mobile fica restrita a Hoje, Treino, Plano, Saúde e Chat.
+- Funções secundárias foram agrupadas por contexto no sheet Perfil & Mais.
+- Tema, instalação e encerramento de sessão ficam concentrados no menu secundário em mobile.
+- X representa fechar/sair; seta continua representando retorno hierárquico.
+- O sheet gerencia foco, Escape e estado ativo das áreas secundárias.
+
+Próxima entrega: `v0.60.3 — Athlete Interests Discovery 2.0`.
