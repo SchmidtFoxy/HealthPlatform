@@ -9628,8 +9628,15 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.2 — Nutrition Target Guidance 2.0`.
 
-### v0.59.2 — Nutrition Target Guidance 2.0
-Evoluir o saldo diário para leitura por refeição, distribuição percentual, alertas visuais não prescritivos e troca/remoção de alimentos com recalculo imediato.
+### ✅ v0.59.2 — Nutrition Target Guidance 2.0 — IMPLEMENTADA
+- leitura de metas por refeição com estado próximo/acima/abaixo;
+- participação percentual de cada refeição nas calorias prescritas do dia;
+- orientação visual informativa e explicitamente não prescritiva;
+- atualização imediata ao adicionar, trocar, redimensionar ou remover alimentos;
+- resumo diário assistido mostrando quantas metas pedem revisão;
+- PWA responsivo em 360/390/430 px com guidance em coluna única.
+
+**Próxima etapa funcional:** `v0.59.3 — Supplement Catalog Foundation`.
 
 ### v0.59.3 — Supplement Catalog Foundation
 Criar catálogo estruturado de suplementação: proteínas, creatina, pré-treinos, barras proteicas, eletrólitos, vitaminas/minerais e itens personalizados, com porção, composição, fabricante opcional, observações, status e isolamento por organização.

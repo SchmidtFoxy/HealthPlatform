@@ -20147,6 +20147,41 @@ function hpNutritionBuilderMealTotals(meal,alimentos){
   return {kcal,p,c,g,fib};
 }
 
+
+// ===== v0.59.2 — Nutrition Target Guidance 2.0 =====
+const HP_NUTRITION_TARGET_GUIDANCE_V0592='v0.59.2';
+function hpNutritionGuidanceStateV0592(current,goal){
+  if(!(goal>0))return {state:'neutral',label:'Sem meta',delta:null,pct:null};
+  const delta=current-goal,pct=(delta/goal)*100,abs=Math.abs(pct);
+  if(abs<=5)return {state:'ok',label:'Próximo da meta',delta,pct};
+  return delta>0?{state:'over',label:'Acima da meta',delta,pct}:{state:'under',label:'Abaixo da meta',delta,pct};
+}
+function hpNutritionGuidanceMetricV0592(label,current,goal,unit,precision=1){
+  const g=hpNutritionGuidanceStateV0592(current,goal);
+  const delta=g.delta==null?'':`${g.delta>0?'+':''}${num(g.delta,precision)} ${unit}`;
+  return `<div class="nutrition-guidance-metric-v0592 ${g.state}"><span>${label}</span><strong>${num(current,precision)} ${unit}</strong><small>${goal>0?`${g.label} • ${delta}`:'Sem meta nesta refeição'}</small></div>`;
+}
+function hpNutritionRenderMealGuidanceV0592(meal,mt,dayTotals,form){
+  let box=meal.querySelector('.nutrition-meal-guidance-v0592');
+  if(!box){box=document.createElement('div');box.className='nutrition-meal-guidance-v0592';meal.querySelector('.nutrition-meal-footer')?.appendChild(box)}
+  if(!box)return;
+  const goals={kcal:Number(meal.querySelector('[name=mealMetaCalorias]')?.value||0),p:Number(meal.querySelector('[name=mealMetaProteinasG]')?.value||0),c:Number(meal.querySelector('[name=mealMetaCarboidratosG]')?.value||0),g:Number(meal.querySelector('[name=mealMetaGordurasG]')?.value||0),fib:Number(meal.querySelector('[name=mealMetaFibrasG]')?.value||0)};
+  const share=dayTotals.kcal>0?(mt.kcal/dayTotals.kcal)*100:0;
+  const mealName=meal.querySelector('[name=mealName]')?.value?.trim()||'Refeição';
+  const state=hpNutritionGuidanceStateV0592(mt.kcal,goals.kcal);
+  box.innerHTML=`<div class="nutrition-meal-guidance-head-v0592"><div><span class="eyebrow">LEITURA DA REFEIÇÃO</span><strong>${esc(mealName)}</strong><small>${num(share,0)}% das calorias prescritas do dia • leitura informativa, não prescritiva</small></div><span class="nutrition-guidance-badge-v0592 ${state.state}">${state.label}</span></div><div class="nutrition-meal-guidance-grid-v0592">${hpNutritionGuidanceMetricV0592('Calorias',mt.kcal,goals.kcal,'kcal',0)}${hpNutritionGuidanceMetricV0592('Proteína',mt.p,goals.p,'g')}${hpNutritionGuidanceMetricV0592('Carbo',mt.c,goals.c,'g')}${hpNutritionGuidanceMetricV0592('Gordura',mt.g,goals.g,'g')}${hpNutritionGuidanceMetricV0592('Fibra',mt.fib,goals.fib,'g')}</div>`;
+}
+function hpNutritionRenderDailyGuidanceV0592(form,t){
+  let box=form.querySelector('.nutrition-daily-guidance-v0592');
+  const anchor=form.querySelector('#nutritionBuilder2TargetDiff');
+  if(!box&&anchor){box=document.createElement('div');box.className='nutrition-daily-guidance-v0592';anchor.insertAdjacentElement('afterend',box)}
+  if(!box)return;
+  const metrics=[['Calorias',t.kcal,Number(form.elements.metaCalorias?.value||0),'kcal',0],['Proteína',t.p,Number(form.elements.metaProteinasG?.value||0),'g',1],['Carboidrato',t.c,Number(form.elements.metaCarboidratosG?.value||0),'g',1],['Gordura',t.g,Number(form.elements.metaGordurasG?.value||0),'g',1],['Fibra',t.fib,Number(form.elements.metaFibrasG?.value||0),'g',1]];
+  const active=metrics.filter(x=>x[2]>0),outside=active.filter(x=>Math.abs(((x[1]-x[2])/x[2])*100)>5);
+  const headline=!active.length?'Defina metas para ativar a leitura assistida':outside.length?`${outside.length} meta(s) pedem revisão`:'Plano próximo das metas informadas';
+  box.innerHTML=`<div><span class="eyebrow">TARGET GUIDANCE 2.0</span><strong>${headline}</strong><small>O AESYN mostra diferenças e distribuição; a decisão de ajuste continua sendo do profissional.</small></div><div class="nutrition-daily-guidance-grid-v0592">${metrics.map(x=>hpNutritionGuidanceMetricV0592(...x)).join('')}</div>`;
+}
+
 function hpNutritionBuilderUpdatePreview(alimentos){
   const f=$('#nutritionBuilder2Form');if(!f)return;
   const t=hpNutritionBuilderTotals(alimentos);
@@ -20154,14 +20189,16 @@ function hpNutritionBuilderUpdatePreview(alimentos){
     const mt=hpNutritionBuilderMealTotals(meal,alimentos);
     const live=meal.querySelector('.nutrition-meal-live-total');
     if(live)live.innerHTML=`<strong>${num(mt.kcal,0)} kcal</strong><span>P ${num(mt.p)}g • C ${num(mt.c)}g • G ${num(mt.g)}g • Fibra ${num(mt.fib)}g</span>`;
+    hpNutritionRenderMealGuidanceV0592(meal,mt,t,f);
   });
   const macro=$('#nutritionBuilder2MacroPreview');
   if(macro)macro.innerHTML=`<b>${num(t.kcal,0)} kcal</b><span>P ${num(t.p)}g</span><span>C ${num(t.c)}g</span><span>G ${num(t.g)}g</span><span>Fibra ${num(t.fib)}g</span>`;
   const target=$('#nutritionBuilder2TargetDiff');
   if(target){
     const pairs=[['Calorias',t.kcal,Number(val(f,'metaCalorias')||0),'kcal'],['Proteína',t.p,Number(val(f,'metaProteinasG')||0),'g'],['Carboidrato',t.c,Number(val(f,'metaCarboidratosG')||0),'g'],['Gordura',t.g,Number(val(f,'metaGordurasG')||0),'g'],['Fibra',t.fib,Number(val(f,'metaFibrasG')||0),'g']];
-    target.innerHTML=pairs.map(([label,current,goal,unit])=>`<div><small>${label}</small><strong>${num(current,label==='Calorias'?0:1)} ${unit}</strong><span>${goal?`meta ${num(goal,label==='Calorias'?0:1)} • ${current-goal>=0?'+':''}${num(current-goal,label==='Calorias'?0:1)} ${unit}`:'sem meta'}</span></div>`).join('');
+    target.innerHTML=pairs.map(([label,current,goal,unit])=>{const guidance=hpNutritionGuidanceStateV0592(current,goal);return `<div class="${guidance.state}"><small>${label}</small><strong>${num(current,label==='Calorias'?0:1)} ${unit}</strong><span>${goal?`${guidance.label} • ${current-goal>=0?'+':''}${num(current-goal,label==='Calorias'?0:1)} ${unit}`:'sem meta'}</span></div>`}).join('');
   }
+  hpNutritionRenderDailyGuidanceV0592(f,t);
 }
 
 function hpNutritionBuilderRead(form){
@@ -20549,7 +20586,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.1';
+const HP_MVP_VERSION='0.59.2';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

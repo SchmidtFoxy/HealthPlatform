@@ -1,8 +1,8 @@
-# AESYN Performance — v0.59.1
+# AESYN Performance — v0.59.2
 
 ## Meal Templates Quick Apply
 
-A v0.59.1 transforma os modelos de refeição já existentes em uma ferramenta de montagem rápida dentro do próprio Nutrition Builder. O profissional pode buscar e filtrar blocos como café da manhã, almoço, jantar, pré-treino e pós-treino e adicioná-los à dieta em edição sem sair da tela nem salvar o plano antes.
+A v0.59.2 evolui o Nutrition Builder com leitura assistida de metas por refeição e por dia. O profissional enxerga distribuição percentual, diferenças em relação às metas e alertas visuais não prescritivos enquanto adiciona, remove, troca ou redimensiona alimentos.
 
 ### Qualidade de produto
 - **Aplicação no contexto:** templates aparecem dentro do builder, próximos da montagem de refeições.

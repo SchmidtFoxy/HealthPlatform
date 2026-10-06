@@ -1,3 +1,12 @@
+# v0.59.2 — Nutrition Target Guidance 2.0
+
+- adiciona leitura por refeição com participação percentual no dia;
+- mostra estados próximo/acima/abaixo para metas de calorias e macros;
+- adiciona resumo diário assistido e não prescritivo;
+- recalcula guidance imediatamente em alterações de alimentos e porções;
+- aplica PWA Creamy Gate em 360/390/430 px;
+- próxima etapa: v0.59.3 — Supplement Catalog Foundation.
+
 # v0.59.1 — Meal Templates Quick Apply
 
 - Expõe os modelos de refeição diretamente dentro do Nutrition Builder.

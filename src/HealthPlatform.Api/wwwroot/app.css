@@ -6233,3 +6233,17 @@ html[data-theme="light"] .sports-expansion-ii-v0260{background:#fff}
 @media(max-width:900px){.meal-template-quick-grid-v0591{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.meal-template-quick-v0591{padding:10px}.meal-template-quick-head-v0591{display:grid}.meal-template-quick-status-v0591{justify-self:start}.meal-template-quick-grid-v0591{grid-template-columns:1fr}.meal-template-quick-card-v0591{align-items:stretch}.meal-template-quick-card-v0591 button{min-width:96px}}
 @media(max-width:430px){.meal-template-quick-card-v0591{display:grid}.meal-template-quick-card-v0591 button{width:100%}.meal-template-chips-v0591{margin-right:-10px;padding-right:10px}}
+
+/* ===== v0.59.2 — Nutrition Target Guidance 2.0 ===== */
+.nutrition-daily-guidance-v0592{display:grid;gap:10px;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft,#111815)}
+.nutrition-daily-guidance-v0592>div:first-child{display:grid;gap:3px}.nutrition-daily-guidance-v0592>div:first-child small{color:var(--muted)}
+.nutrition-daily-guidance-grid-v0592,.nutrition-meal-guidance-grid-v0592{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.nutrition-guidance-metric-v0592{display:grid;gap:3px;min-width:0;padding:9px;border:1px solid var(--line);border-radius:12px;background:var(--surface,#0c1210)}
+.nutrition-guidance-metric-v0592 span,.nutrition-guidance-metric-v0592 small{font-size:11px;color:var(--muted)}.nutrition-guidance-metric-v0592 strong{font-size:13px;white-space:nowrap}
+.nutrition-guidance-metric-v0592.ok{border-color:color-mix(in srgb,var(--accent) 34%,var(--line))}.nutrition-guidance-metric-v0592.over{border-color:rgba(232,128,128,.42);background:rgba(232,128,128,.05)}.nutrition-guidance-metric-v0592.under{border-color:rgba(224,176,92,.42);background:rgba(224,176,92,.05)}
+.nutrition-meal-guidance-v0592{width:100%;display:grid;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.nutrition-meal-guidance-head-v0592{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.nutrition-meal-guidance-head-v0592>div{display:grid;gap:2px}.nutrition-meal-guidance-head-v0592 small{color:var(--muted)}
+.nutrition-guidance-badge-v0592{font-size:10px;font-weight:800;padding:5px 8px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}.nutrition-guidance-badge-v0592.ok{border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}.nutrition-guidance-badge-v0592.over{border-color:rgba(232,128,128,.42)}.nutrition-guidance-badge-v0592.under{border-color:rgba(224,176,92,.42)}
+.nutrition-builder2-diff>div.ok{border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}.nutrition-builder2-diff>div.over{border-color:rgba(232,128,128,.42)}.nutrition-builder2-diff>div.under{border-color:rgba(224,176,92,.42)}
+@media(max-width:760px){.nutrition-daily-guidance-grid-v0592,.nutrition-meal-guidance-grid-v0592{grid-template-columns:repeat(2,minmax(0,1fr))}.nutrition-meal-guidance-head-v0592{align-items:stretch;flex-direction:column}.nutrition-guidance-badge-v0592{width:max-content}}
+@media(max-width:430px){.nutrition-daily-guidance-v0592{padding:10px}.nutrition-daily-guidance-grid-v0592,.nutrition-meal-guidance-grid-v0592{grid-template-columns:1fr}.nutrition-guidance-metric-v0592{padding:8px}.nutrition-meal-guidance-v0592{margin-top:8px}}

@@ -13,9 +13,16 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# v0.59.2 - Product Brain gate: Nutrition Target Guidance 2.0 + proxima etapa funcional.
+$versionAtual0592 = (Get-Content (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
+if ($versionAtual0592 -ne "0.59.2") { throw "VERSION.txt esperado 0.59.2; atual: $versionAtual0592" }
+$roadmapAtual0592 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+foreach ($token0592 in @("Anti-Roadmap-Loop", "v0.59.2 — Nutrition Target Guidance 2.0", "v0.59.3 — Supplement Catalog Foundation")) {
+    if (-not $roadmapAtual0592.Contains($token0592)) { throw "Roadmap v0.59.2 incompleto: $token0592" }
+}
+Write-Host "[Produto] v0.59.2 / Nutrition Target Guidance 2.0: roadmap vivo OK." -ForegroundColor DarkCyan
+
 # v0.59.1 - Product Brain gate: Meal Templates Quick Apply + proxima etapa funcional.
-$versionAtual0591 = (Get-Content -Encoding UTF8 (Join-Path $root "VERSION.txt") -Raw).Trim()
-if ($versionAtual0591 -ne "0.59.1") { throw "VERSION.txt esperado 0.59.1; atual: $versionAtual0591" }
 $roadmapAtual0591 = Get-Content -Encoding UTF8 (Join-Path $root "ROADMAP.md") -Raw
 foreach ($token0591 in @("Anti-Roadmap-Loop", "Nutrition & Communication Experience", "v0.59.1 — Meal Templates Quick Apply", "v0.59.2 — Nutrition Target Guidance 2.0")) {
     if (-not $roadmapAtual0591.Contains($token0591)) { throw "Roadmap v0.59.1 incompleto: $token0591" }
