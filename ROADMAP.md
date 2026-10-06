@@ -9804,8 +9804,18 @@ A fase `v0.59.x — Nutrition & Communication Experience` está funcionalmente c
 - gates da regressão adicionados a PREPARAR/TESTAR.
 **Próxima etapa:** `v0.60.1 — Patient Files Mobile Recovery`.
 
-### v0.60.1 — Patient Files Mobile Recovery
-Corrigir a jornada Arquivos no paciente em 360/390/430 px: listagem, upload, câmera/galeria, preview/download, erro/retry, permissões e teclado/modal.
+### ✅ v0.60.1 — Patient Files Mobile Recovery — IMPLEMENTADA
+Corrigida a jornada Arquivos no paciente e no contexto profissional:
+- loading, empty, erro e retry próprios;
+- upload não usa mais o submit genérico que redirecionava o paciente para a Home;
+- câmera e galeria/arquivo em escolhas touch-friendly;
+- upload e download tentam renovar sessão antes de logout;
+- busca por `input` com debounce, sem rebinding da toolbar;
+- ações de abrir/chat/remover com pending state;
+- layout sem overflow em 360/390/430 px;
+- sheet respeita `visualViewport`, safe area e teclado;
+- regressão coberta por PREPARAR/TESTAR.
+**Próxima etapa:** `v0.60.2 — Mobile Navigation & Profile/More 2.0`.
 
 ### v0.60.2 — Mobile Navigation & Profile/More 2.0
 Perfil/Mais limpo no topo, funções secundárias separadas, sem `•••`; X para fechar/sair e seta apenas para voltar hierarquicamente.

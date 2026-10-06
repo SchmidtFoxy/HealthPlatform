@@ -10611,3 +10611,12 @@ A abertura da Lista 05 prioriza confiabilidade de entrada e ergonomia mobile:
 - shell mobile impede deslocamento horizontal involuntário.
 
 Próxima entrega: `v0.60.1 — Patient Files Mobile Recovery`.
+## v0.60.1 — Patient Files Mobile Recovery
+- upload preserva a página Arquivos após sucesso;
+- câmera e arquivo/galeria possuem entradas próprias;
+- loading, empty, erro e retry explícitos;
+- filtros atualizam sem rebinding duplicado;
+- upload/download reaproveitam a renovação de sessão da v0.60.0;
+- cards, ações e sheet revisados para 360, 390 e 430 px.
+
+Próxima entrega: `v0.60.2 — Mobile Navigation & Profile/More 2.0`.

@@ -8702,3 +8702,12 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Cache do Service Worker e cache-busting atualizados para `0.60.0`.
 - Lista 05 consolidada no ROADMAP.md vivo, incluindo Diet Model Builder.
 - Sem migration de banco.
+## v0.60.1 — Patient Files Mobile Recovery — 2026-10-06
+- Recuperada a página Arquivos no PWA/mobile com loading, erro, retry e vazio.
+- Upload deixou de usar o submit genérico que recarregava a Home.
+- Adicionadas entradas touch-friendly para arquivo/galeria e câmera.
+- Upload/download tentam renovar sessão antes de logout em 401.
+- Busca passou a atualizar por `input` com debounce.
+- Cards e ações reorganizados para 360/390/430 px, sem overflow.
+- Ações exibem pending state e o sheet respeita viewport/safe area/teclado.
+- Sem migration de banco.

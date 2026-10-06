@@ -20686,7 +20686,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.0';
+const HP_MVP_VERSION='0.60.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -31085,3 +31085,174 @@ document.addEventListener('DOMContentLoaded',()=>{
     searchButton.setAttribute('title','Buscar');
   }
 });
+// ===== v0.60.1 — Patient Files Mobile Recovery =====
+const HP_PATIENT_FILES_MOBILE_RECOVERY_V0601='v0.60.1';
+
+function hpPatientFileCardV0601(x,professional=false){
+  const isPdf=String(x?.contentType||'').toLowerCase()==='application/pdf';
+  const tags=Array.isArray(x?.tags)?x.tags:[];
+  return `<article class="patient-file-card-v0601" data-file-id="${esc(x.id)}">
+    <div class="patient-file-icon-v0601" aria-hidden="true">${isPdf?'PDF':'IMG'}</div>
+    <div class="patient-file-copy-v0601">
+      <div class="patient-file-title-v0601"><strong>${esc(x.nome||'Arquivo')}</strong><span>${esc(x.categoria||'Outro')}</span></div>
+      <p>${esc(x.descricao||'Sem descrição.')}</p>
+      <small>${fmtDateTime(x.dataUtc)} • ${hpFileSizeV01934(Number(x.tamanhoBytes||0))} • enviado por ${esc(x.origem||'AESYN')}</small>
+      ${tags.length?`<div class="patient-file-tags-v0601">${tags.map(t=>`<span>#${esc(t)}</span>`).join('')}</div>`:''}
+    </div>
+    <div class="patient-file-actions-v0601">
+      <button class="primary" type="button" data-file-open-v0601>Abrir</button>
+      <button class="secondary" type="button" data-file-chat-v0601>Enviar no chat</button>
+      <button class="ghost danger" type="button" data-file-remove-v0601>Remover</button>
+    </div>
+  </article>`;
+}
+function hpPatientFilesEmptyV0601(){
+  return `<div class="patient-files-empty-v0601">
+    <span aria-hidden="true">▣</span>
+    <strong>Nenhum arquivo por aqui ainda.</strong>
+    <p>Envie exames, laudos, fotos ou documentos para manter seu acompanhamento organizado.</p>
+    <button class="primary" type="button" data-file-empty-upload-v0601>Enviar primeiro arquivo</button>
+  </div>`;
+}
+function hpPatientFilesMarkupV0601(items=[],professional=false){
+  const cards=items.length?items.map(x=>hpPatientFileCardV0601(x,professional)).join(''):hpPatientFilesEmptyV0601();
+  return `<section class="patient-files-shell-v0601" data-patient-files-v0601="${professional?'professional':'patient'}">
+    <header class="patient-files-head-v0601">
+      <div><span class="eyebrow">AESYN • ARQUIVOS</span><h2>${professional?'Biblioteca clínica':'Meus arquivos'}</h2><p>Exames, laudos, fotos e documentos protegidos em um só lugar.</p></div>
+      <button class="primary patient-files-new-v0601" type="button" data-file-new-v0601>+ Enviar arquivo</button>
+    </header>
+    <div class="patient-files-toolbar-v0601">
+      <label><span>Pesquisar</span><input type="search" inputmode="search" enterkeyhint="search" data-file-search-v0601 placeholder="Nome, descrição ou tag"></label>
+      <label><span>Categoria</span><select data-file-category-v0601><option value="">Todas</option>${hpPatientFileCategoriesV01934.map(c=>`<option>${c}</option>`).join('')}</select></label>
+    </div>
+    <div class="patient-files-list-v0601" aria-live="polite">${cards}</div>
+  </section>`;
+}
+function hpPatientFilesStateV0601(kind,message,action=''){
+  const title=kind==='loading'?'Carregando arquivos…':kind==='error'?'Não foi possível carregar seus arquivos':'';
+  return `<div class="patient-files-state-v0601 ${esc(kind)}" role="${kind==='error'?'alert':'status'}">
+    ${kind==='loading'?'<span class="patient-files-spinner-v0601" aria-hidden="true"></span>':'<span aria-hidden="true">!</span>'}
+    <div><strong>${esc(title)}</strong>${message?`<p>${esc(message)}</p>`:''}</div>
+    ${action?`<button class="secondary" type="button" data-files-retry-v0601>${esc(action)}</button>`:''}
+  </div>`;
+}
+async function hpFilesFetchWithSessionV0601(path,options={},attempt=0){
+  const headers={...(options.headers||{})};
+  if(state.token)headers.Authorization=`Bearer ${state.token}`;
+  const r=await fetch(path,{...options,headers});
+  if(r.status===401&&attempt===0&&typeof hpTryRefreshSessionV0600==='function'){
+    const renewal=await hpTryRefreshSessionV0600();
+    if(renewal.ok)return hpFilesFetchWithSessionV0601(path,options,1);
+    if(!renewal.terminal)throw new Error('Não foi possível validar sua sessão agora. Tente novamente sem sair da tela.');
+  }
+  if(r.status===401){logout({notifyServer:false});throw new Error('Sua sessão expirou.')}
+  if(r.status===403)throw new Error('Você não tem permissão para acessar este arquivo.');
+  return r;
+}
+async function hpUploadPatientFileV0601(path,file,meta={}){
+  const form=new FormData();
+  form.append('file',file);form.append('categoria',meta.categoria||'Outro');form.append('descricao',meta.descricao||'');form.append('tags',meta.tags||'');form.append('viaChat',meta.viaChat?'true':'false');
+  const r=await hpFilesFetchWithSessionV0601(path,{method:'POST',body:form});
+  const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}
+  if(!r.ok)throw new Error(d?.message||`Não foi possível enviar o arquivo (HTTP ${r.status}).`);
+  return d;
+}
+async function hpOpenSecureFileV0601(path,name){
+  const r=await hpFilesFetchWithSessionV0601(path);
+  if(!r.ok)throw new Error('Não foi possível abrir este arquivo.');
+  const blob=await r.blob(),url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.download=name||'';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function hpPatientFileUploadModalV0601({professional=false,patientId=null,onDone}){
+  const target=professional?`/api/pacientes/${patientId}/arquivos/upload`:'/api/arquivos/me/upload';
+  const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');
+  modal.classList.remove('hidden');
+  modal.classList.add('patient-action-sheet','patient-file-upload-sheet-v0601');
+  document.body.classList.add('patient-sheet-open');
+  box.innerHTML=`<div class="patient-sheet-handle" aria-hidden="true"></div>
+    <div class="modal-heading patient-file-upload-head-v0601">
+      <div><span class="eyebrow">AESYN • ARQUIVOS</span><h2>Enviar arquivo</h2><p>Escolha um documento da galeria/arquivos ou fotografe agora.</p></div>
+      <button class="ghost patient-file-upload-close-v0601" type="button" data-file-upload-close-v0601 aria-label="Fechar">×</button>
+    </div>
+    <form id="patientFileUploadFormV0601" class="patient-file-upload-form-v0601">
+      <div class="patient-file-picker-grid-v0601">
+        <label class="patient-file-picker-v0601"><span aria-hidden="true">▣</span><strong>Arquivo ou galeria</strong><small>PDF, imagem, DOC ou DOCX • até 15 MB</small><input class="sr-only" name="file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label>
+        <label class="patient-file-picker-v0601"><span aria-hidden="true">◎</span><strong>Tirar foto</strong><small>Use a câmera traseira do celular</small><input class="sr-only" name="cameraFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"></label>
+      </div>
+      <div class="patient-file-selected-v0601" data-file-selected-v0601 role="status">Nenhum arquivo selecionado.</div>
+      <div class="patient-file-meta-grid-v0601">
+        <label><span>Categoria</span><select name="categoria">${hpPatientFileCategoriesV01934.map(c=>`<option>${c}</option>`).join('')}</select></label>
+        <label><span>Tags</span><input name="tags" autocomplete="off" placeholder="sangue, joelho, setembro"></label>
+        <label class="wide"><span>Descrição</span><textarea name="descricao" rows="3" maxlength="500" placeholder="Contexto que ajuda a identificar este arquivo."></textarea></label>
+      </div>
+      <div class="patient-file-upload-status-v0601" data-file-upload-status-v0601 aria-live="polite"></div>
+      <div class="patient-file-upload-actions-v0601"><button class="secondary" type="button" data-file-upload-cancel-v0601>Cancelar</button><button class="primary" type="submit">Enviar arquivo</button></div>
+    </form>`;
+  const form=box.querySelector('#patientFileUploadFormV0601'),fileInput=form.querySelector('input[name="file"]'),cameraInput=form.querySelector('input[name="cameraFile"]'),selected=form.querySelector('[data-file-selected-v0601]');
+  const syncSelected=()=>{const file=cameraInput.files?.[0]||fileInput.files?.[0];selected.textContent=file?`${file.name} • ${hpFileSizeV01934(Number(file.size||0))}`:'Nenhum arquivo selecionado.'};
+  fileInput.addEventListener('change',()=>{if(fileInput.files?.length)cameraInput.value='';syncSelected()});
+  cameraInput.addEventListener('change',()=>{if(cameraInput.files?.length)fileInput.value='';syncSelected()});
+  const close=()=>{modal.classList.remove('patient-file-upload-sheet-v0601');closeClinicalAction()};
+  box.querySelector('[data-file-upload-close-v0601]')?.addEventListener('click',close);
+  box.querySelector('[data-file-upload-cancel-v0601]')?.addEventListener('click',close);
+  form.onsubmit=async e=>{
+    e.preventDefault();const file=cameraInput.files?.[0]||fileInput.files?.[0];
+    if(!file){selected.textContent='Escolha um arquivo ou tire uma foto antes de enviar.';return}
+    const submit=form.querySelector('button[type="submit"]'),status=form.querySelector('[data-file-upload-status-v0601]');
+    hpSetActionPending(submit,true,'Enviando…');status.textContent='Enviando com segurança…';
+    try{
+      await hpUploadPatientFileV0601(target,file,{categoria:form.elements.categoria.value,descricao:form.elements.descricao.value,tags:form.elements.tags.value});
+      status.textContent='Arquivo enviado.';close();toast('Arquivo enviado com sucesso.');await onDone?.();
+    }catch(err){status.textContent=err?.message||'Falha ao enviar. Tente novamente.'}
+    finally{if(submit?.isConnected)hpSetActionPending(submit,false)}
+  };
+}
+function hpBindPatientFileCardsV0601({professional=false,patientId=null,host,reload}){
+  host.querySelectorAll('[data-file-id]').forEach(card=>{
+    const id=card.dataset.fileId,name=card.querySelector('strong')?.textContent||'arquivo';
+    const download=professional?`/api/pacientes/${patientId}/arquivos/${id}/download`:`/api/arquivos/me/${id}/download`;
+    card.querySelector('[data-file-open-v0601]')?.addEventListener('click',e=>{const b=e.currentTarget;hpSetActionPending(b,true,'Abrindo…');hpOpenSecureFileV0601(download,name).catch(err=>toast(err.message,true)).finally(()=>{if(b?.isConnected)hpSetActionPending(b,false)})});
+    card.querySelector('[data-file-remove-v0601]')?.addEventListener('click',async e=>{if(!confirm('Remover este arquivo da biblioteca? O evento ficará auditado.'))return;const b=e.currentTarget;hpSetActionPending(b,true,'Removendo…');try{await api(professional?`/api/pacientes/${patientId}/arquivos/${id}`:`/api/arquivos/me/${id}`,{method:'DELETE'});toast('Arquivo removido.');await reload()}catch(err){toast(err.message,true)}finally{if(b?.isConnected)hpSetActionPending(b,false)}});
+    card.querySelector('[data-file-chat-v0601]')?.addEventListener('click',async e=>{const b=e.currentTarget;hpSetActionPending(b,true,'Enviando…');try{await api(professional?`/api/chat/pacientes/${patientId}/mensagens`:'/api/chat/me/mensagens',{method:'POST',body:JSON.stringify({mensagem:`Arquivo compartilhado: ${name}`,contexto:'Exames',referenciaTipo:'Arquivo',referenciaId:id,referenciaTitulo:name})});toast('Arquivo enviado ao chat.')}catch(err){toast(err.message,true)}finally{if(b?.isConnected)hpSetActionPending(b,false)}});
+  });
+}
+async function hpBindPatientFilesV0601({professional=false,patientId=null,host,reload}){
+  const base=professional?`/api/pacientes/${patientId}/arquivos`:'/api/arquivos/me',list=host.querySelector('.patient-files-list-v0601');
+  const upload=()=>hpPatientFileUploadModalV0601({professional,patientId,onDone:reload});
+  host.querySelector('[data-file-new-v0601]')?.addEventListener('click',upload);
+  host.querySelector('[data-file-empty-upload-v0601]')?.addEventListener('click',upload);
+  hpBindPatientFileCardsV0601({professional,patientId,host,reload});
+  const refresh=async()=>{
+    const q=host.querySelector('[data-file-search-v0601]')?.value||'',cat=host.querySelector('[data-file-category-v0601]')?.value||'';
+    list.innerHTML=hpPatientFilesStateV0601('loading','Filtrando sua biblioteca…');
+    try{
+      const items=await api(`${base}?q=${encodeURIComponent(q)}&categoria=${encodeURIComponent(cat)}`);
+      list.innerHTML=items.length?items.map(x=>hpPatientFileCardV0601(x,professional)).join(''):hpPatientFilesEmptyV0601();
+      list.querySelector('[data-file-empty-upload-v0601]')?.addEventListener('click',upload);
+      hpBindPatientFileCardsV0601({professional,patientId,host,reload});
+    }catch(err){
+      list.innerHTML=hpPatientFilesStateV0601('error',err?.message||'Tente novamente.','Tentar novamente');
+      list.querySelector('[data-files-retry-v0601]')?.addEventListener('click',refresh);
+    }
+  };
+  let timer=null;
+  host.querySelector('[data-file-search-v0601]')?.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(refresh,260)});
+  host.querySelector('[data-file-category-v0601]')?.addEventListener('change',refresh);
+}
+async function loadProfessionalPatientFilesV0601(patient,host){
+  const reload=()=>loadProfessionalPatientFilesV0601(patient,host);host.innerHTML=hpPatientFilesStateV0601('loading','Buscando a biblioteca clínica…');
+  try{const items=await api(`/api/pacientes/${patient.id}/arquivos`);host.innerHTML=hpPatientFilesMarkupV0601(items,true);await hpBindPatientFilesV0601({professional:true,patientId:patient.id,host,reload})}
+  catch(err){host.innerHTML=hpPatientFilesStateV0601('error',err?.message||'Falha ao carregar arquivos.','Tentar novamente');host.querySelector('[data-files-retry-v0601]')?.addEventListener('click',reload)}
+}
+async function loadPatientFilesV0601(){
+  const host=$('#patientPortalContent')||content;setPatientPortalLoading('arquivos');
+  try{const items=await api('/api/arquivos/me');host.innerHTML=`<div class="patient-portal-page patient-files-page-v0601">${hpPatientFilesMarkupV0601(items,false)}</div>`;await hpBindPatientFilesV0601({professional:false,host,reload:loadPatientFilesV0601})}
+  catch(err){host.innerHTML=`<div class="patient-portal-page patient-files-page-v0601">${hpPatientFilesStateV0601('error',err?.message||'Falha ao carregar seus arquivos.','Tentar novamente')}</div>`;host.querySelector('[data-files-retry-v0601]')?.addEventListener('click',loadPatientFilesV0601)}
+}
+hpUploadPatientFileV01934=hpUploadPatientFileV0601;
+hpOpenSecureFileV01934=hpOpenSecureFileV0601;
+hpPatientFileUploadModalV01934=hpPatientFileUploadModalV0601;
+hpBindPatientFilesV01934=hpBindPatientFilesV0601;
+loadProfessionalPatientFilesV01934=loadProfessionalPatientFilesV0601;
+loadPatientFilesV01934=loadPatientFilesV0601;
