@@ -1,3 +1,11 @@
+## v0.59.7 — Chat Read State & Attention Queue
+- Reutiliza o estado de leitura por usuário do Chat Foundation sem nova tabela ou fonte de verdade.
+- Detecta pacientes aguardando resposta a partir do histórico real da conversa.
+- Adiciona filtro Aguardando, tempo de espera e estados operacionais de SLA de 24h na inbox.
+- Integra conversas pendentes à fila de atenção profissional com acesso direto ao chat.
+- Mantém o SLA como organização operacional, sem interpretação clínica automática.
+- Aplica PWA Creamy Gate à inbox e à fila em 360/390/430 px.
+
 ## v0.59.6 — Professional Chat Inbox
 - Adiciona inbox profissional unificada para o Chat Foundation existente.
 - Inclui badge global de não lidas no menu lateral, busca e filtros Todas/Não lidas.

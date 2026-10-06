@@ -9687,8 +9687,16 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.7 — Chat Read State & Attention Queue`.
 
-### v0.59.7 — Chat Read State & Attention Queue
-Persistir estado de leitura por usuário, badges, filtros de não lidas e integração com a fila de atenção do profissional (`pacientes aguardando resposta`).
+### ✅ v0.59.7 — Chat Read State & Attention Queue — IMPLEMENTADA
+- reutiliza o estado de leitura por usuário já persistido em `NotificacoesInternas`, sem criar uma segunda fonte de verdade;
+- calcula `aguardando resposta` a partir das mensagens do paciente posteriores à última resposta profissional;
+- adiciona filtro `Aguardando`, tempo de espera e estados operacionais de SLA de 24h na inbox;
+- integra `pacientes aguardando resposta` à fila de atenção do profissional;
+- destaca conversas próximas de 24h e acima de 24h sem transformar SLA em risco clínico;
+- mantém abertura direta da conversa, badge de não lidas e leitura persistente;
+- PWA Creamy Gate aplicado em 360/390/430 px.
+
+**Próxima etapa funcional:** `v0.59.8 — Chat Attachments`.
 
 ### v0.59.8 — Chat Attachments
 Permitir anexar fotos e documentos com validação de tipo/tamanho, preview seguro, histórico e vínculo explícito com a conversa/paciente.

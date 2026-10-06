@@ -20654,7 +20654,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.6';
+const HP_MVP_VERSION='0.59.7';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -22205,7 +22205,7 @@ function hpFillMealPlanV01932(form,list,alimentos,plan){
 const HP_SUPPLEMENT_SCHEDULING_V0594='v0.59.4';
 const hpSupplementContextsV0594=['Com refeição','Pré-treino','Pós-treino','Ao acordar','Antes de dormir','Entre refeições','Outro'];
 
-const HP_SUPPLEMENT_TRAINING_CONTEXT_V0595='v0.59.6';
+const HP_SUPPLEMENT_TRAINING_CONTEXT_V0595='v0.59.7';
 function hpSupplementTrainingOptionsV0595(treinos,item=null){const rows=['<option value="">Sem vínculo com treino</option>'];(treinos||[]).forEach(t=>(t.sessoes||[]).forEach(sessao=>rows.push(`<option value="${sessao.id}" ${String(sessao.id)===String(item?.sessaoTreinoId||'')?'selected':''}>${esc(t.nome)} • ${esc(sessao.nome)}</option>`)));return rows.join('')}
 
 function hpSupplementScheduleRowV0594(catalog,item=null,mealCount=1,treinos=[]){
@@ -30701,3 +30701,70 @@ async function hpRefreshProfessionalChatBadgeV0596(){
 }
 setInterval(()=>hpRefreshProfessionalChatBadgeV0596(),60000);
 setTimeout(()=>hpRefreshProfessionalChatBadgeV0596(),1200);
+
+
+// ===== v0.59.7 — Chat Read State & Attention Queue =====
+const HP_CHAT_READ_ATTENTION_V0597='v0.59.7';
+function hpChatWaitLabelV0597(minutes){
+  const m=Math.max(0,Number(minutes||0));
+  if(m<60)return `aguarda há ${Math.max(1,Math.floor(m))} min`;
+  const h=Math.floor(m/60);if(h<24)return `aguarda há ${h}h`;
+  const d=Math.floor(h/24);return `aguarda há ${d}d`;
+}
+function hpChatOperationalStateV0597(x){
+  if(!x?.aguardandoResposta)return {tone:'answered',label:'Respondido'};
+  if(x.slaExcedido)return {tone:'overdue',label:'SLA 24h excedido'};
+  if(x.proximoDoSla)return {tone:'soon',label:'Próximo do SLA'};
+  return {tone:'waiting',label:'Aguardando resposta'};
+}
+const __hpChatInboxCardV0597=hpChatInboxCardV0596;
+hpChatInboxCardV0596=function(x){
+  const html=__hpChatInboxCardV0597(x);
+  const state0597=hpChatOperationalStateV0597(x);
+  const status=x.aguardandoResposta?`<span class="professional-chat-state-v0597 ${state0597.tone}">${esc(state0597.label)} • ${esc(hpChatWaitLabelV0597(x.minutosAguardando))}</span>`:`<span class="professional-chat-state-v0597 answered">Respondido</span>`;
+  return html.replace('<span>'+esc(x.ultimoAutorTipo==='Profissional'?'Você: ':'')+esc(x.ultimaMensagem||'')+'</span></span>',`<span>${esc(x.ultimoAutorTipo==='Profissional'?'Você: ':'')}${esc(x.ultimaMensagem||'')}</span>${status}</span>`);
+};
+const __hpLoadProfessionalChatInboxV0597=hpLoadProfessionalChatInboxV0596;
+hpLoadProfessionalChatInboxV0596=async function(){
+  const mode=state.chatInboxModeV0597||(state.chatInboxUnreadV0596?'unread':'all');
+  state.chatInboxUnreadV0596=mode==='unread';
+  const search=state.chatInboxSearchV0596||'';
+  const qs=new URLSearchParams();
+  if(mode==='unread')qs.set('somenteNaoLidas','true');
+  if(mode==='waiting')qs.set('somenteAguardandoResposta','true');
+  if(search.trim())qs.set('busca',search.trim());
+  const data=await api(`/api/chat/inbox?${qs.toString()}`);const items=data.conversas||[];
+  content.innerHTML=`<section class="professional-chat-inbox-v0596 professional-chat-attention-v0597" data-chat-read-attention-v0597="${HP_CHAT_READ_ATTENTION_V0597}">
+    <div class="professional-chat-hero-v0596"><div><span class="eyebrow">CONNECTED CARE • ATTENTION INBOX</span><h2>Conversas com seus pacientes</h2><p>Não lidas e pacientes aguardando resposta permanecem visíveis até você abrir ou responder a conversa.</p></div><div class="professional-chat-kpis-v0597"><div><strong>${Number(data.totalNaoLidas||0)}</strong><span>não lidas</span></div><div><strong>${Number(data.totalAguardandoResposta||0)}</strong><span>aguardando</span></div><div class="${Number(data.totalSlaExcedido||0)?'has-alert':''}"><strong>${Number(data.totalSlaExcedido||0)}</strong><span>&gt; 24h</span></div></div></div>
+    <div class="professional-chat-toolbar-v0596 card"><label class="professional-chat-search-v0596"><span>Buscar</span><input id="professionalChatSearchV0596" value="${esc(search)}" placeholder="Paciente ou mensagem" /></label><div class="professional-chat-filters-v0596 professional-chat-filters-v0597"><button class="${mode==='all'?'primary':'secondary'}" data-chat-filter-v0597="all">Todas</button><button class="${mode==='unread'?'primary':'secondary'}" data-chat-filter-v0597="unread">Não lidas${Number(data.totalNaoLidas||0)?` (${Number(data.totalNaoLidas||0)})`:''}</button><button class="${mode==='waiting'?'primary':'secondary'}" data-chat-filter-v0597="waiting">Aguardando${Number(data.totalAguardandoResposta||0)?` (${Number(data.totalAguardandoResposta||0)})`:''}</button></div></div>
+    <div class="professional-chat-list-v0596">${items.length?items.map(hpChatInboxCardV0596).join(''):`<div class="card empty"><strong>${mode==='waiting'?'Nenhum paciente aguardando resposta.':mode==='unread'?'Nenhuma mensagem não lida.':'Nenhuma conversa encontrada.'}</strong><span>${mode==='waiting'?'Sua fila de mensagens está em dia.':mode==='unread'?'Você está em dia com seus pacientes.':'As conversas aparecerão aqui quando houver mensagens.'}</span></div>`}</div>
+  </section>`;
+  hpSetGlobalChatBadgeV0596(Number(data.totalNaoLidas||0));
+  const input=$('#professionalChatSearchV0596');if(input){let timer;input.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{state.chatInboxSearchV0596=input.value;hpLoadProfessionalChatInboxV0596().catch(e=>toast(e.message,true))},250)}}
+  $$('[data-chat-filter-v0597]').forEach(b=>b.onclick=()=>{state.chatInboxModeV0597=b.dataset.chatFilterV0597||'all';state.chatInboxUnreadV0596=state.chatInboxModeV0597==='unread';hpLoadProfessionalChatInboxV0596().catch(e=>toast(e.message,true))});
+  $$('[data-chat-open]').forEach(b=>b.onclick=()=>{state.patientId=b.dataset.chatOpen;state.patientTab='chat';navigate('paciente')});
+  $$('[data-chat-patient-open]').forEach(b=>b.onclick=()=>{state.patientId=b.dataset.chatPatientOpen;state.patientTab='resumo';navigate('paciente')});
+};
+function hpChatAttentionQueueCardV0597(x){
+  const state0597=hpChatOperationalStateV0597(x);
+  return `<article class="chat-attention-item-v0597 ${state0597.tone}" data-chat-attention-patient-v0597="${x.pacienteId}"><div><span class="chat-attention-state-v0597">${esc(state0597.label)}</span><strong>${esc(x.pacienteNome)}</strong><small>${esc(hpChatWaitLabelV0597(x.minutosAguardando))} • ${esc(x.contextoRotulo||'Acompanhamento geral')}</small><p>${esc(x.ultimaMensagem||'')}</p></div><button class="primary" type="button" data-chat-attention-open-v0597="${x.pacienteId}">Responder</button></article>`;
+}
+function hpRenderChatAttentionQueueV0597(data){
+  const items=(data?.conversas||[]).slice(0,6);
+  return `<section class="card chat-attention-queue-v0597" data-chat-attention-queue-v0597="${HP_CHAT_READ_ATTENTION_V0597}"><div class="card-head"><div><span class="eyebrow">CONNECTED CARE • RESPOSTAS</span><h3>Pacientes aguardando resposta</h3><small>Fila operacional do chat. O SLA de 24h organiza prioridade e não representa risco clínico.</small></div><span class="attention-center-count">${Number(data?.totalAguardandoResposta||0)}</span></div>${Number(data?.totalSlaExcedido||0)>0?`<div class="chat-attention-alert-v0597"><strong>${Number(data.totalSlaExcedido)} conversa(s) acima de 24h.</strong><span>Priorize a revisão conforme seu fluxo de atendimento.</span></div>`:''}<div class="chat-attention-list-v0597">${items.length?items.map(hpChatAttentionQueueCardV0597).join(''):`<div class="empty"><strong>Ninguém aguardando resposta.</strong><span>A fila de mensagens está em dia.</span></div>`}</div>${Number(data?.totalAguardandoResposta||0)>items.length?`<button class="ghost chat-attention-open-all-v0597" type="button">Ver todas as ${Number(data.totalAguardandoResposta)} conversas →</button>`:''}</section>`;
+}
+function hpWireChatAttentionQueueV0597(){
+  $$('[data-chat-attention-open-v0597]').forEach(b=>b.onclick=()=>{state.patientId=b.dataset.chatAttentionOpenV0597;state.patientTab='chat';navigate('paciente')});
+  $('.chat-attention-open-all-v0597')?.addEventListener('click',()=>{state.chatInboxModeV0597='waiting';navigate('chat-profissional')});
+}
+const __loadCentralDia_v0597=loadCentralDia;
+loadCentralDia=async function(){
+  await __loadCentralDia_v0597();
+  try{
+    const data=await api('/api/chat/inbox?somenteAguardandoResposta=true');
+    const panel=hpRenderChatAttentionQueueV0597(data);
+    const anchor=content.querySelector('[data-attention-reasons-panel-v0207]')||content.querySelector('[data-attention-queue-v0202]')||content.firstElementChild;
+    if(anchor)anchor.insertAdjacentHTML('beforebegin',panel);else content.insertAdjacentHTML('afterbegin',panel);
+    hpWireChatAttentionQueueV0597();
+  }catch(err){console.warn('Chat Attention Queue v0.59.7 indisponível:',err)}
+};

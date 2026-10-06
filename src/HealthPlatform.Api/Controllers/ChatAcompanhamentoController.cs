@@ -108,7 +108,11 @@ public sealed class ChatAcompanhamentoController(
 
     [Authorize]
     [HttpGet("inbox")]
-    public async Task<IActionResult> InboxProfissional([FromQuery] string? busca, [FromQuery] bool somenteNaoLidas, CancellationToken ct)
+    public async Task<IActionResult> InboxProfissional(
+        [FromQuery] string? busca,
+        [FromQuery] bool somenteNaoLidas,
+        [FromQuery] bool somenteAguardandoResposta,
+        CancellationToken ct)
     {
         var profissional = await MeuProfissional(ct);
         if (profissional is null) return Forbid();
@@ -121,7 +125,7 @@ public sealed class ChatAcompanhamentoController(
             .ToListAsync(ct);
 
         if (itens.Count == 0)
-            return Ok(new { totalNaoLidas = 0, conversas = Array.Empty<object>() });
+            return Ok(new { totalNaoLidas = 0, totalAguardandoResposta = 0, totalSlaExcedido = 0, conversas = Array.Empty<object>() });
 
         var ids = itens.Select(x => x.Id).ToArray();
         var naoLidas = await db.NotificacoesInternas.AsNoTracking()
@@ -138,11 +142,28 @@ public sealed class ChatAcompanhamentoController(
             .ToDictionaryAsync(x => x.Id, ct);
 
         var termo = (busca ?? string.Empty).Trim();
-        var conversas = itens.GroupBy(x => x.PacienteId)
+        var agoraUtc = DateTime.UtcNow;
+        var todasConversas = itens.GroupBy(x => x.PacienteId)
             .Select(g =>
             {
-                var ultima = g.OrderByDescending(x => x.DataHoraUtc).First();
-                var quantidadeNaoLida = g.Count(x => naoLidasSet.Contains(x.Id));
+                var ordenadas = g.OrderBy(x => x.DataHoraUtc).ToArray();
+                var ultima = ordenadas[^1];
+                var quantidadeNaoLida = ordenadas.Count(x => naoLidasSet.Contains(x.Id));
+                var ultimaRespostaProfissionalUtc = ordenadas
+                    .Where(x => string.Equals(x.Resultado, "Profissional", StringComparison.OrdinalIgnoreCase))
+                    .Select(x => (DateTime?)x.DataHoraUtc)
+                    .LastOrDefault();
+                var mensagensPacientePendentes = ordenadas
+                    .Where(x => string.Equals(x.Resultado, "Paciente", StringComparison.OrdinalIgnoreCase) &&
+                        (!ultimaRespostaProfissionalUtc.HasValue || x.DataHoraUtc > ultimaRespostaProfissionalUtc.Value))
+                    .ToArray();
+                var aguardandoResposta = mensagensPacientePendentes.Length > 0;
+                var aguardandoDesdeUtc = aguardandoResposta ? mensagensPacientePendentes[0].DataHoraUtc : (DateTime?)null;
+                var minutosAguardando = aguardandoDesdeUtc.HasValue
+                    ? Math.Max(0, (int)Math.Floor((agoraUtc - aguardandoDesdeUtc.Value).TotalMinutes))
+                    : 0;
+                var slaExcedido = aguardandoResposta && minutosAguardando >= 24 * 60;
+                var proximoDoSla = aguardandoResposta && !slaExcedido && minutosAguardando >= 18 * 60;
                 pacientes.TryGetValue(g.Key, out var paciente);
                 var (mensagem, referencia) = SepararObservacoes(ultima.Observacoes ?? string.Empty);
                 return new
@@ -157,18 +178,35 @@ public sealed class ChatAcompanhamentoController(
                     contextoRotulo = RotuloContexto(ExtrairContexto(ultima.Canal)),
                     referencia,
                     naoLidas = quantidadeNaoLida,
-                    possuiNaoLidas = quantidadeNaoLida > 0
+                    possuiNaoLidas = quantidadeNaoLida > 0,
+                    aguardandoResposta,
+                    aguardandoDesdeUtc,
+                    minutosAguardando,
+                    proximoDoSla,
+                    slaExcedido
                 };
             })
+            .ToArray();
+
+        var conversas = todasConversas
             .Where(x => !somenteNaoLidas || x.possuiNaoLidas)
+            .Where(x => !somenteAguardandoResposta || x.aguardandoResposta)
             .Where(x => string.IsNullOrWhiteSpace(termo) || x.pacienteNome.Contains(termo, StringComparison.OrdinalIgnoreCase) ||
                 (x.pacienteEmail ?? string.Empty).Contains(termo, StringComparison.OrdinalIgnoreCase) ||
                 x.ultimaMensagem.Contains(termo, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(x => x.possuiNaoLidas)
+            .OrderByDescending(x => x.slaExcedido)
+            .ThenByDescending(x => x.aguardandoResposta)
+            .ThenByDescending(x => x.possuiNaoLidas)
             .ThenByDescending(x => x.ultimaMensagemEmUtc)
             .ToArray();
 
-        return Ok(new { totalNaoLidas = naoLidas.Count, conversas });
+        return Ok(new
+        {
+            totalNaoLidas = naoLidas.Count,
+            totalAguardandoResposta = todasConversas.Count(x => x.aguardandoResposta),
+            totalSlaExcedido = todasConversas.Count(x => x.slaExcedido),
+            conversas
+        });
     }
 
     [HttpGet("nao-lidas")]
