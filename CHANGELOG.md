@@ -1,3 +1,10 @@
+## v0.59.6 — Professional Chat Inbox
+- Adiciona inbox profissional unificada para o Chat Foundation existente.
+- Inclui badge global de não lidas no menu lateral, busca e filtros Todas/Não lidas.
+- Mostra última mensagem, contexto, atividade e contador por paciente.
+- Abre diretamente a conversa do paciente e preserva o fluxo de leitura já existente.
+- Aplica PWA Creamy Gate à inbox em 360/390/430 px.
+
 # v0.59.4 — Supplement Scheduling & Nutrition Integration
 
 ### v0.59.4-r1 — EF Migration Discovery Hotfix

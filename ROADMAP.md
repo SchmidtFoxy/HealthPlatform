@@ -9675,8 +9675,17 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.6 — Professional Chat Inbox`.
 
-### v0.59.6 — Professional Chat Inbox
-Adicionar `Chat` ao menu lateral profissional com inbox unificada, todas as conversas, última mensagem, horário, paciente, ordenação por atividade e contador persistente de não lidas.
+### ✅ v0.59.6 — Professional Chat Inbox — IMPLEMENTADA
+- item `Chat` no menu lateral profissional com badge global de não lidas;
+- inbox agregada sobre o Chat Foundation existente, sem nova fonte de dados;
+- lista de conversas com paciente, contexto, última mensagem, horário relativo e contador individual;
+- filtros `Todas` e `Não lidas`, além de busca por paciente/mensagem;
+- ordenação prioriza conversas não lidas e depois atividade recente;
+- abertura direta na aba Chat do paciente e atalho para o prontuário;
+- leitura continua sendo marcada ao abrir a conversa pela fundação existente;
+- PWA Creamy Gate aplicado em 360/390/430 px.
+
+**Próxima etapa funcional:** `v0.59.7 — Chat Read State & Attention Queue`.
 
 ### v0.59.7 — Chat Read State & Attention Queue
 Persistir estado de leitura por usuário, badges, filtros de não lidas e integração com a fila de atenção do profissional (`pacientes aguardando resposta`).

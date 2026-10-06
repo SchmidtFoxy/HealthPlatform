@@ -106,6 +106,71 @@ public sealed class ChatAcompanhamentoController(
         return await CriarMensagem(paciente, profissional, "Profissional", request, paciente.UsuarioId, ct);
     }
 
+    [Authorize]
+    [HttpGet("inbox")]
+    public async Task<IActionResult> InboxProfissional([FromQuery] string? busca, [FromQuery] bool somenteNaoLidas, CancellationToken ct)
+    {
+        var profissional = await MeuProfissional(ct);
+        if (profissional is null) return Forbid();
+
+        var itens = await db.InteracoesAcompanhamento.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.ProfissionalId == profissional.Id && x.Canal.StartsWith("Chat:"))
+            .OrderByDescending(x => x.DataHoraUtc)
+            .Take(2000)
+            .Select(x => new { x.Id, x.PacienteId, x.DataHoraUtc, x.Resultado, x.Observacoes, x.Canal })
+            .ToListAsync(ct);
+
+        if (itens.Count == 0)
+            return Ok(new { totalNaoLidas = 0, conversas = Array.Empty<object>() });
+
+        var ids = itens.Select(x => x.Id).ToArray();
+        var naoLidas = await db.NotificacoesInternas.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.UsuarioId == currentUser.UserId && x.Ativa &&
+                !x.LidaEmUtc.HasValue && x.OrigemTipo == "ChatAcompanhamento" && x.OrigemId.HasValue && ids.Contains(x.OrigemId.Value))
+            .Select(x => x.OrigemId!.Value)
+            .ToListAsync(ct);
+        var naoLidasSet = naoLidas.ToHashSet();
+
+        var pacienteIds = itens.Select(x => x.PacienteId).Distinct().ToArray();
+        var pacientes = await db.Pacientes.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && pacienteIds.Contains(x.Id) && x.Ativo)
+            .Select(x => new { x.Id, x.Nome, x.Email })
+            .ToDictionaryAsync(x => x.Id, ct);
+
+        var termo = (busca ?? string.Empty).Trim();
+        var conversas = itens.GroupBy(x => x.PacienteId)
+            .Select(g =>
+            {
+                var ultima = g.OrderByDescending(x => x.DataHoraUtc).First();
+                var quantidadeNaoLida = g.Count(x => naoLidasSet.Contains(x.Id));
+                pacientes.TryGetValue(g.Key, out var paciente);
+                var (mensagem, referencia) = SepararObservacoes(ultima.Observacoes ?? string.Empty);
+                return new
+                {
+                    pacienteId = g.Key,
+                    pacienteNome = paciente?.Nome ?? "Paciente",
+                    pacienteEmail = paciente?.Email,
+                    ultimaMensagem = Resumir(mensagem, 160),
+                    ultimaMensagemEmUtc = ultima.DataHoraUtc,
+                    ultimoAutorTipo = ultima.Resultado,
+                    contexto = ExtrairContexto(ultima.Canal),
+                    contextoRotulo = RotuloContexto(ExtrairContexto(ultima.Canal)),
+                    referencia,
+                    naoLidas = quantidadeNaoLida,
+                    possuiNaoLidas = quantidadeNaoLida > 0
+                };
+            })
+            .Where(x => !somenteNaoLidas || x.possuiNaoLidas)
+            .Where(x => string.IsNullOrWhiteSpace(termo) || x.pacienteNome.Contains(termo, StringComparison.OrdinalIgnoreCase) ||
+                (x.pacienteEmail ?? string.Empty).Contains(termo, StringComparison.OrdinalIgnoreCase) ||
+                x.ultimaMensagem.Contains(termo, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(x => x.possuiNaoLidas)
+            .ThenByDescending(x => x.ultimaMensagemEmUtc)
+            .ToArray();
+
+        return Ok(new { totalNaoLidas = naoLidas.Count, conversas });
+    }
+
     [HttpGet("nao-lidas")]
     public async Task<IActionResult> NaoLidas([FromQuery] Guid? pacienteId, CancellationToken ct)
     {

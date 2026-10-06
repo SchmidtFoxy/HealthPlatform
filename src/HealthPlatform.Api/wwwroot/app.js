@@ -20654,7 +20654,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.5';
+const HP_MVP_VERSION='0.59.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -22205,7 +22205,7 @@ function hpFillMealPlanV01932(form,list,alimentos,plan){
 const HP_SUPPLEMENT_SCHEDULING_V0594='v0.59.4';
 const hpSupplementContextsV0594=['Com refeição','Pré-treino','Pós-treino','Ao acordar','Antes de dormir','Entre refeições','Outro'];
 
-const HP_SUPPLEMENT_TRAINING_CONTEXT_V0595='v0.59.5';
+const HP_SUPPLEMENT_TRAINING_CONTEXT_V0595='v0.59.6';
 function hpSupplementTrainingOptionsV0595(treinos,item=null){const rows=['<option value="">Sem vínculo com treino</option>'];(treinos||[]).forEach(t=>(t.sessoes||[]).forEach(sessao=>rows.push(`<option value="${sessao.id}" ${String(sessao.id)===String(item?.sessaoTreinoId||'')?'selected':''}>${esc(t.nome)} • ${esc(sessao.nome)}</option>`)));return rows.join('')}
 
 function hpSupplementScheduleRowV0594(catalog,item=null,mealCount=1,treinos=[]){
@@ -30643,3 +30643,61 @@ openMealPlanForm=async function(p,plan=null){
   if(!$('#mealPlanForm'))return;
   try{const alimentos=await api('/api/alimentos');await hpEnhanceMealPlanWithTemplatesV0591(alimentos)}catch(e){console.warn('Meal Templates Quick Apply indisponível:',e)}
 };
+
+
+// ===== v0.59.6 — Professional Chat Inbox =====
+const __navigate_v0596=navigate;
+navigate=function(view){
+  if(view!=='chat-profissional')return __navigate_v0596(view);
+  state.view='chat-profissional';
+  $$('.nav-item[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));
+  $('.sidebar')?.classList.remove('open');
+  $('#pageEyebrow').textContent='AESYN • CONNECTED CARE';
+  $('#pageTitle').textContent='Chat';
+  setLoading();
+  hpLoadProfessionalChatInboxV0596().catch(e=>{content.innerHTML=`<div class="card empty">${esc(e.message)}</div>`;toast(e.message,true)});
+};
+
+function hpRelativeChatTimeV0596(value){
+  const d=value?new Date(value):null;if(!d||Number.isNaN(d.getTime()))return '';
+  const min=Math.max(0,Math.round((Date.now()-d.getTime())/60000));
+  if(min<1)return 'agora';if(min<60)return `há ${min} min`;const h=Math.floor(min/60);if(h<24)return `há ${h}h`;const dias=Math.floor(h/24);if(dias<7)return `há ${dias}d`;return fmtDateTime(value);
+}
+function hpChatInboxCardV0596(x){
+  const unread=Number(x.naoLidas||0);
+  return `<article class="professional-chat-item-v0596 ${unread?'has-unread':''}" data-chat-patient="${x.pacienteId}">
+    <button class="professional-chat-open-v0596" type="button" data-chat-open="${x.pacienteId}" aria-label="Abrir conversa com ${esc(x.pacienteNome)}">
+      <span class="professional-chat-avatar-v0596">${esc(String(x.pacienteNome||'P').trim().slice(0,1).toUpperCase())}</span>
+      <span class="professional-chat-copy-v0596"><span class="professional-chat-title-v0596"><strong>${esc(x.pacienteNome)}</strong>${unread?`<b class="professional-chat-count-v0596">${unread>99?'99+':unread}</b>`:''}</span>
+      <small>${esc(x.contextoRotulo||'Acompanhamento geral')} • ${hpRelativeChatTimeV0596(x.ultimaMensagemEmUtc)}</small>
+      <span>${esc(x.ultimoAutorTipo==='Profissional'?'Você: ':'')}${esc(x.ultimaMensagem||'')}</span></span>
+    </button>
+    <button class="ghost professional-chat-patient-v0596" type="button" data-chat-patient-open="${x.pacienteId}">Paciente</button>
+  </article>`;
+}
+async function hpLoadProfessionalChatInboxV0596(){
+  const onlyUnread=state.chatInboxUnreadV0596===true;
+  const search=state.chatInboxSearchV0596||'';
+  const qs=new URLSearchParams();if(onlyUnread)qs.set('somenteNaoLidas','true');if(search.trim())qs.set('busca',search.trim());
+  const data=await api(`/api/chat/inbox?${qs.toString()}`);const items=data.conversas||[];
+  content.innerHTML=`<section class="professional-chat-inbox-v0596">
+    <div class="professional-chat-hero-v0596"><div><span class="eyebrow">CONNECTED CARE • INBOX</span><h2>Conversas com seus pacientes</h2><p>Mensagens recentes em um só lugar. Abra a conversa para marcar as mensagens recebidas como lidas.</p></div><div class="professional-chat-total-v0596"><strong>${Number(data.totalNaoLidas||0)}</strong><span>não lidas</span></div></div>
+    <div class="professional-chat-toolbar-v0596 card"><label class="professional-chat-search-v0596"><span>Buscar</span><input id="professionalChatSearchV0596" value="${esc(search)}" placeholder="Paciente ou mensagem" /></label><div class="professional-chat-filters-v0596"><button class="${!onlyUnread?'primary':'secondary'}" data-chat-filter="all">Todas</button><button class="${onlyUnread?'primary':'secondary'}" data-chat-filter="unread">Não lidas${Number(data.totalNaoLidas||0)?` (${Number(data.totalNaoLidas||0)})`:''}</button></div></div>
+    <div class="professional-chat-list-v0596">${items.length?items.map(hpChatInboxCardV0596).join(''):`<div class="card empty"><strong>${onlyUnread?'Nenhuma mensagem não lida.':'Nenhuma conversa encontrada.'}</strong><span>${onlyUnread?'Você está em dia com seus pacientes.':'As conversas aparecerão aqui quando houver mensagens.'}</span></div>`}</div>
+  </section>`;
+  hpSetGlobalChatBadgeV0596(Number(data.totalNaoLidas||0));
+  const input=$('#professionalChatSearchV0596');if(input){let timer;input.oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>{state.chatInboxSearchV0596=input.value;hpLoadProfessionalChatInboxV0596().catch(e=>toast(e.message,true))},250)}}
+  $$('[data-chat-filter]').forEach(b=>b.onclick=()=>{state.chatInboxUnreadV0596=b.dataset.chatFilter==='unread';hpLoadProfessionalChatInboxV0596().catch(e=>toast(e.message,true))});
+  $$('[data-chat-open]').forEach(b=>b.onclick=()=>{state.patientId=b.dataset.chatOpen;state.patientTab='chat';navigate('paciente')});
+  $$('[data-chat-patient-open]').forEach(b=>b.onclick=()=>{state.patientId=b.dataset.chatPatientOpen;state.patientTab='resumo';navigate('paciente')});
+}
+function hpSetGlobalChatBadgeV0596(total){
+  const badge=document.querySelector('[data-chat-global-badge]');if(!badge)return;
+  if(total>0){badge.textContent=total>99?'99+':String(total);badge.classList.remove('hidden')}else{badge.textContent='0';badge.classList.add('hidden')}
+}
+async function hpRefreshProfessionalChatBadgeV0596(){
+  if(!state.user||state.user.tipoUsuario==='Paciente')return;
+  try{const d=await api('/api/chat/nao-lidas');hpSetGlobalChatBadgeV0596(Number(d.total||0))}catch{}
+}
+setInterval(()=>hpRefreshProfessionalChatBadgeV0596(),60000);
+setTimeout(()=>hpRefreshProfessionalChatBadgeV0596(),1200);
