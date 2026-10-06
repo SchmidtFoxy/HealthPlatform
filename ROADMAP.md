@@ -9638,8 +9638,17 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.3 — Supplement Catalog Foundation`.
 
-### v0.59.3 — Supplement Catalog Foundation
-Criar catálogo estruturado de suplementação: proteínas, creatina, pré-treinos, barras proteicas, eletrólitos, vitaminas/minerais e itens personalizados, com porção, composição, fabricante opcional, observações, status e isolamento por organização.
+### ✅ v0.59.3 — Supplement Catalog Foundation — IMPLEMENTADA
+- catálogo estruturado e isolado por organização para proteínas, creatina, pré-treinos, barrinhas proteicas, eletrólitos, vitaminas/minerais e itens personalizados;
+- fabricante, categoria, apresentação, porção e unidade;
+- calorias/macros, cafeína, composição/princípios ativos, instruções e observações;
+- busca, filtros por categoria, edição, inativação e reativação;
+- acesso direto em Nutrição → Suplementos e em Configurações;
+- migration `20261006143000_V0593SupplementCatalog`;
+- guardrail explícito: catálogo não recomenda produto, dose, indicação ou necessidade clínica;
+- PWA em uma coluna para 360/390/430 px.
+
+**Próxima etapa funcional:** `v0.59.4 — Supplement Scheduling & Nutrition Integration`.
 
 ### v0.59.4 — Supplement Scheduling & Nutrition Integration
 Permitir adicionar suplementos ao plano alimentar e cronograma diário, com horário/contexto (`café`, `pré-treino`, `pós-treino`, `antes de dormir`, etc.) e visualização integrada ao paciente.

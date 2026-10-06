@@ -3330,6 +3330,14 @@ function openRescheduleForm(id,current){
             <div id="cfg-alimentos"></div>
           </article>
 
+          <article class="card span-2 supplement-settings-v0593" data-supplement-catalog="v0.59.3">
+            <div class="card-head">
+              <div><h3>Catálogo de suplementos</h3><p class="muted">Pré-treinos, proteínas, creatina, barrinhas, eletrólitos e outros itens reutilizáveis.</p></div>
+              <button class="btn btn-primary" id="cfg-add-suplemento">+ Suplemento</button>
+            </div>
+            <div id="cfg-suplementos"></div>
+          </article>
+
           <article class="card span-2">
             <div class="card-head">
               <div><h3>Marcadores laboratoriais</h3><p class="muted">Ex.: Glicemia, LDL, HDL, TSH.</p></div>
@@ -3354,11 +3362,13 @@ function openRescheduleForm(id,current){
     await Promise.allSettled([
       loadResumo(),
       loadAlimentos(),
+      loadSuplementos(),
       loadMarcadores(),
       loadPerguntas()
     ]);
 
     document.querySelector("#cfg-add-alimento")?.addEventListener("click", () => modalAlimento());
+    document.querySelector("#cfg-add-suplemento")?.addEventListener("click", () => modalSuplemento());
     document.querySelector("#cfg-add-marcador")?.addEventListener("click", () => modalMarcador());
     document.querySelector("#cfg-add-pergunta")?.addEventListener("click", () => modalPergunta());
   }
@@ -3399,6 +3409,63 @@ function openRescheduleForm(id,current){
     } catch {
       el.innerHTML = `<div class="empty-state">Falha ao carregar alimentos.</div>`;
     }
+  }
+
+  const hpSupplementCategoriesV0593 = ['Proteína','Creatina','Pré-treino','Barrinha proteica','Eletrólitos','Vitaminas e minerais','Carboidrato','Recuperação','Outros'];
+
+  function hpSupplementCategoryOptionsV0593(selected='Outros') {
+    return hpSupplementCategoriesV0593.map(x=>`<option value="${esc(x)}" ${x===selected?'selected':''}>${esc(x)}</option>`).join('');
+  }
+
+  async function loadSuplementos() {
+    const el = document.querySelector("#cfg-suplementos");
+    if (!el) return;
+    try {
+      const d = await api("/api/suplementos?incluirInativos=true");
+      const itens = Array.isArray(d) ? d : (d.items || d.data || []);
+      el.innerHTML = itens.length ? `
+        <div class="supplement-catalog-grid-v0593">
+          ${itens.map(x => `
+            <article class="supplement-card-v0593 ${x.ativo === false ? 'is-inactive' : ''}" data-supplement-id="${x.id}">
+              <div class="supplement-card-head-v0593"><div><span class="eyebrow">${esc(x.categoria || 'Outros')}</span><strong>${esc(x.nome)}</strong><small>${esc(x.marca || 'Sem fabricante informado')}</small></div><span class="badge ${x.ativo === false ? 'badge-muted' : 'badge-ok'}">${x.ativo === false ? 'Inativo' : 'Ativo'}</span></div>
+              <div class="supplement-serving-v0593"><b>${num(x.porcaoQuantidade,2)} ${esc(x.porcaoUnidade || 'porção')}</b><span>${num(x.caloriasPorPorcao,0)} kcal • P ${num(x.proteinasGPorPorcao,1)}g • C ${num(x.carboidratosGPorPorcao,1)}g • G ${num(x.gordurasGPorPorcao,1)}g${x.cafeinaMgPorPorcao!=null?` • Cafeína ${num(x.cafeinaMgPorPorcao,0)}mg`:''}</span></div>
+              ${x.composicao?`<p>${esc(x.composicao)}</p>`:''}
+              <div class="supplement-actions-v0593"><button type="button" class="btn btn-sm" data-supplement-edit>Editar</button><button type="button" class="btn btn-sm" data-supplement-toggle="${x.ativo !== false ? 'off':'on'}">${x.ativo !== false ? 'Inativar':'Ativar'}</button></div>
+            </article>`).join("")}
+        </div>` : `<div class="empty-state">Nenhum suplemento cadastrado. Comece pelos itens que você mais reutiliza.</div>`;
+      el.querySelectorAll('[data-supplement-edit]').forEach(btn=>btn.onclick=()=>{const id=btn.closest('[data-supplement-id]')?.dataset.supplementId;const x=itens.find(i=>String(i.id)===String(id));if(x)modalSuplemento(x)});
+      el.querySelectorAll('[data-supplement-toggle]').forEach(btn=>btn.onclick=async()=>{const id=btn.closest('[data-supplement-id]')?.dataset.supplementId;if(!id)return;const activate=btn.dataset.supplementToggle==='on';await api(activate?`/api/suplementos/${id}/reativar`:`/api/suplementos/${id}`,{method:activate?'POST':'DELETE'});await loadSuplementos()});
+    } catch {
+      el.innerHTML = `<div class="empty-state">Falha ao carregar suplementos.</div>`;
+    }
+  }
+
+  function modalSuplemento(x=null) {
+    const editing=!!x?.id;
+    showModal(editing?"Editar suplemento":"Novo suplemento", `
+      <div class="form-grid two supplement-form-v0593">
+        <label>Nome<input name="nome" required value="${esc(x?.nome||'')}"></label>
+        <label>Fabricante / marca<input name="marca" value="${esc(x?.marca||'')}"></label>
+        <label>Categoria<select name="categoria">${hpSupplementCategoryOptionsV0593(x?.categoria||'Outros')}</select></label>
+        <label>Apresentação<input name="forma" placeholder="Pó, cápsula, barra..." value="${esc(x?.forma||'')}"></label>
+        <label>Quantidade da porção<input name="porcaoQuantidade" type="number" min="0.01" step="0.01" required value="${x?.porcaoQuantidade??1}"></label>
+        <label>Unidade da porção<input name="porcaoUnidade" required placeholder="g, scoop, cápsula, barra..." value="${esc(x?.porcaoUnidade||'porção')}"></label>
+        <label>Calorias / porção<input name="calorias" type="number" min="0" step="0.01" value="${x?.caloriasPorPorcao??0}"></label>
+        <label>Proteína (g) / porção<input name="proteina" type="number" min="0" step="0.01" value="${x?.proteinasGPorPorcao??0}"></label>
+        <label>Carboidrato (g) / porção<input name="carboidrato" type="number" min="0" step="0.01" value="${x?.carboidratosGPorPorcao??0}"></label>
+        <label>Gordura (g) / porção<input name="gordura" type="number" min="0" step="0.01" value="${x?.gordurasGPorPorcao??0}"></label>
+        <label>Fibra (g) / porção<input name="fibra" type="number" min="0" step="0.01" value="${x?.fibrasGPorPorcao??0}"></label>
+        <label>Cafeína (mg) / porção<input name="cafeina" type="number" min="0" step="0.01" value="${x?.cafeinaMgPorPorcao??''}"></label>
+        <label class="span-2">Composição / princípios ativos<textarea name="composicao" rows="3" placeholder="Ex.: creatina 3 g; beta-alanina 2 g...">${esc(x?.composicao||'')}</textarea></label>
+        <label class="span-2">Instrução cadastrada pelo profissional<textarea name="instrucoesUso" rows="2" placeholder="Contexto ou orientação definida pelo profissional; o AESYN não infere dose.">${esc(x?.instrucoesUso||'')}</textarea></label>
+        <label class="span-2">Observações internas<textarea name="observacoes" rows="2">${esc(x?.observacoes||'')}</textarea></label>
+      </div>
+      <p class="supplement-guardrail-v0593">O catálogo organiza itens e dados de rótulo. O AESYN não recomenda suplemento, dose, indicação ou necessidade clínica automaticamente.</p>
+    `, async f => {
+      const body={nome:f.get('nome'),marca:f.get('marca')||null,categoria:f.get('categoria')||'Outros',forma:f.get('forma')||null,porcaoQuantidade:Number(f.get('porcaoQuantidade')||1),porcaoUnidade:f.get('porcaoUnidade')||'porção',caloriasPorPorcao:Number(f.get('calorias')||0),proteinasGPorPorcao:Number(f.get('proteina')||0),carboidratosGPorPorcao:Number(f.get('carboidrato')||0),gordurasGPorPorcao:Number(f.get('gordura')||0),fibrasGPorPorcao:Number(f.get('fibra')||0),cafeinaMgPorPorcao:f.get('cafeina')===''?null:Number(f.get('cafeina')),composicao:f.get('composicao')||null,instrucoesUso:f.get('instrucoesUso')||null,observacoes:f.get('observacoes')||null};
+      await api(editing?`/api/suplementos/${x.id}`:'/api/suplementos',{method:editing?'PUT':'POST',body:JSON.stringify(body)});
+      await loadSuplementos();
+    });
   }
 
   async function loadMarcadores() {
@@ -20586,7 +20653,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.2';
+const HP_MVP_VERSION='0.59.3';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -21726,6 +21793,46 @@ async function hpOpenNutritionReviewPublish2(patient,preferredPlanId=null){
 // Add the review/publish entry point to the patient nutrition tab without
 // replacing the stable v0.18.12 renderer.
 const __hpRenderNutritionProfessionalFlow_v01815=hpRenderNutritionProfessionalFlow;
+const HP_SUPPLEMENT_CATALOG_FOUNDATION_V0593='v0.59.3';
+const hpSupplementCategoriesCatalogV0593=['Todos','Proteína','Creatina','Pré-treino','Barrinha proteica','Eletrólitos','Vitaminas e minerais','Carboidrato','Recuperação','Outros'];
+
+function hpSupplementCategoryOptionsCatalogV0593(selected='Outros'){
+  return hpSupplementCategoriesCatalogV0593.filter(x=>x!=='Todos').map(x=>`<option value="${esc(x)}" ${x===selected?'selected':''}>${esc(x)}</option>`).join('');
+}
+
+async function hpOpenSupplementCatalogV0593(){
+  const box=$('#clinicalActionContent');$('#clinicalActionModal').classList.add('nutrition-modal-open');$('#clinicalActionModal').classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SUPLEMENTAÇÃO • v0.59.3</span><h2>Catálogo de suplementos</h2><p>Base reutilizável do profissional para pré-treinos, proteínas, creatina, barrinhas, eletrólitos e outros itens.</p></div><div class="empty">Carregando catálogo...</div>`;
+  try{
+    const items=await api('/api/suplementos?incluirInativos=true');
+    hpRenderSupplementCatalogV0593(box,items);
+  }catch(err){box.innerHTML+=`<div class="empty">${esc(err.message||'Falha ao carregar suplementos.')}</div>`}
+}
+
+function hpRenderSupplementCatalogV0593(box,items){
+  const list=Array.isArray(items)?items:[];
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">SUPLEMENTAÇÃO • v0.59.3</span><h2>Catálogo de suplementos</h2><p>${list.length} item(ns) cadastrados • dados de rótulo e organização profissional, sem recomendação automática.</p></div>
+  <section class="supplement-toolbar-v0593"><input id="supplementSearchV0593" type="search" placeholder="Buscar suplemento, marca ou composição..." aria-label="Buscar suplementos"><button type="button" class="primary" id="supplementNewV0593">+ Suplemento</button></section>
+  <div class="supplement-chips-v0593">${hpSupplementCategoriesCatalogV0593.map((x,i)=>`<button type="button" class="${i===0?'active':''}" data-supplement-category-v0593="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+  <div id="supplementListV0593" class="supplement-catalog-grid-v0593"></div>
+  <div class="supplement-catalog-note-v0593"><strong>Guardrail clínico</strong><span>O AESYN organiza catálogo e dados informados. Não escolhe produto, dose, indicação ou necessidade clínica automaticamente.</span></div>
+  <div class="form-actions"><button type="button" class="secondary" data-close-clinical-form>Fechar</button></div>`;
+  $('[data-close-clinical-form]').onclick=closeClinicalAction;
+  let category='Todos';const search=$('#supplementSearchV0593'),host=$('#supplementListV0593');
+  const render=()=>{const term=String(search.value||'').trim().toLowerCase();const filtered=list.filter(x=>(category==='Todos'||x.categoria===category)&&(!term||`${x.nome||''} ${x.marca||''} ${x.categoria||''} ${x.composicao||''}`.toLowerCase().includes(term)));host.innerHTML=filtered.length?filtered.map(x=>hpSupplementCardV0593(x)).join(''):`<div class="empty">Nenhum suplemento corresponde aos filtros.</div>`;host.querySelectorAll('[data-supplement-edit-v0593]').forEach(b=>b.onclick=()=>{const x=list.find(i=>String(i.id)===String(b.dataset.supplementEditV0593));if(x)hpOpenSupplementFormV0593(x)});host.querySelectorAll('[data-supplement-toggle-v0593]').forEach(b=>b.onclick=async()=>{const id=b.dataset.supplementToggleV0593,activate=b.dataset.activate==='true';try{await api(activate?`/api/suplementos/${id}/reativar`:`/api/suplementos/${id}`,{method:activate?'POST':'DELETE'});toast(activate?'Suplemento reativado.':'Suplemento inativado sem apagar o histórico.');await hpOpenSupplementCatalogV0593()}catch(err){toast(err.message,true)}})};
+  search.oninput=render;$$('[data-supplement-category-v0593]').forEach(b=>b.onclick=()=>{category=b.dataset.supplementCategoryV0593;$$('[data-supplement-category-v0593]').forEach(x=>x.classList.toggle('active',x===b));render()});$('#supplementNewV0593').onclick=()=>hpOpenSupplementFormV0593();render();
+}
+
+function hpSupplementCardV0593(x){
+  return `<article class="supplement-card-v0593 ${x.ativo===false?'is-inactive':''}"><div class="supplement-card-head-v0593"><div><span class="eyebrow">${esc(x.categoria||'Outros')}</span><h4>${esc(x.nome)}</h4><small>${esc(x.marca||'Sem fabricante informado')}${x.forma?` • ${esc(x.forma)}`:''}</small></div><span class="pill ${x.ativo===false?'Encerrada':'Ativa'}">${x.ativo===false?'Inativo':'Ativo'}</span></div><div class="supplement-serving-v0593"><strong>${num(x.porcaoQuantidade,2)} ${esc(x.porcaoUnidade||'porção')}</strong><span>${num(x.caloriasPorPorcao,0)} kcal • P ${num(x.proteinasGPorPorcao,1)}g • C ${num(x.carboidratosGPorPorcao,1)}g • G ${num(x.gordurasGPorPorcao,1)}g${x.cafeinaMgPorPorcao!=null?` • cafeína ${num(x.cafeinaMgPorPorcao,0)}mg`:''}</span></div>${x.composicao?`<p class="supplement-composition-v0593">${esc(x.composicao)}</p>`:''}${x.instrucoesUso?`<small class="supplement-instruction-v0593">${esc(x.instrucoesUso)}</small>`:''}<div class="supplement-actions-v0593"><button type="button" class="secondary" data-supplement-edit-v0593="${x.id}">Editar</button><button type="button" class="ghost" data-supplement-toggle-v0593="${x.id}" data-activate="${x.ativo===false?'true':'false'}">${x.ativo===false?'Reativar':'Inativar'}</button></div></article>`;
+}
+
+function hpOpenSupplementFormV0593(x=null){
+  const editing=!!x?.id,box=$('#clinicalActionContent');
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="supplementBackV0593">← Catálogo</button><span class="eyebrow">SUPLEMENTAÇÃO • CADASTRO</span><h2>${editing?'Editar suplemento':'Novo suplemento'}</h2><p>Cadastre dados objetivos do item. Dose e indicação continuam sob decisão do profissional.</p></div><form id="supplementFormV0593" class="clinical-form supplement-form-v0593"><div class="form-grid two"><label>Nome<input name="nome" required value="${esc(x?.nome||'')}"></label><label>Fabricante / marca<input name="marca" value="${esc(x?.marca||'')}"></label><label>Categoria<select name="categoria">${hpSupplementCategoryOptionsCatalogV0593(x?.categoria||'Outros')}</select></label><label>Apresentação<input name="forma" placeholder="Pó, cápsula, barra..." value="${esc(x?.forma||'')}"></label><label>Quantidade da porção<input name="porcaoQuantidade" type="number" min="0.01" step="0.01" required value="${x?.porcaoQuantidade??1}"></label><label>Unidade da porção<input name="porcaoUnidade" required placeholder="g, scoop, cápsula, barra..." value="${esc(x?.porcaoUnidade||'porção')}"></label><label>Calorias / porção<input name="calorias" type="number" min="0" step="0.01" value="${x?.caloriasPorPorcao??0}"></label><label>Proteína (g) / porção<input name="proteina" type="number" min="0" step="0.01" value="${x?.proteinasGPorPorcao??0}"></label><label>Carboidrato (g) / porção<input name="carboidrato" type="number" min="0" step="0.01" value="${x?.carboidratosGPorPorcao??0}"></label><label>Gordura (g) / porção<input name="gordura" type="number" min="0" step="0.01" value="${x?.gordurasGPorPorcao??0}"></label><label>Fibra (g) / porção<input name="fibra" type="number" min="0" step="0.01" value="${x?.fibrasGPorPorcao??0}"></label><label>Cafeína (mg) / porção<input name="cafeina" type="number" min="0" step="0.01" value="${x?.cafeinaMgPorPorcao??''}"></label><label class="span-2">Composição / princípios ativos<textarea name="composicao" rows="3">${esc(x?.composicao||'')}</textarea></label><label class="span-2">Instrução cadastrada pelo profissional<textarea name="instrucoesUso" rows="2">${esc(x?.instrucoesUso||'')}</textarea></label><label class="span-2">Observações internas<textarea name="observacoes" rows="2">${esc(x?.observacoes||'')}</textarea></label></div><div class="supplement-catalog-note-v0593"><strong>Sem automação clínica</strong><span>O AESYN não infere necessidade, dose ou indicação a partir deste cadastro.</span></div><div class="form-actions"><button type="button" class="secondary" id="supplementCancelV0593">Cancelar</button><button class="primary" type="submit">${editing?'Salvar alterações':'Cadastrar suplemento'}</button></div></form>`;
+  $('#supplementBackV0593').onclick=$('#supplementCancelV0593').onclick=hpOpenSupplementCatalogV0593;const f=$('#supplementFormV0593');f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');b.disabled=true;try{const body={nome:val(f,'nome'),marca:val(f,'marca')||null,categoria:val(f,'categoria')||'Outros',forma:val(f,'forma')||null,porcaoQuantidade:Number(val(f,'porcaoQuantidade')||1),porcaoUnidade:val(f,'porcaoUnidade')||'porção',caloriasPorPorcao:Number(val(f,'calorias')||0),proteinasGPorPorcao:Number(val(f,'proteina')||0),carboidratosGPorPorcao:Number(val(f,'carboidrato')||0),gordurasGPorPorcao:Number(val(f,'gordura')||0),fibrasGPorPorcao:Number(val(f,'fibra')||0),cafeinaMgPorPorcao:val(f,'cafeina')===''?null:Number(val(f,'cafeina')),composicao:val(f,'composicao')||null,instrucoesUso:val(f,'instrucoesUso')||null,observacoes:val(f,'observacoes')||null};await api(editing?`/api/suplementos/${x.id}`:'/api/suplementos',{method:editing?'PUT':'POST',body:JSON.stringify(body)});toast(editing?'Suplemento atualizado.':'Suplemento cadastrado.');await hpOpenSupplementCatalogV0593()}catch(err){toast(err.message,true)}finally{b.disabled=false}};
+}
+
 hpRenderNutritionProfessionalFlow=function(d){
   __hpRenderNutritionProfessionalFlow_v01815(d);
   const actions=document.querySelector('.nutrition-pro-flow .pro-flow-actions');
@@ -22110,10 +22217,10 @@ openMealPlanForm=openMealPlanFormV01932;
 
 hpRenderNutritionProfessionalFlow=function(d){
   const box=$('#patientTabContent'),planos=d.planos||[],patient=d.p||d.portal?.paciente||{id:state.patientId,nome:'Paciente'};
-  box.innerHTML=`<section class="card full-card pro-flow-card nutrition-pro-flow" data-pro-nutrition-flow="v0.19.32"><div class="card-head pro-flow-head"><div><span class="eyebrow">AESYN • PROFESSIONAL NUTRITION • v0.19.32</span><h3>Treino e nutrição • Nutrição</h3><small>Crie, edite, duplique, arquive e publique dietas com refeições, alimentos, equivalências e metas sem sair do paciente.</small></div><div class="nutrition-top-actions pro-flow-actions"><button class="ghost" id="nutritionFoodCatalogV01932">Alimentos</button><button class="ghost" id="nutritionMealModelsV1812">Refeições</button><button class="secondary" id="nutritionDietModelsV1812">Modelos de dieta</button><button class="primary" id="newMealPlanV1812">+ Criar dieta</button></div></div>
+  box.innerHTML=`<section class="card full-card pro-flow-card nutrition-pro-flow" data-pro-nutrition-flow="v0.19.32"><div class="card-head pro-flow-head"><div><span class="eyebrow">AESYN • PROFESSIONAL NUTRITION • v0.19.32</span><h3>Treino e nutrição • Nutrição</h3><small>Crie, edite, duplique, arquive e publique dietas com refeições, alimentos, equivalências e metas sem sair do paciente.</small></div><div class="nutrition-top-actions pro-flow-actions"><button class="ghost" id="nutritionFoodCatalogV01932">Alimentos</button><button class="ghost" id="nutritionSupplementCatalogV0593">Suplementos</button><button class="ghost" id="nutritionMealModelsV1812">Refeições</button><button class="secondary" id="nutritionDietModelsV1812">Modelos de dieta</button><button class="primary" id="newMealPlanV1812">+ Criar dieta</button></div></div>
   <div class="nutrition-catalog-ready"><div><strong>Workspace nutricional completo</strong><span>Metas, refeições, substituições/equivalências, modelos e histórico ficam conectados ao paciente.</span></div><button class="secondary" id="nutritionReviewPublishV01932">Revisar & publicar</button></div>
   ${planos.length?`<div class="nutrition-plan-grid-v1812">${planos.map(p=>`<article class="food-plan nutrition-version-card pro-nutrition-plan-card" data-pro-nutrition-plan="${p.id}"><div class="record-top"><div><span class="eyebrow">${esc(p.status)} • V${p.versao||1} • início ${fmtDate(p.dataInicio)}</span><h4>${esc(p.nome)}</h4><small>${esc(p.profissionalNome||'')}</small></div><div class="macro-summary"><b>${num(p.totaisDiarios?.calorias,0)} kcal</b><span>P ${num(p.totaisDiarios?.proteinasG)}g</span><span>C ${num(p.totaisDiarios?.carboidratosG)}g</span><span>G ${num(p.totaisDiarios?.gordurasG)}g</span></div></div>${nutritionTargetPanel(p)}<div class="nutrition-meal-summary-v1812">${(p.refeicoes||[]).map((r,i)=>`<div><span>${i+1}</span><strong>${esc(r.nome)}</strong><small>${r.horario?String(r.horario).slice(0,5):'--:--'} • ${(r.itens||[]).length} item(ns) • ${num(r.totais?.calorias,0)} kcal</small></div>`).join('')||'<div class="empty compact">Sem refeições cadastradas.</div>'}</div><div class="nutrition-plan-actions pro-plan-actions"><button class="primary nutrition-edit-v1812" data-plan-id="${p.id}">Editar dieta</button><button class="secondary nutrition-progress-v1812" data-plan-id="${p.id}">Duplicar / progressão</button><button class="ghost nutrition-save-template-v1812" data-plan-id="${p.id}">Salvar como modelo</button>${hpNutritionStatusAction(p,patient)}</div></article>`).join('')}</div>`:sectionEmpty('Nenhuma dieta registrada. Use “+ Criar dieta” para começar.')}</section>`;
-  $('#newMealPlanV1812').onclick=()=>openMealPlanForm(patient);$('#nutritionDietModelsV1812').onclick=()=>openDietMealLibrary(patient,'plans');$('#nutritionMealModelsV1812').onclick=()=>openDietMealLibrary(patient,'meals');$('#nutritionFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;$('#nutritionReviewPublishV01932').onclick=()=>openPrescriptionReview(patient);
+  $('#newMealPlanV1812').onclick=()=>openMealPlanForm(patient);$('#nutritionDietModelsV1812').onclick=()=>openDietMealLibrary(patient,'plans');$('#nutritionMealModelsV1812').onclick=()=>openDietMealLibrary(patient,'meals');$('#nutritionFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;$('#nutritionSupplementCatalogV0593').onclick=hpOpenSupplementCatalogV0593;$('#nutritionReviewPublishV01932').onclick=()=>openPrescriptionReview(patient);
   $$('.nutrition-edit-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openMealPlanForm(patient,plan)});
   $$('.nutrition-progress-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openNutritionProgression(patient,plan)});
   $$('.nutrition-save-template-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openSaveMealPlanTemplate(plan)});

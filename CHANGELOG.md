@@ -1,3 +1,13 @@
+# v0.59.3 — Supplement Catalog Foundation
+- Adiciona tabela `Suplementos` com isolamento por organização e auditoria.
+- Adiciona CRUD autenticado em `/api/suplementos` com busca, filtro por categoria, inativação e reativação.
+- Estrutura porção, macros/calorias, cafeína, composição, fabricante, apresentação, instruções e observações.
+- Adiciona área `Suplementos` no workspace profissional de Nutrição e catálogo também em Configurações.
+- Adiciona busca, chips de categoria e cards compactos responsivos.
+- PWA Creamy Gate: uma coluna e ações touch-friendly em 760/430 px.
+- Guardrail: nenhuma recomendação, dose, indicação ou necessidade clínica é inferida automaticamente.
+- Próxima etapa: v0.59.4 — Supplement Scheduling & Nutrition Integration.
+
 # v0.59.2 — Nutrition Target Guidance 2.0
 
 - adiciona leitura por refeição com participação percentual no dia;

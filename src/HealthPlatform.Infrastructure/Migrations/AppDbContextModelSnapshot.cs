@@ -77,6 +77,100 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("Alimentos", (string)null);
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.Suplemento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("CaloriasPorPorcao")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("CafeinaMgPorPorcao")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("CarboidratosGPorPorcao")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Composicao")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("FibrasGPorPorcao")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Forma")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<decimal>("GordurasGPorPorcao")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("InstrucoesUso")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Marca")
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<string>("MarcaNormalizada")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("character varying(180)");
+
+                    b.Property<string>("NomeNormalizado")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("character varying(180)");
+
+                    b.Property<string>("Observacoes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("OrganizacaoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("PorcaoQuantidade")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("PorcaoUnidade")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<decimal>("ProteinasGPorPorcao")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizacaoId", "Categoria", "Ativo");
+
+                    b.HasIndex("OrganizacaoId", "NomeNormalizado", "MarcaNormalizada")
+                        .IsUnique();
+
+                    b.ToTable("Suplementos", (string)null);
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Anamnese", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3357,6 +3451,17 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("Organizacao");
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.Suplemento", b =>
+                {
+                    b.HasOne("HealthPlatform.Domain.Entities.Organizacao", "Organizacao")
+                        .WithMany("Suplementos")
+                        .HasForeignKey("OrganizacaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Organizacao");
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Anamnese", b =>
                 {
                     b.HasOne("HealthPlatform.Domain.Entities.Consulta", "Consulta")
@@ -4432,6 +4537,8 @@ namespace HealthPlatform.Infrastructure.Migrations
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Organizacao", b =>
                 {
                     b.Navigation("Alimentos");
+
+                    b.Navigation("Suplementos");
 
                     b.Navigation("EvolucoesClinicas");
 

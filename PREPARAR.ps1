@@ -13,9 +13,31 @@ if (Test-Path $testarPath) {
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
 
+# v0.59.3 - Product Brain gate: Supplement Catalog Foundation + proxima etapa funcional.
+$versionAtual0593 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
+if ($versionAtual0593 -ne "0.59.3") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
+$roadmapAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+foreach ($token0593 in @("Anti-Roadmap-Loop", "v0.59.3 — Supplement Catalog Foundation", "v0.59.4 — Supplement Scheduling & Nutrition Integration")) {
+    if (-not $roadmapAtual0593.Contains($token0593)) { throw "Roadmap v0.59.3 incompleto: $token0593" }
+}
+Write-Host "[Produto] v0.59.3 / Supplement Catalog Foundation: roadmap vivo OK." -ForegroundColor DarkCyan
+
+$suplementoArquivos0593 = @(
+    'src/HealthPlatform.Domain/Entities/Suplemento.cs',
+    'src/HealthPlatform.Api/Contracts/Suplementos/SuplementoContracts.cs',
+    'src/HealthPlatform.Api/Controllers/SuplementosController.cs',
+    'src/HealthPlatform.Infrastructure/Migrations/20261006143000_V0593SupplementCatalog.cs'
+)
+foreach ($rel0593 in $suplementoArquivos0593) { if (-not (Test-Path (Join-Path $PSScriptRoot $rel0593))) { throw "Supplement Catalog v0.59.3 incompleto: arquivo ausente $rel0593" } }
+$controllerAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/SuplementosController.cs') -Raw
+$migrationAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Infrastructure/Migrations/20261006143000_V0593SupplementCatalog.cs') -Raw
+foreach ($token0593Api in @('[Route("api/suplementos")]', 'x.OrganizacaoId == currentUser.OrganizationId', '[HttpPost]', '[HttpPut("{id:guid}")]', '[HttpPost("{id:guid}/reativar")]')) { if (-not $controllerAtual0593.Contains($token0593Api)) { throw "Supplement API v0.59.3 incompleta: $token0593Api" } }
+foreach ($token0593Db in @('CreateTable(', 'name: "Suplementos"', 'IX_Suplementos_OrganizacaoId_NomeNormalizado_MarcaNormalizada')) { if (-not $migrationAtual0593.Contains($token0593Db)) { throw "Migration suplemento v0.59.3 incompleta: $token0593Db" } }
+Write-Host "[Produto] v0.59.3 / entidade + API + migration: OK." -ForegroundColor DarkCyan
+
 # v0.59.2 - Product Brain gate: Nutrition Target Guidance 2.0 + proxima etapa funcional.
 $versionAtual0592 = (Get-Content (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0592 -ne "0.59.2") { throw "VERSION.txt esperado 0.59.2; atual: $versionAtual0592" }
+if ($versionAtual0592 -ne "0.59.3") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
 $roadmapAtual0592 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0592 in @("Anti-Roadmap-Loop", "v0.59.2 — Nutrition Target Guidance 2.0", "v0.59.3 — Supplement Catalog Foundation")) {
     if (-not $roadmapAtual0592.Contains($token0592)) { throw "Roadmap v0.59.2 incompleto: $token0592" }

@@ -25,6 +25,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<ResultadoExameLaboratorial> ResultadosExamesLaboratoriais => Set<ResultadoExameLaboratorial>();
     public DbSet<RelatorioClinico> RelatoriosClinicos => Set<RelatorioClinico>();
     public DbSet<Alimento> Alimentos => Set<Alimento>();
+    public DbSet<Suplemento> Suplementos => Set<Suplemento>();
     public DbSet<PlanoAlimentar> PlanosAlimentares => Set<PlanoAlimentar>();
     public DbSet<ProgramacaoNutricionalDia> ProgramacoesNutricionaisDia => Set<ProgramacaoNutricionalDia>();
     public DbSet<FaseNutricional> FasesNutricionais => Set<FaseNutricional>();
@@ -237,6 +238,24 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.Categoria).HasMaxLength(100);
             entity.HasIndex(x => new { x.OrganizacaoId, x.NomeNormalizado }).IsUnique();
             entity.HasOne(x => x.Organizacao).WithMany(x => x.Alimentos).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Suplemento>(entity =>
+        {
+            entity.ToTable("Suplementos");
+            entity.Property(x => x.Nome).HasMaxLength(180).IsRequired();
+            entity.Property(x => x.NomeNormalizado).HasMaxLength(180).IsRequired();
+            entity.Property(x => x.Marca).HasMaxLength(160);
+            entity.Property(x => x.MarcaNormalizada).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.Categoria).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Forma).HasMaxLength(80);
+            entity.Property(x => x.PorcaoUnidade).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.Composicao).HasMaxLength(2000);
+            entity.Property(x => x.InstrucoesUso).HasMaxLength(1000);
+            entity.Property(x => x.Observacoes).HasMaxLength(1000);
+            entity.HasIndex(x => new { x.OrganizacaoId, x.NomeNormalizado, x.MarcaNormalizada }).IsUnique();
+            entity.HasIndex(x => new { x.OrganizacaoId, x.Categoria, x.Ativo });
+            entity.HasOne(x => x.Organizacao).WithMany(x => x.Suplementos).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<ModeloPlanoAlimentar>(entity =>

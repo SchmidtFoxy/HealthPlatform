@@ -6247,3 +6247,42 @@ html[data-theme="light"] .sports-expansion-ii-v0260{background:#fff}
 .nutrition-builder2-diff>div.ok{border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}.nutrition-builder2-diff>div.over{border-color:rgba(232,128,128,.42)}.nutrition-builder2-diff>div.under{border-color:rgba(224,176,92,.42)}
 @media(max-width:760px){.nutrition-daily-guidance-grid-v0592,.nutrition-meal-guidance-grid-v0592{grid-template-columns:repeat(2,minmax(0,1fr))}.nutrition-meal-guidance-head-v0592{align-items:stretch;flex-direction:column}.nutrition-guidance-badge-v0592{width:max-content}}
 @media(max-width:430px){.nutrition-daily-guidance-v0592{padding:10px}.nutrition-daily-guidance-grid-v0592,.nutrition-meal-guidance-grid-v0592{grid-template-columns:1fr}.nutrition-guidance-metric-v0592{padding:8px}.nutrition-meal-guidance-v0592{margin-top:8px}}
+
+/* ===== v0.59.3 — Supplement Catalog Foundation ===== */
+.supplement-toolbar-v0593{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin:14px 0 10px}
+.supplement-toolbar-v0593 input{min-width:0}
+.supplement-chips-v0593{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:thin}
+.supplement-chips-v0593 button{white-space:nowrap;min-height:40px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--text);padding:0 13px}
+.supplement-chips-v0593 button.active{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent)}
+.supplement-catalog-grid-v0593{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
+.supplement-card-v0593{display:grid;gap:10px;min-width:0;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface-2)}
+.supplement-card-v0593.is-inactive{opacity:.66}
+.supplement-card-head-v0593{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.supplement-card-head-v0593 h4,.supplement-card-head-v0593 strong{display:block;margin:2px 0 0;font-size:1rem}
+.supplement-card-head-v0593 small{display:block;color:var(--muted);margin-top:3px}
+.supplement-serving-v0593{display:grid;gap:3px;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.supplement-serving-v0593 span,.supplement-composition-v0593,.supplement-instruction-v0593{color:var(--muted);font-size:.88rem;line-height:1.4}
+.supplement-composition-v0593{margin:0;white-space:pre-line}
+.supplement-instruction-v0593{display:block}
+.supplement-actions-v0593{display:flex;flex-wrap:wrap;gap:8px}
+.supplement-actions-v0593 button{min-height:40px}
+.supplement-catalog-note-v0593{display:grid;gap:3px;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+.supplement-catalog-note-v0593 span,.supplement-guardrail-v0593{color:var(--muted);font-size:.88rem;line-height:1.45}
+.supplement-form-v0593 .span-2{grid-column:1/-1}
+.supplement-settings-v0593 .supplement-catalog-grid-v0593{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:760px){
+  .supplement-catalog-grid-v0593,.supplement-settings-v0593 .supplement-catalog-grid-v0593{grid-template-columns:1fr}
+  .supplement-toolbar-v0593{grid-template-columns:1fr}
+  .supplement-toolbar-v0593 button{width:100%;min-height:46px}
+  .supplement-actions-v0593{display:grid;grid-template-columns:1fr 1fr}
+  .supplement-actions-v0593 button{width:100%}
+}
+@media(max-width:430px){
+  .supplement-card-v0593{padding:12px;border-radius:14px}
+  .supplement-card-head-v0593{gap:8px}
+  .supplement-serving-v0593{padding:9px}
+  .supplement-actions-v0593{grid-template-columns:1fr}
+  .supplement-chips-v0593{margin-right:-12px;padding-right:12px}
+  .supplement-form-v0593{grid-template-columns:1fr!important}
+  .supplement-form-v0593 .span-2{grid-column:auto}
+}

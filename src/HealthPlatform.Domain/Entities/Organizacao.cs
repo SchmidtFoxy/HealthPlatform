@@ -13,6 +13,7 @@ public class Organizacao : BaseEntity
     public ICollection<PerguntaAnamnese> PerguntasAnamnese { get; set; } = new List<PerguntaAnamnese>();
     public ICollection<MarcadorLaboratorial> MarcadoresLaboratoriais { get; set; } = new List<MarcadorLaboratorial>();
     public ICollection<Alimento> Alimentos { get; set; } = new List<Alimento>();
+    public ICollection<Suplemento> Suplementos { get; set; } = new List<Suplemento>();
     public ICollection<Exercicio> Exercicios { get; set; } = new List<Exercicio>();
     public ICollection<PendenciaClinica> PendenciasClinicas { get; set; } = new List<PendenciaClinica>();
     public ICollection<NotificacaoInterna> NotificacoesInternas { get; set; } = new List<NotificacaoInterna>();

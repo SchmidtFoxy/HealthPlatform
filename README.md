@@ -1,17 +1,23 @@
-# AESYN Performance — v0.59.2
+# AESYN Performance — v0.59.3
 
-## Meal Templates Quick Apply
+## Supplement Catalog Foundation
 
-A v0.59.2 evolui o Nutrition Builder com leitura assistida de metas por refeição e por dia. O profissional enxerga distribuição percentual, diferenças em relação às metas e alertas visuais não prescritivos enquanto adiciona, remove, troca ou redimensiona alimentos.
+A v0.59.3 cria a base estruturada de suplementação do AESYN. O profissional passa a ter um catálogo reutilizável e isolado por organização para proteínas, creatina, pré-treinos, barrinhas proteicas, eletrólitos, vitaminas/minerais e itens personalizados.
 
-### Qualidade de produto
-- **Aplicação no contexto:** templates aparecem dentro do builder, próximos da montagem de refeições.
-- **Reuso completo:** nome, horário, metas, alimentos, porções e substituições são reaproveitados.
-- **Busca e categorias:** chips horizontais e busca textual aceleram bibliotecas grandes.
-- **PWA first:** grid vira uma coluna no celular, chips permanecem roláveis e o CTA ocupa largura confortável em 430 px.
-- **Integridade:** modelos com alimentos inativos/indisponíveis são bloqueados antes de contaminar o plano em edição.
+### Entregas
+- cadastro com nome, fabricante, categoria, apresentação e porção;
+- calorias e macros por porção quando aplicável;
+- cafeína por porção, composição/princípios ativos, instrução registrada e observações;
+- busca e filtros por categoria;
+- ativação/inativação sem apagar histórico;
+- acesso direto em **Nutrição → Suplementos** e também em Configurações;
+- isolamento por organização, auditoria e migration própria;
+- UI mobile/PWA em uma coluna para 360/390/430 px.
 
-**Próxima etapa planejada:** `v0.59.2 — Nutrition Target Guidance 2.0`.
+### Guardrail
+O catálogo organiza dados informados pelo profissional. O AESYN **não recomenda suplemento, não infere necessidade clínica e não escolhe dose ou indicação automaticamente**.
+
+**Próxima etapa planejada:** `v0.59.4 — Supplement Scheduling & Nutrition Integration`.
 
 ---
 
