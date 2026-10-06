@@ -9861,9 +9861,25 @@ Execução vira uma superfície de foco legível durante o treino:
 - Regression Memory cobre estrutura, contraste, progresso e identidade `v0.60.5`.
 
 **Próxima etapa:** `v0.60.6 — Workout Series Blocks / Sub-series Builder`.
-### v0.60.6 — Workout Series Blocks / Sub-series Builder
-`+` para blocos/subséries com repetições diferentes, preservando ordem, técnicas avançadas e leitura do paciente.
+### ✅ v0.60.6 — Workout Series Blocks / Sub-series Builder — IMPLEMENTADA
+O Workout Builder passa a suportar blocos/sub-séries estruturados dentro do mesmo exercício:
+- botão **+ Bloco** adiciona até 8 blocos ordenáveis por exercício;
+- cada bloco possui nome opcional, séries, repetições, carga, unidade, descanso e observação própria;
+- exemplo suportado: **1× 10–15** + **2× 3×10**, sem duplicar o exercício;
+- blocos preservam ordem ao duplicar sessão/modelo;
+- resumo de séries do builder usa a soma dos blocos quando eles existirem;
+- técnicas avançadas (BISET, DROP e progressão) continuam coexistindo com blocos;
+- `blocosSeries` é persistido estruturalmente no JSON do treino-modelo;
+- ao publicar para paciente, blocos são serializados em marcador técnico reversível no item, sem migration;
+- ao salvar novamente um plano de paciente como modelo, o marcador é convertido de volta para blocos estruturados;
+- marcador técnico nunca aparece na copy humana;
+- paciente vê blocos na ficha e no Workout Focus Mode;
+- treinos antigos continuam compatíveis usando Séries + Reps simples;
+- validação backend impede blocos inválidos e limita a 8 por exercício;
+- PWA 360/390/430 e desktop preservados;
+- Regression Memory cobre contrato backend, builder, render do paciente e identidade `v0.60.6`.
 
+**Próxima etapa:** `v0.60.7 — Patient Plan Compact Experience`.
 ### v0.60.7 — Patient Plan Compact Experience
 Plano mais compacto, texto centralizado nos destaques, melhor uso da largura e menos rolagem sem esconder informação.
 

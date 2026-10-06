@@ -8739,3 +8739,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Adiciona progresso em tempo real e feedback inline de erro.
 - Melhora contraste, foco, touch targets e safe areas em 360/390/430 px.
 - Usa pending state compartilhado no envio e adiciona Regression Memory.
+## v0.60.6 — Workout Series Blocks / Sub-series Builder
+- Adiciona blocos/sub-séries estruturados no Workout Builder.
+- Cada bloco suporta séries, reps, carga, descanso e observação independentes.
+- Preserva blocos no JSON do treino-modelo e no round-trip modelo → paciente → modelo.
+- Paciente visualiza blocos na ficha e na execução de treino.
+- Mantém compatibilidade com treinos antigos e técnicas avançadas.

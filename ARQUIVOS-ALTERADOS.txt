@@ -1,26 +1,28 @@
-AESYN Performance — v0.60.5-r3 — Static Health Current Version Gate Alignment
+AESYN Performance — v0.60.6-r3 — Series Blocks Backend Compile Fix
 
-Hotfix da mesma versão funcional v0.60.5.
+Hotfix da mesma versão funcional v0.60.6.
 
-Diagnóstico confirmado:
-- o erro não vinha do endpoint em execução;
-- gates históricos como Rowing/Trekking carregam HealthController.cs em variáveis
-  $health0264, $health0265 etc.;
-- as condições ainda faziam .Contains('0.60.4');
-- o r2 corrigiu corretamente HealthController.cs para 0.60.5, fazendo essas condições
-  antigas falharem.
+Causa:
+- ExtrairBlocosSeries retornava:
+  List<TemplateBlocoSerie> ?? TemplateBlocoSerie[]
+- o operador ?? nao aceita List<T> de um lado e T[] do outro;
+- a API nao compilava/subia e o AESYN AUTO expirava aguardando
+  http://127.0.0.1:5180.
 
 Correção:
-- atualiza SOMENTE padrões $health*.Contains('0.60.4') -> 0.60.5;
-- preserva marcadores históricos de features/releases;
-- não enfraquece o runtime gate $health.version;
-- valida que HealthController.cs contém 0.60.5 nos dois payloads;
-- preserva exatamente um BOM UTF-8.
+- troca somente o fallback do deserialize:
+  ?? Array.Empty<TemplateBlocoSerie>()
+  por
+  ?? new List<TemplateBlocoSerie>()
+- adiciona dotnet build -c Release no PREPARAR do hotfix;
+- se houver outra falha de compilacao, ela aparece antes do RODAR;
+- PREPARAR final mantém Regression Memory textual contra o bug;
+- nenhuma mudança de escopo funcional;
+- exatamente um BOM UTF-8.
 
-Arquivos:
+Arquivos do pacote:
 - PREPARAR.ps1
 - VERSION.txt
 - ARQUIVOS-ALTERADOS.txt
 
-O PREPARAR altera TESTAR.ps1 e se substitui pelo PREPARAR final idempotente.
 Sem commit individual de -r3.

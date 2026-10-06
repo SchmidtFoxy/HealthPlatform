@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Domain.Entities;
@@ -24,6 +25,15 @@ public sealed class ModelosPlanosTreinoController(
         DateOnly? DataFim,
         string? Observacoes);
 
+    public sealed record TemplateBlocoSerie(
+        int Ordem,
+        string? Nome,
+        int Series,
+        string Repeticoes,
+        decimal? Carga = null,
+        string? UnidadeCarga = null,
+        int? DescansoSegundos = null,
+        string? Observacoes = null);
     public sealed record TemplateItemTreino(
         Guid ExercicioId,
         int Ordem,
@@ -39,7 +49,8 @@ public sealed class ModelosPlanosTreinoController(
         decimal? DropReducaoPercentual = null,
         int? DropEtapas = null,
         decimal? ProgressaoCargaPercentual = null,
-        string? ProgressaoRegra = null);
+        string? ProgressaoRegra = null,
+        IReadOnlyCollection<TemplateBlocoSerie>? BlocosSeries = null);
 
     public sealed record TemplateSessaoTreino(
         string Nome,
@@ -225,7 +236,8 @@ public sealed class ModelosPlanosTreinoController(
                             i.UnidadeCarga,
                             i.DescansoSegundos,
                             i.TempoSegundos,
-                            i.Observacoes)).ToList())).ToList());
+                            ObservacaoSemBlocos(i.Observacoes),
+                            BlocosSeries: ExtrairBlocosSeries(i.Observacoes))).ToList())).ToList());
 
         var modelo = new ModeloPlanoTreino
         {
@@ -417,23 +429,105 @@ public sealed class ModelosPlanosTreinoController(
         });
     }
 
+    private const string BlocosSeriesPrefixo = "[AESYN:BLOCOS_SERIES:";
+
     private static string? ObservacaoComTecnica(TemplateItemTreino item)
     {
         var tecnica = (item.Tecnica ?? string.Empty).Trim();
+        string? observacao;
         if (string.IsNullOrWhiteSpace(tecnica) || tecnica.Equals("Normal", StringComparison.OrdinalIgnoreCase))
-            return Limpar(item.Observacoes);
-
-        string marcador = tecnica switch
         {
-            "Biset" => $"[BISET{(string.IsNullOrWhiteSpace(item.GrupoBiset) ? string.Empty : $" {item.GrupoBiset}")}]",
-            "DropSet" => $"[DROP -{item.DropReducaoPercentual ?? 45m:0.#}% x{Math.Max(1, item.DropEtapas ?? 1)}]",
-            "ProgressaoCarga" => $"[PROGRESSAO +{item.ProgressaoCargaPercentual ?? 5m:0.#}%{(string.IsNullOrWhiteSpace(item.ProgressaoRegra) ? string.Empty : $" • {item.ProgressaoRegra}")}]",
-            _ => $"[{tecnica.ToUpperInvariant()}]"
-        };
+            observacao = Limpar(item.Observacoes);
+        }
+        else
+        {
+            string marcador = tecnica switch
+            {
+                "Biset" => $"[BISET{(string.IsNullOrWhiteSpace(item.GrupoBiset) ? string.Empty : $" {item.GrupoBiset}")}]",
+                "DropSet" => $"[DROP -{item.DropReducaoPercentual ?? 45m:0.#}% x{Math.Max(1, item.DropEtapas ?? 1)}]",
+                "ProgressaoCarga" => $"[PROGRESSAO +{item.ProgressaoCargaPercentual ?? 5m:0.#}%{(string.IsNullOrWhiteSpace(item.ProgressaoRegra) ? string.Empty : $" • {item.ProgressaoRegra}")}]",
+                _ => $"[{tecnica.ToUpperInvariant()}]"
+            };
+            observacao = string.IsNullOrWhiteSpace(item.Observacoes)
+                ? marcador
+                : $"{marcador} {item.Observacoes.Trim()}";
+        }
 
-        return string.IsNullOrWhiteSpace(item.Observacoes)
+        return AnexarBlocosSeries(observacao, item.BlocosSeries);
+    }
+
+    private static string? AnexarBlocosSeries(
+        string? observacao,
+        IReadOnlyCollection<TemplateBlocoSerie>? blocos)
+    {
+        if (blocos is null || blocos.Count == 0)
+            return Limpar(observacao);
+
+        var normalizados = blocos
+            .OrderBy(x => x.Ordem)
+            .Select((x, index) => x with
+            {
+                Ordem = index + 1,
+                Nome = Limpar(x.Nome),
+                Repeticoes = x.Repeticoes.Trim(),
+                UnidadeCarga = Limpar(x.UnidadeCarga),
+                Observacoes = Limpar(x.Observacoes)
+            })
+            .ToList();
+
+        var json = JsonSerializer.Serialize(normalizados);
+        var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(json))
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
+        var marcador = $"{BlocosSeriesPrefixo}{encoded}]";
+        return string.IsNullOrWhiteSpace(observacao)
             ? marcador
-            : $"{marcador} {item.Observacoes.Trim()}";
+            : $"{observacao.Trim()} {marcador}";
+    }
+
+    private static IReadOnlyCollection<TemplateBlocoSerie> ExtrairBlocosSeries(string? observacao)
+    {
+        if (string.IsNullOrWhiteSpace(observacao))
+            return Array.Empty<TemplateBlocoSerie>();
+
+        var inicio = observacao.IndexOf(BlocosSeriesPrefixo, StringComparison.Ordinal);
+        if (inicio < 0)
+            return Array.Empty<TemplateBlocoSerie>();
+
+        var payloadStart = inicio + BlocosSeriesPrefixo.Length;
+        var fim = observacao.IndexOf(']', payloadStart);
+        if (fim <= payloadStart)
+            return Array.Empty<TemplateBlocoSerie>();
+
+        try
+        {
+            var encoded = observacao[payloadStart..fim].Replace('-', '+').Replace('_', '/');
+            encoded = encoded.PadRight(encoded.Length + ((4 - encoded.Length % 4) % 4), '=');
+            var json = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
+            return JsonSerializer.Deserialize<List<TemplateBlocoSerie>>(json)
+                ?.OrderBy(x => x.Ordem)
+                .ToList()
+                ?? new List<TemplateBlocoSerie>();
+        }
+        catch
+        {
+            return Array.Empty<TemplateBlocoSerie>();
+        }
+    }
+
+    private static string? ObservacaoSemBlocos(string? observacao)
+    {
+        if (string.IsNullOrWhiteSpace(observacao))
+            return null;
+        var inicio = observacao.IndexOf(BlocosSeriesPrefixo, StringComparison.Ordinal);
+        if (inicio < 0)
+            return Limpar(observacao);
+        var fim = observacao.IndexOf(']', inicio + BlocosSeriesPrefixo.Length);
+        if (fim < 0)
+            return Limpar(observacao);
+        var limpa = (observacao[..inicio] + observacao[(fim + 1)..]).Trim();
+        return Limpar(limpa);
     }
 
     private async Task<Profissional?> GetProfissionalAtual(CancellationToken ct) =>
@@ -477,6 +571,14 @@ public sealed class ModelosPlanosTreinoController(
             return "Adicione pelo menos um exercicio ao treino-modelo.";
         if (request.Sessoes.SelectMany(x => x.Itens).Any(x => x.Series <= 0 || string.IsNullOrWhiteSpace(x.Repeticoes)))
             return "Series e repeticoes devem estar preenchidas em todos os exercicios.";
+        if (request.Sessoes.SelectMany(x => x.Itens).Any(x => (x.BlocosSeries?.Count ?? 0) > 8))
+            return "Cada exercicio pode ter no maximo 8 blocos de series.";
+        var blocosInvalidos = request.Sessoes
+            .SelectMany(x => x.Itens)
+            .SelectMany(x => x.BlocosSeries ?? Array.Empty<TemplateBlocoSerie>())
+            .Any(x => x.Ordem <= 0 || x.Series <= 0 || string.IsNullOrWhiteSpace(x.Repeticoes));
+        if (blocosInvalidos)
+            return "Blocos de series precisam de ordem, series e repeticoes validas.";
 
         var ids = request.Sessoes.SelectMany(x => x.Itens).Select(x => x.ExercicioId).Distinct().ToArray();
         var validos = await db.Exercicios.AsNoTracking()

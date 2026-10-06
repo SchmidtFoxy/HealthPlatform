@@ -15933,6 +15933,104 @@ function openExerciseEditor(item=null,onDone=null){
 }
 
 
+
+// ===== v0.60.6 — Workout Series Blocks / Sub-series Builder =====
+const HP_WORKOUT_SERIES_BLOCKS_V0606='v0.60.6';
+
+function hpWorkoutSeriesBlocksV0606(item){
+  if(Array.isArray(item?.blocosSeries))return item.blocosSeries.slice().sort((a,b)=>(a.ordem||0)-(b.ordem||0));
+  const raw=String(item?.observacoes||'');
+  const marker=raw.match(/\[AESYN:BLOCOS_SERIES:([A-Za-z0-9_-]+)\]/);
+  if(!marker)return [];
+  try{
+    let b64=marker[1].replace(/-/g,'+').replace(/_/g,'/');
+    while(b64.length%4)b64+='=';
+    const bytes=atob(b64);
+    const data=Uint8Array.from(bytes,c=>c.charCodeAt(0));
+    const parsed=JSON.parse(new TextDecoder().decode(data));
+    return Array.isArray(parsed)?parsed.slice().sort((a,b)=>(a.ordem||0)-(b.ordem||0)):[];
+  }catch{return []}
+}
+function hpWorkoutObservationWithoutSeriesBlocksV0606(value){
+  return String(value||'').replace(/\s*\[AESYN:BLOCOS_SERIES:[A-Za-z0-9_-]+\]\s*/g,' ').trim();
+}
+function hpReadSeriesBlocksV0606(row){
+  return [...row.querySelectorAll('[data-series-block-v0606]')].map((block,index)=>({
+    ordem:index+1,
+    nome:block.querySelector('[name=blockName]')?.value.trim()||null,
+    series:Math.max(1,Number(block.querySelector('[name=blockSeries]')?.value||1)),
+    repeticoes:block.querySelector('[name=blockReps]')?.value.trim()||'—',
+    carga:block.querySelector('[name=blockLoad]')?.value===''?null:Number(block.querySelector('[name=blockLoad]')?.value),
+    unidadeCarga:block.querySelector('[name=blockUnit]')?.value.trim()||null,
+    descansoSegundos:block.querySelector('[name=blockRest]')?.value===''?null:Number(block.querySelector('[name=blockRest]')?.value),
+    observacoes:block.querySelector('[name=blockObs]')?.value.trim()||null
+  }));
+}
+function hpSeriesBlockCardV0606(block={},index=0,defaults={}){
+  return `<article class="series-block-v0606" data-series-block-v0606>
+    <div class="series-block-head-v0606">
+      <span class="series-block-index-v0606">Bloco ${index+1}</span>
+      <div>
+        <button type="button" class="icon-btn series-block-up-v0606" title="Subir bloco">↑</button>
+        <button type="button" class="icon-btn series-block-down-v0606" title="Descer bloco">↓</button>
+        <button type="button" class="icon-btn series-block-remove-v0606" title="Remover bloco">×</button>
+      </div>
+    </div>
+    <div class="series-block-grid-v0606">
+      <label>Nome<input name="blockName" value="${esc(block.nome||'')}" placeholder="Ex.: Aquecimento"></label>
+      <label>Séries<input name="blockSeries" type="number" min="1" max="20" value="${block.series??1}"></label>
+      <label>Reps<input name="blockReps" value="${esc(block.repeticoes||defaults.reps||'10-12')}"></label>
+      <label>Carga<input name="blockLoad" type="number" min="0" step="0.01" value="${block.carga??''}"></label>
+      <label>Unid.<input name="blockUnit" value="${esc(block.unidadeCarga||'kg')}"></label>
+      <label>Descanso<input name="blockRest" type="number" min="0" value="${block.descansoSegundos??defaults.rest??60}"></label>
+      <label class="span2">Observação<input name="blockObs" value="${esc(block.observacoes||'')}" placeholder="Cues específicos deste bloco"></label>
+    </div>
+  </article>`;
+}
+function hpBindSeriesBlocksEditorV0606(row,initial=[],defaults={},onChange=()=>{}){
+  const list=row.querySelector('[data-series-blocks-list-v0606]');
+  const add=row.querySelector('[data-add-series-block-v0606]');
+  const empty=row.querySelector('[data-series-blocks-empty-v0606]');
+  if(!list||!add)return;
+
+  const refresh=()=>{
+    const blocks=[...list.querySelectorAll('[data-series-block-v0606]')];
+    blocks.forEach((block,index)=>{
+      const badge=block.querySelector('.series-block-index-v0606');
+      if(badge)badge.textContent=`Bloco ${index+1}`;
+      block.querySelector('.series-block-up-v0606').disabled=index===0;
+      block.querySelector('.series-block-down-v0606').disabled=index===blocks.length-1;
+    });
+    if(empty)empty.hidden=blocks.length>0;
+    onChange();
+  };
+  const wire=block=>{
+    block.querySelector('.series-block-remove-v0606').onclick=()=>{block.remove();refresh()};
+    block.querySelector('.series-block-up-v0606').onclick=()=>{if(block.previousElementSibling)list.insertBefore(block,block.previousElementSibling);refresh()};
+    block.querySelector('.series-block-down-v0606').onclick=()=>{if(block.nextElementSibling)list.insertBefore(block.nextElementSibling,block);refresh()};
+    block.querySelectorAll('input').forEach(input=>input.addEventListener('input',onChange));
+  };
+  const append=block=>{
+    if(list.children.length>=8){toast('Use no máximo 8 blocos por exercício.',true);return}
+    const wrap=document.createElement('div');
+    wrap.innerHTML=hpSeriesBlockCardV0606(block,list.children.length,defaults);
+    const node=wrap.firstElementChild;
+    list.appendChild(node);wire(node);refresh();
+  };
+  (initial||[]).forEach(append);
+  add.onclick=()=>append({series:1,repeticoes:defaults.reps||'10-12',descansoSegundos:defaults.rest??60});
+  refresh();
+}
+function hpWorkoutSeriesBlocksPatientHtmlV0606(item,compact=false){
+  const blocks=hpWorkoutSeriesBlocksV0606(item);
+  if(!blocks.length)return '';
+  return `<section class="patient-series-blocks-v0606 ${compact?'compact':''}" aria-label="Blocos de séries">
+    <div class="patient-series-blocks-head-v0606"><span>Blocos de séries</span><small>${blocks.reduce((n,b)=>n+Number(b.series||0),0)} séries totais</small></div>
+    <div class="patient-series-blocks-list-v0606">${blocks.map((b,index)=>`<article>
+      <i>${index+1}</i><div><strong>${esc(b.nome||`Bloco ${index+1}`)}</strong><span>${b.series}× ${esc(b.repeticoes||'—')}${b.carga!=null?` • ${num(b.carga)} ${esc(b.unidadeCarga||'kg')}`:''}${b.descansoSegundos!=null?` • ${b.descansoSegundos}s`:''}</span>${b.observacoes?`<small>${esc(b.observacoes)}</small>`:''}</div>
+    </article>`).join('')}</div>
+  </section>`;
+}
 const HP_WORKOUT_BUILDER_3='v0.18.7';
 
 async function openStandaloneWorkoutBuilder(modelSummary=null){
@@ -16053,13 +16151,17 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
       dropReducaoPercentual:row.querySelector('[name=dropReducao]')?.value===''?null:Number(row.querySelector('[name=dropReducao]')?.value),
       dropEtapas:row.querySelector('[name=dropEtapas]')?.value===''?null:Number(row.querySelector('[name=dropEtapas]')?.value),
       progressaoCargaPercentual:row.querySelector('[name=progressaoCarga]')?.value===''?null:Number(row.querySelector('[name=progressaoCarga]')?.value),
-      progressaoRegra:row.querySelector('[name=progressaoRegra]')?.value.trim()||null
+      progressaoRegra:row.querySelector('[name=progressaoRegra]')?.value.trim()||null,
+      blocosSeries:hpReadSeriesBlocksV0606(row)
     });
 
     const updateSummary=()=>{
       const sessions=[...host.querySelectorAll('.standalone-session')];
       const rows=[...host.querySelectorAll('.standalone-exercise-row')];
-      const sets=rows.reduce((n,row)=>n+Math.max(0,Number(row.querySelector('[name=series]')?.value||0)),0);
+      const sets=rows.reduce((n,row)=>{
+        const blocks=hpReadSeriesBlocksV0606(row);
+        return n+(blocks.length?blocks.reduce((sum,b)=>sum+Math.max(0,Number(b.series||0)),0):Math.max(0,Number(row.querySelector('[name=series]')?.value||0)));
+      },0);
       $('#builder3SessionCount').textContent=sessions.length;
       $('#builder3ExerciseCount').textContent=rows.filter(r=>r.querySelector('[name=exercicioId]')?.value).length;
       $('#builder3SetCount').textContent=sets;
@@ -16098,6 +16200,14 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
         <label>RIR alvo<input name="rirAlvo" type="number" min="0" max="10" value="${item?.rirAlvo??''}"></label>
         <label>Cadência<input name="cadencia" value="${esc(item?.cadencia||'')}" placeholder="Ex.: 3-1-1-0"></label>
         <label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}" placeholder="Cues, RIR/RPE e orientações do exercício"></label>
+        <section class="series-blocks-editor-v0606 span2">
+          <div class="series-blocks-editor-head-v0606">
+            <div><small>BLOCOS / SUB-SÉRIES</small><strong>Prescrições diferentes dentro do mesmo exercício</strong><p>Quando houver blocos, eles detalham a prescrição base. A ordem abaixo é a ordem mostrada ao paciente.</p></div>
+            <button type="button" class="secondary" data-add-series-block-v0606>+ Bloco</button>
+          </div>
+          <div class="series-blocks-empty-v0606" data-series-blocks-empty-v0606>Sem blocos: o exercício usa Séries + Reps acima.</div>
+          <div class="series-blocks-list-v0606" data-series-blocks-list-v0606></div>
+        </section>
         <section class="advanced-technique-panel span2" data-technique-panel>
           <div class="advanced-technique-head"><div><small>TÉCNICA AVANÇADA</small><strong>BISET, DROP ou progressão de carga</strong></div><label>Estratégia<select name="tecnica"><option value="Normal">Normal</option><option value="Biset">BISET / conjugado</option><option value="DropSet">DROP set</option><option value="ProgressaoCarga">Progressão de carga</option></select></label></div>
           <div class="advanced-technique-config" data-technique="Biset"><label>Grupo Biset<input name="grupoBiset" value="${esc(item?.grupoBiset||'')}" placeholder="Ex.: B1"></label><button type="button" class="secondary add-biset-pair">+ Agregar exercício conjugado</button><small>Os exercícios com o mesmo grupo são executados em sequência antes do descanso.</small></div>
@@ -16113,6 +16223,12 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
       rows.appendChild(row);
 
       const select=row.querySelector('[name=exercicioId]');
+      hpBindSeriesBlocksEditorV0606(
+        row,
+        item?.blocosSeries||[],
+        {reps:item?.repeticoes||defaultReps(),rest:item?.descansoSegundos??defaultRest()},
+        updateSummary
+      );
       const techniqueSelect=row.querySelector('[name=tecnica]');
       const syncTechnique=()=>{
         const value=techniqueSelect?.value||'Normal';
@@ -16970,7 +17086,7 @@ function hpTrainingDayFlow(home,plano,historico){
 // ===== v0.19.5 — Patient Advanced Technique Guidance =====
 const HP_PATIENT_ADVANCED_TECHNIQUE_GUIDANCE='v0.19.5';
 function hpWorkoutTechniqueMeta(item){
-  const raw=String(item?.observacoes||'').trim();
+  const raw=hpWorkoutObservationWithoutSeriesBlocksV0606(item?.observacoes);
   let m=raw.match(/^\[BISET(?:\s+([^\]]+))?\]\s*/i);
   if(m)return {type:'biset',label:'BISET',title:'Exercício conjugado',group:(m[1]||'').trim(),note:raw.slice(m[0].length).trim(),detail:'Execute este exercício em sequência com o outro exercício do mesmo BISET, respeitando a prescrição.'};
   m=raw.match(/^\[DROP\s+-([\d.,]+)%\s+x(\d+)\]\s*/i);
@@ -16984,12 +17100,14 @@ function hpWorkoutTechniqueBadge(item){
   return `<span class="workout-technique-badge ${t.type}">${esc(t.label)}${t.type==='biset'&&t.group?` ${esc(t.group)}`:''}</span>`;
 }
 function hpWorkoutTechniqueGuidance(item){
-  const t=hpWorkoutTechniqueMeta(item);if(t.type==='normal')return t.note?`<p class="workout-technique-note">${esc(t.note)}</p>`:'';
+  const t=hpWorkoutTechniqueMeta(item);
+  const blocks=hpWorkoutSeriesBlocksPatientHtmlV0606(item,true);
+  if(t.type==='normal')return `${t.note?`<p class="workout-technique-note">${esc(t.note)}</p>`:''}${blocks}`;
   const prescribed=Number(item?.carga);
   let calc='';
   if(t.type==='drop'&&Number.isFinite(prescribed)&&prescribed>0){const next=prescribed*(1-t.reduction/100);calc=`<small>Carga de referência após redução: ~${num(next,1)} ${esc(item.unidadeCarga||'kg')}</small>`;}
   if(t.type==='progression'&&Number.isFinite(prescribed)&&prescribed>0){const next=prescribed*(1+t.increase/100);calc=`<small>Próxima carga de referência: ~${num(next,1)} ${esc(item.unidadeCarga||'kg')}</small>`;}
-  return `<div class="workout-technique-guidance ${t.type}"><div><b>${esc(t.title)}</b><span>${esc(t.detail)}</span>${calc}</div>${t.note?`<p>${esc(t.note)}</p>`:''}</div>`;
+  return `<div class="workout-technique-guidance ${t.type}"><div><b>${esc(t.title)}</b><span>${esc(t.detail)}</span>${calc}</div>${t.note?`<p>${esc(t.note)}</p>`:''}</div>${blocks}`;
 }
 function hpWorkoutTechniqueClass(item){return `technique-${hpWorkoutTechniqueMeta(item).type}`;}
 
@@ -17200,7 +17318,7 @@ function hpWorkoutPrescriptionChipsV0605(item){
     item.carga!=null?['Carga',`${num(item.carga)} ${item.unidadeCarga||'kg'}`]:null,
     item.descansoSegundos!=null?['Descanso',`${item.descansoSegundos}s`]:null
   ].filter(Boolean);
-  return `<div class="execution-prescription-v0605" aria-label="Prescrição">${chips.map(([k,v])=>`<span><small>${esc(k)}</small><b>${esc(v)}</b></span>`).join('')}</div>`;
+  return `<div class="execution-prescription-v0605" aria-label="Prescrição">${chips.map(([k,v])=>`<span><small>${esc(k)}</small><b>${esc(v)}</b></span>`).join('')}</div>${hpWorkoutSeriesBlocksPatientHtmlV0606(item)}`;
 }
 function hpUpdateWorkoutExecutionProgressV0605(form){
   if(!form)return;
@@ -20744,7 +20862,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.5';
+const HP_MVP_VERSION='0.60.6';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
