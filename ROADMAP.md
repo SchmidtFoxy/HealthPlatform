@@ -9617,8 +9617,16 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 ## Próximas etapas priorizadas
 
-### v0.59.1 — Meal Templates Quick Apply
-Permitir aplicar rapidamente templates de refeições prontas no builder — café da manhã, almoço, jantar, pré-treino, pós-treino e modelos personalizados — reaproveitando a biblioteca de refeições existente sem duplicar conceitos.
+### ✅ v0.59.1 — Meal Templates Quick Apply — IMPLEMENTADA
+- templates de refeição disponíveis dentro do Nutrition Builder;
+- busca por nome, categoria e descrição;
+- filtros rápidos por categoria com chips horizontais;
+- aplicação sem salvar o plano antes;
+- reaproveitamento de nome, horário, metas, alimentos, porções e substituições;
+- bloqueio seguro quando o catálogo não contém mais um alimento do modelo;
+- PWA em uma coluna, CTA confortável e chips roláveis em 430 px.
+
+**Próxima etapa funcional:** `v0.59.2 — Nutrition Target Guidance 2.0`.
 
 ### v0.59.2 — Nutrition Target Guidance 2.0
 Evoluir o saldo diário para leitura por refeição, distribuição percentual, alertas visuais não prescritivos e troca/remoção de alimentos com recalculo imediato.

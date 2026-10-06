@@ -1,16 +1,17 @@
-# AESYN Performance — v0.59.0
+# AESYN Performance — v0.59.1
 
-## Nutrition Builder Live Balance & Unit Integrity
+## Meal Templates Quick Apply
 
-A v0.59.0 volta a priorizar valor funcional e experiência de uso. O builder de dieta passa a preservar a massa nutricional em gramas durante trocas de unidade, recalcular macros imediatamente e mostrar quanto falta — ou quanto excedeu — cada meta diária enquanto o profissional monta o plano.
+A v0.59.1 transforma os modelos de refeição já existentes em uma ferramenta de montagem rápida dentro do próprio Nutrition Builder. O profissional pode buscar e filtrar blocos como café da manhã, almoço, jantar, pré-treino e pós-treino e adicioná-los à dieta em edição sem sair da tela nem salvar o plano antes.
 
 ### Qualidade de produto
-- **Unidade sem surpresa:** trocar `unidade`, `g`, `fatia` ou outra forma de medida não deve alterar a massa nutricional por acidente.
-- **Metas vivas:** calorias, proteína, carboidratos, gorduras e fibras mostram consumido/meta e saldo restante em tempo real.
-- **Plano mais compacto:** cards profissionais usam menos altura e ações mais densas, preservando legibilidade.
-- **PWA first:** o painel de metas e ações reorganiza em 760 px e 430 px sem overflow horizontal.
+- **Aplicação no contexto:** templates aparecem dentro do builder, próximos da montagem de refeições.
+- **Reuso completo:** nome, horário, metas, alimentos, porções e substituições são reaproveitados.
+- **Busca e categorias:** chips horizontais e busca textual aceleram bibliotecas grandes.
+- **PWA first:** grid vira uma coluna no celular, chips permanecem roláveis e o CTA ocupa largura confortável em 430 px.
+- **Integridade:** modelos com alimentos inativos/indisponíveis são bloqueados antes de contaminar o plano em edição.
 
-**Próxima etapa planejada:** `v0.59.1 — Meal Templates Quick Apply`.
+**Próxima etapa planejada:** `v0.59.2 — Nutrition Target Guidance 2.0`.
 
 ---
 

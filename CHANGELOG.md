@@ -1,3 +1,13 @@
+# v0.59.1 — Meal Templates Quick Apply
+
+- Expõe os modelos de refeição diretamente dentro do Nutrition Builder.
+- Adiciona busca, filtros por categoria e aplicação em um toque sem exigir salvar o plano antes.
+- Reaplica nome, horário, metas por refeição, alimentos, porções e substituições do modelo.
+- Adiciona endpoint autenticado e isolado por organização para leitura do conteúdo de um modelo ativo.
+- Bloqueia aplicação quando alimentos do modelo não estão mais disponíveis no catálogo ativo.
+- Adiciona layout PWA responsivo com chips roláveis e cards de uma coluna em telas pequenas.
+- Mantém metas nutricionais e preview do plano recalculados imediatamente após aplicar o template.
+
 # v0.59.0 — Nutrition Builder Live Balance & Unit Integrity
 
 - Corrige a conversão de unidade no builder nutricional preservando a massa canônica em gramas ao trocar a forma de medida.

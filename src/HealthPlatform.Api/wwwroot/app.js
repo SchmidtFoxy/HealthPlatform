@@ -20549,7 +20549,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.0';
+const HP_MVP_VERSION='0.59.1';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -30355,3 +30355,98 @@ function hpHydrateSupportSessionHandoffCopyVerificationClosureContinuityHandoffG
   const target=$('#opsSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceHandoffTextV05863');
   if(target)target.textContent=hpSupportSessionHandoffCopyVerificationClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceClosureContinuityHandoffGuidanceHandoffV05863();
 }
+
+// ===== v0.59.1 — Meal Templates Quick Apply =====
+const HP_MEAL_TEMPLATES_QUICK_APPLY_V0591='v0.59.1';
+
+function hpMealTemplateCategoryV0591(value){
+  const raw=String(value||'Outros').trim();
+  return raw||'Outros';
+}
+
+function hpMealTemplateFillRowV0591(row,item,alimentos){
+  if(!row||!item)return;
+  const foodId=String(item.alimentoId||'');
+  const food=(alimentos||[]).find(x=>String(x.id)===foodId);
+  if(!food)throw new Error(`O alimento do modelo não está mais disponível no catálogo: ${foodId}`);
+  const qty=row.querySelector('[name=qty]'),unit=row.querySelector('[name=unit]'),grams=row.querySelector('[name=grams]'),per=row.querySelector('[name=gramsPerUnit]'),select=row.querySelector('[name=foodId]');
+  select.value=foodId;
+  if(unit){unit.value=item.unidade||'g';unit.dispatchEvent(new Event('change',{bubbles:true}))}
+  const q=Number(item.quantidade||0),g=Number(item.quantidadeGramas||0),factor=q>0&&g>0?g/q:(hpDefaultGramsPerMeasure(item.unidade||'g')||1);
+  if(qty)qty.value=String(q||g||100);
+  if(per){per.value=String(factor);per.readOnly=hpDefaultGramsPerMeasure(item.unidade||'g')!=null}
+  if(grams)grams.value=String(g||q||100);
+  select.dispatchEvent(new Event('change',{bubbles:true}));
+  grams?.dispatchEvent(new Event('input',{bubbles:true}));
+  const subs=item.substituicoes||[];
+  for(const sub of subs){
+    row.querySelector('.add-sub')?.click();
+    const sr=row.querySelector('.substitution-row:last-child');
+    if(!sr)continue;
+    const subFood=(alimentos||[]).find(x=>String(x.id)===String(sub.alimentoId||''));
+    if(!subFood){sr.remove();continue}
+    const sf=sr.querySelector('[name=subFood]'),sq=sr.querySelector('[name=subQty]'),su=sr.querySelector('[name=subUnit]'),sg=sr.querySelector('[name=subGrams]'),sp=sr.querySelector('[name=subGramsPerUnit]');
+    sf.value=String(sub.alimentoId);if(su){su.value=sub.unidade||'g';su.dispatchEvent(new Event('change',{bubbles:true}))}
+    const sQty=Number(sub.quantidade||0),sGrams=Number(sub.quantidadeGramas||0),sFactor=sQty>0&&sGrams>0?sGrams/sQty:(hpDefaultGramsPerMeasure(sub.unidade||'g')||1);
+    if(sq)sq.value=String(sQty||sGrams||100);if(sp)sp.value=String(sFactor);if(sg)sg.value=String(sGrams||sQty||100);
+  }
+}
+
+function hpApplyMealTemplateToBuilderV0591(detail,alimentos){
+  const content=detail?.conteudo;
+  const list=$('#mealBuilders');
+  if(!content||!list)throw new Error('Conteúdo do modelo indisponível.');
+  const unavailable=(content.itens||[]).filter(i=>!(alimentos||[]).some(a=>String(a.id)===String(i.alimentoId)));
+  if(unavailable.length)throw new Error(`${unavailable.length} alimento(s) deste modelo não estão mais ativos no catálogo.`);
+  const index=list.querySelectorAll('.meal-builder').length+1;
+  list.insertAdjacentHTML('beforeend',mealBuilder(alimentos,index));
+  const meal=list.lastElementChild;
+  bindMealBuilder(meal,alimentos);
+  const set=(name,value)=>{const el=meal.querySelector(`[name=${name}]`);if(el&&value!=null)el.value=String(value)};
+  set('mealName',content.nomeOriginal||detail.nome||`Refeição ${index}`);
+  set('mealTime',content.horarioOriginal?String(content.horarioOriginal).slice(0,5):'');
+  set('mealMetaCalorias',content.metaCalorias);set('mealMetaProteinasG',content.metaProteinasG);set('mealMetaCarboidratosG',content.metaCarboidratosG);set('mealMetaGordurasG',content.metaGordurasG);set('mealMetaFibrasG',content.metaFibrasG);
+  const items=content.itens||[];
+  const rows=()=>[...meal.querySelectorAll('.meal-item-builder')];
+  while(rows().length<Math.max(1,items.length))meal.querySelector('.add-meal-item')?.click();
+  items.forEach((item,i)=>hpMealTemplateFillRowV0591(rows()[i],item,alimentos));
+  updatePlanPreview(alimentos);
+  meal.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+async function hpEnhanceMealPlanWithTemplatesV0591(alimentos){
+  const form=$('#mealPlanForm'),head=form?.querySelector('.builder-head');
+  if(!form||!head||form.querySelector('[data-meal-template-quick-v0591]'))return;
+  const shell=document.createElement('section');
+  shell.className='meal-template-quick-v0591';
+  shell.dataset.mealTemplateQuickV0591='1';
+  shell.innerHTML=`<div class="meal-template-quick-head-v0591"><div><span class="eyebrow">TEMPLATES DE REFEIÇÃO • ${HP_MEAL_TEMPLATES_QUICK_APPLY_V0591}</span><strong>Adicionar refeição pronta</strong><small>Escolha um bloco salvo e continue ajustando alimentos, porções e metas normalmente.</small></div><span class="meal-template-quick-status-v0591">Carregando...</span></div><div class="meal-template-quick-tools-v0591"><input type="search" data-meal-template-search-v0591 placeholder="Buscar café, almoço, pré-treino..."><div class="meal-template-chips-v0591" data-meal-template-chips-v0591></div></div><div class="meal-template-quick-grid-v0591" data-meal-template-grid-v0591></div>`;
+  head.after(shell);
+  try{
+    const modelos=await api('/api/modelos-refeicoes');
+    const categories=[...new Set(modelos.map(x=>hpMealTemplateCategoryV0591(x.categoria)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+    let activeCategory='';
+    const chips=shell.querySelector('[data-meal-template-chips-v0591]'),grid=shell.querySelector('[data-meal-template-grid-v0591]'),search=shell.querySelector('[data-meal-template-search-v0591]'),status=shell.querySelector('.meal-template-quick-status-v0591');
+    chips.innerHTML=`<button type="button" class="active" data-meal-template-category-v0591="">Todos</button>`+categories.map(c=>`<button type="button" data-meal-template-category-v0591="${esc(c)}">${esc(c)}</button>`).join('');
+    const render=()=>{
+      const q=hpNutritionNormalizeSearch(search.value);
+      const filtered=modelos.filter(m=>(!activeCategory||hpMealTemplateCategoryV0591(m.categoria)===activeCategory)&&(!q||hpNutritionNormalizeSearch(`${m.nome||''} ${m.categoria||''} ${m.descricao||''}`).includes(q)));
+      status.textContent=`${filtered.length} de ${modelos.length}`;
+      grid.innerHTML=filtered.length?filtered.map(m=>`<article class="meal-template-quick-card-v0591" data-template-id-v0591="${m.id}"><div><span>${esc(hpMealTemplateCategoryV0591(m.categoria))}</span><strong>${esc(m.nome)}</strong><small>${Number(m.itens||0)} alimento(s)${m.horario?` • ${String(m.horario).slice(0,5)}`:' • horário flexível'}</small></div><button type="button" class="primary" data-template-apply-v0591>+ Adicionar</button></article>`).join(''):`<div class="meal-template-quick-empty-v0591"><strong>Nenhum template encontrado.</strong><span>Salve uma refeição pronta pela biblioteca para reutilizá-la aqui.</span></div>`;
+      grid.querySelectorAll('[data-template-apply-v0591]').forEach(btn=>btn.onclick=async()=>{
+        const card=btn.closest('[data-template-id-v0591]'),model=modelos.find(x=>String(x.id)===String(card?.dataset.templateIdV0591));
+        if(!model)return;btn.disabled=true;const old=btn.textContent;btn.textContent='Adicionando...';
+        try{const detail=await api(`/api/modelos-refeicoes/${model.id}/conteudo`);hpApplyMealTemplateToBuilderV0591(detail,alimentos);toast(`${model.nome} adicionado ao plano.`)}catch(e){toast(e.message,true)}finally{btn.disabled=false;btn.textContent=old}
+      });
+    };
+    chips.querySelectorAll('[data-meal-template-category-v0591]').forEach(btn=>btn.onclick=()=>{activeCategory=btn.dataset.mealTemplateCategoryV0591||'';chips.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===btn));render()});
+    search.oninput=render;render();
+  }catch(e){shell.querySelector('.meal-template-quick-status-v0591').textContent='Indisponível';shell.querySelector('[data-meal-template-grid-v0591]').innerHTML=`<div class="meal-template-quick-empty-v0591"><strong>Não foi possível carregar os templates.</strong><span>${esc(e.message)}</span></div>`}
+}
+
+const __openMealPlanForm_v0591=openMealPlanForm;
+openMealPlanForm=async function(p,plan=null){
+  await __openMealPlanForm_v0591(p,plan);
+  if(!$('#mealPlanForm'))return;
+  try{const alimentos=await api('/api/alimentos');await hpEnhanceMealPlanWithTemplatesV0591(alimentos)}catch(e){console.warn('Meal Templates Quick Apply indisponível:',e)}
+};
