@@ -1,6 +1,19 @@
-﻿# v0.59.7 - Chat Read State & Attention Queue.
+﻿# v0.59.8 - Chat Attachments.
+$versionAtual0598 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
+if ($versionAtual0598 -ne "0.59.8") { throw "VERSION.txt esperado 0.59.8; atual: $versionAtual0598" }
+$roadmapAtual0598 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
+foreach ($token0598 in @("v0.59.8 — Chat Attachments", "v0.59.9 — PWA Messaging Notifications")) { if (-not $roadmapAtual0598.Contains($token0598)) { throw "Roadmap v0.59.8 incompleto: $token0598" } }
+$filesController0598 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ArquivosPacienteController.cs') -Raw
+$appJs0598 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
+$appCss0598 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
+foreach ($token0598Api in @('application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','LimiteBytes = 15 * 1024 * 1024','AssinaturaValida','viaChat','if (!viaChat) await NotificarNovoArquivo')) { if (-not $filesController0598.Contains($token0598Api)) { throw "Chat Attachments API v0.59.8 incompleta: $token0598Api" } }
+foreach ($token0598Ui in @('HP_CHAT_ATTACHMENTS_V0598','data-chat-attachment-v0598','hpSendChatAttachmentV0598','hpOpenChatAttachmentV0598','rollback',"referenciaTipo:'Arquivo'")) { if (-not $appJs0598.Contains($token0598Ui)) { throw "Chat Attachments UI v0.59.8 incompleta: $token0598Ui" } }
+foreach ($token0598Css in @('.care-chat-attachment-v0598','.care-chat-compose-actions-v0598','@media(max-width:760px)','@media(max-width:430px)','min-height:44px')) { if (-not $appCss0598.Contains($token0598Css)) { throw "PWA Chat Attachments v0.59.8 incompleta: $token0598Css" } }
+Write-Host "[Produto] v0.59.8 / Chat Attachments: OK." -ForegroundColor DarkCyan
+
+# v0.59.7 - Chat Read State & Attention Queue.
 $versionAtual0597 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0597 -ne "0.59.7") { throw "VERSION.txt esperado 0.59.7; atual: $versionAtual0597" }
+if ($versionAtual0597 -ne "0.59.8") { throw "VERSION.txt esperado 0.59.7; atual: $versionAtual0597" }
 $roadmapAtual0597 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0597 in @("v0.59.7 — Chat Read State & Attention Queue", "v0.59.8 — Chat Attachments")) { if (-not $roadmapAtual0597.Contains($token0597)) { throw "Roadmap v0.59.7 incompleto: $token0597" } }
 $chatController0597 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ChatAcompanhamentoController.cs') -Raw
@@ -28,7 +41,7 @@ Set-Location $root
 
 # v0.59.6 - Professional Chat Inbox.
 $versionAtual0596 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0596 -ne "0.59.7") { throw "VERSION.txt esperado 0.59.6; atual: $versionAtual0596" }
+if ($versionAtual0596 -ne "0.59.8") { throw "VERSION.txt esperado 0.59.6; atual: $versionAtual0596" }
 $roadmapAtual0596 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0596 in @("Anti-Roadmap-Loop", "v0.59.6 — Professional Chat Inbox", "v0.59.7 — Chat Read State & Attention Queue")) { if (-not $roadmapAtual0596.Contains($token0596)) { throw "Roadmap v0.59.6 incompleto: $token0596" } }
 $chatController0596 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/Controllers/ChatAcompanhamentoController.cs') -Raw
@@ -42,7 +55,7 @@ Write-Host "[Produto] v0.59.6 / Professional Chat Inbox: OK." -ForegroundColor D
 
 # v0.59.5 - Supplement Training Context.
 $versionAtual0595 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0595 -ne "0.59.7") { throw "VERSION.txt corrente esperado 0.59.6 durante gate v0.59.5; atual: $versionAtual0595" }
+if ($versionAtual0595 -ne "0.59.8") { throw "VERSION.txt corrente esperado 0.59.6 durante gate v0.59.5; atual: $versionAtual0595" }
 $roadmapAtual0595 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0595 in @("Anti-Roadmap-Loop", "v0.59.5 — Supplement Training Context", "v0.59.6 — Professional Chat Inbox")) { if (-not $roadmapAtual0595.Contains($token0595)) { throw "Roadmap v0.59.5 incompleto: $token0595" } }
 foreach ($rel0595 in @(
@@ -56,7 +69,7 @@ Write-Host "[Produto] v0.59.5 / Supplement Training Context: OK." -ForegroundCol
 
 # v0.59.4 - Supplement Scheduling & Nutrition Integration.
 $versionAtual0594 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0594 -ne "0.59.7") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
+if ($versionAtual0594 -ne "0.59.8") { throw "VERSION.txt esperado 0.59.4; atual: $versionAtual0594" }
 $roadmapAtual0594 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0594 in @("Anti-Roadmap-Loop", "v0.59.4 — Supplement Scheduling & Nutrition Integration", "v0.59.5 — Supplement Training Context")) {
     if (-not $roadmapAtual0594.Contains($token0594)) { throw "Roadmap v0.59.4 incompleto: $token0594" }
@@ -77,7 +90,7 @@ Write-Host "[Produto] v0.59.4 / Supplement Scheduling & Nutrition Integration: O
 
 # v0.59.3 - Product Brain gate: Supplement Catalog Foundation + proxima etapa funcional.
 $versionAtual0593 = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0593 -ne "0.59.7") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
+if ($versionAtual0593 -ne "0.59.8") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0593" }
 $roadmapAtual0593 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0593 in @("Anti-Roadmap-Loop", "v0.59.3 — Supplement Catalog Foundation", "v0.59.4 — Supplement Scheduling & Nutrition Integration")) {
     if (-not $roadmapAtual0593.Contains($token0593)) { throw "Roadmap v0.59.3 incompleto: $token0593" }
@@ -99,7 +112,7 @@ Write-Host "[Produto] v0.59.3 / entidade + API + migration: OK." -ForegroundColo
 
 # v0.59.2 - Product Brain gate: Nutrition Target Guidance 2.0 + proxima etapa funcional.
 $versionAtual0592 = (Get-Content (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
-if ($versionAtual0592 -ne "0.59.7") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
+if ($versionAtual0592 -ne "0.59.8") { throw "VERSION.txt esperado 0.59.3; atual: $versionAtual0592" }
 $roadmapAtual0592 = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 foreach ($token0592 in @("Anti-Roadmap-Loop", "v0.59.2 — Nutrition Target Guidance 2.0", "v0.59.3 — Supplement Catalog Foundation")) {
     if (-not $roadmapAtual0592.Contains($token0592)) { throw "Roadmap v0.59.2 incompleto: $token0592" }

@@ -9698,8 +9698,17 @@ Objetivo: tornar nutrição e comunicação duas áreas de uso diário realmente
 
 **Próxima etapa funcional:** `v0.59.8 — Chat Attachments`.
 
-### v0.59.8 — Chat Attachments
-Permitir anexar fotos e documentos com validação de tipo/tamanho, preview seguro, histórico e vínculo explícito com a conversa/paciente.
+### ✅ v0.59.8 — Chat Attachments — IMPLEMENTADA
+- botão de anexo diretamente no composer do chat de paciente e profissional;
+- reutiliza a biblioteca segura de arquivos do paciente, sem criar armazenamento paralelo;
+- aceita PDF, JPEG, PNG, WebP, DOC e DOCX com limite de 15 MB;
+- backend valida assinatura real/magic bytes além do MIME informado; DOCX também precisa conter a estrutura interna esperada de Word;
+- upload gera referência `Arquivo` na mensagem e mantém o arquivo auditável na biblioteca, sem duplicar notificações de arquivo + chat;
+- imagens e PDFs abrem em preview seguro autenticado; DOC/DOCX usam download autenticado;
+- cards de anexo ficam dentro da bolha da conversa com nome e ação de abertura;
+- PWA Creamy Gate aplicado ao composer e aos cards em 360/390/430 px.
+
+**Próxima etapa funcional:** `v0.59.9 — PWA Messaging Notifications`.
 
 ### v0.59.9 — PWA Messaging Notifications
 Adicionar Web Push para novas mensagens, deep-link para a conversa correta, fallback interno quando push não estiver disponível e sincronização do badge de não lidas.

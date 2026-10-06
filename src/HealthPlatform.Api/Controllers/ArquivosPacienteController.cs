@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.IO.Compression;
 using System.Text.Json;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Api.Services.Push;
@@ -40,20 +41,20 @@ public sealed class ArquivosPacienteController(
 
     [HttpPost("api/pacientes/{pacienteId:guid}/arquivos/upload")]
     [RequestSizeLimit(LimiteBytes)]
-    public async Task<IActionResult> UploadProfissional(Guid pacienteId, IFormFile file, [FromForm] string? categoria, [FromForm] string? descricao, [FromForm] string? tags, CancellationToken ct)
+    public async Task<IActionResult> UploadProfissional(Guid pacienteId, IFormFile file, [FromForm] string? categoria, [FromForm] string? descricao, [FromForm] string? tags, [FromForm] bool viaChat, CancellationToken ct)
     {
         if (!await PodeAcessarComoProfissional(pacienteId, ct)) return Forbid();
-        return await SalvarArquivo(pacienteId, file, categoria, descricao, tags, "Profissional", ct);
+        return await SalvarArquivo(pacienteId, file, categoria, descricao, tags, "Profissional", viaChat, ct);
     }
 
     [Authorize(Policy = "PatientOnly")]
     [HttpPost("api/arquivos/me/upload")]
     [RequestSizeLimit(LimiteBytes)]
-    public async Task<IActionResult> UploadPaciente(IFormFile file, [FromForm] string? categoria, [FromForm] string? descricao, [FromForm] string? tags, CancellationToken ct)
+    public async Task<IActionResult> UploadPaciente(IFormFile file, [FromForm] string? categoria, [FromForm] string? descricao, [FromForm] string? tags, [FromForm] bool viaChat, CancellationToken ct)
     {
         var paciente = await MeuPaciente(ct);
         if (paciente is null) return NotFound(new { message = "Paciente vinculado nao encontrado." });
-        return await SalvarArquivo(paciente.Id, file, categoria, descricao, tags, "Paciente", ct);
+        return await SalvarArquivo(paciente.Id, file, categoria, descricao, tags, "Paciente", viaChat, ct);
     }
 
     [HttpGet("api/pacientes/{pacienteId:guid}/arquivos/{arquivoId:guid}/download")]
@@ -88,14 +89,14 @@ public sealed class ArquivosPacienteController(
         return await Remover(paciente.Id, arquivoId, "Paciente", ct);
     }
 
-    private async Task<IActionResult> SalvarArquivo(Guid pacienteId, IFormFile file, string? categoria, string? descricao, string? tags, string origem, CancellationToken ct)
+    private async Task<IActionResult> SalvarArquivo(Guid pacienteId, IFormFile file, string? categoria, string? descricao, string? tags, string origem, bool viaChat, CancellationToken ct)
     {
         if (file is null || file.Length == 0) return BadRequest(new { message = "Selecione um arquivo." });
         if (file.Length > LimiteBytes) return BadRequest(new { message = "O arquivo deve ter no maximo 15 MB." });
 
         var contentType = NormalizarContentType(file.ContentType);
         var extensao = ExtensaoPermitida(contentType);
-        if (extensao is null) return BadRequest(new { message = "Formato invalido. Use PDF, JPEG, PNG ou WebP." });
+        if (extensao is null) return BadRequest(new { message = "Formato invalido. Use PDF, JPEG, PNG, WebP, DOC ou DOCX." });
         if (!await AssinaturaValida(file, contentType, ct)) return BadRequest(new { message = "O conteudo do arquivo nao corresponde ao formato informado." });
 
         var id = Guid.NewGuid();
@@ -131,7 +132,7 @@ public sealed class ArquivosPacienteController(
         finally { gate.Release(); }
 
         await Auditar("UPLOAD", pacienteId, item, ct);
-        await NotificarNovoArquivo(pacienteId, item, origem, ct);
+        if (!viaChat) await NotificarNovoArquivo(pacienteId, item, origem, ct);
         return Ok(ToResponse(pacienteId, item));
     }
 
@@ -295,7 +296,10 @@ public sealed class ArquivosPacienteController(
     private static string NormalizarContentType(string valor) => valor.Split(';', 2)[0].Trim().ToLowerInvariant();
     private static string? ExtensaoPermitida(string contentType) => contentType switch
     {
-        "application/pdf" => ".pdf", "image/jpeg" => ".jpg", "image/png" => ".png", "image/webp" => ".webp", _ => null
+        "application/pdf" => ".pdf", "image/jpeg" => ".jpg", "image/png" => ".png", "image/webp" => ".webp",
+        "application/msword" => ".doc",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => ".docx",
+        _ => null
     };
     private static string NormalizarCategoria(string? valor)
     {
@@ -316,14 +320,31 @@ public sealed class ArquivosPacienteController(
         var buffer = new byte[12];
         await using var stream = file.OpenReadStream();
         var read = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), ct);
-        return contentType switch
+        var headerValido = contentType switch
         {
             "application/pdf" => read >= 5 && buffer[0] == 0x25 && buffer[1] == 0x50 && buffer[2] == 0x44 && buffer[3] == 0x46 && buffer[4] == 0x2D,
             "image/jpeg" => read >= 3 && buffer[0] == 0xFF && buffer[1] == 0xD8 && buffer[2] == 0xFF,
             "image/png" => read >= 8 && buffer[0] == 0x89 && buffer[1] == 0x50 && buffer[2] == 0x4E && buffer[3] == 0x47 && buffer[4] == 0x0D && buffer[5] == 0x0A && buffer[6] == 0x1A && buffer[7] == 0x0A,
             "image/webp" => read >= 12 && buffer[0] == 0x52 && buffer[1] == 0x49 && buffer[2] == 0x46 && buffer[3] == 0x46 && buffer[8] == 0x57 && buffer[9] == 0x45 && buffer[10] == 0x42 && buffer[11] == 0x50,
+            "application/msword" => read >= 8 && buffer[0] == 0xD0 && buffer[1] == 0xCF && buffer[2] == 0x11 && buffer[3] == 0xE0 && buffer[4] == 0xA1 && buffer[5] == 0xB1 && buffer[6] == 0x1A && buffer[7] == 0xE1,
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => read >= 4 && buffer[0] == 0x50 && buffer[1] == 0x4B && buffer[2] == 0x03 && buffer[3] == 0x04,
             _ => false
         };
+        if (!headerValido) return false;
+
+        if (contentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document") return true;
+        if (!stream.CanSeek) return false;
+        try
+        {
+            stream.Position = 0;
+            using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+            var nomes = archive.Entries.Select(x => x.FullName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            return nomes.Contains("[Content_Types].xml") && nomes.Contains("word/document.xml");
+        }
+        catch (InvalidDataException)
+        {
+            return false;
+        }
     }
 
     private sealed class ArquivoPacienteIndexItem

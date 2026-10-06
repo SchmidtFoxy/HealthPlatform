@@ -1,3 +1,13 @@
+## v0.59.8 — Chat Attachments
+- Adiciona anexo direto no composer para paciente e profissional.
+- Reutiliza a biblioteca segura do paciente e mantém uma única fonte de verdade para arquivos.
+- Suporta PDF, JPEG, PNG, WebP, DOC e DOCX até 15 MB com validação de assinatura real.
+- Mensagens passam a exibir cards de anexos com preview autenticado de imagens/PDF e download de DOC/DOCX.
+- Upload via chat evita notificação duplicada de “novo arquivo”; o destinatário recebe apenas o evento da mensagem.
+- DOCX exige estrutura interna válida de documento Word além do cabeçalho ZIP.
+- Mantém auditoria, isolamento por organização e vínculo explícito com o paciente/conversa.
+- Aplica PWA Creamy Gate ao composer e cards de anexo em 360/390/430 px.
+
 ## v0.59.7 — Chat Read State & Attention Queue
 - Reutiliza o estado de leitura por usuário do Chat Foundation sem nova tabela ou fonte de verdade.
 - Detecta pacientes aguardando resposta a partir do histórico real da conversa.

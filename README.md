@@ -10581,3 +10581,7 @@ No PWA, o cronograma usa uma coluna em telas estreitas e mantém ações confort
 
 ## v0.59.5 — Supplement Training Context
 Suplementos programados em planos alimentares podem ser vinculados opcionalmente a sessões de treino do mesmo paciente. O vínculo serve para contexto e cronograma (por exemplo, pré/pós-treino) e não prescreve automaticamente produto, dose, indicação ou necessidade clínica. O portal do paciente mostra o treino/sessão relacionado quando houver.
+## Chat Attachments (v0.59.8)
+
+O Connected Care permite anexar PDF, JPEG, PNG, WebP, DOC e DOCX diretamente no composer do chat. O anexo usa a mesma biblioteca segura do paciente (até 15 MB, auditoria e isolamento por organização), aparece como referência na conversa e evita notificação duplicada de arquivo quando o envio nasceu no chat. Imagens/PDF podem ser abertos em preview autenticado; DOC/DOCX são baixados de forma autenticada.
+

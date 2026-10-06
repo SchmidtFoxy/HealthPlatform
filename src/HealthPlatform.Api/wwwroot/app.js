@@ -20654,7 +20654,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.59.7';
+const HP_MVP_VERSION='0.59.8';
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';
@@ -22427,7 +22427,7 @@ const hpPatientFileCategoriesV01934=['Exame','Laudo','Foto','Receita','Documento
 const hpFileSizeV01934=bytes=>bytes<1024?`${bytes} B`:bytes<1048576?`${(bytes/1024).toFixed(1)} KB`:`${(bytes/1048576).toFixed(1)} MB`;
 
 async function hpUploadPatientFileV01934(path,file,meta={}){
-  const form=new FormData();form.append('file',file);form.append('categoria',meta.categoria||'Outro');form.append('descricao',meta.descricao||'');form.append('tags',meta.tags||'');
+  const form=new FormData();form.append('file',file);form.append('categoria',meta.categoria||'Outro');form.append('descricao',meta.descricao||'');form.append('tags',meta.tags||'');form.append('viaChat',meta.viaChat?'true':'false');
   const headers={};if(state.token)headers.Authorization=`Bearer ${state.token}`;
   const r=await fetch(path,{method:'POST',headers,body:form});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}
   if(r.status===401){logout({notifyServer:false});throw new Error('Sua sessão expirou.')}if(r.status===403)throw new Error('Você não tem permissão para enviar este arquivo.');if(!r.ok)throw new Error(d?.message||`Erro HTTP ${r.status}`);return d;
@@ -22441,7 +22441,7 @@ function hpPatientFilesMarkupV01934(items=[],professional=false){
 }
 function hpPatientFileUploadModalV01934({professional=false,patientId=null,onDone}){
   const target=professional?`/api/pacientes/${patientId}/arquivos/upload`:'/api/arquivos/me/upload';
-  const body=`<label class="span-2">Arquivo ou galeria<input name="file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp"><small>PDF, JPEG, PNG ou WebP • até 15 MB.</small></label><label class="span-2">Tirar foto agora<input name="cameraFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><small>No celular, este campo abre a câmera traseira quando o navegador oferece suporte.</small></label><label>Categoria<select name="categoria">${hpPatientFileCategoriesV01934.map(c=>`<option>${c}</option>`).join('')}</select></label><label>Tags<input name="tags" placeholder="ex.: sangue, setembro, joelho"></label><label class="span-2">Descrição<textarea name="descricao" rows="3" maxlength="500" placeholder="Contexto que ajuda o profissional a identificar o arquivo."></textarea></label>`;
+  const body=`<label class="span-2">Arquivo ou galeria<input name="file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"><small>PDF, JPEG, PNG, WebP, DOC ou DOCX • até 15 MB.</small></label><label class="span-2">Tirar foto agora<input name="cameraFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><small>No celular, este campo abre a câmera traseira quando o navegador oferece suporte.</small></label><label>Categoria<select name="categoria">${hpPatientFileCategoriesV01934.map(c=>`<option>${c}</option>`).join('')}</select></label><label>Tags<input name="tags" placeholder="ex.: sangue, setembro, joelho"></label><label class="span-2">Descrição<textarea name="descricao" rows="3" maxlength="500" placeholder="Contexto que ajuda o profissional a identificar o arquivo."></textarea></label>`;
   patientPortalModal('Enviar arquivo',body,async f=>{const file=f.elements.cameraFile.files?.[0]||f.elements.file.files?.[0];if(!file)throw new Error('Selecione um arquivo ou tire uma foto.');await hpUploadPatientFileV01934(target,file,{categoria:f.elements.categoria.value,descricao:f.elements.descricao.value,tags:f.elements.tags.value});await onDone?.();});
 }
 async function hpBindPatientFilesV01934({professional=false,patientId=null,host,reload}){
@@ -30767,4 +30767,85 @@ loadCentralDia=async function(){
     if(anchor)anchor.insertAdjacentHTML('beforebegin',panel);else content.insertAdjacentHTML('afterbegin',panel);
     hpWireChatAttentionQueueV0597();
   }catch(err){console.warn('Chat Attention Queue v0.59.7 indisponível:',err)}
+};
+
+
+// ===== v0.59.8 — Chat Attachments =====
+const HP_CHAT_ATTACHMENTS_V0598='v0.59.8';
+const HP_CHAT_ATTACHMENT_MAX_BYTES_V0598=15*1024*1024;
+const HP_CHAT_ATTACHMENT_TYPES_V0598=['application/pdf','image/jpeg','image/png','image/webp','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+function hpChatAttachmentCategoryV0598(file){return String(file?.type||'').startsWith('image/')?'Foto':'Documento'}
+function hpChatAttachmentIconV0598(name=''){
+  const ext=String(name).toLowerCase().split('.').pop();
+  if(['jpg','jpeg','png','webp'].includes(ext))return '🖼';
+  if(ext==='pdf')return 'PDF';
+  if(['doc','docx'].includes(ext))return 'DOC';
+  return '📎';
+}
+function hpChatReferenceV0598(ref){
+  if(!ref?.tipo)return '';
+  if(ref.tipo!=='Arquivo')return hpChatReferenceV01935(ref);
+  const title=ref.titulo||'Arquivo AESYN';
+  return `<button class="care-chat-attachment-v0598" type="button" data-chat-attachment-open-v0598="${esc(ref.id||'')}" data-chat-attachment-name-v0598="${esc(title)}"><span class="care-chat-attachment-icon-v0598">${esc(hpChatAttachmentIconV0598(title))}</span><span><small>Anexo seguro</small><strong>${esc(title)}</strong><em>Abrir arquivo</em></span></button>`;
+}
+const __hpChatMessagesV0598=hpChatMessages;
+hpChatMessages=function(items=[]){
+  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div>${hpChatReferenceV0598(m.referencia)}<p>${esc(m.mensagem||'')}</p>${hpChatStatusV01935(m)}</div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>Use este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
+};
+const __hpChatShellV0598=hpChatShell;
+hpChatShell=function(data,{professional=false,patient=null}={}){
+  const html=__hpChatShellV0598(data,{professional,patient});
+  const patientId=professional?(patient?.id||data?.paciente?.id||''):(data?.pacienteId||'');
+  return html
+    .replace('class="care-chat-shell care-chat-shell-v01935"',`class="care-chat-shell care-chat-shell-v01935 care-chat-shell-v0598" data-chat-professional-v0598="${professional?'true':'false'}" data-chat-patient-id-v0598="${esc(patientId)}"`)
+    .replace('<button class="primary" type="submit">Enviar</button></form>',`<div class="care-chat-compose-actions-v0598"><input class="sr-only" type="file" data-chat-attachment-input-v0598 accept="application/pdf,image/jpeg,image/png,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"><button class="secondary care-chat-attach-v0598" type="button" data-chat-attachment-v0598 aria-label="Anexar foto ou documento">📎 <span>Anexar</span></button><button class="primary" type="submit">Enviar</button></div></form><small class="care-chat-attachment-help-v0598">PDF, imagem, DOC ou DOCX • até 15 MB. Arquivos ficam também na biblioteca segura do paciente.</small>`);
+};
+async function hpOpenChatAttachmentV0598(id,name,professional,patientId){
+  if(!id)throw new Error('Anexo inválido.');
+  const path=professional?`/api/pacientes/${patientId}/arquivos/${id}/download`:`/api/arquivos/me/${id}/download`;
+  const headers={};if(state.token)headers.Authorization=`Bearer ${state.token}`;
+  const r=await fetch(path,{headers});
+  if(r.status===401){logout({notifyServer:false});throw new Error('Sua sessão expirou.')}
+  if(!r.ok)throw new Error('Não foi possível abrir o anexo.');
+  const blob=await r.blob(),url=URL.createObjectURL(blob),lower=String(name||'').toLowerCase();
+  const preview=blob.type==='application/pdf'||blob.type.startsWith('image/')||/\.(pdf|png|jpe?g|webp)$/i.test(lower);
+  if(preview){const w=window.open(url,'_blank','noopener');if(!w){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.click()}}
+  else{const a=document.createElement('a');a.href=url;a.download=name||'anexo';document.body.appendChild(a);a.click();a.remove()}
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+async function hpSendChatAttachmentV0598(file,url,reload,professional,patientId,contexto){
+  if(!file) return;
+  if(file.size>HP_CHAT_ATTACHMENT_MAX_BYTES_V0598)throw new Error('O anexo deve ter no máximo 15 MB.');
+  if(!HP_CHAT_ATTACHMENT_TYPES_V0598.includes(String(file.type||'').toLowerCase()))throw new Error('Formato inválido. Use PDF, imagem, DOC ou DOCX.');
+  const uploadPath=professional?`/api/pacientes/${patientId}/arquivos/upload`:'/api/arquivos/me/upload';
+  const saved=await hpUploadPatientFileV01934(uploadPath,file,{categoria:hpChatAttachmentCategoryV0598(file),descricao:'Anexo enviado pelo chat AESYN',tags:'chat',viaChat:true});
+  try{
+    await api(url,{method:'POST',body:JSON.stringify({mensagem:`Anexo enviado: ${file.name}`,contexto:contexto||'Geral',referenciaTipo:'Arquivo',referenciaId:saved.id,referenciaTitulo:file.name}),dedupeKey:`chat-attachment:${saved.id}`});
+  }catch(err){
+    const rollback=professional?`/api/pacientes/${patientId}/arquivos/${saved.id}`:`/api/arquivos/me/${saved.id}`;
+    try{await api(rollback,{method:'DELETE'})}catch{}
+    throw err;
+  }
+  await reload();
+}
+function hpBindChatAttachmentsV0598(url,reload){
+  const shell=$('.care-chat-shell-v0598');if(!shell)return;
+  const form=shell.querySelector('#careChatForm'),input=shell.querySelector('[data-chat-attachment-input-v0598]'),button=shell.querySelector('[data-chat-attachment-v0598]');
+  const professional=shell.getAttribute('data-chat-professional-v0598')==='true';
+  const patientId=shell.getAttribute('data-chat-patient-id-v0598')||'';
+  button?.addEventListener('click',()=>input?.click());
+  input?.addEventListener('change',async()=>{
+    const file=input.files?.[0];if(!file)return;
+    const old=button.innerHTML;button.disabled=true;button.innerHTML='⏳ <span>Enviando...</span>';
+    try{await hpSendChatAttachmentV0598(file,url,reload,professional,patientId,val(form,'contexto'));toast('Anexo enviado no chat.')}catch(err){toast(err.message||'Falha ao enviar anexo.',true)}finally{button.disabled=false;button.innerHTML=old;input.value=''}
+  });
+  shell.querySelectorAll('[data-chat-attachment-open-v0598]').forEach(el=>el.addEventListener('click',()=>hpOpenChatAttachmentV0598(el.dataset.chatAttachmentOpenV0598,el.dataset.chatAttachmentNameV0598,professional,patientId).catch(e=>toast(e.message,true))));
+}
+const __loadPatientChatV0598=loadPatientChat;
+loadPatientChat=async function(){
+  const host=$('#patientPortalContent')||content;
+  try{const data=await api('/api/chat/me');host.innerHTML=hpChatShell(data,{professional:false});hpBindChatForm('/api/chat/me/mensagens',loadPatientChat);hpBindChatAttachmentsV0598('/api/chat/me/mensagens',loadPatientChat);host.querySelector('[data-chat-open-files]')?.addEventListener('click',()=>loadPatientSection('arquivos').catch(e=>toast(e.message,true)));setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},20);await hpRefreshChatBadgeV01935()}catch(err){host.innerHTML=hpChatErrorV01935(err.message);host.querySelector('[data-chat-retry]')?.addEventListener('click',()=>loadPatientChat())}
+};
+loadProfessionalPatientChat=async function(patient,host=$('#patientTabContent')){
+  try{const data=await api(`/api/chat/pacientes/${patient.id}`);host.innerHTML=hpChatShell(data,{professional:true,patient});const url=`/api/chat/pacientes/${patient.id}/mensagens`;hpBindChatForm(url,()=>loadProfessionalPatientChat(patient,host));hpBindChatAttachmentsV0598(url,()=>loadProfessionalPatientChat(patient,host));host.querySelector('[data-chat-open-files]')?.addEventListener('click',()=>{state.patientTab='arquivos';loadProfessionalPatientFilesV01934(patient,host).catch(e=>toast(e.message,true))});setTimeout(()=>{const t=$('#careChatThread');if(t)t.scrollTop=t.scrollHeight},20);await hpRefreshChatBadgeV01935(patient.id)}catch(err){host.innerHTML=hpChatErrorV01935(err.message);host.querySelector('[data-chat-retry]')?.addEventListener('click',()=>loadProfessionalPatientChat(patient,host))}
 };
