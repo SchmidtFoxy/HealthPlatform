@@ -20903,7 +20903,110 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.7';
+const HP_MVP_VERSION='0.60.8';
+
+// ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
+const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
+const HP_DEMO_PROFESSIONAL_NAME_V0608='Dr Raphael';
+
+function hpDemoProfessionalNameV0608(value){
+  const name=String(value??'');
+  return /^(Dr\.?\s*Testinho|Doutor\s+Testinho)$/i.test(name.trim())?HP_DEMO_PROFESSIONAL_NAME_V0608:name;
+}
+function hpProfessionalChatConversationItemsV0608(root){
+  if(!root)return [];
+  const selectors=[
+    '[data-chat-patient-id]',
+    '[data-chat-conversation-id]',
+    '[data-conversation-id]',
+    '.professional-chat-inbox-item',
+    '.chat-inbox-item',
+    '.chat-conversation-item'
+  ];
+  const seen=new Set();
+  return selectors.flatMap(selector=>[...root.querySelectorAll(selector)]).filter(el=>{
+    if(seen.has(el))return false;
+    seen.add(el);return true;
+  });
+}
+function hpEnhanceProfessionalChatGlobalV0608(){
+  const nav=document.querySelector('[data-view="chat-profissional"]');
+  if(!nav)return;
+  nav.classList.add('nav-chat-global-v0608');
+  nav.setAttribute('aria-label','Abrir chat com pacientes');
+  nav.setAttribute('title','Chat com todos os pacientes');
+
+  const active=nav.classList.contains('active') || nav.getAttribute('aria-current')==='page';
+  if(!active)return;
+
+  const main=document.querySelector('#content,#mainContent,.content,.main-content,main.main');
+  if(!main)return;
+
+  const items=hpProfessionalChatConversationItemsV0608(main);
+  if(!items.length)return;
+
+  let tools=main.querySelector('[data-chat-global-tools-v0608]');
+  if(!tools){
+    tools=document.createElement('section');
+    tools.className='professional-chat-global-tools-v0608';
+    tools.setAttribute('data-chat-global-tools-v0608','');
+    tools.innerHTML=`<div><span class="eyebrow">CHAT GLOBAL</span><strong>Todos os pacientes</strong><small>Abra uma conversa sem precisar entrar antes no prontuário.</small></div>
+      <label><span>Buscar paciente</span><input type="search" inputmode="search" autocomplete="off" placeholder="Nome do paciente" data-chat-global-search-v0608 aria-label="Buscar paciente no chat"></label>
+      <span class="professional-chat-global-count-v0608" data-chat-global-count-v0608></span>`;
+    const first=items[0];
+    const host=first.parentElement;
+    if(host?.parentElement)host.parentElement.insertBefore(tools,host);
+    else main.insertBefore(tools,main.firstChild);
+  }
+
+  const input=tools.querySelector('[data-chat-global-search-v0608]');
+  const count=tools.querySelector('[data-chat-global-count-v0608]');
+  const apply=()=>{
+    const term=(input?.value||'').trim().toLocaleLowerCase('pt-BR');
+    let visible=0;
+    hpProfessionalChatConversationItemsV0608(main).forEach(item=>{
+      const text=(item.innerText||item.textContent||'').toLocaleLowerCase('pt-BR');
+      const show=!term||text.includes(term);
+      item.classList.toggle('chat-global-filtered-v0608',!show);
+      item.setAttribute('aria-hidden',show?'false':'true');
+      if(show)visible++;
+    });
+    if(count)count.textContent=term?`${visible} encontrado${visible===1?'':'s'}`:`${visible} paciente${visible===1?'':'s'}`;
+  };
+
+  if(input && !input.dataset.boundV0608){
+    input.dataset.boundV0608='1';
+    input.addEventListener('input',apply);
+    input.addEventListener('search',apply);
+  }
+  apply();
+
+  // Identidade demo: somente texto já renderizado com o nome demo exato.
+  // Nomes reais vindos da API permanecem intocados.
+  main.querySelectorAll('strong,b,h1,h2,h3,h4,span,small').forEach(el=>{
+    if(el.children.length)return;
+    const raw=(el.textContent||'').trim();
+    if(/^(Dr\.?\s*Testinho|Doutor\s+Testinho)$/i.test(raw))el.textContent=HP_DEMO_PROFESSIONAL_NAME_V0608;
+  });
+}
+function hpInstallProfessionalChatObserverV0608(){
+  if(window.__hpProfessionalChatObserverV0608)return;
+  let queued=false;
+  const run=()=>{
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{queued=false;hpEnhanceProfessionalChatGlobalV0608()});
+  };
+  const observer=new MutationObserver(run);
+  observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','aria-current']});
+  window.__hpProfessionalChatObserverV0608=observer;
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('[data-view="chat-profissional"]'))setTimeout(run,0);
+  });
+  run();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hpInstallProfessionalChatObserverV0608,{once:true});
+else hpInstallProfessionalChatObserverV0608();
 const HP_PATIENT_HOME_CLEANUP='v0.19.30';
 const HP_WORKOUT_BUILDER_2='v0.17.4';
 const HP_WORKOUT_LIBRARY_ASSIGNMENT='v0.17.5';

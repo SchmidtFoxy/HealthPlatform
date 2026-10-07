@@ -1,44 +1,50 @@
 ﻿$ErrorActionPreference = "Stop"
 Write-Host "============================================================" -ForegroundColor DarkGreen
-Write-Host " AESYN v0.60.7 | PATIENT PLAN COMPACT EXPERIENCE" -ForegroundColor Green
+Write-Host " AESYN v0.60.8 | PROFESSIONAL CHAT IDENTITY & GLOBAL INBOX" -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor DarkGreen
 
 $version = (Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
 $app = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.js') -Raw
 $css = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
+$index = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/index.html') -Raw
 $roadmap = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 
-if ($version -ne '0.60.7') { throw "VERSION.txt esperado 0.60.7; atual: $version" }
+if ($version -ne '0.60.8') { throw "VERSION.txt esperado 0.60.8; atual: $version" }
 
 foreach ($token in @(
-  'HP_PATIENT_PLAN_COMPACT_V0607',
-  'patient-plan-summary-v0607',
-  'patient-meal-time-v0607',
-  'food-substitutions-v0607',
-  'patient-plan-supplements-v0607',
-  'patient-supplement-schedule-v0594',
-  'patient-supplement-item-v0594',
-  'supplement-training-context-v0595',
-  'Meu cronograma de suplementos'
+  'HP_PROFESSIONAL_CHAT_GLOBAL_V0608',
+  'hpEnhanceProfessionalChatGlobalV0608',
+  'data-chat-global-search-v0608',
+  'HP_DEMO_PROFESSIONAL_NAME_V0608'
 )) {
-  if (-not $app.Contains($token)) { throw "PREPARAR v0.60.7 incompleto: $token" }
+  if (-not $app.Contains($token)) { throw "PREPARAR v0.60.8 incompleto: $token" }
+}
+
+$demoIdentityExactSignature0608 = 'return /^(Dr\.?\s*Testinho|Doutor\s+Testinho)$/i.test'
+if (-not $app.Contains($demoIdentityExactSignature0608)) {
+    throw 'Protecao de identidade demo por match exato ausente.'
 }
 
 foreach ($token in @(
-  '.patient-plan-compact-v0607',
-  '.patient-plan-meals-v0607',
-  '.patient-plan-supplements-v0607',
-  '@media(max-width:430px)',
-  '@media(max-width:360px)'
+  'nav-chat-global-v0608',
+  'data-view="chat-profissional"',
+  'data-chat-global-badge'
 )) {
-  if (-not $css.Contains($token)) { throw "PREPARAR CSS v0.60.7 incompleto: $token" }
+  if (-not $index.Contains($token)) { throw "PREPARAR sidebar v0.60.8 incompleta: $token" }
 }
 
-if (-not $roadmap.Contains('v0.60.8')) {
-    throw 'ROADMAP sem proxima etapa v0.60.8.'
+foreach ($token in @(
+  '.professional-chat-global-tools-v0608',
+  '.chat-global-filtered-v0608',
+  '@media(max-width:430px)'
+)) {
+  if (-not $css.Contains($token)) { throw "PREPARAR CSS v0.60.8 incompleto: $token" }
 }
 
-Write-Host "    Patient Plan Compact Experience: OK." -ForegroundColor Green
-Write-Host "    Regression gate loadPatientPlan escopado: OK." -ForegroundColor Green
-Write-Host "    Compatibilidade suplemento v0.59.4/v0.59.5: OK." -ForegroundColor Green
-Write-Host "    Proxima etapa: v0.60.8 / Professional Chat Identity & Global Inbox Consolidation" -ForegroundColor DarkCyan
+if (-not $roadmap.Contains('v0.60.9')) {
+    throw 'ROADMAP sem proxima etapa v0.60.9.'
+}
+
+Write-Host "    Professional Chat Identity & Global Inbox: OK." -ForegroundColor Green
+Write-Host "    Demo identity exact-match protection: OK." -ForegroundColor Green
+Write-Host "    Proxima etapa: v0.60.9 / Professional Nutrition Planning Engine 3.0" -ForegroundColor DarkCyan

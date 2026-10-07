@@ -10640,3 +10640,5 @@ A execução de treino do paciente usa um Workout Focus Mode de alto contraste: 
 O Workout Builder profissional aceita múltiplos blocos de séries dentro do mesmo exercício. Um exercício pode, por exemplo, ter um bloco de aquecimento `1×10–15` e depois um bloco principal `2×3×10`, preservando ordem, carga, descanso e observações específicas. Modelos antigos continuam válidos sem blocos.
 ### v0.60.7 — Patient Plan Compact Experience
 A tela Plano do paciente prioriza leitura rápida do dia: energia e macros ficam compactos no topo, refeições aproveitam melhor a largura, horários têm destaque visual e substituições podem ser expandidas sob demanda. Nenhuma informação prescrita é removida.
+### v0.60.8 — Professional Chat Identity & Global Inbox Consolidation
+O profissional acessa o Chat global diretamente pela sidebar e pode filtrar pacientes/conversas pelo nome sem precisar abrir um prontuário antes. A implementação consolida a inbox já existente, preservando não lidas e deep-links. A identidade demo usa “Dr Raphael”; nomes reais continuam vindos do cadastro profissional.

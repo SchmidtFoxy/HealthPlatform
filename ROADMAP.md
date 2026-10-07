@@ -9896,9 +9896,20 @@ O plano alimentar do paciente passa a usar melhor a largura e exigir menos rolag
 - Regression Memory cobre estrutura, responsividade e identidade `v0.60.7`.
 
 **Próxima etapa:** `v0.60.8 — Professional Chat Identity & Global Inbox Consolidation`.
-### v0.60.8 — Professional Chat Identity & Global Inbox Consolidation
-Consolidar Chat da sidebar para todos os pacientes autorizados; identidade de demo “Dr Raphael”; badges, busca e fila de resposta coerentes.
+### ✅ v0.60.8 — Professional Chat Identity & Global Inbox Consolidation — IMPLEMENTADA
+Consolidação da Professional Chat Inbox já entregue na Lista 04, sem recriar a função:
+- entrada `Chat` da sidebar profissional explicitamente tratada como inbox global;
+- badge global de não lidas existente preservado;
+- camada progressiva de busca por nome sobre a lista de conversas/pacientes já renderizada;
+- busca não altera endpoints, deep-links, não-lidas ou estado de aguardando resposta;
+- profissional pode abrir o Chat diretamente pela sidebar, sem depender de prontuário previamente aberto;
+- filtro é local, instantâneo e acessível por teclado/mobile;
+- identidade demo `Dr Testinho` / `Doutor Testinho` passa a `Dr Raphael` somente em cópias estáticas e arquivos demo/seed;
+- nomes reais recebidos da API não são reescritos;
+- UI mobile 360/390/430 com input de 46 px e fonte adequada para teclado iOS;
+- Regression Memory cobre sidebar global, busca progressiva, identidade demo e preservação do badge v0.59.6.
 
+**Próxima etapa:** `v0.60.9 — Professional Nutrition Planning Engine 3.0`.
 ### v0.60.9 — Professional Nutrition Planning Engine 3.0 + Diet Model Builder
 Peso, altura e dados corporais; TMB/GET; objetivo; alvo energético; macros; kcal; totais por refeição/dia; meta × prescrito × restante/excedido; controle manual profissional.
 Adicionar entradas **Montar dieta modelo** e **Nova dieta**:

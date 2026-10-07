@@ -8753,3 +8753,9 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Substituições usam details/summary acessível e recolhível.
 - Cronograma de suplementos acompanha a nova densidade visual.
 - PWA validável em 360/390/430 px, sem overflow.
+## v0.60.8 — Professional Chat Identity & Global Inbox Consolidation
+- Consolida a Professional Chat Inbox existente como entrada global da sidebar.
+- Adiciona busca progressiva por paciente sobre o inbox já renderizado.
+- Preserva badge de não lidas, deep-links e estados de conversa existentes.
+- Atualiza identidade demo Dr Testinho/Doutor Testinho para Dr Raphael apenas em cópias estáticas e seeds/demo.
+- Mantém nomes reais vindos da API intocados.
