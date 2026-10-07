@@ -572,7 +572,7 @@ async function loadDashboard(){
     </section>
     <section class="card">
       <div class="card-head"><div><span class="eyebrow">CONTINUIDADE</span><h3>Próximos atendimentos</h3></div><small>${proximas.length} agendada(s)</small></div>
-      ${proximas.length?`<div class="list">${proximas.slice(0,6).map(agendaRow).join('')}</div>`:'<div class="performance-empty"><strong>Sem próximas consultas.</strong><span>Use a agenda para organizar os próximos acompanhamentos.</span></div>'}
+      ${proximas.length?`<div class="list">${proximas.slice(0,6).map(agendaRow).join('')}</div>`:'<div class="performance-empty"><strong>Sem próximas consultas.</strong><span>+a agenda para organizar os próximos acompanhamentos.</span></div>'}
     </section>
   </div>
 
@@ -651,7 +651,7 @@ const HP_PATIENT_STATUS_V0203='v0.20.3';
 function hpPatientStatusLabelV0203(v){return ({Ativo:'Ativo',Pausado:'Pausado',AguardandoAvaliacao:'Aguardando avaliação',Encerrado:'Encerrado'})[v]||v||'Ativo'}
 function hpPatientStatusClassV0203(v){return ({Ativo:'active',Pausado:'paused',AguardandoAvaliacao:'waiting',Encerrado:'closed'})[v]||'active'}
 async function hpOpenPatientStatusV0203(p){const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');modal.classList.remove('hidden');modal.classList.add('patient-status-modal-v0203');box.className='clinical-action-shell patient-status-shell-v0203';box.setAttribute('data-patient-status-v0203',HP_PATIENT_STATUS_V0203);box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="closePatientStatusV0203">← Voltar</button><span class="eyebrow">STATUS DO ACOMPANHAMENTO</span><h2>${esc(p.nome)}</h2><p>Organize a carteira sem apagar histórico clínico ou prescrições.</p></div><form id="patientStatusFormV0203" class="form-grid"><label>Status<select name="status"><option value="Ativo">Ativo</option><option value="Pausado">Pausado</option><option value="AguardandoAvaliacao">Aguardando avaliação</option><option value="Encerrado">Encerrado</option></select></label><label class="span-2">Motivo / contexto<textarea name="motivo" rows="4" maxlength="500" placeholder="Opcional. Ex.: pausa temporária, aguardando retorno, acompanhamento encerrado..."></textarea></label><div class="span-2 patient-status-help-v0203">Alterar status é administrativo/operacional. O histórico clínico permanece preservado e a mudança fica auditada.</div><div class="span-2 form-actions"><button type="button" class="secondary" id="cancelPatientStatusV0203">Cancelar</button><button class="primary" type="submit">Salvar status</button></div></form>`;openClinicalAction(box);const f=$('#patientStatusFormV0203');f.status.value=p.statusAcompanhamento||'Ativo';f.motivo.value=p.motivoStatusAcompanhamento||'';const close=()=>closeClinicalAction();$('#closePatientStatusV0203').onclick=close;$('#cancelPatientStatusV0203').onclick=close;f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');b.disabled=true;try{await api(`/api/pacientes/${p.id}/status`,{method:'PATCH',body:JSON.stringify({status:f.status.value,motivo:f.motivo.value||null})});close();toast('Status do paciente atualizado.');if(state.patientId===p.id)await loadPatient();else await loadPatients('',{status:'Todos'})}catch(x){toast(x.message,true)}finally{b.disabled=false}}}
-async function hpOpenPatientTagsV0205(p){const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');modal.classList.remove('hidden');box.className='clinical-action-shell patient-tags-shell-v0205';box.setAttribute('data-tags-segmentation-v0205',HP_TAG_SEGMENTATION_V0205);const atuais=Array.isArray(p.tags)?p.tags:[];box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="closePatientTagsV0205">← Voltar</button><span class="eyebrow">TAGS & SEGMENTAÇÃO</span><h2>${esc(p.nome)}</h2><p>Use tags personalizadas para organizar a carteira e criar agrupamentos operacionais.</p></div><form id="patientTagsFormV0205" class="form-grid patient-tags-form-v0205"><label class="span-2">Tags<textarea name="tags" rows="4" maxlength="1000" placeholder="Ex.: Hipertrofia, Retorno mensal, VIP">${esc(atuais.join(', '))}</textarea><small>Separe por vírgulas. Máximo de 20 tags por paciente.</small></label><div class="span-2 patient-tags-preview-v0205">${atuais.map(x=>`<span class="patient-tag-v0205">${esc(x)}</span>`).join('')||'<span class="muted-mini">Nenhuma tag cadastrada.</span>'}</div><div class="span-2 form-actions"><button type="button" class="secondary" id="cancelPatientTagsV0205">Cancelar</button><button class="primary" type="submit">Salvar tags</button></div></form>`;openClinicalAction(box);const f=$('#patientTagsFormV0205');const close=()=>closeClinicalAction();$('#closePatientTagsV0205').onclick=close;$('#cancelPatientTagsV0205').onclick=close;f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');const tags=String(f.elements.tags.value||'').split(',').map(x=>x.trim()).filter(Boolean);b.disabled=true;try{await api(`/api/pacientes/${p.id}/tags`,{method:'PATCH',body:JSON.stringify({tags})});close();toast('Tags do paciente atualizadas.');if(state.patientId===p.id)await loadPatient();else await loadPatients('',{status:'Todos'})}catch(x){toast(x.message,true)}finally{b.disabled=false}}}
+async function hpOpenPatientTagsV0205(p){const modal=$('#clinicalActionModal'),box=$('#clinicalActionContent');modal.classList.remove('hidden');box.className='clinical-action-shell patient-tags-shell-v0205';box.setAttribute('data-tags-segmentation-v0205',HP_TAG_SEGMENTATION_V0205);const atuais=Array.isArray(p.tags)?p.tags:[];box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link" id="closePatientTagsV0205">← Voltar</button><span class="eyebrow">TAGS & SEGMENTAÇÃO</span><h2>${esc(p.nome)}</h2><p>+tags personalizadas para organizar a carteira e criar agrupamentos operacionais.</p></div><form id="patientTagsFormV0205" class="form-grid patient-tags-form-v0205"><label class="span-2">Tags<textarea name="tags" rows="4" maxlength="1000" placeholder="Ex.: Hipertrofia, Retorno mensal, VIP">${esc(atuais.join(', '))}</textarea><small>Separe por vírgulas. Máximo de 20 tags por paciente.</small></label><div class="span-2 patient-tags-preview-v0205">${atuais.map(x=>`<span class="patient-tag-v0205">${esc(x)}</span>`).join('')||'<span class="muted-mini">Nenhuma tag cadastrada.</span>'}</div><div class="span-2 form-actions"><button type="button" class="secondary" id="cancelPatientTagsV0205">Cancelar</button><button class="primary" type="submit">Salvar tags</button></div></form>`;openClinicalAction(box);const f=$('#patientTagsFormV0205');const close=()=>closeClinicalAction();$('#closePatientTagsV0205').onclick=close;$('#cancelPatientTagsV0205').onclick=close;f.onsubmit=async e=>{e.preventDefault();const b=f.querySelector('button[type=submit]');const tags=String(f.elements.tags.value||'').split(',').map(x=>x.trim()).filter(Boolean);b.disabled=true;try{await api(`/api/pacientes/${p.id}/tags`,{method:'PATCH',body:JSON.stringify({tags})});close();toast('Tags do paciente atualizadas.');if(state.patientId===p.id)await loadPatient();else await loadPatients('',{status:'Todos'})}catch(x){toast(x.message,true)}finally{b.disabled=false}}}
 async function loadPatients(search='',filters={}){const q=new URLSearchParams({busca:search,status:filters.status||'Ativos',aderencia:filters.aderencia||'',ultimaInteracao:filters.ultimaInteracao||'',proximaRevisao:filters.proximaRevisao||'',marcador:filters.marcador||'',tag:filters.tag||'',ordenar:filters.ordenar||'nome'});if(filters.responsavelId)q.set('responsavelId',filters.responsavelId);const d=await api(`/api/pacientes/pesquisa-avancada?${q}`);const select=(id,label,options,value='')=>`<label class="patient-filter"><span>${label}</span><select id="${id}">${options.map(([v,t])=>`<option value="${v}" ${String(value)===String(v)?'selected':''}>${t}</option>`).join('')}</select></label>`;content.innerHTML=`<div class="section-head"><div><h3>Pacientes</h3><p>${d.total} paciente(s) encontrado(s) com os filtros atuais.</p></div><button class="primary" id="newPatient">+ Novo paciente</button></div><section class="card patient-search-panel" aria-label="Busca e filtros de pacientes"><div class="patient-search-main"><input id="patientSearch" class="search-input" placeholder="Buscar nome, CPF, e-mail ou telefone" value="${esc(search)}"><button type="button" class="secondary" id="clearPatientFilters">Limpar filtros</button></div><div class="patient-filter-grid">${select('patientStatus','Status',[['Ativos','Em acompanhamento'],['Ativo','Ativo'],['Pausado','Pausado'],['AguardandoAvaliacao','Aguardando avaliação'],['Encerrado','Encerrado'],['Todos','Todos']],filters.status||'Ativos')}${select('patientResponsible','Responsável',[['','Todos'],...(d.responsaveis||[]).map(x=>[x.id,x.nome])],filters.responsavelId||'')}${select('patientAdherence','Aderência',[['','Todas'],['Alta','Alta (≥80%)'],['Media','Média (60–79%)'],['Baixa','Baixa (<60%)'],['SemDados','Sem dados']],filters.aderencia||'')}${select('patientInteraction','Última interação',[['','Qualquer'],['7d','Últimos 7 dias'],['30d','Últimos 30 dias'],['Antiga','Há mais de 30 dias/sem interação']],filters.ultimaInteracao||'')}${select('patientReview','Próxima revisão',[['','Qualquer'],['7d','Próximos 7 dias'],['30d','Próximos 30 dias'],['SemData','Sem data']],filters.proximaRevisao||'')}${select('patientMarker','Marcador operacional',[['','Todos'],...(d.marcadores||[]).map(x=>[x,{SemInteracaoRecente:'Sem interação recente',SemRevisaoAgendada:'Sem revisão agendada',BaixaAdesao:'Baixa adesão',SemDadosAdesao:'Sem dados de adesão',Inativo:'Inativo'}[x]||x])],filters.marcador||'')}${select('patientTag','Tag personalizada',[['','Todas'],...(d.tagsDisponiveis||[]).map(x=>[x,x])],filters.tag||'')}${select('patientSort','Ordenar por',[['nome','Nome'],['aderencia','Menor aderência'],['interacao','Interação mais antiga'],['revisao','Próxima revisão']],filters.ordenar||'nome')}</div><p class="muted-mini">Status de acompanhamento é administrativo e preserva todo o histórico clínico.</p></section><div class="table-wrap">${d.itens.length?`<table class="data-table"><thead><tr><th>Paciente</th><th>Responsável</th><th>Aderência</th><th>Última interação</th><th>Próxima revisão</th><th>Status</th><th></th></tr></thead><tbody>${d.itens.map(p=>`<tr data-patient="${p.id}"><td><div class="person-cell"><div class="mini-avatar">${initials(p.nome)}</div><div><strong>${esc(p.nome)}</strong><div class="muted-mini">${esc(p.profissao||p.email||'Sem complemento')}</div>${(p.tags||[]).length?`<div class="patient-tags-inline-v0205">${p.tags.map(x=>`<span class="patient-tag-v0205">${esc(x)}</span>`).join('')}</div>`:''}</div></div></td><td>${esc(p.responsavelNome||'—')}</td><td>${p.adesaoMediaPercentual==null?'—':`${num(p.adesaoMediaPercentual,0)}%`}</td><td>${p.ultimaInteracaoUtc?fmtDateTime(p.ultimaInteracaoUtc):'Sem interação'}</td><td>${p.proximaRevisaoUtc?fmtDateTime(p.proximaRevisaoUtc):'Sem data'}</td><td><span class="patient-status-v0203 ${hpPatientStatusClassV0203(p.statusAcompanhamento)}">${esc(hpPatientStatusLabelV0203(p.statusAcompanhamento))}</span></td><td><button type="button" class="ghost patient-tags-edit-v0205" data-tags-patient="${p.id}">Tags</button><button type="button" class="ghost patient-status-edit-v0203" data-status-patient="${p.id}">Alterar status</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nenhum paciente corresponde aos filtros.</div>'}</div>`;const read=()=>({status:$('#patientStatus').value,responsavelId:$('#patientResponsible').value,aderencia:$('#patientAdherence').value,ultimaInteracao:$('#patientInteraction').value,proximaRevisao:$('#patientReview').value,marcador:$('#patientMarker').value,tag:$('#patientTag').value,ordenar:$('#patientSort').value});let timer;$('#patientSearch').oninput=e=>{clearTimeout(timer);timer=setTimeout(()=>loadPatients(e.target.value,read()),300)};['patientStatus','patientResponsible','patientAdherence','patientInteraction','patientReview','patientMarker','patientTag','patientSort'].forEach(id=>$('#'+id).onchange=()=>loadPatients($('#patientSearch').value,read()));$('#clearPatientFilters').onclick=()=>loadPatients('',{});$('#newPatient').onclick=openCreatePatient;$$('[data-patient]').forEach(x=>x.onclick=e=>{if(!e.target.closest('button'))openPatient(x.dataset.patient)});$$('.patient-status-edit-v0203').forEach(b=>b.onclick=e=>{e.stopPropagation();const p=d.itens.find(x=>String(x.id)===String(b.dataset.statusPatient));if(p)hpOpenPatientStatusV0203(p)});$$('.patient-tags-edit-v0205').forEach(b=>b.onclick=e=>{e.stopPropagation();const p=d.itens.find(x=>String(x.id)===String(b.dataset.tagsPatient));if(p)hpOpenPatientTagsV0205(p)})}
 function openCreatePatient(){$('#createPatientModal').classList.remove('hidden')}
 $('#createPatientForm').addEventListener('submit',async e=>{e.preventDefault();const obj=Object.fromEntries(new FormData(e.target).entries());Object.keys(obj).forEach(k=>{if(obj[k]==='')obj[k]=null});try{const p=await api('/api/pacientes',{method:'POST',body:JSON.stringify(obj)});$('#createPatientModal').classList.add('hidden');e.target.reset();toast('Paciente cadastrado. Complete a avaliação inicial agora ou depois.');openPatientIntake(p)}catch(x){toast(x.message,true)}});
@@ -1576,7 +1576,7 @@ function hpNutritionAdherenceAthleteCard(n){
 }
 function hpNutritionAdherenceProfessionalCard(n){
   if(!n||n.estado==='SemPlano')return '';
-  return `<section class="card nutrition-adherence-card professional"><div class="card-head"><div><span class="eyebrow">ADESÃO NUTRICIONAL • HOJE</span><h3>${n.refeicoesRegistradas}/${n.refeicoesPlanejadas} registradas</h3></div><span class="pill ${n.estado==='Revisar'?'Alta':n.estado==='BoaAdesao'?'Ativa':'Agendada'}">${esc(n.estado)}</span></div><div class="game-prof-grid"><span><b>${n.realizadas||0}</b>realizadas</span><span><b>${n.adaptadas||0}</b>adaptadas</span><span><b>${n.naoRealizadas||0}</b>não realizadas</span><span><b>${n.adequacaoRegistradaPercentual!=null?num(n.adequacaoRegistradaPercentual,0)+'%':'—'}</b>adequação registrada</span></div><p class="muted-line">${esc(n.mensagem||'')}</p><small class="muted-line">Use o padrão para ajustar a estratégia; o sistema não altera calorias, macros ou refeições automaticamente.</small></section>`;
+  return `<section class="card nutrition-adherence-card professional"><div class="card-head"><div><span class="eyebrow">ADESÃO NUTRICIONAL • HOJE</span><h3>${n.refeicoesRegistradas}/${n.refeicoesPlanejadas} registradas</h3></div><span class="pill ${n.estado==='Revisar'?'Alta':n.estado==='BoaAdesao'?'Ativa':'Agendada'}">${esc(n.estado)}</span></div><div class="game-prof-grid"><span><b>${n.realizadas||0}</b>realizadas</span><span><b>${n.adaptadas||0}</b>adaptadas</span><span><b>${n.naoRealizadas||0}</b>não realizadas</span><span><b>${n.adequacaoRegistradaPercentual!=null?num(n.adequacaoRegistradaPercentual,0)+'%':'—'}</b>adequação registrada</span></div><p class="muted-line">${esc(n.mensagem||'')}</p><small class="muted-line">+o padrão para ajustar a estratégia; o sistema não altera calorias, macros ou refeições automaticamente.</small></section>`;
 }
 
 
@@ -1707,7 +1707,7 @@ function hpBodyPainProfessionalCard(d){
 function hpBodyPainAthleteCard(d){
   if(!d)return '';
   const r=(d.registrosRecentes||[]).slice(0,3);
-  return `<section class="card body-pain-card athlete"><div class="card-head"><div><span class="eyebrow">MAPA DE DOR • 7 DIAS</span><h3>${d.registros7?`${d.regioesAtivas} região(ões) registrada(s)`:'Onde está incomodando?'}</h3></div><button class="secondary" id="bodyPainButton">${d.registros7?'Atualizar dor':'Registrar região'}</button></div><p>${esc(d.mensagem||'')}</p>${r.length?`<div class="recovery-signal-list">${r.map(x=>`<div class="recovery-signal ${x.intensidade>=7?'alta':x.intensidade>=4?'media':'baixa'}"><strong>${esc(x.regiao)}${x.lado?' • '+esc(x.lado):''}</strong><small>dor ${x.intensidade}/10 • impacto ${x.impactoTreino}/10</small></div>`).join('')}</div>`:''}<small class="muted-line">Use o registro para acompanhar padrões. Dor persistente, intensa ou incapacitante merece avaliação profissional.</small></section>`;
+  return `<section class="card body-pain-card athlete"><div class="card-head"><div><span class="eyebrow">MAPA DE DOR • 7 DIAS</span><h3>${d.registros7?`${d.regioesAtivas} região(ões) registrada(s)`:'Onde está incomodando?'}</h3></div><button class="secondary" id="bodyPainButton">${d.registros7?'Atualizar dor':'Registrar região'}</button></div><p>${esc(d.mensagem||'')}</p>${r.length?`<div class="recovery-signal-list">${r.map(x=>`<div class="recovery-signal ${x.intensidade>=7?'alta':x.intensidade>=4?'media':'baixa'}"><strong>${esc(x.regiao)}${x.lado?' • '+esc(x.lado):''}</strong><small>dor ${x.intensidade}/10 • impacto ${x.impactoTreino}/10</small></div>`).join('')}</div>`:''}<small class="muted-line">+o registro para acompanhar padrões. Dor persistente, intensa ou incapacitante merece avaliação profissional.</small></section>`;
 }
 
 function hpPlannedExecutedAthleteCard(x){
@@ -1792,7 +1792,7 @@ function hpWeeklyAthleteRhythm(d){
   const label=tone==='protect'?'Proteger recuperação':tone==='balanced'?'Semana consolidada':'Semana em andamento';
   const progress=goal>0?Math.min(100,Math.round((completed/goal)*100)):0;
   const next=remaining<=0?'Meta principal atendida':`${remaining} sessão${remaining===1?'':'ões'} restante${remaining===1?'':'s'}`;
-  const message=summary?.resumo || plan?.resumo || 'Use a semana como contexto, sem substituir o plano definido pelo profissional.';
+  const message=summary?.resumo || plan?.resumo || '+a semana como contexto, sem substituir o plano definido pelo profissional.';
   return `<section class="weekly-athlete-rhythm ${tone}" aria-label="Ritmo esportivo da semana">
     <div class="weekly-athlete-rhythm-head"><div><span class="eyebrow">RITMO DA SEMANA</span><h3>${esc(label)}</h3></div><span class="weekly-rhythm-state">${esc(state)}</span></div>
     <div class="weekly-rhythm-progress"><div><strong>${goal>0?`${completed}/${goal}`:`${completed}`}</strong><span>${goal>0?'treinos da meta':'treinos registrados'}</span></div><div class="weekly-rhythm-track"><i style="width:${progress}%"></i></div><b>${esc(next)}</b></div>
@@ -1999,7 +1999,7 @@ function hpWeeklyReview(d){
   const stableWeek=weeklyState==='Equilibrada'||weeklyState==='Consolidar';
   const tone=protectedWeek?'protect':stableWeek?'steady':'active';
   const loadLabel=load.posicaoHistorica||load.estado||'Sem comparação de carga';
-  const trendLabel=trend.resumo||summary.resumo||plan.resumo||'Use a semana como contexto para decidir o próximo passo.';
+  const trendLabel=trend.resumo||summary.resumo||plan.resumo||'+a semana como contexto para decidir o próximo passo.';
   const challenges=(game.desafiosSemana||[]);
   const challengesDone=challenges.filter(x=>x.concluido).length;
   const nextFocus=protectedWeek?'Recuperação e retorno gradual':stableWeek?'Consolidar o que funcionou':completed<goal?'Retomar pelo próximo treino do plano':'Manter consistência sem buscar carga extra';
@@ -2011,7 +2011,7 @@ function hpWeeklyReview(d){
       <article><small>MISSÕES</small><strong>${challenges.length?`${challengesDone}/${challenges.length}`:'—'}</strong><span>${challenges.length?'concluídas':'sem missões ativas'}</span></article>
       <article><small>CARGA</small><strong>${load.cargaAtual7!=null?num(load.cargaAtual7,0):'—'}</strong><span>${esc(loadLabel)}</span></article>
     </div>
-    <div class="weekly-review-next"><div><small>FOCO DA PRÓXIMA SEMANA</small><strong>${esc(nextFocus)}</strong><span>Use esta síntese como contexto; o plano profissional continua sendo a referência.</span></div><button type="button" class="secondary weekly-review-action" id="weeklyReviewAction">Revisar semana completa <span>→</span></button></div>
+    <div class="weekly-review-next"><div><small>FOCO DA PRÓXIMA SEMANA</small><strong>${esc(nextFocus)}</strong><span>+esta síntese como contexto; o plano profissional continua sendo a referência.</span></div><button type="button" class="secondary weekly-review-action" id="weeklyReviewAction">Revisar semana completa <span>→</span></button></div>
   </section>`;
 }
 
@@ -2053,7 +2053,7 @@ function hpBodyContextBrief(d,readiness){
   const weekText=protectedWeek?'semana protegida':weeklyState==='Equilibrada'||weeklyState==='Consolidar'?'semana consolidada':'semana em andamento';
   const loadText=reviewLoad?'carga pede revisão':observeLoad?'carga para observar':'carga no contexto';
   const recoveryText=reviewRecovery?'recuperação pede revisão':observeRecovery?'recuperação para observar':response.sessaoNome?'recuperação estável':readiness?'check-in registrado':'check-in pendente';
-  const action=!readiness?'Faça o check-in para completar a leitura do dia.':tone==='review'?'Use os detalhes abaixo antes de decidir como conduzir a próxima sessão.':tone==='observe'?'Acompanhe os sinais do dia sem transformar o insight em prescrição.':'Siga o plano do dia e use os insights como contexto.';
+  const action=!readiness?'Faça o check-in para completar a leitura do dia.':tone==='review'?'+os detalhes abaixo antes de decidir como conduzir a próxima sessão.':tone==='observe'?'Acompanhe os sinais do dia sem transformar o insight em prescrição.':'Siga o plano do dia e use os insights como contexto.';
   return `<div class="body-context-brief ${tone}" aria-label="Resumo rápido do contexto esportivo"><div class="body-context-icon" aria-hidden="true">${tone==='review'?'!':tone==='observe'?'~':'✓'}</div><div><span class="eyebrow">LEITURA RÁPIDA</span><h3>${esc(title)}</h3><p>${esc(weekText)} • ${esc(loadText)} • ${esc(recoveryText)}</p><small>${esc(action)}</small></div></div>`;
 }
 
@@ -2098,7 +2098,7 @@ function hpEndOfDayFlow(d){
     <div class="end-of-day-flow-review">
       <article><small>CORPO</small><strong>${esc(bodyText)}</strong><span>Contexto da manhã preservado até o fechamento.</span></article>
       <article><small>SESSÃO</small><strong>${esc(workoutText)}</strong><span>Treino e esforço entram no histórico quando registrados.</span></article>
-      <article><small>HIDRATAÇÃO</small><strong>${esc(hydrationText)}</strong><span>Use o realizado de hoje; não compense volume no fim do dia.</span></article>
+      <article><small>HIDRATAÇÃO</small><strong>${esc(hydrationText)}</strong><span>+o realizado de hoje; não compense volume no fim do dia.</span></article>
       <article><small>ROTEIRO</small><strong>${total?`${completed}/${total} essenciais`:'Sem itens essenciais'}</strong><span>${closed?'Fechamento concluído.':`${num(progress,0)}% acompanhado hoje.`}</span></article>
     </div>
     <div class="end-of-day-flow-footer"><div><small>${closed?'O fechamento pode ser atualizado se você precisar corrigir sua percepção.':'Percepção final + uma nota curta são suficientes para consolidar o dia.'}</small></div><button type="button" class="${closed?'secondary':'primary'} end-of-day-flow-action" id="endOfDayFlowAction">${closed?'Revisar fechamento':'Encerrar meu dia'}</button></div>
@@ -3215,7 +3215,7 @@ async function openMealPlanForm(p){
 
 async function openReportForm(p){
   const box=$('#clinicalActionContent');
-  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">RELATÓRIO CLÍNICO</span><h2>Novo relatório</h2><p>${esc(p.nome)} • gere um snapshot imutável do período.</p></div><form id="reportForm" class="form-grid clinical-form"><label>Data inicial<input name="inicio" type="date"></label><label>Data final<input name="fim" type="date" value="${todayISO()}"></label><label class="span-2">Título<input name="titulo" value="Relatório de evolução clínica"></label><label class="span-2">Conclusão médica<textarea name="conclusaoMedica" placeholder="Síntese clínica, evolução e próximas orientações..."></textarea></label><div class="span-2 report-preview-box" id="reportPreview"><small>PREVIEW</small><p>Use o botão abaixo para conferir os indicadores antes de gerar.</p></div><div class="span-2 form-actions"><button type="button" class="secondary" id="previewReport">Atualizar preview</button><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Gerar relatório</button></div></form>`;
+  box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">RELATÓRIO CLÍNICO</span><h2>Novo relatório</h2><p>${esc(p.nome)} • gere um snapshot imutável do período.</p></div><form id="reportForm" class="form-grid clinical-form"><label>Data inicial<input name="inicio" type="date"></label><label>Data final<input name="fim" type="date" value="${todayISO()}"></label><label class="span-2">Título<input name="titulo" value="Relatório de evolução clínica"></label><label class="span-2">Conclusão médica<textarea name="conclusaoMedica" placeholder="Síntese clínica, evolução e próximas orientações..."></textarea></label><div class="span-2 report-preview-box" id="reportPreview"><small>PREVIEW</small><p>+o botão abaixo para conferir os indicadores antes de gerar.</p></div><div class="span-2 form-actions"><button type="button" class="secondary" id="previewReport">Atualizar preview</button><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Gerar relatório</button></div></form>`;
   $('.clinical-back').onclick=()=>openClinicalActionMenu(p);$('[data-close-clinical-form]').onclick=closeClinicalAction;
   const f=$('#reportForm');
   const preview=async()=>{const inicio=val(f,'inicio'),fim=val(f,'fim');const qs=new URLSearchParams();if(inicio)qs.set('inicioUtc',new Date(`${inicio}T00:00:00`).toISOString());if(fim)qs.set('fimUtc',new Date(`${fim}T23:59:59`).toISOString());const d=await api(`/api/pacientes/${p.id}/relatorios/preview?${qs}`),i=d.indicadores||{};$('#reportPreview').innerHTML=`<small>PREVIEW DO SNAPSHOT</small><div class="report-preview-metrics"><span><b>${i.consultas??0}</b> consultas</span><span><b>${i.avaliacoes??0}</b> avaliações</span><span><b>${i.exames??0}</b> exames</span><span><b>${num(i.pesoAtualKg)}</b> kg atual</span><span><b>${num(i.variacaoPesoKg)}</b> kg variação</span><span><b>${(d.resultadosForaDaFaixaInformada||[]).length}</b> fora da faixa</span></div>`};
@@ -4553,7 +4553,7 @@ async function loadPatientAthleteData(){
   const history=evolution?.itens||[];
   host.innerHTML=`<div class="athlete-data-hub" data-athlete-data-hub="v0.19.31">
     <section class="athlete-data-hero">
-      <div><span class="eyebrow">DADOS PARA ATLETAS</span><h1>Seu desempenho com contexto</h1><p>Carga, recuperação, corpo e consistência reunidos fora da Home diária. Use para entender tendências — não para perseguir um número isolado.</p></div>
+      <div><span class="eyebrow">DADOS PARA ATLETAS</span><h1>Seu desempenho com contexto</h1><p>Carga, recuperação, corpo e consistência reunidos fora da Home diária. +para entender tendências — não para perseguir um número isolado.</p></div>
       <span class="athlete-data-context">${cycle?.nome?esc(cycle.nome):'Visão longitudinal'}</span>
     </section>
     <section class="athlete-data-metrics" aria-label="Resumo técnico do atleta">
@@ -4865,7 +4865,7 @@ async function openWorkoutForm(p,existingPlan=null,options={}){
     const plan=existingPlan||{};
     const tuning=state.recommendationTuningDraft?.patientId===p.id?state.recommendationTuningDraft:null;
     box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">WORKOUT BUILDER</span><h2>${editing?'Editar plano':'Novo plano'}</h2><p>${esc(p.nome)} • ${exercicios.length} exercício(s) no catálogo</p></div>
-      ${tuning?`<div class="workout-builder-context"><b>Contexto da sugestão profissional</b><span>${esc(tuning.goal||'Objetivo definido')} • ${tuning.strength||'—'} sessão(ões) de força • ${tuning.minutes||'—'} min/sessão</span><small>Use como referência. A ficha continua totalmente editável pelo profissional.</small></div>`:''}
+      ${tuning?`<div class="workout-builder-context"><b>Contexto da sugestão profissional</b><span>${esc(tuning.goal||'Objetivo definido')} • ${tuning.strength||'—'} sessão(ões) de força • ${tuning.minutes||'—'} min/sessão</span><small>+como referência. A ficha continua totalmente editável pelo profissional.</small></div>`:''}
       <form id="workoutForm" class="clinical-form workout-builder2-form">
         <div class="form-grid builder-meta">
           ${field('Nome do plano','nome','text',`value="${esc(plan.nome||'Plano de treino')}" required`)}
@@ -16052,7 +16052,7 @@ function hpBindSeriesBlocksEditorV0606(row,initial=[],defaults={},onChange=()=>{
     block.querySelectorAll('input').forEach(input=>input.addEventListener('input',onChange));
   };
   const append=block=>{
-    if(list.children.length>=8){toast('Use no máximo 8 blocos por exercício.',true);return}
+    if(list.children.length>=8){toast('+no máximo 8 blocos por exercício.',true);return}
     const wrap=document.createElement('div');
     wrap.innerHTML=hpSeriesBlockCardV0606(block,list.children.length,defaults);
     const node=wrap.firstElementChild;
@@ -17082,7 +17082,7 @@ function hpRecoveryDayFlow(home){
   const closed=!!home?.execucaoDoDia?.diaFechado;
   const state=closed?'done':'active';
   const title=recommendation==='Recuperacao'?'Hoje, recuperar faz parte do plano':'Hoje pede uma execução mais leve';
-  const detail=plan.resumo||readiness.motivoRecomendacao||'Use os sinais do corpo como contexto e respeite a orientação profissional.';
+  const detail=plan.resumo||readiness.motivoRecomendacao||'+os sinais do corpo como contexto e respeite a orientação profissional.';
   const focus=plan.focoPrincipal||'Recuperação e qualidade';
   return `<section class="recovery-day-flow ${state}" aria-label="Recovery Day Flow">
     <div class="recovery-day-flow-head"><div><span class="eyebrow">RECOVERY DAY FLOW</span><h2>${esc(title)}</h2><p>${esc(detail)}</p></div><span class="recovery-day-flow-state">${closed?'Fechado':recommendation==='Recuperacao'?'Recuperar':'Leve'}</span></div>
@@ -20573,7 +20573,7 @@ function hpMetabolicCalculatorCard(context){
   const sex=hpNormalizeSex(patient.sexo);
   const lean=a.massaMagraKg??'';
   return `<section class="metabolic-calculator" data-metabolic-calculator="v0.19.7" data-metabolic-planning="v0.19.24">
-    <div class="metabolic-calculator-head"><div><span class="eyebrow">PLANEJAMENTO ENERGÉTICO</span><strong>TMB e gasto energético estimado</strong><small>Use como apoio ao raciocínio profissional. Valores são estimativas e permanecem editáveis.</small></div><span class="metabolic-source-badge">${a?.id?'Avaliação mais recente':'Preenchimento manual'}</span></div>
+    <div class="metabolic-calculator-head"><div><span class="eyebrow">PLANEJAMENTO ENERGÉTICO</span><strong>TMB e gasto energético estimado</strong><small>+como apoio ao raciocínio profissional. Valores são estimativas e permanecem editáveis.</small></div><span class="metabolic-source-badge">${a?.id?'Avaliação mais recente':'Preenchimento manual'}</span></div>
     <div class="metabolic-flow" aria-label="Fluxo do planejamento energético"><span><b>1</b>TMB</span><i>→</i><span><b>2</b>GET</span><i>→</i><span><b>3</b>Objetivo</span><i>→</i><span><b>4</b>Meta calórica</span><i>→</i><span><b>5</b>Macros</span></div>
     <div class="metabolic-active-target" id="metabolicActiveTarget"><small>Meta calórica ativa do plano</small><strong>Não definida</strong><span>Defina o GET ou um alvo de objetivo e aplique-o ao plano.</span></div>
     <div class="metabolic-input-grid">
@@ -20684,7 +20684,7 @@ function hpBindMetabolicCalculator(form,context,refreshPlan){
     const result=hpCalculateMacroTargets({weight,proteinPerKg,fatPerKg,carbPerKg,targetCalories});
     if(!result){macroOutput.innerHTML='<div><small>Proteína</small><strong>—</strong><span>g/dia</span></div><div><small>Lipídios</small><strong>—</strong><span>g/dia</span></div><div><small>Carboidratos</small><strong>—</strong><span>g/dia</span></div><div><small>Energia dos macros</small><strong>—</strong><span>kcal/dia</span></div>';macroBalance.textContent='Informe o peso para calcular as metas.';macroBalance.className='macro-target-balance';macroApply.disabled=true;return;}
     macroOutput.innerHTML=`<div><small>Proteína</small><strong>${num(result.protein,1)}</strong><span>g/dia</span></div><div><small>Lipídios</small><strong>${num(result.fat,1)}</strong><span>g/dia</span></div><div><small>Carboidratos</small><strong>${num(result.carb,1)}</strong><span>g/dia</span></div><div><small>Energia dos macros</small><strong>${num(result.calories,0)}</strong><span>kcal/dia</span></div>`;
-    if(targetCalories>0){const delta=Math.round(result.delta),deltaPct=(result.delta/targetCalories)*100;macroBalance.textContent=`Energia dos macros vs. meta ativa: ${delta>0?'+':''}${delta} kcal (${deltaPct>0?'+':''}${deltaPct.toFixed(1)}%). ${Math.abs(delta)<=100?'Distribuição próxima da meta.':'Use o ajuste assistido ou revise os g/kg.'}`;macroBalance.className=`macro-target-balance${Math.abs(delta)<=100?' ok':' warning'}`;}else{macroBalance.textContent='Defina uma meta calórica para comparar a energia estimada dos macros.';macroBalance.className='macro-target-balance';}
+    if(targetCalories>0){const delta=Math.round(result.delta),deltaPct=(result.delta/targetCalories)*100;macroBalance.textContent=`Energia dos macros vs. meta ativa: ${delta>0?'+':''}${delta} kcal (${deltaPct>0?'+':''}${deltaPct.toFixed(1)}%). ${Math.abs(delta)<=100?'Distribuição próxima da meta.':'+o ajuste assistido ou revise os g/kg.'}`;macroBalance.className=`macro-target-balance${Math.abs(delta)<=100?' ok':' warning'}`;}else{macroBalance.textContent='Defina uma meta calórica para comparar a energia estimada dos macros.';macroBalance.className='macro-target-balance';}
     macroApply.disabled=false;if(macroReconcile)macroReconcile.disabled=!(targetCalories>0);macroApply.dataset.protein=String(result.protein);macroApply.dataset.fat=String(result.fat);macroApply.dataset.carb=String(result.carb);
   };
   const calculateGoal=()=>{
@@ -20714,7 +20714,7 @@ function hpBindMetabolicCalculator(form,context,refreshPlan){
     output.innerHTML=`<div><small>TMB estimada</small><strong>${bmr?Math.round(bmr):'—'}</strong><span>kcal/dia</span></div><div><small>GET estimado</small><strong>${get?Math.round(get):'—'}</strong><span>kcal/dia</span></div><div><small>Fator atividade</small><strong>${factor.toFixed(3)}</strong><span>${esc(HP_ACTIVITY_FACTORS[activity]?.label||'')}</span></div>`;
     note.textContent=bmr?`${formulaLabel}. Resultado é uma estimativa clínica e pode ser ajustado pelo profissional.`:'Preencha peso, altura, idade e sexo para calcular.';
     apply.disabled=!get;apply.dataset.kcal=get?String(Math.round(get)):'';
-    if(activeTarget){const target=Number(form.elements.metaCalorias?.value||0);activeTarget.innerHTML=target>0?`<small>Meta calórica ativa do plano</small><strong>${Math.round(target)} kcal/dia</strong><span>Este é o valor usado para comparar a energia dos macros e o plano prescrito.</span>`:`<small>Meta calórica ativa do plano</small><strong>Não definida</strong><span>Use o GET ou um alvo de objetivo para preencher a meta do plano.</span>`;}
+    if(activeTarget){const target=Number(form.elements.metaCalorias?.value||0);activeTarget.innerHTML=target>0?`<small>Meta calórica ativa do plano</small><strong>${Math.round(target)} kcal/dia</strong><span>Este é o valor usado para comparar a energia dos macros e o plano prescrito.</span>`:`<small>Meta calórica ativa do plano</small><strong>Não definida</strong><span>+o GET ou um alvo de objetivo para preencher a meta do plano.</span>`;}
     calculateGoal();
     if(macroBox&&w>0){const mw=macroBox.querySelector('[name=macroWeight]');if(!mw.dataset.manual)mw.value=String(w);}
     calculateMacros();
@@ -20722,7 +20722,7 @@ function hpBindMetabolicCalculator(form,context,refreshPlan){
   box.querySelectorAll('.metabolic-input-grid input,.metabolic-input-grid select').forEach(x=>x.addEventListener('input',calculate));
   box.querySelectorAll('.metabolic-input-grid select').forEach(x=>x.addEventListener('change',calculate));
   if(goalBox){goalBox.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',()=>{if(x.name==='weightGoalCurrent')x.dataset.manual='1';calculateGoal();}));goalBox.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculateGoal));}
-  if(macroBox){macroBox.querySelectorAll('input').forEach(x=>x.addEventListener('input',()=>{if(x.name==='macroWeight')x.dataset.manual='1';calculateMacros();}));macroBox.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculateMacros));form.elements.metaCalorias?.addEventListener('input',()=>{calculateMacros();const target=Number(form.elements.metaCalorias?.value||0);if(activeTarget)activeTarget.innerHTML=target>0?`<small>Meta calórica ativa do plano</small><strong>${Math.round(target)} kcal/dia</strong><span>Este é o valor usado para comparar a energia dos macros e o plano prescrito.</span>`:`<small>Meta calórica ativa do plano</small><strong>Não definida</strong><span>Use o GET ou um alvo de objetivo para preencher a meta do plano.</span>`;});}
+  if(macroBox){macroBox.querySelectorAll('input').forEach(x=>x.addEventListener('input',()=>{if(x.name==='macroWeight')x.dataset.manual='1';calculateMacros();}));macroBox.querySelectorAll('select').forEach(x=>x.addEventListener('change',calculateMacros));form.elements.metaCalorias?.addEventListener('input',()=>{calculateMacros();const target=Number(form.elements.metaCalorias?.value||0);if(activeTarget)activeTarget.innerHTML=target>0?`<small>Meta calórica ativa do plano</small><strong>${Math.round(target)} kcal/dia</strong><span>Este é o valor usado para comparar a energia dos macros e o plano prescrito.</span>`:`<small>Meta calórica ativa do plano</small><strong>Não definida</strong><span>+o GET ou um alvo de objetivo para preencher a meta do plano.</span>`;});}
   apply.onclick=()=>{const kcal=Number(apply.dataset.kcal||0);if(!kcal)return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('GET aplicado como meta calórica. Revise antes de salvar.');};
   if(goalApply)goalApply.onclick=()=>{const kcal=Number(goalApply.dataset.kcal||0);if(!kcal)return;const needsReview=goalApply.dataset.belowBmr==='true'||goalApply.dataset.aggressive==='true';if(needsReview&&!confirm(`O alvo de ${Math.round(kcal)} kcal/dia exige revisão profissional por estar abaixo da TMB estimada e/ou representar ritmo agressivo. Deseja aplicar mesmo assim?`))return;form.elements.metaCalorias.value=Math.round(kcal);form.elements.metaCalorias.dispatchEvent(new Event('input',{bubbles:true}));refreshPlan?.();toast('Alvo energético aplicado. A projeção continua editável e deve ser revisada pelo profissional.');};
   if(macroReconcile)macroReconcile.onclick=()=>{
@@ -20749,7 +20749,7 @@ openMealPlanForm=async function(p,existingPlan=null){
     const initialMeals=existingPlan?.refeicoes?.length?existingPlan.refeicoes:Array.from({length:Math.max(1,Math.min(6,Number(tuning?.meals||1)))},(_,i)=>({nome:i===0?'Café da manhã':`Refeição ${i+1}`,horario:i===0?'08:00':null,itens:[]}));
     const metaVal=(key)=>existingPlan?.[key]??'';
     box.innerHTML=`<div class="modal-heading"><button type="button" class="back-link clinical-back">← Voltar</button><span class="eyebrow">NUTRITION BUILDER</span><h2>${existingPlan?'Editar plano alimentar':'Novo plano alimentar'}</h2><p>${esc(p.nome)} • ${alimentos.length} alimento(s) disponíveis</p></div>
-      ${tuning?`<section class="nutrition-builder-context"><div><span class="eyebrow">CONTEXTO DA SUGESTÃO PROFISSIONAL</span><strong>${esc(tuning.goal||'Objetivo definido')}</strong><small>${tuning.meals||'—'} refeições/dia • ${esc(tuning.nutrition||'direção nutricional a revisar')}</small></div><p>${esc(tuning.preferences||'Sem preferências adicionais registradas.')}</p><small>Use como referência. O plano continua totalmente editável pelo profissional.</small></section>`:''}
+      ${tuning?`<section class="nutrition-builder-context"><div><span class="eyebrow">CONTEXTO DA SUGESTÃO PROFISSIONAL</span><strong>${esc(tuning.goal||'Objetivo definido')}</strong><small>${tuning.meals||'—'} refeições/dia • ${esc(tuning.nutrition||'direção nutricional a revisar')}</small></div><p>${esc(tuning.preferences||'Sem preferências adicionais registradas.')}</p><small>+como referência. O plano continua totalmente editável pelo profissional.</small></section>`:''}
       <form id="nutritionBuilder2Form" class="clinical-form nutrition-builder2-form">
         <div class="form-grid builder-meta">
           ${field('Nome do plano','nome','text',`value="${esc(existingPlan?.nome||'Plano alimentar')}" required`)}
@@ -20903,7 +20903,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.8';
+const HP_MVP_VERSION='0.60.9';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -21102,7 +21102,7 @@ function openMvpGuide(){
   box.innerHTML=`<div class="modal-heading">
       <span class="eyebrow">CENTRAL DE AJUDA AESYN</span>
       <h2>Guia rápido da plataforma</h2>
-      <p>Não precisa testar tudo de uma vez. Use este guia para conhecer os principais fluxos da plataforma e localizar rapidamente os recursos do acompanhamento.</p>
+      <p>Não precisa testar tudo de uma vez. +este guia para conhecer os principais fluxos da plataforma e localizar rapidamente os recursos do acompanhamento.</p>
     </div>
     <div class="mvp-guide-grid">
       ${hpMvpChecklistItem('01','Acesse o prontuário','Localize o paciente e consulte rapidamente histórico, avaliações e informações relevantes do acompanhamento.')}
@@ -21110,11 +21110,11 @@ function openMvpGuide(){
       ${hpMvpChecklistItem('03','Prescreva o plano','Organize treino, alimentação, metas, sessões e progressões conforme a estratégia definida para o paciente.')}
       ${hpMvpChecklistItem('04','Acompanhe a evolução','Consulte check-ins, gráficos, alertas, pendências, follow-up e sinais de evolução ao longo do tempo.')}
       ${hpMvpChecklistItem('05','Visualize como paciente','Confira como o plano, os treinos e as informações de saúde aparecem na experiência do paciente.')}
-      ${hpMvpChecklistItem('06','Use a Central de Ajuda','Volte a este guia sempre que precisar localizar os principais fluxos da plataforma.')}
+      ${hpMvpChecklistItem('06','+a Central de Ajuda','Volte a este guia sempre que precisar localizar os principais fluxos da plataforma.')}
     </div>
     <div class="mvp-feedback-card">
       <strong>Precisa registrar uma observação?</strong>
-      <p>Use o modelo de suporte para informar a tela, o fluxo e o que aconteceu. Isso facilita a identificação e o acompanhamento da solicitação.</p>
+      <p>+o modelo de suporte para informar a tela, o fluxo e o que aconteceu. Isso facilita a identificação e o acompanhamento da solicitação.</p>
     </div>
     <div class="form-actions"><button class="secondary" type="button" id="copyMvpFeedbackTemplate">Copiar modelo de suporte</button><button class="primary" type="button" data-close-mvp-guide>Fechar ajuda</button></div>`;
 
@@ -21761,7 +21761,7 @@ function hpRenderWorkoutProfessionalFlow(d){
           <button class="ghost workout-save-template-v1812" data-workout-id="${t.id}">Salvar como modelo</button>
           <button class="ghost workout-progress-v1812" data-workout-id="${t.id}">Criar progressão</button>
         </div>
-      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano de treino cadastrado. Use “+ Novo plano” para começar pelo Treino A.')}</section>`;
+      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano de treino cadastrado. +“+ Novo plano” para começar pelo Treino A.')}</section>`;
 
   $('#newWorkoutFromTabV1812').onclick=()=>openWorkoutForm(patient);
   $('#workoutLibraryV1812').onclick=()=>openWorkoutLibrary(patient);
@@ -21816,7 +21816,7 @@ function hpRenderNutritionProfessionalFlow(d){
           <button class="secondary nutrition-progress-v1812" data-plan-id="${p.id}">Criar progressão</button>
           <button class="ghost nutrition-save-template-v1812" data-plan-id="${p.id}">Salvar como modelo</button>
         </div>
-      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano alimentar registrado. Use “+ Montar dieta” para criar o primeiro.')}</section>`;
+      </article>`).join('')}</div>`:sectionEmpty('Nenhum plano alimentar registrado. +“+ Montar dieta” para criar o primeiro.')}</section>`;
 
   $('#newMealPlanV1812').onclick=()=>openMealPlanForm(patient);
   $('#nutritionDietModelsV1812').onclick=()=>openDietMealLibrary(patient,'plans');
@@ -22265,7 +22265,7 @@ function hpChatContextOptions(selected='Geral'){
   return items.map(([v,l])=>`<option value="${v}" ${v===selected?'selected':''}>${l}</option>`).join('');
 }
 function hpChatMessages(items=[]){
-  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div><p>${esc(m.mensagem||'')}</p></div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>Use este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
+  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div><p>${esc(m.mensagem||'')}</p></div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>+este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
 }
 function hpChatShell(data,{professional=false,patient=null}={}){
   const person=professional?(patient?.nome||data?.paciente?.nome||'Paciente'):(data?.profissional?.nome||'Seu profissional');
@@ -22556,6 +22556,106 @@ function hpFillMealPlanV01932(form,list,alimentos,plan){
 }
 
 
+
+// ===== v0.60.9 — Professional Nutrition Planning Engine 3.0 =====
+const HP_NUTRITION_PLANNING_ENGINE_V0609='v0.60.9';
+function hpNutritionPlanningStepsV0609(){
+  return `<nav class="nutrition-planning-steps-v0609" aria-label="Etapas do planejamento nutricional">
+    <button type="button" data-nutrition-step-v0609="nutritionDataV0609"><b>1</b><span>Dados</span></button>
+    <button type="button" data-nutrition-step-v0609="nutritionEnergyV0609"><b>2</b><span>Gasto energético</span></button>
+    <button type="button" data-nutrition-step-v0609="weightGoalPlanner"><b>3</b><span>Objetivo</span></button>
+    <button type="button" data-nutrition-step-v0609="nutritionMacrosV0609"><b>4</b><span>Macros</span></button>
+    <button type="button" data-nutrition-step-v0609="nutritionMealsV0609"><b>5</b><span>Refeições</span></button>
+    <button type="button" data-nutrition-step-v0609="nutritionReviewV0609"><b>6</b><span>Revisão</span></button>
+  </nav>`;
+}
+function hpNutritionPlanningTotalsV0609(form,alimentos){
+  const foodMap=new Map((alimentos||[]).map(x=>[String(x.id),x]));
+  const total={kcal:0,p:0,c:0,g:0,fib:0};
+  form.querySelectorAll('.meal-item-builder').forEach(r=>{
+    const a=foodMap.get(String(r.querySelector('[name=foodId]')?.value||''));if(!a)return;
+    const grams=Number(r.querySelector('[name=grams]')?.value||0),factor=grams/100;
+    total.kcal+=Number(a.caloriasPor100g||0)*factor;
+    total.p+=Number(a.proteinasPor100g||0)*factor;
+    total.c+=Number(a.carboidratosPor100g||0)*factor;
+    total.g+=Number(a.gordurasPor100g||0)*factor;
+    total.fib+=Number(a.fibrasPor100g||0)*factor;
+  });
+  const suppMap=new Map((window.hpSupplementCatalogCurrentV0594||[]).map(x=>[String(x.id),x]));
+  form.querySelectorAll('.supplement-schedule-row-v0594').forEach(r=>{
+    const s=suppMap.get(String(r.querySelector('[name=supplementId]')?.value||''));if(!s)return;
+    const q=Number(r.querySelector('[name=suppQty]')?.value||0);
+    total.kcal+=Number(s.caloriasPorPorcao||0)*q;
+    total.p+=Number(s.proteinasPorPorcaoG||0)*q;
+    total.c+=Number(s.carboidratosPorPorcaoG||0)*q;
+    total.g+=Number(s.gordurasPorPorcaoG||0)*q;
+    total.fib+=Number(s.fibrasPorPorcaoG||0)*q;
+  });
+  return total;
+}
+function hpNutritionPlanningMetricV0609(label,current,target,unit,digits=1){
+  const goal=Number(target||0),diff=current-goal,pct=goal>0?(current/goal)*100:null;
+  const state=goal<=0?'neutral':Math.abs(diff/goal)<=.05?'good':Math.abs(diff/goal)<=.12?'watch':'attention';
+  return `<article class="${state}"><small>${label}</small><strong>${num(current,digits)} ${unit}</strong>
+    <span>${goal>0?`meta ${num(goal,digits)} • ${pct.toFixed(0)}%`:'meta não definida'}</span>
+    <em>${goal>0?(diff>0?`excedido ${num(diff,digits)} ${unit}`:`restante ${num(Math.abs(diff),digits)} ${unit}`):'defina uma meta'}</em></article>`;
+}
+function hpRefreshNutritionPlanningSummaryV0609(form,alimentos){
+  const host=form?.querySelector('#nutritionPlanningSummaryV0609');if(!host)return;
+  const t=hpNutritionPlanningTotalsV0609(form,alimentos);
+  host.innerHTML=`<div class="nutrition-planning-summary-head-v0609"><div><span class="eyebrow">RESUMO AO VIVO</span><strong>Meta × prescrito</strong></div><small>Atualiza ao editar porções, alimentos ou suplementos.</small></div>
+    <div class="nutrition-planning-summary-grid-v0609">
+      ${hpNutritionPlanningMetricV0609('Energia',t.kcal,form.elements.metaCalorias?.value,'kcal',0)}
+      ${hpNutritionPlanningMetricV0609('Proteína',t.p,form.elements.metaProteinasG?.value,'g')}
+      ${hpNutritionPlanningMetricV0609('Carboidrato',t.c,form.elements.metaCarboidratosG?.value,'g')}
+      ${hpNutritionPlanningMetricV0609('Gordura',t.g,form.elements.metaGordurasG?.value,'g')}
+      ${hpNutritionPlanningMetricV0609('Fibra',t.fib,form.elements.metaFibrasG?.value,'g')}
+    </div>`;
+}
+function hpBindNutritionPlanningEngineV0609(form,alimentos){
+  form.querySelectorAll('[data-nutrition-step-v0609]').forEach(btn=>btn.onclick=()=>{
+    const id=btn.dataset.nutritionStepV0609;
+    let target=form.querySelector(`#${id}`)||document.getElementById(id);
+    if(!target&&id==='weightGoalPlanner')target=form.querySelector('[data-weight-goal-planner]');
+    target?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  });
+  const refresh=()=>hpRefreshNutritionPlanningSummaryV0609(form,alimentos);
+  form.addEventListener('input',refresh);form.addEventListener('change',refresh);refresh();
+}
+async function hpOpenDietModelStudioV0609(){
+  const box=$('#clinicalActionContent'),modal=$('#clinicalActionModal');
+  modal.classList.add('nutrition-modal-open','workout-modal-open','workout-execution-readable-v0605');modal.classList.remove('hidden');
+  box.innerHTML=`<div class="modal-heading"><span class="eyebrow">DIET MODEL STUDIO • v0.60.9</span><h2>Montar dieta modelo</h2><p>Crie um modelo reutilizável sem paciente vinculado. Depois, aplique uma cópia independente a qualquer paciente.</p></div><div class="empty">Carregando catálogo alimentar...</div>`;
+  try{
+    const alimentos=await api('/api/alimentos');
+    if(!alimentos.length){box.innerHTML+=`<div class="empty">Cadastre alimentos antes de montar um modelo.</div>`;return}
+    box.innerHTML=`<div class="modal-heading"><span class="eyebrow">DIET MODEL STUDIO • v0.60.9</span><h2>Montar dieta modelo</h2><p>O modelo-base permanece independente. Ao aplicar a um paciente, o AESYN cria uma cópia editável.</p></div>
+      <form id="dietModelStudioV0609" class="clinical-form nutrition-model-studio-v0609">
+        ${hpNutritionPlanningStepsV0609()}
+        <section id="nutritionDataV0609" class="nutrition-model-meta-v0609"><div class="form-grid builder-meta">${field('Nome do modelo','nome','text','value="Nova dieta modelo" required')}${field('Objetivo / uso','objetivo','text','placeholder="Ex.: performance, recomposição, manutenção"')}${area('Descrição','descricao','placeholder="Quando usar este modelo?"')}</div></section>
+        <section id="nutritionMacrosV0609" class="nutrition-target-builder"><div><strong>Metas-base do modelo</strong><small>Referências editáveis. O profissional adapta ao paciente antes de publicar.</small></div><div class="nutrition-target-inputs">${field('Calorias','metaCalorias','number','step="1" min="1"')}${field('Proteína (g)','metaProteinasG','number','step="0.1" min="0"')}${field('Carboidrato (g)','metaCarboidratosG','number','step="0.1" min="0"')}${field('Gordura (g)','metaGordurasG','number','step="0.1" min="0"')}${field('Fibra (g)','metaFibrasG','number','step="0.1" min="0"')}</div></section>
+        <section id="nutritionMealsV0609"><div class="builder-head"><div><h3>Refeições do modelo</h3><p>Estruture refeições, alimentos, porções e equivalências sem vincular a um paciente.</p></div><button type="button" class="secondary" id="dietModelAddMealV0609">+ Refeição</button></div><div id="dietModelMealsV0609" class="builder-list"></div></section>
+        <aside id="nutritionPlanningSummaryV0609" class="nutrition-planning-summary-v0609"></aside>
+        <section id="nutritionReviewV0609" class="nutrition-model-safety-v0609"><strong>Controle profissional</strong><span>Use os detalhes abaixo antes de decidir. O AESYN calcula e organiza. Estratégia clínica, aplicação ao paciente e publicação continuam sob decisão profissional.</span></section>
+        <div class="form-actions builder-actions"><button type="button" class="secondary" id="dietModelLibraryV0609">Biblioteca</button><button type="button" class="ghost" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">Salvar modelo</button></div>
+      </form>`;
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;$('#dietModelLibraryV0609').onclick=()=>hpOpenNutritionTemplates2(null,'plans');
+    const form=$('#dietModelStudioV0609'),list=$('#dietModelMealsV0609');let idx=0;
+    const add=()=>{idx++;list.insertAdjacentHTML('beforeend',mealBuilder(alimentos,idx));bindMealBuilder(list.lastElementChild,alimentos);hpRefreshNutritionPlanningSummaryV0609(form,alimentos)};
+    $('#dietModelAddMealV0609').onclick=add;add();hpBindNutritionPlanningEngineV0609(form,alimentos);
+    form.onsubmit=async e=>{
+      e.preventDefault();const button=form.querySelector('button[type=submit]');button.disabled=true;
+      try{
+        const refeicoes=[...form.querySelectorAll('.meal-builder')].map((m,i)=>({nome:m.querySelector('[name=mealName]').value.trim(),horario:m.querySelector('[name=mealTime]').value||null,ordem:i+1,observacoes:null,itens:[...m.querySelectorAll('.meal-item-builder')].filter(r=>r.querySelector('[name=foodId]').value).map(r=>({alimentoId:r.querySelector('[name=foodId]').value,quantidade:Number(r.querySelector('[name=qty]').value||0),unidade:r.querySelector('[name=unit]').value.trim(),quantidadeGramas:Number(r.querySelector('[name=grams]').value||0),observacao:null,substituicoes:[...r.querySelectorAll('.substitution-row')].filter(x=>x.querySelector('[name=subFood]').value).map(x=>({alimentoId:x.querySelector('[name=subFood]').value,quantidade:Number(x.querySelector('[name=subQty]').value||0),unidade:x.querySelector('[name=subUnit]').value.trim(),quantidadeGramas:Number(x.querySelector('[name=subGrams]').value||0),observacao:null}))}))}));
+        if(refeicoes.some(x=>!x.nome))throw new Error('Informe o nome de todas as refeições.');
+        if(!refeicoes.some(x=>x.itens.length))throw new Error('Adicione pelo menos um alimento ao modelo.');
+        const payload={nome:val(form,'nome'),descricao:val(form,'descricao')||null,objetivo:val(form,'objetivo')||null,ativo:true,metaCalorias:dec(form,'metaCalorias'),metaProteinasG:dec(form,'metaProteinasG'),metaCarboidratosG:dec(form,'metaCarboidratosG'),metaGordurasG:dec(form,'metaGordurasG'),metaFibrasG:dec(form,'metaFibrasG'),refeicoes};
+        await api('/api/modelos-planos-alimentares',{method:'POST',body:JSON.stringify(payload)});
+        toast('Dieta modelo salva na biblioteca.');await hpOpenNutritionTemplates2(null,'plans');
+      }catch(err){toast(err.message,true)}finally{button.disabled=false}
+    };
+  }catch(err){box.innerHTML=`<div class="empty"><strong>Não foi possível abrir o Model Studio.</strong><span>${esc(err.message)}</span><button class="primary" data-close-clinical-form>Fechar</button></div>`;$('[data-close-clinical-form]').onclick=closeClinicalAction}
+}
 // ===== v0.59.4 — Supplement Scheduling & Nutrition Integration =====
 const HP_SUPPLEMENT_SCHEDULING_V0594='v0.59.4';
 const hpSupplementContextsV0594=['Com refeição','Pré-treino','Pós-treino','Ao acordar','Antes de dormir','Entre refeições','Outro'];
@@ -22599,14 +22699,14 @@ async function openMealPlanFormV01932(p,plan=null){
   const editing=!!plan?.id,box=$('#clinicalActionContent');$('#clinicalActionModal').classList.add('nutrition-modal-open');$('#clinicalActionModal').classList.remove('hidden');
   box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION BUILDER • v0.19.32</span><h2>${editing?'Editar dieta':'Nova dieta'}</h2><p>${esc(p.nome)} • carregando catálogo...</p></div>`;
   try{
-    const [alimentos,suplementosCatalogo,treinosPaciente]=await Promise.all([api('/api/alimentos'),api('/api/suplementos'),api(`/api/pacientes/${p.id}/treinos`)]);window.hpSupplementCatalogCurrentV0594=suplementosCatalogo;window.hpSupplementTrainingPlansV0595=treinosPaciente;if(!alimentos.length){box.innerHTML+=`<div class="empty">Nenhum alimento ativo. Use “Catálogo de alimentos” para cadastrar a base antes de montar a dieta.</div><div class="form-actions"><button class="primary" id="emptyFoodCatalogV01932">Abrir catálogo de alimentos</button></div>`;$('#emptyFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;return}
+    const [alimentos,suplementosCatalogo,treinosPaciente]=await Promise.all([api('/api/alimentos'),api('/api/suplementos'),api(`/api/pacientes/${p.id}/treinos`)]);window.hpSupplementCatalogCurrentV0594=suplementosCatalogo;window.hpSupplementTrainingPlansV0595=treinosPaciente;const metabolicContext=await hpLoadMetabolicContext(p);if(!alimentos.length){box.innerHTML+=`<div class="empty">Nenhum alimento ativo. +“Catálogo de alimentos” para cadastrar a base antes de montar a dieta.</div><div class="form-actions"><button class="primary" id="emptyFoodCatalogV01932">Abrir catálogo de alimentos</button></div>`;$('#emptyFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;return}
     box.innerHTML=`<div class="modal-heading"><span class="eyebrow">NUTRITION BUILDER • v0.19.32</span><h2>${editing?'Editar dieta':'Nova dieta'}</h2><p>${esc(p.nome)} • ${alimentos.length} alimento(s) ativos</p></div>
-    <form id="mealPlanForm" class="clinical-form"><div class="form-grid builder-meta">${field('Nome do plano','nome','text',`value="${esc(plan?.nome||'Plano alimentar')}" required`)}${field('Data de início','dataInicio','date',`value="${plan?.dataInicio?String(plan.dataInicio).slice(0,10):todayISO()}" required`)}${field('Data final','dataFim','date',plan?.dataFim?`value="${String(plan.dataFim).slice(0,10)}"`:'')}${area('Orientações gerais','observacoes')}</div>
-    <section class="nutrition-target-builder"><div><strong>Metas nutricionais diárias</strong><small>Compare meta × prescrito antes de publicar.</small></div><div class="nutrition-target-inputs">${field('Calorias','metaCalorias','number','step="1" min="1"')}${field('Proteína (g)','metaProteinasG','number','step="0.1" min="0"')}${field('Carboidrato (g)','metaCarboidratosG','number','step="0.1" min="0"')}${field('Gordura (g)','metaGordurasG','number','step="0.1" min="0"')}${field('Fibra (g)','metaFibrasG','number','step="0.1" min="0"')}</div><div id="planTargetPreview" class="nutrition-target-preview"></div></section>
-    <div class="builder-head"><div><h3>Refeições e equivalências</h3><p>Monte refeições, itens e substituições equivalentes.</p></div><div class="nutrition-top-actions"><button type="button" class="ghost" id="builderFoodCatalogV01932">Catálogo de alimentos</button><button type="button" class="secondary" id="addMeal">+ Refeição</button></div></div><div id="mealBuilders" class="builder-list"></div>
+    <form id="mealPlanForm" class="clinical-form nutrition-planning-engine-v0609">${hpNutritionPlanningStepsV0609()}<section id="nutritionDataV0609"><div class="form-grid builder-meta">${field('Nome do plano','nome','text',`value="${esc(plan?.nome||'Plano alimentar')}" required`)}${field('Data de início','dataInicio','date',`value="${plan?.dataInicio?String(plan.dataInicio).slice(0,10):todayISO()}" required`)}${field('Data final','dataFim','date',plan?.dataFim?`value="${String(plan.dataFim).slice(0,10)}"`:'')}${area('Orientações gerais','observacoes')}</div>
+    <section id="nutritionEnergyV0609">${hpMetabolicCalculatorCard(metabolicContext)}<div class="nutrition-professional-context-v0609"><strong>Referência clínica</strong><span>Use como referência. A ficha continua totalmente editável pelo profissional.</span></div></section><section id="nutritionMacrosV0609" class="nutrition-target-builder"><div><strong>Metas nutricionais diárias</strong><small>Compare meta × prescrito antes de publicar.</small></div><div class="nutrition-target-inputs">${field('Calorias','metaCalorias','number','step="1" min="1"')}${field('Proteína (g)','metaProteinasG','number','step="0.1" min="0"')}${field('Carboidrato (g)','metaCarboidratosG','number','step="0.1" min="0"')}${field('Gordura (g)','metaGordurasG','number','step="0.1" min="0"')}${field('Fibra (g)','metaFibrasG','number','step="0.1" min="0"')}</div><div id="planTargetPreview" class="nutrition-target-preview"></div></section>
+    <div id="nutritionMealsV0609" class="builder-head"><div><h3>Refeições e equivalências</h3><p>Monte refeições, itens e substituições equivalentes.</p></div><div class="nutrition-top-actions"><button type="button" class="ghost" id="builderFoodCatalogV01932">Catálogo de alimentos</button><button type="button" class="secondary" id="addMeal">+ Refeição</button></div></div><div id="mealBuilders" class="builder-list"></div>
     <section class="supplement-schedule-builder-v0594"><div class="builder-head"><div><span class="eyebrow">SUPLEMENTAÇÃO • v0.59.5</span><h3>Suplementos no cronograma</h3><p>Inclua itens do catálogo com porções, horário, contexto e sessão de treino opcional. Calorias/macros cadastrados entram automaticamente nos totais do plano.</p></div><button type="button" class="secondary" id="addSupplementV0594" ${suplementosCatalogo.length?'':'disabled'}>+ Suplemento</button></div><div id="supplementScheduleListV0594" class="supplement-schedule-list-v0594"></div>${suplementosCatalogo.length?'':'<div class="empty compact">Nenhum suplemento ativo no catálogo. Cadastre em Nutrição → Suplementos.</div>'}<div class="supplement-clinical-guard-v0594"><strong>Decisão profissional</strong><span>O AESYN organiza o cronograma, mas não escolhe dose, necessidade ou indicação automaticamente.</span></div></section>
-    <div class="plan-preview"><small>TOTAL ESTIMADO DO PLANO</small><div id="planMacroPreview" class="macro-summary"><b>0 kcal</b><span>P 0g</span><span>C 0g</span><span>G 0g</span></div></div><div class="form-actions builder-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">${editing?'Salvar alterações':'Criar dieta'}</button></div></form>`;
-    $('[data-close-clinical-form]').onclick=closeClinicalAction;$('#builderFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;const f=$('#mealPlanForm'),list=$('#mealBuilders'),supplementList=$('#supplementScheduleListV0594');let mealIndex=0;
+    <aside id="nutritionPlanningSummaryV0609" class="nutrition-planning-summary-v0609"></aside><div id="nutritionReviewV0609" class="plan-preview"><small>TOTAL ESTIMADO DO PLANO</small><div id="planMacroPreview" class="macro-summary"><b>0 kcal</b><span>P 0g</span><span>C 0g</span><span>G 0g</span></div></div><div class="form-actions builder-actions"><button type="button" class="secondary" data-close-clinical-form>Cancelar</button><button class="primary" type="submit">${editing?'Salvar alterações':'Criar dieta'}</button></div></form>`;
+    $('[data-close-clinical-form]').onclick=closeClinicalAction;$('#builderFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;const f=$('#mealPlanForm'),list=$('#mealBuilders'),supplementList=$('#supplementScheduleListV0594');hpBindMetabolicCalculator(f,metabolicContext,()=>{updatePlanPreview(alimentos);hpRefreshNutritionPlanningSummaryV0609(f,alimentos)});hpBindNutritionPlanningEngineV0609(f,alimentos);let mealIndex=0;
     const addMeal=()=>{mealIndex++;list.insertAdjacentHTML('beforeend',mealBuilder(alimentos,mealIndex));bindMealBuilder(list.lastElementChild,alimentos);hpRefreshSupplementMealOptionsV0594(f)};$('#addMeal').onclick=addMeal;
     if(editing){hpFillMealPlanV01932(f,list,alimentos,plan);mealIndex=(plan.refeicoes||[]).length}else addMeal();
     const existingSupplements=(plan?.suplementos||[]).map(x=>({...x,refeicaoOrdem:x.refeicaoId?((plan?.refeicoes||[]).find(r=>String(r.id)===String(x.refeicaoId))?.ordem??null):null}));
@@ -22621,9 +22721,9 @@ openMealPlanForm=openMealPlanFormV01932;
 
 hpRenderNutritionProfessionalFlow=function(d){
   const box=$('#patientTabContent'),planos=d.planos||[],patient=d.p||d.portal?.paciente||{id:state.patientId,nome:'Paciente'};
-  box.innerHTML=`<section class="card full-card pro-flow-card nutrition-pro-flow" data-pro-nutrition-flow="v0.19.32"><div class="card-head pro-flow-head"><div><span class="eyebrow">AESYN • PROFESSIONAL NUTRITION • v0.19.32</span><h3>Treino e nutrição • Nutrição</h3><small>Crie, edite, duplique, arquive e publique dietas com refeições, alimentos, equivalências e metas sem sair do paciente.</small></div><div class="nutrition-top-actions pro-flow-actions"><button class="ghost" id="nutritionFoodCatalogV01932">Alimentos</button><button class="ghost" id="nutritionSupplementCatalogV0593">Suplementos</button><button class="ghost" id="nutritionMealModelsV1812">Refeições</button><button class="secondary" id="nutritionDietModelsV1812">Modelos de dieta</button><button class="primary" id="newMealPlanV1812">+ Criar dieta</button></div></div>
+  box.innerHTML=`<section class="card full-card pro-flow-card nutrition-pro-flow" data-pro-nutrition-flow="v0.19.32"><div class="card-head pro-flow-head"><div><span class="eyebrow">AESYN • PROFESSIONAL NUTRITION • v0.19.32</span><h3>Treino e nutrição • Nutrição</h3><small>Crie, edite, duplique, arquive e publique dietas com refeições, alimentos, equivalências e metas sem sair do paciente.</small></div><div class="nutrition-top-actions pro-flow-actions"><button class="ghost" id="nutritionFoodCatalogV01932">Alimentos</button><button class="ghost" id="nutritionSupplementCatalogV0593">Suplementos</button><button class="ghost" id="nutritionMealModelsV1812">Refeições</button><button class="secondary" id="nutritionDietModelsV1812">Montar dieta modelo</button><button class="primary" id="newMealPlanV1812">Nova dieta</button></div></div>
   <div class="nutrition-catalog-ready"><div><strong>Workspace nutricional completo</strong><span>Metas, refeições, substituições/equivalências, modelos e histórico ficam conectados ao paciente.</span></div><button class="secondary" id="nutritionReviewPublishV01932">Revisar & publicar</button></div>
-  ${planos.length?`<div class="nutrition-plan-grid-v1812">${planos.map(p=>`<article class="food-plan nutrition-version-card pro-nutrition-plan-card" data-pro-nutrition-plan="${p.id}"><div class="record-top"><div><span class="eyebrow">${esc(p.status)} • V${p.versao||1} • início ${fmtDate(p.dataInicio)}</span><h4>${esc(p.nome)}</h4><small>${esc(p.profissionalNome||'')}</small></div><div class="macro-summary"><b>${num(p.totaisDiarios?.calorias,0)} kcal</b><span>P ${num(p.totaisDiarios?.proteinasG)}g</span><span>C ${num(p.totaisDiarios?.carboidratosG)}g</span><span>G ${num(p.totaisDiarios?.gordurasG)}g</span></div></div>${nutritionTargetPanel(p)}<div class="nutrition-meal-summary-v1812">${(p.refeicoes||[]).map((r,i)=>`<div><span>${i+1}</span><strong>${esc(r.nome)}</strong><small>${r.horario?String(r.horario).slice(0,5):'--:--'} • ${(r.itens||[]).length} item(ns) • ${num(r.totais?.calorias,0)} kcal</small></div>`).join('')||'<div class="empty compact">Sem refeições cadastradas.</div>'}</div><div class="nutrition-plan-actions pro-plan-actions"><button class="primary nutrition-edit-v1812" data-plan-id="${p.id}">Editar dieta</button><button class="secondary nutrition-progress-v1812" data-plan-id="${p.id}">Duplicar / progressão</button><button class="ghost nutrition-save-template-v1812" data-plan-id="${p.id}">Salvar como modelo</button>${hpNutritionStatusAction(p,patient)}</div></article>`).join('')}</div>`:sectionEmpty('Nenhuma dieta registrada. Use “+ Criar dieta” para começar.')}</section>`;
+  ${planos.length?`<div class="nutrition-plan-grid-v1812">${planos.map(p=>`<article class="food-plan nutrition-version-card pro-nutrition-plan-card" data-pro-nutrition-plan="${p.id}"><div class="record-top"><div><span class="eyebrow">${esc(p.status)} • V${p.versao||1} • início ${fmtDate(p.dataInicio)}</span><h4>${esc(p.nome)}</h4><small>${esc(p.profissionalNome||'')}</small></div><div class="macro-summary"><b>${num(p.totaisDiarios?.calorias,0)} kcal</b><span>P ${num(p.totaisDiarios?.proteinasG)}g</span><span>C ${num(p.totaisDiarios?.carboidratosG)}g</span><span>G ${num(p.totaisDiarios?.gordurasG)}g</span></div></div>${nutritionTargetPanel(p)}<div class="nutrition-meal-summary-v1812">${(p.refeicoes||[]).map((r,i)=>`<div><span>${i+1}</span><strong>${esc(r.nome)}</strong><small>${r.horario?String(r.horario).slice(0,5):'--:--'} • ${(r.itens||[]).length} item(ns) • ${num(r.totais?.calorias,0)} kcal</small></div>`).join('')||'<div class="empty compact">Sem refeições cadastradas.</div>'}</div><div class="nutrition-plan-actions pro-plan-actions"><button class="primary nutrition-edit-v1812" data-plan-id="${p.id}">Editar dieta</button><button class="secondary nutrition-progress-v1812" data-plan-id="${p.id}">Duplicar / progressão</button><button class="ghost nutrition-save-template-v1812" data-plan-id="${p.id}">Salvar como modelo</button>${hpNutritionStatusAction(p,patient)}</div></article>`).join('')}</div>`:sectionEmpty('Nenhuma dieta registrada. +“+ Criar dieta” para começar.')}</section>`;
   $('#newMealPlanV1812').onclick=()=>openMealPlanForm(patient);$('#nutritionDietModelsV1812').onclick=()=>openDietMealLibrary(patient,'plans');$('#nutritionMealModelsV1812').onclick=()=>openDietMealLibrary(patient,'meals');$('#nutritionFoodCatalogV01932').onclick=hpOpenFoodCatalogV01932;$('#nutritionSupplementCatalogV0593').onclick=hpOpenSupplementCatalogV0593;$('#nutritionReviewPublishV01932').onclick=()=>openPrescriptionReview(patient);
   $$('.nutrition-edit-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openMealPlanForm(patient,plan)});
   $$('.nutrition-progress-v1812').forEach(b=>b.onclick=()=>{const plan=planos.find(x=>String(x.id)===String(b.dataset.planId));if(plan)openNutritionProgression(patient,plan)});
@@ -22632,6 +22732,33 @@ hpRenderNutritionProfessionalFlow=function(d){
 };
 
 
+
+// v0.60.9-r5: robust bridge for the existing professional CTA.
+// Capture phase avoids depending on how older code bound this button.
+function hpInstallNutritionModelCtaBridgeV0609(){
+  if(window.__hpNutritionModelCtaBridgeV0609)return;
+  window.__hpNutritionModelCtaBridgeV0609=true;
+  document.addEventListener('click',event=>{
+    const button=event.target.closest?.('#nutritionDietModelsV1812');
+    if(!button)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    hpOpenDietModelStudioV0609();
+  },true);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hpInstallNutritionModelCtaBridgeV0609,{once:true});
+else hpInstallNutritionModelCtaBridgeV0609();
+
+// v0.60.9: keep existing server library, add first-class model authoring without patient.
+const __hpOpenNutritionTemplates2V0609=hpOpenNutritionTemplates2;
+hpOpenNutritionTemplates2=async function(patient=null,initialTab='plans'){
+  await __hpOpenNutritionTemplates2V0609(patient,initialTab);
+  if(patient)return;
+  const guidance=document.querySelector('.nutrition-template-guidance');if(!guidance||guidance.querySelector('#nutritionModelStudioEntryV0609'))return;
+  const button=document.createElement('button');button.type='button';button.className='primary';button.id='nutritionModelStudioEntryV0609';button.textContent='Montar dieta modelo';
+  button.onclick=hpOpenDietModelStudioV0609;guidance.appendChild(button);
+};
+openDietMealLibrary=hpOpenNutritionTemplates2;
 // ===== v0.19.33 — Workout CRUD & Multi-Plan Completion =====
 const HP_WORKOUT_CRUD_MULTI_PLAN='v0.19.33';
 
@@ -22673,7 +22800,7 @@ hpRenderWorkoutProfessionalFlow=function(d){
         <button class="primary" id="newWorkoutFromTabV1812">+ Novo plano</button>
       </div>
     </div>
-    <div class="workout-multiplan-guidance-v01933"><div><strong>Múltiplos planos são permitidos</strong><span>Use planos separados para força, cardio, recuperação ou outros contextos. Arquivar/desvincular retira da rotina ativa sem apagar o histórico.</span></div><span class="profile-context-badge">${ativos} ativo(s)</span></div>
+    <div class="workout-multiplan-guidance-v01933"><div><strong>Múltiplos planos são permitidos</strong><span>+planos separados para força, cardio, recuperação ou outros contextos. Arquivar/desvincular retira da rotina ativa sem apagar o histórico.</span></div><span class="profile-context-badge">${ativos} ativo(s)</span></div>
     ${treinos.length?`<div class="workout-plan-grid pro-workout-plan-grid workout-plan-grid-v01933">${treinos.map(t=>`
       <article class="workout-plan-card pro-workout-plan-card ${String(t.status||'').toLowerCase()==='ativo'?'':'is-archived'}" data-workout-plan="${t.id}">
         <div class="record-top"><div><span class="eyebrow">V${t.versao||1} • ${fmtDate(t.dataInicio)}${t.dataFim?' — '+fmtDate(t.dataFim):''}</span><h4>${esc(t.nome)}</h4><small>${esc(t.profissionalNome||'')}</small></div><span class="pill ${t.status==='Ativo'?'Ativa':'Agendada'}">${esc(t.status)}</span></div>
@@ -22904,7 +23031,7 @@ function hpChatReferenceV01935(ref){
   return `<div class="care-chat-reference-v01935" data-chat-reference="${esc(ref.tipo)}"><span>${icons[ref.tipo]||'↗'}</span><div><small>Contexto ${esc(ref.tipo)}</small><strong>${esc(title)}</strong></div></div>`;
 }
 hpChatMessages=function(items=[]){
-  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div>${hpChatReferenceV01935(m.referencia)}<p>${esc(m.mensagem||'')}</p>${hpChatStatusV01935(m)}</div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>Use este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
+  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div>${hpChatReferenceV01935(m.referencia)}<p>${esc(m.mensagem||'')}</p>${hpChatStatusV01935(m)}</div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>+este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
 };
 hpChatShell=function(data,{professional=false,patient=null}={}){
   const person=professional?(patient?.nome||data?.paciente?.nome||'Paciente'):(data?.profissional?.nome||'Seu profissional');
@@ -22961,7 +23088,7 @@ const hpPatientTutorialStepsV01937=[
   {key:'checkin',icon:'◉',eyebrow:'PASSO 1 • CHECK-IN',title:'Conte como você está',text:'O check-in diário registra sono, energia, dor e recuperação. Leva poucos segundos e dá contexto para o profissional acompanhar sua resposta ao plano.',action:'Fazer meu check-in',run:()=>openDailyReadiness(null)},
   {key:'workout',icon:'🏋',eyebrow:'PASSO 2 • PRIMEIRO TREINO',title:'Escolha uma sessão publicada e comece',text:'Você pode ter Treino A, B, C, cardio, recuperação ou outros planos ao mesmo tempo. Abra Treino, escolha uma sessão liberada e registre série por série. Nada é substituído só porque você iniciou outra ficha.',action:'Ver meus treinos',view:'treino'},
   {key:'nutrition',icon:'🥗',eyebrow:'PASSO 3 • ALIMENTAÇÃO',title:'Seu plano alimentar fica no bolso',text:'Em Plano você encontra refeições, horários, alimentos e alternativas publicadas. Registre o que aconteceu de verdade quando o fluxo permitir; divergências ajudam o profissional a ajustar a prescrição.',action:'Abrir meu plano',view:'plano'},
-  {key:'chat',icon:'✉',eyebrow:'PASSO 4 • CHAT',title:'Dúvida não precisa esperar a próxima consulta',text:'Use o chat para dúvidas sobre treino, alimentação, exames e recuperação. Arquivos podem ser enviados pela biblioteca e referenciados na conversa para manter o contexto.',action:'Abrir chat',view:'chat'},
+  {key:'chat',icon:'✉',eyebrow:'PASSO 4 • CHAT',title:'Dúvida não precisa esperar a próxima consulta',text:'+o chat para dúvidas sobre treino, alimentação, exames e recuperação. Arquivos podem ser enviados pela biblioteca e referenciados na conversa para manter o contexto.',action:'Abrir chat',view:'chat'},
   {key:'done',icon:'✓',eyebrow:'PRONTO PARA COMEÇAR',title:'Você já sabe o essencial',text:'Comece pela Home e faça o que está previsto para hoje. Quando quiser rever este guia, toque no botão ? ou abra “Tutorial do AESYN” em Meu perfil.'}
 ];
 function hpClosePatientTutorialV01937(){document.querySelector('.patient-tutorial-overlay-v01937')?.remove()}
@@ -23307,7 +23434,7 @@ function hpPatientOverviewV0206(d){
       <section class="patient-overview-attention-v0206"><div class="patient-overview-section-title-v0206"><span>PRÓXIMA REVISÃO</span><small>motivo operacional mais relevante</small></div><button type="button" class="${primary.tone}" data-overview-tab-v0206="${primary.tab}"><b>${esc(primary.title)}</b><span>${esc(primary.detail)}</span><i>Revisar →</i></button>${reasons.length>1?`<small class="patient-overview-more-v0206">+ ${reasons.length-1} outro(s) sinal(is) disponível(is)</small>`:''}</section>
       <section class="patient-overview-recent-v0206"><div class="patient-overview-section-title-v0206"><span>ATIVIDADE RECENTE</span><small>último evento longitudinal</small></div>${latest?`<button type="button" data-overview-tab-v0206="timeline"><b>${esc(latest.titulo||String(latest.tipo||'Evento').replaceAll('_',' '))}</b><span>${fmtDateTime(latest.dataUtc)}</span><small>${esc(hpTimelineCategoryLabel(latest.categoria))}</small></button>`:`<div class="patient-overview-empty-v0206">Ainda sem eventos na timeline.</div>`}</section>
     </div>
-    <div class="patient-overview-safety-v0206"><span>Leitura rápida</span><p>Use este resumo para orientar a navegação. Ele não diagnostica, não prescreve e não altera automaticamente qualquer plano.</p></div>
+    <div class="patient-overview-safety-v0206"><span>Leitura rápida</span><p>+este resumo para orientar a navegação. Ele não diagnostica, não prescreve e não altera automaticamente qualquer plano.</p></div>
   </section>`;
 }
 function hpBindPatientOverviewV0206(){
@@ -23540,7 +23667,7 @@ function hpClinicalSportsSnapshotV0209(d){
   const stateTone=String(weekly?.estado||recovery?.nivelAtencao||'').toLowerCase().includes('revis')||String(recovery?.nivelAtencao||'').toLowerCase()==='alta'?'review':String(weekly?.estado||'').toLowerCase().includes('observ')?'observe':'steady';
   return `<section class="clinical-sports-snapshot-v0209 ${stateTone}" data-clinical-sports-snapshot-v0209="${HP_CLINICAL_SPORTS_SNAPSHOT_V0209}">
     <div class="clinical-sports-snapshot-head-v0209">
-      <div><span class="eyebrow">AESYN • CLINICAL & SPORTS SNAPSHOT 2.0</span><h3>Corpo, treino, recuperação e adesão em uma única leitura.</h3><p>Resumo longitudinal com origem rastreável. Use como ponto de partida para revisão profissional, nunca como diagnóstico automático.</p></div>
+      <div><span class="eyebrow">AESYN • CLINICAL & SPORTS SNAPSHOT 2.0</span><h3>Corpo, treino, recuperação e adesão em uma única leitura.</h3><p>Resumo longitudinal com origem rastreável. +como ponto de partida para revisão profissional, nunca como diagnóstico automático.</p></div>
       <span class="clinical-sports-state-v0209">${esc(stateLabel)}</span>
     </div>
     <div class="clinical-sports-domains-v0209">
@@ -24110,7 +24237,7 @@ function hpHumanSynthesisV0214(d){
     </div>`:`<div class="human-synthesis-empty-v0214">Ainda não há contexto suficiente para montar a síntese.</div>`}
 
     <div class="human-synthesis-guidance-v0214">
-      <div><b>Para a consulta</b><span>Use esta síntese como ponto de partida e abra as fontes originais quando precisar de detalhe.</span></div>
+      <div><b>Para a consulta</b><span>+esta síntese como ponto de partida e abra as fontes originais quando precisar de detalhe.</span></div>
       <div><b>Para o acompanhamento</b><span>Observe mudanças entre objetivo, contexto, execução e sinais ao longo do tempo.</span></div>
     </div>
 
@@ -24190,7 +24317,7 @@ function hpAesynDailyV0220(d){
     </div>
 
     <div class="aesyn-daily-action-v0220">
-      <div><b>Próxima ação</b><span>Use o plano profissional como referência e ajuste a execução ao contexto real registrado.</span></div>
+      <div><b>Próxima ação</b><span>+o plano profissional como referência e ajuste a execução ao contexto real registrado.</span></div>
       <button type="button" class="btn ghost" data-daily-action-v0220="checkin">Atualizar contexto</button>
     </div>
 
@@ -24353,7 +24480,7 @@ function hpTodayPlanDataV0223(d){
 
   let guidance='Siga o plano profissional usando o contexto do dia como referência.';
   if(readiness.attention?.length>=2){
-    guidance='Há múltiplos fatores de atenção hoje. Use o plano como referência e considere conversar com o profissional antes de aumentar exigência.';
+    guidance='Há múltiplos fatores de atenção hoje. +o plano como referência e considere conversar com o profissional antes de aumentar exigência.';
   } else if(readiness.attention?.length===1){
     guidance='Há um fator de atenção hoje. Observe como ele se comporta durante a execução sem deixar um único sinal decidir o dia inteiro.';
   } else if(readiness.known?.length>=4){
@@ -24572,7 +24699,7 @@ function hpDaily30V0225(d){
       <div>
         <span>PRÓXIMO PASSO</span>
         <b>${x.focus==='checkin'?'Fazer o check-in':x.focus==='plan'?'Rever o plano':'Abrir o Action Hub'}</b>
-        <small>${esc(x.guidance||'Use o contexto do dia como apoio, sem deixar um único sinal decidir tudo.')}</small>
+        <small>${esc(x.guidance||'+o contexto do dia como apoio, sem deixar um único sinal decidir tudo.')}</small>
       </div>
       <button type="button" class="btn primary" data-daily-30s-primary-v0225="${esc(x.focus)}">Continuar</button>
     </div>
@@ -25446,7 +25573,7 @@ function hpExploreFoundationV0240(x){
 
     <div class="aesyn-explore-compass-v0240">
       <article><span>PRECISO FAZER</span>${ctx.must.length?ctx.must.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Seu plano profissional continua sendo a referência quando existir.</p>'}</article>
-      <article><span>QUERO FAZER</span>${ctx.want.length?ctx.want.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Use Explore para descobrir modalidades e interesses.</p>'}</article>
+      <article><span>QUERO FAZER</span>${ctx.want.length?ctx.want.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>+Explore para descobrir modalidades e interesses.</p>'}</article>
       <article><span>POSSO FAZER HOJE</span>${ctx.can.length?ctx.can.slice(0,3).map(v=>`<b>${esc(v)}</b>`).join(''):'<p>Tempo, local e recursos serão refinados nas próximas etapas.</p>'}</article>
     </div>
 
@@ -25559,7 +25686,7 @@ function hpStartSportDetailV0241(sport){
       <div><span>PRÓXIMO PASSO</span><b>${esc(sport?.proximoPasso||'Aprender os fundamentos.')}</b></div>
     </div>
 
-    <div class="start-sport-rule-v0241"><b>Como usar</b><span>${esc(sport?.regraDeUso||'Use como educação e descoberta, não como prescrição.')}</span></div>
+    <div class="start-sport-rule-v0241"><b>Como usar</b><span>${esc(sport?.regraDeUso||'+como educação e descoberta, não como prescrição.')}</span></div>
   </article>`;
 }
 
@@ -25804,7 +25931,7 @@ function hpQuickMovementV0244(data){
       <div>
         <span class="eyebrow">QUICK MOVEMENT 2.0</span>
         <h3 id="quickMovementTitleV0244">Pouco tempo não precisa virar treino intenso.</h3>
-        <p>Use a janela disponível apenas para filtrar possibilidades. O AESYN não transforma minutos livres em prescrição automática.</p>
+        <p>+a janela disponível apenas para filtrar possibilidades. O AESYN não transforma minutos livres em prescrição automática.</p>
       </div>
       <span>${items.length} possibilidade(s)</span>
     </div>
@@ -25896,7 +26023,7 @@ function hpTravelModeV0245(data){
       <div>
         <span class="eyebrow">TRAVEL MODE 2.0</span>
         <h3 id="travelModeTitleV0245">A rotina mudou. O plano não precisa desaparecer.</h3>
-        <p>Use o contexto temporário da viagem para explorar possibilidades sem substituir automaticamente o que foi planejado pelo profissional.</p>
+        <p>+o contexto temporário da viagem para explorar possibilidades sem substituir automaticamente o que foi planejado pelo profissional.</p>
       </div>
       <span>${items.length} possibilidade(s)</span>
     </div>
@@ -31318,7 +31445,7 @@ function hpChatReferenceV0598(ref){
 }
 const __hpChatMessagesV0598=hpChatMessages;
 hpChatMessages=function(items=[]){
-  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div>${hpChatReferenceV0598(m.referencia)}<p>${esc(m.mensagem||'')}</p>${hpChatStatusV01935(m)}</div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>Use este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
+  return items.length?items.map(m=>`<article class="care-chat-message ${m.me?'mine':'theirs'}" data-chat-message="${esc(m.id||'')}"><div class="care-chat-bubble"><div class="care-chat-meta"><span>${esc(m.contextoRotulo||'Acompanhamento')}</span><time>${fmtDateTime(m.dataHoraUtc)}</time></div>${hpChatReferenceV0598(m.referencia)}<p>${esc(m.mensagem||'')}</p>${hpChatStatusV01935(m)}</div></article>`).join(''):`<div class="care-chat-empty"><span>✉</span><strong>Conversa aberta</strong><p>+este espaço para dúvidas sobre treino, nutrição, exames, recuperação e seu acompanhamento.</p></div>`;
 };
 const __hpChatShellV0598=hpChatShell;
 hpChatShell=function(data,{professional=false,patient=null}={}){
@@ -31344,7 +31471,7 @@ async function hpOpenChatAttachmentV0598(id,name,professional,patientId){
 async function hpSendChatAttachmentV0598(file,url,reload,professional,patientId,contexto){
   if(!file) return;
   if(file.size>HP_CHAT_ATTACHMENT_MAX_BYTES_V0598)throw new Error('O anexo deve ter no máximo 15 MB.');
-  if(!HP_CHAT_ATTACHMENT_TYPES_V0598.includes(String(file.type||'').toLowerCase()))throw new Error('Formato inválido. Use PDF, imagem, DOC ou DOCX.');
+  if(!HP_CHAT_ATTACHMENT_TYPES_V0598.includes(String(file.type||'').toLowerCase()))throw new Error('Formato inválido. +PDF, imagem, DOC ou DOCX.');
   const uploadPath=professional?`/api/pacientes/${patientId}/arquivos/upload`:'/api/arquivos/me/upload';
   const saved=await hpUploadPatientFileV01934(uploadPath,file,{categoria:hpChatAttachmentCategoryV0598(file),descricao:'Anexo enviado pelo chat AESYN',tags:'chat',viaChat:true});
   try{
@@ -31675,7 +31802,7 @@ function hpPatientFileUploadModalV0601({professional=false,patientId=null,onDone
     <form id="patientFileUploadFormV0601" class="patient-file-upload-form-v0601">
       <div class="patient-file-picker-grid-v0601">
         <label class="patient-file-picker-v0601"><span aria-hidden="true">▣</span><strong>Arquivo ou galeria</strong><small>PDF, imagem, DOC ou DOCX • até 15 MB</small><input class="sr-only" name="file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label>
-        <label class="patient-file-picker-v0601"><span aria-hidden="true">◎</span><strong>Tirar foto</strong><small>Use a câmera traseira do celular</small><input class="sr-only" name="cameraFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"></label>
+        <label class="patient-file-picker-v0601"><span aria-hidden="true">◎</span><strong>Tirar foto</strong><small>+a câmera traseira do celular</small><input class="sr-only" name="cameraFile" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"></label>
       </div>
       <div class="patient-file-selected-v0601" data-file-selected-v0601 role="status">Nenhum arquivo selecionado.</div>
       <div class="patient-file-meta-grid-v0601">

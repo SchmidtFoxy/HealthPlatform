@@ -9910,17 +9910,29 @@ Consolidação da Professional Chat Inbox já entregue na Lista 04, sem recriar 
 - Regression Memory cobre sidebar global, busca progressiva, identidade demo e preservação do badge v0.59.6.
 
 **Próxima etapa:** `v0.60.9 — Professional Nutrition Planning Engine 3.0`.
-### v0.60.9 — Professional Nutrition Planning Engine 3.0 + Diet Model Builder
-Peso, altura e dados corporais; TMB/GET; objetivo; alvo energético; macros; kcal; totais por refeição/dia; meta × prescrito × restante/excedido; controle manual profissional.
-Adicionar entradas **Montar dieta modelo** e **Nova dieta**:
-- modelos sem paciente;
-- criar do zero;
-- duplicar, versionar e adaptar;
-- aplicar ao paciente sem alterar o modelo original;
-- transformar dieta existente em modelo;
-- alimentos, porções, refeições e suplementos reutilizáveis;
-- recálculo ao vivo durante adaptação.
+### ✅ v0.60.9 — Professional Nutrition Planning Engine 3.0 — IMPLEMENTADA
 
+### Entrega consolidada
+- `Nova dieta` vira o caminho explícito de prescrição para o paciente;
+- `Montar dieta modelo` abre um Model Studio independente de paciente;
+- modelo-base pode conter metas, refeições, alimentos, gramagens e equivalências e é salvo na biblioteca profissional;
+- biblioteca existente continua pesquisável e a aplicação de modelo mantém o fluxo de cópia independente por paciente;
+- dietas já existentes continuam podendo virar modelo por `Salvar como modelo`;
+- o builder final v0.19.32 volta a carregar o contexto metabólico real do paciente;
+- peso, altura, idade, sexo/contexto fisiológico disponível e massa magra voltam a alimentar o planejamento;
+- TMB por Mifflin-St Jeor e Katch-McArdle quando aplicável;
+- GET por fator de atividade;
+- objetivo/peso desejado/prazo e alvo energético permanecem decisão profissional;
+- macros editáveis e aplicação explícita ao plano;
+- fluxo guiado `Dados → Gasto energético → Objetivo → Macros → Refeições → Revisão`;
+- resumo nutricional ao vivo com `meta / prescrito / restante / excedido / %`;
+- alimentos e suplementos continuam somados aos totais sem criar uma segunda fonte nutricional;
+- revisão/publicação histórica existente permanece preservada;
+- mobile/PWA 360/390/430 e desktop profissional;
+- Clinical Control Gate: o AESYN calcula e explica, mas não prescreve automaticamente.
+
+### Critério de aceite
+O profissional parte dos dados corporais, revisa TMB/GET/objetivo/macros, monta a dieta com composição ao vivo e pode começar por uma dieta nova ou por um modelo reutilizável sem paciente vinculado.
 ### v0.60.10 — Lista 05 Integrated Quality Pass & Closure
 Passagem integrada real das jornadas tocadas, regressões, claro/escuro, 360/390/430/desktop, acessibilidade, empty/loading/error/retry e fechamento explícito da Lista 05.
 Não criar cadeia artificial de “closure/handoff/summary” depois desse ponto.

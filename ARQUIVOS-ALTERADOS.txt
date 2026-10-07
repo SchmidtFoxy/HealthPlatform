@@ -1,19 +1,23 @@
-AESYN Performance — v0.60.8-r1 — Demo Identity Exact Match Gate Fix
+AESYN Performance — v0.60.9-r8 — Professional Builder Context Copy
 
-Hotfix da mesma versão funcional v0.60.8.
+Hotfix da mesma versão funcional v0.60.9.
+
+Estado:
+- v0.60.9 já está aplicada localmente;
+- PREPARAR + build + runtime passaram;
+- falha ocorreu em Regression Memory histórico do TESTAR.ps1.
 
 Causa:
-- a implementação JavaScript usa corretamente:
-  return /^(Dr\.?\s*Testinho|Doutor\s+Testinho)$/i.test
-- o TESTAR.ps1 procurava barras duplicadas porque foi escrito com `\\`
-  dentro de string PowerShell;
-- PowerShell não usa backslash como caractere de escape, então o gate
-  buscava uma assinatura inexistente e gerava falso negativo.
+- o TESTAR exige a copy:
+  `Use como referência. A ficha continua totalmente editável pelo profissional.`
+- a reorganização do Nutrition Planning Engine removeu essa mensagem do builder.
 
 Correção:
-- usa string PowerShell literal com a assinatura real do JavaScript;
-- mantém o match exato para proteger nomes reais;
-- não altera o Chat, sidebar, busca, badge ou identidade funcional;
+- restaura a mensagem dentro de `nutritionEnergyV0609`;
+- adiciona wrapper `nutrition-professional-context-v0609`;
+- mantém TMB, GET, macros, Model Studio, endpoints e cálculos intactos;
+- não enfraquece TESTAR.ps1;
+- valida que a frase está dentro do builder final `openMealPlanFormV01932`;
 - exatamente um BOM UTF-8.
 
 Arquivos:
@@ -21,5 +25,5 @@ Arquivos:
 - VERSION.txt
 - ARQUIVOS-ALTERADOS.txt
 
-O PREPARAR altera TESTAR.ps1 e se substitui pelo PREPARAR final idempotente.
-Sem commit individual de -r1.
+O PREPARAR altera app.js e se substitui pelo PREPARAR final idempotente.
+Sem commit individual de -r8.

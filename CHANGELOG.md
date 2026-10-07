@@ -8759,3 +8759,10 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - Preserva badge de não lidas, deep-links e estados de conversa existentes.
 - Atualiza identidade demo Dr Testinho/Doutor Testinho para Dr Raphael apenas em cópias estáticas e seeds/demo.
 - Mantém nomes reais vindos da API intocados.
+## v0.60.9 — Professional Nutrition Planning Engine 3.0
+- Reintegra o motor metabólico existente ao Nutrition Builder final.
+- Dados → TMB/GET → Objetivo → Macros → Refeições → Revisão.
+- Resumo ao vivo meta/prescrito/restante/excedido/%.
+- CTAs profissionais `Montar dieta modelo` e `Nova dieta`.
+- Model Studio sem paciente vinculado com refeições, alimentos, porções, equivalências e metas-base.
+- Mantém biblioteca, aplicação por cópia, revisão/publicação, suplementos e controle profissional.
