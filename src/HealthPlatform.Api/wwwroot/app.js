@@ -20903,7 +20903,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.60.9';
+const HP_MVP_VERSION='0.60.10';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -31906,3 +31906,35 @@ loadPatientSection=async function(view='inicio'){
 };
 $('#patientMoreLogoutV0602')?.addEventListener('click',()=>{closePatientMoreSheet({restoreFocus:false});logout()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#patientMoreSheet')?.classList.contains('open')){e.preventDefault();closePatientMoreSheet()}});
+// ===== v0.60.10 — Lista 05 Integrated Mobile & Cross-surface Quality Pass =====
+const HP_LISTA05_INTEGRATED_QUALITY_V0610='v0.60.10';
+function hpJourneyStabilityGuardV0610(){
+  if(window.__hpJourneyStabilityGuardV0610)return;
+  window.__hpJourneyStabilityGuardV0610=true;
+  const root=document.documentElement;
+  const updateViewport=()=>{
+    const vv=window.visualViewport;
+    const viewportHeight=vv?vv.height:window.innerHeight;
+    const keyboardOpen=vv?((window.innerHeight-vv.height)>120):false;
+    root.style.setProperty('--hp-visual-viewport-height-v0610',`${Math.max(320,Math.round(viewportHeight))}px`);
+    root.classList.toggle('hp-keyboard-open-v0610',keyboardOpen);
+    root.dataset.hpViewportWidth=String(Math.round(vv?.width||window.innerWidth));
+  };
+  const recoverFocus=event=>{
+    const modal=event.target.closest?.('.modal,.sheet,.mobile-search-sheet-v0600,.clinical-modal');
+    if(!modal)return;
+    modal.classList.add('hp-focus-context-v0610');
+  };
+  updateViewport();
+  window.addEventListener('resize',updateViewport,{passive:true});
+  window.addEventListener('orientationchange',updateViewport,{passive:true});
+  window.visualViewport?.addEventListener('resize',updateViewport,{passive:true});
+  window.visualViewport?.addEventListener('scroll',updateViewport,{passive:true});
+  document.addEventListener('focusin',recoverFocus);
+  document.addEventListener('focusout',event=>{
+    const modal=event.target.closest?.('.modal,.sheet,.mobile-search-sheet-v0600,.clinical-modal');
+    if(modal&&!modal.contains(event.relatedTarget))modal.classList.remove('hp-focus-context-v0610');
+  });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hpJourneyStabilityGuardV0610,{once:true});
+else hpJourneyStabilityGuardV0610();

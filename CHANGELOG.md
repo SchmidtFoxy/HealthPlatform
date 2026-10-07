@@ -8766,3 +8766,11 @@ O ciclo v0.5.x será usado para evoluções reais do Connected Care, priorizando
 - CTAs profissionais `Montar dieta modelo` e `Nova dieta`.
 - Model Studio sem paciente vinculado com refeições, alimentos, porções, equivalências e metas-base.
 - Mantém biblioteca, aplicação por cópia, revisão/publicação, suplementos e controle profissional.
+## v0.60.10 — Lista 05 Integrated Mobile & Cross-surface Quality Pass
+- Journey Stability Guard para visualViewport, teclado móvel e orientation/resize.
+- Safe-area e altura real de modal no PWA.
+- Navegação inferior não cobre formulários com teclado aberto.
+- Focus-visible consistente e acessível.
+- Regressões cruzadas das entregas v0.60.4–v0.60.9.
+- Lista 05 concluída: 16/16 requisitos.
+- Anti-roadmap-loop: não criar v0.60.11 apenas para fechamento.

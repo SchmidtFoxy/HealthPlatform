@@ -9933,10 +9933,31 @@ Consolidação da Professional Chat Inbox já entregue na Lista 04, sem recriar 
 
 ### Critério de aceite
 O profissional parte dos dados corporais, revisa TMB/GET/objetivo/macros, monta a dieta com composição ao vivo e pode começar por uma dieta nova ou por um modelo reutilizável sem paciente vinculado.
-### v0.60.10 — Lista 05 Integrated Quality Pass & Closure
-Passagem integrada real das jornadas tocadas, regressões, claro/escuro, 360/390/430/desktop, acessibilidade, empty/loading/error/retry e fechamento explícito da Lista 05.
-Não criar cadeia artificial de “closure/handoff/summary” depois desse ponto.
-### ✅ v0.60.2 — Mobile Navigation & Profile/More 2.0 — IMPLEMENTADA
+### ✅ v0.60.10 — Lista 05 Integrated Mobile & Cross-surface Quality Pass — IMPLEMENTADA
+
+### Entrega consolidada
+- jornada PWA da Lista 05 protegida por gates cruzados;
+- jornada profissional protegida do Chat → paciente → treino → séries avançadas → Nutrição;
+- Journey Stability Guard para `visualViewport`, teclado virtual, orientation/resize e foco em modais;
+- safe areas reforçadas em superfícies móveis;
+- modais limitados ao viewport visual real quando o teclado abre;
+- navegação inferior deixa de cobrir campos durante teclado aberto;
+- foco visível consistente para teclado/acessibilidade;
+- contenção de largura em 360 / 390 / 430 px sem mascarar scroll deliberado;
+- preservação explícita de Workout Selection, Readability, Series Blocks, Patient Plan, Global Chat e Nutrition Planning Engine;
+- identidade demo e copies clínicas históricas preservadas;
+- Regression Memory consolidada no TESTAR.ps1.
+
+### Fechamento
+> **LISTA 05 — CONCLUÍDA**
+
+Todos os 16 requisitos planejados da Lista 05 estão cobertos pela série v0.60.0 → v0.60.10.
+
+### Anti-roadmap-loop
+Não criar `v0.60.11+` para handoff, closure, summary ou refinamentos equivalentes.
+A próxima evolução funcional deve reabrir o Product Brain e escolher uma prioridade real para **v0.61.0 / Lista 06**, com ganho observável para paciente ou profissional.
+
+---### ✅ v0.60.2 — Mobile Navigation & Profile/More 2.0 — IMPLEMENTADA
 - Perfil/Mais saiu do dock inferior e virou acesso explícito no app bar do paciente;
 - dock mobile permanece focado em Hoje, Treino, Plano, Saúde e Chat;
 - sheet secundário foi agrupado em Perfil e evolução, Acompanhamento e Conta e aplicativo;

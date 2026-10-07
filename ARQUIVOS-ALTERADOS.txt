@@ -1,29 +1,58 @@
-AESYN Performance — v0.60.9-r8 — Professional Builder Context Copy
+AESYN Performance — v0.60.10 — Lista 05 Integrated Mobile Cross-surface Quality Pass
 
-Hotfix da mesma versão funcional v0.60.9.
+Base esperada: v0.60.9 aprovada.
 
-Estado:
-- v0.60.9 já está aplicada localmente;
-- PREPARAR + build + runtime passaram;
-- falha ocorreu em Regression Memory histórico do TESTAR.ps1.
-
-Causa:
-- o TESTAR exige a copy:
-  `Use como referência. A ficha continua totalmente editável pelo profissional.`
-- a reorganização do Nutrition Planning Engine removeu essa mensagem do builder.
-
-Correção:
-- restaura a mensagem dentro de `nutritionEnergyV0609`;
-- adiciona wrapper `nutrition-professional-context-v0609`;
-- mantém TMB, GET, macros, Model Studio, endpoints e cálculos intactos;
-- não enfraquece TESTAR.ps1;
-- valida que a frase está dentro do builder final `openMealPlanFormV01932`;
-- exatamente um BOM UTF-8.
-
-Arquivos:
+Pacote incremental bootstrap:
 - PREPARAR.ps1
 - VERSION.txt
 - ARQUIVOS-ALTERADOS.txt
 
-O PREPARAR altera app.js e se substitui pelo PREPARAR final idempotente.
-Sem commit individual de -r8.
+O PREPARAR altera:
+- src/HealthPlatform.Api/wwwroot/app.js
+- src/HealthPlatform.Api/wwwroot/app.css
+- src/HealthPlatform.Api/wwwroot/index.html
+- src/HealthPlatform.Api/wwwroot/sw.js
+- src/HealthPlatform.Api/Program.cs
+- src/HealthPlatform.Api/Controllers/HealthController.cs
+- ROADMAP.md
+- README.md
+- CHANGELOG.md
+- TESTAR.ps1
+- VERSION.txt
+- PREPARAR.ps1 final
+
+Entrega:
+- Journey Stability Guard v0.60.10;
+- visualViewport + teclado móvel;
+- orientation/resize;
+- safe-area;
+- modais limitados ao viewport visual;
+- bottom nav não cobre campos com teclado aberto;
+- focus-visible consistente;
+- contenção mobile 360/390/430;
+- regression gates cruzados para Workout Selection, Workout Readability,
+  Series Blocks, Patient Plan Compact, Global Chat e Nutrition Planning Engine;
+- preservação das copies clínicas históricas;
+- identidade pública v0.60.10;
+- dotnet build Release antes do runtime;
+- ROADMAP marca LISTA 05 — CONCLUÍDA (16/16);
+- anti-roadmap-loop: sem v0.60.11 artificial;
+- próxima evolução deverá ser v0.61.0 / Lista 06 por prioridade funcional real.
+
+Hotfix -r1 — Structural ROADMAP Closure
+
+Causa:
+- o PREPARAR assumia que após v0.60.10 existiria uma seção específica
+  `# 3. Mapa dos 16 requisitos...`;
+- o ROADMAP vivo já foi reorganizado e esse marcador textual não é confiável;
+- a seção v0.60.10 existia, mas o recorte não encontrava seu fim.
+
+Correção:
+- detecta o nível real do heading de v0.60.10;
+- encerra a seção no próximo heading de nível igual ou superior;
+- se não houver próxima seção, usa o fim do ROADMAP;
+- não depende mais de título, numeração ou texto da seção seguinte;
+- valida LISTA 05 — CONCLUÍDA e direção v0.61.0 / Lista 06 após o patch;
+- nenhuma gravação funcional ocorreu na tentativa anterior;
+- pacote continua cumulativo sobre v0.60.9;
+- exatamente um BOM UTF-8.
