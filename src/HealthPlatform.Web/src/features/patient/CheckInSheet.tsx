@@ -1,6 +1,8 @@
 import clsx from 'clsx';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Button, Sheet, Stepper, toast } from '@/components/ui';
+import { api } from '@/lib/api';
 import { hojeIso } from '@/lib/format';
 import { useRegistrarCheckIn } from './queries';
 
@@ -13,6 +15,10 @@ const ESCALAS = [
 ] as const;
 
 type Chave = (typeof ESCALAS)[number]['key'];
+
+// Regioes para localizar a dor: o profissional ve onde doi e quanto atrapalha o treino.
+const REGIOES = ['Pescoço', 'Ombro', 'Cotovelo', 'Punho', 'Costas', 'Lombar', 'Quadril', 'Coxa', 'Joelho', 'Panturrilha', 'Tornozelo', 'Pé', 'Abdômen', 'Cabeça'];
+const LADOS = ['Esquerdo', 'Direito', 'Os dois'];
 
 /** Escala 0-10 em botoes grandes: mais rapido que slider com o polegar. */
 export function Escala({ value, onChange, invertida }: { value: number; onChange: (v: number) => void; invertida?: boolean }) {
@@ -52,10 +58,18 @@ export function CheckInSheet({ open, onClose }: { open: boolean; onClose: () => 
   const salvar = useRegistrarCheckIn();
   const [sono, setSono] = useState(7);
   const [v, setV] = useState<Record<Chave, number>>({ sonoQualidade: 7, energiaNivel: 7, disposicaoNivel: 7, recuperacaoNivel: 7, dorNivel: 0 });
+  const [regioes, setRegioes] = useState<string[]>([]);
+  const [lado, setLado] = useState<string | null>(null);
+  const [impacto, setImpacto] = useState(2);
+  const qc = useQueryClient();
 
   async function enviar() {
     try {
       await salvar.mutateAsync({ data: hojeIso(), sonoHoras: sono, ...v });
+      if (v.dorNivel > 0)
+        for (const regiao of regioes)
+          await api('/api/portal/me/dor-corporal', { method: 'POST', json: { data: hojeIso(), regiao, lado, intensidade: v.dorNivel, impactoTreino: impacto, observacao: null } });
+      if (v.dorNivel > 0 && regioes.length) qc.invalidateQueries({ queryKey: ['p', 'home'] });
       toast('Check-in registrado');
       onClose();
     } catch (e) {
@@ -94,9 +108,57 @@ export function CheckInSheet({ open, onClose }: { open: boolean; onClose: () => 
               <span>{e.baixo}</span>
               <span>{e.alto}</span>
             </div>
+            {e.key === 'dorNivel' && v.dorNivel > 0 && (
+              <div className="mt-4 flex flex-col gap-4 rounded-2xl bg-raised/60 p-3">
+                <div>
+                  <p className="mb-2 text-[14px] font-semibold">Onde dói?</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {REGIOES.map((r) => (
+                      <Chip key={r} ativo={regioes.includes(r)} onClick={() => setRegioes((l) => (l.includes(r) ? l.filter((x) => x !== r) : [...l, r]))}>
+                        {r}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+                {regioes.length > 0 && (
+                  <>
+                    <div>
+                      <p className="mb-2 text-[14px] font-semibold">Lado</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {LADOS.map((l) => (
+                          <Chip key={l} ativo={lado === l} onClick={() => setLado(lado === l ? null : l)}>
+                            {l}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mb-2 flex items-baseline justify-between">
+                        <p className="text-[14px] font-semibold">Quanto atrapalha o treino?</p>
+                        <p className="num font-semibold text-accent">{impacto}</p>
+                      </div>
+                      <Escala value={impacto} onChange={setImpacto} invertida />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
     </Sheet>
+  );
+}
+
+function Chip({ ativo, onClick, children }: { ativo: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={ativo}
+      onClick={onClick}
+      className={clsx('rounded-full border px-3 py-1.5 text-[13px] font-semibold transition', ativo ? 'border-accent bg-accent/10 text-accent' : 'border-line text-muted')}
+    >
+      {children}
+    </button>
   );
 }

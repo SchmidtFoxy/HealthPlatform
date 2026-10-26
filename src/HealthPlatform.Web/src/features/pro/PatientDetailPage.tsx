@@ -11,6 +11,7 @@ import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/f
 import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/types';
 import { RegistrarContatoSheet } from './CentralPage';
 import { SalvarModeloSheet, UsarModeloSheet } from './BibliotecaPage';
+import { AlertasPaciente, DorCorporalCard, type DorCorporalResumo, ProgressoCarga, VolumePorGrupo } from './Analises';
 import { CalendarioNutricional } from './CalendarioNutricional';
 import { CiclosEsportivosSecao } from './CiclosEsportivos';
 import { FasesSecao } from './Fases';
@@ -94,6 +95,8 @@ function VisaoGeral({ id }: { id: string }) {
           )}
         </Card>
 
+        <DorCorporalCard dor={(home.data as { dorCorporal?: DorCorporalResumo } | undefined)?.dorCorporal} />
+        <AlertasPaciente pacienteId={id} />
         {ad && ad.refeicoesPlanejadas > 0 && (
           <Card className="mt-3 p-4">
             <div className="flex items-baseline justify-between">
@@ -389,6 +392,8 @@ function AbaTreino({ id }: { id: string }) {
           </Card>
         );
       })}
+      <ProgressoCarga pacienteId={id} />
+      <VolumePorGrupo pacienteId={id} />
       <FasesSecao id={id} dominio="treino" planos={planos} />
       <CiclosEsportivosSecao pacienteId={id} />
     </div>
