@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ChevronDown, Clock, Dumbbell, Flame, Play, Timer } from 'lucide-react';
+import { Check, ChevronDown, Clock, Dumbbell, Flame, Play, Timer } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
@@ -8,6 +8,7 @@ import { Button, Card, Empty, ErrorBox, Pill, SectionTitle, Skeleton } from '@/c
 import { dataCurta, n0, n1, sessaoEhDoDia } from '@/lib/format';
 import type { SessaoTreinoPortal as SessaoTreino } from '@/lib/types';
 import { useHistoricoTreinos, useMeusTreinos } from './queries';
+import { mesmoDia, treinoDoDia } from './treino-dia';
 
 const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
@@ -20,17 +21,24 @@ export function WorkoutPlanPage() {
   const hist = useHistoricoTreinos(60);
   const plano = q.data?.planos[0];
   const hoje = new Date();
-  const sessaoHoje = plano?.sessoes.find((s) => !!s.diasSemana && sessaoEhDoDia(s.diasSemana));
+  const dia = treinoDoDia(plano, hist.data?.execucoes);
+  const sessaoHoje = dia.hoje;
+  // Depois de treinar, o destaque passa para o proximo treino.
+  const destaque = sessaoHoje ?? (dia.feitosHoje.length ? dia.proxima?.sessao : undefined);
   const [aberta, setAberta] = useState<string | null>(null);
-  const abertaId = aberta ?? sessaoHoje?.id ?? null;
+  const abertaId = aberta ?? destaque?.id ?? null;
 
-  // Semana atual, de domingo a sabado, com a sessao prevista em cada dia.
-  const semana = DIAS.map((rotulo, dia) => {
+  // Semana atual, de domingo a sabado. Plano com dias: a sessao prevista em cada dia.
+  // Plano em rodizio: o que foi feito em cada dia e, hoje, o proximo do rodizio.
+  const semana = DIAS.map((rotulo, i) => {
     const d = new Date(hoje);
-    d.setDate(hoje.getDate() - hoje.getDay() + dia);
-    const sessao = plano?.sessoes.find((s) => !!s.diasSemana && sessaoEhDoDia(s.diasSemana, d));
-    const feito = hist.data?.execucoes.some((e) => new Date(e.dataHoraInicioUtc).toDateString() === d.toDateString());
-    return { rotulo, d, sessao, feito, ehHoje: dia === hoje.getDay() };
+    d.setDate(hoje.getDate() - hoje.getDay() + i);
+    const exec = hist.data?.execucoes.find((e) => mesmoDia(new Date(e.dataHoraInicioUtc), d));
+    const ehHoje = i === hoje.getDay();
+    const sessao = dia.rodizio
+      ? (exec && plano?.sessoes.find((s) => s.nome === exec.sessao)) || (ehHoje ? sessaoHoje : undefined) || undefined
+      : plano?.sessoes.find((s) => !!s.diasSemana && sessaoEhDoDia(s.diasSemana, d));
+    return { rotulo, d, sessao, feito: !!exec, ehHoje };
   });
 
   const ultimos30 = (hist.data?.execucoes ?? []).filter((e) => Date.now() - new Date(e.dataHoraInicioUtc).getTime() < 30 * 864e5);
@@ -68,7 +76,7 @@ export function WorkoutPlanPage() {
                     s.feito ? (s.ehHoje ? 'bg-accent-ink/20' : 'bg-ok/20 text-ok') : s.sessao ? (s.ehHoje ? 'bg-accent-ink/15' : 'text-fg') : 'text-faint',
                   )}
                 >
-                  {s.sessao ? letra(s.sessao.nome) : '·'}
+                  {s.feito ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : s.sessao ? letra(s.sessao.nome) : '·'}
                 </span>
               </div>
             ))}
@@ -80,19 +88,21 @@ export function WorkoutPlanPage() {
           <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
             {plano.sessoes.map((s, idx) => {
               const ehHoje = s.id === sessaoHoje?.id;
+              const feitaHoje = dia.feitasHojeNomes.has(s.nome);
+              const ehProxima = !sessaoHoje && s.id === destaque?.id;
               const open = abertaId === s.id;
               const grupos = [...new Set(s.itens.map((i) => i.grupoMuscular).filter(Boolean))];
               return (
                 <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
-                  <Card className={clsx('flex h-full flex-col overflow-hidden', ehHoje && 'border-accent/50 shadow-glow')}>
+                  <Card className={clsx('flex h-full flex-col overflow-hidden', (ehHoje || ehProxima) && 'border-accent/50 shadow-glow', feitaHoje && 'border-ok/40')}>
                     <button className="flex w-full items-center gap-4 p-4 text-left lg:cursor-default" onClick={() => setAberta(open ? '' : s.id)} aria-expanded={open}>
-                      <div className={clsx('grid h-12 w-12 shrink-0 place-items-center rounded-2xl font-display text-lg font-semibold', ehHoje ? 'bg-accent text-accent-ink' : 'bg-raised text-muted')}>
-                        {letra(s.nome)}
+                      <div className={clsx('grid h-12 w-12 shrink-0 place-items-center rounded-2xl font-display text-lg font-semibold', feitaHoje ? 'bg-ok/20 text-ok' : ehHoje || ehProxima ? 'bg-accent text-accent-ink' : 'bg-raised text-muted')}>
+                        {feitaHoje ? <Check className="h-6 w-6" strokeWidth={3} /> : letra(s.nome)}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <p className="truncate font-semibold">{s.nome}</p>
-                          {ehHoje && <Pill tone="accent">Hoje</Pill>}
+                          {feitaHoje ? <Pill tone="ok">Feito hoje</Pill> : ehHoje ? <Pill tone="accent">Hoje</Pill> : ehProxima ? <Pill tone="accent">Próximo · {dia.proxima?.quando}</Pill> : null}
                         </div>
                         <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[13px] text-muted">
                           <span>{s.itens.length} exercícios</span>
@@ -128,8 +138,8 @@ export function WorkoutPlanPage() {
                           </li>
                         ))}
                       </ol>
-                      <Button variant={ehHoje ? 'primary' : 'soft'} className="mt-3 w-full" icon={<Play className="h-4 w-4 fill-current" />} onClick={() => nav(`/treino/${s.id}`)}>
-                        Começar {s.nome.split('—')[0].trim()}
+                      <Button variant={ehHoje && !feitaHoje ? 'primary' : 'soft'} className="mt-3 w-full" icon={<Play className="h-4 w-4 fill-current" />} onClick={() => nav(`/treino/${s.id}`)}>
+                        {feitaHoje ? 'Treinar de novo' : `Começar ${s.nome.split('—')[0].trim()}`}
                       </Button>
                     </div>
                   </Card>
