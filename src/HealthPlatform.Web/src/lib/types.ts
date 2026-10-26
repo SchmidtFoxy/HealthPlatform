@@ -174,6 +174,9 @@ export interface DiaHistorico {
   recuperacaoNivel: number | null;
   treinosConcluidos: number;
   esforcoMedio: number | null;
+  diaFechado?: boolean;
+  percepcaoDoDia?: number | null;
+  resumoFechamento?: string | null;
 }
 
 export interface HistoricoDiario {

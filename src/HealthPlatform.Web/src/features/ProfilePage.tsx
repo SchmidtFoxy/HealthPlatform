@@ -64,6 +64,13 @@ export function ProfilePage() {
               </span>
               <ChevronRight className="h-5 w-5 text-muted" />
             </Link>
+            <Link to="/diario" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Diário
+                <span className="block text-sm font-normal text-muted">Registros do dia a dia e fechamento do dia</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
             <Link to="/arquivos" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Arquivos e exames
@@ -77,7 +84,7 @@ export function ProfilePage() {
           <span>
             Abrir versão clássica
             <span className="block text-sm font-normal text-muted">
-              {s?.tipoUsuario === 'Paciente' ? 'Diário, exploração de esportes e demais módulos' : 'Gestão, equipe, agenda, exames e demais módulos'}
+              {s?.tipoUsuario === 'Paciente' ? 'Exploração de esportes e demais módulos' : 'Gestão, equipe, agenda, exames e demais módulos'}
             </span>
           </span>
           <ExternalLink className="h-5 w-5 text-muted" />
