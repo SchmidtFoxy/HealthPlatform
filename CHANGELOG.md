@@ -1,3 +1,9 @@
+## 0.66.3 — Calendário nutricional e ciclos esportivos no novo app
+
+- Aba Dieta do paciente: calendário semanal dizendo qual dieta vale em cada dia (padrão, treino, descanso, viagem, flexível), com orientação do dia, copiar semana para a próxima e trocar dois dias.
+- Aba Treino do paciente: ciclos esportivos com perfil, objetivo, datas, situação, metas (treinos por semana, consistência, peso) e vínculo com fases de treino e nutricional.
+- Sem mudança de banco.
+
 ## 0.66.2 — Programas de treino no novo app
 
 - Biblioteca > Modelos > Programas: lista com busca, criação, edição, duplicação, desativação e exclusão de programas em fases.
