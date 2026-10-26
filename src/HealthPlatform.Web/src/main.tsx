@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { SessionProvider } from './lib/session';
 import { ApiError } from './lib/api';
+import { vigiarAtualizacao } from './lib/atualizacao';
 import './styles.css';
 
 const queryClient = new QueryClient({
@@ -16,6 +17,8 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+vigiarAtualizacao();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

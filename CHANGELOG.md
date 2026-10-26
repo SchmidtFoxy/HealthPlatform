@@ -1,3 +1,8 @@
+## v0.62.7 — Celulares sempre na versão nova
+
+- Servidor passa a mandar `Cache-Control: no-cache` para páginas, scripts, estilos e service workers (arquivos com hash do /app ficam em cache longo), então o celular sempre confere se há versão nova.
+- Versão clássica e /app checam a versão do servidor ao abrir, ao voltar para o app e a cada 5 minutos; se mudou, atualizam o service worker, limpam o cache antigo e recarregam sozinhos (uma vez por versão).
+
 ## v0.62.6 — Ficha do paciente com cabeçalho novo
 
 - /app: ficha do paciente abre com um cartão de perfil (avatar, nome, idade, profissão, tags) e botões de WhatsApp, E-mail e Prontuário que cabem lado a lado no celular.

@@ -1,16 +1,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
+
+const versao = readFileSync(new URL('../../VERSION.txt', import.meta.url), 'utf8').trim();
 
 // O novo front e servido pela propria API em /app, ao lado do front classico.
 export default defineConfig({
   base: '/app/',
+  define: { __APP_VERSION__: JSON.stringify(versao) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: false,
       scope: '/app/',
       manifest: {
         id: '/app/',
