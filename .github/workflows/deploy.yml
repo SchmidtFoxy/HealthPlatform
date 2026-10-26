@@ -72,7 +72,13 @@ jobs:
             ServerAliveInterval 30
             ConnectTimeout 20
           EOF
-          if ! ssh -v "$VPS_HOST" 'echo conexao-ok' 2> ssh-debug.txt; then
+          # A primeira conexao de um runner novo as vezes estoura o tempo; tenta ate 3 vezes.
+          conectou=false
+          for tentativa in 1 2 3; do
+            if ssh -v "$VPS_HOST" 'echo conexao-ok' 2> ssh-debug.txt; then conectou=true; break; fi
+            sleep 15
+          done
+          if [ "$conectou" != true ]; then
             grep -E "Connecting to|Connection (refused|timed out|closed)|Host key|Offering|Authentications that|Permission denied|No route|kex" ssh-debug.txt \
               | head -12 | while IFS= read -r l; do echo "::warning::ssh: $l"; done
             echo "::error::Falha ao conectar por SSH na VPS."
