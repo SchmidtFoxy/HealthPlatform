@@ -1,3 +1,7 @@
+## v0.65.7 — Filtros avançados de pacientes na versão nova
+
+- Equipe: botão de filtros ao lado da busca de pacientes, com status de acompanhamento, responsável, adesão, última interação, próxima revisão, sinais de atenção e ordenação. Com filtro ativo, cada paciente mostra adesão média, última interação e responsável.
+
 ## v0.65.6 — Fases do ciclo na versão nova
 
 - Equipe: nas abas Treino e Dieta do paciente, nova seção Fases do ciclo com criar, editar, excluir e reordenar fases (adaptação, força, deload, cutting, refeed...), vínculo com o plano, metas de peso, adesão e duração mínima e o critério profissional.
