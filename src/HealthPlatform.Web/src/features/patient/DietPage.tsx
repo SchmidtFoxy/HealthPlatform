@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ArrowLeftRight, Check, ChevronRight, Salad } from 'lucide-react';
+import { ArrowLeftRight, Check, ChevronRight, Pill as PillIcon, Salad } from 'lucide-react';
 import { MouseEvent, useState } from 'react';
 import { Page, PageHeader } from '@/components/shell';
 import { Empty, ErrorBox, Pill, Ring, Skeleton, toast } from '@/components/ui';
-import { hora, n0 } from '@/lib/format';
+import { hora, n0, n1 } from '@/lib/format';
 import type { Nutrientes, RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { MacroDots, MealSheet, STATUS_INFO, somaNutrientes } from './meals';
 import { useAdesaoRefeicao, useHome, usePlanoAlimentar } from './queries';
@@ -60,6 +60,33 @@ export function DietPage() {
                 </motion.li>
               ))}
             </ol>
+            {!!plano.suplementos?.length && (
+              <>
+                <h2 className="mb-3 mt-7 font-display text-[17px] font-semibold tracking-tight">Suplementos</h2>
+                <ul className="flex flex-col gap-2">
+                  {plano.suplementos.map((x) => (
+                    <li key={x.id} className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-3.5">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
+                        <PillIcon className="h-5 w-5" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold">
+                          {x.nome}
+                          {x.marca && <span className="font-normal text-muted"> · {x.marca}</span>}
+                        </p>
+                        <p className="text-[13px] text-muted">
+                          {[`${n1(x.quantidadePorcoes * x.porcaoQuantidade)} ${x.porcaoUnidade}`, x.contexto, x.horario && hora(x.horario), x.refeicao && `com ${x.refeicao}`, x.sessaoTreino && `treino ${x.sessaoTreino}`]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </p>
+                        {x.observacoes && <p className="mt-1 text-[13px]">{x.observacoes}</p>}
+                      </div>
+                      {x.calorias > 0 && <span className="num shrink-0 text-[13px] text-muted">{n0(x.calorias)} kcal</span>}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </section>
         </div>
       )}

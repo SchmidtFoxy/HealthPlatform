@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { FileImage, FileText, FolderOpen, Trash2, Upload } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
+import { ehImagem, ImagemArquivo, VisualizadorImagem } from '@/components/ImagemArquivo';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
 import { abrirArquivo, ACEITOS, ArquivoPaciente, CATEGORIAS, enviarArquivo, listarArquivos, removerArquivo, tamanho } from '@/lib/arquivos';
@@ -15,6 +16,7 @@ export function FilesPage() {
   const [categoria, setCategoria] = useState<string>('Exame');
   const [descricao, setDescricao] = useState('');
   const [remover, setRemover] = useState<ArquivoPaciente | null>(null);
+  const [foto, setFoto] = useState<ArquivoPaciente | null>(null);
   const input = useRef<HTMLInputElement>(null);
 
   const lista = useMemo(() => [...(q.data ?? [])].sort((a, b) => b.dataUtc.localeCompare(a.dataUtc)), [q.data]);
@@ -104,34 +106,52 @@ export function FilesPage() {
       )}
 
       {!!visiveis.length && (
-        <Card className="divide-y divide-line/60">
+        <div className="flex flex-col gap-2.5">
           {visiveis.map((a) => {
-            const Icone = a.contentType.startsWith('image/') ? FileImage : FileText;
+            const imagem = ehImagem(a);
+            const Icone = imagem ? FileImage : FileText;
+            const acao =
+              a.origem === 'Profissional' ? (
+                <Pill tone="info">Da equipe</Pill>
+              ) : (
+                <button aria-label={`Remover ${a.nome}`} onClick={() => setRemover(a)} className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-faint transition hover:bg-bad/10 hover:text-bad">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              );
+            const legenda = (
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-semibold">{a.descricao || a.nome}</span>
+                <span className="block truncate text-[13px] text-muted">
+                  {a.categoria} · {dataCurta(a.dataUtc)} · {tamanho(a.tamanhoBytes)}
+                </span>
+              </span>
+            );
+            if (imagem)
+              return (
+                <Card key={a.id} className="overflow-hidden p-1.5">
+                  <ImagemArquivo id={a.id} alt={a.descricao || a.nome} onAbrir={() => setFoto(a)} className="w-full rounded-[14px] bg-raised" />
+                  <div className="flex items-center gap-3 px-2 pb-1.5 pt-2.5">
+                    {legenda}
+                    {acao}
+                  </div>
+                </Card>
+              );
             return (
-              <div key={a.id} className="flex items-center gap-3 p-3.5">
+              <Card key={a.id} className="flex items-center gap-3 p-3.5">
                 <button onClick={() => abrirArquivo(a).catch((e) => toast(e.message, 'bad'))} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icone className="h-5 w-5" />
                   </span>
-                  <span className="min-w-0">
-                    <span className="block truncate font-semibold">{a.descricao || a.nome}</span>
-                    <span className="block truncate text-[13px] text-muted">
-                      {a.categoria} · {dataCurta(a.dataUtc)} · {tamanho(a.tamanhoBytes)}
-                    </span>
-                  </span>
+                  {legenda}
                 </button>
-                {a.origem === 'Profissional' ? (
-                  <Pill tone="info">Da equipe</Pill>
-                ) : (
-                  <button aria-label={`Remover ${a.nome}`} onClick={() => setRemover(a)} className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-faint transition hover:bg-bad/10 hover:text-bad">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
+                {acao}
+              </Card>
             );
           })}
-        </Card>
+        </div>
       )}
+
+      <VisualizadorImagem arquivo={foto && { id: foto.id, nome: foto.nome, legenda: foto.descricao }} onClose={() => setFoto(null)} />
 
       <Sheet
         open={!!novo}

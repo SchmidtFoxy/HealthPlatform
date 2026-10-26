@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Apple, BookCopy, ChevronRight, Dumbbell, Library, Plus, Search } from 'lucide-react';
+import { Apple, BookCopy, ChevronRight, Dumbbell, Library, Pill as PillIcon, Plus, Search } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 import { hojeIso, n0, n1 } from '@/lib/format';
 import { Chips } from './CuidadosPro';
 import { usePacientes } from './queries';
+import { CATEGORIAS_SUPLEMENTO, porcaoSuplemento, type Suplemento, useSuplementos } from './suplementos';
 
 // ---------------------------------------------------------------- Tipos
 
@@ -122,7 +123,7 @@ function Inativos({ value, onChange }: { value: boolean; onChange: (v: boolean) 
 
 // ---------------------------------------------------------------- Pagina
 
-type Aba = 'exercicios' | 'alimentos' | 'modelos';
+type Aba = 'exercicios' | 'alimentos' | 'suplementos' | 'modelos';
 
 /** Biblioteca do profissional: catalogo de exercicios, tabela de alimentos e modelos reutilizaveis. */
 export function BibliotecaPage() {
@@ -130,7 +131,7 @@ export function BibliotecaPage() {
   const aba = (params.get('aba') as Aba) || 'modelos';
   return (
     <Page>
-      <PageHeader back="/pro/perfil" title="Biblioteca" subtitle="Exercícios, alimentos e modelos prontos para usar com qualquer paciente." />
+      <PageHeader back="/pro/perfil" title="Biblioteca" subtitle="Exercícios, alimentos, suplementos e modelos prontos para usar com qualquer paciente." />
       <Segmented<Aba>
         value={aba}
         onChange={(v) => setParams({ aba: v }, { replace: true })}
@@ -138,12 +139,14 @@ export function BibliotecaPage() {
           { value: 'modelos', label: 'Modelos' },
           { value: 'exercicios', label: 'Exercícios' },
           { value: 'alimentos', label: 'Alimentos' },
+          { value: 'suplementos', label: 'Suplementos' },
         ]}
       />
       <div className="mt-4">
         {aba === 'modelos' && <Modelos />}
         {aba === 'exercicios' && <Exercicios />}
         {aba === 'alimentos' && <Alimentos />}
+        {aba === 'suplementos' && <Suplementos />}
       </div>
     </Page>
   );
@@ -769,6 +772,206 @@ function AlimentoSheet({ item, categorias, onClose }: { item: Alimento | 'novo' 
         {a && (
           <Button variant="ghost" className={a.ativo ? 'text-muted' : 'text-accent'} loading={status.isPending} onClick={() => status.mutate()}>
             {a.ativo ? 'Desativar alimento' : 'Reativar alimento'}
+          </Button>
+        )}
+      </div>
+    </Sheet>
+  );
+}
+
+// ---------------------------------------------------------------- Suplementos
+
+function Suplementos() {
+  const [inativos, setInativos] = useState(false);
+  const [busca, setBusca] = useState('');
+  const [cat, setCat] = useState<string>('Todos');
+  const [aberto, setAberto] = useState<Suplemento | 'novo' | null>(null);
+  const q = useSuplementos(inativos);
+  const todos = q.data ?? [];
+  const termo = semAcento(busca.trim());
+  const lista = todos.filter((x) => (cat === 'Todos' || x.categoria === cat) && (!termo || semAcento(`${x.nome} ${x.marca ?? ''} ${x.categoria} ${x.composicao ?? ''}`).includes(termo)));
+  const usadas = ['Todos', ...CATEGORIAS_SUPLEMENTO.filter((c) => todos.some((x) => x.categoria === c))];
+
+  return (
+    <>
+      <div className="flex flex-col gap-3">
+        <Busca value={busca} onChange={setBusca} placeholder="Buscar suplemento, marca ou composição" />
+        {usadas.length > 2 && (
+          <div className="-mx-gutter overflow-x-auto px-gutter pb-1">
+            <Chips<string> value={cat} onChange={setCat} options={usadas.map((c) => ({ value: c, label: c }))} />
+          </div>
+        )}
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-muted">
+            {lista.length} {lista.length === 1 ? 'suplemento' : 'suplementos'}
+          </p>
+          <Inativos value={inativos} onChange={setInativos} />
+        </div>
+        <div>
+          <Button size="sm" icon={<Plus className="h-4 w-4" />} onClick={() => setAberto('novo')}>
+            Novo suplemento
+          </Button>
+        </div>
+      </div>
+      <div className="mt-3">
+        {q.isError && <ErrorBox error={q.error} onRetry={() => q.refetch()} />}
+        {q.isLoading ? (
+          <Skeleton className="h-64" />
+        ) : !lista.length ? (
+          <Empty icon={<PillIcon className="h-5 w-5" />} title={todos.length ? 'Nada encontrado' : 'Catálogo vazio'}>
+            {todos.length ? 'Tente outro termo ou categoria.' : 'Cadastre whey, creatina, pré-treino e o que mais você usa. Depois é só incluir no cronograma da dieta.'}
+          </Empty>
+        ) : (
+          <Card className="divide-y divide-line/60">
+            {lista.map((x) => (
+              <Linha
+                key={x.id}
+                titulo={x.nome}
+                sub={`${x.categoria}${x.marca ? ` · ${x.marca}` : ''} · ${porcaoSuplemento(x)}`}
+                extra={!x.ativo && <Pill>Inativo</Pill>}
+                onClick={() => setAberto(x)}
+              />
+            ))}
+          </Card>
+        )}
+      </div>
+      <SuplementoSheet item={aberto} onClose={() => setAberto(null)} />
+    </>
+  );
+}
+
+const CAMPOS_SUPLEMENTO = [
+  ['caloriasPorPorcao', 'Calorias (kcal)'],
+  ['proteinasGPorPorcao', 'Proteínas (g)'],
+  ['carboidratosGPorPorcao', 'Carboidratos (g)'],
+  ['gordurasGPorPorcao', 'Gorduras (g)'],
+  ['fibrasGPorPorcao', 'Fibras (g)'],
+  ['cafeinaMgPorPorcao', 'Cafeína (mg)'],
+] as const;
+
+function SuplementoSheet({ item, onClose }: { item: Suplemento | 'novo' | null; onClose: () => void }) {
+  const qc = useQueryClient();
+  const novo = item === 'novo';
+  const a = novo ? null : item;
+  const [f, setF] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (!item) return;
+    const txt = (v: number | null | undefined) => (v == null ? '' : String(v).replace('.', ','));
+    setF({
+      nome: a?.nome ?? '',
+      marca: a?.marca ?? '',
+      categoria: a?.categoria ?? 'Proteína',
+      forma: a?.forma ?? '',
+      porcaoQuantidade: a ? txt(a.porcaoQuantidade) : '1',
+      porcaoUnidade: a?.porcaoUnidade ?? 'scoop',
+      composicao: a?.composicao ?? '',
+      instrucoesUso: a?.instrucoesUso ?? '',
+      observacoes: a?.observacoes ?? '',
+      ...Object.fromEntries(CAMPOS_SUPLEMENTO.map(([k]) => [k, a ? txt(a[k]) : ''])),
+    });
+  }, [item]);
+  const set = (k: string) => (e: { target: { value: string } }) => setF((x) => ({ ...x, [k]: e.target.value }));
+  const num = (s: string | undefined) => (s?.trim() ? Number(s.replace(',', '.')) : 0);
+  const porcao = num(f.porcaoQuantidade);
+  const valido = !!f.nome?.trim() && porcao > 0 && CAMPOS_SUPLEMENTO.every(([k]) => !Number.isNaN(num(f[k])) && num(f[k]) >= 0);
+  const invalidar = () => qc.invalidateQueries({ queryKey: ['pro', 'suplementos'] });
+  const salvar = useMutation({
+    mutationFn: () => {
+      const json = {
+        nome: f.nome.trim(),
+        marca: f.marca.trim() || null,
+        categoria: f.categoria || 'Outros',
+        forma: f.forma.trim() || null,
+        porcaoQuantidade: porcao,
+        porcaoUnidade: f.porcaoUnidade.trim() || 'porção',
+        caloriasPorPorcao: num(f.caloriasPorPorcao),
+        proteinasGPorPorcao: num(f.proteinasGPorPorcao),
+        carboidratosGPorPorcao: num(f.carboidratosGPorPorcao),
+        gordurasGPorPorcao: num(f.gordurasGPorPorcao),
+        fibrasGPorPorcao: num(f.fibrasGPorPorcao),
+        cafeinaMgPorPorcao: f.cafeinaMgPorPorcao?.trim() ? num(f.cafeinaMgPorPorcao) : null,
+        composicao: f.composicao.trim() || null,
+        instrucoesUso: f.instrucoesUso.trim() || null,
+        observacoes: f.observacoes.trim() || null,
+      };
+      return novo ? api('/api/suplementos', { method: 'POST', json }) : api(`/api/suplementos/${a!.id}`, { method: 'PUT', json });
+    },
+    onSuccess: () => {
+      toast(novo ? 'Suplemento cadastrado.' : 'Suplemento salvo.');
+      invalidar();
+      onClose();
+    },
+    onError: erroToast,
+  });
+  const status = useMutation({
+    mutationFn: () => (a!.ativo ? api(`/api/suplementos/${a!.id}`, { method: 'DELETE' }) : api(`/api/suplementos/${a!.id}/reativar`, { method: 'POST' })),
+    onSuccess: () => {
+      toast(a!.ativo ? 'Suplemento inativado. Dietas existentes não mudam.' : 'Suplemento reativado.');
+      invalidar();
+      onClose();
+    },
+    onError: erroToast,
+  });
+
+  return (
+    <Sheet
+      open={!!item}
+      onClose={onClose}
+      title={novo ? 'Novo suplemento' : 'Suplemento'}
+      footer={
+        <Button size="lg" className="w-full" disabled={!valido} loading={salvar.isPending} onClick={() => salvar.mutate()}>
+          Salvar
+        </Button>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <Field label="Nome">
+          <input className={inputCls} value={f.nome ?? ''} maxLength={160} placeholder="Ex.: Whey protein isolado" onChange={set('nome')} />
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Marca">
+            <input className={inputCls} value={f.marca ?? ''} maxLength={120} onChange={set('marca')} />
+          </Field>
+          <Field label="Forma">
+            <input className={inputCls} value={f.forma ?? ''} maxLength={60} placeholder="Pó, cápsula…" onChange={set('forma')} />
+          </Field>
+        </div>
+        <Field label="Categoria">
+          <select className={inputCls} value={f.categoria ?? 'Outros'} onChange={set('categoria')}>
+            {CATEGORIAS_SUPLEMENTO.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Porção">
+            <input className={inputCls} inputMode="decimal" value={f.porcaoQuantidade ?? ''} onChange={set('porcaoQuantidade')} />
+          </Field>
+          <Field label="Unidade da porção">
+            <input className={inputCls} value={f.porcaoUnidade ?? ''} maxLength={40} placeholder="scoop, g, cápsula" onChange={set('porcaoUnidade')} />
+          </Field>
+        </div>
+        <p className="-mb-2 text-[13px] font-semibold text-muted">Valores por porção (do rótulo)</p>
+        <div className="grid grid-cols-2 gap-3">
+          {CAMPOS_SUPLEMENTO.map(([k, l]) => (
+            <Field key={k} label={l}>
+              <input className={inputCls} inputMode="decimal" value={f[k] ?? ''} placeholder={k === 'cafeinaMgPorPorcao' ? '—' : '0'} onChange={set(k)} />
+            </Field>
+          ))}
+        </div>
+        <Field label="Composição">
+          <textarea className={inputCls + ' h-20 py-3'} value={f.composicao ?? ''} maxLength={1000} onChange={set('composicao')} />
+        </Field>
+        <Field label="Como usar">
+          <textarea className={inputCls + ' h-20 py-3'} value={f.instrucoesUso ?? ''} maxLength={1000} placeholder="Ex.: diluir em 200 ml de água" onChange={set('instrucoesUso')} />
+        </Field>
+        <Field label="Observações">
+          <textarea className={inputCls + ' h-20 py-3'} value={f.observacoes ?? ''} maxLength={1000} onChange={set('observacoes')} />
+        </Field>
+        <p className="text-[12px] text-faint">Dados de rótulo para organizar o cronograma. Dose e indicação continuam sendo decisão profissional.</p>
+        {a && (
+          <Button variant="ghost" className={a.ativo ? 'text-muted' : 'text-accent'} loading={status.isPending} onClick={() => status.mutate()}>
+            {a.ativo ? 'Inativar suplemento' : 'Reativar suplemento'}
           </Button>
         )}
       </div>

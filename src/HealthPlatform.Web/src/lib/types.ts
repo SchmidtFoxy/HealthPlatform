@@ -118,6 +118,22 @@ export interface RefeicaoPortal {
   itens: ItemRefeicaoPortal[];
 }
 
+export interface SuplementoPortal {
+  id: string;
+  nome: string;
+  marca: string | null;
+  quantidadePorcoes: number;
+  porcaoQuantidade: number;
+  porcaoUnidade: string;
+  horario: string | null;
+  contexto: string;
+  refeicao: string | null;
+  sessaoTreino: string | null;
+  observacoes: string | null;
+  calorias: number;
+  proteinas: number;
+}
+
 export interface PlanoAlimentarPortal {
   plano: {
     id: string;
@@ -127,6 +143,7 @@ export interface PlanoAlimentarPortal {
     observacoes: string | null;
     profissional: string;
     refeicoes: RefeicaoPortal[];
+    suplementos?: SuplementoPortal[];
     metaCalorias?: number | null;
     metaProteinasG?: number | null;
     metaCarboidratosG?: number | null;
