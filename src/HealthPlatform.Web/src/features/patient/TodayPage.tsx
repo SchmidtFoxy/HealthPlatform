@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { Check, ChevronRight, Dumbbell, Flame, Moon, Play, Sparkles, Zap } from 'lucide-react';
+import { Check, ChevronRight, Dumbbell, Flame, MessageCircle, Moon, Play, Sparkles, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -11,7 +11,7 @@ import { Avatar } from '@/components/account';
 import type { RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { CheckInSheet } from './CheckInSheet';
 import { MealSheet, STATUS_INFO, StatusButtons, somaNutrientes } from './meals';
-import { useHistoricoTreinos, useHome, useMeusTreinos, usePlanoAlimentar } from './queries';
+import { useChatNaoLidas, useHistoricoTreinos, useHome, useMeusTreinos, usePlanoAlimentar } from './queries';
 import { treinoDoDia } from './treino-dia';
 import { treinoEmAndamento } from './workout-store';
 
@@ -41,6 +41,7 @@ export function TodayPage() {
 
   const plano0 = treinos.data?.planos[0];
   const hist = useHistoricoTreinos(30);
+  const naoLidas = useChatNaoLidas().data?.total ?? 0;
   const dia = useMemo(() => treinoDoDia(plano0, hist.data?.execucoes), [plano0, hist.data]);
   const sessaoHoje = dia.hoje;
   const feito = dia.feitosHoje[0];
@@ -307,9 +308,15 @@ export function TodayPage() {
             {saudacao()}, {primeiroNome(home.data?.paciente.nome ?? sessao?.nome)}
           </h1>
         </div>
-        <Link to="/perfil" aria-label="Perfil" className="lg:hidden">
-          <Avatar nome={sessao?.nome} tipo={sessao?.tipoUsuario} />
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link to="/chat" aria-label={naoLidas ? `Mensagens, ${naoLidas} não lidas` : 'Mensagens'} className="relative grid h-11 w-11 place-items-center rounded-full border border-line bg-surface text-fg transition hover:border-accent/40">
+            <MessageCircle className="h-5 w-5" />
+            {!!naoLidas && <span className="num absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-bad px-1 text-[11px] font-bold text-white">{naoLidas > 9 ? '9+' : naoLidas}</span>}
+          </Link>
+          <Link to="/perfil" aria-label="Perfil" className="lg:hidden">
+            <Avatar nome={sessao?.nome} tipo={sessao?.tipoUsuario} />
+          </Link>
+        </div>
       </header>
 
       {home.isError && <ErrorBox error={home.error} onRetry={() => home.refetch()} />}

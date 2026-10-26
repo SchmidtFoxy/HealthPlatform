@@ -3,14 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <script>
-    /* Paciente logado vai direto para a versao nova (/app). ?classico=1 ou um link de chat/arquivos mantem a classica. */
+    /* Paciente logado vai direto para a versao nova (/app), inclusive pelos links de chat e arquivos das notificacoes. ?classico=1 mantem a classica. */
     (function(){try{
       var q=new URLSearchParams(location.search);
       if(q.has('classico')){sessionStorage.setItem('aesyn_classico','1');return}
-      if(q.has('aesynPushLink')){sessionStorage.setItem('aesyn_classico','1');return}
-      if(sessionStorage.getItem('aesyn_classico'))return;
       var u=JSON.parse(localStorage.getItem('hp_user')||'null'),exp=localStorage.getItem('hp_expires_at');
-      if(u&&u.tipoUsuario==='Paciente'&&!u.impersonating&&localStorage.getItem('hp_token')&&(!exp||new Date(exp)>new Date()))location.replace('/app/hoje');
+      var paciente=u&&u.tipoUsuario==='Paciente'&&!u.impersonating&&localStorage.getItem('hp_token')&&(!exp||new Date(exp)>new Date());
+      var link=q.get('aesynPushLink');
+      if(link){if(paciente&&(link==='chat'||link==='arquivos')){location.replace('/app/'+link);return}sessionStorage.setItem('aesyn_classico','1');return}
+      if(sessionStorage.getItem('aesyn_classico'))return;
+      if(paciente)location.replace('/app/hoje');
     }catch(e){}})();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
@@ -26,8 +28,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.56.1" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.56.1" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.56.1" />
-  <link rel="stylesheet" href="/app.css?v=0.63.1" />
-  <link rel="stylesheet" href="/operations.css?v=0.63.1">
+  <link rel="stylesheet" href="/app.css?v=0.63.2" />
+  <link rel="stylesheet" href="/operations.css?v=0.63.2">
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
@@ -434,6 +436,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.63.1"></script>
+  <script src="/app.js?v=0.63.2"></script>
 </body>
 </html>

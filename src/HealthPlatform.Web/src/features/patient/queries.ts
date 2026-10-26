@@ -7,6 +7,8 @@ export const useMeusTreinos = () => useQuery({ queryKey: ['p', 'treinos'], query
 export const useHistoricoTreinos = (dias = 90) =>
   useQuery({ queryKey: ['p', 'historico', dias], queryFn: () => api<HistoricoTreinos>(`/api/portal/me/treinos/historico?dias=${dias}`) });
 export const usePlanoAlimentar = () => useQuery({ queryKey: ['p', 'plano'], queryFn: () => api<PlanoAlimentarPortal>('/api/portal/me/plano') });
+export const useChatNaoLidas = () =>
+  useQuery({ queryKey: ['p', 'chat-nao-lidas'], queryFn: () => api<{ total: number }>('/api/chat/nao-lidas'), refetchInterval: 60_000 });
 export const useHistoricoDiario = (dias = 14) =>
   useQuery({ queryKey: ['p', 'diario', dias], queryFn: () => api<HistoricoDiario>(`/api/portal/me/historico-diario?dias=${dias}`) });
 

@@ -42,3 +42,14 @@ export function vigiarAtualizacao() {
     if (document.visibilityState === 'visible') checar();
   });
 }
+
+// Clique numa notificacao com o app aberto: o service worker da versao classica avisa a janela.
+// Paciente abre chat/arquivos aqui mesmo; o resto ainda vive na classica.
+export function ouvirLinksDeNotificacao() {
+  navigator.serviceWorker?.addEventListener('message', (e) => {
+    if (e.data?.type !== 'AESYN_PUSH_OPEN') return;
+    const link = String(e.data.link || '');
+    if (link === 'chat' || link === 'arquivos') location.assign(`/app/${link}`);
+    else if (link) location.assign(`/?aesynPushLink=${encodeURIComponent(link)}`);
+  });
+}
