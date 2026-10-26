@@ -1,3 +1,8 @@
+## v0.65.6 — Fases do ciclo na versão nova
+
+- Equipe: nas abas Treino e Dieta do paciente, nova seção Fases do ciclo com criar, editar, excluir e reordenar fases (adaptação, força, deload, cutting, refeed...), vínculo com o plano, metas de peso, adesão e duração mínima e o critério profissional.
+- Cada fase mostra as metas já atendidas a partir dos check-ins; a fase em andamento pode ser revisada (manter, concluir ou concluir e iniciar a próxima) com justificativa registrada.
+
 ## v0.65.5 — Trocar exercício e refeição na versão nova
 
 - Treino ao vivo: botão de trocar exercício com o motivo (equipamento ocupado, sem o equipamento, preferência); mostra alternativas do mesmo grupo muscular do catálogo do profissional com a semelhança, e a troca vai para o histórico. Em caso de dor, orienta a falar com o profissional em vez de trocar.
