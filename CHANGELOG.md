@@ -1,3 +1,15 @@
+## v0.64.3 — Prontuário do paciente na versão nova
+
+- /app equipe, ficha do paciente: nova aba Prontuário, com:
+  - Consultas: registrar atendimento ou agendar, com motivo, queixa, evolução, conduta, orientações e status; edição pelo profissional responsável.
+  - Evoluções no formato SOAP, opcionalmente ligadas a uma consulta.
+  - Anamnese completa, incluindo as perguntas personalizadas da clínica; uma nova anamnese já vem preenchida com a anterior.
+  - Avaliações físicas (peso, altura, IMC, gordura, massas, medidas, pressão e frequência cardíaca) com a variação em relação à anterior.
+  - Exames por coleta, com marcadores agrupados por categoria, valores de referência, destaque do que está fora e cadastro de marcador novo na hora.
+  - Relatórios do período, com conclusão e abertura do relatório pronto para imprimir.
+- O botão Prontuário da ficha não abre mais a versão clássica.
+- Abas da ficha mais compactas no celular.
+
 ## v0.64.2 — Cuidados do paciente pelo profissional e monitoramento na versão nova
 
 - /app equipe, ficha do paciente: nova aba Cuidados para o profissional criar e acompanhar:

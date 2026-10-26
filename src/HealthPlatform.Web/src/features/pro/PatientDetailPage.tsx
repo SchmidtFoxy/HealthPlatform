@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ClipboardCheck, Copy, Dumbbell, ExternalLink, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ClipboardCheck, Copy, Dumbbell, Stethoscope, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -11,9 +11,10 @@ import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/f
 import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/types';
 import { RegistrarContatoSheet } from './CentralPage';
 import { AbaCuidados } from './CuidadosPro';
+import { AbaProntuario } from './ProntuarioPro';
 import { useHistoricoPaciente, usePaciente, usePlanosAlimentares, usePlanosTreino, useResumoClinico } from './queries';
 
-type Aba = 'geral' | 'dieta' | 'treino' | 'cuidados';
+type Aba = 'geral' | 'dieta' | 'treino' | 'cuidados' | 'prontuario';
 
 interface EvolucaoCarga {
   exercicioId: string;
@@ -412,15 +413,16 @@ export function PatientDetailPage() {
             <button onClick={() => setContato(true)} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
               <ClipboardCheck className="h-4 w-4 shrink-0 text-accent" /> Registrar contato
             </button>
-            <a href="/?classico=1#pacientes" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4" title="Abre o prontuário completo na versão clássica">
-              <ExternalLink className="h-4 w-4 shrink-0 text-muted" /> Prontuário
-            </a>
+            <button onClick={() => setParams({ aba: 'prontuario' }, { replace: true })} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
+              <Stethoscope className="h-4 w-4 shrink-0 text-muted" /> Prontuário
+            </button>
           </div>
         </motion.section>
       )}
 
       <div className="sticky top-0 z-20 -mx-gutter mt-4 bg-bg/90 px-gutter py-2 pt-safe backdrop-blur-xl">
         <Segmented<Aba>
+          compact
           value={aba}
           onChange={(v) => {
             setParams(v === 'geral' ? {} : { aba: v }, { replace: true });
@@ -431,6 +433,7 @@ export function PatientDetailPage() {
             { value: 'dieta', label: 'Dieta' },
             { value: 'treino', label: 'Treino' },
             { value: 'cuidados', label: 'Cuidados' },
+            { value: 'prontuario', label: 'Prontuário' },
           ]}
         />
       </div>
@@ -439,6 +442,7 @@ export function PatientDetailPage() {
       {aba === 'dieta' && <AbaDieta id={id} />}
       {aba === 'treino' && <AbaTreino id={id} />}
       {aba === 'cuidados' && <AbaCuidados id={id} />}
+      {aba === 'prontuario' && <AbaProntuario id={id} />}
       <RegistrarContatoSheet paciente={contato && p ? { id: p.id, nome: p.nome } : null} onClose={() => setContato(false)} />
     </Page>
   );
