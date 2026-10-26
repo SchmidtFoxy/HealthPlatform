@@ -18,4 +18,5 @@ public class ExecucaoTreino : BaseEntity
     public PlanoTreino PlanoTreino { get; set; } = null!;
     public SessaoTreino SessaoTreino { get; set; } = null!;
     public ICollection<ExecucaoItemTreino> Itens { get; set; } = new List<ExecucaoItemTreino>();
+    public ICollection<ExecucaoExercicioExtra> Extras { get; set; } = new List<ExecucaoExercicioExtra>();
 }

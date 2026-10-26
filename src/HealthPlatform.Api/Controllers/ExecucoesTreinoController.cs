@@ -33,7 +33,17 @@ public sealed record RegistrarExecucaoTreinoRequest(
     int? DuracaoMinutos,
     int? EsforcoPercebido,
     string? Observacoes,
-    IReadOnlyCollection<ExecucaoItemTreinoRequest> Itens);
+    IReadOnlyCollection<ExecucaoItemTreinoRequest> Itens,
+    IReadOnlyCollection<ExecucaoExtraTreinoRequest>? Extras = null);
+
+/// <summary>Exercicio acrescentado pelo paciente durante o treino, fora do que foi prescrito.</summary>
+public sealed record ExecucaoExtraTreinoRequest(
+    Guid ExercicioId,
+    int? SeriesRealizadas,
+    string? RepeticoesRealizadas,
+    decimal? CargaRealizada,
+    string? UnidadeCarga,
+    string? Observacoes);
 
 [ApiController]
 [Authorize(Policy = "PatientOnly")]
@@ -101,6 +111,23 @@ public sealed class ExecucoesTreinoPacienteController(
             (x.RirRealizado.HasValue && (x.RirRealizado < 0 || x.RirRealizado > 10))))
             return BadRequest(new { message = "Valores de execucao invalidos." });
 
+        var extrasSolicitados = request.Extras ?? [];
+        if (extrasSolicitados.Count > 20)
+            return BadRequest(new { message = "No maximo 20 exercicios extras por treino." });
+        if (extrasSolicitados.Any(x =>
+            (x.SeriesRealizadas.HasValue && (x.SeriesRealizadas < 0 || x.SeriesRealizadas > 50)) ||
+            (x.CargaRealizada.HasValue && x.CargaRealizada < 0) ||
+            (x.Observacoes?.Length ?? 0) > 500))
+            return BadRequest(new { message = "Valores do exercicio extra invalidos." });
+        var idsExtras = extrasSolicitados.Select(x => x.ExercicioId).Distinct().ToArray();
+        var exerciciosExtras = idsExtras.Length == 0
+            ? new Dictionary<Guid, Exercicio>()
+            : await db.Exercicios.AsNoTracking()
+                .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo && idsExtras.Contains(x.Id))
+                .ToDictionaryAsync(x => x.Id, ct);
+        if (exerciciosExtras.Count != idsExtras.Length)
+            return BadRequest(new { message = "Exercicio extra invalido ou indisponivel." });
+
         var inicio = request.DataHoraInicioUtc.ToUniversalTime();
         var fim = request.DataHoraFimUtc?.ToUniversalTime();
         var duracao = request.DuracaoMinutos;
@@ -144,6 +171,21 @@ public sealed class ExecucoesTreinoPacienteController(
                 Observacoes = MontarObservacaoItem(i.Observacoes, i.ExercicioAlternativoId,
                     i.ExercicioAlternativoId.HasValue && alternativas.TryGetValue(i.ExercicioAlternativoId.Value, out var alternativa) ? alternativa.Nome : null,
                     i.MotivoAlternativa)
+            });
+        }
+
+        var ordemExtra = 0;
+        foreach (var x in extrasSolicitados)
+        {
+            execucao.Extras.Add(new ExecucaoExercicioExtra
+            {
+                ExercicioId = x.ExercicioId,
+                Ordem = ++ordemExtra,
+                SeriesRealizadas = x.SeriesRealizadas,
+                RepeticoesRealizadas = Limpar(x.RepeticoesRealizadas),
+                CargaRealizada = x.CargaRealizada,
+                UnidadeCarga = Limpar(x.UnidadeCarga),
+                Observacoes = Limpar(x.Observacoes)
             });
         }
 
@@ -205,7 +247,8 @@ public sealed class ExecucoesTreinoPacienteController(
                 execucao.DataHoraInicioUtc,
                 execucao.DuracaoMinutos,
                 execucao.EsforcoPercebido,
-                Itens = request.Itens.Count
+                Itens = request.Itens.Count,
+                Extras = extrasSolicitados.Count
             }),
             IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
         });
@@ -218,9 +261,23 @@ public sealed class ExecucoesTreinoPacienteController(
             var divergencia = request.Itens.Any(x => x.ExercicioAlternativoId.HasValue || !x.Concluido);
             var titulo = divergencia ? $"Treino com divergência: {paciente.Nome}" : $"Treino concluído: {paciente.Nome}";
             var corpo = divergencia ? $"{sessao.Nome} foi concluído com substituição ou item não concluído." : $"{sessao.Nome} foi concluído no AESYN.";
+            if (extrasSolicitados.Count > 0)
+                corpo += extrasSolicitados.Count == 1 ? " Incluiu 1 exercício extra." : $" Incluiu {extrasSolicitados.Count} exercícios extras.";
             await push.EnviarAsync(alvo, "lembrete", titulo, corpo, "pacientes", ct);
         }
         return Ok(new { execucao.Id, execucao.Status, execucao.DuracaoMinutos });
+    }
+
+    /// <summary>Exercicios ativos da equipe, para o paciente acrescentar um extra no treino do dia.</summary>
+    [HttpGet("exercicios")]
+    public async Task<IActionResult> Exercicios(CancellationToken ct)
+    {
+        var itens = await db.Exercicios.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
+            .OrderBy(x => x.Nome)
+            .Select(x => new { x.Id, x.Nome, x.GrupoMuscular, x.Equipamento })
+            .ToListAsync(ct);
+        return Ok(itens);
     }
 
     [HttpGet("historico")]
@@ -245,6 +302,7 @@ public sealed class ExecucoesTreinoPacienteController(
             .Include(x => x.SessaoTreino)
             .Include(x => x.PlanoTreino)
             .Include(x => x.Itens).ThenInclude(x => x.ItemTreino).ThenInclude(x => x.Exercicio)
+            .Include(x => x.Extras).ThenInclude(x => x.Exercicio)
             .Where(x => x.PacienteId == pacienteId.Value && x.DataHoraInicioUtc >= desde)
             .OrderByDescending(x => x.DataHoraInicioUtc)
             .ToListAsync(ct);
@@ -284,6 +342,16 @@ public sealed class ExecucoesTreinoPacienteController(
             i.TecnicaExecutadaParametros,
             i.Concluido,
             i.Observacoes
+        }),
+        extras = x.Extras.OrderBy(e => e.Ordem).Select(e => new
+        {
+            e.ExercicioId,
+            exercicio = e.Exercicio.Nome,
+            e.SeriesRealizadas,
+            e.RepeticoesRealizadas,
+            e.CargaRealizada,
+            e.UnidadeCarga,
+            e.Observacoes
         })
     };
 
@@ -330,6 +398,7 @@ public sealed class ExecucoesTreinoProfissionalController(
             .Include(x => x.SessaoTreino)
             .Include(x => x.PlanoTreino)
             .Include(x => x.Itens).ThenInclude(x => x.ItemTreino).ThenInclude(x => x.Exercicio)
+            .Include(x => x.Extras).ThenInclude(x => x.Exercicio)
             .Where(x => x.PacienteId == pacienteId && x.DataHoraInicioUtc >= desde)
             .OrderByDescending(x => x.DataHoraInicioUtc)
             .ToListAsync(ct);
@@ -390,6 +459,14 @@ public sealed class ExecucoesTreinoProfissionalController(
                     i.CargaRealizada,
                     i.UnidadeCarga,
                     i.Concluido
+                }),
+                extras = x.Extras.OrderBy(e => e.Ordem).Select(e => new
+                {
+                    exercicio = e.Exercicio.Nome,
+                    e.SeriesRealizadas,
+                    e.RepeticoesRealizadas,
+                    e.CargaRealizada,
+                    e.UnidadeCarga
                 })
             })
         });

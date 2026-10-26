@@ -50,6 +50,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<ItemTreino> ItensTreino => Set<ItemTreino>();
     public DbSet<ExecucaoTreino> ExecucoesTreino => Set<ExecucaoTreino>();
     public DbSet<ExecucaoItemTreino> ExecucoesItensTreino => Set<ExecucaoItemTreino>();
+    public DbSet<ExecucaoExercicioExtra> ExecucoesExerciciosExtras => Set<ExecucaoExercicioExtra>();
     public DbSet<PendenciaClinica> PendenciasClinicas => Set<PendenciaClinica>();
     public DbSet<NotificacaoInterna> NotificacoesInternas => Set<NotificacaoInterna>();
     public DbSet<InteracaoAcompanhamento> InteracoesAcompanhamento => Set<InteracaoAcompanhamento>();
@@ -744,6 +745,20 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasForeignKey(x => x.ExecucaoTreinoId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(x => x.ItemTreino).WithMany(x => x.Execucoes)
                 .HasForeignKey(x => x.ItemTreinoId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<ExecucaoExercicioExtra>(entity =>
+        {
+            entity.ToTable("ExecucoesExerciciosExtras");
+            entity.Property(x => x.RepeticoesRealizadas).HasMaxLength(80);
+            entity.Property(x => x.UnidadeCarga).HasMaxLength(20);
+            entity.Property(x => x.Observacoes).HasMaxLength(500);
+            entity.HasIndex(x => x.ExecucaoTreinoId);
+            entity.HasIndex(x => x.ExercicioId);
+            entity.HasOne(x => x.ExecucaoTreino).WithMany(x => x.Extras)
+                .HasForeignKey(x => x.ExecucaoTreinoId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Exercicio).WithMany()
+                .HasForeignKey(x => x.ExercicioId).OnDelete(DeleteBehavior.Restrict);
         });
 
 

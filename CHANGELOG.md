@@ -1,3 +1,9 @@
+## v0.65.9 — Treino livre e registro de água
+
+- Paciente: no calendário do Treino, tocar num dia mostra o que foi feito (sessão, horário, duração, RPE e cada exercício com séries e carga) ou o que está previsto, com atalho para ver os exercícios ou começar. Setas navegam entre semanas.
+- Paciente: durante o treino, botão "Exercício extra" abre o catálogo da equipe com busca e grupos musculares; o exercício entra só no treino do dia, com séries e carga registradas como os demais. Fica salvo no histórico (tabela nova ExecucoesExerciciosExtras) e o profissional vê nos treinos recentes e no aviso de treino concluído.
+- Paciente: card "Água hoje" na tela Hoje com +250 ml, +500 ml e +1 L. Com meta hídrica do profissional, soma no registro da meta e mostra o progresso; sem meta, registra no diário. O recado do dia sobre hidratação ganhou o botão "Marcar água".
+
 ## v0.65.8 — Busca da equipe na versão nova
 
 - Equipe: lupa no topo da tela Hoje que busca de uma vez pacientes, pendências abertas, contatos e consultas, agrupados por tipo; tocar leva direto para a ficha, a central ou a agenda.

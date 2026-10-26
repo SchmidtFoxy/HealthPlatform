@@ -88,6 +88,8 @@ export interface ExecucaoHistorico {
   plano: string;
   sessao: string;
   itens: ItemExecucaoHistorico[];
+  /** Exercicios que o paciente acrescentou por conta propria. */
+  extras?: { exercicioId: string; exercicio: string; seriesRealizadas: number | null; repeticoesRealizadas: string | null; cargaRealizada: number | null; unidadeCarga: string | null }[];
 }
 
 export interface HistoricoTreinos {

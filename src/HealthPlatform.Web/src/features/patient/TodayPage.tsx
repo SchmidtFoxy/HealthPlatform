@@ -9,6 +9,7 @@ import { dataLonga, hojeIso, hora, n0, primeiroNome, saudacao } from '@/lib/form
 import { useSessao } from '@/lib/session';
 import { Avatar } from '@/components/account';
 import type { RefeicaoPortal, StatusRefeicao } from '@/lib/types';
+import { AguaCard } from './Agua';
 import { BoasVindasSheet, useOnboardingPaciente } from './BoasVindas';
 import { CheckInSheet } from './CheckInSheet';
 import { FecharDiaSheet } from './DiaryPage';
@@ -322,6 +323,11 @@ export function TodayPage() {
           <p className="eyebrow">Recado do dia</p>
           <p className="mt-1.5 font-semibold">{coach.titulo}</p>
           <p className="mt-1 text-sm text-muted">{coach.acao}</p>
+          {coach.codigo.includes('hidratacao') && (
+            <Button variant="soft" size="sm" className="mt-3" onClick={() => document.getElementById('agua')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
+              Marcar água
+            </Button>
+          )}
         </motion.div>
       )}
     </>
@@ -370,6 +376,7 @@ export function TodayPage() {
               </Link>
             </motion.div>
           )}
+          <AguaCard delay={0.05} />
           {mostrarFechamento && (
             <motion.div {...fade(1)} className="mt-3">
               <button onClick={() => setFecharDia(true)} className="flex w-full items-center gap-3 rounded-xl2 border border-accent/40 bg-accent/[0.06] p-4 text-left transition active:scale-[0.99]">
