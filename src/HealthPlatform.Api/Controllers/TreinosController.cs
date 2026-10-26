@@ -38,14 +38,16 @@ public sealed class TreinosController(
         string? Cadencia = null,
         string? TecnicaAvancada = null,
         string? TecnicaAvancadaCodigo = null,
-        string? TecnicaAvancadaParametros = null);
+        string? TecnicaAvancadaParametros = null,
+        Guid? Id = null);
 
     public sealed record SessaoTreinoRequest(
         string Nome,
         string? DiasSemana,
         int Ordem,
         string? Observacoes,
-        IReadOnlyCollection<ItemTreinoRequest> Itens);
+        IReadOnlyCollection<ItemTreinoRequest> Itens,
+        Guid? Id = null);
 
     public sealed record UpsertPlanoTreinoRequest(
         string Nome,
@@ -330,7 +332,7 @@ public sealed class TreinosController(
     {
         var item = await db.PlanosTreino
             .Include(x => x.Paciente)
-            .Include(x => x.Sessoes).ThenInclude(x => x.Itens)
+            .Include(x => x.Sessoes).ThenInclude(x => x.Itens).ThenInclude(x => x.Exercicio)
             .FirstOrDefaultAsync(x =>
                 x.Id == id &&
                 x.Paciente.OrganizacaoId == currentUser.OrganizationId, ct);
@@ -349,9 +351,8 @@ public sealed class TreinosController(
         item.Status = NormalizarStatus(request.Status);
         item.Observacoes = Limpar(request.Observacoes);
 
-        db.SessoesTreino.RemoveRange(item.Sessoes);
-        item.Sessoes.Clear();
-        MontarSessoes(item, request.Sessoes);
+        var conflito = await ReconciliarSessoes(item, request.Sessoes, ct);
+        if (conflito is not null) return Conflict(new { message = conflito });
 
         Auditar("UPDATE", nameof(PlanoTreino), item.Id, antes, SnapshotPlano(item));
         await db.SaveChangesAsync(ct);
@@ -694,6 +695,114 @@ public sealed class TreinosController(
             return "Um ou mais exercicios nao existem ou estao inativos.";
 
         return null;
+    }
+
+    // Atualiza sessoes e exercicios no lugar para preservar os ids referenciados pelo historico
+    // de execucoes (FK Restrict). Casa por Id quando o cliente envia; senao, pela posicao (front classico).
+    private async Task<string?> ReconciliarSessoes(
+        PlanoTreino plano,
+        IReadOnlyCollection<SessaoTreinoRequest> sessoes,
+        CancellationToken ct)
+    {
+        var existentes = plano.Sessoes.OrderBy(x => x.Ordem).ToList();
+        var itensExistentes = existentes.SelectMany(x => x.Itens).ToList();
+        var sessaoIds = existentes.Select(x => x.Id).ToList();
+        var itemIds = itensExistentes.Select(x => x.Id).ToList();
+
+        var sessoesComHistorico = (await db.ExecucoesTreino
+            .Where(x => sessaoIds.Contains(x.SessaoTreinoId))
+            .Select(x => x.SessaoTreinoId).Distinct().ToListAsync(ct)).ToHashSet();
+        var itensComHistorico = (await db.ExecucoesItensTreino
+            .Where(x => itemIds.Contains(x.ItemTreinoId))
+            .Select(x => x.ItemTreinoId).Distinct().ToListAsync(ct)).ToHashSet();
+
+        var pedidas = sessoes.OrderBy(x => x.Ordem).ToList();
+        var porId = pedidas.Any(x => x.Id is not null);
+        var usadasSessoes = new HashSet<Guid>();
+        var usadosItens = new HashSet<Guid>();
+
+        for (var si = 0; si < pedidas.Count; si++)
+        {
+            var s = pedidas[si];
+            var sessao = porId
+                ? existentes.FirstOrDefault(x => x.Id == s.Id)
+                : si < existentes.Count ? existentes[si] : null;
+
+            if (sessao is null)
+            {
+                sessao = new SessaoTreino { PlanoTreinoId = plano.Id };
+                plano.Sessoes.Add(sessao);
+                db.Add(sessao);
+            }
+
+            usadasSessoes.Add(sessao.Id);
+            sessao.Nome = s.Nome.Trim();
+            sessao.DiasSemana = Limpar(s.DiasSemana);
+            sessao.Ordem = s.Ordem;
+            sessao.Observacoes = Limpar(s.Observacoes);
+
+            var atuais = sessao.Itens.OrderBy(x => x.Ordem).ToList();
+            var itensPedidos = (s.Itens ?? Array.Empty<ItemTreinoRequest>()).OrderBy(x => x.Ordem).ToList();
+            var itensPorId = itensPedidos.Any(x => x.Id is not null);
+
+            for (var ii = 0; ii < itensPedidos.Count; ii++)
+            {
+                var i = itensPedidos[ii];
+                var alvo = itensPorId
+                    ? atuais.FirstOrDefault(x => x.Id == i.Id)
+                    : ii < atuais.Count ? atuais[ii] : null;
+
+                // Trocar o exercicio de um item com historico apagaria o sentido das cargas registradas.
+                if (alvo is not null && alvo.ExercicioId != i.ExercicioId && itensComHistorico.Contains(alvo.Id))
+                    alvo = null;
+
+                if (alvo is null || usadosItens.Contains(alvo.Id))
+                {
+                    alvo = new ItemTreino { SessaoTreinoId = sessao.Id };
+                    sessao.Itens.Add(alvo);
+                    db.Add(alvo);
+                }
+
+                usadosItens.Add(alvo.Id);
+                AplicarItem(alvo, i);
+            }
+
+            foreach (var sobra in atuais.Where(x => !usadosItens.Contains(x.Id)).ToList())
+            {
+                if (itensComHistorico.Contains(sobra.Id))
+                    return $"O exercício \"{sobra.Exercicio?.Nome ?? "removido"}\" já tem treinos registrados pelo paciente e não pode sair deste plano. Publique uma nova versão do plano para removê-lo.";
+                sessao.Itens.Remove(sobra);
+                db.ItensTreino.Remove(sobra);
+            }
+        }
+
+        foreach (var sobra in existentes.Where(x => !usadasSessoes.Contains(x.Id)).ToList())
+        {
+            if (sessoesComHistorico.Contains(sobra.Id) || sobra.Itens.Any(x => itensComHistorico.Contains(x.Id)))
+                return $"A sessão \"{sobra.Nome}\" já tem treinos registrados pelo paciente e não pode ser removida. Publique uma nova versão do plano para reorganizar as sessões.";
+            plano.Sessoes.Remove(sobra);
+            db.SessoesTreino.Remove(sobra);
+        }
+
+        return null;
+    }
+
+    private static void AplicarItem(ItemTreino alvo, ItemTreinoRequest i)
+    {
+        alvo.ExercicioId = i.ExercicioId;
+        alvo.Ordem = i.Ordem;
+        alvo.Series = i.Series;
+        alvo.Repeticoes = i.Repeticoes.Trim();
+        alvo.Carga = i.Carga;
+        alvo.UnidadeCarga = Limpar(i.UnidadeCarga);
+        alvo.DescansoSegundos = i.DescansoSegundos;
+        alvo.TempoSegundos = i.TempoSegundos;
+        alvo.Observacoes = Limpar(i.Observacoes);
+        alvo.RirAlvo = i.RirAlvo;
+        alvo.Cadencia = Limpar(i.Cadencia);
+        alvo.TecnicaAvancada = Limpar(i.TecnicaAvancada);
+        alvo.TecnicaAvancadaCodigo = AdvancedTechniqueCatalog.NormalizarCodigo(i.TecnicaAvancadaCodigo);
+        alvo.TecnicaAvancadaParametros = Limpar(i.TecnicaAvancadaParametros);
     }
 
     private void MontarSessoes(

@@ -7,11 +7,13 @@ using Microsoft.EntityFrameworkCore;
 namespace HealthPlatform.Api.Controllers;
 
 [ApiController]
-[Authorize]
+// Rotas do portal usam PatientOnly; as demais exigem a equipe (policy padrao) por metodo.
+[Authorize(Policy = "AuthenticatedOnly")]
 public sealed class AthletePerformancePassportController(
     AppDbContext db,
     CurrentUser currentUser) : ControllerBase
 {
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte")]
     public async Task<IActionResult> Profissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -44,6 +46,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarAsync(db, pacienteId.Value, ct));
     }
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte/recordes")]
     public async Task<IActionResult> RecordesProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -85,6 +88,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte/tempos")]
     public async Task<IActionResult> TemposProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -126,6 +130,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte/resultados")]
     public async Task<IActionResult> ResultadosProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -167,6 +172,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte/habilidades-marcos")]
     public async Task<IActionResult> HabilidadesMarcosProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -208,6 +214,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/passaporte/evolucao")]
     public async Task<IActionResult> EvolucaoProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -255,6 +262,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence")]
     public async Task<IActionResult> ProgressIntelligenceProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -306,6 +314,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/context")]
     public async Task<IActionResult> ProgressSignalContextProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -359,6 +368,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/timeline")]
     public async Task<IActionResult> MultiSignalTimelineProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -414,6 +424,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/windows")]
     public async Task<IActionResult> ProgressEvidenceWindowsProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -471,6 +482,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/observation-map")]
     public async Task<IActionResult> CrossSignalObservationMapProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -528,6 +540,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/summary")]
     public async Task<IActionResult> ProgressObservationSummaryProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -591,6 +604,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-intelligence/closure")]
     public async Task<IActionResult> ProgressIntelligenceClosureProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -658,6 +672,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-review-workspace")]
     public async Task<IActionResult> ProgressReviewWorkspaceProfissional(Guid pacienteId, CancellationToken ct = default)
     {
@@ -693,6 +708,7 @@ public sealed class AthletePerformancePassportController(
     }
 
 
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/performance/progress-review-notes-foundation")]
     public async Task<IActionResult> ProgressReviewNotesFoundationProfissional(Guid pacienteId, CancellationToken ct = default)
     {

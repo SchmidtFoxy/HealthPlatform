@@ -10,3 +10,8 @@ appsettings.Production.json
 
 # Runtime/local application data
 **/App_Data/
+
+# Novo front (React)
+src/HealthPlatform.Web/node_modules/
+src/HealthPlatform.Web/dist/
+*.tsbuildinfo

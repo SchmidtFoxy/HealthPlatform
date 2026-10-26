@@ -71,7 +71,10 @@ public class PlanosAlimentaresController(AppDbContext db, CurrentUser currentUse
         item.MetaGordurasG = request.MetaGordurasG;
         item.MetaFibrasG = request.MetaFibrasG;
         item.UpdatedAtUtc = DateTime.UtcNow;
-        db.SuplementosPlanoAlimentar.RemoveRange(item.Suplementos); item.Suplementos.Clear(); db.RefeicoesPlanoAlimentar.RemoveRange(item.Refeicoes); item.Refeicoes.Clear(); await MontarRefeicoes(item, request.Refeicoes, ct); await MontarSuplementos(item, request.Suplementos, ct); Auditar("UPDATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct);
+        db.SuplementosPlanoAlimentar.RemoveRange(item.Suplementos); item.Suplementos.Clear(); db.RefeicoesPlanoAlimentar.RemoveRange(item.Refeicoes); item.Refeicoes.Clear(); await MontarRefeicoes(item, request.Refeicoes, ct); await MontarSuplementos(item, request.Suplementos, ct);
+        // As entidades novas ja nascem com Id (BaseEntity); sem marcar como Added o EF tenta UPDATE e a gravacao falha.
+        db.AddRange(item.Refeicoes); db.AddRange(item.Suplementos);
+        Auditar("UPDATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct);
         var atualizado = await QueryCompleta().FirstAsync(x => x.Id == id, ct); return Ok(ToResponse(atualizado));
     }
 

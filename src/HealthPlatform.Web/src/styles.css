@@ -1,0 +1,133 @@
+@import '@fontsource-variable/sora';
+@import '@fontsource-variable/figtree';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Identidade AESYN: fundo teal profundo, menta luminosa da marca, numeros em Sora. */
+:root,
+[data-theme='light'] {
+  --bg: 241 246 245;
+  --surface: 255 255 255;
+  --raised: 233 241 239;
+  --line: 207 222 219;
+  --fg: 10 30 27;
+  --muted: 84 109 104;
+  --faint: 140 162 158;
+  --accent: 9 140 115;
+  --accent-ink: 255 255 255;
+  --deep: 8 58 52;
+  --ok: 22 150 84;
+  --warn: 196 120 0;
+  --bad: 205 55 55;
+  --info: 40 110 200;
+  --prot: 214 84 120;
+  --carb: 214 150 20;
+  --fat: 90 120 220;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: 5 16 14;
+  --surface: 11 28 25;
+  --raised: 17 40 36;
+  --line: 33 62 56;
+  --fg: 230 243 240;
+  --muted: 140 168 162;
+  --faint: 90 118 112;
+  --accent: 94 240 200;
+  --accent-ink: 4 30 25;
+  --deep: 15 90 80;
+  --ok: 92 220 140;
+  --warn: 255 186 80;
+  --bad: 255 110 110;
+  --info: 110 170 255;
+  --prot: 255 120 160;
+  --carb: 255 200 90;
+  --fat: 130 160 255;
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg font-sans text-fg antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+.num {
+  font-family: 'Sora Variable', Sora, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-muted;
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.px-gutter {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Halo da marca, usado com parcimonia em hero e botoes de destaque. */
+.aurora {
+  background:
+    radial-gradient(120% 80% at 10% 0%, rgb(var(--accent) / 0.22), transparent 60%),
+    radial-gradient(90% 70% at 100% 20%, rgb(var(--deep) / 0.55), transparent 65%),
+    rgb(var(--surface));
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgb(var(--raised)) 0%, rgb(var(--line) / 0.6) 50%, rgb(var(--raised)) 100%);
+  background-size: 200% 100%;
+  @apply animate-shimmer rounded-xl;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

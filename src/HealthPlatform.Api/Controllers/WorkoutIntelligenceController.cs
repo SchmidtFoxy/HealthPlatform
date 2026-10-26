@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 namespace HealthPlatform.Api.Controllers;
 
 [ApiController]
-[Authorize]
+// Rotas do portal usam PatientOnly; as demais exigem a equipe (policy padrao) por metodo.
+[Authorize(Policy = "AuthenticatedOnly")]
 public sealed class WorkoutIntelligenceController(AppDbContext db, CurrentUser currentUser) : ControllerBase
 {
+    [Authorize]
     [HttpGet("api/pacientes/{pacienteId:guid}/treinos/inteligencia")]
     public async Task<IActionResult> Profissional(Guid pacienteId, [FromQuery] int dias = 28, CancellationToken ct = default)
     {
