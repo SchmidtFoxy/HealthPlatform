@@ -28,7 +28,7 @@ jobs:
       VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
       DB_NAME: ${{ secrets.DB_NAME }}
       HEALTH_URL: ${{ vars.HEALTH_URL || 'https://aesyn.com.br/api/health' }}
-      APP_SERVICE: ${{ vars.APP_SERVICE || 'api' }}
+      APP_SERVICE: ${{ vars.APP_SERVICE || 'app' }}
     steps:
       - name: Verificar configuracao
         id: cfg
