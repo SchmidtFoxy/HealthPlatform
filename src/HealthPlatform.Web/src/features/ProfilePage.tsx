@@ -1,35 +1,34 @@
 import { ExternalLink, LogOut, Monitor, Moon, Sun } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Avatar, PAPEL, TrocarConta, useConta } from '@/components/account';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Segmented } from '@/components/ui';
-import { sair } from '@/lib/api';
-import { iniciais } from '@/lib/format';
 import { useSessao } from '@/lib/session';
 import { Tema, useTema } from '@/lib/theme';
 
-const PAPEL: Record<string, string> = {
-  Admin: 'Administrador',
-  Medico: 'Médico',
-  Nutricionista: 'Nutricionista',
-  Personal: 'Personal trainer',
-  Secretaria: 'Secretaria',
-  Paciente: 'Paciente',
-};
-
 export function ProfilePage() {
   const s = useSessao();
-  const nav = useNavigate();
+  const conta = useConta();
   const [tema, setTema] = useTema();
   return (
     <Page>
-      <PageHeader title="Perfil" />
+      <PageHeader
+        title="Perfil"
+        action={
+          <Button variant="danger" size="sm" icon={<LogOut className="h-4 w-4" />} onClick={conta.sair}>
+            Sair
+          </Button>
+        }
+      />
       <Card className="flex items-center gap-4 p-5">
-        <div className="grid h-16 w-16 place-items-center rounded-full bg-accent/15 font-display text-xl font-semibold text-accent">{iniciais(s?.nome)}</div>
+        <Avatar nome={s?.nome} tipo={s?.tipoUsuario} size="lg" />
         <div className="min-w-0">
           <p className="truncate font-display text-lg font-semibold">{s?.nome}</p>
-          <p className="text-sm text-muted">{PAPEL[s?.tipoUsuario ?? ''] ?? s?.tipoUsuario}</p>
+          <p className="text-sm text-muted">{s ? PAPEL[s.tipoUsuario] : ''}</p>
         </div>
       </Card>
+
+      <p className="eyebrow mb-2 mt-7">Trocar de conta</p>
+      <TrocarConta />
 
       <p className="eyebrow mb-2 mt-7">Aparência</p>
       <Segmented<Tema>
@@ -47,25 +46,18 @@ export function ProfilePage() {
         <a href="/" className="flex items-center justify-between p-4 font-semibold">
           <span>
             Abrir versão clássica
-            <span className="block text-sm font-normal text-muted">Exames, anamnese, chat, arquivos e demais módulos</span>
+            <span className="block text-sm font-normal text-muted">
+              {s?.tipoUsuario === 'Paciente' ? 'Exames, chat, arquivos e demais módulos' : 'Gestão, equipe, agenda, exames e demais módulos'}
+            </span>
           </span>
           <ExternalLink className="h-5 w-5 text-muted" />
         </a>
       </Card>
 
-      <Button
-        variant="danger"
-        size="lg"
-        className="mt-8 w-full"
-        icon={<LogOut className="h-5 w-5" />}
-        onClick={async () => {
-          await sair();
-          nav('/entrar', { replace: true });
-        }}
-      >
+      <Button variant="danger" size="lg" className="mt-8 w-full" icon={<LogOut className="h-5 w-5" />} onClick={conta.sair}>
         Sair da conta
       </Button>
-      <p className="mt-6 text-center text-xs text-faint">AESYN · nova experiência (prévia)</p>
+      <p className="mt-6 text-center text-xs text-faint">AESYN · nova experiência</p>
     </Page>
   );
 }
