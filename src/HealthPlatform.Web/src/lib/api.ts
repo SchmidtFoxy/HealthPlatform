@@ -123,3 +123,8 @@ export async function sair() {
 }
 
 export const ehPaciente = (s: Sessao | null) => s?.tipoUsuario === 'Paciente';
+
+export async function pedirNovaSenha(email: string) {
+  const r = await api<{ message?: string }>('/api/auth/password/esqueci', { method: 'POST', json: { email } });
+  return r?.message ?? 'Se existir uma conta ativa para este e-mail, você receberá as instruções para redefinir sua senha.';
+}
