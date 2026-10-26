@@ -25,8 +25,10 @@ export function saudacao(d = new Date()) {
   return 'Boa noite';
 }
 
-export const dataLonga = (d = new Date()) =>
-  d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+export const dataLonga = (d = new Date()) => {
+  const t = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
 
 export const dataCurta = (iso: string) => {
   const d = new Date(iso.length === 10 ? iso + 'T12:00:00' : iso);
