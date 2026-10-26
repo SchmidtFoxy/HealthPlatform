@@ -11,7 +11,8 @@
       var paciente=u&&u.tipoUsuario==='Paciente'&&!u.impersonating&&localStorage.getItem('hp_token')&&(!exp||new Date(exp)>new Date());
       var link=q.get('aesynPushLink');
       var mapa={chat:'chat',arquivos:'arquivos',inicio:'hoje',alimentacao:'dieta',treinos:'treino',cuidados:'cuidados'};
-      if(link){if(paciente&&Object.prototype.hasOwnProperty.call(mapa,link)){location.replace('/app/'+mapa[link]);return}sessionStorage.setItem('aesyn_classico','1');return}
+      var conversa=/^chat-profissional:([0-9a-f-]{36})$/i.exec(link||'');var equipe=u&&u.tipoUsuario!=='Paciente'&&!u.impersonating&&localStorage.getItem('hp_token')&&(!exp||new Date(exp)>new Date());
+      if(link){if(paciente&&Object.prototype.hasOwnProperty.call(mapa,link)){location.replace('/app/'+mapa[link]);return}if(equipe&&conversa){location.replace('/app/pro/mensagens/'+conversa[1]);return}sessionStorage.setItem('aesyn_classico','1');return}
       if(sessionStorage.getItem('aesyn_classico'))return;
       if(paciente)location.replace('/app/hoje');
     }catch(e){}})();
@@ -29,8 +30,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.56.1" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.56.1" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.56.1" />
-  <link rel="stylesheet" href="/app.css?v=0.63.8" />
-  <link rel="stylesheet" href="/operations.css?v=0.63.8">
+  <link rel="stylesheet" href="/app.css?v=0.63.9" />
+  <link rel="stylesheet" href="/operations.css?v=0.63.9">
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
@@ -437,6 +438,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.63.8"></script>
+  <script src="/app.js?v=0.63.9"></script>
 </body>
 </html>

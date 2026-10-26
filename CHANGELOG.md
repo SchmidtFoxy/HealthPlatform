@@ -1,3 +1,10 @@
+## v0.63.9 — Mensagens do profissional na versão nova
+
+- /app equipe: nova aba Mensagens com todas as conversas, busca, filtros "A responder" e "Não lidas", contador de não lidas e tempo de espera (amarelo perto de 24h, vermelho passou de 24h).
+- Conversa com o paciente no mesmo formato do chat do paciente: assunto, anexo (vai para os arquivos do paciente), atalho para a ficha.
+- Ficha do paciente ganhou o botão Chat.
+- Notificação de mensagem de paciente abre direto a conversa no /app.
+
 ## v0.63.8 — Jornada e sinais conectados na versão nova
 
 - /app Sua jornada: linha do tempo de consultas, avaliações, exames, metas, diário, check-ins, treinos e pedidos, agrupada por mês, com período de 3 meses, 6 meses ou 1 ano. Cada evento abre a tela correspondente.

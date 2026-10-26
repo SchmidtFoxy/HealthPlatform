@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Copy, Dumbbell, ExternalLink, Flame, Mail, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
+import { ChevronLeft, Copy, Dumbbell, ExternalLink, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -392,7 +392,10 @@ export function PatientDetailPage() {
               )}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex">
+            <Link to={`/pro/mensagens/${p.id}`} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-accent/10 px-2.5 text-[13px] font-semibold text-accent transition hover:bg-accent/20 sm:flex-none sm:px-4">
+              <MessageCircle className="h-4 w-4 shrink-0" /> Chat
+            </Link>
             {p.telefone && (
               <a href={`https://wa.me/55${p.telefone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
                 <Phone className="h-4 w-4 shrink-0 text-ok" /> WhatsApp

@@ -64,5 +64,7 @@ export const testarPush = () => api<{ enviadas: number; motivo?: string }>('/api
 export function destinoDoLink(link: string, paciente: boolean) {
   const app: Record<string, string> = { chat: 'chat', arquivos: 'arquivos', inicio: 'hoje', alimentacao: 'dieta', treinos: 'treino', cuidados: 'cuidados' };
   if (paciente && Object.prototype.hasOwnProperty.call(app, link)) return `/app/${app[link]}`;
+  const conversa = /^chat-profissional:([0-9a-f-]{36})$/i.exec(link);
+  if (!paciente && conversa) return `/app/pro/mensagens/${conversa[1]}`;
   return `/?aesynPushLink=${encodeURIComponent(link)}`;
 }

@@ -1,4 +1,4 @@
-import { Activity, CalendarCheck, Dumbbell, Home, Salad, User, Users } from 'lucide-react';
+import { Activity, CalendarCheck, Dumbbell, Home, MessageCircle, Salad, User, Users } from 'lucide-react';
 import { lazy, ReactNode, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/shell';
@@ -15,7 +15,9 @@ import { useSessao } from './lib/session';
 import { useTema } from './lib/theme';
 
 const LiveWorkoutPage = lazy(() => import('./features/patient/LiveWorkoutPage').then((m) => ({ default: m.LiveWorkoutPage })));
-const ChatPage = lazy(() => import('./features/patient/ChatPage').then((m) => ({ default: m.ChatPage })));
+const ChatPage = lazy(() => import('./features/chat/Conversa').then((m) => ({ default: m.ChatPage })));
+const ProChatPage = lazy(() => import('./features/chat/Conversa').then((m) => ({ default: m.ProChatPage })));
+const InboxPage = lazy(() => import('./features/chat/InboxPage').then((m) => ({ default: m.InboxPage })));
 const ExplorePage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExplorePage })));
 const ExploreDetailPage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExploreDetailPage })));
 const AccountPage = lazy(() => import('./features/AccountPage').then((m) => ({ default: m.AccountPage })));
@@ -65,6 +67,7 @@ const navPaciente = [
 const navEquipe = [
   { to: '/pro', label: 'Hoje', icon: CalendarCheck, end: true },
   { to: '/pro/pacientes', label: 'Pacientes', icon: Users },
+  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageCircle },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
 ];
 
@@ -112,6 +115,14 @@ export function App() {
             }
           />
           <Route
+            path="/pro/mensagens/:id"
+            element={
+              <Protegido papel="equipe">
+                <ProChatPage />
+              </Protegido>
+            }
+          />
+          <Route
             path="/treino/:sessaoId"
             element={
               <Protegido papel="paciente">
@@ -129,6 +140,7 @@ export function App() {
           >
             <Route path="/pro" element={<ProTodayPage />} />
             <Route path="/pro/pacientes" element={<PatientsPage />} />
+            <Route path="/pro/mensagens" element={<InboxPage />} />
             <Route path="/pro/pacientes/:id" element={<PatientDetailPage />} />
             <Route path="/pro/perfil" element={<ProfilePage />} />
             <Route path="/pro/conta" element={<AccountPage />} />
