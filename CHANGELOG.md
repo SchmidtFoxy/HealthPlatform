@@ -1,3 +1,13 @@
+## v0.61.0 — Novo front mobile-first em /app
+- Novo app React/Vite/PWA servido em `/app`, ao lado do front clássico e com a mesma sessão.
+- Paciente: Hoje, treino ao vivo com timer de descanso, dieta, progresso e perfil com tema claro/escuro.
+- Profissional: Hoje, pacientes, ficha com evolução de carga e construtores de dieta e de treino.
+- Corrige 403 do paciente ao aceitar termos/onboarding.
+- Corrige 500 ao editar plano alimentar.
+- Corrige 500 ao editar treino com histórico; remover item com histórico retorna 409 com orientação.
+- CI gratuito no GitHub Actions (build da API e do novo front).
+- Sem migration.
+
 ## v0.59.11 — Messaging Presence & Delivery Polish / Lista 04 Closure
 - Recibos do chat exibem `Enviada`, `Entregue` e `Lida` usando o estado real já persistido.
 - Mensagens lidas mostram o horário real de leitura.

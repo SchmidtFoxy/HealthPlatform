@@ -429,6 +429,7 @@ function New-LocalApplicationPackage {
         "--exclude=.env",
         "--exclude=.env.*",
         "--exclude=backups",
+        "--exclude=node_modules",
         "-C", $ScriptRoot,
         "."
     )
