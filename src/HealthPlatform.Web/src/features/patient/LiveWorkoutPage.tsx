@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 import { mmss, n0, n1 } from '@/lib/format';
 import type { ItemTreinoPortal, SessaoTreinoPortal } from '@/lib/types';
 import { useHistoricoTreinos, useMeusTreinos } from './queries';
+import { obsLimpa, seriesDoItem } from '@/lib/series';
 import { novoAndamento, salvarAndamento, SerieRegistro, treinoEmAndamento, TreinoAndamento } from './workout-store';
 
 // ------------------------------------------------------------ utilidades de feedback
@@ -107,8 +108,11 @@ function RestTimer({ fimEm, total, onAjustar, onFim }: { fimEm: number; total: n
 // ------------------------------------------------------------ cartao do exercicio
 
 function linhaPrescricao(it: ItemTreinoPortal) {
-  const partes = [`${it.series} × ${it.repeticoes}`];
-  if (it.carga != null) partes.push(`${n1(it.carga)} ${it.unidadeCarga ?? 'kg'}`);
+  const alvos = seriesDoItem(it);
+  const cargas = [...new Set(alvos.map((a) => a.carga).filter((c): c is number => c != null))];
+  const partes = [`${alvos.length} × ${alvos.length > 1 && new Set(alvos.map((a) => a.reps)).size > 1 ? alvos.map((a) => a.reps).join('/') : it.repeticoes}`];
+  if (cargas.length > 1) partes.push(`${cargas.map(n1).join('/')} ${it.unidadeCarga ?? 'kg'}`);
+  else if (it.carga != null) partes.push(`${n1(it.carga)} ${it.unidadeCarga ?? 'kg'}`);
   if (it.rirAlvo != null) partes.push(`RIR ${it.rirAlvo}`);
   if (it.cadencia) partes.push(`cadência ${it.cadencia}`);
   return partes.join(' · ');
@@ -267,6 +271,9 @@ export function LiveWorkoutPage() {
   const foco = focoSel != null && focoSel < series.length ? focoSel : indiceAtiva;
   const sFoco = foco >= 0 ? series[foco] : undefined;
   const unidade = it.unidadeCarga ?? 'kg';
+  const alvos = seriesDoItem(it);
+  const alvo = (i: number) => alvos[i] ?? alvos[alvos.length - 1];
+  const obs = obsLimpa(it.observacoes);
 
   const atualizarSerie = (idx: number, s: SerieRegistro) => setT((x) => x && { ...x, series: { ...x.series, [it.id]: x.series[it.id].map((o, i) => (i === idx ? s : o)) } });
 
@@ -276,7 +283,15 @@ export function LiveWorkoutPage() {
     // Propaga carga e reps para as series seguintes ainda nao feitas (padrao de academia).
     setT((x) => {
       if (!x) return x;
-      const lista = x.series[it.id].map((o, i) => (i === idx ? { ...o, feita } : feita && i > idx && !o.feita ? { ...o, carga: s.carga, reps: o.reps ?? s.reps } : o));
+      // Com cargas diferentes por serie, leva o mesmo ajuste (ex.: +2,5 kg) para as seguintes.
+      const delta = s.carga != null && alvo(idx).carga != null ? s.carga - (alvo(idx).carga as number) : null;
+      const lista = x.series[it.id].map((o, i) => {
+        if (i === idx) return { ...o, feita };
+        if (!feita || i < idx || o.feita) return o;
+        const meta = alvo(i).carga;
+        const carga = delta != null && meta != null && meta !== alvo(idx).carga ? meta + delta : s.carga;
+        return { ...o, carga, reps: o.reps ?? s.reps };
+      });
       return { ...x, series: { ...x.series, [it.id]: lista } };
     });
     setFocoSel(null);
@@ -419,7 +434,7 @@ export function LiveWorkoutPage() {
                 </p>
                 <h1 className="mt-1.5 font-display text-[28px] font-semibold leading-[1.1] tracking-tight lg:text-[34px]">{it.exercicio}</h1>
               </div>
-              {(it.descricao || it.observacoes || it.videoUrl) && (
+              {(it.descricao || obs || it.videoUrl) && (
                 <button aria-label="Como executar" onClick={() => setDetalhe(true)} className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-raised text-muted">
                   <Info className="h-5 w-5" />
                 </button>
@@ -440,7 +455,7 @@ export function LiveWorkoutPage() {
                 </span>
               )}
             </div>
-            {it.observacoes && <p className="mt-3 rounded-xl border border-line bg-surface px-3 py-2 text-sm">{it.observacoes}</p>}
+            {obs && <p className="mt-3 rounded-xl border border-line bg-surface px-3 py-2 text-sm">{obs}</p>}
 
             {/* Serie em foco */}
             {sFoco ? (
@@ -450,7 +465,7 @@ export function LiveWorkoutPage() {
                     Série {foco + 1} <span className="text-muted">de {series.length}</span>
                   </p>
                   <p className="num text-[13px] text-muted">
-                    Meta {it.repeticoes} reps{it.carga != null ? ` · ${n1(it.carga)} ${unidade}` : ''}
+                    Meta {alvo(foco).reps} reps{alvo(foco).carga != null ? ` · ${n1(alvo(foco).carga)} ${unidade}` : ''}
                   </p>
                 </div>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -531,7 +546,7 @@ export function LiveWorkoutPage() {
         <div className="flex flex-col gap-3 text-[15px]">
           {it.equipamento && <p className="text-muted">Equipamento: {it.equipamento}</p>}
           {it.descricao && <p>{it.descricao}</p>}
-          {it.observacoes && <p className="rounded-xl bg-raised p-3">{it.observacoes}</p>}
+          {obs && <p className="rounded-xl bg-raised p-3">{obs}</p>}
           {it.videoUrl && (
             <a href={it.videoUrl} target="_blank" rel="noreferrer" className="font-semibold text-accent">
               Ver vídeo de execução

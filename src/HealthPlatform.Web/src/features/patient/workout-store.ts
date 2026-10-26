@@ -3,6 +3,7 @@
 
 import type { SessaoTreinoPortal } from '@/lib/types';
 import { repsAlvo } from '@/lib/format';
+import { seriesDoItem } from '@/lib/series';
 
 export interface SerieRegistro {
   reps: number | null;
@@ -41,8 +42,11 @@ export function salvarAndamento(t: TreinoAndamento | null) {
 export function novoAndamento(sessao: SessaoTreinoPortal, ultimaCarga: Map<string, number>): TreinoAndamento {
   const series: Record<string, SerieRegistro[]> = {};
   for (const it of sessao.itens) {
-    const carga = ultimaCarga.get(it.id) ?? it.carga ?? null;
-    series[it.id] = Array.from({ length: Math.max(1, it.series) }, () => ({ reps: repsAlvo(it.repeticoes), carga, feita: false }));
+    // Cada serie nasce com a meta dela (piramide, top set...). Sem variacao, vale a carga da ultima vez.
+    const alvos = seriesDoItem(it);
+    const varia = alvos.some((a) => a.reps !== alvos[0].reps || a.carga !== alvos[0].carga);
+    const ultima = ultimaCarga.get(it.id);
+    series[it.id] = alvos.map((a) => ({ reps: repsAlvo(a.reps), carga: varia ? (a.carga ?? ultima ?? null) : (ultima ?? a.carga ?? null), feita: false }));
   }
   return { sessaoId: sessao.id, sessaoNome: sessao.nome, inicio: new Date().toISOString(), atual: 0, series };
 }

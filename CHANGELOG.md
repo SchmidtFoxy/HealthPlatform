@@ -1,3 +1,10 @@
+## v0.63.0 — Séries por linha no treino
+
+- Editor de treino (/app e clássico): cada exercício tem uma linha por série, com reps e carga próprias. "Adicionar série" cria uma linha nova copiando a anterior, o × remove, e "Igualar à 1ª" volta tudo para séries iguais. Dá para montar pirâmide (12/10/8/6), top set ou back-off.
+- Carga aceita vírgula enquanto digita (27,5).
+- Treino ao vivo: cada série já nasce com a meta dela, a "Meta" do cartão mostra reps e carga daquela série, e um ajuste de carga feito numa série é levado às seguintes mantendo a progressão.
+- O marcador técnico das séries não aparece mais nas orientações do exercício.
+
 ## v0.62.8 — Treino do dia marca concluído e mostra o próximo
 
 - /app: depois de registrar o treino, o card "Treino de hoje" vira "Treino de hoje concluído" com duração, exercícios e esforço, e aponta o próximo treino (amanhã ou o próximo dia da agenda).

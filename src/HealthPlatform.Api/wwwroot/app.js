@@ -15989,7 +15989,9 @@ function hpWorkoutSeriesBlocksV0606(item){
     const bytes=atob(b64);
     const data=Uint8Array.from(bytes,c=>c.charCodeAt(0));
     const parsed=JSON.parse(new TextDecoder().decode(data));
-    return Array.isArray(parsed)?parsed.slice().sort((a,b)=>(a.ordem||0)-(b.ordem||0)):[];
+    // A API grava em PascalCase; o app novo e o builder leem em camelCase.
+    const norm=o=>Object.fromEntries(Object.entries(o||{}).map(([k,v])=>[k.charAt(0).toLowerCase()+k.slice(1),v]));
+    return Array.isArray(parsed)?parsed.map(norm).sort((a,b)=>(a.ordem||0)-(b.ordem||0)):[];
   }catch{return []}
 }
 function hpWorkoutObservationWithoutSeriesBlocksV0606(value){
@@ -16243,8 +16245,8 @@ async function openStandaloneWorkoutBuilder(modelSummary=null){
         <label class="span2">Observação<input name="itemObs" value="${esc(item?.observacoes||'')}" placeholder="Cues, RIR/RPE e orientações do exercício"></label>
         <section class="series-blocks-editor-v0606 span2">
           <div class="series-blocks-editor-head-v0606">
-            <div><small>BLOCOS / SUB-SÉRIES</small><strong>Prescrições diferentes dentro do mesmo exercício</strong><p>Quando houver blocos, eles detalham a prescrição base. A ordem abaixo é a ordem mostrada ao paciente.</p></div>
-            <button type="button" class="secondary" data-add-series-block-v0606>+ Bloco</button>
+            <div><small>SÉRIES DO EXERCÍCIO</small><strong>Cada linha é uma série</strong><p>Ajuste reps e carga de cada série (pirâmide, aquecimento, top set). Séries, Reps e Carga acima preenchem todas de uma vez; em Reps, 12/10/8 distribui por série.</p></div>
+            <button type="button" class="secondary" data-add-series-block-v0606>+ Série</button>
           </div>
           <div class="series-blocks-empty-v0606" data-series-blocks-empty-v0606>Sem blocos: o exercício usa Séries + Reps acima.</div>
           <div class="series-blocks-list-v0606" data-series-blocks-list-v0606></div>
@@ -20903,7 +20905,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.62.8';
+const HP_MVP_VERSION='0.63.0';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -31977,7 +31979,7 @@ else hpJourneyStabilityGuardV0610();
   document.addEventListener('keydown',e=>{if(e.key==='Escape')fechar()});
 })();
 
-/* v0.62.8: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
+/* v0.63.0: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
 (function hpVigiaVersaoV0627(){
   const CHAVE='aesyn-recarregou-para';
   let checando=false;
@@ -31997,3 +31999,95 @@ else hpJourneyStabilityGuardV0610();
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checar()});
   setInterval(checar,5*60*1000);
 })();
+
+
+// ===== v0.63.0 — Séries por linha no builder de treino =====
+// Substitui o editor de "blocos" por uma linha por série. O formato salvo continua o mesmo
+// (blocosSeries), agrupando séries iguais em sequência; se todas forem iguais, nada é salvo
+// e o exercício usa Séries + Reps + Carga.
+function hpSeriesV0630Iguais(a,b){return String(a.repeticoes||'')===String(b.repeticoes||'')&&(a.carga??null)===(b.carga??null)}
+function hpSerieLinhaV0630(s,i,unit){
+  return `<div class="serie-linha-v0630" data-serie-v0630>
+    <span class="serie-num-v0630">${i+1}</span>
+    <label><small>Reps</small><input name="serieReps" value="${esc(s.repeticoes||'')}" placeholder="10"></label>
+    <label><small>Carga (${esc(unit||'kg')})</small><input name="serieCarga" type="number" min="0" step="0.5" inputmode="decimal" value="${s.carga??''}" placeholder="—"></label>
+    <button type="button" class="icon-btn serie-remove-v0630" title="Remover série" aria-label="Remover série ${i+1}">×</button>
+  </div>`;
+}
+function hpLerSeriesV0630(row){
+  return [...row.querySelectorAll('[data-serie-v0630]')].map(r=>({
+    repeticoes:r.querySelector('[name=serieReps]').value.trim()||'—',
+    carga:r.querySelector('[name=serieCarga]').value===''?null:Number(r.querySelector('[name=serieCarga]').value)
+  }));
+}
+function hpReadSeriesBlocksV0606(row){
+  const sets=hpLerSeriesV0630(row);
+  if(!sets.length||sets.every(s=>hpSeriesV0630Iguais(s,sets[0])))return [];
+  const unit=row.querySelector('[name=unidadeCarga]')?.value.trim()||'kg';
+  const restRaw=row.querySelector('[name=descanso]')?.value;
+  const rest=restRaw===''||restRaw==null?null:Number(restRaw);
+  const blocks=[];
+  sets.forEach(s=>{
+    const last=blocks[blocks.length-1];
+    if(last&&hpSeriesV0630Iguais(last,s))last.series++;
+    else blocks.push({ordem:blocks.length+1,nome:null,series:1,repeticoes:s.repeticoes,carga:s.carga,unidadeCarga:unit,descansoSegundos:rest,observacoes:null});
+  });
+  return blocks;
+}
+function hpBindSeriesBlocksEditorV0606(row,initial=[],defaults={},onChange=()=>{}){
+  const list=row.querySelector('[data-series-blocks-list-v0606]');
+  const add=row.querySelector('[data-add-series-block-v0606]');
+  const empty=row.querySelector('[data-series-blocks-empty-v0606]');
+  const seriesIn=row.querySelector('[name=series]');
+  const repsIn=row.querySelector('[name=repeticoes]');
+  const cargaIn=row.querySelector('[name=carga]');
+  const unitIn=row.querySelector('[name=unidadeCarga]');
+  if(!list||!add||!seriesIn||!repsIn||!cargaIn)return;
+  if(empty)empty.hidden=true;
+  const cargaBase=()=>cargaIn.value===''?null:Number(cargaIn.value);
+  const repsDe=(i)=>{const parts=repsIn.value.split('/').map(x=>x.trim()).filter(Boolean);return parts.length>1?(parts[i]??parts[parts.length-1]):(repsIn.value.trim()||defaults.reps||'10')};
+  let sets=[];
+  (initial||[]).slice().sort((a,b)=>(a.ordem??a.Ordem??0)-(b.ordem??b.Ordem??0)).forEach(b=>{
+    const n=Math.max(1,Number(b.series??b.Series??1));
+    for(let i=0;i<n;i++)sets.push({repeticoes:String(b.repeticoes??b.Repeticoes??''),carga:(b.carga??b.Carga??null)});
+  });
+  if(!sets.length){
+    const n=Math.max(1,Math.min(20,Number(seriesIn.value)||3));
+    sets=Array.from({length:n},(_,i)=>({repeticoes:repsDe(i),carga:cargaBase()}));
+  }
+  const render=()=>{
+    list.innerHTML=sets.map((s,i)=>hpSerieLinhaV0630(s,i,unitIn?.value)).join('');
+    list.querySelectorAll('[data-serie-v0630]').forEach((r,i)=>{
+      r.querySelector('.serie-remove-v0630').disabled=sets.length<=1;
+      r.querySelector('.serie-remove-v0630').onclick=()=>{if(sets.length<=1)return;sets.splice(i,1);render();syncMain()};
+      r.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{sets=hpLerSeriesV0630(row);syncMain()}));
+    });
+  };
+  const syncMain=()=>{
+    seriesIn.value=sets.length;
+    const reps=sets.map(s=>s.repeticoes);
+    repsIn.value=reps.every(r=>r===reps[0])?reps[0]:reps.join('/');
+    const cargas=sets.map(s=>s.carga);
+    const comCarga=cargas.filter(c=>c!=null);
+    cargaIn.value=cargas.every(c=>c===cargas[0])?(cargas[0]??''):(comCarga.length?Math.max(...comCarga):'');
+    onChange();
+  };
+  seriesIn.addEventListener('input',()=>{
+    const n=Math.max(1,Math.min(20,Number(seriesIn.value)||0));
+    if(!Number(seriesIn.value))return;
+    while(sets.length<n){const last=sets[sets.length-1]||{repeticoes:repsDe(sets.length),carga:cargaBase()};sets.push({...last})}
+    sets.length=n;
+    render();onChange();
+  });
+  repsIn.addEventListener('input',()=>{sets=sets.map((s,i)=>({...s,repeticoes:repsDe(i)}));render();onChange()});
+  cargaIn.addEventListener('input',()=>{sets=sets.map(s=>({...s,carga:cargaBase()}));render();onChange()});
+  unitIn?.addEventListener('input',render);
+  add.onclick=()=>{
+    if(sets.length>=20){toast('No máximo 20 séries por exercício.',true);return}
+    const last=sets[sets.length-1]||{repeticoes:repsDe(0),carga:cargaBase()};
+    sets.push({...last});render();syncMain();
+    list.querySelector('[data-serie-v0630]:last-child [name=serieReps]')?.focus();
+  };
+  render();
+  if((initial||[]).length)syncMain();else onChange();
+}

@@ -6699,3 +6699,24 @@ body{min-width:0}
 /* v0.62.3: nada empurra a tela para os lados no celular */
 html,body{overflow-x:clip}
 @media (max-width:720px){.agenda-header{flex-wrap:wrap;gap:10px}.date-nav{width:100%;justify-content:space-between}.date-title{min-width:0;flex:1}.agenda-item{grid-template-columns:56px 4px minmax(0,1fr)}.agenda-actions{grid-column:1/-1;flex-wrap:wrap}}
+
+/* v0.63.0: séries por linha no builder de treino */
+.series-blocks-list-v0606{display:grid;gap:6px}
+.serie-linha-v0630{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(0,1fr) 38px;gap:8px;align-items:end;padding:6px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.serie-linha-v0630 label{display:grid;gap:3px;min-width:0;margin:0}
+.serie-linha-v0630 label small{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.serie-linha-v0630 input{width:100%;min-width:0;height:40px;font-size:16px;font-weight:700;text-align:center}
+.serie-num-v0630{display:grid;place-items:center;width:28px;height:28px;margin-bottom:6px;border-radius:999px;background:rgba(126,232,178,.14);color:var(--accent,#7ee8b2);font-weight:900;font-size:13px}
+.serie-remove-v0630{height:40px;width:38px}
+.serie-remove-v0630:disabled{opacity:.3}
+.standalone-exercise-row .series-blocks-editor-v0606,.standalone-exercise-row .advanced-technique-panel,.standalone-exercise-row .builder3-row-actions{grid-column:1/-1}
+.standalone-exercise-row .series-blocks-list-v0606{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.standalone-exercise-row .series-blocks-editor-head-v0606 p{font-size:12px;max-width:62ch}
+.standalone-exercise-row label{font-size:11px}
+.standalone-exercise-row input,.standalone-exercise-row select{font-size:14px;min-height:38px}
+@media (max-width:720px){.standalone-exercise-row input,.standalone-exercise-row select{font-size:16px}}
+@media (min-width:900px){
+  .standalone-exercise-row.builder3-exercise-row{grid-template-columns:repeat(8,minmax(0,1fr))}
+  .standalone-exercise-row .builder3-exercise-picker,.standalone-exercise-row label.span2{grid-column:1/-1}
+  .standalone-exercise-row .builder3-exercise-searchbar{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:6px}
+}
