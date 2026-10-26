@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, ChevronLeft, ChevronRight, Info, Minus, Pause, Plus, Repeat2, RotateCcw, ShieldAlert, Timer, Trophy, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Info, Minus, Pause, Plus, Repeat2, RotateCcw, Search, ShieldAlert, Timer, Trash2, Trophy, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, ErrorBox, Ring, Sheet, Skeleton, toast } from '@/components/ui';
@@ -10,7 +10,7 @@ import { mmss, n0, n1 } from '@/lib/format';
 import type { ItemTreinoPortal, SessaoTreinoPortal } from '@/lib/types';
 import { useHistoricoTreinos, useMeusTreinos } from './queries';
 import { obsLimpa, seriesDoItem } from '@/lib/series';
-import { novoAndamento, salvarAndamento, SerieRegistro, Troca, treinoEmAndamento, TreinoAndamento } from './workout-store';
+import { Extra, novoAndamento, salvarAndamento, SerieRegistro, Troca, treinoEmAndamento, TreinoAndamento } from './workout-store';
 
 // ------------------------------------------------------------ utilidades de feedback
 
@@ -211,6 +211,13 @@ export function LiveWorkoutPage() {
           [it.cargaRealizada != null && `${n1(it.cargaRealizada)} ${it.unidadeCarga ?? 'kg'}`, it.repeticoesRealizadas && `${it.repeticoesRealizadas} reps`].filter(Boolean).join(' × '),
         );
       }
+    // Extras de treinos anteriores ficam pela chave do exercicio.
+    for (const e of execs)
+      for (const x of e.extras ?? []) {
+        const k = `exercicio-${x.exercicioId}`;
+        if (x.cargaRealizada != null) ultima.set(k, x.cargaRealizada);
+        ultimaTexto.set(k, [x.cargaRealizada != null && `${n1(x.cargaRealizada)} ${x.unidadeCarga ?? 'kg'}`, x.repeticoesRealizadas && `${x.repeticoesRealizadas} reps`].filter(Boolean).join(' × '));
+      }
     return { ultima, melhor, ultimaTexto };
   }, [historico.data]);
 
@@ -220,6 +227,7 @@ export function LiveWorkoutPage() {
   const [sair, setSair] = useState(false);
   const [detalhe, setDetalhe] = useState(false);
   const [trocar, setTrocar] = useState(false);
+  const [addExtra, setAddExtra] = useState(false);
   const [rpe, setRpe] = useState(7);
   const [conclusao, setConclusao] = useState<Conclusao | null>(null);
   const [focoSel, setFocoSel] = useState<number | null>(null);
@@ -261,7 +269,9 @@ export function LiveWorkoutPage() {
       </div>
     );
 
-  const itens = sessao.itens;
+  const extras = t.extras ?? [];
+  const itens = [...sessao.itens, ...extras.map(itemDoExtra)];
+  const ehExtra = (x: ItemTreinoPortal) => x.id.startsWith('extra-');
   const atual = Math.min(t.atual, itens.length - 1);
   const it = itens[atual];
   const series = t.series[it.id] ?? [];
@@ -276,6 +286,8 @@ export function LiveWorkoutPage() {
   const alvo = (i: number) => alvos[i] ?? alvos[alvos.length - 1];
   const obs = obsLimpa(it.observacoes);
   const troca = t.trocas?.[it.id];
+  const extraAtual = ehExtra(it);
+  const chaveUltima = (x: ItemTreinoPortal) => (ehExtra(x) ? `exercicio-${x.exercicioId}` : x.id);
   const nomeDe = (x: ItemTreinoPortal) => t.trocas?.[x.id]?.nome ?? x.exercicio;
 
   const atualizarSerie = (idx: number, s: SerieRegistro) => setT((x) => x && { ...x, series: { ...x.series, [it.id]: x.series[it.id].map((o, i) => (i === idx ? s : o)) } });
@@ -317,12 +329,42 @@ export function LiveWorkoutPage() {
       return { ...x, series: { ...x.series, [it.id]: [...l, { reps: base.reps, carga: base.carga, feita: false }] } };
     });
 
+  const adicionarExtra = (x: { id: string; nome: string; grupoMuscular: string | null; equipamento: string | null }) => {
+    const extra: Extra = { id: `extra-${Math.random().toString(36).slice(2, 10)}`, exercicioId: x.id, nome: x.nome, grupoMuscular: x.grupoMuscular, equipamento: x.equipamento };
+    const carga = ultima.get(`exercicio-${x.id}`) ?? null;
+    setT((a) => a && { ...a, extras: [...(a.extras ?? []), extra], series: { ...a.series, [extra.id]: Array.from({ length: 3 }, () => ({ reps: 10, carga, feita: false })) }, atual: itens.length });
+    setAddExtra(false);
+    toast(`${x.nome} entrou no treino de hoje.`);
+  };
+
+  const removerExtra = (id: string) =>
+    setT((a) => {
+      if (!a) return a;
+      const series = { ...a.series };
+      delete series[id];
+      return { ...a, extras: (a.extras ?? []).filter((x) => x.id !== id), series, atual: Math.max(0, a.atual - 1) };
+    });
+
   async function concluir() {
     if (!t || !sessao) return;
     const fim = new Date();
     const duracao = Math.max(1, Math.round((fim.getTime() - new Date(t.inicio).getTime()) / 60000));
     const recordes: Conclusao['recordes'] = [];
     let volume = 0;
+    const extrasBody = (t.extras ?? [])
+      .map((x) => {
+        const ss = (t.series[x.id] ?? []).filter((s) => s.feita);
+        ss.forEach((s) => (volume += (s.carga ?? 0) * (s.reps ?? 0)));
+        return {
+          exercicioId: x.exercicioId,
+          seriesRealizadas: ss.length,
+          repeticoesRealizadas: ss.length ? ss.map((s) => s.reps ?? '-').join('/') : null,
+          cargaRealizada: ss.reduce<number | null>((m, s) => (s.carga != null && (m == null || s.carga > m) ? s.carga : m), null),
+          unidadeCarga: 'kg',
+          observacoes: ss.length ? 'Séries: ' + ss.map((s) => `${s.reps ?? '-'}×${s.carga != null ? n1(s.carga) : '-'}`).join(' · ') : null,
+        };
+      })
+      .filter((x) => x.seriesRealizadas > 0);
     const itensBody = sessao.itens.map((item) => {
       const ss = (t.series[item.id] ?? []).filter((s) => s.feita);
       const cargaMax = ss.reduce<number | null>((m, s) => (s.carga != null && (m == null || s.carga > m) ? s.carga : m), null);
@@ -352,11 +394,12 @@ export function LiveWorkoutPage() {
         esforcoPercebido: rpe,
         observacoes: null,
         itens: itensBody,
+        extras: extrasBody,
       });
       salvarAndamento(null);
       qc.invalidateQueries({ queryKey: ['p'] });
       setFinalizar(false);
-      setConclusao({ duracao, volume, series: itensBody.reduce((a, i) => a + i.seriesRealizadas, 0), recordes });
+      setConclusao({ duracao, volume, series: itensBody.reduce((a, i) => a + i.seriesRealizadas, 0) + extrasBody.reduce((a, i) => a + i.seriesRealizadas, 0), recordes });
     } catch (e) {
       toast(e instanceof Error ? e.message : 'Não foi possível salvar. Seu treino continua salvo no aparelho.', 'bad');
     }
@@ -424,6 +467,14 @@ export function LiveWorkoutPage() {
                 </li>
               );
             })}
+            <li className="shrink-0">
+              <button
+                onClick={() => setAddExtra(true)}
+                className="flex h-9 items-center gap-1.5 rounded-full border border-dashed border-line px-3 text-[13px] font-semibold text-muted transition hover:text-fg lg:h-auto lg:w-full lg:gap-3 lg:rounded-2xl lg:p-3"
+              >
+                <Plus className="h-4 w-4 lg:h-8 lg:w-8 lg:rounded-full lg:bg-raised lg:p-2" /> Exercício
+              </button>
+            </li>
           </ol>
         </nav>
 
@@ -432,16 +483,22 @@ export function LiveWorkoutPage() {
             <div className="mt-5 flex items-start justify-between gap-3 lg:mt-0">
               <div className="min-w-0">
                 <p className="eyebrow">
-                  Exercício {atual + 1} de {itens.length}
+                  {extraAtual ? 'Extra seu' : `Exercício ${atual + 1} de ${itens.length}`}
                   {it.grupoMuscular && ` · ${it.grupoMuscular}`}
                 </p>
                 <h1 className="mt-1.5 font-display text-[28px] font-semibold leading-[1.1] tracking-tight lg:text-[34px]">{nomeDe(it)}</h1>
                 {troca && <p className="mt-1 text-sm text-muted">em vez de {it.exercicio}</p>}
               </div>
               <div className="mt-1 flex shrink-0 gap-2">
+                {extraAtual ? (
+                  <button aria-label="Tirar exercício extra" onClick={() => removerExtra(it.id)} className="grid h-10 w-10 place-items-center rounded-full bg-raised text-muted">
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                ) : (
                 <button aria-label="Trocar exercício" onClick={() => setTrocar(true)} className={clsx('grid h-10 w-10 place-items-center rounded-full', troca ? 'bg-accent/15 text-accent' : 'bg-raised text-muted')}>
                   <Repeat2 className="h-5 w-5" />
                 </button>
+                )}
                 {!troca && (it.descricao || obs || it.videoUrl) && (
                   <button aria-label="Como executar" onClick={() => setDetalhe(true)} className="grid h-10 w-10 place-items-center rounded-full bg-raised text-muted">
                     <Info className="h-5 w-5" />
@@ -451,16 +508,16 @@ export function LiveWorkoutPage() {
             </div>
 
             <div className="mt-3 flex flex-wrap gap-2 text-[13px]">
-              <span className="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">{linhaPrescricao(it)}</span>
+              <span className="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">{extraAtual ? 'Fora do plano · você escolhe séries e carga' : linhaPrescricao(it)}</span>
               {it.descansoSegundos != null && (
                 <span className="flex items-center gap-1 rounded-full bg-raised px-3 py-1 text-muted">
                   <Pause className="h-3 w-3" /> {mmss(it.descansoSegundos)}
                 </span>
               )}
               {it.tecnicaAvancada && <span className="rounded-full bg-warn/15 px-3 py-1 font-semibold text-warn">{it.tecnicaAvancada}</span>}
-              {ultimaTexto.get(it.id) && (
+              {ultimaTexto.get(chaveUltima(it)) && (
                 <span className="rounded-full bg-raised px-3 py-1 text-muted">
-                  Última vez <span className="num font-semibold text-fg">{ultimaTexto.get(it.id)}</span>
+                  Última vez <span className="num font-semibold text-fg">{ultimaTexto.get(chaveUltima(it))}</span>
                 </span>
               )}
             </div>
@@ -518,9 +575,14 @@ export function LiveWorkoutPage() {
                 <SerieLinha key={i} i={i} s={s} foco={i === foco} unidade={unidade} onClick={() => setFocoSel(i)} />
               ))}
             </ul>
-            <button onClick={adicionarSerie} className="mt-2 flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line text-sm font-semibold text-muted hover:text-fg">
-              <Plus className="h-4 w-4" /> Série extra
-            </button>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <button onClick={adicionarSerie} className="flex h-11 items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line text-sm font-semibold text-muted hover:text-fg">
+                <Plus className="h-4 w-4" /> Série extra
+              </button>
+              <button onClick={() => setAddExtra(true)} className="flex h-11 items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line text-sm font-semibold text-muted hover:text-fg">
+                <Plus className="h-4 w-4" /> Exercício extra
+              </button>
+            </div>
 
             <div className="mt-6 flex gap-3">
               <Button variant="outline" className="flex-1" disabled={atual === 0} onClick={() => ir(atual - 1)} icon={<ChevronLeft className="h-4 w-4" />}>
@@ -568,6 +630,8 @@ export function LiveWorkoutPage() {
           if (x) toast(`Hoje: ${x.nome}`);
         }}
       />
+
+      <AdicionarExercicioSheet open={addExtra} onClose={() => setAddExtra(false)} onEscolher={adicionarExtra} jaNoTreino={new Set(itens.map((x) => x.exercicioId))} />
 
       <Sheet open={detalhe} onClose={() => setDetalhe(false)} title={it.exercicio}>
         <div className="flex flex-col gap-3 text-[15px]">
@@ -780,6 +844,88 @@ function TrocarSheet({ open, item, troca, onClose, onEscolher }: { open: boolean
           Voltar ao prescrito
         </Button>
       )}
+    </Sheet>
+  );
+}
+
+// ------------------------------------------------------------ exercicio extra
+
+function itemDoExtra(x: Extra): ItemTreinoPortal {
+  return {
+    id: x.id,
+    exercicioId: x.exercicioId,
+    exercicio: x.nome,
+    grupoMuscular: x.grupoMuscular,
+    equipamento: x.equipamento,
+    descricao: null,
+    videoUrl: null,
+    series: 3,
+    repeticoes: '10',
+    carga: null,
+    unidadeCarga: 'kg',
+    descansoSegundos: 60,
+    tempoSegundos: null,
+    rirAlvo: null,
+    cadencia: null,
+    tecnicaAvancada: null,
+    observacoes: null,
+  };
+}
+
+interface ExercicioCatalogo {
+  id: string;
+  nome: string;
+  grupoMuscular: string | null;
+  equipamento: string | null;
+}
+
+const semAcento = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
+/** Catalogo da equipe para o paciente acrescentar um exercicio que nao estava no plano. */
+function AdicionarExercicioSheet({ open, onClose, onEscolher, jaNoTreino }: { open: boolean; onClose: () => void; onEscolher: (x: ExercicioCatalogo) => void; jaNoTreino: Set<string> }) {
+  const [busca, setBusca] = useState('');
+  const [grupo, setGrupo] = useState<string | null>(null);
+  useEffect(() => {
+    if (open) {
+      setBusca('');
+      setGrupo(null);
+    }
+  }, [open]);
+  const q = useQuery({ queryKey: ['p', 'exercicios-catalogo'], queryFn: () => api<ExercicioCatalogo[]>('/api/portal/me/treinos/exercicios'), enabled: open, staleTime: 10 * 60_000 });
+  const todos = q.data ?? [];
+  const grupos = useMemo(() => [...new Set(todos.map((x) => x.grupoMuscular).filter(Boolean) as string[])].sort(), [todos]);
+  const termo = semAcento(busca.trim());
+  const lista = todos.filter((x) => (!grupo || x.grupoMuscular === grupo) && (!termo || semAcento(`${x.nome} ${x.equipamento ?? ''}`).includes(termo))).slice(0, 80);
+  return (
+    <Sheet open={open} onClose={onClose} title="Adicionar exercício" tall>
+      <p className="-mt-1 mb-3 text-sm text-muted">Acordou inspirado? Inclua um exercício só no treino de hoje. Seu profissional vê no histórico.</p>
+      <label className="relative mb-3 block">
+        <Search className="pointer-events-none absolute left-3.5 top-3 h-5 w-5 text-faint" />
+        <input type="search" aria-label="Buscar exercício" placeholder="Buscar exercício" value={busca} onChange={(e) => setBusca(e.target.value)} className="h-11 w-full rounded-xl border border-line bg-surface pl-11 pr-3 outline-none focus:border-accent" />
+      </label>
+      {grupos.length > 0 && (
+        <div className="no-scrollbar -mx-5 mb-3 flex gap-2 overflow-x-auto px-5">
+          {[null, ...grupos].map((g) => (
+            <button key={g ?? 'todos'} onClick={() => setGrupo(g)} className={clsx('h-8 shrink-0 rounded-full border px-3 text-[13px] font-semibold', grupo === g ? 'border-accent bg-accent text-accent-ink' : 'border-line text-muted')}>
+              {g ?? 'Todos'}
+            </button>
+          ))}
+        </div>
+      )}
+      {q.isLoading && <Skeleton className="h-60" />}
+      {q.error && <ErrorBox error={q.error} onRetry={() => q.refetch()} />}
+      <div className="flex flex-col">
+        {lista.map((x) => (
+          <button key={x.id} onClick={() => onEscolher(x)} className="flex items-center gap-3 rounded-xl px-2 py-3 text-left transition hover:bg-raised active:bg-raised">
+            <span className="min-w-0 flex-1">
+              <span className="block truncate font-semibold">{x.nome}</span>
+              <span className="block truncate text-[13px] text-muted">{[x.grupoMuscular, x.equipamento].filter(Boolean).join(' · ') || 'Sem grupo definido'}</span>
+            </span>
+            {jaNoTreino.has(x.id) ? <span className="shrink-0 text-[12px] font-semibold text-muted">já no treino</span> : <Plus className="h-5 w-5 shrink-0 text-accent" />}
+          </button>
+        ))}
+        {q.isSuccess && !lista.length && <p className="py-10 text-center text-sm text-muted">{todos.length ? 'Nenhum exercício encontrado.' : 'Seu profissional ainda não cadastrou exercícios.'}</p>}
+      </div>
     </Sheet>
   );
 }

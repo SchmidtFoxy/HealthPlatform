@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { Check, ChevronDown, Clock, Dumbbell, Flame, Play, Timer } from 'lucide-react';
+import { Check, ChevronDown, ChevronLeft, ChevronRight, Clock, Coffee, Dumbbell, Flame, Play, Plus, Timer } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, Pill, SectionTitle, Skeleton } from '@/components/ui';
 import { dataCurta, n0, n1, sessaoEhDoDia } from '@/lib/format';
-import type { SessaoTreinoPortal as SessaoTreino } from '@/lib/types';
+import type { ExecucaoHistorico, SessaoTreinoPortal as SessaoTreino } from '@/lib/types';
 import { useHistoricoTreinos, useMeusTreinos } from './queries';
 import { mesmoDia, treinoDoDia } from './treino-dia';
 
@@ -18,7 +18,7 @@ const minutos = (s: SessaoTreino) => Math.round(s.itens.reduce((a, i) => a + i.s
 export function WorkoutPlanPage() {
   const nav = useNavigate();
   const q = useMeusTreinos();
-  const hist = useHistoricoTreinos(60);
+  const hist = useHistoricoTreinos(90);
   const plano = q.data?.planos[0];
   const hoje = new Date();
   const dia = treinoDoDia(plano, hist.data?.execucoes);
@@ -27,19 +27,35 @@ export function WorkoutPlanPage() {
   const destaque = sessaoHoje ?? (dia.feitosHoje.length ? dia.proxima?.sessao : undefined);
   const [aberta, setAberta] = useState<string | null>(null);
   const abertaId = aberta ?? destaque?.id ?? null;
+  const [offset, setOffset] = useState(0);
+  const [sel, setSel] = useState(() => hoje.toDateString());
 
-  // Semana atual, de domingo a sabado. Plano com dias: a sessao prevista em cada dia.
+  // Semana de domingo a sabado (offset em semanas a partir da atual). Plano com dias: a sessao prevista em cada dia.
   // Plano em rodizio: o que foi feito em cada dia e, hoje, o proximo do rodizio.
   const semana = DIAS.map((rotulo, i) => {
     const d = new Date(hoje);
-    d.setDate(hoje.getDate() - hoje.getDay() + i);
-    const exec = hist.data?.execucoes.find((e) => mesmoDia(new Date(e.dataHoraInicioUtc), d));
-    const ehHoje = i === hoje.getDay();
+    d.setDate(hoje.getDate() - hoje.getDay() + i + offset * 7);
+    const execs = (hist.data?.execucoes ?? []).filter((e) => mesmoDia(new Date(e.dataHoraInicioUtc), d));
+    const ehHoje = mesmoDia(d, hoje);
     const sessao = dia.rodizio
-      ? (exec && plano?.sessoes.find((s) => s.nome === exec.sessao)) || (ehHoje ? sessaoHoje : undefined) || undefined
+      ? (execs[0] && plano?.sessoes.find((s) => s.nome === execs[0].sessao)) || (ehHoje ? sessaoHoje : undefined) || undefined
       : plano?.sessoes.find((s) => !!s.diasSemana && sessaoEhDoDia(s.diasSemana, d));
-    return { rotulo, d, sessao, feito: !!exec, ehHoje };
+    return { rotulo, d, sessao, execs, feito: execs.length > 0, ehHoje, futuro: !ehHoje && d > hoje };
   });
+  const diaSel = semana.find((s) => s.d.toDateString() === sel);
+  const tituloSemana =
+    offset === 0 ? 'Esta semana' : offset === -1 ? 'Semana passada' : offset === 1 ? 'Próxima semana' : `${semana[0].d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })} a ${semana[6].d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}`;
+  const mudarSemana = (n: number) => {
+    const novo = offset + n;
+    setOffset(novo);
+    const d = new Date(hoje);
+    d.setDate(hoje.getDate() + novo * 7);
+    setSel((novo === 0 ? hoje : d).toDateString());
+  };
+  const verSessao = (id: string) => {
+    setAberta(id);
+    setTimeout(() => document.getElementById(`sessao-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  };
 
   const ultimos30 = (hist.data?.execucoes ?? []).filter((e) => Date.now() - new Date(e.dataHoraInicioUtc).getTime() < 30 * 864e5);
 
@@ -59,28 +75,51 @@ export function WorkoutPlanPage() {
       {plano && (
         <>
           {/* Semana */}
-          <div className="grid grid-cols-7 gap-1.5 rounded-xl3 border border-line bg-surface p-2 sm:gap-2 sm:p-3">
-            {semana.map((s) => (
-              <div
-                key={s.rotulo}
-                className={clsx(
-                  'flex flex-col items-center gap-1 rounded-2xl py-2.5',
-                  s.ehHoje ? 'bg-accent text-accent-ink' : s.sessao ? 'bg-raised/70' : '',
-                )}
-              >
-                <span className={clsx('text-[11px] font-semibold', !s.ehHoje && 'text-muted')}>{s.rotulo}</span>
-                <span className="num text-[15px] font-semibold">{s.d.getDate()}</span>
-                <span
-                  className={clsx(
-                    'grid h-6 w-6 place-items-center rounded-full font-display text-[11px] font-bold',
-                    s.feito ? (s.ehHoje ? 'bg-accent-ink/20' : 'bg-ok/20 text-ok') : s.sessao ? (s.ehHoje ? 'bg-accent-ink/15' : 'text-fg') : 'text-faint',
-                  )}
-                >
-                  {s.feito ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : s.sessao ? letra(s.sessao.nome) : '·'}
-                </span>
-              </div>
-            ))}
+          <div className="rounded-xl3 border border-line bg-surface p-2 sm:p-3">
+            <div className="mb-1.5 flex items-center justify-between px-1">
+              <button aria-label="Semana anterior" disabled={offset <= -12} onClick={() => mudarSemana(-1)} className="grid h-8 w-8 place-items-center rounded-full text-muted transition hover:bg-raised disabled:opacity-30">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button className="text-[13px] font-semibold text-muted" onClick={() => offset !== 0 && mudarSemana(-offset)}>
+                {tituloSemana}
+                {offset !== 0 && <span className="ml-1.5 text-accent">· voltar a hoje</span>}
+              </button>
+              <button aria-label="Próxima semana" disabled={offset >= 4} onClick={() => mudarSemana(1)} className="grid h-8 w-8 place-items-center rounded-full text-muted transition hover:bg-raised disabled:opacity-30">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+              {semana.map((s) => {
+                const ativo = s.d.toDateString() === sel;
+                return (
+                  <button
+                    key={s.rotulo}
+                    onClick={() => setSel(s.d.toDateString())}
+                    aria-pressed={ativo}
+                    aria-label={`${s.d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric' })}${s.feito ? ', treino feito' : s.sessao ? `, ${s.sessao.nome}` : ''}`}
+                    className={clsx(
+                      'flex flex-col items-center gap-1 rounded-2xl py-2.5 outline-none transition active:scale-95',
+                      s.ehHoje ? 'bg-accent text-accent-ink' : s.sessao || s.feito ? 'bg-raised/70' : '',
+                      ativo && (s.ehHoje ? 'ring-2 ring-accent/40 ring-offset-2 ring-offset-surface' : 'ring-2 ring-accent'),
+                    )}
+                  >
+                    <span className={clsx('text-[11px] font-semibold', !s.ehHoje && 'text-muted')}>{s.rotulo}</span>
+                    <span className="num text-[15px] font-semibold">{s.d.getDate()}</span>
+                    <span
+                      className={clsx(
+                        'grid h-6 w-6 place-items-center rounded-full font-display text-[11px] font-bold',
+                        s.feito ? (s.ehHoje ? 'bg-accent-ink/20' : 'bg-ok/20 text-ok') : s.sessao ? (s.ehHoje ? 'bg-accent-ink/15' : 'text-fg') : 'text-faint',
+                      )}
+                    >
+                      {s.feito ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : s.sessao ? letra(s.sessao.nome) : '·'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {diaSel && <DiaDetalhe dia={diaSel} rodizio={dia.rodizio} onVer={verSessao} onComecar={(id) => nav(`/treino/${id}`)} />}
 
           {plano.observacoes && <p className="mt-3 rounded-xl2 border border-accent/30 bg-accent/10 px-4 py-3 text-sm">{plano.observacoes}</p>}
 
@@ -93,7 +132,7 @@ export function WorkoutPlanPage() {
               const open = abertaId === s.id;
               const grupos = [...new Set(s.itens.map((i) => i.grupoMuscular).filter(Boolean))];
               return (
-                <motion.div key={s.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
+                <motion.div key={s.id} id={`sessao-${s.id}`} className="scroll-mt-20" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
                   <Card className={clsx('flex h-full flex-col overflow-hidden', (ehHoje || ehProxima) && 'border-accent/50 shadow-glow', feitaHoje && 'border-ok/40')}>
                     <button className="flex w-full items-center gap-4 p-4 text-left lg:cursor-default" onClick={() => setAberta(open ? '' : s.id)} aria-expanded={open}>
                       <div className={clsx('grid h-12 w-12 shrink-0 place-items-center rounded-2xl font-display text-lg font-semibold', feitaHoje ? 'bg-ok/20 text-ok' : ehHoje || ehProxima ? 'bg-accent text-accent-ink' : 'bg-raised text-muted')}>
@@ -194,5 +233,113 @@ export function WorkoutPlanPage() {
         </>
       )}
     </Page>
+  );
+}
+
+// ---------------------------------------------------------------- Dia escolhido no calendario
+
+interface DiaSemana {
+  d: Date;
+  sessao?: SessaoTreino;
+  execs: ExecucaoHistorico[];
+  ehHoje: boolean;
+  futuro: boolean;
+}
+
+function DiaDetalhe({ dia, rodizio, onVer, onComecar }: { dia: DiaSemana; rodizio: boolean; onVer: (id: string) => void; onComecar: (id: string) => void }) {
+  const nome = dia.ehHoje ? 'Hoje' : dia.d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const titulo = nome[0].toUpperCase() + nome.slice(1);
+  const passado = !dia.ehHoje && !dia.futuro;
+  return (
+    <motion.div key={dia.d.toDateString()} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+      <Card className="mt-3 p-4">
+        <p className="eyebrow">{titulo}</p>
+        {dia.execs.map((e) => (
+          <ExecucaoResumo key={e.id} e={e} />
+        ))}
+        {dia.sessao && !dia.execs.length ? (
+          <div className="mt-2">
+            <p className="font-semibold">
+              {dia.futuro ? 'Previsto: ' : dia.ehHoje ? 'Treino do dia: ' : 'Estava previsto: '}
+              {dia.sessao.nome}
+            </p>
+            <p className="text-[13px] text-muted">
+              {dia.sessao.itens.length} exercícios · ~{minutos(dia.sessao)} min{passado ? ' · não registrado' : ''}
+            </p>
+            <div className="mt-3 flex gap-2">
+              <Button variant="soft" size="sm" onClick={() => onVer(dia.sessao!.id)}>
+                Ver exercícios
+              </Button>
+              {!dia.futuro && (
+                <Button size="sm" icon={<Play className="h-3.5 w-3.5 fill-current" />} onClick={() => onComecar(dia.sessao!.id)}>
+                  {dia.ehHoje ? 'Começar' : 'Fazer agora'}
+                </Button>
+              )}
+            </div>
+          </div>
+        ) : !dia.execs.length ? (
+          <div className="mt-2 flex items-start gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-raised text-muted">
+              <Coffee className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-semibold">{dia.futuro ? (rodizio ? 'Seu plano segue em rodízio' : 'Dia sem treino previsto') : passado ? 'Nenhum treino registrado' : 'Dia livre no plano'}</p>
+              <p className="text-[13px] text-muted">
+                {dia.futuro
+                  ? rodizio
+                    ? 'O próximo treino é sempre o que vem depois do último que você fez.'
+                    : 'Aproveite para descansar e recuperar.'
+                  : 'Se bateu vontade, escolha uma sessão do plano abaixo e mande ver.'}
+              </p>
+            </div>
+          </div>
+        ) : null}
+      </Card>
+    </motion.div>
+  );
+}
+
+function ExecucaoResumo({ e }: { e: ExecucaoHistorico }) {
+  const [aberto, setAberto] = useState(false);
+  const feitos = e.itens.filter((i) => i.concluido).length;
+  const extras = e.extras ?? [];
+  const linhas = [
+    ...e.itens.map((i) => ({ k: i.itemTreinoId, nome: i.exercicio, s: i.seriesRealizadas, r: i.repeticoesRealizadas, c: i.cargaRealizada, u: i.unidadeCarga, ok: i.concluido, extra: false })),
+    ...extras.map((x, idx) => ({ k: `x${idx}`, nome: x.exercicio, s: x.seriesRealizadas, r: x.repeticoesRealizadas, c: x.cargaRealizada, u: x.unidadeCarga, ok: true, extra: true })),
+  ];
+  return (
+    <div className="mt-2 border-b border-line/60 pb-3 last:border-0 last:pb-0">
+      <button className="flex w-full items-center gap-3 text-left" onClick={() => setAberto(!aberto)} aria-expanded={aberto}>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ok/15 text-ok">
+          <Check className="h-5 w-5" strokeWidth={3} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-semibold">{e.sessao}</span>
+          <span className="block text-[13px] text-muted">
+            {new Date(e.dataHoraInicioUtc).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} · {e.duracaoMinutos ?? '—'} min · {feitos}/{e.itens.length} exercícios
+            {extras.length > 0 && ` + ${extras.length} extra${extras.length > 1 ? 's' : ''}`}
+          </span>
+        </span>
+        {e.esforcoPercebido != null && <Pill tone={e.esforcoPercebido >= 9 ? 'bad' : e.esforcoPercebido >= 7 ? 'warn' : 'ok'}>RPE {e.esforcoPercebido}</Pill>}
+        <ChevronDown className={clsx('h-4 w-4 shrink-0 text-muted transition', aberto && 'rotate-180')} />
+      </button>
+      {aberto && (
+        <ul className="mt-2 divide-y divide-line/50 pl-[52px]">
+          {linhas.map((l) => (
+            <li key={l.k} className="flex items-center gap-2 py-2 text-sm">
+              <span className={clsx('min-w-0 flex-1 truncate', !l.ok && 'text-muted line-through')}>
+                {l.extra && <Plus className="mr-1 inline h-3.5 w-3.5 text-accent" />}
+                {l.nome}
+              </span>
+              <span className="num shrink-0 text-[13px] text-muted">
+                {l.s != null ? `${l.s}×${l.r ?? '—'}` : ''}
+                {l.c != null ? ` · ${n1(l.c)} ${l.u ?? 'kg'}` : ''}
+              </span>
+            </li>
+          ))}
+          {e.observacoes && <li className="py-2 text-[13px] text-muted">{e.observacoes}</li>}
+        </ul>
+      )}
+    </div>
   );
 }

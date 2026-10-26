@@ -19,6 +19,17 @@ export interface TreinoAndamento {
   series: Record<string, SerieRegistro[]>;
   /** Exercicios trocados por uma alternativa do catalogo, por item da prescricao. */
   trocas?: Record<string, Troca>;
+  /** Exercicios que o paciente acrescentou por conta propria neste treino. */
+  extras?: Extra[];
+}
+
+export interface Extra {
+  /** Chave local (prefixo "extra-"), usada como indice em series. */
+  id: string;
+  exercicioId: string;
+  nome: string;
+  grupoMuscular: string | null;
+  equipamento: string | null;
 }
 
 export interface Troca {

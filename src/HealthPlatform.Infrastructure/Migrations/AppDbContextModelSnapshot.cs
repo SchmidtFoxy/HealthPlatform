@@ -934,6 +934,54 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("ExamesLaboratoriais", (string)null);
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.ExecucaoExercicioExtra", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("CargaRealizada")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ExecucaoTreinoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ExercicioId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Observacoes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Ordem")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RepeticoesRealizadas")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int?>("SeriesRealizadas")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UnidadeCarga")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExecucaoTreinoId");
+
+                    b.HasIndex("ExercicioId");
+
+                    b.ToTable("ExecucoesExerciciosExtras", (string)null);
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.ExecucaoItemTreino", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3742,6 +3790,25 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Navigation("Profissional");
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.ExecucaoExercicioExtra", b =>
+                {
+                    b.HasOne("HealthPlatform.Domain.Entities.ExecucaoTreino", "ExecucaoTreino")
+                        .WithMany("Extras")
+                        .HasForeignKey("ExecucaoTreinoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthPlatform.Domain.Entities.Exercicio", "Exercicio")
+                        .WithMany()
+                        .HasForeignKey("ExercicioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ExecucaoTreino");
+
+                    b.Navigation("Exercicio");
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.ExecucaoItemTreino", b =>
                 {
                     b.HasOne("HealthPlatform.Domain.Entities.ExecucaoTreino", "ExecucaoTreino")
@@ -4548,6 +4615,8 @@ namespace HealthPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("HealthPlatform.Domain.Entities.ExecucaoTreino", b =>
                 {
+                    b.Navigation("Extras");
+
                     b.Navigation("Itens");
                 });
 

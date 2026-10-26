@@ -32,7 +32,7 @@ interface HistoricoPro {
   minutosTotais: number;
   esforcoMedio: number | null;
   evolucaoCarga: EvolucaoCarga[];
-  execucoes: { id: string; dataHoraInicioUtc: string; duracaoMinutos: number | null; esforcoPercebido: number | null; sessao: string; itens: unknown[] }[];
+  execucoes: { id: string; dataHoraInicioUtc: string; duracaoMinutos: number | null; esforcoPercebido: number | null; sessao: string; itens: unknown[]; extras?: { exercicio: string }[] }[];
 }
 
 const STATUS_TONE: Record<string, 'ok' | 'neutral' | 'warn'> = { Ativo: 'ok', Inativo: 'neutral', Concluido: 'neutral', Rascunho: 'warn' };
@@ -189,6 +189,7 @@ function VisaoGeral({ id }: { id: string }) {
                     <p className="text-[13px] text-muted first-letter:uppercase">
                       {tempoRelativo(x.dataHoraInicioUtc)} · {x.duracaoMinutos ?? '—'} min
                     </p>
+                    {!!x.extras?.length && <p className="truncate text-[12px] font-semibold text-accent">+ por conta própria: {x.extras.map((e) => e.exercicio).join(', ')}</p>}
                   </div>
                   {x.esforcoPercebido != null && (
                     <span className="num flex items-center gap-1 text-sm text-muted">
