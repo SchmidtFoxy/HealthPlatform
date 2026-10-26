@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { BookCopy, ChevronLeft, ClipboardCheck, Copy, Dumbbell, Stethoscope, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
+import { BookCopy, CalendarRange, ChevronLeft, ClipboardCheck, Copy, Dumbbell, Stethoscope, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -12,6 +12,7 @@ import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/type
 import { RegistrarContatoSheet } from './CentralPage';
 import { SalvarModeloSheet, UsarModeloSheet } from './BibliotecaPage';
 import { FasesSecao } from './Fases';
+import { AplicarProgramaSheet } from './Programas';
 import { AbaCuidados } from './CuidadosPro';
 import { MaisAcoes, STATUS_ACOMPANHAMENTO } from './FichaAcoes';
 import { AbaProntuario } from './ProntuarioPro';
@@ -331,6 +332,7 @@ function AbaDieta({ id }: { id: string }) {
 
 function AbaTreino({ id }: { id: string }) {
   const [usar, setUsar] = useState(false);
+  const [programa, setPrograma] = useState(false);
   const q = usePlanosTreino(id);
   const planos = [...(q.data ?? [])].sort((a, b) => Number(b.status === 'Ativo') - Number(a.status === 'Ativo') || b.createdAtUtc.localeCompare(a.createdAtUtc));
   if (q.isLoading) return <Skeleton className="mt-6 h-64" />;
@@ -346,8 +348,12 @@ function AbaTreino({ id }: { id: string }) {
         <Button className="w-full" variant="outline" icon={<BookCopy className="h-4 w-4" />} onClick={() => setUsar(true)}>
           Usar modelo
         </Button>
+        <Button className="col-span-2 w-full" variant="outline" icon={<CalendarRange className="h-4 w-4" />} onClick={() => setPrograma(true)}>
+          Aplicar programa em fases
+        </Button>
       </div>
       <UsarModeloSheet tipo="treino" pacienteId={id} open={usar} onClose={() => setUsar(false)} />
+      <AplicarProgramaSheet pacienteId={id} open={programa} onClose={() => setPrograma(false)} />
       {planos.length === 0 && <Empty icon={<Dumbbell className="h-5 w-5" />} title="Nenhum plano de treino">Monte a primeira divisão com séries, cargas e descanso.</Empty>}
       {planos.map((p: PlanoTreinoPro) => {
         const series = p.sessoes.reduce((s, x) => s + x.itens.reduce((a, i) => a + i.series, 0), 0);

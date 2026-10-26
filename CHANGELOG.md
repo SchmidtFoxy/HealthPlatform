@@ -1,3 +1,10 @@
+## 0.66.2 — Programas de treino no novo app
+
+- Biblioteca > Modelos > Programas: lista com busca, criação, edição, duplicação, desativação e exclusão de programas em fases.
+- Editor de fases: nome, semanas, orientações, ordem (subir/descer), duplicar fase e semana-tipo ligando cada dia a um treino-modelo.
+- Aplicar programa num paciente (pela Biblioteca ou pela aba Treino do paciente): data de início, liberar a primeira fase e arquivar treinos ativos.
+- Sem mudança de banco.
+
 ## v0.66.1 — Envio de fotos pela galeria
 
 - Paciente e equipe: o botão Enviar em Arquivos e o clipe do chat abrem três opções, como no WhatsApp: Galeria de fotos, Tirar foto e Documento ou PDF. A galeria abre direto, sem passar pelo gerenciador de arquivos.
