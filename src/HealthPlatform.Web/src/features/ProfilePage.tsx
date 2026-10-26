@@ -71,6 +71,13 @@ export function ProfilePage() {
               </span>
               <ChevronRight className="h-5 w-5 text-muted" />
             </Link>
+            <Link to="/explorar" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Explorar
+                <span className="block text-sm font-normal text-muted">Modalidades, esportes e jeitos de se mover</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
             <Link to="/arquivos" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Arquivos e exames

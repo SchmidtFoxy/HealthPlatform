@@ -1,3 +1,9 @@
+## v0.63.6 — Explorar na versão nova
+
+- /app Explorar: todos os caminhos da clássica (começar um esporte, mover em casa, pouco tempo, viagem, ao ar livre, fundamentos, starter packs, esportes de quadra e campo, natação, triathlon, artes marciais, remo, trekking e recreativos), com filtros por espaço, recurso, tempo e modalidade, e jornada iniciante por modalidade.
+- Seus interesses: marcar modalidades com a intenção (quero experimentar, quero retomar, tenho curiosidade); o profissional vê.
+- Perfil leva ao Explorar.
+
 ## v0.63.5 — Diário, exames e evolução corporal na versão nova
 
 - /app Diário: registros do dia a dia (sono, hidratação, alimentação, treino, sintoma, humor, observação) com valor, nota de 0 a 10 e descrição, e lista dos últimos 30 dias.
