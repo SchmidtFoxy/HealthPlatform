@@ -15,7 +15,8 @@ export interface ArquivoPaciente {
 }
 
 export const CATEGORIAS = ['Exame', 'Laudo', 'Foto', 'Receita', 'Documento', 'Outro'] as const;
-export const ACEITOS = 'application/pdf,image/jpeg,image/png,image/webp,.doc,.docx';
+export const ACEITOS = 'image/*,application/pdf,.doc,.docx';
+export const ACEITOS_DOCUMENTO = 'application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 export const LIMITE_BYTES = 15 * 1024 * 1024;
 
 export const tamanho = (b: number) => (b < 1024 ? `${b} B` : b < 1024 * 1024 ? `${Math.round(b / 1024)} KB` : `${(b / 1024 / 1024).toFixed(1).replace('.', ',')} MB`);
@@ -25,7 +26,40 @@ const base = (pacienteId?: string) => (pacienteId ? `/api/pacientes/${pacienteId
 
 export const listarArquivos = (pacienteId?: string) => api<ArquivoPaciente[]>(base(pacienteId));
 
-export async function enviarArquivo(file: File, opts: { categoria: string; descricao?: string; viaChat?: boolean; pacienteId?: string }) {
+const ehImagemArquivo = (f: File) => f.type.startsWith('image/') || /\.(heic|heif|jpe?g|png|webp|gif)$/i.test(f.name);
+
+/**
+ * Foto do celular (HEIC do iPhone, foto grande da camera...) vira JPEG de ate 2560 px antes de subir:
+ * o servidor so aceita JPEG, PNG e WebP, e o envio fica bem mais leve.
+ */
+export async function prepararImagem(file: File): Promise<File> {
+  if (!ehImagemArquivo(file)) return file;
+  const aceita = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+  if (aceita && file.size <= 3 * 1024 * 1024) return file;
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const escala = Math.min(1, 2560 / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.naturalWidth * escala);
+    canvas.height = Math.round(img.naturalHeight * escala);
+    canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise<Blob | null>((ok) => canvas.toBlob(ok, 'image/jpeg', 0.85));
+    if (!blob) return file;
+    const nome = file.name.replace(/\.[^.]+$/, '') || 'foto';
+    return new File([blob], `${nome}.jpg`, { type: 'image/jpeg', lastModified: file.lastModified });
+  } catch {
+    if (!aceita) throw new Error('Não deu para ler essa foto. Tente tirar um print dela ou escolher outra.');
+    return file;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+export async function enviarArquivo(arquivo: File, opts: { categoria: string; descricao?: string; viaChat?: boolean; pacienteId?: string }) {
+  const file = await prepararImagem(arquivo);
   if (file.size > LIMITE_BYTES) throw new Error('O arquivo deve ter no máximo 15 MB.');
   const fd = new FormData();
   fd.append('file', file);

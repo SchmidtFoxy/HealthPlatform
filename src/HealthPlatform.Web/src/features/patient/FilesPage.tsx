@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { FileImage, FileText, FolderOpen, Trash2, Upload } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ehImagem, ImagemArquivo, VisualizadorImagem } from '@/components/ImagemArquivo';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
-import { abrirArquivo, ACEITOS, ArquivoPaciente, CATEGORIAS, enviarArquivo, listarArquivos, removerArquivo, tamanho } from '@/lib/arquivos';
+import { MenuAnexo } from '@/components/MenuAnexo';
+import { abrirArquivo, ArquivoPaciente, CATEGORIAS, enviarArquivo, listarArquivos, removerArquivo, tamanho } from '@/lib/arquivos';
 import { dataCurta } from '@/lib/format';
 
 export function FilesPage() {
@@ -17,7 +18,12 @@ export function FilesPage() {
   const [descricao, setDescricao] = useState('');
   const [remover, setRemover] = useState<ArquivoPaciente | null>(null);
   const [foto, setFoto] = useState<ArquivoPaciente | null>(null);
-  const input = useRef<HTMLInputElement>(null);
+  const [menu, setMenu] = useState(false);
+  // Previa da foto escolhida antes de enviar (HEIC pode nao abrir no navegador: ai fica so o nome).
+  const previa = useMemo(() => (novo && novo.type.startsWith('image/') ? URL.createObjectURL(novo) : null), [novo]);
+  useEffect(() => () => {
+    if (previa) URL.revokeObjectURL(previa);
+  }, [previa]);
 
   const lista = useMemo(() => [...(q.data ?? [])].sort((a, b) => b.dataUtc.localeCompare(a.dataUtc)), [q.data]);
   const categorias = useMemo(() => ['Todos', ...CATEGORIAS.filter((c) => lista.some((a) => a.categoria === c))], [lista]);
@@ -50,21 +56,16 @@ export function FilesPage() {
         title="Arquivos"
         subtitle="Exames, laudos e documentos do seu acompanhamento."
         action={
-          <Button size="sm" icon={<Upload className="h-4 w-4" />} onClick={() => input.current?.click()}>
+          <Button size="sm" icon={<Upload className="h-4 w-4" />} onClick={() => setMenu(true)}>
             Enviar
           </Button>
         }
       />
-      <input
-        ref={input}
-        type="file"
-        accept={ACEITOS}
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          e.target.value = '';
-          if (!f) return;
-          setCategoria(f.type.startsWith('image/') ? 'Foto' : 'Exame');
+      <MenuAnexo
+        open={menu}
+        onClose={() => setMenu(false)}
+        onArquivo={(f) => {
+          setCategoria(f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name) ? 'Foto' : 'Exame');
           setNovo(f);
         }}
       />
@@ -82,7 +83,7 @@ export function FilesPage() {
           icon={<FolderOpen className="h-5 w-5" />}
           title="Nenhum arquivo ainda"
           action={
-            <Button variant="soft" icon={<Upload className="h-4 w-4" />} onClick={() => input.current?.click()}>
+            <Button variant="soft" icon={<Upload className="h-4 w-4" />} onClick={() => setMenu(true)}>
               Enviar exame ou documento
             </Button>
           }
@@ -165,6 +166,7 @@ export function FilesPage() {
       >
         {novo && (
           <div className="flex flex-col gap-4">
+            {previa && <img src={previa} alt="" className="max-h-72 w-full rounded-2xl bg-raised object-contain" />}
             <div className="flex items-center gap-3 rounded-2xl bg-raised/60 p-3">
               <FileText className="h-5 w-5 shrink-0 text-accent" />
               <div className="min-w-0">

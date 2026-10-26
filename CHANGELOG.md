@@ -1,3 +1,9 @@
+## v0.66.1 — Envio de fotos pela galeria
+
+- Paciente e equipe: o botão Enviar em Arquivos e o clipe do chat abrem três opções, como no WhatsApp: Galeria de fotos, Tirar foto e Documento ou PDF. A galeria abre direto, sem passar pelo gerenciador de arquivos.
+- Fotos HEIC do iPhone e fotos grandes da câmera viram JPEG de até 2560 px antes de subir. Antes elas eram recusadas pelo servidor (só aceita JPEG, PNG e WebP, até 15 MB).
+- Arquivos: a foto escolhida aparece em prévia antes de enviar.
+
 ## v0.66.0 — Suplementos e fotos na versão nova
 
 - Equipe: aba Suplementos na Biblioteca com busca, categorias, cadastro do rótulo (porção, calorias, macros, cafeína, composição e modo de uso), inativar e reativar.
