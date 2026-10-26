@@ -110,6 +110,7 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
 export async function entrar(email: string, senha: string) {
   const r = await api<LoginResponse>('/api/auth/login', { method: 'POST', json: { email, senha } });
   salvarSessao(r);
+  lembrarConta({ email, nome: r.nome, tipoUsuario: r.tipoUsuario });
   return lerSessao()!;
 }
 
@@ -127,4 +128,39 @@ export const ehPaciente = (s: Sessao | null) => s?.tipoUsuario === 'Paciente';
 export async function pedirNovaSenha(email: string) {
   const r = await api<{ message?: string }>('/api/auth/password/esqueci', { method: 'POST', json: { email } });
   return r?.message ?? 'Se existir uma conta ativa para este e-mail, você receberá as instruções para redefinir sua senha.';
+}
+
+// Contas usadas neste aparelho, para trocar de perfil sem digitar tudo de novo. Guarda so e-mail, nome e papel.
+export interface ContaLembrada {
+  email: string;
+  nome: string;
+  tipoUsuario: TipoUsuario;
+}
+
+const CHAVE_CONTAS = 'aesyn_contas';
+
+export function contasLembradas(): ContaLembrada[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(CHAVE_CONTAS) || '[]');
+    return Array.isArray(v) ? v.filter((c) => c?.email) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function lembrarConta(c: ContaLembrada) {
+  try {
+    const resto = contasLembradas().filter((x) => x.email.toLowerCase() !== c.email.toLowerCase());
+    localStorage.setItem(CHAVE_CONTAS, JSON.stringify([c, ...resto].slice(0, 5)));
+  } catch {
+    /* sem armazenamento: so nao lembra */
+  }
+}
+
+export function esquecerConta(email: string) {
+  try {
+    localStorage.setItem(CHAVE_CONTAS, JSON.stringify(contasLembradas().filter((x) => x.email.toLowerCase() !== email.toLowerCase())));
+  } catch {
+    /* sem armazenamento */
+  }
 }

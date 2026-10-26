@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, Lock, Mail, MailCheck, Salad, Sparkles } from 'lucide-react';
 import { FormEvent, InputHTMLAttributes, ReactNode, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import simbolo from '@/assets/aesyn-symbol.webp';
 import { Button } from '@/components/ui';
 import { entrar, pedirNovaSenha } from '@/lib/api';
@@ -22,8 +22,9 @@ function emailLembrado() {
 
 export function LoginPage() {
   const nav = useNavigate();
+  const [params] = useSearchParams();
   const [etapa, setEtapa] = useState<Etapa>('entrar');
-  const [email, setEmail] = useState(emailLembrado);
+  const [email, setEmail] = useState(() => params.get('email') ?? emailLembrado());
   const [senha, setSenha] = useState('');
   const [lembrar, setLembrar] = useState(() => emailLembrado() !== '');
   const [ver, setVer] = useState(false);
@@ -101,6 +102,7 @@ export function LoginPage() {
                     type={ver ? 'text' : 'password'}
                     autoComplete="current-password"
                     placeholder="Sua senha"
+                    autoFocus={!!params.get('email')}
                     required
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
@@ -221,9 +223,14 @@ function PainelMarca() {
         <div className="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.05)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(70%_60%_at_50%_40%,black,transparent)]" />
       </div>
 
-      <header className="flex items-center gap-3 pt-5 lg:pt-10">
-        <img src={simbolo} alt="" className="h-9 w-9 rounded-xl object-cover" />
-        <span className="font-display text-[15px] font-semibold tracking-[0.42em]">AESYN</span>
+      <header className="flex items-center justify-between gap-3 pt-5 lg:pt-10">
+        <Link to="/" className="flex items-center gap-3" aria-label="Conhecer o AESYN">
+          <img src={simbolo} alt="" className="h-9 w-9 rounded-xl object-cover" />
+          <span className="font-display text-[15px] font-semibold tracking-[0.42em]">AESYN</span>
+        </Link>
+        <Link to="/recursos" className="rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-[rgb(200_220_215)] transition hover:bg-white/[0.06]">
+          Conheça o AESYN
+        </Link>
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center pt-4 lg:items-start lg:pt-0">

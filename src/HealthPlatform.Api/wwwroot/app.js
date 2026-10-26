@@ -20903,7 +20903,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.61.0';
+const HP_MVP_VERSION='0.62.0';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -23164,7 +23164,8 @@ document.querySelector('#pwaInstallPrimaryV01938')?.addEventListener('click',hpP
 document.querySelector('#pwaInstallNudgeCloseV01938')?.addEventListener('click',()=>{document.querySelector('#pwaInstallNudgeV01938')?.classList.add('hidden');localStorage.setItem('hp_pwa_install_dismissed_v01938','true');});
 if('serviceWorker' in navigator&&(window.isSecureContext||location.hostname==='localhost'||location.hostname==='127.0.0.1'))window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(err=>console.warn('Service Worker indisponível:',err)),{once:true});
 hpSyncInstallUiV01938();if(hpIsIosV01938())hpMaybeShowInstallNudgeV01938();
-function hpSyncVisualViewportV01938(){const viewport=window.visualViewport,height=Math.round(viewport?.height||window.innerHeight),keyboardOpen=viewport?window.innerHeight-height>140:false;document.documentElement.style.setProperty('--hp-visual-viewport-height',`${height}px`);document.body.classList.toggle('hp-keyboard-open-v01938',keyboardOpen);}
+function hpEditavelFocadoV0620(){const a=document.activeElement;return !!a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))&&!/^(checkbox|radio|button|submit|range|file)$/i.test(a.type||'')}
+function hpSyncVisualViewportV01938(){const viewport=window.visualViewport,height=Math.round(viewport?.height||window.innerHeight),keyboardOpen=viewport?(window.innerHeight-height>140&&hpEditavelFocadoV0620()):false;document.documentElement.style.setProperty('--hp-visual-viewport-height',`${height}px`);document.body.classList.toggle('hp-keyboard-open-v01938',keyboardOpen);}
 window.visualViewport?.addEventListener('resize',hpSyncVisualViewportV01938,{passive:true});window.visualViewport?.addEventListener('scroll',hpSyncVisualViewportV01938,{passive:true});window.addEventListener('resize',hpSyncVisualViewportV01938,{passive:true});hpSyncVisualViewportV01938();
 document.addEventListener('focusin',event=>{if(!window.matchMedia('(max-width:720px)').matches)return;const target=event.target;if(!target?.matches?.('input,textarea,select,[contenteditable="true"]'))return;setTimeout(()=>target.scrollIntoView({block:'center',behavior:'smooth'}),180);});
 const __loadPatientSection_v01938=loadPatientSection;
@@ -27146,8 +27147,8 @@ hpSportsExpansionIIV0260=function(data){
   return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="triathlon-entry-v0262"><button type="button" class="primary" id="openTriathlonV0262">Abrir Triathlon 2.0</button><small>Natação, ciclismo, corrida, T1/T2 e capacidades de suporte.</small></div><div id="triathlonHostV0262" class="triathlon-host-v0262" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
 };
 
-const __hpOpenSportsExpansionIIV0262=hpOpenSportsExpansionIV0260;
-hpOpenSportsExpansionIV0260=async function(host){
+const __hpOpenSportsExpansionIIV0262=hpOpenSportsExpansionIIV0260;
+hpOpenSportsExpansionIIV0260=async function(host){
   await __hpOpenSportsExpansionIIV0262(host);
   const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
   const button=root?.querySelector('#openTriathlonV0262');
@@ -27181,8 +27182,8 @@ hpSportsExpansionIIV0260=function(data){
   return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="martial-arts-entry-v0263"><button type="button" class="primary" id="openMartialArtsV0263">Abrir Martial Arts 2.0</button><small>Base, deslocamento, distância, rotação, reação e capacidades de suporte.</small></div><div id="martialArtsHostV0263" class="martial-arts-host-v0263" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
 };
 
-const __hpOpenSportsExpansionIIV0263=hpOpenSportsExpansionIV0260;
-hpOpenSportsExpansionIV0260=async function(host){
+const __hpOpenSportsExpansionIIV0263=hpOpenSportsExpansionIIV0260;
+hpOpenSportsExpansionIIV0260=async function(host){
   await __hpOpenSportsExpansionIIV0263(host);
   const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
   const button=root?.querySelector('#openMartialArtsV0263');
@@ -27216,8 +27217,8 @@ hpSportsExpansionIIV0260=function(data){
   return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="rowing-entry-v0264"><button type="button" class="primary" id="openRowingV0264">Abrir Rowing 2.0</button><small>Sequência da remada, potência coordenada, postura, resistência e referências reais.</small></div><div id="rowingHostV0264" class="rowing-host-v0264" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
 };
 
-const __hpOpenSportsExpansionIIV0264=hpOpenSportsExpansionIV0260;
-hpOpenSportsExpansionIV0260=async function(host){
+const __hpOpenSportsExpansionIIV0264=hpOpenSportsExpansionIIV0260;
+hpOpenSportsExpansionIIV0260=async function(host){
   await __hpOpenSportsExpansionIIV0264(host);
   const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
   const button=root?.querySelector('#openRowingV0264');
@@ -27251,8 +27252,8 @@ hpSportsExpansionIIV0260=function(data){
   return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="trekking-entry-v0265"><button type="button" class="primary" id="openTrekkingV0265">Abrir Trekking 2.0</button><small>Subida, descida, terreno irregular, estabilidade, resistência e referências reais.</small></div><div id="trekkingHostV0265" class="trekking-host-v0265" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
 };
 
-const __hpOpenSportsExpansionIIV0265=hpOpenSportsExpansionIV0260;
-hpOpenSportsExpansionIV0260=async function(host){
+const __hpOpenSportsExpansionIIV0265=hpOpenSportsExpansionIIV0260;
+hpOpenSportsExpansionIIV0260=async function(host){
   await __hpOpenSportsExpansionIIV0265(host);
   const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
   const button=root?.querySelector('#openTrekkingV0265');
@@ -27288,8 +27289,8 @@ hpSportsExpansionIIV0260=function(data){
   return html.replace('<div class="sports-expansion-ii-chain-v0260">',`<div class="recreational-entry-v0266"><button type="button" class="primary" id="openRecreationalV0266">Abrir Recreational Sports 2.0</button><small>Jogos, parque, praia, coordenação, reação, mobilidade e resistência com curadoria.</small></div><div id="recreationalHostV0266" class="recreational-host-v0266" hidden></div><div class="sports-expansion-ii-chain-v0260">`);
 };
 
-const __hpOpenSportsExpansionIIV0266=hpOpenSportsExpansionIV0260;
-hpOpenSportsExpansionIV0260=async function(host){
+const __hpOpenSportsExpansionIIV0266=hpOpenSportsExpansionIIV0260;
+hpOpenSportsExpansionIIV0260=async function(host){
   await __hpOpenSportsExpansionIIV0266(host);
   const root=host?.querySelector('[data-sports-expansion-ii-v0260]');
   const button=root?.querySelector('#openRecreationalV0266');
@@ -31915,7 +31916,7 @@ function hpJourneyStabilityGuardV0610(){
   const updateViewport=()=>{
     const vv=window.visualViewport;
     const viewportHeight=vv?vv.height:window.innerHeight;
-    const keyboardOpen=vv?((window.innerHeight-vv.height)>120):false;
+    const keyboardOpen=vv?((window.innerHeight-vv.height)>120&&hpEditavelFocadoV0620()):false;
     root.style.setProperty('--hp-visual-viewport-height-v0610',`${Math.max(320,Math.round(viewportHeight))}px`);
     root.classList.toggle('hp-keyboard-open-v0610',keyboardOpen);
     root.dataset.hpViewportWidth=String(Math.round(vv?.width||window.innerWidth));
@@ -31938,3 +31939,40 @@ function hpJourneyStabilityGuardV0610(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hpJourneyStabilityGuardV0610,{once:true});
 else hpJourneyStabilityGuardV0610();
+
+// ===== v0.62.0 — Menu de conta no avatar: sair e trocar de conta sem procurar no menu lateral =====
+(function hpContaAvatarV0620(){
+  const css=document.createElement('style');
+  css.textContent=`.hp-conta-pop-v0620{position:fixed;z-index:9999;min-width:220px;background:#fff;color:#0a1e1b;border:1px solid rgba(16,33,59,.12);border-radius:16px;box-shadow:0 18px 40px rgba(16,33,59,.22);padding:6px;display:flex;flex-direction:column}
+.hp-conta-pop-v0620 button,.hp-conta-pop-v0620 a{all:unset;cursor:pointer;padding:12px 14px;border-radius:10px;font-weight:700;font-size:15px}
+.hp-conta-pop-v0620 button:hover,.hp-conta-pop-v0620 a:hover{background:#eef4f2}
+.hp-conta-pop-v0620 .sair{color:#c53636}
+.user-chip,#patientAvatar{cursor:pointer}`;
+  document.head.appendChild(css);
+  let pop=null;
+  const fechar=()=>{pop?.remove();pop=null};
+  const abrir=alvo=>{
+    fechar();
+    const r=alvo.getBoundingClientRect();
+    pop=document.createElement('div');
+    pop.className='hp-conta-pop-v0620';
+    pop.setAttribute('role','menu');
+    pop.innerHTML='<a role="menuitem" href="/app/">Abrir nova versão</a><button role="menuitem" type="button" data-acao="trocar">Trocar de conta</button><button role="menuitem" type="button" class="sair" data-acao="sair">Sair</button>';
+    pop.style.top=`${Math.round(r.bottom+8)}px`;
+    pop.style.right=`${Math.max(8,Math.round(window.innerWidth-r.right))}px`;
+    pop.addEventListener('click',e=>{
+      const acao=e.target.closest('[data-acao]')?.dataset.acao;
+      if(!acao)return;
+      fechar();
+      if(typeof logout==='function')logout();
+      if(acao==='trocar')location.href='/app/entrar';
+    });
+    document.body.appendChild(pop);
+  };
+  document.addEventListener('click',e=>{
+    const alvo=e.target.closest?.('.user-chip,#patientAvatar');
+    if(alvo){e.preventDefault();e.stopPropagation();pop?fechar():abrir(alvo);return}
+    if(pop&&!e.target.closest('.hp-conta-pop-v0620'))fechar();
+  },true);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')fechar()});
+})();

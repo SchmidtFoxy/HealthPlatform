@@ -1,3 +1,12 @@
+## v0.62.0 — Login novo, páginas públicas e troca de conta
+
+- /app: login redesenhado para celular e PC, com recuperação de senha dentro do app e "lembrar e-mail".
+- /app: páginas públicas para quem não está logado: Início, Recursos, Vantagens e Quem somos.
+- /app: trocar de conta (admin, médico, paciente) pelo Perfil e pelo cartão de conta no menu lateral do PC; contas usadas no aparelho ficam lembradas (só e-mail, nome e papel).
+- Versão clássica: corrigido erro de JavaScript (`hpOpenSportsExpansionIV0260`) que interrompia o carregamento do app.js no meio; tudo o que vinha depois (menu "Mais" com Sair, ajustes de teclado e chat das v0.58 a v0.60) não rodava.
+- Versão clássica: o menu de baixo só é escondido quando um campo de texto está em foco (antes, zoom ou barras do navegador podiam escondê-lo).
+- Versão clássica: tocar no avatar abre Sair, Trocar de conta e Abrir nova versão.
+
 ## v0.61.0 — Novo front mobile-first em /app
 - Novo app React/Vite/PWA servido em `/app`, ao lado do front clássico e com a mesma sessão.
 - Paciente: Hoje, treino ao vivo com timer de descanso, dieta, progresso e perfil com tema claro/escuro.

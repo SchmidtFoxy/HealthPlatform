@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, LucideIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { ContaLateral } from './account';
+import simbolo from '@/assets/aesyn-symbol.webp';
 
 export interface NavItem {
   to: string;
@@ -14,7 +16,7 @@ export interface NavItem {
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={clsx('flex items-center gap-2.5', className)}>
-      <img src="/icons/icon-192.png" alt="" className="h-8 w-8 rounded-[10px]" />
+      <img src={simbolo} alt="" className="h-8 w-8 rounded-[10px] object-cover" />
       <span className="font-display text-[15px] font-semibold tracking-[0.32em]">AESYN</span>
     </div>
   );
@@ -41,7 +43,7 @@ export function AppShell({ items, footer }: { items: NavItem[]; footer?: ReactNo
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto">{footer}</div>
+        <div className="mt-auto">{footer ?? <ContaLateral />}</div>
       </aside>
 
       <main className="min-w-0 flex-1 pb-[calc(84px+env(safe-area-inset-bottom,0px))] lg:pb-10">

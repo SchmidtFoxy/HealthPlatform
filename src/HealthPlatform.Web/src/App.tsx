@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/shell';
 import { Skeleton, Toaster } from './components/ui';
 import { LoginPage } from './features/auth/LoginPage';
+import { HomeSitePage, RecursosPage, SiteLayout, SobrePage, VantagensPage } from './features/site/site';
 import { ProfilePage } from './features/ProfilePage';
 import { DietPage } from './features/patient/DietPage';
 import { ProgressPage } from './features/patient/ProgressPage';
@@ -41,7 +42,7 @@ function Protegido({ papel, children }: { papel: 'paciente' | 'equipe'; children
 
 function Inicio() {
   const s = useSessao();
-  if (!s) return <Navigate to="/entrar" replace />;
+  if (!s) return <HomeSitePage />;
   return <Navigate to={s.tipoUsuario === 'Paciente' ? '/hoje' : '/pro'} replace />;
 }
 
@@ -66,7 +67,12 @@ export function App() {
       <Toaster />
       <Suspense fallback={<Carregando />}>
         <Routes>
-          <Route path="/" element={<Inicio />} />
+          <Route element={<SiteLayout />}>
+            <Route path="/" element={<Inicio />} />
+            <Route path="/recursos" element={<RecursosPage />} />
+            <Route path="/vantagens" element={<VantagensPage />} />
+            <Route path="/sobre" element={<SobrePage />} />
+          </Route>
           <Route path="/entrar" element={<LoginPage />} />
 
           <Route
@@ -119,7 +125,7 @@ export function App() {
               </Protegido>
             }
           />
-          <Route path="*" element={<Inicio />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </>
