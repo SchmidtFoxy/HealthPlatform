@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.60.10" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.61.0" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -241,6 +241,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 // SPA web do MVP. Rotas desconhecidas fora de /api caem no index.
+// Novo front (React) servido em /app: rotas do cliente caem no index.html dele.
+app.MapFallbackToFile("app/{*path:nonfile}", "app/index.html");
 app.MapFallbackToFile("index.html");
 
 if (app.Environment.IsDevelopment())

@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 namespace HealthPlatform.Api.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("api/configuracoes")]
 public class ConfiguracoesController(
     AppDbContext db,
@@ -21,6 +20,9 @@ public class ConfiguracoesController(
     IHttpContextAccessor httpContextAccessor,
     UserManager<Usuario> userManager) : ControllerBase
 {
+    // Configuracoes da clinica sao exclusivas da equipe; as rotas "minha-conta" valem
+    // para qualquer usuario autenticado, inclusive pacientes (aceite de termos, onboarding).
+    [Authorize]
     [HttpGet("resumo")]
     public async Task<IActionResult> Resumo(CancellationToken ct)
     {
@@ -52,6 +54,7 @@ public class ConfiguracoesController(
 
     public sealed record AtualizarOrganizacaoRequest(string Nome, string? Cnpj);
 
+    [Authorize]
     [HttpPut("organizacao")]
     public async Task<IActionResult> AtualizarOrganizacao(
         AtualizarOrganizacaoRequest request,
@@ -110,6 +113,7 @@ public class ConfiguracoesController(
         string NovaSenha,
         string ConfirmacaoNovaSenha);
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpGet("minha-conta")]
     public async Task<IActionResult> MinhaConta(CancellationToken ct)
     {
@@ -146,6 +150,7 @@ public class ConfiguracoesController(
             : Ok(usuario);
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPut("minha-conta")]
     public async Task<IActionResult> AtualizarMinhaConta(
         AtualizarMinhaContaRequest request,
@@ -199,6 +204,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPost("minha-conta/alterar-senha")]
     public async Task<IActionResult> AlterarMinhaSenha(
         AlterarMinhaSenhaRequest request,
@@ -257,6 +263,7 @@ public class ConfiguracoesController(
         return Ok(new { message = "Senha alterada com sucesso." });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPut("minha-conta/preferencias")]
     public async Task<IActionResult> AtualizarPreferencias(
         AtualizarPreferenciasRequest request,
@@ -319,6 +326,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPut("minha-conta/foto")]
     public async Task<IActionResult> AtualizarFotoPerfil(
         AtualizarFotoPerfilRequest request,
@@ -361,6 +369,7 @@ public class ConfiguracoesController(
         return Ok(new { usuario.FotoPerfilDataUrl });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpGet("minha-conta/sessao-atual")]
     public IActionResult SessaoAtual()
     {
@@ -379,6 +388,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpGet("minha-conta/onboarding-paciente")]
     public async Task<IActionResult> ObterOnboardingPaciente(CancellationToken ct)
     {
@@ -400,6 +410,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPost("minha-conta/onboarding-paciente/concluir")]
     public async Task<IActionResult> ConcluirOnboardingPaciente(CancellationToken ct)
     {
@@ -434,6 +445,7 @@ public class ConfiguracoesController(
     public sealed record AceitarDocumentosLegaisRequest(bool AceitarTermos, bool AceitarPoliticaPrivacidade);
     public sealed record DesativarMinhaContaRequest(string SenhaAtual, string Confirmacao);
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpGet("minha-conta/privacidade")]
     public async Task<IActionResult> PrivacidadeMinhaConta(CancellationToken ct)
     {
@@ -474,6 +486,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPost("minha-conta/consentimentos/aceitar")]
     public async Task<IActionResult> AceitarDocumentosLegais(AceitarDocumentosLegaisRequest request, CancellationToken ct)
     {
@@ -528,6 +541,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPost("minha-conta/solicitar-exclusao-dados")]
     public async Task<IActionResult> SolicitarExclusaoDados(CancellationToken ct)
     {
@@ -557,6 +571,7 @@ public class ConfiguracoesController(
         });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpPost("minha-conta/desativar")]
     public async Task<IActionResult> DesativarMinhaConta(DesativarMinhaContaRequest request, CancellationToken ct)
     {
@@ -603,6 +618,7 @@ public class ConfiguracoesController(
         return Ok(new { desativada = true, desativadaEmUtc = agora });
     }
 
+    [Authorize(Policy = "AuthenticatedOnly")]
     [HttpGet("minha-conta/auditoria")]
     public async Task<IActionResult> MinhaAuditoria([FromQuery] int limite = 40, CancellationToken ct = default)
     {

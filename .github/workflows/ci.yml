@@ -1,0 +1,38 @@
+# Verificacao gratuita a cada PR e push na main: compila a API e o novo front.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Build da API
+        run: dotnet build HealthPlatform.slnx -c Release
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/HealthPlatform.Web/package-lock.json
+
+      - name: Build do novo front
+        working-directory: src/HealthPlatform.Web
+        run: |
+          npm ci
+          npx tsc -b
+          npm run build
+
+      - name: Bundle commitado esta atualizado
+        run: |
+          git add -N src/HealthPlatform.Api/wwwroot/app
+          git diff --stat --exit-code -- src/HealthPlatform.Api/wwwroot/app || (echo "Rode 'npm run build' em src/HealthPlatform.Web e commite wwwroot/app." && exit 1)

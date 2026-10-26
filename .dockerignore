@@ -10,3 +10,4 @@
 *.zip
 HealthPlatform-v*/
 .DS_Store
+**/node_modules/

@@ -1,0 +1,97 @@
+# Deploy automatico em producao depois que o CI passa na main.
+# Usa o mesmo DEPLOY-PRODUCAO.ps1 de sempre (backup validado, staging, migrations
+# seguras, promocao atomica, healthcheck e rollback). Os dados da VPS ficam em
+# Settings > Secrets and variables > Actions; sem eles o deploy so avisa e para.
+name: Deploy producao
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-producao
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    environment: producao
+    timeout-minutes: 45
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+      VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      HEALTH_URL: ${{ vars.HEALTH_URL || 'https://aesyn.com.br/api/health' }}
+      APP_SERVICE: ${{ vars.APP_SERVICE || 'app' }}
+    steps:
+      - name: Verificar configuracao
+        id: cfg
+        run: |
+          faltando=""
+          for v in VPS_HOST VPS_USER VPS_SSH_KEY VPS_KNOWN_HOSTS DB_NAME; do
+            [ -z "${!v}" ] && faltando="$faltando $v"
+          done
+          if [ -n "$faltando" ]; then
+            echo "::warning::Deploy nao executado. Secrets ausentes:$faltando"
+            echo "pronto=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "pronto=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.cfg.outputs.pronto == 'true'
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Chave SSH
+        if: steps.cfg.outputs.pronto == 'true'
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host $VPS_HOST
+            User $VPS_USER
+            IdentityFile ~/.ssh/id_deploy
+            IdentitiesOnly yes
+            BatchMode yes
+            StrictHostKeyChecking yes
+            ServerAliveInterval 30
+          EOF
+          ssh "$VPS_HOST" 'echo conexao-ok'
+
+      - name: Deploy
+        if: steps.cfg.outputs.pronto == 'true'
+        shell: pwsh
+        run: |
+          $v = (Get-Content VERSION.txt -Raw).Trim()
+          $h = $env:VPS_HOST
+          ./DEPLOY-PRODUCAO.ps1 -Aplicar `
+            -TargetVersion $v `
+            -VpsHost $h -VpsUser $env:VPS_USER `
+            -DatabaseName $env:DB_NAME `
+            -HealthUrl $env:HEALTH_URL `
+            -ApplicationService $env:APP_SERVICE `
+            -ProductionConfirmation "PRODUCAO:${h}:$v" `
+            -ActivationConfirmation "ATIVAR:${h}:$v" `
+            -MigrationSafetyConfirmation "VALIDAR-MIGRATIONS:${h}:$v"
+
+      - name: Guardar logs do deploy
+        if: always() && steps.cfg.outputs.pronto == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-logs-${{ github.run_number }}
+          path: .deploy-logs/
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Limpar chave
+        if: always()
+        run: rm -f ~/.ssh/id_deploy
