@@ -1,3 +1,8 @@
+## v0.65.5 — Trocar exercício e refeição na versão nova
+
+- Treino ao vivo: botão de trocar exercício com o motivo (equipamento ocupado, sem o equipamento, preferência); mostra alternativas do mesmo grupo muscular do catálogo do profissional com a semelhança, e a troca vai para o histórico. Em caso de dor, orienta a falar com o profissional em vez de trocar.
+- Refeição: "Trocar por outra refeição do plano" mostra as refeições já prescritas mais parecidas em calorias e macros; a escolhida fica registrada como adaptada, com o motivo.
+
 ## v0.65.4 — Check-ins de evolução na versão nova
 
 - Paciente: em Progresso, nova seção Check-ins de evolução com peso, adesão à dieta e ao treino e energia (último valor, variação e gráfico) e o histórico; o check-in tem escalas de 0 a 10 para fome, energia, sono e percepção de evolução e fica ligado às fases atuais.

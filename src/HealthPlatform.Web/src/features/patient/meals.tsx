@@ -1,8 +1,10 @@
 import clsx from 'clsx';
 import { ArrowLeftRight, Check, Shuffle, X } from 'lucide-react';
-import { useState } from 'react';
-import { Pill, Sheet, toast } from '@/components/ui';
-import { hora, n0 } from '@/lib/format';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { Button, ErrorBox, Pill, Sheet, Skeleton, toast } from '@/components/ui';
+import { api } from '@/lib/api';
+import { hora, n0, n1 } from '@/lib/format';
 import type { ItemRefeicaoPortal, Nutrientes, RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { useAdesaoRefeicao } from './queries';
 
@@ -121,6 +123,9 @@ export function StatusButtons({ refeicaoId, status, compact }: { refeicaoId: str
 
 export function MealSheet({ refeicao, status, onClose }: { refeicao: RefeicaoPortal | null; status: StatusRefeicao; onClose: () => void }) {
   const tot = refeicao ? somaNutrientes(refeicao.itens) : null;
+  const [trocar, setTrocar] = useState(false);
+  useEffect(() => setTrocar(false), [refeicao?.id]);
+  if (refeicao && trocar) return <TrocarRefeicao refeicao={refeicao} onVoltar={() => setTrocar(false)} onClose={onClose} />;
   return (
     <Sheet
       open={!!refeicao}
@@ -152,6 +157,112 @@ export function MealSheet({ refeicao, status, onClose }: { refeicao: RefeicaoPor
               <ItemLinha key={i.id} item={i} />
             ))}
           </ul>
+          <button onClick={() => setTrocar(true)} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-line py-3 text-sm font-semibold text-muted transition hover:text-fg">
+            <ArrowLeftRight className="h-4 w-4" /> Trocar por outra refeição do plano
+          </button>
+        </>
+      )}
+    </Sheet>
+  );
+}
+
+interface AlternativasRefeicao {
+  refeicaoOriginalNome: string;
+  caloriasOriginais: number;
+  alternativas: { refeicaoId: string; planoNome: string; nome: string; horario: string | null; calorias: number; proteinasG: number; carboidratosG: number; gordurasG: number; similaridadePercentual: number; itens: string[] }[];
+}
+
+const MOTIVOS_TROCA = ['Não gostei desta refeição', 'Não tenho os alimentos agora', 'Estou fora de casa', 'Quero algo mais prático', 'Outro motivo'];
+
+/** Troca a refeicao de hoje por outra ja prescrita, ordenada pela proximidade de calorias e macros. Fica registrada como adaptada. */
+function TrocarRefeicao({ refeicao, onVoltar, onClose }: { refeicao: RefeicaoPortal; onVoltar: () => void; onClose: () => void }) {
+  const q = useQuery({ queryKey: ['p', 'refeicao-alternativas', refeicao.id], queryFn: () => api<AlternativasRefeicao>(`/api/portal/me/refeicoes/${refeicao.id}/alternativas`) });
+  const m = useAdesaoRefeicao();
+  const [sel, setSel] = useState<string | null>(null);
+  const [motivo, setMotivo] = useState(MOTIVOS_TROCA[0]);
+  const alts = q.data?.alternativas ?? [];
+  const escolhida = alts.find((a) => a.refeicaoId === sel) ?? alts[0];
+  return (
+    <Sheet
+      open
+      onClose={onClose}
+      title={`Trocar ${refeicao.nome.toLowerCase()}`}
+      footer={
+        <div className="flex gap-2">
+          <Button variant="ghost" size="lg" onClick={onVoltar}>
+            Voltar
+          </Button>
+          <Button
+            size="lg"
+            className="flex-1"
+            disabled={!escolhida}
+            loading={m.isPending}
+            onClick={() =>
+              escolhida &&
+              m.mutate(
+                { refeicaoId: refeicao.id, status: 'Adaptada', observacao: `Troca AESYN: ${escolhida.nome} | ${motivo}` },
+                {
+                  onSuccess: () => {
+                    toast(`Troca registrada: ${escolhida.nome}`);
+                    onClose();
+                  },
+                  onError: (e) => toast(e.message, 'bad'),
+                },
+              )
+            }
+          >
+            Usar esta hoje
+          </Button>
+        </div>
+      }
+    >
+      <p className="-mt-1 mb-4 text-sm text-muted">Opções que já estão no seu plano, das mais parecidas para as menos. A troca fica registrada como adaptada para seu profissional ver.</p>
+      {q.isLoading ? (
+        <Skeleton className="h-48" />
+      ) : q.error ? (
+        <ErrorBox error={q.error} onRetry={() => q.refetch()} />
+      ) : !alts.length ? (
+        <p className="rounded-xl bg-raised p-4 text-sm text-muted">Ainda não há outra refeição prescrita para trocar hoje. Se precisar, marque como adaptada e conte no chat o que comeu.</p>
+      ) : (
+        <>
+          <div className="flex flex-col gap-2" role="radiogroup" aria-label="Alternativas">
+            {alts.map((a) => {
+              const ativo = escolhida?.refeicaoId === a.refeicaoId;
+              return (
+                <button
+                  key={a.refeicaoId}
+                  role="radio"
+                  aria-checked={ativo}
+                  onClick={() => setSel(a.refeicaoId)}
+                  className={clsx('rounded-xl border p-3.5 text-left transition', ativo ? 'border-accent bg-accent/10' : 'border-line hover:bg-raised/50')}
+                >
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className="font-semibold">{a.nome}</span>
+                    <span className="num shrink-0 text-sm font-semibold text-accent">{n0(a.similaridadePercentual)}%</span>
+                  </span>
+                  <span className="num mt-0.5 block text-sm text-muted">
+                    {n0(a.calorias)} kcal · P {n1(a.proteinasG)} · C {n1(a.carboidratosG)} · G {n1(a.gordurasG)}
+                    {a.horario ? ` · ${hora(a.horario)}` : ''}
+                  </span>
+                  {a.itens.length > 0 && <span className="mt-1 block text-[13px] text-faint">{a.itens.join(' · ')}</span>}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mb-2 mt-5 text-[13px] font-semibold text-muted">Por que trocar?</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Motivo da troca">
+            {MOTIVOS_TROCA.map((x) => (
+              <button
+                key={x}
+                type="button"
+                aria-pressed={motivo === x}
+                onClick={() => setMotivo(x)}
+                className={clsx('rounded-full border px-3.5 py-1.5 text-sm font-semibold transition', motivo === x ? 'border-accent bg-accent/10 text-accent' : 'border-line text-muted hover:text-fg')}
+              >
+                {x}
+              </button>
+            ))}
+          </div>
         </>
       )}
     </Sheet>

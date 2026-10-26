@@ -17,6 +17,14 @@ export interface TreinoAndamento {
   inicio: string;
   atual: number;
   series: Record<string, SerieRegistro[]>;
+  /** Exercicios trocados por uma alternativa do catalogo, por item da prescricao. */
+  trocas?: Record<string, Troca>;
+}
+
+export interface Troca {
+  exercicioId: string;
+  nome: string;
+  motivo: string;
 }
 
 const KEY = 'aesyn_treino_andamento';
