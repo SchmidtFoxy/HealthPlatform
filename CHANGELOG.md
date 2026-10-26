@@ -1,3 +1,10 @@
+## v0.62.3 — Telas que não "sambam" no celular
+
+- /app e versão clássica: a página não rola mais para os lados no celular.
+- /app: Hoje do profissional e histórico de treinos não passam da largura da tela; itens de grid encolhem com textos longos.
+- /app: campos de texto com 16px no celular, para o iPhone não dar zoom ao tocar no campo.
+- Versão clássica: agenda (data e setas) se ajusta ao celular.
+
 ## v0.62.2 — Dieta, plano de treino e modo academia
 
 - /app: Dieta do paciente com resumo do dia (kcal consumidas, quanto falta e macros) fixo ao lado no PC e linha do tempo das refeições com marcar como feita em um toque.

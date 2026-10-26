@@ -6695,3 +6695,7 @@ body{min-width:0}
 @media(prefers-reduced-motion:reduce){
   .hp-focus-context-v0610,.hp-focus-context-v0610 *{scroll-behavior:auto!important}
 }
+
+/* v0.62.3: nada empurra a tela para os lados no celular */
+html,body{overflow-x:clip}
+@media (max-width:720px){.agenda-header{flex-wrap:wrap;gap:10px}.date-nav{width:100%;justify-content:space-between}.date-title{min-width:0;flex:1}.agenda-item{grid-template-columns:56px 4px minmax(0,1fr)}.agenda-actions{grid-column:1/-1;flex-wrap:wrap}}

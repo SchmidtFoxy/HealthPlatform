@@ -65,6 +65,17 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* Nada pode empurrar a pagina para os lados no celular. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Itens de grid encolhem em vez de esticar a coluna com texto longo. */
+.grid > * {
+  min-width: 0;
+}
+
 h1,
 h2,
 h3 {

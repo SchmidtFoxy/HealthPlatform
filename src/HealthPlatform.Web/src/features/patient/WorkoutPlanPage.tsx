@@ -161,7 +161,7 @@ export function WorkoutPlanPage() {
               </Card>
             ))}
           </div>
-          <ul className="grid gap-2 lg:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
             {hist.data.execucoes.slice(0, 8).map((e) => {
               const [dia, mes] = dataCurta(e.dataHoraInicioUtc).split(' ');
               return (
