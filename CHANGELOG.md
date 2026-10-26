@@ -1,3 +1,11 @@
+## v0.66.0 — Suplementos e fotos na versão nova
+
+- Equipe: aba Suplementos na Biblioteca com busca, categorias, cadastro do rótulo (porção, calorias, macros, cafeína, composição e modo de uso), inativar e reativar.
+- Equipe: o editor de dieta ganhou o cronograma de suplementos (porções, momento, horário, refeição e sessão de treino). Os macros entram no total do plano, e a mensagem que mandava para a versão clássica saiu.
+- Paciente: a Dieta lista os suplementos do plano com quantidade, momento e orientação.
+- Fotos como no WhatsApp: em Arquivos e no chat, a imagem aparece na proporção original e abre em tela cheia ao tocar, com botão de baixar. Foto enviada sem texto no chat não mostra mais "Enviei o arquivo…".
+- Deploy: `scripts/sql/v0.65.9_exercicios_extras.sql` cria em produção a tabela dos exercícios extras (exigida pela 0.65.9).
+
 ## v0.65.9 — Treino livre e registro de água
 
 - Paciente: no calendário do Treino, tocar num dia mostra o que foi feito (sessão, horário, duração, RPE e cada exercício com séries e carga) ou o que está previsto, com atalho para ver os exercícios ou começar. Setas navegam entre semanas.

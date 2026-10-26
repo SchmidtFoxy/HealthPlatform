@@ -9,6 +9,8 @@ import { api } from '@/lib/api';
 import { hojeIso, n0 } from '@/lib/format';
 import type { Alimento, PlanoAlimentarPro } from '@/lib/types';
 import { useAlimentos, usePaciente, usePlanosAlimentares } from './queries';
+import { useSuplementos } from './suplementos';
+import { macrosSuplementos, SuplementosSecao } from './SuplementosDieta';
 
 // ------------------------------------------------------------------ Modelo local
 
@@ -229,7 +231,7 @@ function SeletorAlimento({ open, onClose, onPick, titulo, referencia }: { open: 
             )}
           </button>
         ))}
-        {!alimentos.isLoading && lista.length === 0 && <p className="py-10 text-center text-sm text-muted">Nenhum alimento encontrado. Cadastre novos alimentos na versão clássica.</p>}
+        {!alimentos.isLoading && lista.length === 0 && <p className="py-10 text-center text-sm text-muted">Nenhum alimento encontrado. Cadastre novos alimentos na Biblioteca.</p>}
       </div>
     </Sheet>
   );
@@ -482,7 +484,9 @@ export function DietEditorPage() {
   const upRef = (k: string, fn: (r: Refeicao) => Refeicao) => up((x) => ({ ...x, refeicoes: x.refeicoes.map((r) => (r.k === k ? fn(r) : r)) }));
 
   const totaisRef = (r: Refeicao) => r.itens.reduce((s, i) => soma(s, macrosDe(mapa.get(i.alimentoId), i.gramas)), zero);
-  const total = d ? d.refeicoes.reduce((s, r) => soma(s, totaisRef(r)), zero) : zero;
+  const catSup = useSuplementos(true);
+  const mapaSup = useMemo(() => new Map((catSup.data ?? []).map((x) => [x.id, x])), [catSup.data]);
+  const total = d ? soma(d.refeicoes.reduce((s, r) => soma(s, totaisRef(r)), zero), macrosSuplementos(d.suplementos, mapaSup)) : zero;
 
   const salvar = useMutation({
     mutationFn: async (liberar: boolean) => {
@@ -619,7 +623,7 @@ export function DietEditorPage() {
               <Field label="Orientações gerais do plano">
                 <textarea className={inputCls + ' h-24 py-3'} placeholder="Hidratação, temperos liberados, combinações…" value={d.observacoes ?? ''} onChange={(e) => up((x) => ({ ...x, observacoes: e.target.value || null }))} />
               </Field>
-              {d.suplementos.length > 0 && <p className="text-[13px] text-muted">{d.suplementos.length} suplemento(s) deste plano são mantidos ao salvar. Para editá-los, use a versão clássica.</p>}
+              <SuplementosSecao pacienteId={id} itens={d.suplementos} refeicoes={d.refeicoes.map((r, i) => ({ k: r.k, nome: r.nome || `Refeição ${i + 1}` }))} catalogo={mapaSup} onChange={(l) => up((x) => ({ ...x, suplementos: l }))} />
             </div>
           </>
         )}

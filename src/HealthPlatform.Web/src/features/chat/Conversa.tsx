@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { ChevronLeft, FileText, Loader2, Paperclip, SendHorizontal, ShieldAlert } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ehImagem, ImagemArquivo, VisualizadorImagem } from '@/components/ImagemArquivo';
 import { ErrorBox, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { abrirArquivo, ACEITOS, enviarArquivo } from '@/lib/arquivos';
@@ -59,6 +60,7 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
   const q = useQuery({ queryKey: chave, queryFn: () => api<Conversa>(base), refetchInterval: 15_000, refetchIntervalInBackground: false });
   const [texto, setTexto] = useState('');
   const [contexto, setContexto] = useState('Geral');
+  const [foto, setFoto] = useState<{ id: string; nome: string } | null>(null);
   const fim = useRef<HTMLDivElement>(null);
   const campo = useRef<HTMLTextAreaElement>(null);
   const arquivoRef = useRef<HTMLInputElement>(null);
@@ -86,7 +88,7 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
   const anexar = useMutation({
     mutationFn: async (file: File) => {
       const a = await enviarArquivo(file, { categoria: file.type.startsWith('image/') ? 'Foto' : 'Exame', viaChat: true, pacienteId });
-      return enviar.mutateAsync({ mensagem: texto.trim() || `Enviei o arquivo ${a.nome}.`, contexto, referenciaTipo: 'Arquivo', referenciaId: a.id, referenciaTitulo: a.nome });
+      return enviar.mutateAsync({ mensagem: texto.trim() || (file.type.startsWith('image/') ? 'Foto' : `Enviei o arquivo ${a.nome}.`), contexto, referenciaTipo: 'Arquivo', referenciaId: a.id, referenciaTitulo: a.nome });
     },
     onSuccess: () => {
       setTexto('');
@@ -159,6 +161,7 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
           {msgs.map((m, i) => {
             const novoDia = i === 0 || new Date(msgs[i - 1].dataHoraUtc).toDateString() !== new Date(m.dataHoraUtc).toDateString();
             const colado = !novoDia && msgs[i - 1].meu === m.meu;
+            const fotoMsg = m.referencia?.tipo === 'Arquivo' && !!m.referencia.id && ehImagem({ nome: m.referencia.titulo });
             return (
               <div key={m.id}>
                 {novoDia && <p className="my-3 text-center text-[12px] font-semibold uppercase tracking-wider text-faint">{diaRotulo(m.dataHoraUtc)}</p>}
@@ -172,8 +175,17 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
                     {m.contexto !== 'Geral' && (
                       <p className={clsx('mb-0.5 text-[11px] font-semibold uppercase tracking-wider', m.meu ? 'text-accent-ink/70' : 'text-accent')}>{m.contextoRotulo}</p>
                     )}
-                    <p className="whitespace-pre-wrap break-words">{m.mensagem}</p>
-                    {m.referencia?.tipo === 'Arquivo' && m.referencia.id && (
+                    {!(fotoMsg && (m.mensagem === 'Foto' || m.mensagem.startsWith('Enviei o arquivo'))) && <p className="whitespace-pre-wrap break-words">{m.mensagem}</p>}
+                    {m.referencia?.tipo === 'Arquivo' && m.referencia.id && ehImagem({ nome: m.referencia.titulo }) ? (
+                      <ImagemArquivo
+                        id={m.referencia.id}
+                        pacienteId={pacienteId}
+                        alt={m.referencia.titulo ?? 'Foto'}
+                        onAbrir={() => setFoto({ id: m.referencia!.id!, nome: m.referencia!.titulo ?? 'Foto' })}
+                        maxAltura={320}
+                        className="-mx-1 mt-0.5 w-60 rounded-2xl bg-black/20"
+                      />
+                    ) : m.referencia?.tipo === 'Arquivo' && m.referencia.id && (
                       <button
                         onClick={() => abrirArquivo({ id: m.referencia!.id!, nome: m.referencia!.titulo ?? 'arquivo' }, pacienteId).catch((e) => toast(e.message, 'bad'))}
                         className={clsx('mt-2 flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left text-[13px] font-semibold', m.meu ? 'bg-accent-ink/10' : 'bg-raised')}
@@ -192,6 +204,7 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
             );
           })}
           <div ref={fim} />
+          <VisualizadorImagem arquivo={foto} pacienteId={pacienteId} onClose={() => setFoto(null)} />
         </div>
       </div>
 

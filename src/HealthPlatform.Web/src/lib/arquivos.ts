@@ -56,3 +56,11 @@ export async function abrirArquivo(a: Pick<ArquivoPaciente, 'id' | 'nome'>, paci
   }
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
+
+/** Baixa o arquivo com o token e devolve uma URL local (blob) para exibir, por exemplo, uma foto. */
+export async function urlDoArquivo(id: string, pacienteId?: string) {
+  const s = lerSessao();
+  const r = await fetch(`${base(pacienteId)}/${id}/download`, { headers: s ? { Authorization: `Bearer ${s.token}` } : {} });
+  if (!r.ok) throw new Error('Não foi possível carregar o arquivo.');
+  return URL.createObjectURL(await r.blob());
+}
