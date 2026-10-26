@@ -8,6 +8,7 @@ import { Button, Card, ErrorBox, Field, inputCls, Pill, SectionTitle, Sheet, Ske
 import { api } from '@/lib/api';
 import { ACEITOS, enviarArquivo } from '@/lib/arquivos';
 import { dataCurta, hojeIso, n0, n1 } from '@/lib/format';
+import { MeuProtocolo, useMeuProtocolo } from './Protocolo';
 import { horariosHoje, Medicamento, Meta, Solicitacao, useMedicamentos, useMetas, useSolicitacoes } from './queries';
 
 const STATUS_PEDIDO: Record<string, { label: string; tone: 'warn' | 'info' | 'ok' | 'neutral' }> = {
@@ -332,14 +333,21 @@ function Metas() {
 }
 
 export function CarePage() {
+  const protocolo = useMeuProtocolo().data;
   return (
     <Page wide>
-      <PageHeader back="/hoje" eyebrow="Cuidados" title="Seu acompanhamento" subtitle="Pedidos do profissional, remédios e suplementos de hoje e suas metas." />
+      <PageHeader back="/hoje" eyebrow="Cuidados" title="Seu acompanhamento" subtitle="Pedidos do profissional, o que medir, remédios e suplementos de hoje e suas metas." />
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid gap-x-6 lg:grid-cols-2">
         <section className="lg:col-span-2">
           <SectionTitle>Pedidos do profissional</SectionTitle>
           <Pedidos />
         </section>
+        {protocolo?.configurado && (
+          <section className="lg:col-span-2">
+            <SectionTitle>Seu monitoramento</SectionTitle>
+            <MeuProtocolo />
+          </section>
+        )}
         <section>
           <SectionTitle>Remédios e suplementos de hoje</SectionTitle>
           <Remedios />

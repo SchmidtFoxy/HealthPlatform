@@ -45,7 +45,7 @@ interface ContatoFila {
   contatosUltimos30Dias: number;
 }
 
-interface Pedido {
+export interface Pedido {
   id: string;
   pacienteId: string;
   pacienteNome: string;
@@ -489,7 +489,7 @@ export function RegistrarContatoSheet({ paciente, onClose }: { paciente: { id: s
       }
     >
       <div className="flex flex-col gap-4">
-        <Field label="Canal">
+        <Field label="Canal" group>
           <div className="flex flex-wrap gap-2">
             {CANAIS.map((c) => (
               <button
@@ -636,7 +636,7 @@ function PedidosAba() {
   );
 }
 
-function RevisarPedidoSheet({ pedido, onClose }: { pedido: Pedido | null; onClose: () => void }) {
+export function RevisarPedidoSheet({ pedido, onClose }: { pedido: Pedido | null; onClose: () => void }) {
   const qc = useQueryClient();
   const [obs, setObs] = useState('');
   useEffect(() => setObs(''), [pedido]);

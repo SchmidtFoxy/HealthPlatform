@@ -13,6 +13,7 @@ import { CheckInSheet } from './CheckInSheet';
 import { FecharDiaSheet } from './DiaryPage';
 import { MealSheet, STATUS_INFO, StatusButtons, somaNutrientes } from './meals';
 import { horariosHoje, useChatNaoLidas, useHistoricoDiario, useHistoricoTreinos, useHome, useMedicamentos, useMetas, useSolicitacoes, useMeusTreinos, usePlanoAlimentar } from './queries';
+import { useMeuProtocolo } from './Protocolo';
 import { treinoDoDia } from './treino-dia';
 import { treinoEmAndamento } from './workout-store';
 
@@ -55,13 +56,16 @@ export function TodayPage() {
     (a, m) => a + horariosHoje(m).filter((h) => !meds!.registrosHoje.some((r) => r.medicamentoId === m.id && new Date(r.dataHoraPrevistaUtc).getTime() === new Date(h.utc).getTime())).length,
     0,
   );
+  const protocolo = useMeuProtocolo().data;
+  const medicoesAbertas = protocolo?.configurado ? protocolo.aderencia.hoje.previstos - protocolo.aderencia.hoje.concluidos : 0;
   const metasAbertas = (metas?.metas ?? []).filter((m) => m.status === 'Ativa' && !m.registros.some((r) => r.data === hojeIso())).length;
   const cuidados = [
     pedidos && `${pedidos} ${pedidos > 1 ? 'pedidos' : 'pedido'} do profissional`,
     dosesAbertas && `${dosesAbertas} ${dosesAbertas > 1 ? 'doses' : 'dose'} para marcar`,
     metasAbertas && `${metasAbertas} ${metasAbertas > 1 ? 'metas' : 'meta'} de hoje`,
+    medicoesAbertas && `${medicoesAbertas} ${medicoesAbertas > 1 ? 'registros' : 'registro'} do monitoramento`,
   ].filter(Boolean) as string[];
-  const temCuidados = !!(meds?.medicamentos.length || metas?.metas.length || pedidos);
+  const temCuidados = !!(meds?.medicamentos.length || metas?.metas.length || pedidos || protocolo?.configurado);
   const dia = useMemo(() => treinoDoDia(plano0, hist.data?.execucoes), [plano0, hist.data]);
   const sessaoHoje = dia.hoje;
   const feito = dia.feitosHoje[0];
@@ -356,7 +360,7 @@ export function TodayPage() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">{cuidados.length ? 'Cuidados de hoje' : 'Cuidados em dia'}</span>
-                  <span className="block truncate text-[13px] text-muted">{cuidados.length ? cuidados.join(' · ') : 'Remédios, metas e pedidos marcados'}</span>
+                  <span className="block truncate text-[13px] text-muted">{cuidados.length ? cuidados.join(' · ') : 'Remédios, metas, medições e pedidos marcados'}</span>
                 </span>
                 <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
               </Link>

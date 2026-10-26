@@ -107,7 +107,8 @@ public sealed class ProtocolosAcompanhamentoController(
         foreach (var diaOffset in Enumerable.Range(0, dias))
         {
             var dia = inicioLocal.AddDays(diaOffset);
-            foreach (var item in protocolo.Where(x => x.Ativo && DeveExecutarNoDia(x, dia, offsetMinutos)))
+            // Dias anteriores a criacao do item nao contam como previstos.
+            foreach (var item in protocolo.Where(x => x.Ativo && DeveExecutarNoDia(x, dia, offsetMinutos) && DateOnly.FromDateTime(x.CreatedAtUtc.AddMinutes(offsetMinutos)) <= dia))
             {
                 previstos++;
                 var concluido = RegistroCumpre(item.Tipo, registros.Where(r => DateOnly.FromDateTime(r.DataHoraUtc.AddMinutes(offsetMinutos)) == dia).Select(r => r.Tipo));

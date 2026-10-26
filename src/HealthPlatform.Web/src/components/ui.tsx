@@ -322,13 +322,15 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
   );
 }
 
-export function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
+/** Rotulo + campo. Use `group` para grupos de botoes (chips): um <label> daria o nome do rotulo ao primeiro botao. */
+export function Field({ label, children, hint, group }: { label: string; children: ReactNode; hint?: string; group?: boolean }) {
+  const Tag = group ? 'div' : 'label';
   return (
-    <label className="flex min-w-0 flex-col gap-1.5">
+    <Tag className="flex min-w-0 flex-col gap-1.5" {...(group ? { role: 'group', 'aria-label': label } : {})}>
       <span className="text-[13px] font-semibold text-muted">{label}</span>
       {children}
       {hint && <span className="text-xs text-faint">{hint}</span>}
-    </label>
+    </Tag>
   );
 }
 
