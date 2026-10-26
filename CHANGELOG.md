@@ -1,3 +1,9 @@
+## v0.63.3 — Cuidados do paciente na versão nova
+
+- /app: nova tela Cuidados com os pedidos do profissional (responder com texto, arquivo e link), remédios e suplementos do dia (Tomei / Pulei por horário) e metas (valor do dia ou Cumpri / Não deu, com os últimos 7 dias).
+- Hoje ganhou o cartão "Cuidados de hoje", que resume pedidos em aberto, doses e metas que faltam marcar.
+- Perfil leva a Cuidados sem passar pela clássica.
+
 ## v0.63.2 — Chat e arquivos do paciente na versão nova
 
 - /app: Chat com o profissional, com assunto da mensagem (Treino, Nutrição, Recuperação, Exames, Medicamentos), anexo de arquivo, aviso de urgência e atualização a cada 15 s.
