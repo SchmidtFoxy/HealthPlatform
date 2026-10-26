@@ -1,3 +1,13 @@
+## v0.64.1 — Central do dia do profissional na versão nova
+
+- /app equipe: Hoje ganhou o bloco "Para resolver" com pendências prioritárias, contatos de acompanhamento e respostas de pedidos para revisar.
+- Nova Central do dia com três abas:
+  - Pendências: abertas, adiadas e resolvidas; ao abrir, marca como vista; resolver com registro do que foi feito, adiar (amanhã, 3 dias, 1 semana ou data livre) e marcar retorno na agenda.
+  - Contatos: fila de follow-ups (atrasados, hoje, esta semana, mais adiante) com registro de contato, próximo contato, WhatsApp e chat.
+  - Pedidos: respostas dos pacientes para revisar, aguardando paciente e revisados; revisar com observação ou cancelar.
+- Ficha do paciente ganhou o botão "Registrar contato".
+- Central do dia passa a contar o follow-up agendado mesmo quando houve mensagem no chat depois, igual à fila de contatos.
+
 ## v0.64.0 — Agenda do profissional na versão nova
 
 - /app equipe: aba Agenda com a semana (bolinha nos dias com consulta), lista do dia e ações rápidas: confirmar, marcar como realizada, faltou, cancelar, reagendar ou remarcar, chat e WhatsApp.

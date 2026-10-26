@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Copy, Dumbbell, ExternalLink, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ClipboardCheck, Copy, Dumbbell, ExternalLink, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -9,6 +9,7 @@ import { Button, Card, Empty, ErrorBox, MacroBar, Pill, Ring, SectionTitle, Segm
 import { api } from '@/lib/api';
 import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/format';
 import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/types';
+import { RegistrarContatoSheet } from './CentralPage';
 import { useHistoricoPaciente, usePaciente, usePlanosAlimentares, usePlanosTreino, useResumoClinico } from './queries';
 
 type Aba = 'geral' | 'dieta' | 'treino';
@@ -362,6 +363,7 @@ export function PatientDetailPage() {
   const [params, setParams] = useSearchParams();
   const aba = (params.get('aba') as Aba) || 'geral';
   const [, force] = useState(0);
+  const [contato, setContato] = useState(false);
   const q = usePaciente(id);
   const p = q.data;
   const a = idade(p?.dataNascimento);
@@ -406,6 +408,9 @@ export function PatientDetailPage() {
                 <Mail className="h-4 w-4 shrink-0 text-info" /> E-mail
               </a>
             )}
+            <button onClick={() => setContato(true)} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
+              <ClipboardCheck className="h-4 w-4 shrink-0 text-accent" /> Registrar contato
+            </button>
             <a href="/?classico=1#pacientes" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4" title="Abre o prontuário completo na versão clássica">
               <ExternalLink className="h-4 w-4 shrink-0 text-muted" /> Prontuário
             </a>
@@ -431,6 +436,7 @@ export function PatientDetailPage() {
       {aba === 'geral' && <VisaoGeral id={id} />}
       {aba === 'dieta' && <AbaDieta id={id} />}
       {aba === 'treino' && <AbaTreino id={id} />}
+      <RegistrarContatoSheet paciente={contato && p ? { id: p.id, nome: p.nome } : null} onClose={() => setContato(false)} />
     </Page>
   );
 }
