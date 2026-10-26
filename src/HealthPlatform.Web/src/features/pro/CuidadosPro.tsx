@@ -56,7 +56,7 @@ const STATUS_META: Record<string, { l: string; tone: 'ok' | 'warn' | 'neutral' |
 };
 const TIPOS_PEDIDO = ['Acompanhamento', 'Exame', 'Documento', 'Medição', 'Questionário', 'Retorno', 'Outro'];
 
-function Chips<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { value: T; label: string }[] }) {
+export function Chips<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { value: T; label: string }[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((o) => (

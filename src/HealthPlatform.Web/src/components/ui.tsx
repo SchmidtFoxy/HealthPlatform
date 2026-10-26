@@ -303,7 +303,7 @@ export function Stepper({
   );
 }
 
-export function Segmented<T extends string>({ options, value, onChange, className }: { options: { value: T; label: ReactNode }[]; value: T; onChange: (v: T) => void; className?: string }) {
+export function Segmented<T extends string>({ options, value, onChange, className, compact }: { options: { value: T; label: ReactNode }[]; value: T; onChange: (v: T) => void; className?: string; compact?: boolean }) {
   return (
     <div className={clsx('relative flex rounded-full bg-raised p-1', className)} role="tablist">
       {options.map((o) => (
@@ -312,7 +312,7 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
           role="tab"
           aria-selected={o.value === value}
           onClick={() => onChange(o.value)}
-          className={clsx('relative z-10 flex-1 rounded-full px-3 py-2 text-sm font-semibold transition', o.value === value ? 'text-fg' : 'text-muted')}
+          className={clsx('relative z-10 min-w-0 flex-1 rounded-full py-2 font-semibold transition', compact ? 'px-1 text-[13px] sm:px-3 sm:text-sm' : 'px-3 text-sm', o.value === value ? 'text-fg' : 'text-muted')}
         >
           {o.value === value && <motion.span layoutId={`seg-${options.map((x) => x.value).join()}`} className="absolute inset-0 -z-10 rounded-full bg-surface shadow-card" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
           {o.label}
