@@ -1,7 +1,7 @@
 # Deploy automatico em producao depois que o CI passa na main.
-# Usa o mesmo DEPLOY-PRODUCAO.ps1 de sempre (backup validado, staging, migrations
-# seguras, promocao atomica, healthcheck e rollback). Os dados da VPS ficam em
-# Settings > Secrets and variables > Actions; sem eles o deploy so avisa e para.
+# Envia o codigo da main para a VPS e roda scripts/deploy/remote-deploy.sh: confere migrations,
+# faz backup validado do Postgres, builda, troca a pasta ativa e confere a saude, com rollback
+# automatico. Os dados da VPS ficam em Settings > Secrets and variables > Actions.
 name: Deploy producao
 
 on:
@@ -53,9 +53,15 @@ jobs:
         if: steps.cfg.outputs.pronto == 'true'
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          # Secrets colados no Windows podem vir com CRLF; o OpenSSH recusa a chave nesse formato.
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
-          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf '%s\n' "$VPS_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
+          if ! ssh-keygen -y -f ~/.ssh/id_deploy > /dev/null 2>&1; then
+            echo "::error::VPS_SSH_KEY nao e uma chave privada valida (confira se colou o arquivo aesyn_deploy inteiro, sem o .pub)."
+            exit 1
+          fi
+          echo "::notice::Chave carregada: $(ssh-keygen -lf ~/.ssh/id_deploy | cut -d' ' -f2)"
           cat > ~/.ssh/config <<EOF
           Host $VPS_HOST
             User $VPS_USER
@@ -64,31 +70,47 @@ jobs:
             BatchMode yes
             StrictHostKeyChecking yes
             ServerAliveInterval 30
+            ConnectTimeout 20
           EOF
-          ssh "$VPS_HOST" 'echo conexao-ok'
+          # A primeira conexao de um runner novo as vezes estoura o tempo; tenta ate 3 vezes.
+          conectou=false
+          for tentativa in 1 2 3; do
+            if ssh -v "$VPS_HOST" 'echo conexao-ok' 2> ssh-debug.txt; then conectou=true; break; fi
+            sleep 15
+          done
+          if [ "$conectou" != true ]; then
+            grep -E "Connecting to|Connection (refused|timed out|closed)|Host key|Offering|Authentications that|Permission denied|No route|kex" ssh-debug.txt \
+              | head -12 | while IFS= read -r l; do echo "::warning::ssh: $l"; done
+            echo "::error::Falha ao conectar por SSH na VPS."
+            exit 1
+          fi
 
       - name: Deploy
         if: steps.cfg.outputs.pronto == 'true'
-        shell: pwsh
         run: |
-          $v = (Get-Content VERSION.txt -Raw).Trim()
-          $h = $env:VPS_HOST
-          ./DEPLOY-PRODUCAO.ps1 -Aplicar `
-            -TargetVersion $v `
-            -VpsHost $h -VpsUser $env:VPS_USER `
-            -DatabaseName $env:DB_NAME `
-            -HealthUrl $env:HEALTH_URL `
-            -ApplicationService $env:APP_SERVICE `
-            -ProductionConfirmation "PRODUCAO:${h}:$v" `
-            -ActivationConfirmation "ATIVAR:${h}:$v" `
-            -MigrationSafetyConfirmation "VALIDAR-MIGRATIONS:${h}:$v"
+          set -euo pipefail
+          VERSAO=$(tr -d '[:space:]' < VERSION.txt)
+          git archive --format=tar.gz -o release.tar.gz HEAD
+          ls src/HealthPlatform.Infrastructure/Migrations/*.cs \
+            | grep -v -e Designer -e ModelSnapshot | xargs -n1 basename | sed 's/\.cs$//' > migrations.txt
+          DEST=/opt/healthplatform-releases
+          ssh "$VPS_HOST" "mkdir -p $DEST"
+          scp release.tar.gz migrations.txt scripts/deploy/remote-deploy.sh "$VPS_HOST:$DEST/"
+          ssh "$VPS_HOST" "bash $DEST/remote-deploy.sh $DEST/release.tar.gz $VERSAO $DB_NAME $APP_SERVICE $DEST/migrations.txt" 2>&1 | tee deploy-output.txt
+
+      - name: Resumo da falha
+        if: failure() && steps.cfg.outputs.pronto == 'true'
+        run: |
+          # Leva as ultimas linhas do deploy para as anotacoes do job, visiveis na pagina do run.
+          [ -f deploy-output.txt ] || exit 0
+          tail -n 40 deploy-output.txt | grep -v '^::' | grep -v '^\s*$' | while IFS= read -r l; do echo "::warning::deploy: $l"; done
 
       - name: Guardar logs do deploy
         if: always() && steps.cfg.outputs.pronto == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: deploy-logs-${{ github.run_number }}
-          path: .deploy-logs/
+          path: deploy-output.txt
           if-no-files-found: ignore
           retention-days: 90
 
