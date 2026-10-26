@@ -43,7 +43,25 @@ export function ProfilePage() {
 
       <p className="eyebrow mb-2 mt-7">Outras funções</p>
       <Card className="divide-y divide-line">
-        <a href="/" className="flex items-center justify-between p-4 font-semibold">
+        {s?.tipoUsuario === 'Paciente' && (
+          <>
+            <a href="/?classico=1&aesynPushLink=chat" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Chat com seu profissional
+                <span className="block text-sm font-normal text-muted">Mensagens e dúvidas do acompanhamento</span>
+              </span>
+              <ExternalLink className="h-5 w-5 text-muted" />
+            </a>
+            <a href="/?classico=1&aesynPushLink=arquivos" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Arquivos e exames
+                <span className="block text-sm font-normal text-muted">Documentos enviados por você e pela equipe</span>
+              </span>
+              <ExternalLink className="h-5 w-5 text-muted" />
+            </a>
+          </>
+        )}
+        <a href="/?classico=1" className="flex items-center justify-between p-4 font-semibold">
           <span>
             Abrir versão clássica
             <span className="block text-sm font-normal text-muted">

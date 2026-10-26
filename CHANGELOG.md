@@ -1,3 +1,9 @@
+## v0.63.1 — Paciente abre direto na versão nova
+
+- Paciente logado que abre aesyn.com.br (ou o app instalado) vai direto para a versão nova em /app.
+- Notificações de chat e arquivos continuam abrindo na clássica; no /app, Perfil ganhou atalhos para Chat e Arquivos.
+- Links "versão clássica" do /app usam `?classico=1`, que mantém a clássica até fechar o app. Profissionais e acesso "como paciente" do admin não mudam.
+
 ## v0.63.0 — Séries por linha no treino
 
 - Editor de treino (/app e clássico): cada exercício tem uma linha por série, com reps e carga próprias. "Adicionar série" cria uma linha nova copiando a anterior, o × remove, e "Igualar à 1ª" volta tudo para séries iguais. Dá para montar pirâmide (12/10/8/6), top set ou back-off.

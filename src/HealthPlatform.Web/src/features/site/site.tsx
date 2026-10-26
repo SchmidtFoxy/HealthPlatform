@@ -140,7 +140,7 @@ export function SiteLayout() {
                 </Link>
               </li>
               <li>
-                <a href="/" className="text-muted hover:text-fg">
+                <a href="/?classico=1" className="text-muted hover:text-fg">
                   Versão clássica
                 </a>
               </li>

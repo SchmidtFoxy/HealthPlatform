@@ -84,7 +84,7 @@ export function ProTodayPage() {
 
       {semPerfil && (
         <div className="mt-3 rounded-xl2 border border-warn/40 bg-warn/10 p-4 text-sm">
-          Complete seu perfil profissional na <a href="/" className="font-semibold underline">versão clássica</a> para ver a agenda.
+          Complete seu perfil profissional na <a href="/?classico=1" className="font-semibold underline">versão clássica</a> para ver a agenda.
         </div>
       )}
 
