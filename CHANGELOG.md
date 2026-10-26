@@ -1,3 +1,10 @@
+## v0.62.2 — Dieta, plano de treino e modo academia
+
+- /app: Dieta do paciente com resumo do dia (kcal consumidas, quanto falta e macros) fixo ao lado no PC e linha do tempo das refeições com marcar como feita em um toque.
+- /app: Plano de treino com a semana em faixa (sessão de cada dia e dias treinados), sessões em cards com grupos musculares e botão para começar, e números dos últimos 30 dias.
+- /app: Treino ao vivo em "modo academia": série atual em destaque com botões grandes de repetições e carga e o botão Concluir série; as outras séries ficam em lista compacta. No PC, lista de exercícios à esquerda.
+- /app: datas curtas sem o "de" ("24 out").
+
 ## v0.62.1 — Hoje do paciente redesenhado
 
 - /app: no PC, o Hoje usa duas colunas (prontidão e treino à esquerda, refeições à direita); no celular, segue a ordem do dia.
