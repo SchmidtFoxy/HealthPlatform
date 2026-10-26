@@ -1,3 +1,10 @@
+## 0.66.5 — Análises e dor por região no novo app
+
+- Paciente: no check-in, quando marca dor, escolhe onde dói, o lado e quanto atrapalha o treino.
+- Profissional, aba Geral: card de dor por região dos últimos dias e lista de pontos de atenção (exames fora da referência, variação de peso, metas com pouco registro).
+- Profissional, aba Treino: progresso de carga por exercício (progredindo, estável, estagnado, possível fadiga) com mini gráfico e sinais, e volume semanal por grupo muscular.
+- Sem mudança de banco.
+
 ## 0.66.4 — Anamnese e exames no novo app
 
 - Perfil > Anamnese e exames: perguntas próprias da anamnese (texto, número, sim/não, escala, opções), com ordem, edição, desativar e reativar.
