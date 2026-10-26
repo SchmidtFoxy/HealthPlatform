@@ -1,3 +1,9 @@
+## 0.66.4 — Anamnese e exames no novo app
+
+- Perfil > Anamnese e exames: perguntas próprias da anamnese (texto, número, sim/não, escala, opções), com ordem, edição, desativar e reativar.
+- Mesma tela, aba Marcadores: catálogo de marcadores de exame por categoria, com unidade padrão, busca, edição, desativar e reativar.
+- Sem mudança de banco.
+
 ## 0.66.3 — Calendário nutricional e ciclos esportivos no novo app
 
 - Aba Dieta do paciente: calendário semanal dizendo qual dieta vale em cada dia (padrão, treino, descanso, viagem, flexível), com orientação do dia, copiar semana para a próxima e trocar dois dias.

@@ -150,7 +150,14 @@ export function ProfilePage() {
             <Link to="/pro/biblioteca" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Biblioteca
-                <span className="block text-sm font-normal text-muted">Exercícios, alimentos e modelos de treino e dieta</span>
+                <span className="block text-sm font-normal text-muted">Exercícios, alimentos, suplementos, modelos e programas</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
+            <Link to="/pro/anamnese-exames" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Anamnese e exames
+                <span className="block text-sm font-normal text-muted">Suas perguntas de anamnese e marcadores de exame</span>
               </span>
               <ChevronRight className="h-5 w-5 text-muted" />
             </Link>
