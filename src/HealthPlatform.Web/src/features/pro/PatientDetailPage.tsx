@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { Copy, Dumbbell, ExternalLink, Flame, Mail, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
+import { ChevronLeft, Copy, Dumbbell, ExternalLink, Flame, Mail, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Page, PageHeader } from '@/components/shell';
+import { Page } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, MacroBar, Pill, Ring, SectionTitle, Segmented, Skeleton, Sparkline, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/format';
@@ -180,7 +180,7 @@ function VisaoGeral({ id }: { id: string }) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{x.sessao}</p>
-                    <p className="text-[13px] capitalize text-muted">
+                    <p className="text-[13px] text-muted first-letter:uppercase">
                       {tempoRelativo(x.dataHoraInicioUtc)} · {x.duracaoMinutos ?? '—'} min
                     </p>
                   </div>
@@ -368,30 +368,46 @@ export function PatientDetailPage() {
 
   return (
     <Page wide>
-      <PageHeader back="/pro/pacientes" title={p ? p.nome : <Skeleton className="h-8 w-48" />} subtitle={p ? [a != null && `${a} anos`, p.sexo, p.profissao].filter(Boolean).join(' · ') || undefined : undefined} />
+      <Link to="/pro/pacientes" className="-ml-1 mt-4 inline-flex h-9 items-center gap-1 rounded-full pr-3 text-sm font-semibold text-muted hover:text-fg">
+        <ChevronLeft className="h-5 w-5" /> Pacientes
+      </Link>
 
       {q.isError && <ErrorBox error={q.error} onRetry={() => q.refetch()} />}
+      {q.isLoading && <Skeleton className="mt-3 h-36" />}
 
       {p && (
-        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="-mt-1 flex flex-wrap items-center gap-2">
-          <div className="mr-1 grid h-10 w-10 place-items-center rounded-full bg-accent/15 font-display text-sm font-semibold text-accent">{iniciais(p.nome)}</div>
-          {p.tags.map((t) => (
-            <Pill key={t}>{t}</Pill>
-          ))}
-          {p.telefone && (
-            <a href={`https://wa.me/55${p.telefone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-[13px] font-semibold">
-              <Phone className="h-3.5 w-3.5" /> WhatsApp
+        <motion.section initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="aurora mt-3 flex flex-col gap-4 rounded-xl3 border border-line p-5 lg:flex-row lg:items-center">
+          <div className="flex min-w-0 flex-1 items-center gap-4">
+            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-accent/15 font-display text-lg sm:h-16 sm:w-16 sm:text-xl font-semibold text-accent ring-2 ring-accent/30 ring-offset-2 ring-offset-bg">{iniciais(p.nome)}</div>
+            <div className="min-w-0">
+              <h1 className="font-display text-[22px] font-semibold leading-tight tracking-tight sm:text-[26px]">{p.nome}</h1>
+              <p className="truncate text-sm text-muted">{[a != null && `${a} anos`, p.sexo, p.profissao].filter(Boolean).join(' · ') || p.email}</p>
+              {(p.tags.length > 0 || p.statusAcompanhamento !== 'Ativo') && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {p.statusAcompanhamento !== 'Ativo' && <Pill tone="warn">{p.statusAcompanhamento}</Pill>}
+                  {p.tags.map((t) => (
+                    <Pill key={t}>{t}</Pill>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {p.telefone && (
+              <a href={`https://wa.me/55${p.telefone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
+                <Phone className="h-4 w-4 shrink-0 text-ok" /> WhatsApp
+              </a>
+            )}
+            {p.email && (
+              <a href={`mailto:${p.email}`} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
+                <Mail className="h-4 w-4 shrink-0 text-info" /> E-mail
+              </a>
+            )}
+            <a href="/#pacientes" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4" title="Abre o prontuário completo na versão clássica">
+              <ExternalLink className="h-4 w-4 shrink-0 text-muted" /> Prontuário
             </a>
-          )}
-          {p.email && (
-            <a href={`mailto:${p.email}`} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-[13px] font-semibold">
-              <Mail className="h-3.5 w-3.5" /> E-mail
-            </a>
-          )}
-          <a href="/#pacientes" className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold text-muted">
-            Prontuário completo <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        </motion.div>
+          </div>
+        </motion.section>
       )}
 
       <div className="sticky top-0 z-20 -mx-gutter mt-4 bg-bg/90 px-gutter py-2 pt-safe backdrop-blur-xl">
