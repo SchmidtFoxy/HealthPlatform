@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { ChevronLeft, FileText, Loader2, Paperclip, SendHorizontal, ShieldAlert } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ErrorBox, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { abrirArquivo, ACEITOS, enviarArquivo } from '@/lib/arquivos';
@@ -22,7 +22,8 @@ interface Mensagem {
 }
 
 interface Conversa {
-  pacienteId: string;
+  pacienteId?: string;
+  paciente?: { id: string; nome: string };
   profissional: { id: string; nome: string; especialidade: string | null } | null;
   prazoResposta?: string;
   emergencia?: string;
@@ -48,13 +49,14 @@ const diaRotulo = (iso: string) => {
 };
 const horaMsg = (iso: string) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-export const useConversa = () =>
-  useQuery({ queryKey: ['p', 'chat'], queryFn: () => api<Conversa>('/api/chat/me'), refetchInterval: 15_000, refetchIntervalInBackground: false });
-
-export function ChatPage() {
+/** Conversa paciente <-> profissional. pacienteId ausente: visao do paciente (/api/chat/me). */
+export function Conversa({ pacienteId }: { pacienteId?: string }) {
+  const pro = !!pacienteId;
+  const base = pro ? `/api/chat/pacientes/${pacienteId}` : '/api/chat/me';
+  const chave = pro ? ['pro', 'chat', pacienteId] : ['p', 'chat'];
   const nav = useNavigate();
   const qc = useQueryClient();
-  const q = useConversa();
+  const q = useQuery({ queryKey: chave, queryFn: () => api<Conversa>(base), refetchInterval: 15_000, refetchIntervalInBackground: false });
   const [texto, setTexto] = useState('');
   const [contexto, setContexto] = useState('Geral');
   const fim = useRef<HTMLDivElement>(null);
@@ -64,8 +66,8 @@ export function ChatPage() {
 
   // Abrir a conversa marca como lida no servidor; o contador some junto.
   useEffect(() => {
-    if (q.data) qc.invalidateQueries({ queryKey: ['p', 'chat-nao-lidas'] });
-  }, [q.data, qc]);
+    if (q.data) qc.invalidateQueries({ queryKey: [pro ? 'pro' : 'p', pro ? 'inbox' : 'chat-nao-lidas'] });
+  }, [q.data, qc, pro]);
 
   useLayoutEffect(() => {
     fim.current?.scrollIntoView({ block: 'end' });
@@ -73,22 +75,22 @@ export function ChatPage() {
 
   const enviar = useMutation({
     mutationFn: (body: { mensagem: string; contexto: string; referenciaTipo?: string; referenciaId?: string; referenciaTitulo?: string }) =>
-      api<Mensagem>('/api/chat/me/mensagens', { method: 'POST', json: body }),
+      api<Mensagem>(`${base}/mensagens`, { method: 'POST', json: body }),
     onSuccess: (m) => {
-      qc.setQueryData<Conversa>(['p', 'chat'], (c) => (c ? { ...c, mensagens: [...c.mensagens, { ...m, meu: true, lidaEmUtc: null }] } : c));
-      qc.invalidateQueries({ queryKey: ['p', 'chat'] });
+      qc.setQueryData<Conversa>(chave, (c) => (c ? { ...c, mensagens: [...c.mensagens, { ...m, meu: true, lidaEmUtc: null }] } : c));
+      qc.invalidateQueries({ queryKey: chave });
     },
     onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível enviar.', 'bad'),
   });
 
   const anexar = useMutation({
     mutationFn: async (file: File) => {
-      const a = await enviarArquivo(file, { categoria: file.type.startsWith('image/') ? 'Foto' : 'Exame', viaChat: true });
+      const a = await enviarArquivo(file, { categoria: file.type.startsWith('image/') ? 'Foto' : 'Exame', viaChat: true, pacienteId });
       return enviar.mutateAsync({ mensagem: texto.trim() || `Enviei o arquivo ${a.nome}.`, contexto, referenciaTipo: 'Arquivo', referenciaId: a.id, referenciaTitulo: a.nome });
     },
     onSuccess: () => {
       setTexto('');
-      qc.invalidateQueries({ queryKey: ['p', 'arquivos'] });
+      qc.invalidateQueries({ queryKey: pro ? ['pro', 'arquivos', pacienteId] : ['p', 'arquivos'] });
     },
     onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível enviar o arquivo.', 'bad'),
   });
@@ -109,20 +111,27 @@ export function ChatPage() {
   }, [texto]);
 
   const prof = q.data?.profissional;
+  // O cabecalho mostra quem esta do outro lado.
+  const outro = pro ? (q.data?.paciente ? { nome: q.data.paciente.nome, sub: 'Paciente' } : null) : prof ? { nome: prof.nome, sub: prof.especialidade ?? 'Acompanhamento' } : null;
   const ocupado = enviar.isPending || anexar.isPending;
 
   return (
     <div className="flex h-dvh flex-col bg-bg">
       <header className="pt-safe shrink-0 border-b border-line/70 bg-surface/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-gutter py-3">
-          <button aria-label="Voltar" onClick={() => (history.length > 1 ? nav(-1) : nav('/hoje'))} className="-ml-2 grid h-10 w-10 shrink-0 place-items-center rounded-full hover:bg-raised">
+          <button aria-label="Voltar" onClick={() => (history.length > 1 ? nav(-1) : nav(pro ? '/pro/mensagens' : '/hoje'))} className="-ml-2 grid h-10 w-10 shrink-0 place-items-center rounded-full hover:bg-raised">
             <ChevronLeft className="h-6 w-6" />
           </button>
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/15 font-display text-sm font-semibold text-accent">{iniciais(prof?.nome ?? '?')}</div>
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/15 font-display text-sm font-semibold text-accent">{iniciais(outro?.nome ?? '?')}</div>
           <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold leading-tight">{prof?.nome ?? (q.isLoading ? '…' : 'Seu profissional')}</p>
-            <p className="truncate text-[13px] text-muted">{prof?.especialidade ?? 'Acompanhamento'}</p>
+            <p className="truncate font-semibold leading-tight">{outro?.nome ?? (q.isLoading ? '…' : 'Seu profissional')}</p>
+            <p className="truncate text-[13px] text-muted">{outro?.sub ?? 'Acompanhamento'}</p>
           </div>
+          {pro && (
+            <Link to={`/pro/pacientes/${pacienteId}`} className="shrink-0 rounded-full border border-line px-3 py-1.5 text-[13px] font-semibold text-muted transition hover:border-accent/40">
+              Ver ficha
+            </Link>
+          )}
         </div>
       </header>
 
@@ -137,13 +146,15 @@ export function ChatPage() {
             </div>
           )}
           {q.data && !prof && <p className="mt-10 text-center text-sm text-muted">Você ainda não tem um profissional vinculado. Assim que tiver, a conversa aparece aqui.</p>}
-          {q.data && prof && (
+          {q.data && prof && !pro && (
             <div className="mb-3 flex items-start gap-2 rounded-2xl border border-line bg-surface px-3.5 py-3 text-[13px] text-muted">
               <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warn" />
               <p>Respostas em até 24h úteis. Para urgências ou emergências, procure atendimento médico ou ligue 192.</p>
             </div>
           )}
-          {q.data && prof && !msgs.length && <p className="mt-6 text-center text-sm text-muted">Mande sua primeira mensagem: dúvidas sobre o treino, a dieta ou como você está se sentindo.</p>}
+          {q.data && prof && !msgs.length && (
+            <p className="mt-6 text-center text-sm text-muted">{pro ? 'Nenhuma mensagem ainda. Comece a conversa.' : 'Mande sua primeira mensagem: dúvidas sobre o treino, a dieta ou como você está se sentindo.'}</p>
+          )}
 
           {msgs.map((m, i) => {
             const novoDia = i === 0 || new Date(msgs[i - 1].dataHoraUtc).toDateString() !== new Date(m.dataHoraUtc).toDateString();
@@ -164,7 +175,7 @@ export function ChatPage() {
                     <p className="whitespace-pre-wrap break-words">{m.mensagem}</p>
                     {m.referencia?.tipo === 'Arquivo' && m.referencia.id && (
                       <button
-                        onClick={() => abrirArquivo({ id: m.referencia!.id!, nome: m.referencia!.titulo ?? 'arquivo' }).catch((e) => toast(e.message, 'bad'))}
+                        onClick={() => abrirArquivo({ id: m.referencia!.id!, nome: m.referencia!.titulo ?? 'arquivo' }, pacienteId).catch((e) => toast(e.message, 'bad'))}
                         className={clsx('mt-2 flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left text-[13px] font-semibold', m.meu ? 'bg-accent-ink/10' : 'bg-raised')}
                       >
                         <FileText className="h-4 w-4 shrink-0" />
@@ -225,7 +236,7 @@ export function ChatPage() {
                     mandar();
                   }
                 }}
-                placeholder="Escreva sua mensagem"
+                placeholder={pro ? 'Responder' : 'Escreva sua mensagem'}
                 className="min-h-[44px] w-full min-w-0 resize-none rounded-[22px] border border-line bg-bg px-4 py-2.5 text-base text-fg outline-none transition placeholder:text-faint focus:border-accent sm:text-[15px]"
               />
               <button
@@ -242,4 +253,13 @@ export function ChatPage() {
       )}
     </div>
   );
+}
+
+export function ChatPage() {
+  return <Conversa />;
+}
+
+export function ProChatPage() {
+  const { id } = useParams();
+  return <Conversa pacienteId={id} />;
 }
