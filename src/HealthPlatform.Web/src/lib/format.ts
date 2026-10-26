@@ -32,7 +32,7 @@ export const dataLonga = (d = new Date()) => {
 
 export const dataCurta = (iso: string) => {
   const d = new Date(iso.length === 10 ? iso + 'T12:00:00' : iso);
-  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '').replace(' de ', ' ');
 };
 
 export const diaSemanaCurto = (iso: string) => {

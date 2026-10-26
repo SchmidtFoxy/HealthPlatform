@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, ChevronLeft, ChevronRight, Info, Pause, Plus, Timer, Trophy, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Info, Minus, Pause, Plus, RotateCcw, Timer, Trophy, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, ErrorBox, Ring, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
+import { Button, ErrorBox, Ring, Sheet, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { mmss, n0, n1 } from '@/lib/format';
 import type { ItemTreinoPortal, SessaoTreinoPortal } from '@/lib/types';
@@ -114,42 +114,62 @@ function linhaPrescricao(it: ItemTreinoPortal) {
   return partes.join(' · ');
 }
 
-function SerieLinha({
-  i,
-  s,
-  ativa,
-  unidade,
-  onChange,
-  onToggle,
-}: {
-  i: number;
-  s: SerieRegistro;
-  ativa: boolean;
-  unidade: string;
-  onChange: (s: SerieRegistro) => void;
-  onToggle: () => void;
-}) {
+function Ajuste({ label, value, onChange, step, max, sufixo }: { label: string; value: number | null; onChange: (v: number) => void; step: number; max: number; sufixo: string }) {
+  const v = value ?? 0;
+  const set = (n: number) => {
+    navigator.vibrate?.(8);
+    onChange(Math.max(0, Math.min(max, Math.round(n * 100) / 100)));
+  };
+  const botao = 'grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-line bg-surface text-fg transition active:scale-90 active:bg-raised';
   return (
-    <motion.li
-      layout
-      className={clsx(
-        'flex items-center gap-2 rounded-2xl border p-2 pl-3 transition-colors',
-        s.feita ? 'border-ok/30 bg-ok/10' : ativa ? 'border-accent/50 bg-accent/[0.06]' : 'border-line bg-surface',
-      )}
-    >
-      <span className={clsx('num w-6 text-center text-lg font-semibold', s.feita ? 'text-ok' : 'text-muted')}>{i + 1}</span>
-      <div className="flex min-w-0 flex-1 items-center justify-center gap-2">
-        <Stepper value={s.reps} onChange={(reps) => onChange({ ...s, reps })} step={1} min={0} max={100} suffix="rep" />
-        <Stepper value={s.carga} onChange={(carga) => onChange({ ...s, carga })} step={unidade === 'kg' ? 2.5 : 1} min={0} max={999} suffix={unidade} />
-      </div>
-      <button
-        onClick={onToggle}
-        aria-label={s.feita ? `Desmarcar série ${i + 1}` : `Concluir série ${i + 1}`}
-        className={clsx('grid h-12 w-12 shrink-0 place-items-center rounded-full transition active:scale-90', s.feita ? 'bg-ok text-white' : 'bg-raised text-muted')}
-      >
-        <Check className="h-6 w-6" strokeWidth={3} />
+    <div className="flex items-center gap-2 rounded-2xl bg-raised/60 p-2">
+      <button type="button" aria-label={`Diminuir ${label}`} onClick={() => set(v - step)} className={botao}>
+        <Minus className="h-5 w-5" strokeWidth={2.6} />
       </button>
-    </motion.li>
+      <label className="flex min-w-0 flex-1 flex-col items-center">
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-muted">{label}</span>
+        <span className="flex items-baseline gap-1">
+          <input
+            inputMode="decimal"
+            aria-label={label}
+            className="num min-w-0 bg-transparent text-center text-[34px] font-semibold leading-tight outline-none"
+            style={{ width: `${Math.max(1, String(value ?? '').length) + 0.6}ch` }}
+            value={value ?? ''}
+            placeholder="0"
+            onChange={(e) => {
+              const n = Number(e.target.value.replace(',', '.'));
+              if (!Number.isNaN(n)) onChange(n);
+            }}
+          />
+          <span className="text-sm text-muted">{sufixo}</span>
+        </span>
+      </label>
+      <button type="button" aria-label={`Aumentar ${label}`} onClick={() => set(v + step)} className={botao}>
+        <Plus className="h-5 w-5" strokeWidth={2.6} />
+      </button>
+    </div>
+  );
+}
+
+function SerieLinha({ i, s, foco, unidade, onClick }: { i: number; s: SerieRegistro; foco: boolean; unidade: string; onClick: () => void }) {
+  return (
+    <li>
+      <button
+        onClick={onClick}
+        className={clsx(
+          'flex w-full items-center gap-3 rounded-2xl border px-3 py-2.5 text-left transition',
+          foco ? 'border-accent bg-accent/[0.08]' : s.feita ? 'border-ok/25 bg-ok/[0.07]' : 'border-line bg-surface hover:border-accent/40',
+        )}
+      >
+        <span className={clsx('num grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-semibold', s.feita ? 'bg-ok text-white' : foco ? 'bg-accent text-accent-ink' : 'bg-raised text-muted')}>
+          {s.feita ? <Check className="h-4 w-4" strokeWidth={3} /> : i + 1}
+        </span>
+        <span className="num flex-1 text-[15px] font-semibold">
+          {s.reps ?? '—'} <span className="font-normal text-muted">reps</span> × {s.carga != null ? n1(s.carga) : '—'} <span className="font-normal text-muted">{unidade}</span>
+        </span>
+        <span className={clsx('text-[12px] font-semibold', s.feita ? 'text-ok' : foco ? 'text-accent' : 'text-faint')}>{s.feita ? 'Feita' : foco ? 'Agora' : 'A fazer'}</span>
+      </button>
+    </li>
   );
 }
 
@@ -197,6 +217,7 @@ export function LiveWorkoutPage() {
   const [detalhe, setDetalhe] = useState(false);
   const [rpe, setRpe] = useState(7);
   const [conclusao, setConclusao] = useState<Conclusao | null>(null);
+  const [focoSel, setFocoSel] = useState<number | null>(null);
   const agora = useAgora(1000);
   useWakeLock(!!t && !conclusao);
 
@@ -209,6 +230,9 @@ export function LiveWorkoutPage() {
   useEffect(() => {
     if (t && !conclusao) salvarAndamento(t);
   }, [t, conclusao]);
+
+  // Ao trocar de exercicio, o foco volta para a primeira serie pendente.
+  useEffect(() => setFocoSel(null), [t?.atual]);
 
   const registrar = useMutation({
     mutationFn: (body: unknown) => api('/api/portal/me/treinos/execucoes', { method: 'POST', json: body }),
@@ -240,6 +264,9 @@ export function LiveWorkoutPage() {
   const feitas = todas.filter((s) => s.feita).length;
   const decorrido = Math.floor((agora - new Date(t.inicio).getTime()) / 1000);
   const indiceAtiva = series.findIndex((s) => !s.feita);
+  const foco = focoSel != null && focoSel < series.length ? focoSel : indiceAtiva;
+  const sFoco = foco >= 0 ? series[foco] : undefined;
+  const unidade = it.unidadeCarga ?? 'kg';
 
   const atualizarSerie = (idx: number, s: SerieRegistro) => setT((x) => x && { ...x, series: { ...x.series, [it.id]: x.series[it.id].map((o, i) => (i === idx ? s : o)) } });
 
@@ -252,6 +279,7 @@ export function LiveWorkoutPage() {
       const lista = x.series[it.id].map((o, i) => (i === idx ? { ...o, feita } : feita && i > idx && !o.feita ? { ...o, carga: s.carga, reps: o.reps ?? s.reps } : o));
       return { ...x, series: { ...x.series, [it.id]: lista } };
     });
+    setFocoSel(null);
     if (feita) {
       navigator.vibrate?.(25);
       const ultimaDoExercicio = series.filter((o, i) => i !== idx && !o.feita).length === 0;
@@ -322,16 +350,17 @@ export function LiveWorkoutPage() {
     <div className="min-h-full pb-40">
       {/* Barra superior */}
       <div className="sticky top-0 z-30 border-b border-line/70 bg-bg/90 pt-safe backdrop-blur-xl">
-        <div className="mx-auto flex max-w-xl items-center gap-2 px-gutter py-2.5">
+        <div className="mx-auto flex max-w-xl items-center gap-2 px-gutter py-2.5 lg:max-w-5xl">
           <button aria-label="Sair do treino" onClick={() => setSair(true)} className="-ml-2 grid h-10 w-10 place-items-center rounded-full hover:bg-raised">
             <X className="h-5 w-5" />
           </button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{sessao.nome}</p>
             <p className="num text-xs text-muted">
-              {mmss(decorrido)} · {feitas}/{todas.length} séries
+              {feitas}/{todas.length} séries
             </p>
           </div>
+          <span className="num mr-1 rounded-full bg-raised px-3 py-1.5 text-sm font-semibold tabular-nums">{mmss(decorrido)}</span>
           <Button size="sm" onClick={() => setFinalizar(true)} variant={feitas === todas.length ? 'primary' : 'soft'}>
             Finalizar
           </Button>
@@ -341,38 +370,54 @@ export function LiveWorkoutPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-xl px-gutter">
-        {/* Trilha de exercicios */}
-        <div className="no-scrollbar -mx-gutter mt-3 flex gap-2 overflow-x-auto px-gutter pb-1">
-          {itens.map((x, i) => {
-            const ss = t.series[x.id] ?? [];
-            const ok = ss.length > 0 && ss.every((s) => s.feita);
-            const parcial = ss.some((s) => s.feita);
-            return (
-              <button
-                key={x.id}
-                onClick={() => ir(i)}
-                className={clsx(
-                  'flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[13px] font-semibold transition',
-                  i === atual ? 'border-accent bg-accent text-accent-ink' : ok ? 'border-ok/40 bg-ok/10 text-ok' : parcial ? 'border-accent/40 text-accent' : 'border-line text-muted',
-                )}
-              >
-                {ok ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="num">{i + 1}</span>}
-                <span className="max-w-[9rem] truncate">{x.exercicio}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="mx-auto max-w-xl px-gutter lg:grid lg:max-w-5xl lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-8">
+        {/* Lista de exercicios: trilha no celular, coluna no PC */}
+        <nav className="lg:sticky lg:top-24 lg:mt-6">
+          <p className="eyebrow mb-3 hidden lg:block">Sessão de hoje</p>
+          <ol className="no-scrollbar -mx-gutter mt-3 flex gap-2 overflow-x-auto px-gutter pb-1 lg:mx-0 lg:mt-0 lg:flex-col lg:overflow-visible lg:px-0">
+            {itens.map((x, i) => {
+              const ss = t.series[x.id] ?? [];
+              const nFeitas = ss.filter((s) => s.feita).length;
+              const ok = ss.length > 0 && nFeitas === ss.length;
+              return (
+                <li key={x.id} className="shrink-0">
+                  <button
+                    onClick={() => ir(i)}
+                    className={clsx(
+                      'flex h-9 items-center gap-1.5 rounded-full border px-3 text-[13px] font-semibold transition lg:h-auto lg:w-full lg:gap-3 lg:rounded-2xl lg:p-3 lg:text-left',
+                      i === atual ? 'border-accent bg-accent text-accent-ink lg:bg-accent/10 lg:text-fg' : ok ? 'border-ok/40 bg-ok/10 text-ok lg:text-fg' : nFeitas ? 'border-accent/40 text-accent lg:text-fg' : 'border-line text-muted lg:bg-surface lg:text-fg',
+                    )}
+                  >
+                    <span
+                      className={clsx(
+                        'num lg:grid lg:h-8 lg:w-8 lg:shrink-0 lg:place-items-center lg:rounded-full lg:text-sm',
+                        ok ? 'lg:bg-ok lg:text-white' : i === atual ? 'lg:bg-accent lg:text-accent-ink' : 'lg:bg-raised lg:text-muted',
+                      )}
+                    >
+                      {ok ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}
+                    </span>
+                    <span className="max-w-[9rem] truncate lg:min-w-0 lg:max-w-none lg:flex-1">
+                      {x.exercicio}
+                      <span className="num hidden text-[12px] font-normal text-muted lg:block">
+                        {nFeitas}/{ss.length} séries{x.grupoMuscular ? ` · ${x.grupoMuscular}` : ''}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
 
         <AnimatePresence mode="wait">
-          <motion.section key={it.id} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}>
-            <div className="mt-5 flex items-start justify-between gap-3">
+          <motion.section key={it.id} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }} className="lg:mt-6">
+            <div className="mt-5 flex items-start justify-between gap-3 lg:mt-0">
               <div className="min-w-0">
                 <p className="eyebrow">
                   Exercício {atual + 1} de {itens.length}
                   {it.grupoMuscular && ` · ${it.grupoMuscular}`}
                 </p>
-                <h1 className="mt-1.5 font-display text-[28px] font-semibold leading-[1.1] tracking-tight">{it.exercicio}</h1>
+                <h1 className="mt-1.5 font-display text-[28px] font-semibold leading-[1.1] tracking-tight lg:text-[34px]">{it.exercicio}</h1>
               </div>
               {(it.descricao || it.observacoes || it.videoUrl) && (
                 <button aria-label="Como executar" onClick={() => setDetalhe(true)} className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-raised text-muted">
@@ -389,25 +434,67 @@ export function LiveWorkoutPage() {
                 </span>
               )}
               {it.tecnicaAvancada && <span className="rounded-full bg-warn/15 px-3 py-1 font-semibold text-warn">{it.tecnicaAvancada}</span>}
+              {ultimaTexto.get(it.id) && (
+                <span className="rounded-full bg-raised px-3 py-1 text-muted">
+                  Última vez <span className="num font-semibold text-fg">{ultimaTexto.get(it.id)}</span>
+                </span>
+              )}
             </div>
-            {ultimaTexto.get(it.id) && (
-              <p className="mt-3 text-sm text-muted">
-                Última vez: <span className="num font-semibold text-fg">{ultimaTexto.get(it.id)}</span>
-              </p>
-            )}
             {it.observacoes && <p className="mt-3 rounded-xl border border-line bg-surface px-3 py-2 text-sm">{it.observacoes}</p>}
 
-            <div className="mt-4 flex items-center justify-between px-1 text-[11px] font-semibold uppercase tracking-widest text-faint">
-              <span>Série</span>
-              <span className="flex-1 text-center">Reps · Carga</span>
-              <span className="w-12 text-center">Feito</span>
-            </div>
-            <ul className="mt-2 flex flex-col gap-2">
+            {/* Serie em foco */}
+            {sFoco ? (
+              <div className="mt-5 rounded-xl3 border border-accent/40 bg-surface p-4 shadow-glow">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className="font-display text-lg font-semibold">
+                    Série {foco + 1} <span className="text-muted">de {series.length}</span>
+                  </p>
+                  <p className="num text-[13px] text-muted">
+                    Meta {it.repeticoes} reps{it.carga != null ? ` · ${n1(it.carga)} ${unidade}` : ''}
+                  </p>
+                </div>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <Ajuste label="Repetições" value={sFoco.reps} onChange={(reps) => atualizarSerie(foco, { ...sFoco, reps })} step={1} max={100} sufixo="reps" />
+                  <Ajuste label="Carga" value={sFoco.carga} onChange={(carga) => atualizarSerie(foco, { ...sFoco, carga })} step={unidade === 'kg' ? 2.5 : 1} max={999} sufixo={unidade} />
+                </div>
+                {sFoco.feita ? (
+                  <button onClick={() => alternar(foco)} className="mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-line text-[15px] font-semibold text-muted transition active:scale-[0.98]">
+                    <RotateCcw className="h-4 w-4" /> Desmarcar série {foco + 1}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => alternar(foco)}
+                    className="mt-3 flex h-16 w-full items-center justify-center gap-2 rounded-2xl bg-accent text-[17px] font-semibold text-accent-ink shadow-glow transition hover:brightness-110 active:scale-[0.98]"
+                  >
+                    <Check className="h-6 w-6" strokeWidth={3} /> Concluir série {foco + 1}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="mt-5 flex flex-col items-center rounded-xl3 border border-ok/40 bg-ok/[0.08] p-5 text-center">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-ok text-white">
+                  <Check className="h-6 w-6" strokeWidth={3} />
+                </span>
+                <p className="mt-3 font-display text-lg font-semibold">Exercício concluído</p>
+                <p className="text-sm text-muted">Todas as séries foram registradas.</p>
+                {atual < itens.length - 1 ? (
+                  <Button size="lg" className="mt-4 w-full" onClick={() => ir(atual + 1)}>
+                    Próximo: {itens[atual + 1].exercicio}
+                  </Button>
+                ) : (
+                  <Button size="lg" className="mt-4 w-full" onClick={() => setFinalizar(true)}>
+                    Finalizar treino
+                  </Button>
+                )}
+              </div>
+            )}
+
+            <ul className="mt-4 flex flex-col gap-2">
               {series.map((s, i) => (
-                <SerieLinha key={i} i={i} s={s} ativa={i === indiceAtiva} unidade={it.unidadeCarga ?? 'kg'} onChange={(n) => atualizarSerie(i, n)} onToggle={() => alternar(i)} />
+                <SerieLinha key={i} i={i} s={s} foco={i === foco} unidade={unidade} onClick={() => setFocoSel(i)} />
               ))}
             </ul>
-            <button onClick={adicionarSerie} className="mt-2 flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line text-sm font-semibold text-muted">
+            <button onClick={adicionarSerie} className="mt-2 flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line text-sm font-semibold text-muted hover:text-fg">
               <Plus className="h-4 w-4" /> Série extra
             </button>
 
@@ -416,11 +503,11 @@ export function LiveWorkoutPage() {
                 Anterior
               </Button>
               {atual < itens.length - 1 ? (
-                <Button variant="outline" className="flex-1" onClick={() => ir(atual + 1)}>
+                <Button variant="soft" className="flex-1" onClick={() => ir(atual + 1)}>
                   Próximo <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button className="flex-1" onClick={() => setFinalizar(true)}>
+                <Button variant="soft" className="flex-1" onClick={() => setFinalizar(true)}>
                   Finalizar treino
                 </Button>
               )}
@@ -428,7 +515,6 @@ export function LiveWorkoutPage() {
           </motion.section>
         </AnimatePresence>
       </div>
-
       <AnimatePresence>
         {descanso && (
           <RestTimer
