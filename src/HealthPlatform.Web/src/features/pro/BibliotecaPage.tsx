@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 import { hojeIso, n0, n1 } from '@/lib/format';
 import { Chips } from './CuidadosPro';
 import { usePacientes } from './queries';
+import { ProgramasLista } from './Programas';
 import { CATEGORIAS_SUPLEMENTO, porcaoSuplemento, type Suplemento, useSuplementos } from './suplementos';
 
 // ---------------------------------------------------------------- Tipos
@@ -90,7 +91,7 @@ function resumoModelo(tipo: TipoModelo, m: Modelo) {
 
 const erroToast = (e: unknown) => toast(e instanceof Error ? e.message : 'Não foi possível salvar.', 'bad');
 
-function Busca({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
+export function Busca({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
   return (
     <label className="relative block">
       <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
@@ -99,7 +100,7 @@ function Busca({ value, onChange, placeholder }: { value: string; onChange: (v: 
   );
 }
 
-function Linha({ titulo, sub, extra, onClick }: { titulo: ReactNode; sub?: ReactNode; extra?: ReactNode; onClick: () => void }) {
+export function Linha({ titulo, sub, extra, onClick }: { titulo: ReactNode; sub?: ReactNode; extra?: ReactNode; onClick: () => void }) {
   return (
     <button onClick={onClick} className="flex w-full items-center gap-3 p-3.5 text-left transition hover:bg-raised/40">
       <span className="min-w-0 flex-1 [overflow-wrap:anywhere]">
@@ -155,8 +156,41 @@ export function BibliotecaPage() {
 // ---------------------------------------------------------------- Modelos
 
 function Modelos() {
-  const [tipo, setTipo] = useState<TipoModelo>('treino');
+  const [params, setParams] = useSearchParams();
+  const tipoUrl = params.get('tipo');
+  const tipo = (['treino', 'dieta', 'sessao', 'refeicao', 'programa'].includes(tipoUrl ?? '') ? tipoUrl : 'treino') as TipoModelo | 'programa';
+  const setTipo = (t: TipoModelo | 'programa') => setParams({ aba: 'modelos', tipo: t }, { replace: true });
   const [inativos, setInativos] = useState(false);
+  return (
+    <>
+      <div className="-mx-gutter mb-3 overflow-x-auto px-gutter pb-1">
+        <Chips<TipoModelo | 'programa'>
+          value={tipo}
+          onChange={setTipo}
+          options={[
+            { value: 'treino', label: 'Treinos' },
+            { value: 'programa', label: 'Programas' },
+            { value: 'dieta', label: 'Dietas' },
+            { value: 'sessao', label: 'Sessões' },
+            { value: 'refeicao', label: 'Refeições' },
+          ]}
+        />
+      </div>
+      {tipo === 'programa' ? (
+        <>
+          <div className="mb-3 flex justify-end">
+            <Inativos value={inativos} onChange={setInativos} />
+          </div>
+          <ProgramasLista inativos={inativos} />
+        </>
+      ) : (
+        <ModelosDoTipo key={tipo} tipo={tipo} inativos={inativos} setInativos={setInativos} />
+      )}
+    </>
+  );
+}
+
+function ModelosDoTipo({ tipo, inativos, setInativos }: { tipo: TipoModelo; inativos: boolean; setInativos: (v: boolean) => void }) {
   const [aberto, setAberto] = useState<Modelo | null>(null);
   const q = useModelos(tipo, inativos);
   const lista = q.data ?? [];
@@ -168,18 +202,6 @@ function Modelos() {
   };
   return (
     <>
-      <div className="-mx-gutter mb-3 overflow-x-auto px-gutter pb-1">
-        <Chips<TipoModelo>
-          value={tipo}
-          onChange={setTipo}
-          options={[
-            { value: 'treino', label: 'Treinos' },
-            { value: 'dieta', label: 'Dietas' },
-            { value: 'sessao', label: 'Sessões' },
-            { value: 'refeicao', label: 'Refeições' },
-          ]}
-        />
-      </div>
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className="text-sm text-muted">
           {lista.length} {lista.length === 1 ? NOME[tipo].um.toLowerCase() : NOME[tipo].varios.toLowerCase()}
