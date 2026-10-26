@@ -12,6 +12,7 @@ import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/type
 import { RegistrarContatoSheet } from './CentralPage';
 import { SalvarModeloSheet, UsarModeloSheet } from './BibliotecaPage';
 import { AbaCuidados } from './CuidadosPro';
+import { MaisAcoes, STATUS_ACOMPANHAMENTO } from './FichaAcoes';
 import { AbaProntuario } from './ProntuarioPro';
 import { useHistoricoPaciente, usePaciente, usePlanosAlimentares, usePlanosTreino, useResumoClinico } from './queries';
 
@@ -408,7 +409,7 @@ export function PatientDetailPage() {
               <p className="truncate text-sm text-muted">{[a != null && `${a} anos`, p.sexo, p.profissao].filter(Boolean).join(' · ') || p.email}</p>
               {(p.tags.length > 0 || p.statusAcompanhamento !== 'Ativo') && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                  {p.statusAcompanhamento !== 'Ativo' && <Pill tone="warn">{p.statusAcompanhamento}</Pill>}
+                  {p.statusAcompanhamento !== 'Ativo' && <Pill tone="warn">{STATUS_ACOMPANHAMENTO[p.statusAcompanhamento] ?? p.statusAcompanhamento}</Pill>}
                   {p.tags.map((t) => (
                     <Pill key={t}>{t}</Pill>
                   ))}
@@ -436,6 +437,7 @@ export function PatientDetailPage() {
             <button onClick={() => setParams({ aba: 'prontuario' }, { replace: true })} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4">
               <Stethoscope className="h-4 w-4 shrink-0 text-muted" /> Prontuário
             </button>
+            <MaisAcoes paciente={p} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4" />
           </div>
         </motion.section>
       )}

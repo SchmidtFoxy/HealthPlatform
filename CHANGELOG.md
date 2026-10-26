@@ -1,3 +1,14 @@
+## v0.65.1 — Acesso do paciente e cadastro na versão nova
+
+- /app equipe, ficha do paciente ganhou o botão "Mais" com:
+  - Acesso ao app: liberar acesso, gerar novo convite (com copiar link e envio pelo WhatsApp) e revogar.
+  - Editar dados: nome, CPF, nascimento, sexo, telefone, e-mail e profissão.
+  - Status do acompanhamento: ativo, pausado, aguardando avaliação ou encerrado, com motivo.
+  - Tags para organizar a carteira.
+  - Notas internas da equipe: criar, editar, fixar e arquivar.
+- Nova tela de ativação do convite na versão nova: o paciente cria a senha (com os requisitos visíveis) e já entra no app. Links de convite antigos também abrem nela.
+- Campos com anel de foco próprio (login, busca) não mostram mais o contorno duplo.
+
 ## v0.65.0 — Biblioteca do profissional na versão nova
 
 - /app equipe: nova Biblioteca (Perfil → Biblioteca) com:

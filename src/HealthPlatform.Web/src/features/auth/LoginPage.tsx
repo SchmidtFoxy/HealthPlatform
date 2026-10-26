@@ -5,7 +5,7 @@ import { FormEvent, InputHTMLAttributes, ReactNode, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import simbolo from '@/assets/aesyn-symbol.webp';
 import { Button } from '@/components/ui';
-import { entrar, pedirNovaSenha } from '@/lib/api';
+import { api, entrar, pedirNovaSenha } from '@/lib/api';
 
 type Etapa = 'entrar' | 'esqueci' | 'enviado';
 
@@ -375,5 +375,100 @@ function Voltar({ onClick }: { onClick: () => void }) {
     <button type="button" onClick={onClick} className="-ml-2 inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-sm font-semibold text-muted transition hover:bg-raised hover:text-fg">
       <ArrowLeft className="h-4 w-4" /> Voltar
     </button>
+  );
+}
+
+// ---------------------------------------------------------------- Ativacao do convite
+
+/** Regras de senha do servidor (Identity): tamanho, maiuscula, minuscula, numero e simbolo. */
+export const REGRAS_SENHA: { l: string; ok: (s: string) => boolean }[] = [
+  { l: '10 caracteres ou mais', ok: (s) => s.length >= 10 },
+  { l: 'Letra maiúscula', ok: (s) => /[A-Z]/.test(s) },
+  { l: 'Letra minúscula', ok: (s) => /[a-z]/.test(s) },
+  { l: 'Número', ok: (s) => /\d/.test(s) },
+  { l: 'Símbolo, como ! ou @', ok: (s) => /[^A-Za-z0-9]/.test(s) },
+];
+
+/** Link do convite do profissional: o paciente cria a senha e ja entra no app. */
+export function AtivarPage() {
+  const nav = useNavigate();
+  const [params] = useSearchParams();
+  const email = params.get('email') ?? '';
+  const token = params.get('token') ?? '';
+  const [senha, setSenha] = useState('');
+  const [senha2, setSenha2] = useState('');
+  const [ver, setVer] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(false);
+  const valida = REGRAS_SENHA.every((r) => r.ok(senha));
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setErro(null);
+    if (!valida) return setErro('A senha ainda não atende a todos os requisitos.');
+    if (senha !== senha2) return setErro('As senhas não conferem.');
+    setCarregando(true);
+    try {
+      await api('/api/auth/paciente/ativar', { method: 'POST', json: { email, token, senha } });
+      try {
+        await entrar(email, senha);
+        nav('/hoje', { replace: true });
+      } catch {
+        nav(`/entrar?email=${encodeURIComponent(email)}`, { replace: true });
+      }
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : 'Não foi possível ativar agora.');
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  const olho = (
+    <button type="button" aria-label={ver ? 'Ocultar senha' : 'Mostrar senha'} onClick={() => setVer((v) => !v)} className="grid h-10 w-10 place-items-center rounded-full text-muted transition hover:bg-raised hover:text-fg">
+      {ver ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+    </button>
+  );
+
+  return (
+    <div className="min-h-full bg-bg lg:grid lg:grid-cols-[1.1fr_1fr]">
+      <PainelMarca />
+      <main className="relative z-10 -mt-8 flex flex-col rounded-t-[32px] bg-bg px-gutter pb-safe pt-8 shadow-[0_-24px_60px_-30px_rgb(0_0_0/0.6)] lg:mt-0 lg:items-center lg:justify-center lg:rounded-none lg:px-16 lg:shadow-none">
+        <div className="mx-auto w-full max-w-[400px] pb-8">
+          {!email || !token ? (
+            <Passo>
+              <h2 className="font-display text-[28px] font-semibold tracking-tight">Link incompleto</h2>
+              <p className="mt-1.5 text-[15px] text-muted">Abra o link do convite exatamente como chegou, ou peça ao seu profissional um novo convite.</p>
+              <Link to="/entrar">
+                <Button variant="outline" size="lg" className="mt-8 w-full">
+                  Ir para entrar
+                </Button>
+              </Link>
+            </Passo>
+          ) : (
+            <Passo>
+              <h2 className="font-display text-[28px] font-semibold tracking-tight">Crie sua senha</h2>
+              <p className="mt-1.5 text-[15px] text-muted">
+                Seu acompanhamento está pronto. Você vai entrar com <span className="font-semibold text-fg">{email}</span>.
+              </p>
+              <form onSubmit={submit} className="mt-7 flex flex-col gap-4">
+                <Campo label="Nova senha" icon={<Lock className="h-[18px] w-[18px]" />} type={ver ? 'text' : 'password'} autoComplete="new-password" required autoFocus value={senha} onChange={(e) => setSenha(e.target.value)} trailing={olho} />
+                <ul className="grid grid-cols-2 gap-x-3 gap-y-1 text-[13px]">
+                  {REGRAS_SENHA.map((r) => (
+                    <li key={r.l} className={clsx('flex items-center gap-1.5', r.ok(senha) ? 'text-ok' : 'text-faint')}>
+                      <Check className="h-3.5 w-3.5 shrink-0" strokeWidth={3} /> {r.l}
+                    </li>
+                  ))}
+                </ul>
+                <Campo label="Repita a senha" icon={<Lock className="h-[18px] w-[18px]" />} type={ver ? 'text' : 'password'} autoComplete="new-password" required value={senha2} onChange={(e) => setSenha2(e.target.value)} />
+                <Erro texto={erro} />
+                <Button type="submit" size="lg" loading={carregando} className="mt-1 w-full">
+                  Ativar e entrar <ArrowRight className="h-5 w-5" />
+                </Button>
+              </form>
+            </Passo>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }

@@ -3,7 +3,7 @@ import { lazy, ReactNode, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/shell';
 import { Skeleton, Toaster } from './components/ui';
-import { LoginPage } from './features/auth/LoginPage';
+import { AtivarPage, LoginPage } from './features/auth/LoginPage';
 import { HomeSitePage, RecursosPage, SiteLayout, SobrePage, VantagensPage } from './features/site/site';
 import { ProfilePage } from './features/ProfilePage';
 import { DietPage } from './features/patient/DietPage';
@@ -89,6 +89,7 @@ export function App() {
             <Route path="/sobre" element={<SobrePage />} />
           </Route>
           <Route path="/entrar" element={<LoginPage />} />
+          <Route path="/ativar" element={<AtivarPage />} />
 
           <Route
             element={
