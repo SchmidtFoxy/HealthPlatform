@@ -20903,7 +20903,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.62.6';
+const HP_MVP_VERSION='0.62.7';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -31975,4 +31975,25 @@ else hpJourneyStabilityGuardV0610();
     if(pop&&!e.target.closest('.hp-conta-pop-v0620'))fechar();
   },true);
   document.addEventListener('keydown',e=>{if(e.key==='Escape')fechar()});
+})();
+
+/* v0.62.7: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
+(function hpVigiaVersaoV0627(){
+  const CHAVE='aesyn-recarregou-para';
+  let checando=false;
+  async function checar(){
+    if(checando||!navigator.onLine)return;checando=true;
+    try{
+      const r=await fetch('/api/health',{cache:'no-store'});const j=await r.json().catch(()=>null);
+      const nova=j&&j.version;
+      if(!nova||nova===HP_MVP_VERSION)return;
+      try{if(sessionStorage.getItem(CHAVE)===nova)return;sessionStorage.setItem(CHAVE,nova)}catch{}
+      try{const reg=await navigator.serviceWorker?.getRegistration();await reg?.update()}catch{}
+      try{const nomes=await caches.keys();await Promise.all(nomes.filter(n=>n.startsWith('aesyn-static')).map(n=>caches.delete(n)))}catch{}
+      location.reload();
+    }catch{}finally{checando=false}
+  }
+  setTimeout(checar,4000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checar()});
+  setInterval(checar,5*60*1000);
 })();

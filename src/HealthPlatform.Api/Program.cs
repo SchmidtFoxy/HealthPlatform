@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.62.6" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.62.7" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -203,6 +203,26 @@ if (app.Environment.IsDevelopment())
 // Deve executar antes de HTTPS/HSTS para respeitar X-Forwarded-Proto do Nginx.
 app.UseForwardedHeaders();
 
+// Celulares precisam pegar a versao nova logo apos o deploy: HTML, service workers,
+// manifestos e os bundles sem hash sempre revalidam; os arquivos com hash em /app/assets
+// podem ficar em cache para sempre, porque o nome muda a cada build.
+var arquivosEstaticos = new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var caminho = ctx.Context.Request.Path.Value ?? string.Empty;
+        var headers = ctx.Context.Response.Headers;
+        if (caminho.StartsWith("/app/assets/", StringComparison.OrdinalIgnoreCase))
+            headers.CacheControl = "public, max-age=31536000, immutable";
+        else if (caminho.EndsWith(".html", StringComparison.OrdinalIgnoreCase) ||
+                 caminho.EndsWith(".js", StringComparison.OrdinalIgnoreCase) ||
+                 caminho.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
+                 caminho.EndsWith(".webmanifest", StringComparison.OrdinalIgnoreCase) ||
+                 caminho == "/" || caminho == "/app" || caminho == "/app/")
+            headers.CacheControl = "no-cache";
+    }
+};
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
@@ -210,7 +230,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseStaticFiles(arquivosEstaticos);
 
 app.UseAuthentication();
 
@@ -242,8 +262,8 @@ app.MapControllers();
 
 // SPA web do MVP. Rotas desconhecidas fora de /api caem no index.
 // Novo front (React) servido em /app: rotas do cliente caem no index.html dele.
-app.MapFallbackToFile("app/{*path:nonfile}", "app/index.html");
-app.MapFallbackToFile("index.html");
+app.MapFallbackToFile("app/{*path:nonfile}", "app/index.html", arquivosEstaticos);
+app.MapFallbackToFile("index.html", arquivosEstaticos);
 
 if (app.Environment.IsDevelopment())
 {
