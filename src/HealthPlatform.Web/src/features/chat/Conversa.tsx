@@ -6,7 +6,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ehImagem, ImagemArquivo, VisualizadorImagem } from '@/components/ImagemArquivo';
 import { ErrorBox, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
-import { abrirArquivo, ACEITOS, enviarArquivo } from '@/lib/arquivos';
+import { abrirArquivo, enviarArquivo } from '@/lib/arquivos';
+import { MenuAnexo } from '@/components/MenuAnexo';
 import { iniciais } from '@/lib/format';
 
 interface Mensagem {
@@ -61,9 +62,9 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
   const [texto, setTexto] = useState('');
   const [contexto, setContexto] = useState('Geral');
   const [foto, setFoto] = useState<{ id: string; nome: string } | null>(null);
+  const [menuAnexo, setMenuAnexo] = useState(false);
   const fim = useRef<HTMLDivElement>(null);
   const campo = useRef<HTMLTextAreaElement>(null);
-  const arquivoRef = useRef<HTMLInputElement>(null);
   const msgs = q.data?.mensagens ?? [];
 
   // Abrir a conversa marca como lida no servidor; o contador some junto.
@@ -223,18 +224,8 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
               ))}
             </div>
             <div className="flex items-end gap-2 pb-3">
-              <input
-                ref={arquivoRef}
-                type="file"
-                accept={ACEITOS}
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  e.target.value = '';
-                  if (f) anexar.mutate(f);
-                }}
-              />
-              <button aria-label="Anexar arquivo" disabled={ocupado} onClick={() => arquivoRef.current?.click()} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-muted transition hover:bg-raised disabled:opacity-50">
+              <MenuAnexo open={menuAnexo} onClose={() => setMenuAnexo(false)} onArquivo={(f) => anexar.mutate(f)} />
+              <button aria-label="Anexar foto ou arquivo" disabled={ocupado} onClick={() => setMenuAnexo(true)} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-muted transition hover:bg-raised disabled:opacity-50">
                 {anexar.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
               </button>
               <textarea
