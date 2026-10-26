@@ -17,6 +17,7 @@ import { useTema } from './lib/theme';
 const LiveWorkoutPage = lazy(() => import('./features/patient/LiveWorkoutPage').then((m) => ({ default: m.LiveWorkoutPage })));
 const ChatPage = lazy(() => import('./features/chat/Conversa').then((m) => ({ default: m.ChatPage })));
 const ProChatPage = lazy(() => import('./features/chat/Conversa').then((m) => ({ default: m.ProChatPage })));
+const BibliotecaPage = lazy(() => import('./features/pro/BibliotecaPage').then((m) => ({ default: m.BibliotecaPage })));
 const CentralPage = lazy(() => import('./features/pro/CentralPage').then((m) => ({ default: m.CentralPage })));
 const AgendaPage = lazy(() => import('./features/pro/AgendaPage').then((m) => ({ default: m.AgendaPage })));
 const InboxPage = lazy(() => import('./features/chat/InboxPage').then((m) => ({ default: m.InboxPage })));
@@ -146,6 +147,7 @@ export function App() {
             <Route path="/pro/mensagens" element={<InboxPage />} />
             <Route path="/pro/agenda" element={<AgendaPage />} />
             <Route path="/pro/central" element={<CentralPage />} />
+            <Route path="/pro/biblioteca" element={<BibliotecaPage />} />
             <Route path="/pro/pacientes/:id" element={<PatientDetailPage />} />
             <Route path="/pro/perfil" element={<ProfilePage />} />
             <Route path="/pro/conta" element={<AccountPage />} />

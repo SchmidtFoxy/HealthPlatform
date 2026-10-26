@@ -112,11 +112,29 @@ export function ProfilePage() {
             </Link>
           </>
         )}
+        {s && s.tipoUsuario !== 'Paciente' && (
+          <>
+            <Link to="/pro/central" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Central do dia
+                <span className="block text-sm font-normal text-muted">Pendências, contatos de acompanhamento e pedidos</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
+            <Link to="/pro/biblioteca" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Biblioteca
+                <span className="block text-sm font-normal text-muted">Exercícios, alimentos e modelos de treino e dieta</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
+          </>
+        )}
         <a href="/?classico=1" className="flex items-center justify-between p-4 font-semibold">
           <span>
             Abrir versão clássica
             <span className="block text-sm font-normal text-muted">
-              {s?.tipoUsuario === 'Paciente' ? 'Exploração de esportes e demais módulos' : 'Gestão, equipe, agenda, exames e demais módulos'}
+              {s?.tipoUsuario === 'Paciente' ? 'Exploração de esportes e demais módulos' : 'Gestão, equipe, configurações e demais módulos'}
             </span>
           </span>
           <ExternalLink className="h-5 w-5 text-muted" />
