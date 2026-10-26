@@ -1,3 +1,7 @@
+## v0.65.8 — Busca da equipe na versão nova
+
+- Equipe: lupa no topo da tela Hoje que busca de uma vez pacientes, pendências abertas, contatos e consultas, agrupados por tipo; tocar leva direto para a ficha, a central ou a agenda.
+
 ## v0.65.7 — Filtros avançados de pacientes na versão nova
 
 - Equipe: botão de filtros ao lado da busca de pacientes, com status de acompanhamento, responsável, adesão, última interação, próxima revisão, sinais de atenção e ordenação. Com filtro ativo, cada paciente mostra adesão média, última interação e responsável.
