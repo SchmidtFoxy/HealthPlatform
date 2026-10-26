@@ -52,3 +52,72 @@ export function useAdesaoRefeicao() {
     onSettled: () => qc.invalidateQueries({ queryKey: ['p', 'home'] }),
   });
 }
+
+// ---------------------------------------------------------------- Cuidados (pedidos, medicamentos, metas)
+
+export interface Solicitacao {
+  id: string;
+  tipo: string;
+  titulo: string;
+  descricao: string | null;
+  dataLimiteUtc: string | null;
+  status: 'Pendente' | 'Enviada' | 'Revisada' | 'Cancelada' | string;
+  profissionalNome: string;
+  respostaPaciente: string | null;
+  linkResposta: string | null;
+  respondidaEmUtc: string | null;
+  observacaoRevisao: string | null;
+  createdAtUtc: string;
+}
+
+export interface Medicamento {
+  id: string;
+  nome: string;
+  dose: number | null;
+  unidade: string | null;
+  via: string | null;
+  frequencia: string | null;
+  horariosLocais: string | null;
+  orientacao: string | null;
+}
+
+export interface RegistroMedicamento {
+  id: string;
+  medicamentoId: string;
+  dataHoraPrevistaUtc: string;
+  status: 'Tomado' | 'Pulado' | string;
+}
+
+export interface Meta {
+  id: string;
+  nome: string;
+  tipo: string;
+  valorObjetivo: number | null;
+  unidade: string | null;
+  frequencia: string;
+  status: string;
+  observacoes: string | null;
+  registros: { id: string; data: string; valor: number | null; concluida: boolean | null }[];
+  resumo: { registros: number; concluidos: number; percentualConclusao: number };
+}
+
+export const useSolicitacoes = () =>
+  useQuery({ queryKey: ['p', 'solicitacoes'], queryFn: () => api<{ pendentes: number; aguardandoRevisao: number; itens: Solicitacao[] }>('/api/portal/me/solicitacoes') });
+export const useMedicamentos = () =>
+  useQuery({
+    queryKey: ['p', 'medicamentos'],
+    queryFn: () =>
+      api<{ data: string; medicamentos: Medicamento[]; registrosHoje: RegistroMedicamento[] }>(`/api/portal/me/medicamentos?offsetMinutos=${-new Date().getTimezoneOffset()}`),
+  });
+export const useMetas = () => useQuery({ queryKey: ['p', 'metas'], queryFn: () => api<{ inicio: string; fim: string; metas: Meta[] }>('/api/portal/me/metas?dias=30') });
+
+/** Horarios de hoje de um medicamento ("08:00,20:00") como instantes UTC, no fuso do aparelho. */
+export function horariosHoje(m: Medicamento): { hora: string; utc: string }[] {
+  const lista = (m.horariosLocais ?? '').split(',').map((h) => h.trim()).filter(Boolean);
+  return (lista.length ? lista : ['08:00']).map((hora) => {
+    const [h, min] = hora.split(':').map(Number);
+    const d = new Date();
+    d.setHours(h, min || 0, 0, 0);
+    return { hora: hora.slice(0, 5), utc: d.toISOString() };
+  });
+}

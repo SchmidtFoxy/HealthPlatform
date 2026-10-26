@@ -1,17 +1,17 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { Check, ChevronRight, Dumbbell, Flame, MessageCircle, Moon, Play, Sparkles, Zap } from 'lucide-react';
+import { Check, ChevronRight, ClipboardList, Dumbbell, Flame, MessageCircle, Moon, Play, Sparkles, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Button, Card, ErrorBox, Pill, Ring, SectionTitle, Skeleton } from '@/components/ui';
-import { dataLonga, hora, n0, primeiroNome, saudacao } from '@/lib/format';
+import { dataLonga, hojeIso, hora, n0, primeiroNome, saudacao } from '@/lib/format';
 import { useSessao } from '@/lib/session';
 import { Avatar } from '@/components/account';
 import type { RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { CheckInSheet } from './CheckInSheet';
 import { MealSheet, STATUS_INFO, StatusButtons, somaNutrientes } from './meals';
-import { useChatNaoLidas, useHistoricoTreinos, useHome, useMeusTreinos, usePlanoAlimentar } from './queries';
+import { horariosHoje, useChatNaoLidas, useHistoricoTreinos, useHome, useMedicamentos, useMetas, useSolicitacoes, useMeusTreinos, usePlanoAlimentar } from './queries';
 import { treinoDoDia } from './treino-dia';
 import { treinoEmAndamento } from './workout-store';
 
@@ -42,6 +42,21 @@ export function TodayPage() {
   const plano0 = treinos.data?.planos[0];
   const hist = useHistoricoTreinos(30);
   const naoLidas = useChatNaoLidas().data?.total ?? 0;
+  // Cuidados de hoje: pedidos para responder, doses e metas ainda nao marcadas.
+  const pedidos = useSolicitacoes().data?.pendentes ?? 0;
+  const meds = useMedicamentos().data;
+  const metas = useMetas().data;
+  const dosesAbertas = (meds?.medicamentos ?? []).reduce(
+    (a, m) => a + horariosHoje(m).filter((h) => !meds!.registrosHoje.some((r) => r.medicamentoId === m.id && new Date(r.dataHoraPrevistaUtc).getTime() === new Date(h.utc).getTime())).length,
+    0,
+  );
+  const metasAbertas = (metas?.metas ?? []).filter((m) => m.status === 'Ativa' && !m.registros.some((r) => r.data === hojeIso())).length;
+  const cuidados = [
+    pedidos && `${pedidos} ${pedidos > 1 ? 'pedidos' : 'pedido'} do profissional`,
+    dosesAbertas && `${dosesAbertas} ${dosesAbertas > 1 ? 'doses' : 'dose'} para marcar`,
+    metasAbertas && `${metasAbertas} ${metasAbertas > 1 ? 'metas' : 'meta'} de hoje`,
+  ].filter(Boolean) as string[];
+  const temCuidados = !!(meds?.medicamentos.length || metas?.metas.length || pedidos);
   const dia = useMemo(() => treinoDoDia(plano0, hist.data?.execucoes), [plano0, hist.data]);
   const sessaoHoje = dia.hoje;
   const feito = dia.feitosHoje[0];
@@ -325,6 +340,23 @@ export function TodayPage() {
       <div className="mt-4 lg:grid lg:grid-cols-[1.35fr_1fr] lg:items-start lg:gap-8">
         <div className="min-w-0">
           {blocoProntidao}
+          {temCuidados && (
+            <motion.div {...fade(1)} className="mt-3">
+              <Link
+                to="/cuidados"
+                className={clsx('flex items-center gap-3 rounded-xl2 border p-4 transition active:scale-[0.99]', pedidos ? 'border-warn/40 bg-warn/[0.06]' : 'border-line bg-surface')}
+              >
+                <span className={clsx('grid h-10 w-10 shrink-0 place-items-center rounded-xl', cuidados.length ? 'bg-accent/15 text-accent' : 'bg-ok text-white')}>
+                  {cuidados.length ? <ClipboardList className="h-5 w-5" /> : <Check className="h-5 w-5" strokeWidth={3} />}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{cuidados.length ? 'Cuidados de hoje' : 'Cuidados em dia'}</span>
+                  <span className="block truncate text-[13px] text-muted">{cuidados.length ? cuidados.join(' · ') : 'Remédios, metas e pedidos marcados'}</span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
+              </Link>
+            </motion.div>
+          )}
           {blocoTreino}
           <div className="hidden lg:block">{blocoConsistencia}</div>
         </div>
