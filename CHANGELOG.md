@@ -1,3 +1,8 @@
+## v0.62.6 — Ficha do paciente com cabeçalho novo
+
+- /app: ficha do paciente abre com um cartão de perfil (avatar, nome, idade, profissão, tags) e botões de WhatsApp, E-mail e Prontuário que cabem lado a lado no celular.
+- /app: datas relativas dos treinos recentes em minúsculas ("há 2 dias").
+
 ## v0.62.5 — Hoje e Pacientes do profissional
 
 - /app: Hoje do profissional com resumo do dia em uma frase e atalho para os pacientes, números com ícones e lista de atenção com anel de cor por nível e prontidão em destaque.
