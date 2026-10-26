@@ -1,6 +1,6 @@
 ﻿$ErrorActionPreference = "Stop"
 Write-Host "============================================================" -ForegroundColor DarkGreen
-Write-Host " AESYN v0.64.1 | NOVO FRONT MOBILE-FIRST (/app)" -ForegroundColor Green
+Write-Host " AESYN v0.64.2 | NOVO FRONT MOBILE-FIRST (/app)" -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor DarkGreen
 
 $version=(Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()
@@ -8,7 +8,7 @@ $app=Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api
 $css=Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'src/HealthPlatform.Api/wwwroot/app.css') -Raw
 $roadmap = Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'ROADMAP.md') -Raw
 
-if($version -ne '0.64.1'){throw "VERSION.txt esperado 0.64.1; atual: $version"}
+if($version -ne '0.64.2'){throw "VERSION.txt esperado 0.64.2; atual: $version"}
 foreach($token in @(
  'HP_LISTA05_INTEGRATED_QUALITY_V0610',
  'hpJourneyStabilityGuardV0610',
@@ -19,7 +19,7 @@ foreach($token in @(
  'HP_PROFESSIONAL_CHAT_GLOBAL_V0608',
  'HP_NUTRITION_PLANNING_ENGINE_V0609'
 )){
- if(-not $app.Contains($token)){throw "PREPARAR v0.64.1 incompleto: $token"}
+ if(-not $app.Contains($token)){throw "PREPARAR v0.64.2 incompleto: $token"}
 }
 foreach($token in @(
  '--hp-visual-viewport-height-v0610',
@@ -28,12 +28,12 @@ foreach($token in @(
  '@media(max-width:390px)',
  '@media(max-width:360px)'
 )){
- if(-not $css.Contains($token)){throw "PREPARAR CSS v0.64.1 incompleto: $token"}
+ if(-not $css.Contains($token)){throw "PREPARAR CSS v0.64.2 incompleto: $token"}
 }
 if(-not $roadmap.Contains('LISTA 05 — CONCLUÍDA')){throw 'ROADMAP nao marcou Lista 05 concluida.'}
-if(-not $roadmap.Contains('v0.64.1 / Lista 06')){throw 'ROADMAP sem proxima direcao funcional real.'}
+if(-not $roadmap.Contains('v0.64.2 / Lista 06')){throw 'ROADMAP sem proxima direcao funcional real.'}
 
 Write-Host "    Journey Stability Guard: OK." -ForegroundColor Green
 Write-Host "    Integrated Regression Memory: OK." -ForegroundColor Green
 Write-Host "    LISTA 05 — CONCLUÍDA." -ForegroundColor Green
-Write-Host "    Proxima evolucao deve ser v0.64.1 / Lista 06, escolhida por valor real." -ForegroundColor DarkCyan
+Write-Host "    Proxima evolucao deve ser v0.64.2 / Lista 06, escolhida por valor real." -ForegroundColor DarkCyan

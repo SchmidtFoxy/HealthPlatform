@@ -10,9 +10,10 @@ import { api } from '@/lib/api';
 import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/format';
 import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/types';
 import { RegistrarContatoSheet } from './CentralPage';
+import { AbaCuidados } from './CuidadosPro';
 import { useHistoricoPaciente, usePaciente, usePlanosAlimentares, usePlanosTreino, useResumoClinico } from './queries';
 
-type Aba = 'geral' | 'dieta' | 'treino';
+type Aba = 'geral' | 'dieta' | 'treino' | 'cuidados';
 
 interface EvolucaoCarga {
   exercicioId: string;
@@ -426,9 +427,10 @@ export function PatientDetailPage() {
             force((x) => x + 1);
           }}
           options={[
-            { value: 'geral', label: 'Visão geral' },
+            { value: 'geral', label: 'Geral' },
             { value: 'dieta', label: 'Dieta' },
             { value: 'treino', label: 'Treino' },
+            { value: 'cuidados', label: 'Cuidados' },
           ]}
         />
       </div>
@@ -436,6 +438,7 @@ export function PatientDetailPage() {
       {aba === 'geral' && <VisaoGeral id={id} />}
       {aba === 'dieta' && <AbaDieta id={id} />}
       {aba === 'treino' && <AbaTreino id={id} />}
+      {aba === 'cuidados' && <AbaCuidados id={id} />}
       <RegistrarContatoSheet paciente={contato && p ? { id: p.id, nome: p.nome } : null} onClose={() => setContato(false)} />
     </Page>
   );

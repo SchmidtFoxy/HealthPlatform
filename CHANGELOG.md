@@ -1,3 +1,14 @@
+## v0.64.2 — Cuidados do paciente pelo profissional e monitoramento na versão nova
+
+- /app equipe, ficha do paciente: nova aba Cuidados para o profissional criar e acompanhar:
+  - Pedidos ao paciente (exame, documento, medição, questionário…) com prazo; revisar a resposta ou cancelar.
+  - Metas "fiz / não fiz" ou com número e unidade, diárias, semanais ou mensais; editar, pausar, reativar, concluir ou cancelar.
+  - Remédios e suplementos com dose, via, horários e período; editar, desativar e reativar; adesão dos últimos 30 dias.
+  - Monitoramento: o que o paciente deve registrar (peso, pressão, glicemia, frequência cardíaca, saturação, temperatura, água, sono, dor, energia, sintomas), com frequência, dias da semana, horário e instruções.
+- /app paciente: Cuidados ganhou "Seu monitoramento", com registro rápido de cada medição (pressão com sistólica e diastólica, escalas de 0 a 10 para dor e energia). O card Cuidados de hoje conta as medições que faltam.
+- A adesão ao monitoramento passa a contar só a partir do dia em que cada item foi criado.
+- Grupos de opções em formulários ganharam rótulo acessível correto.
+
 ## v0.64.1 — Central do dia do profissional na versão nova
 
 - /app equipe: Hoje ganhou o bloco "Para resolver" com pendências prioritárias, contatos de acompanhamento e respostas de pedidos para revisar.
