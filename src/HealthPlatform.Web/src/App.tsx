@@ -18,6 +18,7 @@ const LiveWorkoutPage = lazy(() => import('./features/patient/LiveWorkoutPage').
 const ChatPage = lazy(() => import('./features/patient/ChatPage').then((m) => ({ default: m.ChatPage })));
 const ExplorePage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExplorePage })));
 const ExploreDetailPage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExploreDetailPage })));
+const AccountPage = lazy(() => import('./features/AccountPage').then((m) => ({ default: m.AccountPage })));
 const CarePage = lazy(() => import('./features/patient/CarePage').then((m) => ({ default: m.CarePage })));
 const FilesPage = lazy(() => import('./features/patient/FilesPage').then((m) => ({ default: m.FilesPage })));
 const ProTodayPage = lazy(() => import('./features/pro/ProTodayPage').then((m) => ({ default: m.ProTodayPage })));
@@ -93,6 +94,7 @@ export function App() {
             <Route path="/dieta" element={<DietPage />} />
             <Route path="/progresso" element={<ProgressPage />} />
             <Route path="/perfil" element={<ProfilePage />} />
+            <Route path="/conta" element={<AccountPage />} />
             <Route path="/arquivos" element={<FilesPage />} />
             <Route path="/cuidados" element={<CarePage />} />
             <Route path="/diario" element={<DiaryPage />} />
@@ -127,6 +129,7 @@ export function App() {
             <Route path="/pro/pacientes" element={<PatientsPage />} />
             <Route path="/pro/pacientes/:id" element={<PatientDetailPage />} />
             <Route path="/pro/perfil" element={<ProfilePage />} />
+            <Route path="/pro/conta" element={<AccountPage />} />
           </Route>
           <Route
             path="/pro/pacientes/:id/dieta/:planoId"

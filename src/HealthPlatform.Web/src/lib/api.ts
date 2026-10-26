@@ -54,6 +54,18 @@ function salvarSessao(r: LoginResponse | null) {
   listeners.forEach((l) => l(s));
 }
 
+/** Atualiza o nome guardado na sessao (depois de editar a conta). */
+export function renomearSessao(nome: string) {
+  try {
+    const u = JSON.parse(localStorage.getItem('hp_user') || 'null');
+    if (u) localStorage.setItem('hp_user', JSON.stringify({ ...u, nome }));
+  } catch {
+    /* sem armazenamento */
+  }
+  const s = lerSessao();
+  listeners.forEach((l) => l(s));
+}
+
 export function aoMudarSessao(fn: (s: Sessao | null) => void) {
   listeners.add(fn);
   return () => listeners.delete(fn);
