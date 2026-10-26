@@ -4,11 +4,18 @@ import { ChevronRight, Plus, Search, UserPlus } from 'lucide-react';
 import { FormEvent, useDeferredValue, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
-import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
+import { Button, Empty, ErrorBox, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
-import { idade, iniciais } from '@/lib/format';
+import { idade, iniciais, tempoRelativo } from '@/lib/format';
 import type { Paciente } from '@/lib/types';
-import { usePacientes } from './queries';
+import { usePacientes, useSinais } from './queries';
+
+const NIVEL: Record<string, { label: string; tone: 'bad' | 'warn' | 'neutral' | 'ok' }> = {
+  RevisarHoje: { label: 'Revisar hoje', tone: 'bad' },
+  Observar: { label: 'Observar', tone: 'warn' },
+  ContextoPendente: { label: 'Sem check-in', tone: 'neutral' },
+  Estavel: { label: 'Estável', tone: 'ok' },
+};
 
 function NovoPaciente({ open, onClose }: { open: boolean; onClose: () => void }) {
   const qc = useQueryClient();
@@ -77,6 +84,8 @@ export function PatientsPage() {
   const [tag, setTag] = useState<string | null>(null);
   const [novo, setNovo] = useState(false);
   const q = usePacientes(termo);
+  const sinaisQ = useSinais();
+  const sinais = useMemo(() => new Map((sinaisQ.data?.sinais ?? []).map((x) => [x.pacienteId, x])), [sinaisQ.data]);
   const lista = q.data?.itens ?? [];
   const tags = useMemo(() => [...new Set(lista.flatMap((p) => p.tags))].sort(), [lista]);
   const filtrados = tag ? lista.filter((p) => p.tags.includes(tag)) : lista;
@@ -122,27 +131,48 @@ export function PatientsPage() {
       ) : filtrados.length === 0 ? (
         <Empty icon={<UserPlus className="h-5 w-5" />} title={busca ? 'Ninguém com esse nome' : 'Nenhum paciente ainda'} action={<Button onClick={() => setNovo(true)}>Cadastrar paciente</Button>} />
       ) : (
-        <Card className="divide-y divide-line/60">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 xl:grid-cols-3">
           {filtrados.map((p) => {
             const a = idade(p.dataNascimento);
+            const sinal = sinais.get(p.id);
+            const nivel = sinal ? (NIVEL[sinal.nivel] ?? NIVEL.Estavel) : NIVEL.Estavel;
             return (
-              <Link key={p.id} to={`/pro/pacientes/${p.id}`} className="flex items-center gap-3 px-4 py-3 transition hover:bg-raised/50">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent/15 font-display text-sm font-semibold text-accent">{iniciais(p.nome)}</div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{p.nome}</p>
-                  <p className="truncate text-[13px] text-muted">{[a != null && `${a} anos`, p.profissao].filter(Boolean).join(' · ') || p.email}</p>
+              <Link key={p.id} to={`/pro/pacientes/${p.id}`} className="group flex flex-col gap-2.5 rounded-xl2 border border-line bg-surface p-4 transition hover:border-accent/40">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-accent/15 font-display text-[15px] font-semibold text-accent">{iniciais(p.nome)}</div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold">{p.nome}</p>
+                    <p className="truncate text-[13px] text-muted">{[a != null && `${a} anos`, p.profissao].filter(Boolean).join(' · ') || p.email}</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 shrink-0 text-faint transition group-hover:translate-x-0.5" />
                 </div>
-                <div className="hidden flex-wrap justify-end gap-1 sm:flex">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Pill tone={nivel.tone}>{nivel.label}</Pill>
+                  {p.statusAcompanhamento !== 'Ativo' && <Pill tone="warn">{p.statusAcompanhamento}</Pill>}
                   {p.tags.slice(0, 2).map((t) => (
                     <Pill key={t}>{t}</Pill>
                   ))}
                 </div>
-                {p.statusAcompanhamento !== 'Ativo' && <Pill tone="warn">{p.statusAcompanhamento}</Pill>}
-                <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
+                <p className="num flex flex-wrap gap-x-3 text-[12px] text-muted">
+                  {sinal ? (
+                    <>
+                      <span>
+                        Prontidão{' '}
+                        <b className={clsx(sinal.prontidaoScore == null ? 'text-faint' : sinal.prontidaoScore >= 75 ? 'text-ok' : sinal.prontidaoScore >= 55 ? 'text-warn' : 'text-bad')}>{sinal.prontidaoScore ?? '—'}</b>
+                      </span>
+                      <span>
+                        <b className="text-fg">{sinal.treinosUltimos7Dias}</b> {sinal.treinosUltimos7Dias === 1 ? 'treino' : 'treinos'} em 7 dias
+                      </span>
+                      <span>Check-in {tempoRelativo(sinal.ultimoCheckInData)}</span>
+                    </>
+                  ) : (
+                    <span>Sem alertas nos últimos 7 dias</span>
+                  )}
+                </p>
               </Link>
             );
           })}
-        </Card>
+        </div>
       )}
       <NovoPaciente open={novo} onClose={() => setNovo(false)} />
     </Page>

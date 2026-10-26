@@ -102,6 +102,10 @@ h3 {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
+.-mx-gutter {
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+}
 
 /* Halo da marca, usado com parcimonia em hero e botoes de destaque. */
 .aurora {
