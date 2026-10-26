@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Bell, CalendarClock, ChevronRight, ClipboardCheck, Dumbbell, FileCheck2, HeartPulse, Moon, PhoneCall, Users } from 'lucide-react';
+import { AlertTriangle, Bell, Search, CalendarClock, ChevronRight, ClipboardCheck, Dumbbell, FileCheck2, HeartPulse, Moon, PhoneCall, Users } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Card, Empty, Pill, SectionTitle, Skeleton } from '@/components/ui';
@@ -8,6 +9,7 @@ import { ApiError } from '@/lib/api';
 import { dataLonga, iniciais, n0, primeiroNome, saudacao, tempoRelativo } from '@/lib/format';
 import { useSessao } from '@/lib/session';
 import type { SinalDiario } from '@/lib/types';
+import { BuscaGlobalSheet } from './BuscaGlobal';
 import { useCentralDia } from './CentralPage';
 import { useAvisosNaoLidos, useDashboard, useSinais } from './queries';
 
@@ -47,6 +49,7 @@ function LinhaSinal({ s }: { s: SinalDiario }) {
 }
 
 export function ProTodayPage() {
+  const [busca, setBusca] = useState(false);
   const sessao = useSessao();
   const dash = useDashboard();
   const avisos = useAvisosNaoLidos();
@@ -68,11 +71,17 @@ export function ProTodayPage() {
             {saudacao()}, {primeiroNome(dash.data?.profissionalNome ?? sessao?.nome)}
           </h1>
         </div>
-        <Link to="/pro/avisos" aria-label={avisos.data ? `Avisos, ${avisos.data} não lidos` : 'Avisos'} className="relative mt-1 grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-surface transition hover:border-accent/40">
-          <Bell className="h-5 w-5" />
-          {!!avisos.data && <span className="num absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-bold text-accent-ink">{avisos.data > 99 ? '99+' : avisos.data}</span>}
-        </Link>
+        <div className="mt-1 flex shrink-0 gap-2">
+          <button onClick={() => setBusca(true)} aria-label="Buscar" className="grid h-11 w-11 place-items-center rounded-full border border-line bg-surface transition hover:border-accent/40">
+            <Search className="h-5 w-5" />
+          </button>
+          <Link to="/pro/avisos" aria-label={avisos.data ? `Avisos, ${avisos.data} não lidos` : 'Avisos'} className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-surface transition hover:border-accent/40">
+            <Bell className="h-5 w-5" />
+            {!!avisos.data && <span className="num absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-bold text-accent-ink">{avisos.data > 99 ? '99+' : avisos.data}</span>}
+          </Link>
+        </div>
       </header>
+      <BuscaGlobalSheet open={busca} onClose={() => setBusca(false)} />
 
       {sinais.data && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="aurora mt-3 flex flex-col gap-3 rounded-xl3 border border-line p-5 sm:flex-row sm:items-center">
