@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowDown, ArrowUp, BarChart3, ChevronLeft, Copy, Plus, Replace, Search, Timer, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, BarChart3, ChevronLeft, Copy, Plus, Replace, Search, Timer, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
 import { api, ApiError } from '@/lib/api';
 import { hojeIso, n0 } from '@/lib/format';
+import { aplicarSeries, obsLimpa, SerieAlvo, seriesDoItem } from '@/lib/series';
 import type { Exercicio, PlanoTreinoPro } from '@/lib/types';
 import { useExercicios, usePaciente, usePlanosTreino } from './queries';
 
@@ -188,6 +189,86 @@ interface Tecnica {
   nome: string;
 }
 
+// Texto local para aceitar "27," ou "27." enquanto digita; o numero vai para o item a cada tecla valida.
+function CargaInput({ label, value, onChange }: { label: string; value: number | null; onChange: (v: number | null) => void }) {
+  const [txt, setTxt] = useState(value == null ? '' : String(value).replace('.', ','));
+  useEffect(() => {
+    const atual = txt.trim() === '' ? null : Number(txt.replace(',', '.'));
+    if (atual !== value) setTxt(value == null ? '' : String(value).replace('.', ','));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return (
+    <input
+      aria-label={label}
+      inputMode="decimal"
+      className={inputCls + ' num h-10 text-center font-semibold'}
+      value={txt}
+      placeholder="—"
+      onChange={(e) => {
+        const t = e.target.value.replace(/[^\d.,]/g, '');
+        setTxt(t);
+        const n = Number(t.replace(',', '.'));
+        if (t === '') onChange(null);
+        else if (!Number.isNaN(n)) onChange(n);
+      }}
+    />
+  );
+}
+
+function SeriesEditor({ item, onChange }: { item: Item; onChange: (i: Item) => void }) {
+  const lista = seriesDoItem(item);
+  const unidade = item.unidadeCarga ?? 'kg';
+  const salvar = (nova: SerieAlvo[]) => onChange(aplicarSeries({ ...item, unidadeCarga: unidade }, nova));
+  const mudar = (idx: number, s: Partial<SerieAlvo>) => salvar(lista.map((x, i) => (i === idx ? { ...x, ...s } : x)));
+  const variando = lista.some((s) => s.reps !== lista[0].reps || s.carga !== lista[0].carga);
+  return (
+    <section>
+      <div className="mb-2 flex items-end justify-between gap-3">
+        <div>
+          <p className="text-[13px] font-semibold">
+            {lista.length} {lista.length === 1 ? 'série' : 'séries'}
+          </p>
+          <p className="text-[12px] text-muted">Cada linha é uma série. Mude reps e carga de uma só para montar pirâmide ou top set.</p>
+        </div>
+        {variando && (
+          <button onClick={() => salvar(lista.map(() => ({ ...lista[0] })))} className="shrink-0 text-[13px] font-semibold text-accent">
+            Igualar à 1ª
+          </button>
+        )}
+      </div>
+      <div className="grid grid-cols-[28px_minmax(0,1fr)_minmax(0,1fr)_36px] items-center gap-x-2 px-1 pb-1 text-[11px] font-semibold uppercase tracking-wider text-faint">
+        <span />
+        <span className="text-center">Reps</span>
+        <span className="text-center">Carga ({unidade})</span>
+        <span />
+      </div>
+      <ol className="flex flex-col gap-1.5">
+        {lista.map((s, i) => (
+          <li key={i} className="grid grid-cols-[28px_minmax(0,1fr)_minmax(0,1fr)_36px] items-center gap-x-2 rounded-2xl bg-raised/50 p-1.5">
+            <span className="num grid h-7 w-7 place-items-center rounded-full bg-accent/15 text-[13px] font-semibold text-accent">{i + 1}</span>
+            <input aria-label={`Repetições da série ${i + 1}`} className={inputCls + ' num h-10 text-center font-semibold'} value={s.reps} placeholder="10" onChange={(e) => mudar(i, { reps: e.target.value })} />
+            <CargaInput label={`Carga da série ${i + 1}`} value={s.carga} onChange={(carga) => mudar(i, { carga })} />
+            <button
+              aria-label={`Remover série ${i + 1}`}
+              disabled={lista.length <= 1}
+              onClick={() => salvar(lista.filter((_, j) => j !== i))}
+              className="grid h-9 w-9 place-items-center rounded-full text-muted transition hover:bg-bad/10 hover:text-bad disabled:opacity-30"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </li>
+        ))}
+      </ol>
+      <button
+        onClick={() => lista.length < 20 && salvar([...lista, { ...lista[lista.length - 1] }])}
+        className="mt-2 flex h-11 w-full items-center justify-center gap-1.5 rounded-2xl border border-dashed border-line text-sm font-semibold text-muted transition hover:border-accent/50 hover:text-accent"
+      >
+        <Plus className="h-4 w-4" /> Adicionar série
+      </button>
+    </section>
+  );
+}
+
 function ItemSheet({
   item,
   exercicio,
@@ -243,13 +324,9 @@ function ItemSheet({
             </div>
           </div>
 
+          <SeriesEditor item={item} onChange={onChange} />
+
           <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-            <Stepper label="Séries" value={item.series} min={1} max={12} onChange={(v) => onChange({ ...item, series: v })} />
-            <div className="flex min-w-0 flex-col items-center gap-1">
-              <span className="eyebrow">Repetições</span>
-              <input aria-label="Repetições" className={inputCls + ' num h-11 rounded-full text-center text-lg font-semibold'} value={item.repeticoes} onChange={(e) => onChange({ ...item, repeticoes: e.target.value })} placeholder="8-12" />
-            </div>
-            <Stepper label="Carga" value={item.carga} step={2.5} suffix={item.unidadeCarga ?? 'kg'} onChange={(v) => onChange({ ...item, carga: v || null, unidadeCarga: item.unidadeCarga ?? 'kg' })} />
             <Stepper label="Descanso" value={item.descansoSegundos} step={15} max={600} suffix="s" onChange={(v) => onChange({ ...item, descansoSegundos: v || null })} />
             <Stepper label="RIR alvo" value={item.rirAlvo} max={6} onChange={(v) => onChange({ ...item, rirAlvo: v })} />
             <div className="flex min-w-0 flex-col items-center gap-1">
@@ -282,7 +359,12 @@ function ItemSheet({
           )}
 
           <Field label="Orientação para o paciente">
-            <textarea className={inputCls + ' h-20 py-3'} placeholder="Amplitude, postura, cuidados…" value={item.observacoes ?? ''} onChange={(e) => onChange({ ...item, observacoes: e.target.value || null })} />
+            <textarea
+              className={inputCls + ' h-20 py-3'}
+              placeholder="Amplitude, postura, cuidados…"
+              value={obsLimpa(item.observacoes) ?? ''}
+              onChange={(e) => onChange(aplicarSeries({ ...item, observacoes: e.target.value || null }, seriesDoItem(item)))}
+            />
           </Field>
         </div>
       )}
