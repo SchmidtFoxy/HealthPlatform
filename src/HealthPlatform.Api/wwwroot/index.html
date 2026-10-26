@@ -6,6 +6,7 @@
     /* Paciente logado vai direto para a versao nova (/app), inclusive pelos links de chat e arquivos das notificacoes. ?classico=1 mantem a classica. */
     (function(){try{
       var q=new URLSearchParams(location.search);
+      var publica={'/redefinir-senha':1,'/confirmar-email':1,'/confirmar-troca-email':1,'/recuperar-senha':1};var caminho=location.pathname.replace(/\/+$/,'');if(publica[caminho]){location.replace('/app'+(caminho==='/recuperar-senha'?'/entrar':caminho)+location.search);return}
       if(q.get('ativarPaciente')==='1'){location.replace('/app/ativar?email='+encodeURIComponent(q.get('email')||'')+'&token='+encodeURIComponent(q.get('token')||''));return}
       if(q.has('classico')){sessionStorage.setItem('aesyn_classico','1');return}
       var u=JSON.parse(localStorage.getItem('hp_user')||'null'),exp=localStorage.getItem('hp_expires_at');
@@ -31,8 +32,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=0.56.1" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=0.56.1" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=0.56.1" />
-  <link rel="stylesheet" href="/app.css?v=0.65.2" />
-  <link rel="stylesheet" href="/operations.css?v=0.65.2">
+  <link rel="stylesheet" href="/app.css?v=0.65.3" />
+  <link rel="stylesheet" href="/operations.css?v=0.65.3">
 </head>
 <body>
   <div id="aesynLaunchScreen" class="aesyn-launch-screen" aria-hidden="true">
@@ -439,6 +440,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=0.65.2"></script>
+  <script src="/app.js?v=0.65.3"></script>
 </body>
 </html>

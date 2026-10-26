@@ -1,3 +1,8 @@
+## v0.65.3 — Telas públicas e boas-vindas do paciente na versão nova
+
+- Redefinir senha, confirmar e-mail e confirmar troca de e-mail agora abrem na versão nova; os links enviados por e-mail apontam para /app e os links antigos são redirecionados.
+- Boas-vindas do paciente no primeiro acesso: passo a passo com Hoje, check-in, treino, plano alimentar e chat, com atalhos para cada um. Pode ser revisto em Perfil → Rever boas-vindas.
+
 ## v0.65.2 — Gestão e avisos da equipe na versão nova
 
 - /app equipe: nova página Gestão (Perfil → Gestão) com:

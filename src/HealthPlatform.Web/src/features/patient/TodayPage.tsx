@@ -9,6 +9,7 @@ import { dataLonga, hojeIso, hora, n0, primeiroNome, saudacao } from '@/lib/form
 import { useSessao } from '@/lib/session';
 import { Avatar } from '@/components/account';
 import type { RefeicaoPortal, StatusRefeicao } from '@/lib/types';
+import { BoasVindasSheet, useOnboardingPaciente } from './BoasVindas';
 import { CheckInSheet } from './CheckInSheet';
 import { FecharDiaSheet } from './DiaryPage';
 import { MealSheet, STATUS_INFO, StatusButtons, somaNutrientes } from './meals';
@@ -39,6 +40,9 @@ export function TodayPage() {
   const treinos = useMeusTreinos();
   const plano = usePlanoAlimentar();
   const [checkin, setCheckin] = useState(false);
+  // Primeiro acesso: tutorial de boas-vindas ate o paciente concluir ou pular.
+  const onboarding = useOnboardingPaciente(sessao?.tipoUsuario === 'Paciente');
+  const [boasVindasFechada, setBoasVindasFechada] = useState(false);
   const [refeicaoAberta, setRefeicaoAberta] = useState<RefeicaoPortal | null>(null);
   const [fecharDia, setFecharDia] = useState(false);
   // Fim de tarde em diante: convite para fechar o dia, se ainda nao fechou.
@@ -390,6 +394,7 @@ export function TodayPage() {
       </div>
 
       <CheckInSheet open={checkin} onClose={() => setCheckin(false)} />
+      <BoasVindasSheet open={onboarding.data?.concluido === false && !boasVindasFechada} onClose={() => setBoasVindasFechada(true)} onCheckin={() => setCheckin(true)} />
       <FecharDiaSheet open={fecharDia} onClose={() => setFecharDia(false)} atual={null} />
       <MealSheet refeicao={refeicaoAberta} status={refeicaoAberta ? (statusPorRefeicao.get(refeicaoAberta.id) ?? 'Pendente') : 'Pendente'} onClose={() => setRefeicaoAberta(null)} />
     </Page>

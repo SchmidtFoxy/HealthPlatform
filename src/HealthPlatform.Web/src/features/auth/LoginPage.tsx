@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, Lock, Mail, MailCheck, Salad, Sparkles } from 'lucide-react';
-import { FormEvent, InputHTMLAttributes, ReactNode, useState } from 'react';
+import { FormEvent, InputHTMLAttributes, ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import simbolo from '@/assets/aesyn-symbol.webp';
 import { Button } from '@/components/ui';
@@ -470,5 +470,143 @@ export function AtivarPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------- Links publicos de e-mail
+
+function TelaPublica({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-full bg-bg lg:grid lg:grid-cols-[1.1fr_1fr]">
+      <PainelMarca />
+      <main className="relative z-10 -mt-8 flex flex-col rounded-t-[32px] bg-bg px-gutter pb-safe pt-8 shadow-[0_-24px_60px_-30px_rgb(0_0_0/0.6)] lg:mt-0 lg:items-center lg:justify-center lg:rounded-none lg:px-16 lg:shadow-none">
+        <div className="mx-auto w-full max-w-[400px] pb-8">
+          <Passo>{children}</Passo>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function Resultado({ ok, titulo, texto, email }: { ok: boolean; titulo: string; texto: string; email?: string }) {
+  return (
+    <div className="flex flex-col items-center text-center">
+      <motion.div
+        initial={{ scale: 0.6, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 220, damping: 16 }}
+        className={clsx('grid h-16 w-16 place-items-center rounded-full', ok ? 'bg-accent/15 text-accent' : 'bg-bad/10 text-bad')}
+      >
+        {ok ? <Check className="h-8 w-8" strokeWidth={3} /> : <Lock className="h-8 w-8" />}
+      </motion.div>
+      <h2 className="mt-5 font-display text-[26px] font-semibold tracking-tight">{titulo}</h2>
+      <p className="mt-2 max-w-xs text-[15px] text-muted">{texto}</p>
+      <Link to={email ? `/entrar?email=${encodeURIComponent(email)}` : '/entrar'} className="w-full">
+        <Button size="lg" className="mt-8 w-full">
+          Ir para entrar
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
+/** Link "esqueci a senha" do e-mail: define a nova senha. */
+export function RedefinirSenhaPage() {
+  const [params] = useSearchParams();
+  const email = params.get('email') ?? '';
+  const token = params.get('token') ?? '';
+  const [senha, setSenha] = useState('');
+  const [senha2, setSenha2] = useState('');
+  const [ver, setVer] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(false);
+  const [pronto, setPronto] = useState(false);
+  const valida = REGRAS_SENHA.every((r) => r.ok(senha));
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setErro(null);
+    if (!valida) return setErro('A senha ainda não atende a todos os requisitos.');
+    if (senha !== senha2) return setErro('As senhas não conferem.');
+    setCarregando(true);
+    try {
+      await api('/api/auth/password/redefinir', { method: 'POST', json: { email, token, novaSenha: senha, confirmacaoNovaSenha: senha2 } });
+      setPronto(true);
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : 'Não foi possível redefinir agora.');
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  if (!email || !token) return <TelaPublica><Resultado ok={false} titulo="Link incompleto" texto="Abra o link do e-mail exatamente como chegou, ou peça um novo em Esqueci a senha." /></TelaPublica>;
+  if (pronto) return <TelaPublica><Resultado ok titulo="Senha atualizada" texto="Pronto. Entre com a nova senha." email={email} /></TelaPublica>;
+  const olho = (
+    <button type="button" aria-label={ver ? 'Ocultar senha' : 'Mostrar senha'} onClick={() => setVer((v) => !v)} className="grid h-10 w-10 place-items-center rounded-full text-muted transition hover:bg-raised hover:text-fg">
+      {ver ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+    </button>
+  );
+  return (
+    <TelaPublica>
+      <h2 className="font-display text-[28px] font-semibold tracking-tight">Nova senha</h2>
+      <p className="mt-1.5 text-[15px] text-muted">
+        Para a conta <span className="font-semibold text-fg">{email}</span>.
+      </p>
+      <form onSubmit={submit} className="mt-7 flex flex-col gap-4">
+        <Campo label="Nova senha" icon={<Lock className="h-[18px] w-[18px]" />} type={ver ? 'text' : 'password'} autoComplete="new-password" required autoFocus value={senha} onChange={(e) => setSenha(e.target.value)} trailing={olho} />
+        <ul className="grid grid-cols-2 gap-x-3 gap-y-1 text-[13px]">
+          {REGRAS_SENHA.map((r) => (
+            <li key={r.l} className={clsx('flex items-center gap-1.5', r.ok(senha) ? 'text-ok' : 'text-faint')}>
+              <Check className="h-3.5 w-3.5 shrink-0" strokeWidth={3} /> {r.l}
+            </li>
+          ))}
+        </ul>
+        <Campo label="Repita a senha" icon={<Lock className="h-[18px] w-[18px]" />} type={ver ? 'text' : 'password'} autoComplete="new-password" required value={senha2} onChange={(e) => setSenha2(e.target.value)} />
+        <Erro texto={erro} />
+        <Button type="submit" size="lg" loading={carregando} className="mt-1 w-full">
+          Salvar nova senha
+        </Button>
+      </form>
+    </TelaPublica>
+  );
+}
+
+/** Links de confirmacao de e-mail e de troca de e-mail. Confirma sozinho ao abrir. */
+export function ConfirmarEmailPage({ troca }: { troca?: boolean }) {
+  const [params] = useSearchParams();
+  const usuarioId = params.get('userId') ?? '';
+  const token = params.get('token') ?? '';
+  const novoEmail = params.get('email') ?? '';
+  const [estado, setEstado] = useState<'carregando' | 'ok' | 'erro'>('carregando');
+  const [msg, setMsg] = useState('');
+  // O token so vale uma vez: o ref evita confirmar de novo quando o efeito roda duas vezes.
+  const enviado = useRef(false);
+  useEffect(() => {
+    if (enviado.current) return;
+    enviado.current = true;
+    if (!usuarioId || !token || (troca && !novoEmail)) {
+      setEstado('erro');
+      setMsg('O link está incompleto. Abra o link do e-mail exatamente como chegou.');
+      return;
+    }
+    api(troca ? '/api/conta/email/troca/confirmar' : '/api/conta/email/confirmacao/confirmar', { method: 'POST', json: troca ? { usuarioId, novoEmail, token } : { usuarioId, token } }).then(
+      () => setEstado('ok'),
+      (e) => {
+        setEstado('erro');
+        setMsg(e instanceof Error ? e.message : 'Não foi possível confirmar agora.');
+      },
+    );
+  }, [usuarioId, token, novoEmail, troca]);
+
+  return (
+    <TelaPublica>
+      {estado === 'carregando' ? (
+        <p className="text-center text-muted">Confirmando seu e-mail...</p>
+      ) : estado === 'ok' ? (
+        <Resultado ok titulo={troca ? 'E-mail alterado' : 'E-mail confirmado'} texto={troca ? `A partir de agora você entra com ${novoEmail}.` : 'Tudo certo com seu e-mail.'} email={troca ? novoEmail : undefined} />
+      ) : (
+        <Resultado ok={false} titulo="Não deu para confirmar" texto={msg || 'O link pode ter expirado. Peça um novo pela sua conta.'} />
+      )}
+    </TelaPublica>
   );
 }
