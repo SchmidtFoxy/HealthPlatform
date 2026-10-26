@@ -66,5 +66,9 @@ export function destinoDoLink(link: string, paciente: boolean) {
   if (paciente && Object.prototype.hasOwnProperty.call(app, link)) return `/app/${app[link]}`;
   const conversa = /^chat-profissional:([0-9a-f-]{36})$/i.exec(link);
   if (!paciente && conversa) return `/app/pro/mensagens/${conversa[1]}`;
+  const ficha = /^paciente:([0-9a-f-]{36})$/i.exec(link);
+  if (!paciente && ficha) return `/app/pro/pacientes/${ficha[1]}`;
+  const pro: Record<string, string> = { followups: 'pro/central?aba=contatos', pendencias: 'pro/central?aba=pendencias', solicitacoes: 'pro/central?aba=pedidos', agenda: 'pro/agenda', inicio: 'pro' };
+  if (!paciente && Object.prototype.hasOwnProperty.call(pro, link)) return `/app/${pro[link]}`;
   return `/?aesynPushLink=${encodeURIComponent(link)}`;
 }

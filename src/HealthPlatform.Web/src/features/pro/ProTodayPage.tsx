@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { AlertTriangle, CalendarClock, ChevronRight, ClipboardCheck, Dumbbell, FileCheck2, HeartPulse, Moon, PhoneCall, Users } from 'lucide-react';
+import { AlertTriangle, Bell, CalendarClock, ChevronRight, ClipboardCheck, Dumbbell, FileCheck2, HeartPulse, Moon, PhoneCall, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Card, Empty, Pill, SectionTitle, Skeleton } from '@/components/ui';
@@ -9,7 +9,7 @@ import { dataLonga, iniciais, n0, primeiroNome, saudacao, tempoRelativo } from '
 import { useSessao } from '@/lib/session';
 import type { SinalDiario } from '@/lib/types';
 import { useCentralDia } from './CentralPage';
-import { useDashboard, useSinais } from './queries';
+import { useAvisosNaoLidos, useDashboard, useSinais } from './queries';
 
 const NIVEL: Record<string, { label: string; tone: 'bad' | 'warn' | 'neutral' | 'ok'; ordem: number }> = {
   RevisarHoje: { label: 'Revisar hoje', tone: 'bad', ordem: 0 },
@@ -49,6 +49,7 @@ function LinhaSinal({ s }: { s: SinalDiario }) {
 export function ProTodayPage() {
   const sessao = useSessao();
   const dash = useDashboard();
+  const avisos = useAvisosNaoLidos();
   const sinais = useSinais();
   const central = useCentralDia();
   const c = central.data;
@@ -60,11 +61,17 @@ export function ProTodayPage() {
 
   return (
     <Page wide>
-      <header className="pb-2 pt-6">
-        <p className="text-sm text-muted">{dataLonga()}</p>
-        <h1 className="font-display text-[28px] font-semibold leading-tight tracking-tight">
-          {saudacao()}, {primeiroNome(dash.data?.profissionalNome ?? sessao?.nome)}
-        </h1>
+      <header className="flex items-start justify-between gap-3 pb-2 pt-6">
+        <div className="min-w-0">
+          <p className="text-sm text-muted">{dataLonga()}</p>
+          <h1 className="font-display text-[28px] font-semibold leading-tight tracking-tight">
+            {saudacao()}, {primeiroNome(dash.data?.profissionalNome ?? sessao?.nome)}
+          </h1>
+        </div>
+        <Link to="/pro/avisos" aria-label={avisos.data ? `Avisos, ${avisos.data} não lidos` : 'Avisos'} className="relative mt-1 grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-surface transition hover:border-accent/40">
+          <Bell className="h-5 w-5" />
+          {!!avisos.data && <span className="num absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-bold text-accent-ink">{avisos.data > 99 ? '99+' : avisos.data}</span>}
+        </Link>
       </header>
 
       {sinais.data && (

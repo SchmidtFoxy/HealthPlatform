@@ -40,3 +40,12 @@ export const useExercicios = () =>
     },
     staleTime: 5 * 60_000,
   });
+
+/** Quantos avisos da equipe ainda nao foram lidos (sino da tela Hoje). */
+export const useAvisosNaoLidos = () =>
+  useQuery({
+    queryKey: ['pro', 'avisos', 'contagem'],
+    queryFn: () => api<{ naoLidas: number }>('/api/notificacoes?lida=false&limite=1'),
+    select: (d) => d.naoLidas,
+    refetchInterval: 120_000,
+  });

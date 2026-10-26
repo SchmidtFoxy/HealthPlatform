@@ -1,3 +1,13 @@
+## v0.65.2 — Gestão e avisos da equipe na versão nova
+
+- /app equipe: nova página Gestão (Perfil → Gestão) com:
+  - Indicadores de 7, 30, 90 dias ou 1 ano: pacientes, consultas por status, comparecimento, atividade por semana, contatos, pendências, treinos e diário, quem pede atenção, exportar CSV e relatório.
+  - Carteira por prioridade (alta, média, baixa, sem sinais) com os sinais de cada paciente e o que fazer.
+  - Equipe (administradores): cadastrar membro com função, registro e senha temporária, editar, desativar e redefinir senha.
+  - Clínica: nome e CNPJ.
+- Nova tela Avisos com o sino na tela Hoje: mensagens, contatos atrasados, respostas de pedidos e consultas próximas; abrir leva direto ao lugar certo, marcar como lido ou não lido e ler todos.
+- Links de notificação da equipe (contatos, pendências, pedidos, agenda e ficha) passam a abrir na versão nova.
+
 ## v0.65.1 — Acesso do paciente e cadastro na versão nova
 
 - /app equipe, ficha do paciente ganhou o botão "Mais" com:

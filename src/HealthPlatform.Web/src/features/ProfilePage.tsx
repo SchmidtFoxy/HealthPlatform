@@ -121,6 +121,20 @@ export function ProfilePage() {
               </span>
               <ChevronRight className="h-5 w-5 text-muted" />
             </Link>
+            <Link to="/pro/gestao" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Gestão
+                <span className="block text-sm font-normal text-muted">Indicadores, carteira, equipe e dados da clínica</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
+            <Link to="/pro/avisos" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Avisos
+                <span className="block text-sm font-normal text-muted">Mensagens, contatos atrasados, pedidos e agenda</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
             <Link to="/pro/biblioteca" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Biblioteca
@@ -134,7 +148,7 @@ export function ProfilePage() {
           <span>
             Abrir versão clássica
             <span className="block text-sm font-normal text-muted">
-              {s?.tipoUsuario === 'Paciente' ? 'Exploração de esportes e demais módulos' : 'Gestão, equipe, configurações e demais módulos'}
+              {s?.tipoUsuario === 'Paciente' ? 'Exploração de esportes e demais módulos' : 'Módulos que ainda não chegaram aqui'}
             </span>
           </span>
           <ExternalLink className="h-5 w-5 text-muted" />
