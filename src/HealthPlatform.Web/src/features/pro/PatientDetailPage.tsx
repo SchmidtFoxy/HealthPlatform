@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ClipboardCheck, Copy, Dumbbell, Stethoscope, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
+import { BookCopy, ChevronLeft, ClipboardCheck, Copy, Dumbbell, Stethoscope, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -10,6 +10,7 @@ import { api } from '@/lib/api';
 import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/format';
 import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/types';
 import { RegistrarContatoSheet } from './CentralPage';
+import { SalvarModeloSheet, UsarModeloSheet } from './BibliotecaPage';
 import { AbaCuidados } from './CuidadosPro';
 import { AbaProntuario } from './ProntuarioPro';
 import { useHistoricoPaciente, usePaciente, usePlanosAlimentares, usePlanosTreino, useResumoClinico } from './queries';
@@ -236,6 +237,7 @@ function useDuplicar(tipo: 'dieta' | 'treino', pacienteId: string) {
 function AcoesPlano({ tipo, pacienteId, plano }: { tipo: 'dieta' | 'treino'; pacienteId: string; plano: { id: string; nome: string; status: string } }) {
   const ativar = useAtivar(tipo, pacienteId);
   const duplicar = useDuplicar(tipo, pacienteId);
+  const [modelo, setModelo] = useState(false);
   return (
     <div className="flex flex-wrap gap-2 border-t border-line/60 p-3">
       <Link to={`/pro/pacientes/${pacienteId}/${tipo}/${plano.id}`}>
@@ -246,6 +248,10 @@ function AcoesPlano({ tipo, pacienteId, plano }: { tipo: 'dieta' | 'treino'; pac
       <Button size="sm" variant="ghost" icon={<Copy className="h-4 w-4" />} loading={duplicar.isPending} onClick={() => duplicar.mutate(plano)}>
         Duplicar
       </Button>
+      <Button size="sm" variant="ghost" icon={<BookCopy className="h-4 w-4" />} onClick={() => setModelo(true)}>
+        Salvar como modelo
+      </Button>
+      <SalvarModeloSheet tipo={tipo} plano={modelo ? plano : null} onClose={() => setModelo(false)} />
       {plano.status === 'Ativo' ? (
         <Button size="sm" variant="ghost" className="ml-auto text-muted" loading={ativar.isPending} onClick={() => ativar.mutate({ id: plano.id, status: 'Concluido' })}>
           Arquivar
@@ -260,17 +266,24 @@ function AcoesPlano({ tipo, pacienteId, plano }: { tipo: 'dieta' | 'treino'; pac
 }
 
 function AbaDieta({ id }: { id: string }) {
+  const [usar, setUsar] = useState(false);
   const q = usePlanosAlimentares(id);
   const planos = [...(q.data ?? [])].sort((a, b) => Number(b.status === 'Ativo') - Number(a.status === 'Ativo') || b.createdAtUtc.localeCompare(a.createdAtUtc));
   if (q.isLoading) return <Skeleton className="mt-6 h-64" />;
   if (q.isError) return <ErrorBox error={q.error} onRetry={() => q.refetch()} />;
   return (
     <div className="mt-6 flex flex-col gap-4">
-      <Link to={`/pro/pacientes/${id}/dieta/novo`}>
-        <Button className="w-full" variant="outline" icon={<Plus className="h-4 w-4" />}>
-          Montar nova dieta
+      <div className="grid grid-cols-2 gap-2">
+        <Link to={`/pro/pacientes/${id}/dieta/novo`}>
+          <Button className="w-full" variant="outline" icon={<Plus className="h-4 w-4" />}>
+            Nova dieta
+          </Button>
+        </Link>
+        <Button className="w-full" variant="outline" icon={<BookCopy className="h-4 w-4" />} onClick={() => setUsar(true)}>
+          Usar modelo
         </Button>
-      </Link>
+      </div>
+      <UsarModeloSheet tipo="dieta" pacienteId={id} open={usar} onClose={() => setUsar(false)} />
       {planos.length === 0 && <Empty icon={<Salad className="h-5 w-5" />} title="Nenhum plano alimentar">Monte a primeira dieta com metas, refeições e substituições.</Empty>}
       {planos.map((p: PlanoAlimentarPro) => {
         const t = p.totaisDiarios;
@@ -313,17 +326,24 @@ function AbaDieta({ id }: { id: string }) {
 }
 
 function AbaTreino({ id }: { id: string }) {
+  const [usar, setUsar] = useState(false);
   const q = usePlanosTreino(id);
   const planos = [...(q.data ?? [])].sort((a, b) => Number(b.status === 'Ativo') - Number(a.status === 'Ativo') || b.createdAtUtc.localeCompare(a.createdAtUtc));
   if (q.isLoading) return <Skeleton className="mt-6 h-64" />;
   if (q.isError) return <ErrorBox error={q.error} onRetry={() => q.refetch()} />;
   return (
     <div className="mt-6 flex flex-col gap-4">
-      <Link to={`/pro/pacientes/${id}/treino/novo`}>
-        <Button className="w-full" variant="outline" icon={<Plus className="h-4 w-4" />}>
-          Montar novo treino
+      <div className="grid grid-cols-2 gap-2">
+        <Link to={`/pro/pacientes/${id}/treino/novo`}>
+          <Button className="w-full" variant="outline" icon={<Plus className="h-4 w-4" />}>
+            Novo treino
+          </Button>
+        </Link>
+        <Button className="w-full" variant="outline" icon={<BookCopy className="h-4 w-4" />} onClick={() => setUsar(true)}>
+          Usar modelo
         </Button>
-      </Link>
+      </div>
+      <UsarModeloSheet tipo="treino" pacienteId={id} open={usar} onClose={() => setUsar(false)} />
       {planos.length === 0 && <Empty icon={<Dumbbell className="h-5 w-5" />} title="Nenhum plano de treino">Monte a primeira divisão com séries, cargas e descanso.</Empty>}
       {planos.map((p: PlanoTreinoPro) => {
         const series = p.sessoes.reduce((s, x) => s + x.itens.reduce((a, i) => a + i.series, 0), 0);

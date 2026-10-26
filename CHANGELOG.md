@@ -1,3 +1,12 @@
+## v0.65.0 — Biblioteca do profissional na versão nova
+
+- /app equipe: nova Biblioteca (Perfil → Biblioteca) com:
+  - Modelos: treinos, dietas, sessões e refeições-modelo; ver o conteúdo, renomear, descrever, desativar e reativar; aplicar um treino ou dieta-modelo em qualquer paciente.
+  - Exercícios: catálogo com busca, filtro por grupo muscular, cadastro e edição (grupo, equipamento, execução e vídeo), desativar sem perder histórico e carregar a base inicial.
+  - Alimentos: tabela com busca, cadastro e edição dos valores por 100 g, desativar e reativar.
+- Ficha do paciente, abas Treino e Dieta: "Usar modelo" cria o plano a partir da biblioteca e abre no editor; cada plano ganhou "Salvar como modelo".
+- Perfil da equipe ganhou atalhos para a Central do dia e a Biblioteca.
+
 ## v0.64.4 — Fotos de evolução e linha do tempo na versão nova
 
 - /app equipe, Prontuário do paciente ganhou:
