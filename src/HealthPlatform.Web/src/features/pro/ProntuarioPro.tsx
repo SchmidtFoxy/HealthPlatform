@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { dataCurta, hojeIso, n1 } from '@/lib/format';
 import { inputLocal } from './CentralPage';
 import { Chips } from './CuidadosPro';
+import { CheckInsSecao } from '@/features/checkins';
 import { Fotos, LinhaDoTempo } from './FotosLinha';
 
 // ---------------------------------------------------------------- Tipos
@@ -117,7 +118,7 @@ interface Relatorio {
   conclusaoMedica: string | null;
 }
 
-type Secao = 'linha' | 'consultas' | 'evolucoes' | 'anamnese' | 'avaliacoes' | 'fotos' | 'exames' | 'relatorios';
+type Secao = 'linha' | 'checkins' | 'consultas' | 'evolucoes' | 'anamnese' | 'avaliacoes' | 'fotos' | 'exames' | 'relatorios';
 
 // ---------------------------------------------------------------- Utilidades
 
@@ -218,6 +219,7 @@ export function AbaProntuario({ id }: { id: string }) {
             { value: 'evolucoes', label: 'Evoluções' },
             { value: 'anamnese', label: 'Anamnese' },
             { value: 'avaliacoes', label: 'Avaliações' },
+            { value: 'checkins', label: 'Check-ins' },
             { value: 'fotos', label: 'Fotos' },
             { value: 'exames', label: 'Exames' },
             { value: 'relatorios', label: 'Relatórios' },
@@ -232,6 +234,7 @@ export function AbaProntuario({ id }: { id: string }) {
       {secao === 'exames' && <Exames id={id} />}
       {secao === 'relatorios' && <Relatorios id={id} />}
       {secao === 'fotos' && <Fotos id={id} />}
+      {secao === 'checkins' && <CheckInsSecao paciente={id} />}
       {secao === 'linha' && <LinhaDoTempo id={id} />}
     </div>
   );
