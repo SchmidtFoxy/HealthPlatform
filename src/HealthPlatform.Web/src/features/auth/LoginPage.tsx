@@ -145,7 +145,7 @@ export function LoginPage() {
 
                 <p className="mt-6 text-center text-xs text-faint">
                   Prefere o visual antigo?{' '}
-                  <a href="/" className="font-semibold text-muted hover:text-fg">
+                  <a href="/?classico=1" className="font-semibold text-muted hover:text-fg">
                     Abrir versão clássica
                   </a>
                 </p>

@@ -403,7 +403,7 @@ export function PatientDetailPage() {
                 <Mail className="h-4 w-4 shrink-0 text-info" /> E-mail
               </a>
             )}
-            <a href="/#pacientes" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4" title="Abre o prontuário completo na versão clássica">
+            <a href="/?classico=1#pacientes" className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface/70 px-2.5 text-[13px] font-semibold transition hover:border-accent/40 sm:flex-none sm:px-4" title="Abre o prontuário completo na versão clássica">
               <ExternalLink className="h-4 w-4 shrink-0 text-muted" /> Prontuário
             </a>
           </div>
