@@ -85,15 +85,29 @@ jobs:
         run: |
           $v = (Get-Content VERSION.txt -Raw).Trim()
           $h = $env:VPS_HOST
-          ./DEPLOY-PRODUCAO.ps1 -Aplicar `
-            -TargetVersion $v `
-            -VpsHost $h -VpsUser $env:VPS_USER `
-            -DatabaseName $env:DB_NAME `
-            -HealthUrl $env:HEALTH_URL `
-            -ApplicationService $env:APP_SERVICE `
-            -ProductionConfirmation "PRODUCAO:${h}:$v" `
-            -ActivationConfirmation "ATIVAR:${h}:$v" `
-            -MigrationSafetyConfirmation "VALIDAR-MIGRATIONS:${h}:$v"
+          try {
+            ./DEPLOY-PRODUCAO.ps1 -Aplicar `
+              -TargetVersion $v `
+              -VpsHost $h -VpsUser $env:VPS_USER `
+              -DatabaseName $env:DB_NAME `
+              -HealthUrl $env:HEALTH_URL `
+              -ApplicationService $env:APP_SERVICE `
+              -ProductionConfirmation "PRODUCAO:${h}:$v" `
+              -ActivationConfirmation "ATIVAR:${h}:$v" `
+              -MigrationSafetyConfirmation "VALIDAR-MIGRATIONS:${h}:$v" *>&1 | Tee-Object -FilePath deploy-output.txt
+          } catch {
+            $msg = $_.Exception.Message
+            Add-Content -Path deploy-output.txt -Value "ERRO: $msg"
+            Write-Host ("::error::" + ($msg -replace "`r?`n", ' | '))
+            exit 1
+          }
+
+      - name: Resumo da falha
+        if: failure() && steps.cfg.outputs.pronto == 'true'
+        run: |
+          # Leva as ultimas linhas do deploy para as anotacoes do job, visiveis na pagina do run.
+          [ -f deploy-output.txt ] || exit 0
+          tail -n 30 deploy-output.txt | sed 's/\x1b\[[0-9;]*m//g' | grep -v '^\s*$' | while IFS= read -r l; do echo "::warning::deploy: $l"; done
 
       - name: Guardar logs do deploy
         if: always() && steps.cfg.outputs.pronto == 'true'
