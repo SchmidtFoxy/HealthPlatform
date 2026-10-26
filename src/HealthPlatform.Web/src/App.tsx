@@ -14,6 +14,8 @@ import { useSessao } from './lib/session';
 import { useTema } from './lib/theme';
 
 const LiveWorkoutPage = lazy(() => import('./features/patient/LiveWorkoutPage').then((m) => ({ default: m.LiveWorkoutPage })));
+const ChatPage = lazy(() => import('./features/patient/ChatPage').then((m) => ({ default: m.ChatPage })));
+const FilesPage = lazy(() => import('./features/patient/FilesPage').then((m) => ({ default: m.FilesPage })));
 const ProTodayPage = lazy(() => import('./features/pro/ProTodayPage').then((m) => ({ default: m.ProTodayPage })));
 const PatientsPage = lazy(() => import('./features/pro/PatientsPage').then((m) => ({ default: m.PatientsPage })));
 const PatientDetailPage = lazy(() => import('./features/pro/PatientDetailPage').then((m) => ({ default: m.PatientDetailPage })));
@@ -87,7 +89,16 @@ export function App() {
             <Route path="/dieta" element={<DietPage />} />
             <Route path="/progresso" element={<ProgressPage />} />
             <Route path="/perfil" element={<ProfilePage />} />
+            <Route path="/arquivos" element={<FilesPage />} />
           </Route>
+          <Route
+            path="/chat"
+            element={
+              <Protegido papel="paciente">
+                <ChatPage />
+              </Protegido>
+            }
+          />
           <Route
             path="/treino/:sessaoId"
             element={

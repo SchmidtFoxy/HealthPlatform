@@ -1,3 +1,10 @@
+## v0.63.2 — Chat e arquivos do paciente na versão nova
+
+- /app: Chat com o profissional, com assunto da mensagem (Treino, Nutrição, Recuperação, Exames, Medicamentos), anexo de arquivo, aviso de urgência e atualização a cada 15 s.
+- /app: Arquivos com envio (PDF, foto ou documento até 15 MB), tipo e descrição, filtro por tipo, abrir e remover os próprios.
+- Hoje ganhou o botão de mensagens com contador de não lidas; Perfil leva ao chat e aos arquivos sem passar pela clássica.
+- Notificações de chat e arquivos do paciente abrem direto no /app.
+
 ## v0.63.1 — Paciente abre direto na versão nova
 
 - Paciente logado que abre aesyn.com.br (ou o app instalado) vai direto para a versão nova em /app.

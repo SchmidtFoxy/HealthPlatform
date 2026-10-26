@@ -1,4 +1,5 @@
-import { ExternalLink, LogOut, Monitor, Moon, Sun } from 'lucide-react';
+import { ChevronRight, ExternalLink, LogOut, Monitor, Moon, Sun } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Avatar, PAPEL, TrocarConta, useConta } from '@/components/account';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Segmented } from '@/components/ui';
@@ -45,27 +46,27 @@ export function ProfilePage() {
       <Card className="divide-y divide-line">
         {s?.tipoUsuario === 'Paciente' && (
           <>
-            <a href="/?classico=1&aesynPushLink=chat" className="flex items-center justify-between p-4 font-semibold">
+            <Link to="/chat" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Chat com seu profissional
                 <span className="block text-sm font-normal text-muted">Mensagens e dúvidas do acompanhamento</span>
               </span>
-              <ExternalLink className="h-5 w-5 text-muted" />
-            </a>
-            <a href="/?classico=1&aesynPushLink=arquivos" className="flex items-center justify-between p-4 font-semibold">
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
+            <Link to="/arquivos" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Arquivos e exames
                 <span className="block text-sm font-normal text-muted">Documentos enviados por você e pela equipe</span>
               </span>
-              <ExternalLink className="h-5 w-5 text-muted" />
-            </a>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
           </>
         )}
         <a href="/?classico=1" className="flex items-center justify-between p-4 font-semibold">
           <span>
             Abrir versão clássica
             <span className="block text-sm font-normal text-muted">
-              {s?.tipoUsuario === 'Paciente' ? 'Exames, chat, arquivos e demais módulos' : 'Gestão, equipe, agenda, exames e demais módulos'}
+              {s?.tipoUsuario === 'Paciente' ? 'Metas, medicamentos e demais módulos' : 'Gestão, equipe, agenda, exames e demais módulos'}
             </span>
           </span>
           <ExternalLink className="h-5 w-5 text-muted" />
