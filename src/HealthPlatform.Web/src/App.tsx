@@ -16,6 +16,8 @@ import { useTema } from './lib/theme';
 
 const LiveWorkoutPage = lazy(() => import('./features/patient/LiveWorkoutPage').then((m) => ({ default: m.LiveWorkoutPage })));
 const ChatPage = lazy(() => import('./features/patient/ChatPage').then((m) => ({ default: m.ChatPage })));
+const ExplorePage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExplorePage })));
+const ExploreDetailPage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExploreDetailPage })));
 const CarePage = lazy(() => import('./features/patient/CarePage').then((m) => ({ default: m.CarePage })));
 const FilesPage = lazy(() => import('./features/patient/FilesPage').then((m) => ({ default: m.FilesPage })));
 const ProTodayPage = lazy(() => import('./features/pro/ProTodayPage').then((m) => ({ default: m.ProTodayPage })));
@@ -94,6 +96,8 @@ export function App() {
             <Route path="/arquivos" element={<FilesPage />} />
             <Route path="/cuidados" element={<CarePage />} />
             <Route path="/diario" element={<DiaryPage />} />
+            <Route path="/explorar" element={<ExplorePage />} />
+            <Route path="/explorar/:codigo" element={<ExploreDetailPage />} />
           </Route>
           <Route
             path="/chat"
