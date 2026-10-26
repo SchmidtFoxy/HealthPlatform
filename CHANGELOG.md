@@ -1,3 +1,10 @@
+## v0.64.4 — Fotos de evolução e linha do tempo na versão nova
+
+- /app equipe, Prontuário do paciente ganhou:
+  - Fotos de evolução: enviar foto com posição (frente, costas, lados) e observação, comparar duas fotos lado a lado e marcar a área de foco numa cópia anotada, sem alterar a original.
+  - Linha do tempo: tudo o que aconteceu com o paciente agrupado por dia, com filtros por categoria (clínico, corpo, exames, treino, nutrição, rotina, metas e mensagens).
+- A linha do tempo esconde registros automáticos de wearable, junta a pressão arterial num item só e mostra anexos do chat pelo nome.
+
 ## v0.64.3 — Prontuário do paciente na versão nova
 
 - /app equipe, ficha do paciente: nova aba Prontuário, com:

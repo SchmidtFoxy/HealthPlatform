@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { dataCurta, hojeIso, n1 } from '@/lib/format';
 import { inputLocal } from './CentralPage';
 import { Chips } from './CuidadosPro';
+import { Fotos, LinhaDoTempo } from './FotosLinha';
 
 // ---------------------------------------------------------------- Tipos
 
@@ -116,7 +117,7 @@ interface Relatorio {
   conclusaoMedica: string | null;
 }
 
-type Secao = 'consultas' | 'evolucoes' | 'anamnese' | 'avaliacoes' | 'exames' | 'relatorios';
+type Secao = 'linha' | 'consultas' | 'evolucoes' | 'anamnese' | 'avaliacoes' | 'fotos' | 'exames' | 'relatorios';
 
 // ---------------------------------------------------------------- Utilidades
 
@@ -203,7 +204,7 @@ function Rodape({ salvar, pendente, valido = true, rotulo = 'Salvar' }: { salvar
 
 // ---------------------------------------------------------------- Aba
 
-/** Aba "Prontuario" da ficha: consultas, evolucoes (SOAP), anamnese, avaliacoes, exames e relatorios. */
+/** Aba "Prontuario" da ficha: consultas, evolucoes (SOAP), anamnese, avaliacoes, fotos, exames, relatorios e linha do tempo. */
 export function AbaProntuario({ id }: { id: string }) {
   const [secao, setSecao] = useState<Secao>('consultas');
   return (
@@ -217,8 +218,10 @@ export function AbaProntuario({ id }: { id: string }) {
             { value: 'evolucoes', label: 'Evoluções' },
             { value: 'anamnese', label: 'Anamnese' },
             { value: 'avaliacoes', label: 'Avaliações' },
+            { value: 'fotos', label: 'Fotos' },
             { value: 'exames', label: 'Exames' },
             { value: 'relatorios', label: 'Relatórios' },
+            { value: 'linha', label: 'Linha do tempo' },
           ]}
         />
       </div>
@@ -228,6 +231,8 @@ export function AbaProntuario({ id }: { id: string }) {
       {secao === 'avaliacoes' && <Avaliacoes id={id} />}
       {secao === 'exames' && <Exames id={id} />}
       {secao === 'relatorios' && <Relatorios id={id} />}
+      {secao === 'fotos' && <Fotos id={id} />}
+      {secao === 'linha' && <LinhaDoTempo id={id} />}
     </div>
   );
 }
