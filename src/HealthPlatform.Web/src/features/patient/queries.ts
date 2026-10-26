@@ -33,8 +33,8 @@ export function useRegistrarCheckIn() {
 export function useAdesaoRefeicao() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ refeicaoId, status }: { refeicaoId: string; status: Exclude<StatusRefeicao, 'Pendente'> }) =>
-      api(`/api/portal/me/refeicoes/${refeicaoId}/adesao`, { method: 'POST', json: { status, observacao: null } }),
+    mutationFn: ({ refeicaoId, status, observacao }: { refeicaoId: string; status: Exclude<StatusRefeicao, 'Pendente'>; observacao?: string }) =>
+      api(`/api/portal/me/refeicoes/${refeicaoId}/adesao`, { method: 'POST', json: { status, observacao: observacao ?? null } }),
     onMutate: async ({ refeicaoId, status }) => {
       await qc.cancelQueries({ queryKey: ['p', 'home'] });
       const antes = qc.getQueryData<HomePaciente>(['p', 'home']);

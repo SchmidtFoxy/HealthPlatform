@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, ChevronLeft, ChevronRight, Info, Minus, Pause, Plus, RotateCcw, Timer, Trophy, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Info, Minus, Pause, Plus, Repeat2, RotateCcw, ShieldAlert, Timer, Trophy, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, ErrorBox, Ring, Sheet, Skeleton, toast } from '@/components/ui';
@@ -10,7 +10,7 @@ import { mmss, n0, n1 } from '@/lib/format';
 import type { ItemTreinoPortal, SessaoTreinoPortal } from '@/lib/types';
 import { useHistoricoTreinos, useMeusTreinos } from './queries';
 import { obsLimpa, seriesDoItem } from '@/lib/series';
-import { novoAndamento, salvarAndamento, SerieRegistro, treinoEmAndamento, TreinoAndamento } from './workout-store';
+import { novoAndamento, salvarAndamento, SerieRegistro, Troca, treinoEmAndamento, TreinoAndamento } from './workout-store';
 
 // ------------------------------------------------------------ utilidades de feedback
 
@@ -219,6 +219,7 @@ export function LiveWorkoutPage() {
   const [finalizar, setFinalizar] = useState(false);
   const [sair, setSair] = useState(false);
   const [detalhe, setDetalhe] = useState(false);
+  const [trocar, setTrocar] = useState(false);
   const [rpe, setRpe] = useState(7);
   const [conclusao, setConclusao] = useState<Conclusao | null>(null);
   const [focoSel, setFocoSel] = useState<number | null>(null);
@@ -274,6 +275,8 @@ export function LiveWorkoutPage() {
   const alvos = seriesDoItem(it);
   const alvo = (i: number) => alvos[i] ?? alvos[alvos.length - 1];
   const obs = obsLimpa(it.observacoes);
+  const troca = t.trocas?.[it.id];
+  const nomeDe = (x: ItemTreinoPortal) => t.trocas?.[x.id]?.nome ?? x.exercicio;
 
   const atualizarSerie = (idx: number, s: SerieRegistro) => setT((x) => x && { ...x, series: { ...x.series, [it.id]: x.series[it.id].map((o, i) => (i === idx ? s : o)) } });
 
@@ -325,7 +328,7 @@ export function LiveWorkoutPage() {
       const cargaMax = ss.reduce<number | null>((m, s) => (s.carga != null && (m == null || s.carga > m) ? s.carga : m), null);
       ss.forEach((s) => (volume += (s.carga ?? 0) * (s.reps ?? 0)));
       const ant = melhor.get(item.id);
-      if (cargaMax != null && ant != null && cargaMax > ant) recordes.push({ nome: item.exercicio, carga: cargaMax, anterior: ant });
+      if (cargaMax != null && ant != null && cargaMax > ant && !t.trocas?.[item.id]) recordes.push({ nome: item.exercicio, carga: cargaMax, anterior: ant });
       return {
         itemTreinoId: item.id,
         seriesRealizadas: ss.length,
@@ -335,8 +338,8 @@ export function LiveWorkoutPage() {
         esforcoPercebido: rpe,
         concluido: ss.length >= item.series,
         observacoes: ss.length ? 'Séries: ' + ss.map((s) => `${s.reps ?? '-'}×${s.carga != null ? n1(s.carga) : '-'}`).join(' · ') : null,
-        exercicioAlternativoId: null,
-        motivoAlternativa: null,
+        exercicioAlternativoId: t.trocas?.[item.id]?.exercicioId ?? null,
+        motivoAlternativa: t.trocas?.[item.id]?.motivo ?? null,
         rirRealizado: null,
       };
     });
@@ -412,7 +415,7 @@ export function LiveWorkoutPage() {
                       {ok ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}
                     </span>
                     <span className="max-w-[9rem] truncate lg:min-w-0 lg:max-w-none lg:flex-1">
-                      {x.exercicio}
+                      {nomeDe(x)}
                       <span className="num hidden text-[12px] font-normal text-muted lg:block">
                         {nFeitas}/{ss.length} séries{x.grupoMuscular ? ` · ${x.grupoMuscular}` : ''}
                       </span>
@@ -432,13 +435,19 @@ export function LiveWorkoutPage() {
                   Exercício {atual + 1} de {itens.length}
                   {it.grupoMuscular && ` · ${it.grupoMuscular}`}
                 </p>
-                <h1 className="mt-1.5 font-display text-[28px] font-semibold leading-[1.1] tracking-tight lg:text-[34px]">{it.exercicio}</h1>
+                <h1 className="mt-1.5 font-display text-[28px] font-semibold leading-[1.1] tracking-tight lg:text-[34px]">{nomeDe(it)}</h1>
+                {troca && <p className="mt-1 text-sm text-muted">em vez de {it.exercicio}</p>}
               </div>
-              {(it.descricao || obs || it.videoUrl) && (
-                <button aria-label="Como executar" onClick={() => setDetalhe(true)} className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-raised text-muted">
-                  <Info className="h-5 w-5" />
+              <div className="mt-1 flex shrink-0 gap-2">
+                <button aria-label="Trocar exercício" onClick={() => setTrocar(true)} className={clsx('grid h-10 w-10 place-items-center rounded-full', troca ? 'bg-accent/15 text-accent' : 'bg-raised text-muted')}>
+                  <Repeat2 className="h-5 w-5" />
                 </button>
-              )}
+                {!troca && (it.descricao || obs || it.videoUrl) && (
+                  <button aria-label="Como executar" onClick={() => setDetalhe(true)} className="grid h-10 w-10 place-items-center rounded-full bg-raised text-muted">
+                    <Info className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="mt-3 flex flex-wrap gap-2 text-[13px]">
@@ -494,7 +503,7 @@ export function LiveWorkoutPage() {
                 <p className="text-sm text-muted">Todas as séries foram registradas.</p>
                 {atual < itens.length - 1 ? (
                   <Button size="lg" className="mt-4 w-full" onClick={() => ir(atual + 1)}>
-                    Próximo: {itens[atual + 1].exercicio}
+                    Próximo: {nomeDe(itens[atual + 1])}
                   </Button>
                 ) : (
                   <Button size="lg" className="mt-4 w-full" onClick={() => setFinalizar(true)}>
@@ -541,6 +550,24 @@ export function LiveWorkoutPage() {
           />
         )}
       </AnimatePresence>
+
+      <TrocarSheet
+        open={trocar}
+        item={it}
+        troca={troca}
+        onClose={() => setTrocar(false)}
+        onEscolher={(x) => {
+          setT((a) => {
+            if (!a) return a;
+            const trocas = { ...(a.trocas ?? {}) };
+            if (x) trocas[it.id] = x;
+            else delete trocas[it.id];
+            return { ...a, trocas };
+          });
+          setTrocar(false);
+          if (x) toast(`Hoje: ${x.nome}`);
+        }}
+      />
 
       <Sheet open={detalhe} onClose={() => setDetalhe(false)} title={it.exercicio}>
         <div className="flex flex-col gap-3 text-[15px]">
@@ -663,5 +690,96 @@ function Celebracao({ c, nome, onFechar }: { c: Conclusao; nome: string; onFecha
         Voltar para hoje
       </Button>
     </div>
+  );
+}
+
+// ------------------------------------------------------------ trocar exercicio
+
+const MOTIVOS = [
+  { v: 'EquipamentoOcupado', l: 'Equipamento ocupado' },
+  { v: 'SemEquipamento', l: 'Sem o equipamento' },
+  { v: 'Preferencia', l: 'Prefiro outra opção' },
+  { v: 'DorDesconforto', l: 'Dor ou desconforto' },
+];
+
+interface Alternativas {
+  exercicioOriginal: string;
+  bloqueadoPorSeguranca: boolean;
+  mensagem: string;
+  alternativas: { exercicioId: string; nome: string; grupoMuscular: string | null; equipamento: string | null; compatibilidadePercentual: number }[];
+}
+
+/** Alternativas do catalogo do profissional para o exercicio, pelo motivo da troca. Vale so para este treino. */
+function TrocarSheet({ open, item, troca, onClose, onEscolher }: { open: boolean; item: ItemTreinoPortal; troca?: Troca; onClose: () => void; onEscolher: (t: Troca | null) => void }) {
+  const [motivo, setMotivo] = useState(troca?.motivo ?? 'EquipamentoOcupado');
+  useEffect(() => {
+    if (open) setMotivo(troca?.motivo ?? 'EquipamentoOcupado');
+  }, [open, troca?.motivo]);
+  const q = useQuery({
+    queryKey: ['treino-alternativas', item.id, motivo],
+    queryFn: () => api<Alternativas>(`/api/portal/me/treino/alternativas/${item.id}?motivo=${motivo}`),
+    enabled: open,
+    staleTime: 5 * 60_000,
+  });
+  const d = q.data;
+  return (
+    <Sheet open={open} onClose={onClose} title="Trocar exercício">
+      <p className="-mt-1 mb-4 text-sm text-muted">
+        No lugar de <span className="font-semibold text-fg">{item.exercicio}</span>, só neste treino. Seu profissional vê a troca no histórico.
+      </p>
+      <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Motivo">
+        {MOTIVOS.map((m) => (
+          <button
+            key={m.v}
+            type="button"
+            aria-pressed={motivo === m.v}
+            onClick={() => setMotivo(m.v)}
+            className={clsx('rounded-full border px-3.5 py-1.5 text-sm font-semibold transition', motivo === m.v ? 'border-accent bg-accent/10 text-accent' : 'border-line text-muted hover:text-fg')}
+          >
+            {m.l}
+          </button>
+        ))}
+      </div>
+      {q.isLoading ? (
+        <Skeleton className="h-40" />
+      ) : q.error ? (
+        <ErrorBox error={q.error} onRetry={() => q.refetch()} />
+      ) : d?.bloqueadoPorSeguranca ? (
+        <div className="flex gap-3 rounded-xl border border-warn/40 bg-warn/[0.06] p-4 text-sm">
+          <ShieldAlert className="h-5 w-5 shrink-0 text-warn" />
+          <div>
+            <p className="font-semibold">Priorize sua segurança</p>
+            <p className="mt-1 text-muted">{d.mensagem}</p>
+          </div>
+        </div>
+      ) : !d?.alternativas.length ? (
+        <p className="rounded-xl bg-raised p-4 text-sm text-muted">Nenhuma alternativa do mesmo grupo muscular no catálogo do seu profissional. Mantenha o prescrito ou fale com ele pelo chat.</p>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {d.alternativas.map((a) => {
+            const sel = troca?.exercicioId === a.exercicioId;
+            return (
+              <button
+                key={a.exercicioId}
+                onClick={() => onEscolher({ exercicioId: a.exercicioId, nome: a.nome, motivo })}
+                className={clsx('flex items-center gap-3 rounded-xl border p-3.5 text-left transition', sel ? 'border-accent bg-accent/10' : 'border-line hover:bg-raised/50')}
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{a.nome}</span>
+                  <span className="block text-sm text-muted">{[a.grupoMuscular, a.equipamento].filter(Boolean).join(' · ')}</span>
+                </span>
+                <span className="num shrink-0 text-sm font-semibold text-accent">{n0(a.compatibilidadePercentual)}%</span>
+              </button>
+            );
+          })}
+          <p className="mt-1 text-xs text-faint">Porcentagem de semelhança com o exercício prescrito.</p>
+        </div>
+      )}
+      {troca && (
+        <Button variant="outline" className="mt-4 w-full" onClick={() => onEscolher(null)}>
+          Voltar ao prescrito
+        </Button>
+      )}
+    </Sheet>
   );
 }
