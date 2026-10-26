@@ -198,3 +198,49 @@ export function ExamesSecao() {
     </section>
   );
 }
+
+interface Passivo {
+  totalAmostras: number;
+  fontes: { fonte: string; rotulo: string; amostras: number; ultimaSincronizacaoUtc: string | null; comDadosRecentes: boolean }[];
+  metricas: { metrica: string; rotulo: string; unidade: string; ultimoValor: number | null; total: number | null; variacaoPercentual7Dias: number | null }[];
+  mensagemSeguranca: string;
+}
+
+const SOMADAS = ['Passos', 'SonoMinutos', 'EnergiaAtiva', 'Distancia', 'MinutosAtivos'];
+
+/** Sinais de relogios e apps de saude (Apple Health, Health Connect, Garmin). So aparece quando ha dados. */
+export function SinaisSecao() {
+  const q = useQuery({ queryKey: ['p', 'passivo'], queryFn: () => api<Passivo>('/api/portal/me/monitoramento-passivo?dias=14') });
+  const d = q.data;
+  if (!d?.totalAmostras) return null;
+  const fontes = d.fontes.filter((f) => f.amostras > 0);
+  return (
+    <section className="mt-8">
+      <div className="mb-3 flex items-end justify-between">
+        <h2 className="font-display text-[17px] font-semibold tracking-tight">Sinais conectados</h2>
+        <span className="text-sm text-muted">{fontes.map((f) => f.rotulo).join(' · ')}</span>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+        {d.metricas.slice(0, 8).map((m) => {
+          const v = SOMADAS.includes(m.metrica) && m.total != null ? m.total : m.ultimoValor;
+          return (
+            <Card key={m.metrica} className="p-4">
+              <p className="text-[13px] text-muted">{m.rotulo}</p>
+              <p className="num mt-1 text-[22px] font-semibold leading-none">
+                {v != null ? n1(v) : '—'}
+                <span className="ml-1 text-[13px] font-normal text-muted">{m.unidade}</span>
+              </p>
+              {m.variacaoPercentual7Dias != null && (
+                <p className="num mt-1.5 text-[12px] text-muted">
+                  {m.variacaoPercentual7Dias > 0 ? '+' : ''}
+                  {n1(m.variacaoPercentual7Dias)}% vs. 7 dias antes
+                </p>
+              )}
+            </Card>
+          );
+        })}
+      </div>
+      <p className="mt-2 text-[12px] text-faint">{d.mensagemSeguranca}</p>
+    </section>
+  );
+}

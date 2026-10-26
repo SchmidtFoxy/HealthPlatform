@@ -89,6 +89,13 @@ export function ProfilePage() {
               </span>
               <ChevronRight className="h-5 w-5 text-muted" />
             </Link>
+            <Link to="/jornada" className="flex items-center justify-between p-4 font-semibold">
+              <span>
+                Sua jornada
+                <span className="block text-sm font-normal text-muted">Linha do tempo do acompanhamento</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </Link>
             <Link to="/explorar" className="flex items-center justify-between p-4 font-semibold">
               <span>
                 Explorar

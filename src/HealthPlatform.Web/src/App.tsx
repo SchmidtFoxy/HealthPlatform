@@ -19,6 +19,7 @@ const ChatPage = lazy(() => import('./features/patient/ChatPage').then((m) => ({
 const ExplorePage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExplorePage })));
 const ExploreDetailPage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExploreDetailPage })));
 const AccountPage = lazy(() => import('./features/AccountPage').then((m) => ({ default: m.AccountPage })));
+const JourneyPage = lazy(() => import('./features/patient/JourneyPage').then((m) => ({ default: m.JourneyPage })));
 const CarePage = lazy(() => import('./features/patient/CarePage').then((m) => ({ default: m.CarePage })));
 const FilesPage = lazy(() => import('./features/patient/FilesPage').then((m) => ({ default: m.FilesPage })));
 const ProTodayPage = lazy(() => import('./features/pro/ProTodayPage').then((m) => ({ default: m.ProTodayPage })));
@@ -98,6 +99,7 @@ export function App() {
             <Route path="/arquivos" element={<FilesPage />} />
             <Route path="/cuidados" element={<CarePage />} />
             <Route path="/diario" element={<DiaryPage />} />
+            <Route path="/jornada" element={<JourneyPage />} />
             <Route path="/explorar" element={<ExplorePage />} />
             <Route path="/explorar/:codigo" element={<ExploreDetailPage />} />
           </Route>

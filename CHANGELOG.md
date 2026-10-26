@@ -1,3 +1,9 @@
+## v0.63.8 — Jornada e sinais conectados na versão nova
+
+- /app Sua jornada: linha do tempo de consultas, avaliações, exames, metas, diário, check-ins, treinos e pedidos, agrupada por mês, com período de 3 meses, 6 meses ou 1 ano. Cada evento abre a tela correspondente.
+- Progresso mostra os sinais de Apple Health, Health Connect e Garmin (passos, FC de repouso, sono…) quando há dados sincronizados.
+- Perfil leva à Jornada.
+
 ## v0.63.7 — Minha conta na versão nova
 
 - /app Minha conta (paciente e equipe): editar nome, trocar ou remover a foto, escolher quais avisos receber (mensagens, planos, lembretes, check-ins) e trocar a senha.
