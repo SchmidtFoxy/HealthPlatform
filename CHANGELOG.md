@@ -1,3 +1,9 @@
+## v0.63.7 — Minha conta na versão nova
+
+- /app Minha conta (paciente e equipe): editar nome, trocar ou remover a foto, escolher quais avisos receber (mensagens, planos, lembretes, check-ins) e trocar a senha.
+- Privacidade: versões aceitas dos Termos e da Política, resumos, aceite quando há versão nova, direitos, pedido de exclusão dos dados e desativação da conta com senha e confirmação.
+- Perfil mostra a foto, leva à Minha conta e avisa quando há termos novos para aceitar.
+
 ## v0.63.6 — Explorar na versão nova
 
 - /app Explorar: todos os caminhos da clássica (começar um esporte, mover em casa, pouco tempo, viagem, ao ar livre, fundamentos, starter packs, esportes de quadra e campo, natação, triathlon, artes marciais, remo, trekking e recreativos), com filtros por espaço, recurso, tempo e modalidade, e jornada iniciante por modalidade.

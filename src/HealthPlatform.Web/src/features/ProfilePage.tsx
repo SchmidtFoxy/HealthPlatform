@@ -1,5 +1,6 @@
-import { ChevronRight, ExternalLink, LogOut, Monitor, Moon, Sun } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ChevronRight, ExternalLink, LogOut, Monitor, Moon, ShieldAlert, Sun } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { useMinhaConta, usePrivacidade } from '@/features/AccountPage';
 import { Avatar, PAPEL, TrocarConta, useConta } from '@/components/account';
 import { NotificacoesCard } from '@/components/notificacoes';
 import { Page, PageHeader } from '@/components/shell';
@@ -10,6 +11,10 @@ import { Tema, useTema } from '@/lib/theme';
 export function ProfilePage() {
   const s = useSessao();
   const conta = useConta();
+  const base = useLocation().pathname.startsWith('/pro') ? '/pro' : '';
+  const minha = useMinhaConta().data;
+  const priv = usePrivacidade().data;
+  const aceitePendente = priv && !(priv.termos.atualizado && priv.politicaPrivacidade.atualizada);
   const [tema, setTema] = useTema();
   return (
     <Page>
@@ -21,13 +26,26 @@ export function ProfilePage() {
           </Button>
         }
       />
-      <Card className="flex items-center gap-4 p-5">
-        <Avatar nome={s?.nome} tipo={s?.tipoUsuario} size="lg" />
-        <div className="min-w-0">
-          <p className="truncate font-display text-lg font-semibold">{s?.nome}</p>
-          <p className="text-sm text-muted">{s ? PAPEL[s.tipoUsuario] : ''}</p>
-        </div>
-      </Card>
+      {aceitePendente && (
+        <Link to={`${base}/conta`} className="mb-3 flex items-center gap-3 rounded-xl2 border border-warn/40 bg-warn/[0.06] p-4">
+          <ShieldAlert className="h-5 w-5 shrink-0 text-warn" />
+          <span className="min-w-0 flex-1 text-sm">
+            <b className="block">Termos atualizados</b>
+            Revise e registre o aceite dos Termos e da Política de Privacidade.
+          </span>
+          <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
+        </Link>
+      )}
+      <Link to={`${base}/conta`} className="block">
+        <Card className="flex items-center gap-4 p-5 transition active:scale-[0.99]">
+          {minha?.fotoPerfilDataUrl ? <img src={minha.fotoPerfilDataUrl} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover" /> : <Avatar nome={s?.nome} tipo={s?.tipoUsuario} size="lg" />}
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-lg font-semibold">{s?.nome}</p>
+            <p className="text-sm text-muted">{s ? PAPEL[s.tipoUsuario] : ''} · Minha conta</p>
+          </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
+        </Card>
+      </Link>
 
       <p className="eyebrow mb-2 mt-7">Trocar de conta</p>
       <TrocarConta />
