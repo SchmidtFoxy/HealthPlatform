@@ -333,7 +333,7 @@ export function Field({ label, children, hint }: { label: string; children: Reac
 }
 
 export const inputCls =
-  'h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3.5 text-[15px] text-fg outline-none transition placeholder:text-faint focus:border-accent focus:ring-2 focus:ring-accent/25';
+  'h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3.5 text-base text-fg sm:text-[15px] outline-none transition placeholder:text-faint focus:border-accent focus:ring-2 focus:ring-accent/25';
 
 // ---------------------------------------------------------------- Bottom sheet
 

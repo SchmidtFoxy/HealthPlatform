@@ -81,7 +81,7 @@ export function ProTodayPage() {
         ))}
       </motion.div>
 
-      <div className="grid gap-x-6 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-x-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <section>
           <SectionTitle action={<Link to="/pro/pacientes" className="text-sm font-semibold text-accent">Todos</Link>}>Quem pede atenção</SectionTitle>
           <Card className="p-2">

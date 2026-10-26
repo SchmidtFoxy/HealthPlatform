@@ -579,7 +579,7 @@ export function DietEditorPage() {
                             <input aria-label="Nome da refeição" className="w-full bg-transparent font-display text-[17px] font-semibold outline-none" value={r.nome} onChange={(e) => upRef(r.k, (x) => ({ ...x, nome: e.target.value }))} />
                             <label className="mt-0.5 inline-flex items-center gap-1.5 text-muted">
                               <Clock className="h-3.5 w-3.5" />
-                              <input aria-label="Horário" type="time" className="num w-[4.75rem] bg-transparent text-[13px] font-semibold text-muted outline-none [&::-webkit-calendar-picker-indicator]:hidden" value={r.horario} onChange={(e) => upRef(r.k, (x) => ({ ...x, horario: e.target.value }))} />
+                              <input aria-label="Horário" type="time" className="num w-[5.5rem] bg-transparent text-base sm:w-[4.75rem] sm:text-[13px] font-semibold text-muted outline-none [&::-webkit-calendar-picker-indicator]:hidden" value={r.horario} onChange={(e) => upRef(r.k, (x) => ({ ...x, horario: e.target.value }))} />
                             </label>
                           </div>
                           <div className="pt-1 text-right">
