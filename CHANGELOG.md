@@ -1,3 +1,9 @@
+## v0.62.8 — Treino do dia marca concluído e mostra o próximo
+
+- /app: depois de registrar o treino, o card "Treino de hoje" vira "Treino de hoje concluído" com duração, exercícios e esforço, e aponta o próximo treino (amanhã ou o próximo dia da agenda).
+- /app: no plano, a sessão feita hoje ganha selo "Feito hoje" e o destaque passa para a próxima; a semana mostra um check nos dias treinados.
+- Planos sem dias da semana (A, B, C em rodízio) agora seguem a sequência a partir do último treino, em vez de mostrar sempre a primeira sessão.
+
 ## v0.62.7 — Celulares sempre na versão nova
 
 - Servidor passa a mandar `Cache-Control: no-cache` para páginas, scripts, estilos e service workers (arquivos com hash do /app ficam em cache longo), então o celular sempre confere se há versão nova.

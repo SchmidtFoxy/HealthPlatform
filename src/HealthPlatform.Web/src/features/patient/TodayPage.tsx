@@ -1,17 +1,18 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ChevronRight, Dumbbell, Flame, Moon, Play, Sparkles, Zap } from 'lucide-react';
+import { Check, ChevronRight, Dumbbell, Flame, Moon, Play, Sparkles, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Button, Card, ErrorBox, Pill, Ring, SectionTitle, Skeleton } from '@/components/ui';
-import { dataLonga, hora, n0, primeiroNome, saudacao, sessaoEhDoDia } from '@/lib/format';
+import { dataLonga, hora, n0, primeiroNome, saudacao } from '@/lib/format';
 import { useSessao } from '@/lib/session';
 import { Avatar } from '@/components/account';
 import type { RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { CheckInSheet } from './CheckInSheet';
 import { MealSheet, STATUS_INFO, StatusButtons, somaNutrientes } from './meals';
-import { useHome, useMeusTreinos, usePlanoAlimentar } from './queries';
+import { useHistoricoTreinos, useHome, useMeusTreinos, usePlanoAlimentar } from './queries';
+import { treinoDoDia } from './treino-dia';
 import { treinoEmAndamento } from './workout-store';
 
 const fade = (i: number) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { delay: 0.04 * i, duration: 0.45, ease: [0.22, 1, 0.36, 1] } });
@@ -39,11 +40,10 @@ export function TodayPage() {
   const [refeicaoAberta, setRefeicaoAberta] = useState<RefeicaoPortal | null>(null);
 
   const plano0 = treinos.data?.planos[0];
-  const sessaoHoje = useMemo(() => {
-    if (!plano0) return null;
-    const doDia = plano0.sessoes.filter((s) => sessaoEhDoDia(s.diasSemana));
-    return doDia[0] ?? null;
-  }, [plano0]);
+  const hist = useHistoricoTreinos(30);
+  const dia = useMemo(() => treinoDoDia(plano0, hist.data?.execucoes), [plano0, hist.data]);
+  const sessaoHoje = dia.hoje;
+  const feito = dia.feitosHoje[0];
   const andamento = treinoEmAndamento();
 
   const statusPorRefeicao = new Map<string, StatusRefeicao>((home.data?.adesaoNutricional.refeicoes ?? []).map((r) => [r.refeicaoId, r.status]));
@@ -107,7 +107,7 @@ export function TodayPage() {
     <>
       <SectionTitle action={<Link to="/treino" className="text-sm font-semibold text-accent">Ver plano</Link>}>Treino de hoje</SectionTitle>
       <motion.div {...fade(2)}>
-        {treinos.isLoading ? (
+        {treinos.isLoading || hist.isLoading ? (
           <Skeleton className="h-40" />
         ) : !plano0 ? (
           <Card className="p-5 text-muted">Seu profissional ainda não liberou um plano de treino.</Card>
@@ -117,6 +117,35 @@ export function TodayPage() {
             <p className="mt-2 font-display text-xl font-semibold">{andamento.sessaoNome}</p>
             <p className="mt-1 text-sm text-muted">Você parou no meio. Toque para continuar de onde estava.</p>
           </Card>
+        ) : feito && !sessaoHoje ? (
+          <div className="relative overflow-hidden rounded-xl3 border border-ok/40 bg-surface">
+            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-ok/10 blur-2xl" />
+            <div className="relative p-5">
+              <div className="flex items-center gap-3">
+                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ok text-bg">
+                  <Check className="h-6 w-6" strokeWidth={3} />
+                </div>
+                <div className="min-w-0">
+                  <p className="eyebrow text-ok">Treino de hoje concluído</p>
+                  <p className="truncate font-display text-xl font-semibold">{feito.sessao}</p>
+                </div>
+              </div>
+              <p className="num mt-3 text-sm text-muted">
+                {[feito.duracaoMinutos != null && `${feito.duracaoMinutos} min`, `${feito.itens.filter((i) => i.concluido).length}/${feito.itens.length} exercícios`, feito.esforcoPercebido != null && `esforço ${feito.esforcoPercebido}/10`]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+              {dia.proxima && (
+                <Link to="/treino" className="mt-4 flex items-center gap-3 rounded-2xl bg-raised/70 p-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="eyebrow">Próximo · {dia.proxima.quando}</p>
+                    <p className="truncate font-semibold">{dia.proxima.sessao.nome}</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
+                </Link>
+              )}
+            </div>
+          </div>
         ) : sessaoHoje ? (
           <div className="relative overflow-hidden rounded-xl3 border border-line bg-surface">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-fat/10 blur-2xl" />

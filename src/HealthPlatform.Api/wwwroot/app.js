@@ -20903,7 +20903,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.62.7';
+const HP_MVP_VERSION='0.62.8';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -31977,7 +31977,7 @@ else hpJourneyStabilityGuardV0610();
   document.addEventListener('keydown',e=>{if(e.key==='Escape')fechar()});
 })();
 
-/* v0.62.7: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
+/* v0.62.8: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
 (function hpVigiaVersaoV0627(){
   const CHAVE='aesyn-recarregou-para';
   let checando=false;
