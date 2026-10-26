@@ -1,3 +1,8 @@
+## v0.65.4 — Check-ins de evolução na versão nova
+
+- Paciente: em Progresso, nova seção Check-ins de evolução com peso, adesão à dieta e ao treino e energia (último valor, variação e gráfico) e o histórico; o check-in tem escalas de 0 a 10 para fome, energia, sono e percepção de evolução e fica ligado às fases atuais.
+- Equipe: no Prontuário, aba Check-ins com os mesmos gráficos e histórico, registro com data e fases nutricional e de treino, e edição.
+
 ## v0.65.3 — Telas públicas e boas-vindas do paciente na versão nova
 
 - Redefinir senha, confirmar e-mail e confirmar troca de e-mail agora abrem na versão nova; os links enviados por e-mail apontam para /app e os links antigos são redirecionados.
