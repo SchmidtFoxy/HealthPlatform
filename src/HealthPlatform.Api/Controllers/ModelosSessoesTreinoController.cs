@@ -87,6 +87,37 @@ public sealed class ModelosSessoesTreinoController(
         return Ok(modelos.Select(x => ToResponse(x)).ToList());
     }
 
+    [HttpGet("api/modelos-sessoes-treino/{id:guid}/conteudo")]
+    public async Task<IActionResult> ObterConteudo(Guid id, CancellationToken ct = default)
+    {
+        var modelo = await db.ModelosSessoesTreino.AsNoTracking()
+            .Include(x => x.Profissional)
+            .FirstOrDefaultAsync(x =>
+                x.Id == id &&
+                x.OrganizacaoId == currentUser.OrganizationId &&
+                x.Ativo, ct);
+
+        if (modelo is null)
+            return NotFound(new { message = "Modelo de sessao nao encontrado ou inativo." });
+
+        ModeloSessaoConteudo? conteudo;
+        try { conteudo = JsonSerializer.Deserialize<ModeloSessaoConteudo>(modelo.ConteudoJson); }
+        catch (JsonException) { conteudo = null; }
+
+        if (conteudo is null || conteudo.Itens.Count == 0)
+            return Conflict(new { message = "Modelo de sessao sem conteudo valido." });
+
+        return Ok(new
+        {
+            modelo.Id,
+            modelo.Nome,
+            modelo.Categoria,
+            modelo.Descricao,
+            profissionalNome = modelo.Profissional?.Nome,
+            conteudo
+        });
+    }
+
     [HttpPost("api/sessoes-treino/{sessaoId:guid}/salvar-como-modelo")]
     public async Task<IActionResult> SalvarComoModelo(
         Guid sessaoId,

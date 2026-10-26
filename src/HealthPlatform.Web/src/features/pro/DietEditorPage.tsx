@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeftRight, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, BookCopy, BookmarkPlus, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Ring, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { hojeIso, n0 } from '@/lib/format';
 import type { Alimento, PlanoAlimentarPro } from '@/lib/types';
+import { InserirModeloSheet, SalvarParteComoModeloSheet } from './ModelosNoPlano';
 import { useAlimentos, usePaciente, usePlanosAlimentares } from './queries';
 import { useSuplementos } from './suplementos';
 import { macrosSuplementos, SuplementosSecao } from './SuplementosDieta';
@@ -27,6 +28,7 @@ interface Item extends Sub {
 }
 interface Refeicao {
   k: string;
+  id?: string;
   nome: string;
   horario: string;
   observacoes: string | null;
@@ -72,6 +74,7 @@ function deServidor(p: PlanoAlimentarPro): Rascunho {
       chaves.set(r.id, k);
       return {
         k,
+        id: r.id,
         nome: r.nome,
         horario: (r.horario ?? '').slice(0, 5),
         observacoes: r.observacoes,
@@ -464,6 +467,8 @@ export function DietEditorPage() {
   const [addEm, setAddEm] = useState<string | null>(null);
   const [metasOpen, setMetasOpen] = useState(false);
   const [menuRef, setMenuRef] = useState<string | null>(null);
+  const [inserir, setInserir] = useState(false);
+  const [salvarModelo, setSalvarModelo] = useState<{ id: string; nome: string } | null>(null);
 
   useEffect(() => {
     if (plano.data && !d) setD(deServidor(plano.data));
@@ -620,6 +625,9 @@ export function DietEditorPage() {
               >
                 Nova refeição
               </Button>
+              <Button variant="ghost" icon={<BookCopy className="h-4 w-4" />} onClick={() => setInserir(true)}>
+                Inserir refeição-modelo
+              </Button>
               <Field label="Orientações gerais do plano">
                 <textarea className={inputCls + ' h-24 py-3'} placeholder="Hidratação, temperos liberados, combinações…" value={d.observacoes ?? ''} onChange={(e) => up((x) => ({ ...x, observacoes: e.target.value || null }))} />
               </Field>
@@ -671,6 +679,35 @@ export function DietEditorPage() {
 
       {d && <MetasSheet open={metasOpen} onClose={() => setMetasOpen(false)} metas={d.metas} onChange={(m) => up((x) => ({ ...x, metas: m }))} atual={total} />}
 
+      <InserirModeloSheet
+        tipo="refeicao"
+        open={inserir}
+        onClose={() => setInserir(false)}
+        onInserir={(c, nome) => {
+          const ok = (a: string) => mapa.has(a);
+          const faltando = c.itens.filter((i) => !ok(i.alimentoId)).length;
+          const sub = (x: { alimentoId: string; quantidade: number; unidade: string; quantidadeGramas: number; observacao: string | null }) => ({
+            k: uid(),
+            alimentoId: x.alimentoId,
+            quantidade: x.quantidade,
+            unidade: x.unidade,
+            gramas: x.quantidadeGramas,
+            observacao: x.observacao,
+          });
+          const nova: Refeicao = {
+            k: uid(),
+            nome: c.nomeOriginal || nome,
+            horario: (c.horarioOriginal ?? '').slice(0, 5),
+            observacoes: c.observacoesOriginais,
+            metas: { calorias: c.metaCalorias, proteinasG: c.metaProteinasG, carboidratosG: c.metaCarboidratosG, gordurasG: c.metaGordurasG, fibrasG: c.metaFibrasG },
+            itens: c.itens.filter((i) => ok(i.alimentoId)).map((i) => ({ ...sub(i), subs: i.substituicoes.filter((x) => ok(x.alimentoId)).map(sub) })),
+          };
+          up((x) => ({ ...x, refeicoes: [...x.refeicoes, nova] }));
+          toast(faltando ? `Refeição inserida. ${faltando} alimento(s) inativo(s) ficaram de fora.` : 'Refeição inserida no rascunho.');
+        }}
+      />
+      <SalvarParteComoModeloSheet tipo="refeicao" alvo={salvarModelo} onClose={() => setSalvarModelo(null)} />
+
       <Sheet open={!!menuRef} onClose={() => setMenuRef(null)} title={d?.refeicoes.find((r) => r.k === menuRef)?.nome}>
         {menuRef && d && (
           <div className="flex flex-col gap-2 pb-2">
@@ -704,6 +741,19 @@ export function DietEditorPage() {
                     }}
                   >
                     Duplicar refeição
+                  </Button>
+                  <Button
+                    variant="outline"
+                    icon={<BookmarkPlus className="h-4 w-4" />}
+                    disabled={!d.refeicoes[idx].itens.length}
+                    onClick={() => {
+                      const r = d.refeicoes[idx];
+                      if (!r.id || sujo) return toast('Salve a dieta antes de guardar a refeição como modelo.', 'bad');
+                      setMenuRef(null);
+                      setSalvarModelo({ id: r.id, nome: r.nome });
+                    }}
+                  >
+                    Salvar como modelo
                   </Button>
                   <Button
                     variant="danger"

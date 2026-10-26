@@ -1,3 +1,10 @@
+## 0.66.6 — Sessões e refeições-modelo dentro dos planos
+
+- Editor de treino: inserir uma sessão-modelo da biblioteca no rascunho e salvar a sessão atual como modelo.
+- Editor de dieta: inserir uma refeição-modelo (com substituições e metas) e salvar uma refeição como modelo pelo menu da refeição.
+- API: GET /api/modelos-sessoes-treino/{id}/conteudo para ler a sessão-modelo antes de inserir.
+- Sem mudança de banco.
+
 ## 0.66.5 — Análises e dor por região no novo app
 
 - Paciente: no check-in, quando marca dor, escolhe onde dói, o lado e quanto atrapalha o treino.
