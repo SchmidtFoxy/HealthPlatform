@@ -1,5 +1,8 @@
 import { ChevronRight, ExternalLink, LogOut, Monitor, Moon, ShieldAlert, Sun } from 'lucide-react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { BoasVindasSheet } from '@/features/patient/BoasVindas';
+import { CheckInSheet } from '@/features/patient/CheckInSheet';
 import { useMinhaConta, usePrivacidade } from '@/features/AccountPage';
 import { Avatar, PAPEL, TrocarConta, useConta } from '@/components/account';
 import { NotificacoesCard } from '@/components/notificacoes';
@@ -16,6 +19,8 @@ export function ProfilePage() {
   const priv = usePrivacidade().data;
   const aceitePendente = priv && !(priv.termos.atualizado && priv.politicaPrivacidade.atualizada);
   const [tema, setTema] = useTema();
+  const [boasVindas, setBoasVindas] = useState(false);
+  const [checkin, setCheckin] = useState(false);
   return (
     <Page>
       <PageHeader
@@ -110,6 +115,13 @@ export function ProfilePage() {
               </span>
               <ChevronRight className="h-5 w-5 text-muted" />
             </Link>
+            <button type="button" onClick={() => setBoasVindas(true)} className="flex w-full items-center justify-between p-4 text-left font-semibold">
+              <span>
+                Rever boas-vindas
+                <span className="block text-sm font-normal text-muted">O passo a passo do primeiro acesso</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted" />
+            </button>
           </>
         )}
         {s && s.tipoUsuario !== 'Paciente' && (
@@ -155,6 +167,8 @@ export function ProfilePage() {
         </a>
       </Card>
 
+      <BoasVindasSheet open={boasVindas} onClose={() => setBoasVindas(false)} onCheckin={() => setCheckin(true)} />
+      <CheckInSheet open={checkin} onClose={() => setCheckin(false)} />
       <Button variant="danger" size="lg" className="mt-8 w-full" icon={<LogOut className="h-5 w-5" />} onClick={conta.sair}>
         Sair da conta
       </Button>

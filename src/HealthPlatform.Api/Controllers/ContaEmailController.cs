@@ -207,7 +207,7 @@ public sealed class ContaEmailController(
     private string BuildPublicUrl(string path, Guid userId, string token, string? email)
     {
         var baseUrl = _emailOptions.PublicBaseUrl.TrimEnd('/');
-        var url = $"{baseUrl}/{path}?userId={Uri.EscapeDataString(userId.ToString())}&token={Uri.EscapeDataString(token)}";
+        var url = $"{baseUrl}/app/{path}?userId={Uri.EscapeDataString(userId.ToString())}&token={Uri.EscapeDataString(token)}";
         if (!string.IsNullOrWhiteSpace(email))
             url += $"&email={Uri.EscapeDataString(email)}";
         return url;
