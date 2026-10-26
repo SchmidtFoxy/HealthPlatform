@@ -1,3 +1,10 @@
+## v0.64.0 — Agenda do profissional na versão nova
+
+- /app equipe: aba Agenda com a semana (bolinha nos dias com consulta), lista do dia e ações rápidas: confirmar, marcar como realizada, faltou, cancelar, reagendar ou remarcar, chat e WhatsApp.
+- Nova consulta: busca do paciente, dia, horário e motivo.
+- Minha conta da equipe ganhou o perfil profissional (registro e especialidade), que antes só existia na clássica.
+- O bloco Agenda do Hoje leva para a agenda completa.
+
 ## v0.63.9 — Mensagens do profissional na versão nova
 
 - /app equipe: nova aba Mensagens com todas as conversas, busca, filtros "A responder" e "Não lidas", contador de não lidas e tempo de espera (amarelo perto de 24h, vermelho passou de 24h).

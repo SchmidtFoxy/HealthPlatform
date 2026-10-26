@@ -1,4 +1,4 @@
-import { Activity, CalendarCheck, Dumbbell, Home, MessageCircle, Salad, User, Users } from 'lucide-react';
+import { Activity, CalendarCheck, CalendarDays, Dumbbell, Home, MessageCircle, Salad, User, Users } from 'lucide-react';
 import { lazy, ReactNode, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/shell';
@@ -17,6 +17,7 @@ import { useTema } from './lib/theme';
 const LiveWorkoutPage = lazy(() => import('./features/patient/LiveWorkoutPage').then((m) => ({ default: m.LiveWorkoutPage })));
 const ChatPage = lazy(() => import('./features/chat/Conversa').then((m) => ({ default: m.ChatPage })));
 const ProChatPage = lazy(() => import('./features/chat/Conversa').then((m) => ({ default: m.ProChatPage })));
+const AgendaPage = lazy(() => import('./features/pro/AgendaPage').then((m) => ({ default: m.AgendaPage })));
 const InboxPage = lazy(() => import('./features/chat/InboxPage').then((m) => ({ default: m.InboxPage })));
 const ExplorePage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExplorePage })));
 const ExploreDetailPage = lazy(() => import('./features/patient/ExplorePage').then((m) => ({ default: m.ExploreDetailPage })));
@@ -66,6 +67,7 @@ const navPaciente = [
 
 const navEquipe = [
   { to: '/pro', label: 'Hoje', icon: CalendarCheck, end: true },
+  { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/pro/pacientes', label: 'Pacientes', icon: Users },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageCircle },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
@@ -141,6 +143,7 @@ export function App() {
             <Route path="/pro" element={<ProTodayPage />} />
             <Route path="/pro/pacientes" element={<PatientsPage />} />
             <Route path="/pro/mensagens" element={<InboxPage />} />
+            <Route path="/pro/agenda" element={<AgendaPage />} />
             <Route path="/pro/pacientes/:id" element={<PatientDetailPage />} />
             <Route path="/pro/perfil" element={<ProfilePage />} />
             <Route path="/pro/conta" element={<AccountPage />} />

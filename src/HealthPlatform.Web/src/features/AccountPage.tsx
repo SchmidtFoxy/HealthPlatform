@@ -171,6 +171,8 @@ export function AccountPage() {
             </div>
           </Card>
 
+          {pro && <PerfilProfissionalCard nome={c.nome} />}
+
           <p className="eyebrow mb-2 mt-7">Avisos que você quer receber</p>
           <Card className="divide-y divide-line/60">
             {AVISOS.map((a) => (
@@ -365,6 +367,62 @@ function PrivacidadeCard({ p }: { p: Privacidade }) {
           </Field>
         </div>
       </Sheet>
+    </>
+  );
+}
+
+interface PerfilProfissional {
+  nome: string;
+  registroProfissional: string;
+  especialidade: string | null;
+}
+
+/** Registro e especialidade: sem isso a agenda e as consultas nao funcionam para o profissional. */
+function PerfilProfissionalCard({ nome }: { nome: string }) {
+  const qc = useQueryClient();
+  const q = useQuery({
+    queryKey: ['conta', 'profissional'],
+    queryFn: () => api<PerfilProfissional>('/api/profissionais/me').catch((e) => (e?.status === 404 ? null : Promise.reject(e))),
+  });
+  const [registro, setRegistro] = useState('');
+  const [especialidade, setEspecialidade] = useState('');
+  useEffect(() => {
+    if (q.data) {
+      setRegistro(q.data.registroProfissional);
+      setEspecialidade(q.data.especialidade ?? '');
+    }
+  }, [q.data]);
+  const salvar = useMutation({
+    mutationFn: () => api('/api/profissionais/me', { method: 'PUT', json: { nome: q.data?.nome ?? nome, registroProfissional: registro.trim(), especialidade: especialidade.trim() || null } }),
+    onSuccess: () => {
+      toast('Perfil profissional salvo.');
+      qc.invalidateQueries({ queryKey: ['conta', 'profissional'] });
+      qc.invalidateQueries({ queryKey: ['pro'] });
+    },
+    onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível salvar.', 'bad'),
+  });
+  const mudou = q.data ? registro.trim() !== q.data.registroProfissional || especialidade.trim() !== (q.data.especialidade ?? '') : !!registro.trim();
+  return (
+    <>
+      <p className="eyebrow mb-2 mt-7">Perfil profissional</p>
+      <Card className="p-4">
+        {q.isLoading ? (
+          <Skeleton className="h-28" />
+        ) : (
+          <div className="flex flex-col gap-3">
+            {!q.data && <p className="rounded-xl bg-warn/10 p-3 text-sm text-warn">Cadastre seu registro para usar agenda, consultas e mensagens.</p>}
+            <Field label="Registro profissional (CRM, CRN, CREF…)">
+              <input className={inputCls} value={registro} maxLength={40} placeholder="Ex.: CRM-SP 123456" onChange={(e) => setRegistro(e.target.value)} />
+            </Field>
+            <Field label="Especialidade">
+              <input className={inputCls} value={especialidade} maxLength={120} placeholder="Ex.: Medicina esportiva" onChange={(e) => setEspecialidade(e.target.value)} />
+            </Field>
+            <Button variant="soft" disabled={!registro.trim() || !mudou} loading={salvar.isPending} onClick={() => salvar.mutate()}>
+              Salvar perfil profissional
+            </Button>
+          </div>
+        )}
+      </Card>
     </>
   );
 }

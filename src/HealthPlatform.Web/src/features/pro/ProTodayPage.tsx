@@ -84,7 +84,7 @@ export function ProTodayPage() {
 
       {semPerfil && (
         <div className="mt-3 rounded-xl2 border border-warn/40 bg-warn/10 p-4 text-sm">
-          Complete seu perfil profissional na <a href="/?classico=1" className="font-semibold underline">versão clássica</a> para ver a agenda.
+          Complete seu perfil profissional em <Link to="/pro/conta" className="font-semibold underline">Minha conta</Link> para ver a agenda.
         </div>
       )}
 
@@ -129,7 +129,7 @@ export function ProTodayPage() {
         </section>
 
         <section>
-          <SectionTitle>Agenda</SectionTitle>
+          <SectionTitle action={<Link to="/pro/agenda" className="text-sm font-semibold text-accent">Ver agenda</Link>}>Agenda</SectionTitle>
           {dash.isLoading ? (
             <Skeleton className="h-40" />
           ) : dash.data?.agendaHoje.length ? (
