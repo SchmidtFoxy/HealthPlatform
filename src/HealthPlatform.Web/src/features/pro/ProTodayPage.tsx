@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { CalendarClock, ChevronRight, Dumbbell, Moon } from 'lucide-react';
+import { AlertTriangle, CalendarClock, ChevronRight, Dumbbell, HeartPulse, Moon, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Card, Empty, Pill, SectionTitle, Skeleton } from '@/components/ui';
@@ -21,14 +21,12 @@ const corScore = (s: number | null) => (s == null ? 'text-faint' : s >= 75 ? 'te
 
 function LinhaSinal({ s }: { s: SinalDiario }) {
   const n = NIVEL[s.nivel] ?? { label: s.nivel, tone: 'neutral' as const, ordem: 9 };
+  const anel = n.tone === 'bad' ? 'ring-bad' : n.tone === 'warn' ? 'ring-warn' : n.tone === 'ok' ? 'ring-ok' : 'ring-line';
   return (
-    <Link to={`/pro/pacientes/${s.pacienteId}`} className="flex items-center gap-3 rounded-2xl px-2 py-3 transition hover:bg-raised/60">
-      <div className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-raised font-display text-sm font-semibold">
-        {iniciais(s.pacienteNome)}
-        {n.tone !== 'ok' && n.tone !== 'neutral' && <span className={clsx('absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-surface', n.tone === 'bad' ? 'bg-bad' : 'bg-warn')} />}
-      </div>
+    <Link to={`/pro/pacientes/${s.pacienteId}`} className="group flex items-center gap-3 rounded-2xl px-2 py-3 transition hover:bg-raised/60">
+      <div className={clsx('grid h-11 w-11 shrink-0 place-items-center rounded-full bg-raised font-display text-sm font-semibold ring-2 ring-offset-2 ring-offset-surface', anel)}>{iniciais(s.pacienteNome)}</div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <p className="truncate font-semibold">{s.pacienteNome}</p>
           <Pill tone={n.tone}>{n.label}</Pill>
         </div>
@@ -36,10 +34,13 @@ function LinhaSinal({ s }: { s: SinalDiario }) {
           {s.razoes[0] ?? `${s.treinosUltimos7Dias} treinos na semana · último ${tempoRelativo(s.ultimoTreinoUtc)}`}
         </p>
       </div>
-      <div className="w-12 shrink-0 text-right">
-        <p className={clsx('num text-xl font-semibold leading-none', corScore(s.prontidaoScore))}>{s.prontidaoScore ?? '—'}</p>
-        <p className="mt-1 text-[10px] uppercase tracking-wider text-faint">prontidão</p>
-      </div>
+      {s.prontidaoScore != null ? (
+        <div className={clsx('num grid h-11 w-11 shrink-0 place-items-center rounded-full bg-raised text-[15px] font-semibold', corScore(s.prontidaoScore))} title="Prontidão">
+          {s.prontidaoScore}
+        </div>
+      ) : (
+        <ChevronRight className="h-5 w-5 shrink-0 text-faint transition group-hover:translate-x-0.5" />
+      )}
     </Link>
   );
 }
@@ -51,6 +52,8 @@ export function ProTodayPage() {
   const semPerfil = dash.error instanceof ApiError && dash.error.status === 409;
   const lista = [...(sinais.data?.sinais ?? [])].sort((a, b) => (NIVEL[a.nivel]?.ordem ?? 9) - (NIVEL[b.nivel]?.ordem ?? 9));
   const comCheckin = (sinais.data?.sinais ?? []).filter((s) => s.prontidaoScore != null);
+  const atencao = sinais.data ? sinais.data.revisarHoje + sinais.data.observar : undefined;
+  const semCheckin = sinais.data?.contextoPendente ?? 0;
 
   return (
     <Page wide>
@@ -61,6 +64,24 @@ export function ProTodayPage() {
         </h1>
       </header>
 
+      {sinais.data && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="aurora mt-3 flex flex-col gap-3 rounded-xl3 border border-line p-5 sm:flex-row sm:items-center">
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow">Resumo do dia</p>
+            <p className="mt-1.5 font-display text-[19px] font-semibold leading-snug">
+              {atencao
+                ? `${atencao} ${atencao > 1 ? 'pacientes pedem' : 'paciente pede'} atenção hoje.`
+                : semCheckin
+                  ? `Nenhum alerta. ${semCheckin} ${semCheckin > 1 ? 'pacientes estão' : 'paciente está'} sem check-in na semana.`
+                  : 'Tudo em dia: todos os pacientes fizeram check-in na semana.'}
+            </p>
+          </div>
+          <Link to="/pro/pacientes" className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-accent-ink shadow-glow transition hover:brightness-110">
+            Ver pacientes <ChevronRight className="h-4 w-4" />
+          </Link>
+        </motion.div>
+      )}
+
       {semPerfil && (
         <div className="mt-3 rounded-xl2 border border-warn/40 bg-warn/10 p-4 text-sm">
           Complete seu perfil profissional na <a href="/" className="font-semibold underline">versão clássica</a> para ver a agenda.
@@ -69,14 +90,15 @@ export function ProTodayPage() {
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         {[
-          { v: sinais.data?.totalPacientesAtivos ?? dash.data?.pacientesAtivos, l: 'pacientes ativos' },
-          { v: dash.data?.consultasHoje, l: 'consultas hoje' },
-          { v: sinais.data ? sinais.data.revisarHoje + sinais.data.observar : undefined, l: 'pedem atenção', tone: 'text-warn' },
-          { v: sinais.data ? sinais.data.totalPacientesAtivos - sinais.data.contextoPendente : undefined, l: 'com check-in na semana', tone: 'text-accent' },
+          { icon: Users, c: 'text-accent', v: sinais.data?.totalPacientesAtivos ?? dash.data?.pacientesAtivos, l: 'pacientes ativos' },
+          { icon: CalendarClock, c: 'text-info', v: dash.data?.consultasHoje, l: 'consultas hoje' },
+          { icon: AlertTriangle, c: 'text-warn', v: atencao, l: 'pedem atenção', tone: atencao ? 'text-warn' : undefined },
+          { icon: HeartPulse, c: 'text-ok', v: sinais.data ? sinais.data.totalPacientesAtivos - sinais.data.contextoPendente : undefined, l: 'com check-in na semana' },
         ].map((x) => (
           <Card key={x.l} className="p-4">
-            {x.v === undefined ? <Skeleton className="h-8 w-12" /> : <p className={clsx('num text-[30px] font-semibold leading-none', x.tone)}>{n0(x.v)}</p>}
-            <p className="mt-2 text-[13px] text-muted">{x.l}</p>
+            <x.icon className={clsx('h-4 w-4', x.c)} />
+            {x.v === undefined ? <Skeleton className="mt-2.5 h-8 w-12" /> : <p className={clsx('num mt-2.5 text-[30px] font-semibold leading-none', x.tone)}>{n0(x.v)}</p>}
+            <p className="mt-1.5 text-[13px] text-muted">{x.l}</p>
           </Card>
         ))}
       </motion.div>

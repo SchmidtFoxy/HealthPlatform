@@ -1,3 +1,9 @@
+## v0.62.5 — Hoje e Pacientes do profissional
+
+- /app: Hoje do profissional com resumo do dia em uma frase e atalho para os pacientes, números com ícones e lista de atenção com anel de cor por nível e prontidão em destaque.
+- /app: Pacientes em cards (três colunas no PC), com nível do acompanhamento, tags, prontidão, treinos na semana e último check-in.
+- /app: trilhas horizontais (busca de pacientes, exercícios do treino ao vivo, abas do paciente) passam a ir de ponta a ponta no celular, como planejado.
+
 ## v0.62.4 — Progresso do paciente redesenhado
 
 - /app: Progresso com quatro números do mês (treinos, horas, prontidão média e exercícios com carga subindo).
