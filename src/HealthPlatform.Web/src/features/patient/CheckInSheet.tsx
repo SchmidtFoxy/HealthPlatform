@@ -15,7 +15,7 @@ const ESCALAS = [
 type Chave = (typeof ESCALAS)[number]['key'];
 
 /** Escala 0-10 em botoes grandes: mais rapido que slider com o polegar. */
-function Escala({ value, onChange, invertida }: { value: number; onChange: (v: number) => void; invertida?: boolean }) {
+export function Escala({ value, onChange, invertida }: { value: number; onChange: (v: number) => void; invertida?: boolean }) {
   return (
     <div className="grid grid-cols-11 gap-1">
       {Array.from({ length: 11 }, (_, i) => {

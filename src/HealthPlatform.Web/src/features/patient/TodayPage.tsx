@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { Check, ChevronRight, ClipboardList, Dumbbell, Flame, MessageCircle, Moon, Play, Sparkles, Zap } from 'lucide-react';
+import { Check, ChevronRight, ClipboardList, Sunset, Dumbbell, Flame, MessageCircle, Moon, Play, Sparkles, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '@/components/shell';
@@ -10,8 +10,9 @@ import { useSessao } from '@/lib/session';
 import { Avatar } from '@/components/account';
 import type { RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { CheckInSheet } from './CheckInSheet';
+import { FecharDiaSheet } from './DiaryPage';
 import { MealSheet, STATUS_INFO, StatusButtons, somaNutrientes } from './meals';
-import { horariosHoje, useChatNaoLidas, useHistoricoTreinos, useHome, useMedicamentos, useMetas, useSolicitacoes, useMeusTreinos, usePlanoAlimentar } from './queries';
+import { horariosHoje, useChatNaoLidas, useHistoricoDiario, useHistoricoTreinos, useHome, useMedicamentos, useMetas, useSolicitacoes, useMeusTreinos, usePlanoAlimentar } from './queries';
 import { treinoDoDia } from './treino-dia';
 import { treinoEmAndamento } from './workout-store';
 
@@ -38,6 +39,10 @@ export function TodayPage() {
   const plano = usePlanoAlimentar();
   const [checkin, setCheckin] = useState(false);
   const [refeicaoAberta, setRefeicaoAberta] = useState<RefeicaoPortal | null>(null);
+  const [fecharDia, setFecharDia] = useState(false);
+  // Fim de tarde em diante: convite para fechar o dia, se ainda nao fechou.
+  const diaHoje = useHistoricoDiario(14).data?.itens.find((d) => d.data === hojeIso());
+  const mostrarFechamento = new Date().getHours() >= 17 && !!diaHoje && !diaHoje.diaFechado;
 
   const plano0 = treinos.data?.planos[0];
   const hist = useHistoricoTreinos(30);
@@ -357,6 +362,20 @@ export function TodayPage() {
               </Link>
             </motion.div>
           )}
+          {mostrarFechamento && (
+            <motion.div {...fade(1)} className="mt-3">
+              <button onClick={() => setFecharDia(true)} className="flex w-full items-center gap-3 rounded-xl2 border border-accent/40 bg-accent/[0.06] p-4 text-left transition active:scale-[0.99]">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/15 text-accent">
+                  <Sunset className="h-5 w-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">Fechar o dia</span>
+                  <span className="block truncate text-[13px] text-muted">Menos de um minuto para registrar como foi</span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-faint" />
+              </button>
+            </motion.div>
+          )}
           {blocoTreino}
           <div className="hidden lg:block">{blocoConsistencia}</div>
         </div>
@@ -367,6 +386,7 @@ export function TodayPage() {
       </div>
 
       <CheckInSheet open={checkin} onClose={() => setCheckin(false)} />
+      <FecharDiaSheet open={fecharDia} onClose={() => setFecharDia(false)} atual={null} />
       <MealSheet refeicao={refeicaoAberta} status={refeicaoAberta ? (statusPorRefeicao.get(refeicaoAberta.id) ?? 'Pendente') : 'Pendente'} onClose={() => setRefeicaoAberta(null)} />
     </Page>
   );

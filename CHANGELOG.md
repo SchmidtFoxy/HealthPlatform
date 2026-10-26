@@ -1,3 +1,10 @@
+## v0.63.5 — Diário, exames e evolução corporal na versão nova
+
+- /app Diário: registros do dia a dia (sono, hidratação, alimentação, treino, sintoma, humor, observação) com valor, nota de 0 a 10 e descrição, e lista dos últimos 30 dias.
+- Fechar o dia: reflexão rápida (nota do dia, quanto do plano foi feito, dificuldade, energia, aprendizado). Abre pelo Diário e, a partir das 17h, por um cartão no Hoje enquanto o dia não foi fechado. Grava no mesmo formato da clássica.
+- Progresso ganhou Corpo (peso, gordura, massa magra, medidas e IMC das avaliações, com tendência) e Exames (coletas com cada marcador, referência, valor anterior e destaque do que está fora).
+- Perfil leva ao Diário.
+
 ## v0.63.4 — Notificações no Perfil da versão nova
 
 - /app Perfil: cartão Notificações para ligar, desligar e testar o push neste aparelho, com aviso claro quando o navegador não suporta (iPhone fora da tela de início) ou a permissão foi bloqueada. A inscrição é a mesma da clássica.

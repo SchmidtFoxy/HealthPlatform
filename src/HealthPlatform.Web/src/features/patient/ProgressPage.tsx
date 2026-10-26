@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { Page, PageHeader } from '@/components/shell';
 import { Card, ErrorBox, Skeleton, Sparkline } from '@/components/ui';
 import { dataCurta, diaSemanaCurto, n0, n1 } from '@/lib/format';
+import { CorpoSecao, ExamesSecao } from './BodyAndExams';
 import { useHistoricoDiario, useHistoricoTreinos } from './queries';
 
 const DIA = 86400000;
@@ -223,6 +224,8 @@ export function ProgressPage() {
           ))}
         </div>
       )}
+      <CorpoSecao />
+      <ExamesSecao />
     </Page>
   );
 }

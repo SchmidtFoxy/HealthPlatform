@@ -9,6 +9,7 @@ import { ProfilePage } from './features/ProfilePage';
 import { DietPage } from './features/patient/DietPage';
 import { ProgressPage } from './features/patient/ProgressPage';
 import { TodayPage } from './features/patient/TodayPage';
+import { DiaryPage } from './features/patient/DiaryPage';
 import { WorkoutPlanPage } from './features/patient/WorkoutPlanPage';
 import { useSessao } from './lib/session';
 import { useTema } from './lib/theme';
@@ -92,6 +93,7 @@ export function App() {
             <Route path="/perfil" element={<ProfilePage />} />
             <Route path="/arquivos" element={<FilesPage />} />
             <Route path="/cuidados" element={<CarePage />} />
+            <Route path="/diario" element={<DiaryPage />} />
           </Route>
           <Route
             path="/chat"
