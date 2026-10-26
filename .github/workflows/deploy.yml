@@ -53,9 +53,15 @@ jobs:
         if: steps.cfg.outputs.pronto == 'true'
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          # Secrets colados no Windows podem vir com CRLF; o OpenSSH recusa a chave nesse formato.
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
-          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf '%s\n' "$VPS_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
+          if ! ssh-keygen -y -f ~/.ssh/id_deploy > /dev/null 2>&1; then
+            echo "::error::VPS_SSH_KEY nao e uma chave privada valida (confira se colou o arquivo aesyn_deploy inteiro, sem o .pub)."
+            exit 1
+          fi
+          echo "::notice::Chave carregada: $(ssh-keygen -lf ~/.ssh/id_deploy | cut -d' ' -f2)"
           cat > ~/.ssh/config <<EOF
           Host $VPS_HOST
             User $VPS_USER
@@ -64,8 +70,14 @@ jobs:
             BatchMode yes
             StrictHostKeyChecking yes
             ServerAliveInterval 30
+            ConnectTimeout 20
           EOF
-          ssh "$VPS_HOST" 'echo conexao-ok'
+          if ! ssh -v "$VPS_HOST" 'echo conexao-ok' 2> ssh-debug.txt; then
+            grep -E "Connecting to|Connection (refused|timed out|closed)|Host key|Offering|Authentications that|Permission denied|No route|kex" ssh-debug.txt \
+              | head -12 | while IFS= read -r l; do echo "::warning::ssh: $l"; done
+            echo "::error::Falha ao conectar por SSH na VPS."
+            exit 1
+          fi
 
       - name: Deploy
         if: steps.cfg.outputs.pronto == 'true'
