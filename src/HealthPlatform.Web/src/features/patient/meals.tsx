@@ -107,7 +107,7 @@ export function StatusButtons({ refeicaoId, status, compact }: { refeicaoId: str
             className={clsx(
               'flex items-center justify-center gap-1.5 rounded-full font-semibold transition active:scale-90',
               compact ? 'h-9 w-9' : 'h-10 flex-1 px-3 text-sm',
-              ativo ? o.cls : 'bg-raised text-muted',
+              ativo ? o.cls : !compact && o.s === 'Realizada' ? 'bg-ok/15 text-ok' : 'bg-raised text-muted',
             )}
           >
             <o.icon className="h-4 w-4" strokeWidth={2.6} />

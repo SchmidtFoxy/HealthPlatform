@@ -25,6 +25,8 @@
   --prot: 214 84 120;
   --carb: 214 150 20;
   --fat: 90 120 220;
+  --halo: 9 140 115;
+  --halo-alpha: 0.1;
   color-scheme: light;
 }
 
@@ -46,6 +48,8 @@
   --prot: 255 120 160;
   --carb: 255 200 90;
   --fat: 130 160 255;
+  --halo: 15 90 80;
+  --halo-alpha: 0.55;
   color-scheme: dark;
 }
 
@@ -92,7 +96,7 @@ h3 {
 .aurora {
   background:
     radial-gradient(120% 80% at 10% 0%, rgb(var(--accent) / 0.22), transparent 60%),
-    radial-gradient(90% 70% at 100% 20%, rgb(var(--deep) / 0.55), transparent 65%),
+    radial-gradient(90% 70% at 100% 20%, rgb(var(--halo) / var(--halo-alpha)), transparent 65%),
     rgb(var(--surface));
 }
 

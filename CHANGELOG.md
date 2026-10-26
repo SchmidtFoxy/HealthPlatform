@@ -1,3 +1,10 @@
+## v0.62.1 — Hoje do paciente redesenhado
+
+- /app: no PC, o Hoje usa duas colunas (prontidão e treino à esquerda, refeições à direita); no celular, segue a ordem do dia.
+- /app: refeições com resumo do dia (feitas e kcal), próxima refeição em destaque com Feita, Adaptei e Pulei, e o resto da lista enxuta.
+- /app: o card do treino mostra os exercícios e as séries antes de começar.
+- /app: data escrita corretamente ("Segunda-feira, 26 de outubro") e brilho do tema claro sem mancha cinza.
+
 ## v0.62.0 — Login novo, páginas públicas e troca de conta
 
 - /app: login redesenhado para celular e PC, com recuperação de senha dentro do app e "lembrar e-mail".

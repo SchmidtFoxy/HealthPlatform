@@ -55,7 +55,7 @@ export function ProTodayPage() {
   return (
     <Page wide>
       <header className="pb-2 pt-6">
-        <p className="text-sm capitalize text-muted">{dataLonga()}</p>
+        <p className="text-sm text-muted">{dataLonga()}</p>
         <h1 className="font-display text-[28px] font-semibold leading-tight tracking-tight">
           {saudacao()}, {primeiroNome(dash.data?.profissionalNome ?? sessao?.nome)}
         </h1>
