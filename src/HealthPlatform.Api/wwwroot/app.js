@@ -336,7 +336,7 @@ function hpStoreSession(d){
   hpScheduleSessionRenewal();
   hpPacienteParaNovaV0631();
 }
-/* v0.65.5: paciente que entra pela classica segue para a versao nova, a menos que tenha escolhido a classica. */
+/* v0.65.6: paciente que entra pela classica segue para a versao nova, a menos que tenha escolhido a classica. */
 function hpPacienteParaNovaV0631(){
   try{
     if(state.user?.tipoUsuario!=='Paciente'||state.user?.impersonating)return;
@@ -20914,7 +20914,7 @@ async function openNutritionCalendar(patient,plans){
 }
 
 const HP_SMART_MEAL_SWAP='v0.19.15';
-const HP_MVP_VERSION='0.65.5';
+const HP_MVP_VERSION='0.65.6';
 
 // ===== v0.60.8 — Professional Chat Identity & Global Inbox Consolidation =====
 const HP_PROFESSIONAL_CHAT_GLOBAL_V0608='v0.60.8';
@@ -31988,7 +31988,7 @@ else hpJourneyStabilityGuardV0610();
   document.addEventListener('keydown',e=>{if(e.key==='Escape')fechar()});
 })();
 
-/* v0.65.5: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
+/* v0.65.6: força a versão nova em celulares e PWAs que ficam abertos em segundo plano. */
 (function hpVigiaVersaoV0627(){
   const CHAVE='aesyn-recarregou-para';
   let checando=false;
@@ -32010,7 +32010,7 @@ else hpJourneyStabilityGuardV0610();
 })();
 
 
-// ===== v0.65.5 — Séries por linha no builder de treino =====
+// ===== v0.65.6 — Séries por linha no builder de treino =====
 // Substitui o editor de "blocos" por uma linha por série. O formato salvo continua o mesmo
 // (blocosSeries), agrupando séries iguais em sequência; se todas forem iguais, nada é salvo
 // e o exercício usa Séries + Reps + Carga.

@@ -11,6 +11,7 @@ import { dataCurta, hora, idade, iniciais, n0, n1, tempoRelativo } from '@/lib/f
 import type { HomePaciente, PlanoAlimentarPro, PlanoTreinoPro } from '@/lib/types';
 import { RegistrarContatoSheet } from './CentralPage';
 import { SalvarModeloSheet, UsarModeloSheet } from './BibliotecaPage';
+import { FasesSecao } from './Fases';
 import { AbaCuidados } from './CuidadosPro';
 import { MaisAcoes, STATUS_ACOMPANHAMENTO } from './FichaAcoes';
 import { AbaProntuario } from './ProntuarioPro';
@@ -322,6 +323,7 @@ function AbaDieta({ id }: { id: string }) {
           </Card>
         );
       })}
+      <FasesSecao id={id} dominio="nutricao" planos={planos} />
     </div>
   );
 }
@@ -377,6 +379,7 @@ function AbaTreino({ id }: { id: string }) {
           </Card>
         );
       })}
+      <FasesSecao id={id} dominio="treino" planos={planos} />
     </div>
   );
 }
