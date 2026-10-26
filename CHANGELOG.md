@@ -1,3 +1,10 @@
+## v0.62.4 — Progresso do paciente redesenhado
+
+- /app: Progresso com quatro números do mês (treinos, horas, prontidão média e exercícios com carga subindo).
+- /app: prontidão com comparação com a sua média e sono das últimas duas semanas (noites abaixo de 6h em destaque).
+- /app: consistência em mapa compacto de 12 semanas, com total de treinos e semanas seguidas; dias contados no fuso do aparelho.
+- /app: evolução de carga em percentual, em grade de três colunas no PC.
+
 ## v0.62.3 — Telas que não "sambam" no celular
 
 - /app e versão clássica: a página não rola mais para os lados no celular.
