@@ -155,8 +155,11 @@ public sealed class CentralDiaController(
         var hoje = DateOnly.FromDateTime(agoraLocal);
         var followups = interacoes
             .GroupBy(x => new { x.PacienteId, x.PacienteNome })
-            .Select(g => g.OrderByDescending(x => x.DataHoraUtc).First())
-            .Where(x => x.ProximoContatoUtc.HasValue)
+            // Mesma regra da fila de follow-ups: vale o proximo contato mais recente agendado,
+            // mesmo que depois tenham ocorrido mensagens no chat (que tambem viram interacoes).
+            .Select(g => g.Where(x => x.ProximoContatoUtc.HasValue).OrderByDescending(x => x.DataHoraUtc).FirstOrDefault())
+            .Where(x => x is not null)
+            .Select(x => x!)
             .Select(x =>
             {
                 var local = x.ProximoContatoUtc!.Value.AddMinutes(offsetMinutos);

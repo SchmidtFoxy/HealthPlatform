@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { AlertTriangle, CalendarClock, ChevronRight, Dumbbell, HeartPulse, Moon, Users } from 'lucide-react';
+import { AlertTriangle, CalendarClock, ChevronRight, ClipboardCheck, Dumbbell, FileCheck2, HeartPulse, Moon, PhoneCall, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Card, Empty, Pill, SectionTitle, Skeleton } from '@/components/ui';
@@ -8,6 +8,7 @@ import { ApiError } from '@/lib/api';
 import { dataLonga, iniciais, n0, primeiroNome, saudacao, tempoRelativo } from '@/lib/format';
 import { useSessao } from '@/lib/session';
 import type { SinalDiario } from '@/lib/types';
+import { useCentralDia } from './CentralPage';
 import { useDashboard, useSinais } from './queries';
 
 const NIVEL: Record<string, { label: string; tone: 'bad' | 'warn' | 'neutral' | 'ok'; ordem: number }> = {
@@ -49,6 +50,8 @@ export function ProTodayPage() {
   const sessao = useSessao();
   const dash = useDashboard();
   const sinais = useSinais();
+  const central = useCentralDia();
+  const c = central.data;
   const semPerfil = dash.error instanceof ApiError && dash.error.status === 409;
   const lista = [...(sinais.data?.sinais ?? [])].sort((a, b) => (NIVEL[a.nivel]?.ordem ?? 9) - (NIVEL[b.nivel]?.ordem ?? 9));
   const comCheckin = (sinais.data?.sinais ?? []).filter((s) => s.prontidaoScore != null);
@@ -102,6 +105,22 @@ export function ProTodayPage() {
           </Card>
         ))}
       </motion.div>
+
+      <SectionTitle action={<Link to="/pro/central" className="text-sm font-semibold text-accent">Abrir central</Link>}>Para resolver</SectionTitle>
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {[
+          { aba: 'pendencias', icon: ClipboardCheck, v: c?.pendenciasPrioritarias, l: c?.pendenciasPrioritarias === 1 ? 'pendência' : 'pendências', d: c?.pendenciasPrioritarias === 1 ? 'prioritária' : 'prioritárias' },
+          { aba: 'contatos', icon: PhoneCall, v: c ? c.followUpsVencidos + c.followUpsHoje : undefined, l: c && c.followUpsVencidos + c.followUpsHoje === 1 ? 'contato' : 'contatos', d: c?.followUpsVencidos ? `${c.followUpsVencidos} atrasado${c.followUpsVencidos > 1 ? 's' : ''}` : 'para hoje' },
+          { aba: 'pedidos', icon: FileCheck2, v: c?.solicitacoesParaRevisao, l: c?.solicitacoesParaRevisao === 1 ? 'resposta' : 'respostas', d: 'para revisar' },
+        ].map((x) => (
+          <Link key={x.aba} to={`/pro/central?aba=${x.aba}`} className="rounded-xl2 border border-line bg-surface p-3.5 transition hover:border-accent/40 sm:p-4">
+            <x.icon className={clsx('h-4 w-4', x.v ? 'text-warn' : 'text-faint')} />
+            {x.v === undefined ? <Skeleton className="mt-2 h-7 w-10" /> : <p className={clsx('num mt-2 text-[26px] font-semibold leading-none', !x.v && 'text-faint')}>{n0(x.v)}</p>}
+            <p className="mt-1 truncate text-[13px] font-semibold">{x.l}</p>
+            <p className="truncate text-[12px] text-muted">{x.d}</p>
+          </Link>
+        ))}
+      </div>
 
       <div className="grid grid-cols-1 gap-x-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <section>
