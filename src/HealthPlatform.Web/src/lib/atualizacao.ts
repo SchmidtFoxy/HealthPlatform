@@ -1,4 +1,6 @@
 import { registerSW } from 'virtual:pwa-register';
+import { lerSessao } from './api';
+import { destinoDoLink } from './push';
 
 declare const __APP_VERSION__: string;
 
@@ -44,12 +46,11 @@ export function vigiarAtualizacao() {
 }
 
 // Clique numa notificacao com o app aberto: o service worker da versao classica avisa a janela.
-// Paciente abre chat/arquivos aqui mesmo; o resto ainda vive na classica.
+// Paciente abre tudo aqui mesmo; o resto ainda vive na classica.
 export function ouvirLinksDeNotificacao() {
   navigator.serviceWorker?.addEventListener('message', (e) => {
     if (e.data?.type !== 'AESYN_PUSH_OPEN') return;
     const link = String(e.data.link || '');
-    if (link === 'chat' || link === 'arquivos') location.assign(`/app/${link}`);
-    else if (link) location.assign(`/?aesynPushLink=${encodeURIComponent(link)}`);
+    if (link) location.assign(destinoDoLink(link, lerSessao()?.tipoUsuario === 'Paciente'));
   });
 }

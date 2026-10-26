@@ -1,6 +1,7 @@
 import { ChevronRight, ExternalLink, LogOut, Monitor, Moon, Sun } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Avatar, PAPEL, TrocarConta, useConta } from '@/components/account';
+import { NotificacoesCard } from '@/components/notificacoes';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Segmented } from '@/components/ui';
 import { useSessao } from '@/lib/session';
@@ -41,6 +42,9 @@ export function ProfilePage() {
           { value: 'dark', label: <span className="flex items-center justify-center gap-1.5"><Moon className="h-4 w-4" />Escuro</span> },
         ]}
       />
+
+      <p className="eyebrow mb-2 mt-7">Notificações</p>
+      <NotificacoesCard />
 
       <p className="eyebrow mb-2 mt-7">Outras funções</p>
       <Card className="divide-y divide-line">

@@ -1,3 +1,8 @@
+## v0.63.4 — Notificações no Perfil da versão nova
+
+- /app Perfil: cartão Notificações para ligar, desligar e testar o push neste aparelho, com aviso claro quando o navegador não suporta (iPhone fora da tela de início) ou a permissão foi bloqueada. A inscrição é a mesma da clássica.
+- Clique em notificação de paciente abre a tela certa no /app: chat, arquivos, início (Hoje), plano alimentar (Dieta) e treino.
+
 ## v0.63.3 — Cuidados do paciente na versão nova
 
 - /app: nova tela Cuidados com os pedidos do profissional (responder com texto, arquivo e link), remédios e suplementos do dia (Tomei / Pulei por horário) e metas (valor do dia ou Cumpri / Não deu, com os últimos 7 dias).
