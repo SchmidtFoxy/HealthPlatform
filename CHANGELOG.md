@@ -1,3 +1,8 @@
+## 0.66.8 — Arquivos do paciente na ficha
+
+- Ficha do paciente › Mais › Arquivos: a equipe vê exames, laudos e fotos do paciente, com prévia das imagens, filtro por tipo, envio e remoção.
+- Cada arquivo mostra se veio do paciente ou da equipe.
+
 ## 0.66.7 — Ver o app como um profissional
 
 - Gestão › Equipe: o administrador pode abrir o app como um médico, nutricionista ou personal ("Ver o app como…"), para conferir o que a pessoa vê.

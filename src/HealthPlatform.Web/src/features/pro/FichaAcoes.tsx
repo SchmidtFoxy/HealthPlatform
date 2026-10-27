@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Archive, ChevronRight, Copy, KeyRound, Lock, MoreHorizontal, Pin, PinOff, StickyNote, Tag, UserCog, UserRoundCheck, X } from 'lucide-react';
+import { Archive, ChevronRight, Copy, FolderOpen, KeyRound, Lock, MoreHorizontal, Pin, PinOff, StickyNote, Tag, UserCog, UserRoundCheck, X } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import type { Paciente } from '@/lib/types';
@@ -51,6 +52,16 @@ export function MaisAcoes({ paciente, className }: { paciente: PacienteFicha; cl
       </button>
       <Sheet open={menu} onClose={() => setMenu(false)} title={paciente.nome}>
         <div className="-mx-1 divide-y divide-line/60">
+          <Link to={`/pro/pacientes/${paciente.id}/arquivos`} className="flex w-full items-center gap-3 p-3.5 text-left transition hover:bg-raised/40">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
+              <FolderOpen className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">Arquivos</span>
+              <span className="block text-[13px] text-muted">Exames, laudos e fotos enviados</span>
+            </span>
+            <ChevronRight className="h-4 w-4 shrink-0 text-faint" />
+          </Link>
           {item('acesso', <KeyRound className="h-5 w-5" />, 'Acesso ao app', 'Convite, novo link ou revogar')}
           {item('dados', <UserCog className="h-5 w-5" />, 'Editar dados', 'Nome, contato, CPF e nascimento')}
           {item('status', <UserRoundCheck className="h-5 w-5" />, 'Status do acompanhamento', STATUS_ACOMPANHAMENTO[paciente.statusAcompanhamento] ?? paciente.statusAcompanhamento)}
