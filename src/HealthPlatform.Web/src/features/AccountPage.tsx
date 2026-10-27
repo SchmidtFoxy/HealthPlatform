@@ -4,6 +4,7 @@ import { Camera, ChevronDown, ShieldCheck, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Avatar, useConta } from '@/components/account';
+import { AtividadeConta } from './AtividadeConta';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, ErrorBox, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
 import { api, renomearSessao } from '@/lib/api';
@@ -188,6 +189,8 @@ export function AccountPage() {
 
           <p className="eyebrow mb-2 mt-7">Segurança</p>
           <SenhaCard />
+          <p className="eyebrow mb-2 mt-7">Atividade da conta</p>
+          <AtividadeConta />
 
           <p className="eyebrow mb-2 mt-7">Privacidade</p>
           {priv.data ? <PrivacidadeCard p={priv.data} /> : <Skeleton className="h-40" />}

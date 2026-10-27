@@ -1,3 +1,7 @@
+## 0.67.2 — Atividade da conta
+
+- Minha conta › "Atividade da conta": a sessão atual (IP e validade) e as últimas ações feitas com a conta, em português (criou, alterou, abriu arquivo…), com data e hora.
+
 ## 0.67.1 — Nova versão com ajuste e metas por refeição
 
 - Ficha › Duplicar (dieta ou treino) abre "Duplicar como nova versão": dieta ajustada em % ou por calorias alvo; treino com carga, séries, repetições e descanso. Mostra a prévia antes de criar e pode concluir o plano atual.
