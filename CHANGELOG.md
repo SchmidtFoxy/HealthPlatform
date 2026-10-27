@@ -1,3 +1,9 @@
+## 0.67.0 — Recordes, histórico das fases e hábitos
+
+- Progresso (paciente) e ficha › Treino (equipe): "Recordes", a maior carga em cada exercício nos últimos 6 meses, com a evolução desde o início.
+- Ficha › Dieta e Treino: "Histórico das fases", com o resultado de cada fase pelos check-ins (peso, adesão, energia, sono) e as revisões já feitas (avançou, manteve, ajustou), com a justificativa.
+- Ficha › Geral: "Hábitos" (sono, estresse, atividade e água) da anamnese mais recente, com a variação desde a anterior.
+
 ## 0.66.9 — Explorar exercícios por modalidade
 
 - Biblioteca › Exercícios › "Explorar por modalidade, objetivo e capacidade": as 19 modalidades (musculação, corrida, natação…) com os exercícios do catálogo que encaixam em cada capacidade.

@@ -468,3 +468,177 @@ export function VolumePorGrupo({ pacienteId }: { pacienteId: string }) {
     </section>
   );
 }
+
+// ---------------------------------------------------------------- Fases: resultado e revisoes
+
+interface AnaliseFase {
+  faseId: string;
+  nome: string;
+  tipo: string;
+  status: string;
+  dataInicio: string | null;
+  dataFim: string | null;
+  checkIns: number;
+  variacaoPesoKg: number | null;
+  mediaAdesaoAlimentacao: number | null;
+  mediaAdesaoTreino: number | null;
+  mediaEnergia: number | null;
+  mediaSono: number | null;
+}
+
+interface RevisaoFase {
+  id: string;
+  dominio: string;
+  faseNome: string;
+  faseDestinoNome: string | null;
+  decisao: string;
+  justificativa: string | null;
+  dataUtc: string;
+  criteriosConfigurados: number;
+  criteriosAtendidos: number;
+  overrideCriterios: boolean;
+  revisadoPorNome: string | null;
+}
+
+const DECISAO: Record<string, { rotulo: string; tom: "ok" | "info" | "warn" | "neutral" }> = {
+  Avancar: { rotulo: "Avançou", tom: "ok" },
+  Manter: { rotulo: "Manteve", tom: "info" },
+  Ajustar: { rotulo: "Ajustou", tom: "warn" },
+  Encerrar: { rotulo: "Encerrou", tom: "neutral" },
+};
+
+/** O que aconteceu em cada fase (pelos check-ins) e as decisoes de revisao ja tomadas. */
+export function ResultadoFases({ pacienteId, dominio }: { pacienteId: string; dominio: "nutricao" | "treino" }) {
+  const [aberto, setAberto] = useState(false);
+  const analise = useQuery({
+    queryKey: ["pro", "analise-fases", pacienteId],
+    queryFn: () => api<{ nutricao: AnaliseFase[]; treino: AnaliseFase[] }>(`/api/pacientes/${pacienteId}/analise-fases`),
+  });
+  const revisoes = useQuery({
+    queryKey: ["pro", "revisoes-fases", pacienteId],
+    queryFn: () => api<{ itens: RevisaoFase[] }>(`/api/pacientes/${pacienteId}/revisoes-fases`),
+  });
+  const fases = (analise.data?.[dominio] ?? []).filter((f) => f.checkIns > 0);
+  const lista = (revisoes.data?.itens ?? []).filter((r) => r.dominio === (dominio === "treino" ? "Treino" : "Nutricao"));
+  if (!fases.length && !lista.length) return null;
+  const pct = (v: number | null) => (v == null ? null : `${n0(v <= 1 ? v * 100 : v)}%`);
+  return (
+    <section>
+      <button onClick={() => setAberto((x) => !x)} className="mb-2 flex w-full items-center justify-between gap-3 text-left" aria-expanded={aberto}>
+        <span>
+          <span className="block font-semibold">Histórico das fases</span>
+          <span className="block text-[13px] text-muted">
+            {[fases.length ? `${fases.length} ${fases.length === 1 ? "fase com check-ins" : "fases com check-ins"}` : null, lista.length ? `${lista.length} ${lista.length === 1 ? "revisão" : "revisões"}` : null]
+              .filter(Boolean)
+              .join(" · ")}
+          </span>
+        </span>
+        <ChevronDown className={clsx("h-4 w-4 shrink-0 text-faint transition", aberto && "rotate-180")} />
+      </button>
+      {aberto && (
+        <div className="flex flex-col gap-3">
+          {!!fases.length && (
+            <Card className="divide-y divide-line/60">
+              {fases.map((f) => (
+                <div key={f.faseId} className="px-4 py-3">
+                  <p className="font-semibold">{f.nome}</p>
+                  <p className="text-[13px] text-muted">
+                    {[
+                      `${f.checkIns} check-ins`,
+                      f.variacaoPesoKg != null ? `peso ${f.variacaoPesoKg > 0 ? "+" : ""}${n1(f.variacaoPesoKg)} kg` : null,
+                      dominio === "nutricao" ? (pct(f.mediaAdesaoAlimentacao) ? `dieta ${pct(f.mediaAdesaoAlimentacao)}` : null) : pct(f.mediaAdesaoTreino) ? `treino ${pct(f.mediaAdesaoTreino)}` : null,
+                      f.mediaEnergia != null ? `energia ${n1(f.mediaEnergia)}` : null,
+                      f.mediaSono != null ? `sono ${n1(f.mediaSono)}` : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
+              ))}
+            </Card>
+          )}
+          {!!lista.length && (
+            <Card className="divide-y divide-line/60">
+              {lista.map((r) => {
+                const d = DECISAO[r.decisao] ?? { rotulo: r.decisao, tom: "neutral" as const };
+                return (
+                  <div key={r.id} className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <p className="min-w-0 flex-1 truncate font-semibold">
+                        {r.faseNome}
+                        {r.faseDestinoNome ? ` → ${r.faseDestinoNome}` : ""}
+                      </p>
+                      <Pill tone={d.tom}>{d.rotulo}</Pill>
+                    </div>
+                    <p className="text-[13px] text-muted">
+                      {[
+                        dataCurta(r.dataUtc),
+                        r.revisadoPorNome,
+                        r.criteriosConfigurados ? `${r.criteriosAtendidos}/${r.criteriosConfigurados} critérios` : null,
+                        r.overrideCriterios ? "decisão do profissional" : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    {r.justificativa && <p className="mt-1 text-[14px]">{r.justificativa}</p>}
+                  </div>
+                );
+              })}
+            </Card>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------- Habitos (anamneses)
+
+interface Habitos {
+  sonoHorasMedia: number | null;
+  estresseNivel: number | null;
+  atividadeFisicaDiasSemana: number | null;
+  aguaLitrosDia: number | null;
+}
+
+/** Sono, estresse, atividade e agua da anamnese mais recente, com a variacao desde a anterior. */
+export function HabitosCard({ pacienteId }: { pacienteId: string }) {
+  const q = useQuery({
+    queryKey: ["pro", "evolucao-habitos", pacienteId],
+    queryFn: () =>
+      api<{ total: number; atual: (Habitos & { dataUtc: string }) | null; variacaoDesdeAnterior: Habitos }>(`/api/pacientes/${pacienteId}/evolucao-habitos`),
+  });
+  const a = q.data?.atual;
+  if (!a) return null;
+  const v = q.data!.variacaoDesdeAnterior;
+  const itens = [
+    { l: "Sono", val: a.sonoHorasMedia, d: v.sonoHorasMedia, u: "h", bom: 1 },
+    { l: "Estresse", val: a.estresseNivel, d: v.estresseNivel, u: "/10", bom: -1 },
+    { l: "Atividade", val: a.atividadeFisicaDiasSemana, d: v.atividadeFisicaDiasSemana, u: "x/sem", bom: 1 },
+    { l: "Água", val: a.aguaLitrosDia, d: v.aguaLitrosDia, u: "L", bom: 1 },
+  ].filter((x) => x.val != null);
+  if (!itens.length) return null;
+  return (
+    <section>
+      <SectionTitle>Hábitos</SectionTitle>
+      <Card className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-4">
+        {itens.map((x) => (
+          <div key={x.l}>
+            <p className="text-[12px] text-muted">{x.l}</p>
+            <p className="num text-xl font-semibold">
+              {n1(x.val!)}
+              <span className="ml-0.5 text-[12px] font-normal text-muted">{x.u}</span>
+            </p>
+            {x.d != null && x.d !== 0 && (
+              <p className={clsx("num text-[12px] font-semibold", x.d * x.bom > 0 ? "text-ok" : "text-warn")}>
+                {x.d > 0 ? "+" : ""}
+                {n1(x.d)} desde a anterior
+              </p>
+            )}
+          </div>
+        ))}
+      </Card>
+      <p className="mt-1.5 text-[12px] text-faint">Pela anamnese de {dataCurta(a.dataUtc)}.</p>
+    </section>
+  );
+}
