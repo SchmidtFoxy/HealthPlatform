@@ -6,6 +6,7 @@ import { Page, PageHeader } from '@/components/shell';
 import { Card, ErrorBox, Skeleton, Sparkline } from '@/components/ui';
 import { dataCurta, diaSemanaCurto, n0, n1 } from '@/lib/format';
 import { CheckInsSecao } from '@/features/checkins';
+import { RecordesCard } from '@/features/recordes';
 import { CorpoSecao, ExamesSecao, SinaisSecao } from './BodyAndExams';
 import { useHistoricoDiario, useHistoricoTreinos } from './queries';
 
@@ -225,6 +226,9 @@ export function ProgressPage() {
           ))}
         </div>
       )}
+      <div className="mt-8">
+        <RecordesCard />
+      </div>
       <CorpoSecao />
       <div className="mt-8">
         <CheckInsSecao paciente={null} titulo="Check-ins de evolução" />
