@@ -45,9 +45,12 @@ export function vigiarAtualizacao() {
   });
 }
 
-// Clique numa notificacao com o app aberto: o service worker da versao classica avisa a janela.
-// Paciente abre tudo aqui mesmo; o resto ainda vive na classica.
+// Clique numa notificacao com o app aberto: o service worker da raiz (/sw.js) avisa a janela.
 export function ouvirLinksDeNotificacao() {
+  // App aberto pelo clique (/app/?aesynPushLink=...): vai direto para a tela do link.
+  const link = new URLSearchParams(location.search).get('aesynPushLink');
+  if (link) history.replaceState(null, '', destinoDoLink(link, lerSessao()?.tipoUsuario === 'Paciente'));
+
   navigator.serviceWorker?.addEventListener('message', (e) => {
     if (e.data?.type !== 'AESYN_PUSH_OPEN') return;
     const link = String(e.data.link || '');

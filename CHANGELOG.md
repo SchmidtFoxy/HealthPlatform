@@ -1,3 +1,9 @@
+## 0.68.0 — O app novo é a entrada do site
+
+- aesyn.com.br (e o app instalado na tela inicial) abre direto o app novo.
+- A versão clássica fica em aesyn.com.br/classico, como reserva, até ser removida.
+- Links antigos continuam funcionando: notificações, convite de paciente, redefinir senha e confirmar e-mail vão para a tela certa do app novo.
+
 ## 0.67.2 — Atividade da conta
 
 - Minha conta › "Atividade da conta": a sessão atual (IP e validade) e as últimas ações feitas com a conta, em português (criou, alterou, abriu arquivo…), com data e hora.

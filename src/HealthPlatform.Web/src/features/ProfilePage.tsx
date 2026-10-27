@@ -163,7 +163,7 @@ export function ProfilePage() {
             </Link>
           </>
         )}
-        <a href="/?classico=1" className="flex items-center justify-between p-4 font-semibold">
+        <a href="/classico?classico=1" className="flex items-center justify-between p-4 font-semibold">
           <span>
             Abrir versão clássica
             <span className="block text-sm font-normal text-muted">

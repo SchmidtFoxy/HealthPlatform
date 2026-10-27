@@ -60,7 +60,7 @@ export async function desativarPush() {
 
 export const testarPush = () => api<{ enviadas: number; motivo?: string }>('/api/push/test', { method: 'POST' });
 
-/** Para onde vai o clique de uma notificacao. Paciente abre tudo no /app; o resto ainda vive na classica. */
+/** Para onde vai o clique de uma notificacao. Link sem tela propria abre o inicio. */
 export function destinoDoLink(link: string, paciente: boolean) {
   const app: Record<string, string> = { chat: 'chat', arquivos: 'arquivos', inicio: 'hoje', alimentacao: 'dieta', treinos: 'treino', cuidados: 'cuidados' };
   if (paciente && Object.prototype.hasOwnProperty.call(app, link)) return `/app/${app[link]}`;
@@ -70,5 +70,5 @@ export function destinoDoLink(link: string, paciente: boolean) {
   if (!paciente && ficha) return `/app/pro/pacientes/${ficha[1]}`;
   const pro: Record<string, string> = { followups: 'pro/central?aba=contatos', pendencias: 'pro/central?aba=pendencias', solicitacoes: 'pro/central?aba=pedidos', agenda: 'pro/agenda', inicio: 'pro' };
   if (!paciente && Object.prototype.hasOwnProperty.call(pro, link)) return `/app/${pro[link]}`;
-  return `/?aesynPushLink=${encodeURIComponent(link)}`;
+  return '/app/';
 }
