@@ -2,6 +2,7 @@ import { Activity, CalendarCheck, CalendarDays, Dumbbell, Home, MessageCircle, S
 import { lazy, ReactNode, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/shell';
+import { FaixaSimulacao } from './components/Simulacao';
 import { Skeleton, Toaster } from './components/ui';
 import { AtivarPage, ConfirmarEmailPage, LoginPage, RedefinirSenhaPage } from './features/auth/LoginPage';
 import { HomeSitePage, RecursosPage, SiteLayout, SobrePage, VantagensPage } from './features/site/site';
@@ -83,6 +84,7 @@ export function App() {
   return (
     <>
       <Toaster />
+      <FaixaSimulacao />
       <Suspense fallback={<Carregando />}>
         <Routes>
           <Route element={<SiteLayout />}>
