@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowDown, ArrowUp, BarChart3, ChevronLeft, Copy, Plus, Replace, Search, Timer, Trash2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, BarChart3, BookCopy, BookmarkPlus, ChevronLeft, Copy, Plus, Replace, Search, Timer, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
@@ -9,6 +9,7 @@ import { api, ApiError } from '@/lib/api';
 import { hojeIso, n0 } from '@/lib/format';
 import { aplicarSeries, obsLimpa, SerieAlvo, seriesDoItem } from '@/lib/series';
 import type { Exercicio, PlanoTreinoPro } from '@/lib/types';
+import { InserirModeloSheet, SalvarParteComoModeloSheet } from './ModelosNoPlano';
 import { useExercicios, usePaciente, usePlanosTreino } from './queries';
 
 // ------------------------------------------------------------------ Modelo local
@@ -426,6 +427,8 @@ export function WorkoutEditorPage() {
   const [picker, setPicker] = useState<'add' | 'swap' | null>(null);
   const [volume, setVolume] = useState(false);
   const [conflito, setConflito] = useState<string | null>(null);
+  const [inserir, setInserir] = useState(false);
+  const [salvarModelo, setSalvarModelo] = useState<{ id: string; nome: string } | null>(null);
 
   useEffect(() => {
     if (plano.data && !d) setD(deServidor(plano.data));
@@ -625,7 +628,22 @@ export function WorkoutEditorPage() {
               </Field>
               </div>
 
-              <div className="mt-4 flex gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button size="sm" variant="ghost" icon={<BookCopy className="h-4 w-4" />} onClick={() => setInserir(true)}>
+                  Inserir sessão-modelo
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  icon={<BookmarkPlus className="h-4 w-4" />}
+                  disabled={!sessao.itens.length}
+                  onClick={() => {
+                    if (!sessao.id || sujo) return toast('Salve o treino antes de guardar a sessão como modelo.', 'bad');
+                    setSalvarModelo({ id: sessao.id, nome: sessao.nome });
+                  }}
+                >
+                  Salvar como modelo
+                </Button>
                 <Button
                   size="sm"
                   variant="ghost"
@@ -737,6 +755,44 @@ export function WorkoutEditorPage() {
         }
         onSwap={() => setPicker('swap')}
       />
+
+      <InserirModeloSheet
+        tipo="sessao"
+        open={inserir}
+        onClose={() => setInserir(false)}
+        onInserir={(c, nome) => {
+          const faltando = c.itens.filter((i) => !mapa.has(i.exercicioId)).length;
+          const nova: Sessao = {
+            k: uid(),
+            nome: c.nomeOriginal || nome,
+            dias: lerDias(c.diasSemanaOriginal),
+            observacoes: c.observacoesOriginais,
+            itens: [...c.itens]
+              .sort((a, b) => a.ordem - b.ordem)
+              .filter((i) => mapa.has(i.exercicioId))
+              .map((i) => ({
+                k: uid(),
+                exercicioId: i.exercicioId,
+                series: i.series,
+                repeticoes: i.repeticoes,
+                carga: i.carga,
+                unidadeCarga: i.unidadeCarga ?? 'kg',
+                descansoSegundos: i.descansoSegundos,
+                tempoSegundos: i.tempoSegundos,
+                rirAlvo: null,
+                cadencia: null,
+                tecnicaAvancada: null,
+                tecnicaAvancadaCodigo: null,
+                tecnicaAvancadaParametros: null,
+                observacoes: i.observacoes,
+              })),
+          };
+          up((x) => ({ ...x, sessoes: [...x.sessoes, nova] }));
+          setAtiva(d?.sessoes.length ?? 0);
+          toast(faltando ? `Sessão inserida. ${faltando} exercício(s) inativo(s) ficaram de fora.` : 'Sessão inserida no rascunho.');
+        }}
+      />
+      <SalvarParteComoModeloSheet tipo="sessao" alvo={salvarModelo} onClose={() => setSalvarModelo(null)} />
 
       {d && <VolumeSheet open={volume} onClose={() => setVolume(false)} sessoes={d.sessoes} mapa={mapa} />}
     </div>
