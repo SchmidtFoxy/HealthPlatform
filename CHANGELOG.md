@@ -1,3 +1,8 @@
+## 0.66.9 — Explorar exercícios por modalidade
+
+- Biblioteca › Exercícios › "Explorar por modalidade, objetivo e capacidade": as 19 modalidades (musculação, corrida, natação…) com os exercícios do catálogo que encaixam em cada capacidade.
+- Cada capacidade mostra sugestões de progressão e regressão. Tocar num exercício abre a ficha dele.
+
 ## 0.66.8 — Arquivos do paciente na ficha
 
 - Ficha do paciente › Mais › Arquivos: a equipe vê exames, laudos e fotos do paciente, com prévia das imagens, filtro por tipo, envio e remoção.
