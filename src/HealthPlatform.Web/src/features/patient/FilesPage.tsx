@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { FileImage, FileText, FolderOpen, Trash2, Upload } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { ehImagem, ImagemArquivo, VisualizadorImagem } from '@/components/ImagemArquivo';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Sheet, Skeleton, toast } from '@/components/ui';
@@ -9,9 +10,13 @@ import { MenuAnexo } from '@/components/MenuAnexo';
 import { abrirArquivo, ArquivoPaciente, CATEGORIAS, enviarArquivo, listarArquivos, removerArquivo, tamanho } from '@/lib/arquivos';
 import { dataCurta } from '@/lib/format';
 
+/** Arquivos do paciente. Na rota da equipe (/pro/pacientes/:id/arquivos), mostra os do paciente aberto. */
 export function FilesPage() {
+  const { id: pacienteId } = useParams();
+  const pro = !!pacienteId;
+  const chave = pro ? ['pro', 'arquivos', pacienteId] : ['p', 'arquivos'];
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ['p', 'arquivos'], queryFn: () => listarArquivos() });
+  const q = useQuery({ queryKey: chave, queryFn: () => listarArquivos(pacienteId) });
   const [filtro, setFiltro] = useState<string>('Todos');
   const [novo, setNovo] = useState<File | null>(null);
   const [categoria, setCategoria] = useState<string>('Exame');
@@ -30,21 +35,21 @@ export function FilesPage() {
   const visiveis = filtro === 'Todos' ? lista : lista.filter((a) => a.categoria === filtro);
 
   const enviar = useMutation({
-    mutationFn: () => enviarArquivo(novo!, { categoria, descricao: descricao.trim() || undefined }),
+    mutationFn: () => enviarArquivo(novo!, { categoria, descricao: descricao.trim() || undefined, pacienteId }),
     onSuccess: () => {
-      toast('Arquivo enviado. Seu profissional já pode ver.');
+      toast(pro ? 'Arquivo enviado. O paciente já pode ver.' : 'Arquivo enviado. Seu profissional já pode ver.');
       setNovo(null);
       setDescricao('');
-      qc.invalidateQueries({ queryKey: ['p', 'arquivos'] });
+      qc.invalidateQueries({ queryKey: chave });
     },
     onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível enviar.', 'bad'),
   });
 
   const apagar = useMutation({
-    mutationFn: (a: ArquivoPaciente) => removerArquivo(a.id),
+    mutationFn: (a: ArquivoPaciente) => removerArquivo(a.id, pacienteId),
     onSuccess: () => {
       setRemover(null);
-      qc.invalidateQueries({ queryKey: ['p', 'arquivos'] });
+      qc.invalidateQueries({ queryKey: chave });
     },
     onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível remover.', 'bad'),
   });
@@ -52,9 +57,9 @@ export function FilesPage() {
   return (
     <Page>
       <PageHeader
-        back="/perfil"
+        back={pro ? `/pro/pacientes/${pacienteId}` : '/perfil'}
         title="Arquivos"
-        subtitle="Exames, laudos e documentos do seu acompanhamento."
+        subtitle={pro ? 'Exames, laudos e documentos do paciente.' : 'Exames, laudos e documentos do seu acompanhamento.'}
         action={
           <Button size="sm" icon={<Upload className="h-4 w-4" />} onClick={() => setMenu(true)}>
             Enviar
@@ -88,7 +93,7 @@ export function FilesPage() {
             </Button>
           }
         >
-          PDF, foto ou documento de até 15 MB. Seu profissional vê na hora.
+          {pro ? 'PDF, foto ou documento de até 15 MB. O paciente vê no app dele.' : 'PDF, foto ou documento de até 15 MB. Seu profissional vê na hora.'}
         </Empty>
       )}
 
@@ -112,7 +117,7 @@ export function FilesPage() {
             const imagem = ehImagem(a);
             const Icone = imagem ? FileImage : FileText;
             const acao =
-              a.origem === 'Profissional' ? (
+              a.origem === 'Profissional' && !pro ? (
                 <Pill tone="info">Da equipe</Pill>
               ) : (
                 <button aria-label={`Remover ${a.nome}`} onClick={() => setRemover(a)} className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-faint transition hover:bg-bad/10 hover:text-bad">
@@ -124,13 +129,14 @@ export function FilesPage() {
                 <span className="block truncate font-semibold">{a.descricao || a.nome}</span>
                 <span className="block truncate text-[13px] text-muted">
                   {a.categoria} · {dataCurta(a.dataUtc)} · {tamanho(a.tamanhoBytes)}
+                  {pro && (a.origem === 'Profissional' ? ' · da equipe' : ' · do paciente')}
                 </span>
               </span>
             );
             if (imagem)
               return (
                 <Card key={a.id} className="overflow-hidden p-1.5">
-                  <ImagemArquivo id={a.id} alt={a.descricao || a.nome} onAbrir={() => setFoto(a)} className="w-full rounded-[14px] bg-raised" />
+                  <ImagemArquivo id={a.id} pacienteId={pacienteId} alt={a.descricao || a.nome} onAbrir={() => setFoto(a)} className="w-full rounded-[14px] bg-raised" />
                   <div className="flex items-center gap-3 px-2 pb-1.5 pt-2.5">
                     {legenda}
                     {acao}
@@ -139,7 +145,7 @@ export function FilesPage() {
               );
             return (
               <Card key={a.id} className="flex items-center gap-3 p-3.5">
-                <button onClick={() => abrirArquivo(a).catch((e) => toast(e.message, 'bad'))} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                <button onClick={() => abrirArquivo(a, pacienteId).catch((e) => toast(e.message, 'bad'))} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent">
                     <Icone className="h-5 w-5" />
                   </span>
@@ -152,7 +158,7 @@ export function FilesPage() {
         </div>
       )}
 
-      <VisualizadorImagem arquivo={foto && { id: foto.id, nome: foto.nome, legenda: foto.descricao }} onClose={() => setFoto(null)} />
+      <VisualizadorImagem pacienteId={pacienteId} arquivo={foto && { id: foto.id, nome: foto.nome, legenda: foto.descricao }} onClose={() => setFoto(null)} />
 
       <Sheet
         open={!!novo}
@@ -160,7 +166,7 @@ export function FilesPage() {
         title="Enviar arquivo"
         footer={
           <Button size="lg" className="w-full" loading={enviar.isPending} onClick={() => enviar.mutate()}>
-            Enviar para o profissional
+            {pro ? 'Enviar para o paciente' : 'Enviar para o profissional'}
           </Button>
         }
       >
@@ -209,7 +215,7 @@ export function FilesPage() {
           </div>
         }
       >
-        <p className="text-[15px] text-muted">{remover?.nome} sai da sua lista e da do seu profissional.</p>
+        <p className="text-[15px] text-muted">{remover?.nome} {pro ? 'sai da lista do paciente e da equipe.' : 'sai da sua lista e da do seu profissional.'}</p>
       </Sheet>
     </Page>
   );

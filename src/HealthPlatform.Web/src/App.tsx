@@ -161,6 +161,7 @@ export function App() {
             <Route path="/pro/gestao" element={<GestaoPage />} />
             <Route path="/pro/avisos" element={<AvisosPage />} />
             <Route path="/pro/pacientes/:id" element={<PatientDetailPage />} />
+            <Route path="/pro/pacientes/:id/arquivos" element={<FilesPage />} />
             <Route path="/pro/perfil" element={<ProfilePage />} />
             <Route path="/pro/conta" element={<AccountPage />} />
           </Route>
