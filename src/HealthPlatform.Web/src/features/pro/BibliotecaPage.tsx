@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Apple, BookCopy, ChevronRight, Dumbbell, Library, Pill as PillIcon, Plus, Search } from 'lucide-react';
+import { Apple, BookCopy, ChevronRight, Compass, Dumbbell, Library, Pill as PillIcon, Plus, Search } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
@@ -11,6 +11,7 @@ import { Chips } from './CuidadosPro';
 import { usePacientes } from './queries';
 import { ProgramasLista } from './Programas';
 import { CATEGORIAS_SUPLEMENTO, porcaoSuplemento, type Suplemento, useSuplementos } from './suplementos';
+import { ModalidadesSheet } from './Modalidades';
 
 // ---------------------------------------------------------------- Tipos
 
@@ -509,6 +510,7 @@ function Exercicios() {
   const [busca, setBusca] = useState('');
   const [grupo, setGrupo] = useState('Todos');
   const [aberto, setAberto] = useState<Exercicio | 'novo' | null>(null);
+  const [modalidades, setModalidades] = useState(false);
   const q = useExercicios(inativos);
   const todos = q.data ?? [];
   const grupos = ['Todos', ...Array.from(new Set(todos.map((x) => x.grupoMuscular).filter((x): x is string => !!x))).sort()];
@@ -560,6 +562,9 @@ function Exercicios() {
             Carregar base inicial
           </Button>
         </div>
+        <button onClick={() => setModalidades(true)} className="flex items-center gap-2 self-start text-[14px] font-semibold text-accent">
+          <Compass className="h-4 w-4" /> Explorar por modalidade, objetivo e capacidade
+        </button>
       </div>
       <div className="mt-3">
         {q.isError && <ErrorBox error={q.error} onRetry={() => q.refetch()} />}
@@ -578,6 +583,16 @@ function Exercicios() {
         )}
       </div>
       <ExercicioSheet item={aberto} todos={todos} onClose={() => setAberto(null)} />
+      <ModalidadesSheet
+        open={modalidades}
+        onClose={() => setModalidades(false)}
+        onExercicio={(id) => {
+          const x = todos.find((e) => e.id === id);
+          if (!x) return;
+          setModalidades(false);
+          setTimeout(() => setAberto(x), 180);
+        }}
+      />
     </>
   );
 }
