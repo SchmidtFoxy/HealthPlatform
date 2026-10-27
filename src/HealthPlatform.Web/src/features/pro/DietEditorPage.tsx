@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeftRight, BookCopy, BookmarkPlus, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, BookCopy, BookmarkPlus, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Ring, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
@@ -389,7 +389,45 @@ function ItemSheet({
 
 // ------------------------------------------------------------------ Metas
 
-function MetasSheet({ open, onClose, metas, onChange, atual }: { open: boolean; onClose: () => void; metas: Metas; onChange: (m: Metas) => void; atual: Macros }) {
+/** Percentual de cada refeicao nas metas do dia: o que ja estava salvo ou, sem isso, partes iguais. */
+function percentuaisIniciais(refeicoes: Refeicao[], metas: Metas): number[] {
+  const total = metas.calorias ?? 0;
+  const salvos = refeicoes.map((r) => (total && r.metas.calorias != null ? Math.round((r.metas.calorias / total) * 100) : null));
+  if (salvos.every((x) => x != null) && salvos.reduce((a, b) => a + (b ?? 0), 0) === 100) return salvos as number[];
+  const base = Math.floor(100 / Math.max(1, refeicoes.length));
+  return refeicoes.map((_, i) => (i === 0 ? 100 - base * (refeicoes.length - 1) : base));
+}
+
+const parte = (v: number | null, pct: number) => (v == null ? null : Math.round((v * pct) / 100));
+
+function MetasSheet({
+  open,
+  onClose,
+  metas,
+  onChange,
+  atual,
+  refeicoes,
+  onDistribuir,
+}: {
+  open: boolean;
+  onClose: () => void;
+  metas: Metas;
+  onChange: (m: Metas) => void;
+  atual: Macros;
+  refeicoes: Refeicao[];
+  onDistribuir: (pcts: number[]) => void;
+}) {
+  const [dividir, setDividir] = useState(false);
+  const [pcts, setPcts] = useState<number[]>([]);
+  useEffect(() => {
+    if (open) {
+      setDividir(false);
+      setPcts(percentuaisIniciais(refeicoes, metas));
+    }
+    // So ao abrir: depois o profissional ajusta a vontade.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+  const somaPct = pcts.reduce((a, b) => a + b, 0);
   const kcalMacros = (metas.proteinasG ?? 0) * 4 + (metas.carboidratosG ?? 0) * 4 + (metas.gordurasG ?? 0) * 9;
   const campo = (k: keyof Metas, label: string, step: number, cor: string) => (
     <div className="flex items-center justify-between gap-3 py-2">
@@ -429,6 +467,44 @@ function MetasSheet({ open, onClose, metas, onChange, atual }: { open: boolean; 
       >
         Usar o que já está montado ({n0(atual.kcal)} kcal) como meta
       </button>
+      {metas.calorias != null && refeicoes.length > 1 && (
+        <div className="mt-4 border-t border-line/60 pt-3">
+          <button className="flex w-full items-center justify-between text-left" onClick={() => setDividir((x) => !x)} aria-expanded={dividir}>
+            <span>
+              <span className="block font-semibold">Dividir entre as refeições</span>
+              <span className="block text-[13px] text-muted">Cada refeição ganha a sua meta, em % do dia.</span>
+            </span>
+            <ChevronDown className={clsx('h-4 w-4 shrink-0 text-faint transition', dividir && 'rotate-180')} />
+          </button>
+          {dividir && (
+            <div className="mt-2">
+              {refeicoes.map((r, i) => (
+                <div key={r.k} className="flex items-center justify-between gap-3 py-1.5">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{r.nome || 'Refeição'}</p>
+                    <p className="num text-[12px] text-muted">
+                      {n0(parte(metas.calorias, pcts[i] ?? 0) ?? 0)} kcal
+                      {metas.proteinasG != null ? ` · P ${n0(parte(metas.proteinasG, pcts[i] ?? 0) ?? 0)}g` : ''}
+                    </p>
+                  </div>
+                  <Stepper value={pcts[i] ?? 0} onChange={(v) => setPcts((x) => x.map((p, j) => (j === i ? Math.max(0, Math.min(100, v || 0)) : p)))} step={5} suffix="%" />
+                </div>
+              ))}
+              <Button
+                className="mt-2 w-full"
+                variant="soft"
+                disabled={somaPct !== 100}
+                onClick={() => {
+                  onDistribuir(pcts);
+                  toast('Metas divididas entre as refeições.');
+                }}
+              >
+                {somaPct === 100 ? 'Aplicar nas refeições' : `A soma está em ${somaPct}%, precisa dar 100%`}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </Sheet>
   );
 }
@@ -592,8 +668,8 @@ export function DietEditorPage() {
                             </label>
                           </div>
                           <div className="pt-1 text-right">
-                            <p className="num font-semibold leading-none">{n0(t.kcal)}</p>
-                            <p className="text-[11px] text-muted">kcal</p>
+                            <p className={clsx('num font-semibold leading-none', r.metas.calorias && Math.abs(t.kcal - r.metas.calorias) > r.metas.calorias * 0.1 && 'text-warn')}>{n0(t.kcal)}</p>
+                            <p className="num text-[11px] text-muted">{r.metas.calorias ? `de ${n0(r.metas.calorias)} kcal` : 'kcal'}</p>
                           </div>
                           <IconButton label="Opções da refeição" onClick={() => setMenuRef(r.k)} className="-mr-2">
                             <MoreHorizontal className="h-5 w-5" />
@@ -677,7 +753,31 @@ export function DietEditorPage() {
         }}
       />
 
-      {d && <MetasSheet open={metasOpen} onClose={() => setMetasOpen(false)} metas={d.metas} onChange={(m) => up((x) => ({ ...x, metas: m }))} atual={total} />}
+      {d && (
+        <MetasSheet
+          open={metasOpen}
+          onClose={() => setMetasOpen(false)}
+          metas={d.metas}
+          onChange={(m) => up((x) => ({ ...x, metas: m }))}
+          atual={total}
+          refeicoes={d.refeicoes}
+          onDistribuir={(pcts) =>
+            up((x) => ({
+              ...x,
+              refeicoes: x.refeicoes.map((r, i) => ({
+                ...r,
+                metas: {
+                  calorias: parte(x.metas.calorias, pcts[i]),
+                  proteinasG: parte(x.metas.proteinasG, pcts[i]),
+                  carboidratosG: parte(x.metas.carboidratosG, pcts[i]),
+                  gordurasG: parte(x.metas.gordurasG, pcts[i]),
+                  fibrasG: parte(x.metas.fibrasG, pcts[i]),
+                },
+              })),
+            }))
+          }
+        />
+      )}
 
       <InserirModeloSheet
         tipo="refeicao"

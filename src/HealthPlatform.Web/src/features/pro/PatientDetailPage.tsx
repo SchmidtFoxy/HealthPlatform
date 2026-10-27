@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { BookCopy, CalendarRange, ChevronLeft, ClipboardCheck, Copy, Dumbbell, Stethoscope, Flame, Mail, MessageCircle, Pencil, Phone, Plus, Salad, TrendingUp } from 'lucide-react';
 import { ReactNode, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Page } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, MacroBar, Pill, Ring, SectionTitle, Segmented, Skeleton, Sparkline, toast } from '@/components/ui';
 import { api } from '@/lib/api';
@@ -16,6 +16,7 @@ import { AlertasPaciente, DorCorporalCard, type DorCorporalResumo, HabitosCard, 
 import { CalendarioNutricional } from './CalendarioNutricional';
 import { CiclosEsportivosSecao } from './CiclosEsportivos';
 import { FasesSecao } from './Fases';
+import { NovaVersaoSheet } from './NovaVersao';
 import { AplicarProgramaSheet } from './Programas';
 import { AbaCuidados } from './CuidadosPro';
 import { MaisAcoes, STATUS_ACOMPANHAMENTO } from './FichaAcoes';
@@ -228,26 +229,9 @@ function useAtivar(tipo: 'dieta' | 'treino', pacienteId: string) {
   });
 }
 
-function useDuplicar(tipo: 'dieta' | 'treino', pacienteId: string) {
-  const qc = useQueryClient();
-  const nav = useNavigate();
-  return useMutation({
-    mutationFn: (plano: { id: string; nome: string }) =>
-      api<{ id: string }>(tipo === 'dieta' ? `/api/planos-alimentares/${plano.id}/duplicar` : `/api/treinos/${plano.id}/duplicar`, {
-        method: 'POST',
-        json: { nome: `${plano.nome} (cópia)`, dataInicio: new Date().toISOString().slice(0, 10), concluirPlanoAnterior: false },
-      }),
-    onSuccess: (novo) => {
-      qc.invalidateQueries({ queryKey: ['pro', tipo === 'dieta' ? 'dietas' : 'treinos', pacienteId] });
-      nav(`/pro/pacientes/${pacienteId}/${tipo}/${novo.id}`);
-    },
-    onError: (e) => toast(e.message, 'bad'),
-  });
-}
-
 function AcoesPlano({ tipo, pacienteId, plano }: { tipo: 'dieta' | 'treino'; pacienteId: string; plano: { id: string; nome: string; status: string } }) {
   const ativar = useAtivar(tipo, pacienteId);
-  const duplicar = useDuplicar(tipo, pacienteId);
+  const [nova, setNova] = useState(false);
   const [modelo, setModelo] = useState(false);
   return (
     <div className="flex flex-wrap gap-2 border-t border-line/60 p-3">
@@ -256,9 +240,10 @@ function AcoesPlano({ tipo, pacienteId, plano }: { tipo: 'dieta' | 'treino'; pac
           Editar
         </Button>
       </Link>
-      <Button size="sm" variant="ghost" icon={<Copy className="h-4 w-4" />} loading={duplicar.isPending} onClick={() => duplicar.mutate(plano)}>
+      <Button size="sm" variant="ghost" icon={<Copy className="h-4 w-4" />} onClick={() => setNova(true)}>
         Duplicar
       </Button>
+      <NovaVersaoSheet tipo={tipo} pacienteId={pacienteId} plano={nova ? plano : null} onClose={() => setNova(false)} />
       <Button size="sm" variant="ghost" icon={<BookCopy className="h-4 w-4" />} onClick={() => setModelo(true)}>
         Salvar como modelo
       </Button>
