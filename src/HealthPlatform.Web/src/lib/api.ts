@@ -8,6 +8,9 @@ export interface Sessao {
   nome: string;
   tipoUsuario: TipoUsuario;
   expiresAtUtc: string | null;
+  /** Admin vendo o app como um profissional, somente leitura. */
+  impersonating?: boolean;
+  impersonatorNome?: string | null;
 }
 
 interface LoginResponse {
@@ -15,6 +18,9 @@ interface LoginResponse {
   expiresAtUtc: string;
   nome: string;
   tipoUsuario: TipoUsuario;
+  impersonating?: boolean;
+  impersonatorId?: string | null;
+  impersonatorNome?: string | null;
 }
 
 export class ApiError extends Error {
@@ -30,7 +36,7 @@ export function lerSessao(): Sessao | null {
     const token = localStorage.getItem('hp_token');
     const user = JSON.parse(localStorage.getItem('hp_user') || 'null');
     if (!token || !user?.tipoUsuario) return null;
-    return { token, nome: user.nome, tipoUsuario: user.tipoUsuario, expiresAtUtc: localStorage.getItem('hp_expires_at') };
+    return { token, nome: user.nome, tipoUsuario: user.tipoUsuario, expiresAtUtc: localStorage.getItem('hp_expires_at'), impersonating: !!user.impersonating, impersonatorNome: user.impersonatorNome ?? null };
   } catch {
     return null;
   }
@@ -44,7 +50,11 @@ function salvarSessao(r: LoginResponse | null) {
       localStorage.removeItem('hp_expires_at');
     } else {
       localStorage.setItem('hp_token', r.accessToken);
-      localStorage.setItem('hp_user', JSON.stringify({ nome: r.nome, tipoUsuario: r.tipoUsuario, impersonating: false }));
+      // Mesmo formato do front classico, para a simulacao valer nos dois.
+      localStorage.setItem(
+        'hp_user',
+        JSON.stringify({ nome: r.nome, tipoUsuario: r.tipoUsuario, impersonating: !!r.impersonating, impersonatorId: r.impersonatorId ?? null, impersonatorNome: r.impersonatorNome ?? null }),
+      );
       localStorage.setItem('hp_expires_at', r.expiresAtUtc || '');
     }
   } catch {
@@ -75,7 +85,8 @@ let renovando: Promise<boolean> | null = null;
 
 async function renovar(): Promise<boolean> {
   const atual = lerSessao();
-  if (!atual) return false;
+  // A simulacao e somente leitura: o servidor recusa renovar, entao ela termina quando o token vence.
+  if (!atual || atual.impersonating) return false;
   renovando ??= fetch('/api/auth/renovar', { method: 'POST', headers: { Authorization: `Bearer ${atual.token}` } })
     .then(async (r) => {
       if (!r.ok) return false;
@@ -127,12 +138,28 @@ export async function entrar(email: string, senha: string) {
 }
 
 export async function sair() {
+  // Na simulacao, o logout de verdade e o da conta do admin.
+  if (lerSessao()?.impersonating) await encerrarSimulacao();
   try {
     await api('/api/auth/logout', { method: 'POST' });
   } catch {
     /* sair localmente mesmo se a API nao responder */
   }
   salvarSessao(null);
+}
+
+/** Admin passa a ver o app como o profissional escolhido, somente leitura. */
+export async function iniciarSimulacao(usuarioId: string) {
+  const r = await api<LoginResponse>(`/api/impersonacao/${usuarioId}/iniciar`, { method: 'POST' });
+  salvarSessao(r);
+}
+
+export async function encerrarSimulacao() {
+  try {
+    salvarSessao(await api<LoginResponse>('/api/impersonacao/finalizar', { method: 'POST' }));
+  } catch {
+    salvarSessao(null);
+  }
 }
 
 export const ehPaciente = (s: Sessao | null) => s?.tipoUsuario === 'Paciente';

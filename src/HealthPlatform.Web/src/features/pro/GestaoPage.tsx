@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { AlertTriangle, CalendarCheck, ChevronDown, Download, FileText, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
+import { AlertTriangle, CalendarCheck, ChevronDown, Download, Eye, FileText, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
 import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Segmented, Sheet, Skeleton, toast } from '@/components/ui';
-import { api, ApiError, lerSessao } from '@/lib/api';
+import { api, ApiError, iniciarSimulacao, lerSessao } from '@/lib/api';
 import { n0, tempoRelativo } from '@/lib/format';
 import { REGRAS_SENHA } from '../auth/LoginPage';
 import { Chips } from './CuidadosPro';
@@ -542,10 +542,35 @@ function MembroSheet({ item, onClose, onSenha }: { item: Membro | 'novo' | null;
                 Redefinir senha
               </Button>
             )}
+            {m.ativo && exigeRegistro(m.tipoUsuario) && lerSessao()?.tipoUsuario === 'Admin' && <VerComo membro={m} />}
           </>
         )}
       </div>
     </Sheet>
+  );
+}
+
+/** Admin abre o app como o profissional ve, sem poder alterar nada. */
+function VerComo({ membro }: { membro: Membro }) {
+  const nav = useNavigate();
+  const [abrindo, setAbrindo] = useState(false);
+  const entrar = async () => {
+    setAbrindo(true);
+    try {
+      await iniciarSimulacao(membro.usuarioId);
+      nav('/pro', { replace: true });
+    } catch (e) {
+      toast(e instanceof Error ? e.message : 'Não foi possível abrir a visão.', 'bad');
+      setAbrindo(false);
+    }
+  };
+  return (
+    <div className="rounded-xl bg-raised/60 p-3">
+      <Button variant="ghost" className="w-full" icon={<Eye className="h-4 w-4" />} loading={abrindo} onClick={entrar}>
+        Ver o app como {membro.nome.split(' ')[0]}
+      </Button>
+      <p className="mt-1 text-center text-[12px] text-muted">Somente leitura, para conferir o que a pessoa vê. Fica registrado na auditoria.</p>
+    </div>
   );
 }
 

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { ChevronRight, LogOut, Plus, Repeat, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ContaLembrada, contasLembradas, esquecerConta, sair, TipoUsuario } from '@/lib/api';
+import { ContaLembrada, contasLembradas, encerrarSimulacao, esquecerConta, lerSessao, sair, TipoUsuario } from '@/lib/api';
 import { iniciais } from '@/lib/format';
 import { useSessao } from '@/lib/session';
 import { Sheet } from './ui';
@@ -46,6 +46,11 @@ export function useConta() {
   const nav = useNavigate();
   return {
     async sair() {
+      // Na simulacao, "Sair" volta para a conta do admin.
+      if (lerSessao()?.impersonating) {
+        await encerrarSimulacao();
+        return nav('/pro/gestao?aba=equipe', { replace: true });
+      }
       await sair();
       nav('/entrar', { replace: true });
     },

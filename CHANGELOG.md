@@ -1,3 +1,9 @@
+## 0.66.7 — Ver o app como um profissional
+
+- Gestão › Equipe: o administrador pode abrir o app como um médico, nutricionista ou personal ("Ver o app como…"), para conferir o que a pessoa vê.
+- Enquanto isso, uma faixa no topo avisa que é somente leitura e tem o botão "Voltar à minha conta". "Sair" também volta para a conta do admin.
+- Vale para o app novo e o clássico (mesma sessão). Tudo fica registrado na auditoria.
+
 ## 0.66.6 — Sessões e refeições-modelo dentro dos planos
 
 - Editor de treino: inserir uma sessão-modelo da biblioteca no rascunho e salvar a sessão atual como modelo.
