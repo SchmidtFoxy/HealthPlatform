@@ -1,3 +1,8 @@
+## 0.67.1 — Nova versão com ajuste e metas por refeição
+
+- Ficha › Duplicar (dieta ou treino) abre "Duplicar como nova versão": dieta ajustada em % ou por calorias alvo; treino com carga, séries, repetições e descanso. Mostra a prévia antes de criar e pode concluir o plano atual.
+- Editor de dieta › Metas do dia › "Dividir entre as refeições": cada refeição ganha a sua meta em % do dia, e o card da refeição mostra "333 de 420 kcal".
+
 ## 0.67.0 — Recordes, histórico das fases e hábitos
 
 - Progresso (paciente) e ficha › Treino (equipe): "Recordes", a maior carga em cada exercício nos últimos 6 meses, com a evolução desde o início.
