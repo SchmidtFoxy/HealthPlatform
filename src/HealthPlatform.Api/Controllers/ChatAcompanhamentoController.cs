@@ -298,9 +298,12 @@ public sealed class ChatAcompanhamentoController(
         await db.SaveChangesAsync(ct);
         if (destinatarioUsuarioId.HasValue)
         {
-            var pushTitulo = autor == "Paciente" ? $"Nova mensagem de {paciente.Nome}" : $"Nova mensagem de {profissional.Nome}";
+            // Como num app de conversa: o titulo e quem escreveu e o corpo e a propria mensagem.
+            var pushTitulo = autor == "Paciente" ? paciente.Nome : profissional.Nome;
+            var pushCorpo = referencia?.Tipo == "Arquivo" && mensagem == "Foto" ? "📷 Foto" : Resumir(mensagem, 160);
+            if (contexto != "Geral") pushCorpo = $"{RotuloContexto(contexto)} • {pushCorpo}";
             var pushLink = autor == "Paciente" ? $"chat-profissional:{paciente.Id}" : "chat";
-            await push.EnviarAsync(destinatarioUsuarioId.Value, "mensagem", pushTitulo, $"{RotuloContexto(contexto)} • {Resumir(mensagem, 120)}", pushLink, ct);
+            await push.EnviarAsync(destinatarioUsuarioId.Value, "mensagem", pushTitulo, pushCorpo, pushLink, ct);
         }
         return Ok(new
         {

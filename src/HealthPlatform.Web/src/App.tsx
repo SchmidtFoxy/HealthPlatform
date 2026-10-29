@@ -1,6 +1,7 @@
 import { Activity, CalendarCheck, CalendarDays, Dumbbell, Home, MessageCircle, Salad, User, Users } from 'lucide-react';
-import { lazy, ReactNode, Suspense } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { lazy, ReactNode, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell } from './components/shell';
 import { FaixaSimulacao } from './components/Simulacao';
 import { Skeleton, Toaster } from './components/ui';
@@ -12,6 +13,8 @@ import { ProgressPage } from './features/patient/ProgressPage';
 import { TodayPage } from './features/patient/TodayPage';
 import { DiaryPage } from './features/patient/DiaryPage';
 import { WorkoutPlanPage } from './features/patient/WorkoutPlanPage';
+import { EVENTO_ABRIR_LINK, EVENTO_PUSH_RECEBIDO } from './lib/atualizacao';
+import { sincronizarPush } from './lib/push';
 import { useSessao } from './lib/session';
 import { useTema } from './lib/theme';
 
@@ -79,8 +82,37 @@ const navEquipe = [
   { to: '/pro/perfil', label: 'Perfil', icon: User },
 ];
 
+/** Liga as notificacoes ao app aberto: o clique leva para a tela certa e a mensagem nova aparece na hora. */
+function useNotificacoesNoApp() {
+  const nav = useNavigate();
+  const qc = useQueryClient();
+  const s = useSessao();
+  useEffect(() => {
+    const abrir = (e: Event) => nav((e as CustomEvent<string>).detail);
+    const recebido = (e: Event) => {
+      if (!(e as CustomEvent<string>).detail.startsWith('chat')) return;
+      ['pro', 'p'].forEach((k) => {
+        qc.invalidateQueries({ queryKey: [k, 'chat'] });
+        qc.invalidateQueries({ queryKey: [k, 'inbox'] });
+        qc.invalidateQueries({ queryKey: [k, 'chat-nao-lidas'] });
+      });
+    };
+    window.addEventListener(EVENTO_ABRIR_LINK, abrir);
+    window.addEventListener(EVENTO_PUSH_RECEBIDO, recebido);
+    return () => {
+      window.removeEventListener(EVENTO_ABRIR_LINK, abrir);
+      window.removeEventListener(EVENTO_PUSH_RECEBIDO, recebido);
+    };
+  }, [nav, qc]);
+  // Aparelho que ja deu permissao continua recebendo, mesmo depois de trocar de conta.
+  useEffect(() => {
+    if (s?.token && !s.impersonating) sincronizarPush().catch(() => {});
+  }, [s?.token, s?.impersonating]);
+}
+
 export function App() {
   useTema();
+  useNotificacoesNoApp();
   return (
     <>
       <Toaster />

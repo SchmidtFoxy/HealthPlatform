@@ -11,6 +11,16 @@
   - O paciente vê "2 pães · 100 g".
   - Banco: três colunas opcionais em `Alimentos` (`scripts/sql/v0.71.0_alimento_medida_caseira.sql`, rodar antes do merge).
 
+## v0.70.1 — Notificação de mensagem leva direto para a conversa
+
+- Cada mensagem nova do chat chega como notificação com o nome de quem escreveu e o texto, e toca de novo a cada mensagem (antes a segunda mensagem trocava a primeira em silêncio). Várias mensagens da mesma conversa ficam numa notificação só, com "3 mensagens novas".
+- Tocar na notificação com o app fechado abre o app (com a abertura animada) direto na conversa. Com o app em segundo plano, ele vem para a frente já na conversa, sem recarregar.
+- Se a sessão tinha expirado, depois de entrar o app volta para a conversa da notificação, e não para o início.
+- Quem está com a conversa aberta na tela não recebe o aviso; a mensagem aparece na hora, sem esperar a próxima atualização. Abrir a conversa tira a notificação dela da bandeja.
+- A conversa convida a ligar as notificações ("Seja avisado quando ... responder") para quem ainda não ligou.
+- O aparelho que já deu permissão volta a ser registrado sozinho ao entrar no app. Ao sair da conta, o aparelho deixa de receber as notificações dela.
+- Inscrições expiradas são removidas do servidor na primeira falha de envio.
+
 ## v0.70.0 — Profissional responsável pelo paciente
 
 - O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.

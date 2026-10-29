@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ChevronLeft, FileText, Loader2, Paperclip, SendHorizontal, ShieldAlert } from 'lucide-react';
+import { Bell, ChevronLeft, FileText, Loader2, Paperclip, SendHorizontal, ShieldAlert, X } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ehImagem, ImagemArquivo, VisualizadorImagem } from '@/components/ImagemArquivo';
@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 import { abrirArquivo, enviarArquivo } from '@/lib/arquivos';
 import { MenuAnexo } from '@/components/MenuAnexo';
 import { iniciais } from '@/lib/format';
+import { ativarPush, limparNotificacoesDaConversa, pushSuportado, statusPush } from '@/lib/push';
 
 interface Mensagem {
   id: string;
@@ -51,6 +52,52 @@ const diaRotulo = (iso: string) => {
 };
 const horaMsg = (iso: string) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
+const CHAVE_CONVITE_PUSH = 'aesyn-chat-convite-push';
+
+/** Convite para ligar as notificacoes, na propria conversa: sem elas a resposta so aparece com o app aberto. */
+function ConvitePush({ pro }: { pro: boolean }) {
+  const qc = useQueryClient();
+  const [fechado, setFechado] = useState(() => {
+    try {
+      return localStorage.getItem(CHAVE_CONVITE_PUSH) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const pode = !fechado && pushSuportado() && Notification.permission === 'default';
+  const st = useQuery({ queryKey: ['push', 'status'], queryFn: statusPush, staleTime: 60_000, enabled: pode });
+  const ativar = useMutation({
+    mutationFn: ativarPush,
+    onSuccess: () => {
+      toast('Notificações ligadas. Você será avisado das novas mensagens.');
+      qc.invalidateQueries({ queryKey: ['push'] });
+      setFechado(true);
+    },
+    onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível ligar as notificações.', 'bad'),
+  });
+  if (!pode || !st.data?.habilitadoNoServidor) return null;
+  const fechar = () => {
+    try {
+      localStorage.setItem(CHAVE_CONVITE_PUSH, '1');
+    } catch {
+      /* sem armazenamento: so esconde agora */
+    }
+    setFechado(true);
+  };
+  return (
+    <div className="mb-3 flex items-center gap-3 rounded-2xl border border-accent/30 bg-accent/10 px-3.5 py-3 text-[13px]">
+      <Bell className="h-5 w-5 shrink-0 text-accent" />
+      <p className="min-w-0 flex-1">{pro ? 'Seja avisado quando o paciente responder, mesmo com o app fechado.' : 'Seja avisado quando seu profissional responder, mesmo com o app fechado.'}</p>
+      <button onClick={() => ativar.mutate()} disabled={ativar.isPending} className="shrink-0 rounded-full bg-accent px-3 py-1.5 font-semibold text-accent-ink disabled:opacity-60">
+        {ativar.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Ativar'}
+      </button>
+      <button aria-label="Agora não" onClick={fechar} className="-mr-1 grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-raised">
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 /** Conversa paciente <-> profissional. pacienteId ausente: visao do paciente (/api/chat/me). */
 export function Conversa({ pacienteId }: { pacienteId?: string }) {
   const pro = !!pacienteId;
@@ -67,10 +114,12 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
   const campo = useRef<HTMLTextAreaElement>(null);
   const msgs = q.data?.mensagens ?? [];
 
-  // Abrir a conversa marca como lida no servidor; o contador some junto.
+  // Abrir a conversa marca como lida no servidor; o contador e a notificacao na bandeja somem junto.
   useEffect(() => {
-    if (q.data) qc.invalidateQueries({ queryKey: [pro ? 'pro' : 'p', pro ? 'inbox' : 'chat-nao-lidas'] });
-  }, [q.data, qc, pro]);
+    if (!q.data) return;
+    qc.invalidateQueries({ queryKey: [pro ? 'pro' : 'p', pro ? 'inbox' : 'chat-nao-lidas'] });
+    limparNotificacoesDaConversa(pro ? `chat-profissional:${pacienteId}` : 'chat').catch(() => {});
+  }, [q.data, qc, pro, pacienteId]);
 
   useLayoutEffect(() => {
     fim.current?.scrollIntoView({ block: 'end' });
@@ -149,6 +198,7 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
             </div>
           )}
           {q.data && !prof && <p className="mt-10 text-center text-sm text-muted">Seu acompanhamento ainda não tem um profissional responsável. A clínica já foi avisada e você poderá mandar mensagens assim que ela definir quem acompanha você.</p>}
+          {q.data && prof && <ConvitePush pro={pro} />}
           {q.data && prof && !pro && (
             <div className="mb-3 flex items-start gap-2 rounded-2xl border border-line bg-surface px-3.5 py-3 text-[13px] text-muted">
               <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warn" />
