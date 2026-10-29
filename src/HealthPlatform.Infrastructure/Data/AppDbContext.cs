@@ -2,13 +2,14 @@ using System.Linq.Expressions;
 using HealthPlatform.Domain.Common;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Identity;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthPlatform.Infrastructure.Data;
 
-public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
+public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>, IDataProtectionKeyContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -76,6 +77,12 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<InteresseExplorePaciente> InteressesExplorePaciente => Set<InteresseExplorePaciente>();
     public DbSet<EventoProgressaoSupervisionada> EventosProgressaoSupervisionada => Set<EventoProgressaoSupervisionada>();
     public DbSet<NotaInternaProfissional> NotasInternasProfissionais => Set<NotaInternaProfissional>();
+
+    /// <summary>
+    /// v0.72.1 - chaves do ASP.NET Data Protection (assinam convites, links de senha e de e-mail).
+    /// No banco elas sobrevivem a deploy, troca de container e migracao de servidor.
+    /// </summary>
+    public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
