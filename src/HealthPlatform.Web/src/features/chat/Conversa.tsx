@@ -197,7 +197,7 @@ export function Conversa({ pacienteId }: { pacienteId?: string }) {
               <Skeleton className="ml-auto h-10 w-1/2" />
             </div>
           )}
-          {q.data && !prof && <p className="mt-10 text-center text-sm text-muted">Você ainda não tem um profissional vinculado. Assim que tiver, a conversa aparece aqui.</p>}
+          {q.data && !prof && <p className="mt-10 text-center text-sm text-muted">Seu acompanhamento ainda não tem um profissional responsável. A clínica já foi avisada e você poderá mandar mensagens assim que ela definir quem acompanha você.</p>}
           {q.data && prof && <ConvitePush pro={pro} />}
           {q.data && prof && !pro && (
             <div className="mb-3 flex items-start gap-2 rounded-2xl border border-line bg-surface px-3.5 py-3 text-[13px] text-muted">

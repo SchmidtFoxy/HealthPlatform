@@ -1,4 +1,4 @@
-## v0.69.2 — Notificação de mensagem leva direto para a conversa
+## v0.70.1 — Notificação de mensagem leva direto para a conversa
 
 - Cada mensagem nova do chat chega como notificação com o nome de quem escreveu e o texto, e toca de novo a cada mensagem (antes a segunda mensagem trocava a primeira em silêncio). Várias mensagens da mesma conversa ficam numa notificação só, com "3 mensagens novas".
 - Tocar na notificação com o app fechado abre o app (com a abertura animada) direto na conversa. Com o app em segundo plano, ele vem para a frente já na conversa, sem recarregar.
@@ -7,6 +7,14 @@
 - A conversa convida a ligar as notificações ("Seja avisado quando ... responder") para quem ainda não ligou.
 - O aparelho que já deu permissão volta a ser registrado sozinho ao entrar no app. Ao sair da conta, o aparelho deixa de receber as notificações dela.
 - Inscrições expiradas são removidas do servidor na primeira falha de envio.
+
+## v0.70.0 — Profissional responsável pelo paciente
+
+- O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.
+- Sem responsável definido, o sistema deduz: consulta mais recente que não foi cancelada nem faltou, plano de treino ou dieta mais recente, último profissional que respondeu no chat ou o único profissional da clínica. Se nada disso existir, o paciente vê o aviso e os administradores são avisados, em vez de a mensagem ir para a pessoa errada.
+- A conversa é do paciente: ao trocar o responsável, o novo profissional vê o histórico inteiro.
+- Gestão › Carteira › "Mensagens e responsável" (só admin): quem recebe as mensagens e por quê, se a conta e o push do profissional estão ativos, mensagens e avisos por pessoa, alertas do que está errado e a troca do responsável, com opção de repassar os avisos não lidos.
+- Banco: coluna nova `Pacientes.ProfissionalResponsavelId` (migration V0700ProfissionalResponsavel).
 
 ## v0.69.1 — Abertura animada do app
 
