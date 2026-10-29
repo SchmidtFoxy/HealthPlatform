@@ -9,6 +9,7 @@
     <link rel="icon" href="/icons/favicon-32.png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>AESYN</title>
+    <link rel="preload" as="image" href="/abertura-simbolo.webp" type="image/webp" />
     <script>
       try {
         var t = localStorage.getItem('aesyn_theme') || 'system';
@@ -16,10 +17,132 @@
         document.documentElement.dataset.theme = dark ? 'dark' : 'light';
       } catch (e) { document.documentElement.dataset.theme = 'dark'; }
     </script>
-    <script type="module" crossorigin src="/assets/index-CVwfR-kv.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DtCHr68a.css">
+    <style>
+      /* Abertura animada do PWA: HTML puro para aparecer no primeiro quadro, antes do JS carregar.
+         Linhas de luz desenham o contorno do simbolo, o simbolo real se materializa e o nome entra letra a letra. */
+      #abertura {
+        --ab-bg: 241 246 245; --ab-fg: 10 30 27; --ab-muted: 84 109 104;
+        --ab-a1: 9 140 115; --ab-traco: 9 140 115; --ab-halo: 9 140 115; --ab-h1: 0.12; --ab-h2: 0.1; --ab-glow: 0.18; --ab-grade: 0.06;
+        position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center; overflow: hidden;
+        background: rgb(var(--ab-bg)); color: rgb(var(--ab-fg));
+        transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1), filter .55s ease;
+      }
+      [data-theme='dark'] #abertura {
+        --ab-bg: 5 16 14; --ab-fg: 230 243 240; --ab-muted: 140 168 162;
+        --ab-a1: 94 240 200; --ab-traco: 170 255 230; --ab-halo: 15 90 80; --ab-h1: 0.12; --ab-h2: 0.5; --ab-glow: 0.5; --ab-grade: 0.06;
+      }
+      #abertura.sair { opacity: 0; transform: scale(1.06); filter: blur(8px); pointer-events: none; }
+      #abertura .ab-halo { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0; animation: ab-in 1.4s ease forwards, ab-respira 6s ease-in-out 1.4s infinite alternate; }
+      #abertura .ab-h1 { width: 70vmax; height: 70vmax; left: -32vmax; top: -38vmax; background: rgb(var(--ab-a1) / var(--ab-h1)); }
+      #abertura .ab-h2 { width: 70vmax; height: 70vmax; right: -34vmax; bottom: -38vmax; background: rgb(var(--ab-halo) / var(--ab-h2)); animation-delay: .2s, 1.6s; }
+      #abertura .ab-grade { position: absolute; inset: 0; opacity: 0; animation: ab-in 1.8s ease .2s forwards;
+        background: radial-gradient(rgb(var(--ab-fg) / var(--ab-grade)) 1px, transparent 1px); background-size: 22px 22px;
+        -webkit-mask-image: radial-gradient(45% 35% at 50% 45%, black, transparent); mask-image: radial-gradient(45% 35% at 50% 45%, black, transparent); }
+      #abertura .ab-centro { position: relative; display: flex; flex-direction: column; align-items: center; transform: translateY(-3vh); }
+      #abertura svg { width: min(62vw, 260px); height: auto; overflow: visible; }
+      #abertura .ab-orbita { fill: none; stroke: rgb(var(--ab-a1) / 0.22); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ab-traco 1.8s cubic-bezier(.6,0,.2,1) .1s forwards; }
+      #abertura .ab-ponto { fill: rgb(var(--ab-a1)); opacity: 0; animation: ab-pisca 2.4s ease-in-out 1.2s infinite; }
+      #abertura .ab-luz { fill: none; stroke: rgb(var(--ab-traco)); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1;
+        filter: drop-shadow(0 0 6px rgb(var(--ab-a1) / .9)); animation: ab-traco 1.05s cubic-bezier(.65,0,.25,1) forwards, ab-some .7s ease 1.55s forwards; }
+      #abertura .ab-l2 { animation-delay: .22s, 1.6s; } #abertura .ab-l3 { animation-delay: .34s, 1.65s; } #abertura .ab-l4 { animation-delay: .46s, 1.7s; }
+      #abertura .ab-simbolo { opacity: 0; transform-origin: 320px 330px; transform: scale(.94); filter: blur(10px); animation: ab-surge 1s cubic-bezier(.2,.7,.2,1) 1.05s forwards; }
+      [data-theme='dark'] #abertura .ab-simbolo { -webkit-mask: url(#ab-mascara); mask: url(#ab-mascara); }
+      [data-theme='light'] #abertura .ab-peca { transform: scale(.78); transform-origin: 320px 320px; }
+      [data-theme='light'] #abertura .ab-simbolo { clip-path: url(#ab-recorte); }
+      [data-theme='light'] #abertura .ab-sombra { filter: drop-shadow(0 30px 40px rgb(8 58 52 / .3)); }
+      #abertura .ab-reflexo { opacity: 0; animation: ab-reflexo 1.3s cubic-bezier(.5,0,.3,1) 1.75s forwards, ab-reflexo 1.3s cubic-bezier(.5,0,.3,1) 4.2s infinite; }
+      #abertura .ab-chao { width: 170px; height: 2px; margin-top: 6px; border-radius: 2px; transform: scaleX(0); opacity: .9;
+        background: linear-gradient(90deg, transparent, rgb(var(--ab-a1)), transparent); animation: ab-chao 1s cubic-bezier(.2,.7,.2,1) 1.25s forwards; }
+      #abertura .ab-nome { display: flex; margin-top: 26px; padding-left: .42em; font: 300 28px/1 'Sora Variable', Sora, system-ui, sans-serif; letter-spacing: .42em; }
+      #abertura .ab-nome span { opacity: 0; transform: translateY(10px); filter: blur(6px); animation: ab-letra .75s cubic-bezier(.2,.7,.2,1) forwards; }
+      #abertura .ab-nome span:nth-child(1) { animation-delay: 1.35s; } #abertura .ab-nome span:nth-child(2) { animation-delay: 1.42s; }
+      #abertura .ab-nome span:nth-child(3) { animation-delay: 1.49s; } #abertura .ab-nome span:nth-child(4) { animation-delay: 1.56s; }
+      #abertura .ab-nome span:nth-child(5) { animation-delay: 1.63s; }
+      #abertura .ab-lema { margin-top: 14px; font: 600 10px/1 'Figtree Variable', Figtree, system-ui, sans-serif; letter-spacing: .32em; text-transform: uppercase; color: rgb(var(--ab-muted)); opacity: 0; animation: ab-in .9s ease 1.85s forwards; }
+      @keyframes ab-in { to { opacity: 1; } }
+      @keyframes ab-some { to { opacity: 0; } }
+      @keyframes ab-respira { from { transform: scale(1); } to { transform: scale(1.12) translate(2%, 3%); } }
+      @keyframes ab-traco { to { stroke-dashoffset: 0; } }
+      @keyframes ab-surge { to { opacity: 1; transform: none; filter: blur(0); } }
+      @keyframes ab-reflexo { 0% { opacity: 0; transform: translateX(-420px); } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateX(420px); } }
+      @keyframes ab-pisca { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+      @keyframes ab-chao { to { transform: scaleX(1); } }
+      @keyframes ab-letra { to { opacity: 1; transform: none; filter: blur(0); } }
+      @media (prefers-reduced-motion: reduce) {
+        #abertura * { animation-duration: .01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+        #abertura .ab-luz, #abertura .ab-reflexo { display: none; }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-BI_t7Nn9.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Cx0vFqt4.css">
   <link rel="manifest" href="/manifest.webmanifest"></head>
   <body>
+    <div id="abertura" aria-hidden="true">
+      <div class="ab-halo ab-h1"></div>
+      <div class="ab-halo ab-h2"></div>
+      <div class="ab-grade"></div>
+      <div class="ab-centro">
+        <svg viewBox="0 0 640 640">
+          <defs>
+            <radialGradient id="ab-borda">
+              <stop offset=".6" stop-color="#fff" />
+              <stop offset="1" stop-color="#fff" stop-opacity="0" />
+            </radialGradient>
+            <mask id="ab-mascara"><rect width="640" height="640" fill="url(#ab-borda)" /></mask>
+            <clipPath id="ab-recorte"><rect width="640" height="640" rx="150" /></clipPath>
+            <linearGradient id="ab-luzg" x1="0" x2="1">
+              <stop offset="0" stop-color="#fff" stop-opacity="0" />
+              <stop offset=".5" stop-color="#fff" stop-opacity=".35" />
+              <stop offset="1" stop-color="#fff" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <circle class="ab-orbita" cx="320" cy="320" r="312" pathLength="1" transform="rotate(-90 320 320)" />
+          <circle class="ab-ponto" cx="8" cy="320" r="5" />
+          <circle class="ab-ponto" cx="632" cy="320" r="5" style="animation-delay: 2.4s" />
+          <g class="ab-peca">
+            <g class="ab-sombra"><g class="ab-simbolo">
+              <image href="/abertura-simbolo.webp" width="640" height="640" />
+              <g style="mix-blend-mode: screen" transform="rotate(18 320 320)"><rect class="ab-reflexo" x="240" y="-120" width="160" height="880" fill="url(#ab-luzg)" /></g>
+            </g></g>
+            <g class="ab-tracos">
+              <path class="ab-luz" pathLength="1" d="M160 575 C90 570 45 545 40 490 C38 460 48 440 58 425 L238 118 C275 55 365 55 402 118 L632 572" />
+              <path class="ab-luz ab-l2" pathLength="1" d="M42 448 C130 470 230 430 330 345 C420 280 520 310 556 405" />
+              <path class="ab-luz ab-l3" pathLength="1" d="M60 530 C170 580 280 520 380 435 C405 412 420 405 432 422 L490 560" />
+              <path class="ab-luz ab-l4" pathLength="1" d="M200 418 L320 228 L372 322" />
+            </g>
+          </g>
+        </svg>
+        <div class="ab-chao"></div>
+        <div class="ab-nome"><span>A</span><span>E</span><span>S</span><span>Y</span><span>N</span></div>
+        <div class="ab-lema">Saúde · Performance · Longevidade</div>
+      </div>
+    </div>
+    <script>
+      // So no app instalado (ou com ?abertura para ver no navegador), uma vez por sessao.
+      // O React chama __aesynAbertura.pronto() ao montar; a animacao fica no ar pelo menos MIN ms.
+      (function () {
+        var el = document.getElementById('abertura');
+        var MIN = 2700, MAX = 7000, t0 = Date.now(), feito = false;
+        var forcar = /[?&]abertura\b/.test(location.search);
+        var app = forcar || (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+        var jaViu = false;
+        try { jaViu = sessionStorage.getItem('aesyn-abertura') === '1'; sessionStorage.setItem('aesyn-abertura', '1'); } catch (e) {}
+        function fechar() {
+          if (feito) return;
+          feito = true;
+          el.classList.add('sair');
+          setTimeout(function () { el.remove(); }, 750);
+        }
+        if (!app || (jaViu && !forcar)) { el.remove(); window.__aesynAbertura = { pronto: function () {} }; return; }
+        window.__aesynAbertura = {
+          pronto: function () {
+            if (/[?&]abertura=fixa\b/.test(location.search)) return;
+            setTimeout(fechar, Math.max(0, MIN - (Date.now() - t0)));
+          },
+        };
+        if (!/[?&]abertura=fixa\b/.test(location.search)) setTimeout(fechar, MAX);
+      })();
+    </script>
     <div id="root"></div>
   </body>
 </html>
