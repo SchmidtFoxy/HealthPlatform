@@ -28,7 +28,7 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        background_color: '#061210',
+        background_color: '#05100e',
         theme_color: '#061210',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
@@ -40,7 +40,7 @@ export default defineConfig({
       workbox: {
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/app\//, /^\/swagger/],
-        globPatterns: ['**/*.{js,css,html,woff2,svg}', 'abertura-simbolo.webp'],
+        globPatterns: ['**/*.{js,css,html,woff2,svg}'],
         globIgnores: ['app/**', 'push-sw.js'],
         importScripts: ['/push-sw.js'],
       },
