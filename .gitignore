@@ -15,3 +15,5 @@ appsettings.Production.json
 src/HealthPlatform.Web/node_modules/
 src/HealthPlatform.Web/dist/
 *.tsbuildinfo
+scripts/e2e/node_modules/
+scripts/e2e/package*.json
