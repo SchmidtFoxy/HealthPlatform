@@ -6,9 +6,10 @@ import { fileURLToPath, URL } from 'node:url';
 
 const versao = readFileSync(new URL('../../VERSION.txt', import.meta.url), 'utf8').trim();
 
-// O novo front e servido pela propria API em /app, ao lado do front classico.
+// O app e servido pela propria API na raiz do site. O build vai inteiro para wwwroot
+// (public/ traz os icones, o push-sw.js e o /app/sw.js que desliga o service worker antigo).
 export default defineConfig({
-  base: '/app/',
+  base: '/',
   define: { __APP_VERSION__: JSON.stringify(versao) },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [
@@ -16,15 +17,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-      scope: '/app/',
+      scope: '/',
       manifest: {
+        // id antigo mantido: celulares com o app instalado continuam reconhecendo o mesmo app.
         id: '/app/',
         name: 'AESYN',
         short_name: 'AESYN',
         description: 'Treino, nutrição e acompanhamento em um só lugar.',
         lang: 'pt-BR',
-        start_url: '/app/',
-        scope: '/app/',
+        start_url: '/',
+        scope: '/',
         display: 'standalone',
         background_color: '#061210',
         theme_color: '#061210',
@@ -36,14 +38,16 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallback: '/app/index.html',
-        navigateFallbackAllowlist: [/^\/app/],
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//, /^\/app\//, /^\/swagger/],
         globPatterns: ['**/*.{js,css,html,woff2,svg}'],
+        globIgnores: ['app/**', 'push-sw.js'],
+        importScripts: ['/push-sw.js'],
       },
     }),
   ],
   build: {
-    outDir: '../HealthPlatform.Api/wwwroot/app',
+    outDir: '../HealthPlatform.Api/wwwroot',
     emptyOutDir: true,
     chunkSizeWarningLimit: 800,
   },

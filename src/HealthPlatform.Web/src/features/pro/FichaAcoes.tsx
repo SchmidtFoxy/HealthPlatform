@@ -187,7 +187,7 @@ function AcessoSheet({ paciente, onClose }: { paciente: PacienteFicha | null; on
   const convidar = useMutation({
     mutationFn: () => api<{ email: string; activationToken: string }>(`/api/pacientes/${paciente!.id}/acesso`, { method: 'POST', json: { email: email.trim() } }),
     onSuccess: (r) => {
-      setLink(`${location.origin}/app/ativar?email=${encodeURIComponent(r.email)}&token=${encodeURIComponent(r.activationToken)}`);
+      setLink(`${location.origin}/ativar?email=${encodeURIComponent(r.email)}&token=${encodeURIComponent(r.activationToken)}`);
       qc.invalidateQueries({ queryKey: ['pro', 'acesso', paciente!.id] });
     },
     onError: erroToast,

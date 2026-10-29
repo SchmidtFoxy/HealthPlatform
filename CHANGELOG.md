@@ -1,3 +1,11 @@
+## v0.69.0 — App na raiz do site, versão clássica removida
+
+- O app novo passa a abrir direto em aesyn.com.br, sem o /app no endereço. Links antigos com /app levam para a mesma tela no endereço novo.
+- A versão clássica (index.html, app.js, app.css, operations.css) foi removida; /classico volta para o início.
+- Notificações push continuam na mesma inscrição: o service worker da raiz agora é o do app e importa /push-sw.js. O service worker antigo de /app se desliga sozinho.
+- Links de e-mail (redefinir senha, confirmar e-mail) e convites apontam para a raiz.
+- O build do Vite gera o wwwroot inteiro; ícones ficam em src/HealthPlatform.Web/public.
+
 ## 0.68.0 — O app novo é a entrada do site
 
 - aesyn.com.br (e o app instalado na tela inicial) abre direto o app novo.

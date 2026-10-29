@@ -1,4 +1,4 @@
-import { ChevronRight, ExternalLink, LogOut, Monitor, Moon, ShieldAlert, Sun } from 'lucide-react';
+import { ChevronRight, LogOut, Monitor, Moon, ShieldAlert, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BoasVindasSheet } from '@/features/patient/BoasVindas';
@@ -163,15 +163,6 @@ export function ProfilePage() {
             </Link>
           </>
         )}
-        <a href="/classico?classico=1" className="flex items-center justify-between p-4 font-semibold">
-          <span>
-            Abrir versão clássica
-            <span className="block text-sm font-normal text-muted">
-              {s?.tipoUsuario === 'Paciente' ? 'Exploração de esportes e demais módulos' : 'Módulos que ainda não chegaram aqui'}
-            </span>
-          </span>
-          <ExternalLink className="h-5 w-5 text-muted" />
-        </a>
       </Card>
 
       <BoasVindasSheet open={boasVindas} onClose={() => setBoasVindas(false)} onCheckin={() => setCheckin(true)} />

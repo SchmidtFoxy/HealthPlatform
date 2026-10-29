@@ -1,5 +1,5 @@
 // Notificacoes push. A inscricao fica no service worker da raiz (/sw.js), que e quem mostra as
-// notificacoes e trata o clique; assim a mesma inscricao vale para a versao nova e para a classica.
+// notificacoes e trata o clique (o codigo de push fica em /push-sw.js, importado pelo service worker do app).
 import { api } from './api';
 
 export interface PushStatus {
@@ -63,12 +63,12 @@ export const testarPush = () => api<{ enviadas: number; motivo?: string }>('/api
 /** Para onde vai o clique de uma notificacao. Link sem tela propria abre o inicio. */
 export function destinoDoLink(link: string, paciente: boolean) {
   const app: Record<string, string> = { chat: 'chat', arquivos: 'arquivos', inicio: 'hoje', alimentacao: 'dieta', treinos: 'treino', cuidados: 'cuidados' };
-  if (paciente && Object.prototype.hasOwnProperty.call(app, link)) return `/app/${app[link]}`;
+  if (paciente && Object.prototype.hasOwnProperty.call(app, link)) return `/${app[link]}`;
   const conversa = /^chat-profissional:([0-9a-f-]{36})$/i.exec(link);
-  if (!paciente && conversa) return `/app/pro/mensagens/${conversa[1]}`;
+  if (!paciente && conversa) return `/pro/mensagens/${conversa[1]}`;
   const ficha = /^paciente:([0-9a-f-]{36})$/i.exec(link);
-  if (!paciente && ficha) return `/app/pro/pacientes/${ficha[1]}`;
+  if (!paciente && ficha) return `/pro/pacientes/${ficha[1]}`;
   const pro: Record<string, string> = { followups: 'pro/central?aba=contatos', pendencias: 'pro/central?aba=pendencias', solicitacoes: 'pro/central?aba=pedidos', agenda: 'pro/agenda', inicio: 'pro' };
-  if (!paciente && Object.prototype.hasOwnProperty.call(pro, link)) return `/app/${pro[link]}`;
-  return '/app/';
+  if (!paciente && Object.prototype.hasOwnProperty.call(pro, link)) return `/${pro[link]}`;
+  return '/';
 }

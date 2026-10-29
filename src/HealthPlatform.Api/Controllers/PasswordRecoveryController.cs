@@ -98,7 +98,7 @@ public sealed class PasswordRecoveryController(
     private string BuildResetUrl(string email, string token)
     {
         var baseUrl = _emailOptions.PublicBaseUrl.TrimEnd('/');
-        return $"{baseUrl}/app/redefinir-senha?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token)}";
+        return $"{baseUrl}/redefinir-senha?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token)}";
     }
 
     private async Task AuditAsync(Usuario user, string action, object data, CancellationToken ct)

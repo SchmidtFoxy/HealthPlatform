@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.68.0" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.69.0" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -204,7 +204,7 @@ if (app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 
 // Celulares precisam pegar a versao nova logo apos o deploy: HTML, service workers,
-// manifestos e os bundles sem hash sempre revalidam; os arquivos com hash em /app/assets
+// manifestos e os bundles sem hash sempre revalidam; os arquivos com hash em /assets
 // podem ficar em cache para sempre, porque o nome muda a cada build.
 var arquivosEstaticos = new StaticFileOptions
 {
@@ -212,13 +212,13 @@ var arquivosEstaticos = new StaticFileOptions
     {
         var caminho = ctx.Context.Request.Path.Value ?? string.Empty;
         var headers = ctx.Context.Response.Headers;
-        if (caminho.StartsWith("/app/assets/", StringComparison.OrdinalIgnoreCase))
+        if (caminho.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
             headers.CacheControl = "public, max-age=31536000, immutable";
         else if (caminho.EndsWith(".html", StringComparison.OrdinalIgnoreCase) ||
                  caminho.EndsWith(".js", StringComparison.OrdinalIgnoreCase) ||
                  caminho.EndsWith(".css", StringComparison.OrdinalIgnoreCase) ||
                  caminho.EndsWith(".webmanifest", StringComparison.OrdinalIgnoreCase) ||
-                 caminho == "/" || caminho == "/app" || caminho == "/app/")
+                 caminho == "/")
             headers.CacheControl = "no-cache";
     }
 };
@@ -229,36 +229,33 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-// v0.68.0 — o app novo (/app) e a entrada do site. A versao classica fica em /classico,
-// como reserva, ate ser removida. Links antigos de notificacao (/?aesynPushLink=) seguem para o app novo.
+// v0.69.0 — o app fica na raiz do site e a versao classica foi removida. Enderecos antigos
+// (/app/..., /classico, convites e links de e-mail da versao classica) seguem para a tela certa.
 app.Use(async (context, next) =>
 {
     var caminho = context.Request.Path.Value ?? "/";
     if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
     {
-        if (caminho is "/" or "/index.html")
+        var q = context.Request.Query;
+        // Convite antigo de paciente: /?ativarPaciente=1&email=...&token=...
+        if (caminho == "/" && q["ativarPaciente"] == "1")
         {
-            // Convite antigo de paciente: /?ativarPaciente=1&email=...&token=...
-            var q = context.Request.Query;
-            var destino = q["ativarPaciente"] == "1"
-                ? $"/app/ativar?email={Uri.EscapeDataString(q["email"].ToString())}&token={Uri.EscapeDataString(q["token"].ToString())}"
-                : "/app/" + context.Request.QueryString;
-            context.Response.Headers.CacheControl = "no-cache";
-            context.Response.Redirect(destino);
+            context.Response.Redirect($"/ativar?email={Uri.EscapeDataString(q["email"].ToString())}&token={Uri.EscapeDataString(q["token"].ToString())}");
             return;
         }
-        // Links de e-mail que apontam para a raiz do site.
+        // /app/sw.js continua sendo servido: e ele que desliga o service worker antigo de /app.
+        if ((caminho.Equals("/app", StringComparison.OrdinalIgnoreCase) || caminho.StartsWith("/app/", StringComparison.OrdinalIgnoreCase)) &&
+            !caminho.Equals("/app/sw.js", StringComparison.OrdinalIgnoreCase))
+        {
+            var resto = caminho.Length > 4 ? caminho[4..] : "/";
+            context.Response.Headers.CacheControl = "no-cache";
+            context.Response.Redirect(resto + context.Request.QueryString);
+            return;
+        }
         var publica = caminho.TrimEnd('/');
-        if (publica is "/redefinir-senha" or "/confirmar-email" or "/confirmar-troca-email" or "/recuperar-senha")
+        if (publica.Equals("/classico", StringComparison.OrdinalIgnoreCase) || publica.Equals("/recuperar-senha", StringComparison.OrdinalIgnoreCase))
         {
-            context.Response.Redirect((publica == "/recuperar-senha" ? "/app/entrar" : "/app" + publica) + context.Request.QueryString);
-            return;
-        }
-        if (caminho.Equals("/classico", StringComparison.OrdinalIgnoreCase))
-        {
-            context.Response.Headers.CacheControl = "no-cache";
-            context.Response.ContentType = "text/html; charset=utf-8";
-            await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "index.html"));
+            context.Response.Redirect(publica.Equals("/classico", StringComparison.OrdinalIgnoreCase) ? "/" : "/entrar");
             return;
         }
     }
@@ -296,11 +293,9 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 app.MapControllers();
 
-// Novo front (React) servido em /app: rotas do cliente caem no index.html dele.
-// Qualquer outra rota desconhecida fora de /api vai para o app novo.
-app.MapFallbackToFile("app/{*path:nonfile}", "app/index.html", arquivosEstaticos);
+// Rotas do app (React) caem no index.html; /api desconhecida responde 404 em JSON.
 app.MapFallback("/api/{*path}", () => Results.NotFound(new { message = "Rota nao encontrada." }));
-app.MapFallback(() => Results.Redirect("/app/"));
+app.MapFallbackToFile("index.html", arquivosEstaticos);
 
 if (app.Environment.IsDevelopment())
 {
