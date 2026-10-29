@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button, ErrorBox, Pill, Sheet, Skeleton, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { hora, n0, n1 } from '@/lib/format';
+import { pluralizar } from '@/lib/medidas';
 import type { ItemRefeicaoPortal, Nutrientes, RefeicaoPortal, StatusRefeicao } from '@/lib/types';
 import { useAdesaoRefeicao } from './queries';
 
@@ -37,7 +38,7 @@ export function MacroDots({ n, className }: { n: Nutrientes; className?: string 
 }
 
 const quantidade = (i: { quantidade: number; unidade: string; quantidadeGramas: number }) =>
-  i.unidade === 'g' || i.unidade === 'ml' ? `${n0(i.quantidade)} ${i.unidade}` : `${n0(i.quantidade)} ${i.unidade}${i.quantidade > 1 && !i.unidade.endsWith('s') ? 's' : ''} · ${n0(i.quantidadeGramas)} g`;
+  i.unidade === 'g' || i.unidade === 'ml' ? `${n0(i.quantidade)} ${i.unidade}` : `${n1(i.quantidade)} ${pluralizar(i.unidade, i.quantidade)} · ${n0(i.quantidadeGramas)} g`;
 
 function ItemLinha({ item }: { item: ItemRefeicaoPortal }) {
   const [aberto, setAberto] = useState(false);

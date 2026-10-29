@@ -43,7 +43,7 @@ public class AlimentosController(AppDbContext db, CurrentUser currentUser, IHttp
         var nome = request.Nome.Trim(); var normalizado = Normalizar(nome);
         if (await db.Alimentos.AnyAsync(x => x.OrganizacaoId == currentUser.OrganizationId && x.NomeNormalizado == normalizado, ct))
             return Conflict(new { message = "Ja existe um alimento com este nome na organizacao." });
-        var item = new Alimento { OrganizacaoId = currentUser.OrganizationId, Nome = nome, NomeNormalizado = normalizado, Categoria = Limpar(request.Categoria), CaloriasPor100g = request.CaloriasPor100g, ProteinasPor100g = request.ProteinasPor100g, CarboidratosPor100g = request.CarboidratosPor100g, GordurasPor100g = request.GordurasPor100g, FibrasPor100g = request.FibrasPor100g };
+        var item = new Alimento { OrganizacaoId = currentUser.OrganizationId, Nome = nome, NomeNormalizado = normalizado, Categoria = Limpar(request.Categoria), CaloriasPor100g = request.CaloriasPor100g, ProteinasPor100g = request.ProteinasPor100g, CarboidratosPor100g = request.CarboidratosPor100g, GordurasPor100g = request.GordurasPor100g, FibrasPor100g = request.FibrasPor100g, UnidadeNome = Limpar(request.UnidadeNome), GramasPorUnidade = request.GramasPorUnidade, GramasPorMl = request.GramasPorMl };
         db.Alimentos.Add(item); Auditar("CREATE", item, null, Snapshot(item)); await db.SaveChangesAsync(ct);
         return CreatedAtAction(nameof(GetById), new { id = item.Id }, ToResponse(item));
     }
@@ -58,7 +58,7 @@ public class AlimentosController(AppDbContext db, CurrentUser currentUser, IHttp
         if (await db.Alimentos.AnyAsync(x => x.Id != id && x.OrganizacaoId == currentUser.OrganizationId && x.NomeNormalizado == normalizado, ct))
             return Conflict(new { message = "Ja existe outro alimento com este nome na organizacao." });
         var antes = Snapshot(item);
-        item.Nome = nome; item.NomeNormalizado = normalizado; item.Categoria = Limpar(request.Categoria); item.CaloriasPor100g = request.CaloriasPor100g; item.ProteinasPor100g = request.ProteinasPor100g; item.CarboidratosPor100g = request.CarboidratosPor100g; item.GordurasPor100g = request.GordurasPor100g; item.FibrasPor100g = request.FibrasPor100g; item.UpdatedAtUtc = DateTime.UtcNow;
+        item.Nome = nome; item.NomeNormalizado = normalizado; item.Categoria = Limpar(request.Categoria); item.CaloriasPor100g = request.CaloriasPor100g; item.ProteinasPor100g = request.ProteinasPor100g; item.CarboidratosPor100g = request.CarboidratosPor100g; item.GordurasPor100g = request.GordurasPor100g; item.FibrasPor100g = request.FibrasPor100g; item.UnidadeNome = Limpar(request.UnidadeNome); item.GramasPorUnidade = request.GramasPorUnidade; item.GramasPorMl = request.GramasPorMl; item.UpdatedAtUtc = DateTime.UtcNow;
         Auditar("UPDATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct); return Ok(ToResponse(item));
     }
 
@@ -81,11 +81,13 @@ public class AlimentosController(AppDbContext db, CurrentUser currentUser, IHttp
     {
         if (string.IsNullOrWhiteSpace(r.Nome)) return "Nome do alimento e obrigatorio.";
         if (r.CaloriasPor100g < 0 || r.ProteinasPor100g < 0 || r.CarboidratosPor100g < 0 || r.GordurasPor100g < 0 || r.FibrasPor100g < 0) return "Valores nutricionais nao podem ser negativos.";
+        if (r.GramasPorUnidade is <= 0 || r.GramasPorMl is <= 0) return "Peso da medida e densidade precisam ser maiores que zero.";
+        if (r.UnidadeNome is { Length: > 40 }) return "Nome da medida caseira pode ter ate 40 caracteres.";
         return null;
     }
     private void Auditar(string acao, Alimento item, object? antes, object? depois) => db.AuditLogs.Add(new AuditLog { OrganizacaoId = currentUser.OrganizationId, UsuarioId = currentUser.UserId, Acao = acao, Entidade = nameof(Alimento), EntidadeId = item.Id.ToString(), DadosAnterioresJson = antes is null ? null : JsonSerializer.Serialize(antes), DadosNovosJson = depois is null ? null : JsonSerializer.Serialize(depois), IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() });
-    private static object Snapshot(Alimento x) => new { x.Id, x.Nome, x.Categoria, x.CaloriasPor100g, x.ProteinasPor100g, x.CarboidratosPor100g, x.GordurasPor100g, x.FibrasPor100g, x.Ativo };
-    private static AlimentoResponse ToResponse(Alimento x) => new(x.Id, x.Nome, x.Categoria, x.CaloriasPor100g, x.ProteinasPor100g, x.CarboidratosPor100g, x.GordurasPor100g, x.FibrasPor100g, x.Ativo, x.CreatedAtUtc, x.UpdatedAtUtc);
+    private static object Snapshot(Alimento x) => new { x.Id, x.Nome, x.Categoria, x.CaloriasPor100g, x.ProteinasPor100g, x.CarboidratosPor100g, x.GordurasPor100g, x.FibrasPor100g, x.UnidadeNome, x.GramasPorUnidade, x.GramasPorMl, x.Ativo };
+    private static AlimentoResponse ToResponse(Alimento x) => new(x.Id, x.Nome, x.Categoria, x.CaloriasPor100g, x.ProteinasPor100g, x.CarboidratosPor100g, x.GordurasPor100g, x.FibrasPor100g, x.Ativo, x.CreatedAtUtc, x.UpdatedAtUtc, x.UnidadeNome, x.GramasPorUnidade, x.GramasPorMl);
     private static string? Limpar(string? valor) => string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
     private static string Normalizar(string valor) { var d = valor.Trim().ToUpperInvariant().Normalize(NormalizationForm.FormD); var sb = new StringBuilder(); foreach (var c in d) if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark) sb.Append(c); return string.Join(' ', sb.ToString().Normalize(NormalizationForm.FormC).Split(' ', StringSplitOptions.RemoveEmptyEntries)); }
 }

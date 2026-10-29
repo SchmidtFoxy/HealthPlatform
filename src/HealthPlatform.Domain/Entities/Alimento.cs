@@ -13,6 +13,11 @@ public class Alimento : BaseEntity
     public decimal CarboidratosPor100g { get; set; }
     public decimal GordurasPor100g { get; set; }
     public decimal FibrasPor100g { get; set; }
+    /// <summary>Medida caseira do alimento (ex.: "unidade", "fatia"). Usada com GramasPorUnidade.</summary>
+    public string? UnidadeNome { get; set; }
+    public decimal? GramasPorUnidade { get; set; }
+    /// <summary>Densidade para prescrever em ml (g por ml). Sem valor, o app usa 1.</summary>
+    public decimal? GramasPorMl { get; set; }
     public bool Ativo { get; set; } = true;
 
     public Organizacao Organizacao { get; set; } = null!;

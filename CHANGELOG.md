@@ -6,6 +6,10 @@
   - **Macros por peso**: proteína, gordura e carboidrato em g/kg viram gramas por dia, com a energia total comparada ao alvo e o botão para "fechar a conta" com um dos macros.
   - Um toque aplica calorias e macros nas metas do plano. O que foi digitado fica lembrado para o paciente neste aparelho.
 - O campo numérico das metas mostra quatro dígitos sem cortar (ex.: 1886 kcal).
+- Quantidade dos alimentos em **gramas, unidade ou ml**: no alimento da dieta, escolha a forma e prescreva "2 pães" em vez de 100 g. As gramas e os macros são calculados pelo peso de 1 unidade (ou pela densidade, em ml).
+  - O peso da medida (ex.: 1 pão = 50 g) pode ser guardado no alimento com um toque, ou em Biblioteca › Alimentos › "Medida caseira". Alimentos com medida guardada já entram na dieta como 1 unidade.
+  - O paciente vê "2 pães · 100 g".
+  - Banco: três colunas opcionais em `Alimentos` (`scripts/sql/v0.71.0_alimento_medida_caseira.sql`, rodar antes do merge).
 
 ## v0.69.1 — Abertura animada do app
 
