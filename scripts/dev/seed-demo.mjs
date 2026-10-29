@@ -105,12 +105,17 @@ async function main() {
   const lista = await api(admin, 'GET', '/api/pacientes?pageSize=100');
   const pacientesExistentes = lista.itens ?? lista.items ?? lista;
 
+  // Medicos so veem os pacientes da propria equipe: o Dr. Andre entra na equipe de todos.
+  const profissionais = await api(admin, 'GET', '/api/admin/profissionais');
+  const andre = profissionais.find((x) => x.usuarioId && x.nome === 'Dr. André Schmidt');
+
   for (const p of PACIENTES) {
     let pac = pacientesExistentes.find((x) => x.nome === p.nome);
     if (!pac) {
       pac = await api(admin, 'POST', '/api/pacientes', { nome: p.nome, cpf: null, dataNascimento: p.nasc, sexo: p.sexo, telefone: '(48) 99999-0000', email: p.email, profissao: p.prof });
       await api(admin, 'PATCH', `/api/pacientes/${pac.id}/tags`, { tags: p.tags.split(',') }).catch(() => {});
     }
+    if (andre) await api(admin, 'PUT', `/api/admin/pacientes/${pac.id}/equipe`, { profissionalIds: [andre.id] });
     if (!p.completo) continue;
 
     const planos = await api(admin, 'GET', `/api/pacientes/${pac.id}/planos-alimentares`);

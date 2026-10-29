@@ -47,7 +47,7 @@ async function rotasDoProfissional() {
 }
 
 const PUBLICAS = ['/', '/recursos', '/vantagens', '/sobre', '/entrar'];
-const DO_ADMIN = ['/admin', '/admin?aba=clinica', '/admin/equipe', '/admin/pacientes', '/admin/atividade', '/admin/clinica', '/admin/perfil', '/admin/conta'];
+const DO_ADMIN = ['/admin', '/admin?aba=clinica', '/admin/usuarios', '/admin/usuarios?aba=pacientes', '/admin/usuarios?aba=pacientes&equipe=sem', '/admin/atividade', '/admin/clinica', '/admin/perfil', '/admin/conta'];
 const DO_PACIENTE = ['/hoje', '/treino', '/dieta', '/progresso', '/perfil', '/conta', '/arquivos', '/cuidados', '/diario', '/jornada', '/explorar', '/chat'];
 
 const falhas = [];

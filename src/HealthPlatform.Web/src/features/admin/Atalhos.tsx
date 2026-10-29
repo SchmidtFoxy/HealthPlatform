@@ -18,7 +18,7 @@ function Atalho({ to, titulo, sub }: { to: string; titulo: string; sub: string }
 export function AtalhoAdmin() {
   const s = useSessao();
   if (s?.tipoUsuario !== 'Admin' || s.impersonating) return null;
-  return <Atalho to="/admin" titulo="Painel do administrador" sub="Equipe, pacientes e atividade" />;
+  return <Atalho to="/admin" titulo="Painel do administrador" sub="Usuários, equipes dos pacientes e atividade" />;
 }
 
 export function AtalhoClinico() {

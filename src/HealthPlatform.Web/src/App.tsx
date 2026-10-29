@@ -38,8 +38,7 @@ const PatientsPage = lazy(() => import('./features/pro/PatientsPage').then((m) =
 const PatientDetailPage = lazy(() => import('./features/pro/PatientDetailPage').then((m) => ({ default: m.PatientDetailPage })));
 const DietEditorPage = lazy(() => import('./features/pro/DietEditorPage').then((m) => ({ default: m.DietEditorPage })));
 const AdminInicioPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminInicioPage })));
-const AdminEquipePage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminEquipePage })));
-const AdminPacientesPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminPacientesPage })));
+const AdminUsuariosPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminUsuariosPage })));
 const AdminAtividadePage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminAtividadePage })));
 const AdminClinicaPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminClinicaPage })));
 const WorkoutEditorPage = lazy(() => import('./features/pro/WorkoutEditorPage').then((m) => ({ default: m.WorkoutEditorPage })));
@@ -87,12 +86,11 @@ const navEquipe = [
   { to: '/pro/perfil', label: 'Perfil', icon: User },
 ];
 
-// No celular cabem cinco abas: Atividade fica no menu lateral e na tela inicial; Perfil, so no celular.
+// Perfil so aparece na barra do celular; no PC a conta fica no rodape do menu lateral.
 const navAdmin = [
   { to: '/admin', label: 'Início', icon: LayoutDashboard, end: true },
-  { to: '/admin/equipe', label: 'Equipe', icon: UsersRound },
-  { to: '/admin/pacientes', label: 'Pacientes', icon: Users },
-  { to: '/admin/atividade', label: 'Atividade', icon: Activity, only: 'desktop' as const },
+  { to: '/admin/usuarios', label: 'Usuários', icon: UsersRound },
+  { to: '/admin/atividade', label: 'Atividade', icon: Activity },
   { to: '/admin/clinica', label: 'Clínica', icon: Building2 },
   { to: '/admin/perfil', label: 'Perfil', icon: User, only: 'mobile' as const },
 ];
@@ -191,8 +189,9 @@ export function App() {
             }
           >
             <Route path="/admin" element={<AdminInicioPage />} />
-            <Route path="/admin/equipe" element={<AdminEquipePage />} />
-            <Route path="/admin/pacientes" element={<AdminPacientesPage />} />
+            <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
+            <Route path="/admin/equipe" element={<Navigate to="/admin/usuarios?aba=equipe" replace />} />
+            <Route path="/admin/pacientes" element={<Navigate to="/admin/usuarios?aba=pacientes" replace />} />
             <Route path="/admin/atividade" element={<AdminAtividadePage />} />
             <Route path="/admin/clinica" element={<AdminClinicaPage />} />
             <Route path="/admin/perfil" element={<ProfilePage />} />

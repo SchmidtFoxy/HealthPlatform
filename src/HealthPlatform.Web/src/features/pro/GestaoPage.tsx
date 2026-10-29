@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { AlertTriangle, CalendarCheck, ChevronDown, Download, Eye, FileText, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
+import { AlertTriangle, CalendarCheck, ChevronDown, Download, Eye, FileText, MessageCircle, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
@@ -263,6 +263,7 @@ function Carteira() {
   const [prioridade, setPrioridade] = useState('Todas');
   const [busca, setBusca] = useState('');
   const [aberto, setAberto] = useState<string | null>(null);
+  const admin = lerSessao()?.tipoUsuario === 'Admin';
   const q = useQuery({ queryKey: ['pro', 'carteira'], queryFn: () => api<ResumoCarteira>('/api/carteira?ordenar=score') });
   const ins = useQuery({ queryKey: ['pro', 'insights-dashboard'], queryFn: () => api<InsightsDashboard>('/api/insights/dashboard') });
   const sinais = new Map((ins.data?.pacientes ?? []).map((x) => [x.pacienteId, x.insights]));
@@ -348,11 +349,20 @@ function Carteira() {
                             {i.acaoSugerida && <p className="mt-1 text-[13px]">{i.acaoSugerida}</p>}
                           </div>
                         ))}
-                        <Link to={`/pro/pacientes/${x.pacienteId}`}>
-                          <Button size="sm" variant="soft">
-                            Abrir ficha
-                          </Button>
-                        </Link>
+                        <div className="flex flex-wrap gap-2">
+                          <Link to={`/pro/pacientes/${x.pacienteId}`}>
+                            <Button size="sm" variant="soft">
+                              Abrir ficha
+                            </Button>
+                          </Link>
+                          {admin && (
+                            <Link to={`/admin/usuarios?aba=pacientes&paciente=${x.pacienteId}`}>
+                              <Button size="sm" variant="soft" icon={<MessageCircle className="h-4 w-4" />}>
+                                Equipe e mensagens
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -394,7 +404,7 @@ interface Membro {
 const TIPOS: Record<string, string> = { Admin: 'Administrador', Medico: 'Médico', Nutricionista: 'Nutricionista', Personal: 'Personal', Secretaria: 'Secretaria' };
 const exigeRegistro = (t: string) => t === 'Medico' || t === 'Nutricionista' || t === 'Personal';
 
-export function Equipe({ acessos }: { acessos?: Record<string, string | null> } = {}) {
+export function Equipe({ acessos, extra }: { acessos?: Record<string, string | null>; extra?: Record<string, ReactNode> } = {}) {
   const q = useQuery({ queryKey: ['pro', 'equipe'], queryFn: () => api<Membro[]>('/api/equipe'), retry: (n, e) => !(e instanceof ApiError && e.status === 403) && n < 2 });
   const [aberto, setAberto] = useState<Membro | 'novo' | null>(null);
   const [senha, setSenha] = useState<Membro | null>(null);
@@ -429,6 +439,7 @@ export function Equipe({ acessos }: { acessos?: Record<string, string | null> } 
                 </span>
                 <span className="block text-[13px] text-muted">{[TIPOS[m.tipoUsuario] ?? m.tipoUsuario, m.especialidade, m.email].filter(Boolean).join(' · ')}</span>
                 {acessos && m.ativo && <span className="block text-[12px] text-faint">{acessos[m.usuarioId] ? `Último acesso ${tempoRelativo(acessos[m.usuarioId])}` : 'Sem acesso registrado'}</span>}
+                {extra?.[m.usuarioId] && <span className="mt-0.5 block">{extra[m.usuarioId]}</span>}
               </span>
               {!m.ativo && <Pill>Inativo</Pill>}
             </button>

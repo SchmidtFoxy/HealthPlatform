@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 Write-Host "============================================================" -ForegroundColor DarkGreen
-Write-Host " AESYN v0.70.0 | PAINEL DO ADMINISTRADOR" -ForegroundColor Green
+Write-Host " AESYN v0.70.0 | PAINEL DO ADMINISTRADOR E PROFISSIONAL RESPONSAVEL" -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor DarkGreen
 
 $version=(Get-Content -Encoding UTF8 (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim()

@@ -14,7 +14,7 @@ export function FaixaSimulacao() {
     setSaindo(true);
     await encerrarSimulacao();
     setSaindo(false);
-    nav('/admin/equipe', { replace: true });
+    nav('/admin/usuarios?aba=equipe', { replace: true });
   };
   return (
     <div className="bg-warn/15 pt-safe text-warn">

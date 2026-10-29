@@ -39,12 +39,38 @@ public sealed record AdminPacienteResponse(
     Guid Id,
     string Nome,
     string? Email,
+    string? Telefone,
     bool Ativo,
     string StatusAcompanhamento,
     string Acesso,
     DateTime? UltimoAcessoUtc,
+    Guid? ProfissionalId,
     string? Profissional,
+    string OrigemResponsavel,
+    string OrigemResponsavelRotulo,
+    IReadOnlyCollection<AdminMembroEquipeResponse> Equipe,
     DateTime CreatedAtUtc);
+
+public sealed record AdminMembroEquipeResponse(Guid Id, string Nome, string Tipo);
+
+public sealed record AdminEquipePacienteRequest(IReadOnlyCollection<Guid> ProfissionalIds);
+
+/// <summary>Em lote: adiciona um profissional a equipe dos pacientes e, se pedido, tira outro (transferencia).</summary>
+public sealed record AdminAtribuirLoteRequest(
+    IReadOnlyCollection<Guid> PacienteIds,
+    Guid ProfissionalId,
+    Guid? RemoverProfissionalId,
+    bool TornarResponsavel);
+
+public sealed record AdminProfissionalResponse(
+    Guid Id,
+    Guid UsuarioId,
+    string Nome,
+    string Tipo,
+    string? Especialidade,
+    bool ContaAtiva,
+    int Pacientes,
+    int PacientesDefinidos);
 
 public sealed record AdminPacientesResponse(
     IReadOnlyCollection<AdminPacienteResponse> Itens,
@@ -78,7 +104,10 @@ public sealed record AdminAcessoEquipeResponse(Guid UsuarioId, DateTime? UltimoA
 [Route("api/admin")]
 public sealed class AdminController(
     AppDbContext db,
-    CurrentUser currentUser) : ControllerBase
+    CurrentUser currentUser,
+    ProfissionalResponsavelService responsaveis,
+    AcessoPacientesService acesso,
+    IHttpContextAccessor httpContextAccessor) : ControllerBase
 {
     /// <summary>Acoes de login e uso que nao entram na lista de atividade.</summary>
     internal static readonly string[] AcoesDeAcesso = ["LOGIN", "ACCESS"];
@@ -113,7 +142,8 @@ public sealed class AdminController(
             .ToDictionaryAsync(x => x.Id, ct);
 
         var ultimosAcessos = await UltimosAcessosAsync(org, ct);
-        var comProfissional = await PacientesComProfissionalAsync(org, ct);
+        var equipes = await EquipesAsync(org, ct);
+        bool SemResponsavel(Guid id) => !equipes.ContainsKey(id);
 
         string Acesso(Guid? usuarioId)
         {
@@ -145,8 +175,8 @@ public sealed class AdminController(
         foreach (var p in pacientes.Where(x => acessoPorPaciente[x.Id] == "convite").OrderBy(x => x.CreatedAtUtc).Take(8))
             atencao.Add(new AdminAtencaoResponse("convite", p.Nome, "Convite enviado e ainda não ativado", p.Id, p.UsuarioId));
 
-        foreach (var p in pacientes.Where(x => !comProfissional.Contains(x.Id)).OrderBy(x => x.CreatedAtUtc).Take(8))
-            atencao.Add(new AdminAtencaoResponse("sem-profissional", p.Nome, "Sem consulta nem plano com algum profissional", p.Id, p.UsuarioId));
+        foreach (var p in pacientes.Where(x => SemResponsavel(x.Id)).OrderBy(x => x.CreatedAtUtc).Take(8))
+            atencao.Add(new AdminAtencaoResponse("sem-profissional", p.Nome, "Nenhum profissional na equipe: ninguém vê este paciente", p.Id, p.UsuarioId));
 
         // O registro de acessos comecou com o painel do admin: antes disso, ninguem conta como sumido.
         var inicioRegistro = ultimosAcessos.Count == 0
@@ -182,7 +212,7 @@ public sealed class AdminController(
             acessoPorPaciente.Values.Count(x => x == "ativo"),
             acessoPorPaciente.Values.Count(x => x == "convite"),
             acessoPorPaciente.Values.Count(x => x == "sem-acesso"),
-            pacientes.Count(x => !comProfissional.Contains(x.Id)),
+            pacientes.Count(x => SemResponsavel(x.Id)),
             pessoasQueAcessaram,
             consultas.Count,
             consultas.Count(x => x == StatusConsulta.Realizada),
@@ -195,6 +225,10 @@ public sealed class AdminController(
     public async Task<ActionResult<AdminPacientesResponse>> Pacientes(
         [FromQuery] string? busca = null,
         [FromQuery] string? acesso = null,
+        [FromQuery] string? responsavel = null,
+        [FromQuery] string? equipe = null,
+        [FromQuery] Guid? profissionalId = null,
+        [FromQuery] Guid? id = null,
         [FromQuery] bool incluirInativos = false,
         [FromQuery] int pagina = 1,
         CancellationToken ct = default)
@@ -206,7 +240,8 @@ public sealed class AdminController(
         var org = currentUser.OrganizationId;
 
         var query = db.Pacientes.AsNoTracking().Where(x => x.OrganizacaoId == org);
-        if (!incluirInativos) query = query.Where(x => x.Ativo);
+        if (id.HasValue) query = query.Where(x => x.Id == id.Value);
+        else if (!incluirInativos) query = query.Where(x => x.Ativo);
         if (!string.IsNullOrWhiteSpace(busca))
         {
             var termo = $"%{busca.Trim()}%";
@@ -222,6 +257,7 @@ public sealed class AdminController(
                     p.Id,
                     p.Nome,
                     p.Email,
+                    p.Telefone,
                     p.Ativo,
                     p.StatusAcompanhamento,
                     p.UsuarioId,
@@ -235,15 +271,27 @@ public sealed class AdminController(
         static string Acesso(bool? ativo, bool? confirmado) =>
             ativo is null ? "sem-acesso" : ativo.Value ? "ativo" : confirmado == true ? "bloqueado" : "convite";
 
+        var porPaciente = await responsaveis.ResolverEmLoteAsync(org, linhas.Select(x => x.Id).ToArray(), ct);
+        var equipes = await EquipesAsync(org, ct);
+        IReadOnlyCollection<AdminMembroEquipeResponse> EquipeDe(Guid id) => equipes.TryGetValue(id, out var e) ? e : [];
+
         var filtradas = linhas
-            .Select(x => new { Linha = x, Acesso = Acesso(x.UsuarioAtivo, x.EmailConfirmado) })
+            .Select(x => new { Linha = x, Acesso = Acesso(x.UsuarioAtivo, x.EmailConfirmado), Responsavel = porPaciente[x.Id] })
             .Where(x => string.IsNullOrWhiteSpace(acesso) || x.Acesso == acesso)
+            .Where(x => !profissionalId.HasValue || EquipeDe(x.Linha.Id).Any(m => m.Id == profissionalId))
+            .Where(x => equipe != "sem" || EquipeDe(x.Linha.Id).Count == 0)
+            .Where(x => responsavel switch
+            {
+                "sem" => x.Responsavel.Profissional is null,
+                "definido" => x.Responsavel.Origem == OrigemResponsavel.Definido,
+                "automatico" => x.Responsavel.Profissional is not null && x.Responsavel.Origem != OrigemResponsavel.Definido,
+                _ => true
+            })
             .ToList();
 
         var total = filtradas.Count;
-        var pagina_ = filtradas.Skip((pagina - 1) * tamanho).Take(tamanho).ToList();
-        var ids = pagina_.Select(x => x.Linha.Id).ToArray();
-        var usuarioIds = pagina_.Where(x => x.Linha.UsuarioId.HasValue).Select(x => x.Linha.UsuarioId!.Value).ToArray();
+        var paginaAtual = filtradas.Skip((pagina - 1) * tamanho).Take(tamanho).ToList();
+        var usuarioIds = paginaAtual.Where(x => x.Linha.UsuarioId.HasValue).Select(x => x.Linha.UsuarioId!.Value).ToArray();
 
         var ultimosAcessos = await db.AuditLogs.AsNoTracking()
             .Where(x => x.OrganizacaoId == org && x.UsuarioId != null && usuarioIds.Contains(x.UsuarioId.Value) && AcoesDeAcesso.Contains(x.Acao))
@@ -251,21 +299,66 @@ public sealed class AdminController(
             .Select(g => new { UsuarioId = g.Key, Ultimo = g.Max(x => x.CreatedAtUtc) })
             .ToDictionaryAsync(x => x.UsuarioId, x => x.Ultimo, ct);
 
-        var profissionais = await ProfissionalMaisRecenteAsync(ids, ct);
-
-        var itens = pagina_.Select(x => new AdminPacienteResponse(
+        var itens = paginaAtual.Select(x => new AdminPacienteResponse(
                 x.Linha.Id,
                 x.Linha.Nome,
                 x.Linha.Email,
+                x.Linha.Telefone,
                 x.Linha.Ativo,
                 x.Linha.StatusAcompanhamento,
                 x.Acesso,
                 x.Linha.UsuarioId.HasValue && ultimosAcessos.TryGetValue(x.Linha.UsuarioId.Value, out var ultimo) ? ultimo : null,
-                profissionais.GetValueOrDefault(x.Linha.Id),
+                x.Responsavel.Profissional?.Id,
+                x.Responsavel.Profissional?.Nome,
+                x.Responsavel.Origem,
+                x.Responsavel.OrigemRotulo,
+                EquipeDe(x.Linha.Id),
                 x.Linha.CreatedAtUtc))
             .ToList();
 
         return Ok(new AdminPacientesResponse(itens, total, pagina, total == 0 ? 0 : (int)Math.Ceiling(total / (double)tamanho)));
+    }
+
+    /// <summary>Profissionais ativos com quantos pacientes estao com cada um (para atribuir e transferir).</summary>
+    [HttpGet("profissionais")]
+    public async Task<ActionResult<IReadOnlyCollection<AdminProfissionalResponse>>> Profissionais(CancellationToken ct = default)
+    {
+        if (!await EhAdmin(ct)) return Forbid();
+
+        var org = currentUser.OrganizationId;
+        var profissionais = await (
+                from p in db.Profissionais.AsNoTracking()
+                join u in db.Users.AsNoTracking() on p.UsuarioId equals u.Id
+                where p.OrganizacaoId == org && p.Ativo
+                orderby p.Nome
+                select new { p.Id, p.UsuarioId, p.Nome, p.Tipo, p.Especialidade, ContaAtiva = u.Ativo })
+            .ToListAsync(ct);
+
+        var ativos = await db.Pacientes.AsNoTracking()
+            .Where(x => x.OrganizacaoId == org && x.Ativo)
+            .Select(x => new { x.Id, x.ProfissionalResponsavelId })
+            .ToListAsync(ct);
+        var idsAtivos = ativos.Select(x => x.Id).ToHashSet();
+        var equipes = await EquipesAsync(org, ct);
+        var contagem = equipes
+            .Where(x => idsAtivos.Contains(x.Key))
+            .SelectMany(x => x.Value)
+            .GroupBy(x => x.Id)
+            .ToDictionary(g => g.Key, g => g.Count());
+        var definidos = ativos
+            .Where(x => x.ProfissionalResponsavelId.HasValue)
+            .GroupBy(x => x.ProfissionalResponsavelId!.Value)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        return Ok(profissionais.Select(x => new AdminProfissionalResponse(
+            x.Id,
+            x.UsuarioId,
+            x.Nome,
+            x.Tipo.ToString(),
+            x.Especialidade,
+            x.ContaAtiva,
+            contagem.GetValueOrDefault(x.Id),
+            definidos.GetValueOrDefault(x.Id))).ToList());
     }
 
     [HttpGet("equipe/acessos")]
@@ -367,50 +460,120 @@ public sealed class AdminController(
             .Select(g => new { UsuarioId = g.Key, Ultimo = g.Max(x => x.CreatedAtUtc) })
             .ToDictionaryAsync(x => x.UsuarioId, x => (DateTime?)x.Ultimo, ct);
 
-    /// <summary>Pacientes que ja tiveram consulta ou plano com algum profissional.</summary>
-    private async Task<HashSet<Guid>> PacientesComProfissionalAsync(Guid org, CancellationToken ct)
+    /// <summary>Define a equipe inteira do paciente: so esses profissionais veem o paciente.</summary>
+    [HttpPut("pacientes/{pacienteId:guid}/equipe")]
+    public async Task<IActionResult> DefinirEquipe(Guid pacienteId, AdminEquipePacienteRequest request, CancellationToken ct = default)
     {
-        var porConsulta = await db.Consultas.AsNoTracking()
-            .Where(x => x.Paciente.OrganizacaoId == org)
-            .Select(x => x.PacienteId)
-            .Distinct()
+        if (!await EhAdmin(ct)) return Forbid();
+
+        var org = currentUser.OrganizationId;
+        var paciente = await db.Pacientes.FirstOrDefaultAsync(x => x.Id == pacienteId && x.OrganizacaoId == org, ct);
+        if (paciente is null) return NotFound(new { message = "Paciente nao encontrado." });
+
+        var desejados = request.ProfissionalIds.Distinct().ToHashSet();
+        var validos = await db.Profissionais.AsNoTracking()
+            .Where(x => x.OrganizacaoId == org && desejados.Contains(x.Id))
+            .Select(x => x.Id)
             .ToListAsync(ct);
-        var porDieta = await db.PlanosAlimentares.AsNoTracking()
-            .Where(x => x.Paciente.OrganizacaoId == org)
-            .Select(x => x.PacienteId)
-            .Distinct()
-            .ToListAsync(ct);
-        var porTreino = await db.PlanosTreino.AsNoTracking()
-            .Where(x => x.Paciente.OrganizacaoId == org)
-            .Select(x => x.PacienteId)
-            .Distinct()
-            .ToListAsync(ct);
-        return porConsulta.Concat(porDieta).Concat(porTreino).ToHashSet();
+        if (validos.Count != desejados.Count) return BadRequest(new { message = "Escolha profissionais da clinica." });
+
+        var atuais = await db.ProfissionaisPacientes.Where(x => x.PacienteId == pacienteId).ToListAsync(ct);
+        var antes = atuais.Select(x => x.ProfissionalId).ToList();
+        db.ProfissionaisPacientes.RemoveRange(atuais.Where(x => !desejados.Contains(x.ProfissionalId)));
+        foreach (var id in desejados.Where(id => atuais.All(x => x.ProfissionalId != id)))
+            await acesso.GarantirNaEquipeAsync(org, pacienteId, id, currentUser.UserId, ct);
+
+        // O responsavel pelas mensagens precisa estar na equipe; se saiu, o paciente volta ao automatico.
+        if (paciente.ProfissionalResponsavelId.HasValue && !desejados.Contains(paciente.ProfissionalResponsavelId.Value))
+            paciente.ProfissionalResponsavelId = null;
+        paciente.UpdatedAtUtc = DateTime.UtcNow;
+
+        Auditar("SET_CARE_TEAM", pacienteId, new { profissionais = antes }, new { profissionais = desejados });
+        await db.SaveChangesAsync(ct);
+        return NoContent();
     }
 
-    /// <summary>Nome do profissional com o vinculo mais recente (consulta ou plano) de cada paciente.</summary>
-    private async Task<Dictionary<Guid, string>> ProfissionalMaisRecenteAsync(Guid[] pacienteIds, CancellationToken ct)
+    /// <summary>Atribui ou transfere varios pacientes de uma vez.</summary>
+    [HttpPost("pacientes/atribuir")]
+    public async Task<IActionResult> AtribuirLote(AdminAtribuirLoteRequest request, CancellationToken ct = default)
     {
-        if (pacienteIds.Length == 0) return [];
+        if (!await EhAdmin(ct)) return Forbid();
 
-        var consultas = await db.Consultas.AsNoTracking()
-            .Where(x => pacienteIds.Contains(x.PacienteId))
-            .Select(x => new { x.PacienteId, Quando = x.DataHoraUtc, x.Profissional.Nome })
+        var org = currentUser.OrganizationId;
+        if (request.PacienteIds.Count == 0) return BadRequest(new { message = "Escolha ao menos um paciente." });
+        if (request.RemoverProfissionalId == request.ProfissionalId) return BadRequest(new { message = "Escolha profissionais diferentes." });
+
+        var destino = await db.Profissionais.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == request.ProfissionalId && x.OrganizacaoId == org && x.Ativo, ct);
+        if (destino is null) return BadRequest(new { message = "Escolha um profissional ativo da clinica." });
+
+        var ids = request.PacienteIds.Distinct().ToArray();
+        var pacientes = await db.Pacientes.Where(x => x.OrganizacaoId == org && ids.Contains(x.Id)).ToListAsync(ct);
+        var agora = DateTime.UtcNow;
+        var adicionados = 0;
+        foreach (var p in pacientes)
+        {
+            if (await acesso.GarantirNaEquipeAsync(org, p.Id, destino.Id, currentUser.UserId, ct)) adicionados++;
+            if (request.RemoverProfissionalId.HasValue)
+            {
+                var sai = await db.ProfissionaisPacientes
+                    .Where(x => x.PacienteId == p.Id && x.ProfissionalId == request.RemoverProfissionalId.Value)
+                    .ToListAsync(ct);
+                db.ProfissionaisPacientes.RemoveRange(sai);
+                if (p.ProfissionalResponsavelId == request.RemoverProfissionalId) p.ProfissionalResponsavelId = destino.Id;
+            }
+            if (request.TornarResponsavel) p.ProfissionalResponsavelId = destino.Id;
+            p.UpdatedAtUtc = agora;
+            Auditar(request.RemoverProfissionalId.HasValue ? "TRANSFER_CARE_TEAM" : "ADD_CARE_TEAM", p.Id, null, new
+            {
+                ProfissionalId = destino.Id,
+                request.RemoverProfissionalId,
+                request.TornarResponsavel
+            });
+        }
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new { pacientes = pacientes.Count, adicionados });
+    }
+
+    /// <summary>Equipe de cada paciente da organizacao: ligacoes da equipe mais o responsavel definido.</summary>
+    private async Task<Dictionary<Guid, List<AdminMembroEquipeResponse>>> EquipesAsync(Guid org, CancellationToken ct)
+    {
+        var profissionais = await db.Profissionais.AsNoTracking()
+            .Where(x => x.OrganizacaoId == org)
+            .Select(x => new { x.Id, x.Nome, x.Tipo })
+            .ToDictionaryAsync(x => x.Id, ct);
+        var ligacoes = await db.ProfissionaisPacientes.AsNoTracking()
+            .Where(x => x.OrganizacaoId == org)
+            .Select(x => new { x.PacienteId, x.ProfissionalId })
             .ToListAsync(ct);
-        var dietas = await db.PlanosAlimentares.AsNoTracking()
-            .Where(x => pacienteIds.Contains(x.PacienteId))
-            .Select(x => new { x.PacienteId, Quando = x.CreatedAtUtc, x.Profissional.Nome })
-            .ToListAsync(ct);
-        var treinos = await db.PlanosTreino.AsNoTracking()
-            .Where(x => pacienteIds.Contains(x.PacienteId))
-            .Select(x => new { x.PacienteId, Quando = x.CreatedAtUtc, x.Profissional.Nome })
+        var responsaveisDefinidos = await db.Pacientes.AsNoTracking()
+            .Where(x => x.OrganizacaoId == org && x.ProfissionalResponsavelId.HasValue)
+            .Select(x => new { PacienteId = x.Id, ProfissionalId = x.ProfissionalResponsavelId!.Value })
             .ToListAsync(ct);
 
-        return consultas.Concat(dietas).Concat(treinos)
-            .Where(x => x.Quando <= DateTime.UtcNow.AddDays(1))
+        return ligacoes.Concat(responsaveisDefinidos)
+            .Where(x => profissionais.ContainsKey(x.ProfissionalId))
             .GroupBy(x => x.PacienteId)
-            .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.Quando).First().Nome);
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(x => x.ProfissionalId).Distinct()
+                    .Select(id => new AdminMembroEquipeResponse(id, profissionais[id].Nome, profissionais[id].Tipo.ToString()))
+                    .OrderBy(x => x.Nome)
+                    .ToList());
     }
+
+    private void Auditar(string acao, Guid pacienteId, object? antes, object? depois) => db.AuditLogs.Add(new AuditLog
+    {
+        OrganizacaoId = currentUser.OrganizationId,
+        UsuarioId = currentUser.UserId,
+        Acao = acao,
+        Entidade = nameof(Paciente),
+        EntidadeId = pacienteId.ToString(),
+        DadosAnterioresJson = antes is null ? null : System.Text.Json.JsonSerializer.Serialize(antes),
+        DadosNovosJson = depois is null ? null : System.Text.Json.JsonSerializer.Serialize(depois),
+        IpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString()
+    });
 
     private async Task<bool> EhAdmin(CancellationToken ct) =>
         !User.HasClaim("impersonation", "true") &&
