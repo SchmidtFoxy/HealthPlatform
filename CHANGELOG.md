@@ -8,6 +8,12 @@
 - O app passa a registrar entradas (login e uso) na auditoria, para mostrar o último acesso.
 - O admin continua com acesso à rotina clínica pelo atalho "Rotina clínica"; na rotina clínica, o atalho "Painel do administrador" leva de volta.
 
+## v0.69.1 — Abertura animada do app
+
+- Ao abrir o app instalado na tela inicial, uma abertura animada substitui a logo parada: linhas de luz desenham o "A", o símbolo da marca se materializa com um reflexo e o nome AESYN entra letra a letra. Segue o tema claro ou escuro.
+- Aparece uma vez por abertura (não repete ao recarregar), fica no ar pelo menos 2,7 s e some assim que o app está pronto. No navegador comum não aparece; dá para ver com aesyn.com.br/?abertura.
+- Quem pede menos movimento no sistema vê só o símbolo e o nome, sem animação.
+
 ## v0.69.0 — App na raiz do site, versão clássica removida
 
 - O app novo passa a abrir direto em aesyn.com.br, sem o /app no endereço. Links antigos com /app levam para a mesma tela no endereço novo.

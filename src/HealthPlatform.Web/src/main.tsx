@@ -8,6 +8,12 @@ import { ApiError } from './lib/api';
 import { ouvirLinksDeNotificacao, vigiarAtualizacao } from './lib/atualizacao';
 import './styles.css';
 
+declare global {
+  interface Window {
+    __aesynAbertura?: { pronto: () => void };
+  }
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,3 +38,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>,
 );
+
+// Tira a abertura animada (index.html) depois que o app desenhou o primeiro quadro.
+requestAnimationFrame(() => window.__aesynAbertura?.pronto());

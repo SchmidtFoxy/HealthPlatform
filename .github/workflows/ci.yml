@@ -36,3 +36,67 @@ jobs:
         run: |
           git add -N src/HealthPlatform.Api/wwwroot
           git diff --stat --exit-code -- src/HealthPlatform.Api/wwwroot || (echo "Rode 'npm run build' em src/HealthPlatform.Web e commite wwwroot." && exit 1)
+
+  # Teste de fumaca: banco vazio, API em Development (migra e cria o admin), seed de demonstracao
+  # e Playwright abrindo as telas do paciente e do profissional. Barra o merge se alguma quebrar.
+  telas:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: healthplatform
+          POSTGRES_USER: healthplatform
+          POSTGRES_PASSWORD: healthplatform_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U healthplatform -d healthplatform"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Subir a API
+        working-directory: src/HealthPlatform.Api
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ASPNETCORE_URLS: http://127.0.0.1:5080
+        run: |
+          dotnet build -c Release
+          nohup dotnet run -c Release --no-build --no-launch-profile > "$RUNNER_TEMP/api.log" 2>&1 &
+          for i in $(seq 1 90); do curl -fsS http://127.0.0.1:5080/api/health && exit 0; sleep 2; done
+          cat "$RUNNER_TEMP/api.log"; exit 1
+
+      - name: Dados de demonstracao
+        run: node scripts/dev/seed-demo.mjs http://127.0.0.1:5080
+
+      - name: Playwright
+        working-directory: scripts/e2e
+        run: |
+          npm init -y > /dev/null
+          npm install --no-save --no-audit --no-fund playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Abrir as telas
+        working-directory: scripts/e2e
+        env:
+          SMOKE_SHOTS: ${{ runner.temp }}/smoke-shots
+        run: node smoke.mjs http://127.0.0.1:5080
+
+      - name: Fotos e log da falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: telas-com-falha
+          path: |
+            ${{ runner.temp }}/smoke-shots
+            ${{ runner.temp }}/api.log
+          if-no-files-found: ignore
