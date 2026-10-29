@@ -91,7 +91,7 @@ async function baixar(path: string, nome: string, abrir = false) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
-function Numero({ v, l, tone, icon }: { v: number | null | undefined; l: string; tone?: string; icon?: ReactNode }) {
+export function Numero({ v, l, tone, icon }: { v: number | null | undefined; l: string; tone?: string; icon?: ReactNode }) {
   return (
     <Card className="p-4">
       {icon}
@@ -133,7 +133,7 @@ function Colunas({ itens }: { itens: Serie[] }) {
   );
 }
 
-function Indicadores() {
+export function Indicadores() {
   const [dias, setDias] = useState('30');
   const q = useQuery({ queryKey: ['pro', 'gestao', dias], queryFn: () => api<ResumoGestao>(`/api/gestao/resumo?dias=${dias}`), placeholderData: (p) => p });
   const [baixando, setBaixando] = useState<'csv' | 'html' | null>(null);
@@ -394,7 +394,7 @@ interface Membro {
 const TIPOS: Record<string, string> = { Admin: 'Administrador', Medico: 'Médico', Nutricionista: 'Nutricionista', Personal: 'Personal', Secretaria: 'Secretaria' };
 const exigeRegistro = (t: string) => t === 'Medico' || t === 'Nutricionista' || t === 'Personal';
 
-function Equipe() {
+export function Equipe({ acessos }: { acessos?: Record<string, string | null> } = {}) {
   const q = useQuery({ queryKey: ['pro', 'equipe'], queryFn: () => api<Membro[]>('/api/equipe'), retry: (n, e) => !(e instanceof ApiError && e.status === 403) && n < 2 });
   const [aberto, setAberto] = useState<Membro | 'novo' | null>(null);
   const [senha, setSenha] = useState<Membro | null>(null);
@@ -428,6 +428,7 @@ function Equipe() {
                   {m.ehUsuarioAtual && <span className="font-normal text-muted"> (você)</span>}
                 </span>
                 <span className="block text-[13px] text-muted">{[TIPOS[m.tipoUsuario] ?? m.tipoUsuario, m.especialidade, m.email].filter(Boolean).join(' · ')}</span>
+                {acessos && m.ativo && <span className="block text-[12px] text-faint">{acessos[m.usuarioId] ? `Último acesso ${tempoRelativo(acessos[m.usuarioId])}` : 'Sem acesso registrado'}</span>}
               </span>
               {!m.ativo && <Pill>Inativo</Pill>}
             </button>
@@ -613,7 +614,7 @@ interface ResumoConfig {
   organizacao: { id: string; nome: string; cnpj: string | null; ativa: boolean };
 }
 
-function Clinica() {
+export function Clinica() {
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ['pro', 'config'], queryFn: () => api<ResumoConfig>('/api/configuracoes/resumo') });
   const [nome, setNome] = useState('');

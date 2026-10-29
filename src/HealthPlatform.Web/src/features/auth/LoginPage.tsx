@@ -5,7 +5,7 @@ import { FormEvent, InputHTMLAttributes, ReactNode, useEffect, useRef, useState 
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import simbolo from '@/assets/aesyn-symbol.webp';
 import { Button } from '@/components/ui';
-import { api, entrar, pedirNovaSenha } from '@/lib/api';
+import { api, entrar, pedirNovaSenha, rotaInicial } from '@/lib/api';
 
 type Etapa = 'entrar' | 'esqueci' | 'enviado';
 
@@ -43,7 +43,7 @@ export function LoginPage() {
       } catch {
         /* sem armazenamento: so nao lembra o e-mail */
       }
-      nav(s.tipoUsuario === 'Paciente' ? '/hoje' : '/pro', { replace: true });
+      nav(rotaInicial(s.tipoUsuario), { replace: true });
     } catch (err) {
       setErro(err instanceof Error ? err.message : 'Não foi possível entrar.');
     } finally {

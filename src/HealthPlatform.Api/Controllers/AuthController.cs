@@ -1,16 +1,19 @@
 using System.Security.Claims;
 using HealthPlatform.Api.Contracts.Auth;
 using HealthPlatform.Api.Services;
+using HealthPlatform.Domain.Entities;
+using HealthPlatform.Infrastructure.Data;
 using HealthPlatform.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPlatform.Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IJwtTokenService jwt) : ControllerBase
+public class AuthController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IJwtTokenService jwt, AppDbContext db) : ControllerBase
 {
     [AllowAnonymous]
     [HttpPost("login")]
@@ -34,6 +37,7 @@ public class AuthController(UserManager<Usuario> userManager, SignInManager<Usua
         if (!result.Succeeded)
             return Unauthorized(new { message = "Email ou senha invalidos." });
 
+        await RegistrarAcessoAsync(usuario, "LOGIN");
         return Ok(await CriarRespostaAsync(usuario));
     }
 
@@ -45,6 +49,8 @@ public class AuthController(UserManager<Usuario> userManager, SignInManager<Usua
         if (usuario is null || !usuario.Ativo)
             return Unauthorized(new { message = "Sessao expirada ou revogada." });
 
+        if (!User.HasClaim("impersonation", "true"))
+            await RegistrarAcessoAsync(usuario, "ACCESS");
         return Ok(await CriarRespostaAsync(usuario));
     }
 
@@ -63,6 +69,34 @@ public class AuthController(UserManager<Usuario> userManager, SignInManager<Usua
             return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Nao foi possivel encerrar a sessao com seguranca." });
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Guarda o ultimo acesso para o painel do administrador. A renovacao do token acontece
+    /// a cada hora de uso, entao basta um registro a cada poucas horas.
+    /// </summary>
+    private async Task RegistrarAcessoAsync(Usuario usuario, string acao)
+    {
+        if (acao == "ACCESS")
+        {
+            var limite = DateTime.UtcNow.AddHours(-3);
+            var recente = await db.AuditLogs.AsNoTracking().AnyAsync(x =>
+                x.UsuarioId == usuario.Id &&
+                (x.Acao == "LOGIN" || x.Acao == "ACCESS") &&
+                x.CreatedAtUtc >= limite);
+            if (recente) return;
+        }
+
+        db.AuditLogs.Add(new AuditLog
+        {
+            OrganizacaoId = usuario.OrganizacaoId,
+            UsuarioId = usuario.Id,
+            Acao = acao,
+            Entidade = "Sessao",
+            EntidadeId = usuario.Id.ToString(),
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        });
+        await db.SaveChangesAsync();
     }
 
     private async Task<LoginResponse> CriarRespostaAsync(Usuario usuario)

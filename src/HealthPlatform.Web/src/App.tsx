@@ -1,7 +1,9 @@
-import { Activity, CalendarCheck, CalendarDays, Dumbbell, Home, MessageCircle, Salad, User, Users } from 'lucide-react';
+import { Activity, Building2, CalendarCheck, CalendarDays, Dumbbell, Home, LayoutDashboard, MessageCircle, Salad, User, Users, UsersRound } from 'lucide-react';
 import { lazy, ReactNode, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/shell';
+import { AtalhoAdmin, AtalhoClinico } from './features/admin/Atalhos';
+import { rotaInicial } from './lib/api';
 import { FaixaSimulacao } from './components/Simulacao';
 import { Skeleton, Toaster } from './components/ui';
 import { AtivarPage, ConfirmarEmailPage, LoginPage, RedefinirSenhaPage } from './features/auth/LoginPage';
@@ -35,6 +37,11 @@ const ProTodayPage = lazy(() => import('./features/pro/ProTodayPage').then((m) =
 const PatientsPage = lazy(() => import('./features/pro/PatientsPage').then((m) => ({ default: m.PatientsPage })));
 const PatientDetailPage = lazy(() => import('./features/pro/PatientDetailPage').then((m) => ({ default: m.PatientDetailPage })));
 const DietEditorPage = lazy(() => import('./features/pro/DietEditorPage').then((m) => ({ default: m.DietEditorPage })));
+const AdminInicioPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminInicioPage })));
+const AdminEquipePage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminEquipePage })));
+const AdminPacientesPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminPacientesPage })));
+const AdminAtividadePage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminAtividadePage })));
+const AdminClinicaPage = lazy(() => import('./features/admin/AdminPages').then((m) => ({ default: m.AdminClinicaPage })));
 const WorkoutEditorPage = lazy(() => import('./features/pro/WorkoutEditorPage').then((m) => ({ default: m.WorkoutEditorPage })));
 
 function Carregando() {
@@ -47,20 +54,21 @@ function Carregando() {
   );
 }
 
-function Protegido({ papel, children }: { papel: 'paciente' | 'equipe'; children: ReactNode }) {
+function Protegido({ papel, children }: { papel: 'paciente' | 'equipe' | 'admin'; children: ReactNode }) {
   const s = useSessao();
   const loc = useLocation();
   if (!s) return <Navigate to="/entrar" replace state={{ de: loc.pathname }} />;
   const paciente = s.tipoUsuario === 'Paciente';
-  if (papel === 'paciente' && !paciente) return <Navigate to="/pro" replace />;
+  if (papel === 'paciente' && !paciente) return <Navigate to={rotaInicial(s.tipoUsuario)} replace />;
   if (papel === 'equipe' && paciente) return <Navigate to="/hoje" replace />;
+  if (papel === 'admin' && s.tipoUsuario !== 'Admin') return <Navigate to={rotaInicial(s.tipoUsuario)} replace />;
   return <>{children}</>;
 }
 
 function Inicio() {
   const s = useSessao();
   if (!s) return <HomeSitePage />;
-  return <Navigate to={s.tipoUsuario === 'Paciente' ? '/hoje' : '/pro'} replace />;
+  return <Navigate to={rotaInicial(s.tipoUsuario)} replace />;
 }
 
 const navPaciente = [
@@ -77,6 +85,16 @@ const navEquipe = [
   { to: '/pro/pacientes', label: 'Pacientes', icon: Users },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageCircle },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
+];
+
+// No celular cabem cinco abas: Atividade fica no menu lateral e na tela inicial; Perfil, so no celular.
+const navAdmin = [
+  { to: '/admin', label: 'Início', icon: LayoutDashboard, end: true },
+  { to: '/admin/equipe', label: 'Equipe', icon: UsersRound },
+  { to: '/admin/pacientes', label: 'Pacientes', icon: Users },
+  { to: '/admin/atividade', label: 'Atividade', icon: Activity, only: 'desktop' as const },
+  { to: '/admin/clinica', label: 'Clínica', icon: Building2 },
+  { to: '/admin/perfil', label: 'Perfil', icon: User, only: 'mobile' as const },
 ];
 
 export function App() {
@@ -147,7 +165,7 @@ export function App() {
           <Route
             element={
               <Protegido papel="equipe">
-                <AppShell items={navEquipe} />
+                <AppShell items={navEquipe} atalho={<AtalhoAdmin />} />
               </Protegido>
             }
           >
@@ -164,6 +182,21 @@ export function App() {
             <Route path="/pro/pacientes/:id/arquivos" element={<FilesPage />} />
             <Route path="/pro/perfil" element={<ProfilePage />} />
             <Route path="/pro/conta" element={<AccountPage />} />
+          </Route>
+          <Route
+            element={
+              <Protegido papel="admin">
+                <AppShell items={navAdmin} atalho={<AtalhoClinico />} />
+              </Protegido>
+            }
+          >
+            <Route path="/admin" element={<AdminInicioPage />} />
+            <Route path="/admin/equipe" element={<AdminEquipePage />} />
+            <Route path="/admin/pacientes" element={<AdminPacientesPage />} />
+            <Route path="/admin/atividade" element={<AdminAtividadePage />} />
+            <Route path="/admin/clinica" element={<AdminClinicaPage />} />
+            <Route path="/admin/perfil" element={<ProfilePage />} />
+            <Route path="/admin/conta" element={<AccountPage />} />
           </Route>
           <Route
             path="/pro/pacientes/:id/dieta/:planoId"

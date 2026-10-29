@@ -168,7 +168,7 @@ interface StatusAcesso {
   email: string | null;
 }
 
-function AcessoSheet({ paciente, onClose }: { paciente: PacienteFicha | null; onClose: () => void }) {
+export function AcessoSheet({ paciente, onClose }: { paciente: Pick<PacienteFicha, 'id' | 'nome' | 'email' | 'telefone'> | null; onClose: () => void }) {
   const qc = useQueryClient();
   const q = useQuery({
     queryKey: ['pro', 'acesso', paciente?.id],

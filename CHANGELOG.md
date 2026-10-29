@@ -1,3 +1,13 @@
+## v0.70.0 — Painel do administrador
+
+- O administrador entra no próprio painel (/admin), separado da rotina clínica: Início, Equipe, Pacientes, Atividade e Clínica.
+- Início: equipe por função, pacientes ativos e novos, acesso dos pacientes ao app, consultas, pendências e uma lista do que precisa de atenção (convites não ativados, pacientes sem profissional, equipe sem entrar há 30 dias). A aba "Indicadores clínicos" traz os indicadores e o relatório da Gestão.
+- Equipe: cadastro, função, senha, desligar acesso e "ver como", agora com o último acesso de cada pessoa.
+- Pacientes: visão administrativa, sem prontuário: profissional, situação do acompanhamento, acesso ao app e último acesso, com filtros e liberação ou revogação de convite.
+- Atividade: o que foi feito na plataforma, por quem e quando, a partir da auditoria.
+- O app passa a registrar entradas (login e uso) na auditoria, para mostrar o último acesso.
+- O admin continua com acesso à rotina clínica pelo atalho "Rotina clínica"; na rotina clínica, o atalho "Painel do administrador" leva de volta.
+
 ## v0.69.0 — App na raiz do site, versão clássica removida
 
 - O app novo passa a abrir direto em aesyn.com.br, sem o /app no endereço. Links antigos com /app levam para a mesma tela no endereço novo.

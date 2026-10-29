@@ -14,7 +14,8 @@ import { Tema, useTema } from '@/lib/theme';
 export function ProfilePage() {
   const s = useSessao();
   const conta = useConta();
-  const base = useLocation().pathname.startsWith('/pro') ? '/pro' : '';
+  const caminho = useLocation().pathname;
+  const base = caminho.startsWith('/admin') ? '/admin' : caminho.startsWith('/pro') ? '/pro' : '';
   const minha = useMinhaConta().data;
   const priv = usePrivacidade().data;
   const aceitePendente = priv && !(priv.termos.atualizado && priv.politicaPrivacidade.atualizada);
@@ -124,7 +125,16 @@ export function ProfilePage() {
             </button>
           </>
         )}
-        {s && s.tipoUsuario !== 'Paciente' && (
+        {s?.tipoUsuario === 'Admin' && !s.impersonating && (
+          <Link to={base === '/admin' ? '/pro' : '/admin'} className="flex items-center justify-between p-4 font-semibold">
+            <span>
+              {base === '/admin' ? 'Rotina clínica' : 'Painel do administrador'}
+              <span className="block text-sm font-normal text-muted">{base === '/admin' ? 'Agenda, pacientes e mensagens, como os profissionais veem' : 'Equipe, pacientes, atividade e dados da clínica'}</span>
+            </span>
+            <ChevronRight className="h-5 w-5 text-muted" />
+          </Link>
+        )}
+        {s && s.tipoUsuario !== 'Paciente' && base !== '/admin' && (
           <>
             <Link to="/pro/central" className="flex items-center justify-between p-4 font-semibold">
               <span>
