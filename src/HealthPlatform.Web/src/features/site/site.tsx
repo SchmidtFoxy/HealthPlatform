@@ -139,11 +139,6 @@ export function SiteLayout() {
                   Entrar
                 </Link>
               </li>
-              <li>
-                <a href="/classico?classico=1" className="text-muted hover:text-fg">
-                  Versão clássica
-                </a>
-              </li>
             </ul>
           </div>
         </div>

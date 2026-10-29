@@ -34,5 +34,5 @@ jobs:
 
       - name: Bundle commitado esta atualizado
         run: |
-          git add -N src/HealthPlatform.Api/wwwroot/app
-          git diff --stat --exit-code -- src/HealthPlatform.Api/wwwroot/app || (echo "Rode 'npm run build' em src/HealthPlatform.Web e commite wwwroot/app." && exit 1)
+          git add -N src/HealthPlatform.Api/wwwroot
+          git diff --stat --exit-code -- src/HealthPlatform.Api/wwwroot || (echo "Rode 'npm run build' em src/HealthPlatform.Web e commite wwwroot." && exit 1)

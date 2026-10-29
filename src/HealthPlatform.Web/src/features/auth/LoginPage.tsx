@@ -142,13 +142,6 @@ export function LoginPage() {
                   <p className="text-sm font-semibold">Primeiro acesso?</p>
                   <p className="mt-1 text-sm text-muted">Seu profissional envia um convite por e-mail. Abra o link do convite para criar sua senha.</p>
                 </div>
-
-                <p className="mt-6 text-center text-xs text-faint">
-                  Prefere o visual antigo?{' '}
-                  <a href="/classico?classico=1" className="font-semibold text-muted hover:text-fg">
-                    Abrir versão clássica
-                  </a>
-                </p>
               </Passo>
             )}
 

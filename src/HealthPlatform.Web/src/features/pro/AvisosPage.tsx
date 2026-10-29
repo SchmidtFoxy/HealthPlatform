@@ -53,9 +53,7 @@ export function AvisosPage() {
     if (!a.lida) await api(`/api/notificacoes/${a.id}/lida`, { method: 'PUT' }).catch(() => {});
     invalidar();
     if (!a.link) return;
-    const destino = destinoDoLink(a.link, false);
-    if (destino.startsWith('/app/')) nav(destino.slice(4));
-    else location.assign(destino);
+    nav(destinoDoLink(a.link, false));
   };
 
   const itens = q.data?.itens ?? [];
