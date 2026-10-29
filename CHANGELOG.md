@@ -1,3 +1,11 @@
+## v0.72.1 — Convite do paciente deixa de dar "Invalid token."
+
+- Causa: as chaves que assinam convites, links de "esqueci a senha" e de confirmação de e-mail ficavam dentro do container. Cada deploy (e a mudança de servidor) criava chaves novas e todo link gerado antes passava a dar "Invalid token.". Além disso o convite valia só 30 minutos, pouco para um link enviado por WhatsApp.
+- As chaves passam a ficar no banco (tabela `DataProtectionKeys`, migration V0721ChavesDataProtection), então sobrevivem a deploy, troca de container e restauração de backup.
+- O convite de primeiro acesso do paciente vale 7 dias e continua de uso único. "Esqueci a senha" segue com 30 minutos.
+- Link vencido ou já usado mostra "Este link de convite expirou ou já foi usado. Peça um novo convite ao seu profissional." em vez de "Invalid token.".
+- Banco: uma tabela nova e vazia (`scripts/sql/v0.72.1_chaves_data_protection.sql`, rodar antes do merge). Convites enviados antes desta versão precisam ser gerados de novo (Ficha do paciente › Acesso ao app › Gerar novo convite, ou Admin › Usuários › paciente › Acesso ao app).
+
 ## v0.72.0 — Painel do administrador e equipe do paciente
 
 - O administrador entra no próprio painel (/admin), separado da rotina clínica: Início, Usuários, Atividade e Clínica.

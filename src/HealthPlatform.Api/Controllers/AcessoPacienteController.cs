@@ -137,7 +137,10 @@ public sealed class AcessoPacienteController(
 
         paciente.UpdatedAtUtc = DateTime.UtcNow;
 
-        var token = await userManager.GeneratePasswordResetTokenAsync(usuario);
+        var token = await userManager.GenerateUserTokenAsync(
+            usuario,
+            ConvitePacienteTokenProvider.Nome,
+            UserManager<Usuario>.ResetPasswordTokenPurpose);
 
         db.AuditLogs.Add(new AuditLog
         {

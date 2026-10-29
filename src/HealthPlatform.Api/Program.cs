@@ -8,6 +8,7 @@ using HealthPlatform.Domain.Enums;
 using HealthPlatform.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ builder.Services.AddControllers(o => o.Filters.Add<FiltroAcessoPaciente>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.72.0" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.72.1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -54,11 +55,18 @@ builder.Services.AddIdentityCore<Usuario>(options =>
 .AddRoles<IdentityRole<Guid>>()
 .AddSignInManager()
 .AddEntityFrameworkStores<AppDbContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddTokenProvider<ConvitePacienteTokenProvider>(ConvitePacienteTokenProvider.Nome);
 
 // v0.19.26 - tokens publicos de conta devem expirar rapidamente.
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     options.TokenLifespan = TimeSpan.FromMinutes(30));
+
+// v0.72.1 - as chaves que assinam convites e links de senha/e-mail ficam no banco. Antes ficavam
+// dentro do container e cada deploy (ou a troca de servidor) invalidava todos os links: "Invalid token.".
+builder.Services.AddDataProtection()
+    .SetApplicationName("HealthPlatform")
+    .PersistKeysToDbContext<AppDbContext>();
 
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(EmailOptions.SectionName));
 builder.Services.AddScoped<ITransactionalEmailService, SmtpTransactionalEmailService>();
