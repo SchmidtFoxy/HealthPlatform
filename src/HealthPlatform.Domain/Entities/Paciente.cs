@@ -18,6 +18,8 @@ public class Paciente : BaseEntity
     public string? MotivoStatusAcompanhamento { get; set; }
     public DateTime? StatusAcompanhamentoAlteradoEmUtc { get; set; }
     public string? TagsSegmentacao { get; set; }
+    /// <summary>Profissional que recebe as mensagens do chat. Nulo: o sistema deduz (ver ProfissionalResponsavelService).</summary>
+    public Guid? ProfissionalResponsavelId { get; set; }
 
     public Organizacao Organizacao { get; set; } = null!;
     public ICollection<Consulta> Consultas { get; set; } = new List<Consulta>();

@@ -1,3 +1,11 @@
+## v0.70.0 — Profissional responsável pelo paciente
+
+- O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.
+- Sem responsável definido, o sistema deduz: consulta mais recente que não foi cancelada nem faltou, plano de treino ou dieta mais recente, último profissional que respondeu no chat ou o único profissional da clínica. Se nada disso existir, o paciente vê o aviso e os administradores são avisados, em vez de a mensagem ir para a pessoa errada.
+- A conversa é do paciente: ao trocar o responsável, o novo profissional vê o histórico inteiro.
+- Gestão › Carteira › "Mensagens e responsável" (só admin): quem recebe as mensagens e por quê, se a conta e o push do profissional estão ativos, mensagens e avisos por pessoa, alertas do que está errado e a troca do responsável, com opção de repassar os avisos não lidos.
+- Banco: coluna nova `Pacientes.ProfissionalResponsavelId` (migration V0700ProfissionalResponsavel).
+
 ## v0.69.1 — Abertura animada do app
 
 - Ao abrir o app instalado na tela inicial, uma abertura animada substitui a logo parada: linhas de luz desenham o "A", o símbolo da marca se materializa com um reflexo e o nome AESYN entra letra a letra. Segue o tema claro ou escuro.

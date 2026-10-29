@@ -2,6 +2,7 @@ using System.Text;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
+using HealthPlatform.Domain.Enums;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,8 @@ namespace HealthPlatform.Api.Controllers;
 public sealed class ChatAcompanhamentoController(
     AppDbContext db,
     CurrentUser currentUser,
-    IPushNotificationService push) : ControllerBase
+    IPushNotificationService push,
+    ProfissionalResponsavelService responsaveis) : ControllerBase
 {
     private const string ContextMarkerPrefix = "[[AESYNCTX|";
     private static readonly HashSet<string> ContextosPermitidos = new(StringComparer.OrdinalIgnoreCase)
@@ -37,10 +39,13 @@ public sealed class ChatAcompanhamentoController(
         if (paciente is null) return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
         var profissional = await ResolverProfissionalDoPaciente(paciente.Id, ct);
-        if (profissional is null) return Ok(new { pacienteId = paciente.Id, profissional = (object?)null, mensagens = Array.Empty<object>(), naoLidas = 0 });
-
-        await MarcarConversaComoLida(paciente.Id, profissional.Id, ct);
-        var mensagens = await ListarMensagens(paciente.Id, profissional.Id, "Paciente", ct);
+        await MarcarConversaComoLida(paciente.Id, ct);
+        var mensagens = await ListarMensagens(paciente.Id, "Paciente", ct);
+        if (profissional is null)
+        {
+            await AvisarAdministradoresSemResponsavel(paciente, ct);
+            return Ok(new { pacienteId = paciente.Id, profissional = (object?)null, mensagens, naoLidas = 0 });
+        }
         return Ok(new
         {
             pacienteId = paciente.Id,
@@ -61,7 +66,11 @@ public sealed class ChatAcompanhamentoController(
         if (paciente is null) return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
         var profissional = await ResolverProfissionalDoPaciente(paciente.Id, ct);
-        if (profissional is null) return BadRequest(new { message = "Nenhum profissional ativo esta vinculado ao seu acompanhamento." });
+        if (profissional is null)
+        {
+            await AvisarAdministradoresSemResponsavel(paciente, ct);
+            return BadRequest(new { message = "Seu acompanhamento ainda nao tem um profissional responsavel. A clinica ja foi avisada." });
+        }
 
         return await CriarMensagem(paciente, profissional, "Paciente", request, profissional.UsuarioId, ct);
     }
@@ -78,8 +87,8 @@ public sealed class ChatAcompanhamentoController(
         if (paciente is null) return NotFound();
         if (!await PodeAcompanharPaciente(profissional.Id, paciente.Id, ct)) return Forbid();
 
-        await MarcarConversaComoLida(paciente.Id, profissional.Id, ct);
-        var mensagens = await ListarMensagens(paciente.Id, profissional.Id, "Profissional", ct);
+        await MarcarConversaComoLida(paciente.Id, ct);
+        var mensagens = await ListarMensagens(paciente.Id, "Profissional", ct);
         return Ok(new
         {
             paciente = new { paciente.Id, paciente.Nome },
@@ -117,8 +126,9 @@ public sealed class ChatAcompanhamentoController(
         var profissional = await MeuProfissional(ct);
         if (profissional is null) return Forbid();
 
+        var meusPacientes = await responsaveis.PacientesDoProfissionalAsync(currentUser.OrganizationId, profissional.Id, ct);
         var itens = await db.InteracoesAcompanhamento.AsNoTracking()
-            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.ProfissionalId == profissional.Id && x.Canal.StartsWith("Chat:"))
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && meusPacientes.Contains(x.PacienteId) && x.Canal.StartsWith("Chat:"))
             .OrderByDescending(x => x.DataHoraUtc)
             .Take(2000)
             .Select(x => new { x.Id, x.PacienteId, x.DataHoraUtc, x.Resultado, x.Observacoes, x.Canal })
@@ -305,14 +315,15 @@ public sealed class ChatAcompanhamentoController(
         });
     }
 
-    private async Task<object[]> ListarMensagens(Guid pacienteId, Guid profissionalId, string perspectiva, CancellationToken ct)
+    // A conversa e do paciente: se o responsavel muda, o novo profissional ve o historico inteiro.
+    private async Task<object[]> ListarMensagens(Guid pacienteId, string perspectiva, CancellationToken ct)
     {
         var itens = await db.InteracoesAcompanhamento.AsNoTracking()
-            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId &&
-                x.ProfissionalId == profissionalId && x.Canal.StartsWith("Chat:"))
-            .OrderBy(x => x.DataHoraUtc)
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId && x.Canal.StartsWith("Chat:"))
+            .OrderByDescending(x => x.DataHoraUtc)
             .Take(300)
             .ToListAsync(ct);
+        itens.Reverse();
 
         var ids = itens.Select(x => x.Id).ToArray();
         var notificacoes = ids.Length == 0
@@ -346,11 +357,10 @@ public sealed class ChatAcompanhamentoController(
         }).ToArray();
     }
 
-    private async Task MarcarConversaComoLida(Guid pacienteId, Guid profissionalId, CancellationToken ct)
+    private async Task MarcarConversaComoLida(Guid pacienteId, CancellationToken ct)
     {
         var ids = await db.InteracoesAcompanhamento.AsNoTracking()
-            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId &&
-                x.ProfissionalId == profissionalId && x.Canal.StartsWith("Chat:"))
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId && x.Canal.StartsWith("Chat:"))
             .Select(x => x.Id)
             .ToListAsync(ct);
         if (ids.Count == 0) return;
@@ -413,22 +423,52 @@ public sealed class ChatAcompanhamentoController(
         await db.Profissionais.FirstOrDefaultAsync(x => x.UsuarioId == currentUser.UserId &&
             x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
 
-    private async Task<Profissional?> ResolverProfissionalDoPaciente(Guid pacienteId, CancellationToken ct)
+    private async Task<Profissional?> ResolverProfissionalDoPaciente(Guid pacienteId, CancellationToken ct) =>
+        (await responsaveis.ResolverAsync(currentUser.OrganizationId, pacienteId, ct)).Profissional;
+
+    // O paciente abriu ou tentou usar o chat sem responsavel: cada admin recebe um aviso por paciente,
+    // que volta a ficar pendente se ja tinha sido lido.
+    private async Task AvisarAdministradoresSemResponsavel(Paciente paciente, CancellationToken ct)
     {
-        var profissionalId = await db.Consultas.AsNoTracking()
-            .Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId)
-            .OrderByDescending(x => x.DataHoraUtc)
-            .Select(x => (Guid?)x.ProfissionalId)
-            .FirstOrDefaultAsync(ct);
-
-        if (profissionalId.HasValue)
+        var chave = $"CHAT-SEM-RESPONSAVEL:{paciente.Id}";
+        var admins = await db.Users.AsNoTracking()
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo && x.TipoUsuario == TipoUsuario.Admin)
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+        var existentes = await db.NotificacoesInternas
+            .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.OrigemChave == chave)
+            .ToDictionaryAsync(x => x.UsuarioId, ct);
+        var agora = DateTime.UtcNow;
+        foreach (var adminId in admins)
         {
-            var vinculado = await db.Profissionais.FirstOrDefaultAsync(x => x.Id == profissionalId.Value && x.Ativo, ct);
-            if (vinculado is not null) return vinculado;
+            if (existentes.TryGetValue(adminId, out var aviso))
+            {
+                if (aviso.Ativa && !aviso.LidaEmUtc.HasValue) continue;
+                aviso.Ativa = true;
+                aviso.LidaEmUtc = null;
+                aviso.DataEventoUtc = agora;
+                aviso.UpdatedAtUtc = agora;
+                continue;
+            }
+            db.NotificacoesInternas.Add(new NotificacaoInterna
+            {
+                OrganizacaoId = currentUser.OrganizationId,
+                UsuarioId = adminId,
+                Tipo = "Sistema",
+                Prioridade = "Alta",
+                Titulo = $"{paciente.Nome} tentou enviar mensagem sem profissional responsável",
+                Mensagem = "Defina o profissional responsável no painel do administrador para as mensagens chegarem.",
+                OrigemTipo = "PacienteSemResponsavel",
+                OrigemId = paciente.Id,
+                OrigemChave = chave,
+                DataEventoUtc = agora,
+                Link = $"admin-paciente:{paciente.Id}",
+                CreatedAtUtc = agora,
+                UpdatedAtUtc = agora,
+                Ativa = true
+            });
         }
-
-        return await db.Profissionais.OrderBy(x => x.Nome).FirstOrDefaultAsync(x =>
-            x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+        await db.SaveChangesAsync(ct);
     }
 
     private static string NormalizarContexto(string? valor)
