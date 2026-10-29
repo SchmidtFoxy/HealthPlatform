@@ -40,7 +40,7 @@ export default defineConfig({
       workbox: {
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//, /^\/app\//, /^\/swagger/],
-        globPatterns: ['**/*.{js,css,html,woff2,svg}'],
+        globPatterns: ['**/*.{js,css,html,woff2,svg}', 'abertura-simbolo.webp'],
         globIgnores: ['app/**', 'push-sw.js'],
         importScripts: ['/push-sw.js'],
       },

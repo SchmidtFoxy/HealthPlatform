@@ -6,6 +6,12 @@
 - Gestão › Carteira › "Mensagens e responsável" (só admin): quem recebe as mensagens e por quê, se a conta e o push do profissional estão ativos, mensagens e avisos por pessoa, alertas do que está errado e a troca do responsável, com opção de repassar os avisos não lidos.
 - Banco: coluna nova `Pacientes.ProfissionalResponsavelId` (migration V0700ProfissionalResponsavel).
 
+## v0.69.1 — Abertura animada do app
+
+- Ao abrir o app instalado na tela inicial, uma abertura animada substitui a logo parada: linhas de luz desenham o "A", o símbolo da marca se materializa com um reflexo e o nome AESYN entra letra a letra. Segue o tema claro ou escuro.
+- Aparece uma vez por abertura (não repete ao recarregar), fica no ar pelo menos 2,7 s e some assim que o app está pronto. No navegador comum não aparece; dá para ver com aesyn.com.br/?abertura.
+- Quem pede menos movimento no sistema vê só o símbolo e o nome, sem animação.
+
 ## v0.69.0 — App na raiz do site, versão clássica removida
 
 - O app novo passa a abrir direto em aesyn.com.br, sem o /app no endereço. Links antigos com /app levam para a mesma tela no endereço novo.
