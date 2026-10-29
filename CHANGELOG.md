@@ -1,3 +1,16 @@
+## v0.71.0 — Calculadora de metas e medidas caseiras na dieta
+
+- Editor de dieta › Metas do dia › "Calcular pela fórmula" traz de volta o planejamento energético da versão clássica:
+  - **Gasto energético**: TMB por Mifflin-St Jeor (ou Katch-McArdle quando a última avaliação tem massa magra) e GET com o fator de atividade (sedentário × 1,2 até extremamente ativo × 1,9). Peso e altura vêm da última avaliação; idade e sexo, da ficha.
+  - **Meta de peso**: perder, manter ou ganhar, peso desejado e prazo em semanas. Mostra o ajuste em kcal/dia, o alvo do dia e o ritmo em kg/semana (~7.700 kcal por kg), com alertas para ritmo acima de 1% do peso por semana, alvo abaixo da TMB ou abaixo de 1.200 kcal.
+  - **Macros por peso**: proteína, gordura e carboidrato em g/kg viram gramas por dia, com a energia total comparada ao alvo e o botão para "fechar a conta" com um dos macros.
+  - Um toque aplica calorias e macros nas metas do plano. O que foi digitado fica lembrado para o paciente neste aparelho.
+- O campo numérico das metas mostra quatro dígitos sem cortar (ex.: 1886 kcal).
+- Quantidade dos alimentos em **gramas, unidade ou ml**: no alimento da dieta, escolha a forma e prescreva "2 pães" em vez de 100 g. As gramas e os macros são calculados pelo peso de 1 unidade (ou pela densidade, em ml).
+  - O peso da medida (ex.: 1 pão = 50 g) pode ser guardado no alimento com um toque, ou em Biblioteca › Alimentos › "Medida caseira". Alimentos com medida guardada já entram na dieta como 1 unidade.
+  - O paciente vê "2 pães · 100 g".
+  - Banco: três colunas opcionais em `Alimentos` (`scripts/sql/v0.71.0_alimento_medida_caseira.sql`, rodar antes do merge).
+
 ## v0.70.1 — Notificação de mensagem leva direto para a conversa
 
 - Cada mensagem nova do chat chega como notificação com o nome de quem escreveu e o texto, e toca de novo a cada mensagem (antes a segunda mensagem trocava a primeira em silêncio). Várias mensagens da mesma conversa ficam numa notificação só, com "3 mensagens novas".

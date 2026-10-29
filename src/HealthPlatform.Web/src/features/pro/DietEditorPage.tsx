@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeftRight, BookCopy, BookmarkPlus, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, BookCopy, BookmarkPlus, Calculator, Check, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Ring, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
+import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Ring, Segmented, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
 import { api } from '@/lib/api';
-import { hojeIso, n0 } from '@/lib/format';
+import { hojeIso, n0, n1 } from '@/lib/format';
+import { corpoAlimento, type Modo, modoDe, pluralizar } from '@/lib/medidas';
 import type { Alimento, PlanoAlimentarPro } from '@/lib/types';
+import { CalculoMetasSheet } from './CalculoMetas';
 import { InserirModeloSheet, SalvarParteComoModeloSheet } from './ModelosNoPlano';
 import { useAlimentos, usePaciente, usePlanosAlimentares } from './queries';
 import { useSuplementos } from './suplementos';
@@ -249,7 +251,7 @@ function LinhaItem({ item, al, onOpen }: { item: Item; al?: Alimento; onOpen: ()
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{al?.nome ?? 'Alimento indisponível'}</p>
         <p className="num text-[12px] text-muted">
-          {item.unidade !== 'g' && item.quantidade ? `${n0(item.quantidade)} ${item.unidade} · ` : ''}
+          {item.unidade !== 'g' && item.quantidade ? `${n1(item.quantidade)} ${item.unidade === 'ml' ? 'ml' : pluralizar(item.unidade, item.quantidade)} · ` : ''}
           {n0(item.gramas)} g · P {n0(m.p)} · C {n0(m.c)} · G {n0(m.g)}
         </p>
       </div>
@@ -261,6 +263,31 @@ function LinhaItem({ item, al, onOpen }: { item: Item; al?: Alimento; onOpen: ()
       )}
       <span className="num w-14 shrink-0 text-right font-semibold">{n0(m.kcal)}</span>
     </button>
+  );
+}
+
+/** Campo decimal que aceita virgula e so repassa valores positivos. */
+function NumeroG({ valor, onChange, sufixo }: { valor: number; onChange: (v: number) => void; sufixo: string }) {
+  const [txt, setTxt] = useState(String(valor).replace('.', ','));
+  useEffect(() => {
+    if (Math.abs(Number(txt.replace(',', '.')) - valor) > 0.001) setTxt(String(Math.round(valor * 100) / 100).replace('.', ','));
+    // So reage a mudancas de fora (troca de modo ou de item).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valor]);
+  return (
+    <div className="relative">
+      <input
+        className={inputCls + ' pr-14'}
+        inputMode="decimal"
+        value={txt}
+        onChange={(e) => {
+          setTxt(e.target.value);
+          const n = Number(e.target.value.replace(',', '.'));
+          if (n > 0) onChange(n);
+        }}
+      />
+      <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[13px] text-muted">{sufixo}</span>
+    </div>
   );
 }
 
@@ -278,13 +305,41 @@ function ItemSheet({
   onRemove: () => void;
 }) {
   const [picker, setPicker] = useState(false);
+  const qc = useQueryClient();
+  const lembrar = useMutation({
+    mutationFn: ({ al, medida }: { al: Alimento; medida: Parameters<typeof corpoAlimento>[1] }) => api<Alimento>(`/api/alimentos/${al.id}`, { method: 'PUT', json: corpoAlimento(al, medida) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['pro', 'alimentos'] });
+      qc.invalidateQueries({ queryKey: ['pro', 'alimentos-lista'] });
+      toast('Medida guardada no alimento. Vale para as próximas dietas.');
+    },
+    onError: (e) => toast(e.message, 'bad'),
+  });
   if (!item) return <Sheet open={false} onClose={onClose}>{null}</Sheet>;
   const al = mapa.get(item.alimentoId);
   const m = macrosDe(al, item.gramas);
-  const setGramas = (g: number) => {
-    const fator = item.gramas ? g / item.gramas : 1;
-    onChange({ ...item, gramas: g, quantidade: item.unidade === 'g' ? g : Math.round(item.quantidade * fator * 100) / 100 });
+  const modo = modoDe(item.unidade);
+  // Quanto pesa 1 medida (ou 1 ml) neste item: o que ja esta prescrito ou, sem isso, o cadastro do alimento.
+  const fatorItem = item.quantidade > 0 && item.gramas > 0 ? item.gramas / item.quantidade : null;
+  const pesoUn = modo === 'un' ? fatorItem ?? al?.gramasPorUnidade ?? 50 : al?.gramasPorUnidade ?? null;
+  const densidade = modo === 'ml' ? fatorItem ?? al?.gramasPorMl ?? 1 : al?.gramasPorMl ?? 1;
+  const arred = (x: number) => Math.round(x * 100) / 100;
+  const setGramas = (g: number) => onChange({ ...item, gramas: g, quantidade: g });
+  const setQtd = (q: number, fator: number) => onChange({ ...item, quantidade: q, gramas: arred(q * fator) });
+  const trocarModo = (novo: Modo) => {
+    if (novo === modo) return;
+    if (novo === 'g') return onChange({ ...item, unidade: 'g', quantidade: item.gramas });
+    if (novo === 'ml') return onChange({ ...item, unidade: 'ml', quantidade: Math.round(item.gramas / (al?.gramasPorMl ?? 1)), gramas: item.gramas });
+    const peso = al?.gramasPorUnidade;
+    if (peso) {
+      const q = Math.max(0.5, Math.round((item.gramas / peso) * 2) / 2);
+      return onChange({ ...item, unidade: al?.unidadeNome || 'unidade', quantidade: q, gramas: arred(q * peso) });
+    }
+    // Sem peso cadastrado: 1 unidade com as gramas atuais; o profissional ajusta o peso logo abaixo.
+    onChange({ ...item, unidade: 'unidade', quantidade: 1 });
   };
+  const medidaDiferente =
+    !!al && (modo === 'un' ? Math.abs((al.gramasPorUnidade ?? 0) - (pesoUn ?? 0)) > 0.01 || (al.unidadeNome || 'unidade') !== item.unidade : modo === 'ml' ? Math.abs((al.gramasPorMl ?? 1) - densidade) > 0.001 : false);
   return (
     <>
       <Sheet
@@ -303,7 +358,30 @@ function ItemSheet({
         }
       >
         <div className="flex flex-col items-center gap-4 py-2">
-          <Stepper big value={item.gramas} onChange={setGramas} step={al && al.caloriasPor100g > 300 ? 5 : 10} min={1} suffix="g" label="Quantidade" />
+          <Segmented
+            compact
+            className="w-full max-w-xs"
+            options={[
+              { value: 'g', label: 'Gramas' },
+              { value: 'un', label: 'Unidade' },
+              { value: 'ml', label: 'ml' },
+            ]}
+            value={modo}
+            onChange={trocarModo}
+          />
+          {modo === 'g' && <Stepper big value={item.gramas} onChange={setGramas} step={al && al.caloriasPor100g > 300 ? 5 : 10} min={1} suffix="g" label="Quantidade" />}
+          {modo === 'un' && (
+            <>
+              <Stepper big value={item.quantidade} onChange={(q) => setQtd(q, pesoUn ?? 0)} step={1} min={0.5} suffix={pluralizar(item.unidade, item.quantidade)} label="Quantidade" />
+              <p className="num -mt-2 text-[13px] text-muted">= {n0(item.gramas)} g</p>
+            </>
+          )}
+          {modo === 'ml' && (
+            <>
+              <Stepper big value={item.quantidade} onChange={(q) => setQtd(q, densidade)} step={50} min={5} suffix="ml" label="Quantidade" />
+              <p className="num -mt-2 text-[13px] text-muted">= {n0(item.gramas)} g</p>
+            </>
+          )}
           <div className="grid w-full grid-cols-4 gap-2 text-center">
             {[
               ['kcal', m.kcal, 'text-fg'],
@@ -317,15 +395,34 @@ function ItemSheet({
               </div>
             ))}
           </div>
-          {item.unidade !== 'g' && (
+          {modo === 'un' && (
             <div className="grid w-full grid-cols-2 gap-3">
-              <Field label="Medida caseira">
-                <input className={inputCls} inputMode="decimal" value={item.quantidade} onChange={(e) => onChange({ ...item, quantidade: Number(e.target.value.replace(',', '.')) || 0 })} />
+              <Field label="Medida">
+                <input className={inputCls} placeholder="unidade, fatia, colher" maxLength={40} value={item.unidade} onChange={(e) => onChange({ ...item, unidade: e.target.value || 'unidade' })} />
               </Field>
-              <Field label="Unidade">
-                <input className={inputCls} value={item.unidade} onChange={(e) => onChange({ ...item, unidade: e.target.value })} />
+              <Field label={`1 ${item.unidade || 'unidade'} pesa`}>
+                <NumeroG valor={pesoUn ?? 0} sufixo="g" onChange={(p) => setQtd(item.quantidade, p)} />
               </Field>
             </div>
+          )}
+          {modo === 'ml' && (
+            <div className="w-full">
+              <Field label="Densidade" hint="Água, leite e sucos ficam perto de 1 g por ml.">
+                <NumeroG valor={densidade} sufixo="g/ml" onChange={(d) => setQtd(item.quantidade, d)} />
+              </Field>
+            </div>
+          )}
+          {al && medidaDiferente && (
+            <Button
+              variant="soft"
+              size="sm"
+              className="self-stretch"
+              icon={<Check className="h-4 w-4" />}
+              loading={lembrar.isPending}
+              onClick={() => lembrar.mutate({ al, medida: modo === 'un' ? { unidadeNome: item.unidade || 'unidade', gramasPorUnidade: arred(pesoUn ?? 0) } : { gramasPorMl: arred(densidade) } })}
+            >
+              {modo === 'un' ? `Guardar "1 ${item.unidade} = ${n1(pesoUn)} g" no alimento` : `Guardar densidade ${n1(densidade)} g/ml no alimento`}
+            </Button>
           )}
           <div className="w-full">
           <Field label="Orientação para o paciente">
@@ -408,6 +505,7 @@ function MetasSheet({
   atual,
   refeicoes,
   onDistribuir,
+  onCalcular,
 }: {
   open: boolean;
   onClose: () => void;
@@ -416,6 +514,7 @@ function MetasSheet({
   atual: Macros;
   refeicoes: Refeicao[];
   onDistribuir: (pcts: number[]) => void;
+  onCalcular: () => void;
 }) {
   const [dividir, setDividir] = useState(false);
   const [pcts, setPcts] = useState<number[]>([]);
@@ -451,6 +550,13 @@ function MetasSheet({
         </Button>
       }
     >
+      <button onClick={onCalcular} className="mb-2 flex w-full items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 px-3 py-3 text-left text-accent">
+        <Calculator className="h-5 w-5 shrink-0" />
+        <span className="min-w-0">
+          <span className="block font-semibold">Calcular pela fórmula</span>
+          <span className="block text-[13px] text-muted">TMB, gasto com atividade, meta de kg a ganhar ou perder e macros em g/kg.</span>
+        </span>
+      </button>
       {campo('calorias', 'Calorias', 50, 'text-fg')}
       {kcalMacros > 0 && Math.abs(kcalMacros - (metas.calorias ?? 0)) > 30 && (
         <button className="mb-2 w-full rounded-xl bg-accent/10 px-3 py-2 text-left text-[13px] text-accent" onClick={() => onChange({ ...metas, calorias: Math.round(kcalMacros) })}>
@@ -542,6 +648,7 @@ export function DietEditorPage() {
   const [aberto, setAberto] = useState<{ r: string; i: string } | null>(null);
   const [addEm, setAddEm] = useState<string | null>(null);
   const [metasOpen, setMetasOpen] = useState(false);
+  const [calcOpen, setCalcOpen] = useState(false);
   const [menuRef, setMenuRef] = useState<string | null>(null);
   const [inserir, setInserir] = useState(false);
   const [salvarModelo, setSalvarModelo] = useState<{ id: string; nome: string } | null>(null);
@@ -648,7 +755,7 @@ export function DietEditorPage() {
               <button onClick={() => setMetasOpen(true)} className="mb-4 flex w-full items-center gap-3 rounded-xl2 border border-accent/30 bg-accent/10 p-4 text-left text-sm">
                 <Target className="h-5 w-5 shrink-0 text-accent" />
                 <span>
-                  <b>Defina as metas do dia</b> para acompanhar calorias e macros enquanto monta.
+                  <b>Defina as metas do dia</b> para acompanhar calorias e macros enquanto monta. Dá para calcular pela TMB e pela meta de peso.
                 </span>
               </button>
             )}
@@ -733,7 +840,10 @@ export function DietEditorPage() {
         titulo="Adicionar alimento"
         onPick={(a) => {
           const g = a.caloriasPor100g > 300 ? 30 : 100;
-          const novoItem: Item = { k: uid(), alimentoId: a.id, quantidade: g, unidade: 'g', gramas: g, observacao: null, subs: [] };
+          // Com medida caseira cadastrada (ex.: 1 pao = 50 g), ja entra como 1 unidade.
+          const novoItem: Item = a.gramasPorUnidade
+            ? { k: uid(), alimentoId: a.id, quantidade: 1, unidade: a.unidadeNome || 'unidade', gramas: a.gramasPorUnidade, observacao: null, subs: [] }
+            : { k: uid(), alimentoId: a.id, quantidade: g, unidade: 'g', gramas: g, observacao: null, subs: [] };
           const r = addEm!;
           upRef(r, (x) => ({ ...x, itens: [...x.itens, novoItem] }));
           setAddEm(null);
@@ -761,6 +871,10 @@ export function DietEditorPage() {
           onChange={(m) => up((x) => ({ ...x, metas: m }))}
           atual={total}
           refeicoes={d.refeicoes}
+          onCalcular={() => {
+            setMetasOpen(false);
+            setCalcOpen(true);
+          }}
           onDistribuir={(pcts) =>
             up((x) => ({
               ...x,
@@ -778,6 +892,28 @@ export function DietEditorPage() {
           }
         />
       )}
+
+      <CalculoMetasSheet
+        open={calcOpen}
+        onClose={() => {
+          setCalcOpen(false);
+          setMetasOpen(true);
+        }}
+        pacienteId={id}
+        onAplicar={(m) => {
+          up((x) => ({
+            ...x,
+            metas: {
+              ...x.metas,
+              calorias: m.calorias ?? x.metas.calorias,
+              proteinasG: m.proteinasG ?? x.metas.proteinasG,
+              carboidratosG: m.carboidratosG ?? x.metas.carboidratosG,
+              gordurasG: m.gordurasG ?? x.metas.gordurasG,
+            },
+          }));
+          toast('Metas calculadas aplicadas. Revise antes de salvar.');
+        }}
+      />
 
       <InserirModeloSheet
         tipo="refeicao"

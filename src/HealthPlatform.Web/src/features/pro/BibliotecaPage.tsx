@@ -35,6 +35,9 @@ interface Alimento {
   gordurasPor100g: number;
   fibrasPor100g: number;
   ativo: boolean;
+  unidadeNome?: string | null;
+  gramasPorUnidade?: number | null;
+  gramasPorMl?: number | null;
 }
 
 /** Os quatro tipos de modelo da biblioteca. Treino e dieta viram plano do paciente; sessao e refeicao entram num plano. */
@@ -744,14 +747,19 @@ function AlimentoSheet({ item, categorias, onClose }: { item: Alimento | 'novo' 
   const [nome, setNome] = useState('');
   const [categoria, setCategoria] = useState('');
   const [v, setV] = useState<Record<string, string>>({});
+  const [medida, setMedida] = useState({ nome: '', gramas: '', densidade: '' });
   useEffect(() => {
     if (!item) return;
     setNome(a?.nome ?? '');
+    const t = (x: number | null | undefined) => (x == null ? '' : String(x).replace('.', ','));
+    setMedida({ nome: a?.unidadeNome ?? '', gramas: t(a?.gramasPorUnidade), densidade: t(a?.gramasPorMl) });
     setCategoria(a?.categoria ?? '');
     setV(Object.fromEntries(CAMPOS_ALIMENTO.map(([k]) => [k, a ? String(a[k]).replace('.', ',') : ''])));
   }, [item]);
   const num = (s: string | undefined) => (s?.trim() ? Number(s.replace(',', '.')) : 0);
-  const valido = !!nome.trim() && CAMPOS_ALIMENTO.every(([k]) => num(v[k]) >= 0 && !Number.isNaN(num(v[k])));
+  const opcional = (s: string) => (s.trim() ? Number(s.replace(',', '.')) : null);
+  const medidaOk = [medida.gramas, medida.densidade].every((s) => { const n = opcional(s); return n == null || n > 0; });
+  const valido = !!nome.trim() && medidaOk && CAMPOS_ALIMENTO.every(([k]) => num(v[k]) >= 0 && !Number.isNaN(num(v[k])));
   const invalidar = () => {
     qc.invalidateQueries({ queryKey: ['pro', 'alimentos-lista'] });
     qc.invalidateQueries({ queryKey: ['pro', 'alimentos'] });
@@ -759,7 +767,15 @@ function AlimentoSheet({ item, categorias, onClose }: { item: Alimento | 'novo' 
 
   const salvar = useMutation({
     mutationFn: () => {
-      const json = { nome: nome.trim(), categoria: categoria.trim() || null, ...Object.fromEntries(CAMPOS_ALIMENTO.map(([k]) => [k, num(v[k])])) };
+      const gpu = opcional(medida.gramas);
+      const json = {
+        nome: nome.trim(),
+        categoria: categoria.trim() || null,
+        ...Object.fromEntries(CAMPOS_ALIMENTO.map(([k]) => [k, num(v[k])])),
+        unidadeNome: gpu ? medida.nome.trim() || 'unidade' : null,
+        gramasPorUnidade: gpu,
+        gramasPorMl: opcional(medida.densidade),
+      };
       return novo ? api('/api/alimentos', { method: 'POST', json }) : api(`/api/alimentos/${a!.id}`, { method: 'PUT', json });
     },
     onSuccess: () => {
@@ -805,6 +821,19 @@ function AlimentoSheet({ item, categorias, onClose }: { item: Alimento | 'novo' 
               <input className={inputCls} inputMode="decimal" value={v[k] ?? ''} placeholder="0" onChange={(e) => setV((x) => ({ ...x, [k]: e.target.value }))} />
             </Field>
           ))}
+        </div>
+        <p className="-mb-2 text-[13px] font-semibold text-muted">Medida caseira (opcional)</p>
+        <p className="-mt-2 text-xs text-faint">Permite prescrever em unidades na dieta, como "2 pães", em vez de gramas.</p>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Nome da medida">
+            <input className={inputCls} value={medida.nome} maxLength={40} placeholder="unidade, fatia, colher" onChange={(e) => setMedida((x) => ({ ...x, nome: e.target.value }))} />
+          </Field>
+          <Field label="1 medida pesa (g)">
+            <input className={inputCls} inputMode="decimal" value={medida.gramas} placeholder="Ex.: 50" onChange={(e) => setMedida((x) => ({ ...x, gramas: e.target.value }))} />
+          </Field>
+          <Field label="Densidade (g por ml)" hint="Para líquidos. Sem valor, 1 ml = 1 g.">
+            <input className={inputCls} inputMode="decimal" value={medida.densidade} placeholder="1" onChange={(e) => setMedida((x) => ({ ...x, densidade: e.target.value }))} />
+          </Field>
         </div>
         {a && (
           <Button variant="ghost" className={a.ativo ? 'text-muted' : 'text-accent'} loading={status.isPending} onClick={() => status.mutate()}>

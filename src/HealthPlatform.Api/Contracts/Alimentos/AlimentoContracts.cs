@@ -7,7 +7,10 @@ public record UpsertAlimentoRequest(
     decimal ProteinasPor100g,
     decimal CarboidratosPor100g,
     decimal GordurasPor100g,
-    decimal FibrasPor100g);
+    decimal FibrasPor100g,
+    string? UnidadeNome = null,
+    decimal? GramasPorUnidade = null,
+    decimal? GramasPorMl = null);
 
 public record AlimentoResponse(
     Guid Id,
@@ -20,4 +23,7 @@ public record AlimentoResponse(
     decimal FibrasPor100g,
     bool Ativo,
     DateTime CreatedAtUtc,
-    DateTime? UpdatedAtUtc);
+    DateTime? UpdatedAtUtc,
+    string? UnidadeNome,
+    decimal? GramasPorUnidade,
+    decimal? GramasPorMl);
