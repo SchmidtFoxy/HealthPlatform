@@ -1,4 +1,4 @@
-## v0.72.3 — "Salvar como modelo" funciona direto no editor de treino e de dieta
+## v0.72.4 — "Salvar como modelo" funciona direto no editor de treino e de dieta
 
 - Causa: ao salvar um treino (ou dieta) novo, a página mudava de endereço mas mantinha o rascunho antigo, sem os ids que o servidor acabou de gerar. O botão "Salvar como modelo" continuava pedindo "Salve o treino antes" mesmo depois de salvo, até recarregar a página.
 - Depois de salvar, o editor passa a usar o plano devolvido pelo servidor, com os ids.
