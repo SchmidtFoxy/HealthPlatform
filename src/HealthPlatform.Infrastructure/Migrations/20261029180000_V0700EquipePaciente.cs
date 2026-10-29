@@ -58,7 +58,8 @@ namespace HealthPlatform.Infrastructure.Migrations
 
             // Ninguem perde quem ja atende: cada profissional entra na equipe dos pacientes com quem
             // ja teve consulta (nao cancelada nem falta), plano, evolucao, anamnese, conversa no chat
-            // ou de quem e o responsavel definido. Pacientes sem nenhum desses ficam so com o admin.
+            // ou de quem e o responsavel definido; com um so profissional ativo na clinica, ele fica com
+            // todos. Pacientes sem nenhum desses ficam so com o admin.
             migrationBuilder.Sql("""
                 INSERT INTO "ProfissionaisPacientes" ("Id", "OrganizacaoId", "PacienteId", "ProfissionalId", "CreatedAtUtc")
                 SELECT gen_random_uuid(), p."OrganizacaoId", v."PacienteId", v."ProfissionalId", now()
@@ -71,6 +72,10 @@ namespace HealthPlatform.Infrastructure.Migrations
                     UNION SELECT "PacienteId", "ProfissionalId" FROM "InteracoesAcompanhamento"
                         WHERE "Canal" LIKE 'Chat:%' AND "Resultado" = 'Profissional'
                     UNION SELECT "Id", "ProfissionalResponsavelId" FROM "Pacientes" WHERE "ProfissionalResponsavelId" IS NOT NULL
+                    -- Clinica com um so profissional ativo: hoje ele ja recebe tudo, entao continua com todos.
+                    UNION SELECT pa."Id", pu."Id" FROM "Pacientes" pa
+                        JOIN "Profissionais" pu ON pu."OrganizacaoId" = pa."OrganizacaoId" AND pu."Ativo"
+                        WHERE (SELECT count(*) FROM "Profissionais" x WHERE x."OrganizacaoId" = pa."OrganizacaoId" AND x."Ativo") = 1
                 ) v
                 JOIN "Pacientes" p ON p."Id" = v."PacienteId"
                 JOIN "Profissionais" pr ON pr."Id" = v."ProfissionalId" AND pr."OrganizacaoId" = p."OrganizacaoId"
