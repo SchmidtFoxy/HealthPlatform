@@ -46,14 +46,19 @@ export function vigiarAtualizacao() {
 }
 
 // Clique numa notificacao com o app aberto: o service worker da raiz (/sw.js) avisa a janela.
+// A navegacao fica com o React Router (useLinksDeNotificacao), sem recarregar a pagina.
+export const EVENTO_ABRIR_LINK = 'aesyn:abrir-link';
+export const EVENTO_PUSH_RECEBIDO = 'aesyn:push-recebido';
+
 export function ouvirLinksDeNotificacao() {
   // App aberto pelo clique (/?aesynPushLink=...): vai direto para a tela do link.
   const link = new URLSearchParams(location.search).get('aesynPushLink');
   if (link) history.replaceState(null, '', destinoDoLink(link, lerSessao()?.tipoUsuario === 'Paciente'));
 
   navigator.serviceWorker?.addEventListener('message', (e) => {
-    if (e.data?.type !== 'AESYN_PUSH_OPEN') return;
-    const link = String(e.data.link || '');
-    if (link) location.assign(destinoDoLink(link, lerSessao()?.tipoUsuario === 'Paciente'));
+    const link = String(e.data?.link || '');
+    if (e.data?.type === 'AESYN_PUSH_RECEBIDO') window.dispatchEvent(new CustomEvent(EVENTO_PUSH_RECEBIDO, { detail: link }));
+    if (e.data?.type !== 'AESYN_PUSH_OPEN' || !link) return;
+    window.dispatchEvent(new CustomEvent(EVENTO_ABRIR_LINK, { detail: destinoDoLink(link, lerSessao()?.tipoUsuario === 'Paciente') }));
   });
 }

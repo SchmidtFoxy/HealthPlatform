@@ -50,6 +50,12 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<decimal>("GordurasPor100g")
                         .HasColumnType("numeric");
 
+                    b.Property<decimal?>("GramasPorMl")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("GramasPorUnidade")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(180)
@@ -65,6 +71,10 @@ namespace HealthPlatform.Infrastructure.Migrations
 
                     b.Property<decimal>("ProteinasPor100g")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("UnidadeNome")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("timestamp with time zone");

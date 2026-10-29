@@ -15,6 +15,29 @@
 - Admin › Usuários: equipe e pacientes num lugar só. Em cada paciente: marcar a equipe, trocar quem recebe as mensagens, acesso ao app, editar dados e desativar ou reativar o cadastro. Filtro por profissional e "sem equipe", e seleção de vários pacientes para atribuir ou transferir de um profissional para outro.
 - Equipe: cada profissional mostra quantos pacientes tem, com atalho para a lista dele.
 
+## v0.71.0 — Calculadora de metas e medidas caseiras na dieta
+
+- Editor de dieta › Metas do dia › "Calcular pela fórmula" traz de volta o planejamento energético da versão clássica:
+  - **Gasto energético**: TMB por Mifflin-St Jeor (ou Katch-McArdle quando a última avaliação tem massa magra) e GET com o fator de atividade (sedentário × 1,2 até extremamente ativo × 1,9). Peso e altura vêm da última avaliação; idade e sexo, da ficha.
+  - **Meta de peso**: perder, manter ou ganhar, peso desejado e prazo em semanas. Mostra o ajuste em kcal/dia, o alvo do dia e o ritmo em kg/semana (~7.700 kcal por kg), com alertas para ritmo acima de 1% do peso por semana, alvo abaixo da TMB ou abaixo de 1.200 kcal.
+  - **Macros por peso**: proteína, gordura e carboidrato em g/kg viram gramas por dia, com a energia total comparada ao alvo e o botão para "fechar a conta" com um dos macros.
+  - Um toque aplica calorias e macros nas metas do plano. O que foi digitado fica lembrado para o paciente neste aparelho.
+- O campo numérico das metas mostra quatro dígitos sem cortar (ex.: 1886 kcal).
+- Quantidade dos alimentos em **gramas, unidade ou ml**: no alimento da dieta, escolha a forma e prescreva "2 pães" em vez de 100 g. As gramas e os macros são calculados pelo peso de 1 unidade (ou pela densidade, em ml).
+  - O peso da medida (ex.: 1 pão = 50 g) pode ser guardado no alimento com um toque, ou em Biblioteca › Alimentos › "Medida caseira". Alimentos com medida guardada já entram na dieta como 1 unidade.
+  - O paciente vê "2 pães · 100 g".
+  - Banco: três colunas opcionais em `Alimentos` (`scripts/sql/v0.71.0_alimento_medida_caseira.sql`, rodar antes do merge).
+
+## v0.70.1 — Notificação de mensagem leva direto para a conversa
+
+- Cada mensagem nova do chat chega como notificação com o nome de quem escreveu e o texto, e toca de novo a cada mensagem (antes a segunda mensagem trocava a primeira em silêncio). Várias mensagens da mesma conversa ficam numa notificação só, com "3 mensagens novas".
+- Tocar na notificação com o app fechado abre o app (com a abertura animada) direto na conversa. Com o app em segundo plano, ele vem para a frente já na conversa, sem recarregar.
+- Se a sessão tinha expirado, depois de entrar o app volta para a conversa da notificação, e não para o início.
+- Quem está com a conversa aberta na tela não recebe o aviso; a mensagem aparece na hora, sem esperar a próxima atualização. Abrir a conversa tira a notificação dela da bandeja.
+- A conversa convida a ligar as notificações ("Seja avisado quando ... responder") para quem ainda não ligou.
+- O aparelho que já deu permissão volta a ser registrado sozinho ao entrar no app. Ao sair da conta, o aparelho deixa de receber as notificações dela.
+- Inscrições expiradas são removidas do servidor na primeira falha de envio.
+
 ## v0.70.0 — Profissional responsável pelo paciente
 
 - O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.

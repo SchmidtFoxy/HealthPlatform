@@ -286,7 +286,7 @@ export function Stepper({
           <input
             inputMode="decimal"
             aria-label={label}
-            className={clsx('num w-[3.2ch] bg-transparent text-center font-semibold outline-none', big ? 'text-2xl' : 'text-lg')}
+            className={clsx('num w-[4.2ch] bg-transparent text-center font-semibold outline-none', big ? 'text-2xl' : 'text-lg')}
             value={value ?? ''}
             onChange={(e) => {
               const n = Number(e.target.value.replace(',', '.'));

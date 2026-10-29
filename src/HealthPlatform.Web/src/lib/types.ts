@@ -291,6 +291,11 @@ export interface Alimento {
   gordurasPor100g: number;
   fibrasPor100g: number;
   ativo: boolean;
+  /** Medida caseira (ex.: "unidade", "fatia") e quanto ela pesa. */
+  unidadeNome?: string | null;
+  gramasPorUnidade?: number | null;
+  /** Densidade para prescrever em ml; sem valor, 1 g/ml. */
+  gramasPorMl?: number | null;
 }
 
 export interface Exercicio {

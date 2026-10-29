@@ -143,6 +143,14 @@ export async function entrar(email: string, senha: string) {
 export async function sair() {
   // Na simulacao, o logout de verdade e o da conta do admin.
   if (lerSessao()?.impersonating) await encerrarSimulacao();
+  // Este aparelho para de receber as notificacoes da conta que saiu (com mensagens de saude no texto).
+  // A inscricao do navegador fica: a proxima conta que entrar com a permissao dada passa a usa-la.
+  try {
+    const sub = await (await navigator.serviceWorker?.getRegistration('/'))?.pushManager?.getSubscription();
+    if (sub) await api('/api/push/subscriptions', { method: 'DELETE', json: { endpoint: sub.endpoint } });
+  } catch {
+    /* sem service worker ou sem rede: segue o logout */
+  }
   try {
     await api('/api/auth/logout', { method: 'POST' });
   } catch {

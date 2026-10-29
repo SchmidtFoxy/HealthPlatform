@@ -248,6 +248,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.Nome).HasMaxLength(180).IsRequired();
             entity.Property(x => x.NomeNormalizado).HasMaxLength(180).IsRequired();
             entity.Property(x => x.Categoria).HasMaxLength(100);
+            entity.Property(x => x.UnidadeNome).HasMaxLength(40);
             entity.HasIndex(x => new { x.OrganizacaoId, x.NomeNormalizado }).IsUnique();
             entity.HasOne(x => x.Organizacao).WithMany(x => x.Alimentos).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
         });

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, Lock, Mail, MailCheck, Salad, Sparkles } from 'lucide-react';
 import { FormEvent, InputHTMLAttributes, ReactNode, useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import simbolo from '@/assets/aesyn-symbol.webp';
 import { Button } from '@/components/ui';
 import { api, entrar, pedirNovaSenha, rotaInicial } from '@/lib/api';
@@ -22,6 +22,8 @@ function emailLembrado() {
 
 export function LoginPage() {
   const nav = useNavigate();
+  // Tela que pediu o login (ex.: a conversa aberta por uma notificacao); depois de entrar, volta para ela.
+  const de = (useLocation().state as { de?: unknown } | null)?.de;
   const [params] = useSearchParams();
   const [etapa, setEtapa] = useState<Etapa>('entrar');
   const [email, setEmail] = useState(() => params.get('email') ?? emailLembrado());
@@ -43,7 +45,9 @@ export function LoginPage() {
       } catch {
         /* sem armazenamento: so nao lembra o e-mail */
       }
-      nav(rotaInicial(s.tipoUsuario), { replace: true });
+      const inicio = rotaInicial(s.tipoUsuario);
+      const volta = typeof de === 'string' && de.startsWith('/') && !de.startsWith('//') && de !== '/entrar' ? de : null;
+      nav(volta ?? inicio, { replace: true });
     } catch (err) {
       setErro(err instanceof Error ? err.message : 'Não foi possível entrar.');
     } finally {
