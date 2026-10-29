@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.67.2" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.68.0" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -229,6 +229,42 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+// v0.68.0 — o app novo (/app) e a entrada do site. A versao classica fica em /classico,
+// como reserva, ate ser removida. Links antigos de notificacao (/?aesynPushLink=) seguem para o app novo.
+app.Use(async (context, next) =>
+{
+    var caminho = context.Request.Path.Value ?? "/";
+    if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
+    {
+        if (caminho is "/" or "/index.html")
+        {
+            // Convite antigo de paciente: /?ativarPaciente=1&email=...&token=...
+            var q = context.Request.Query;
+            var destino = q["ativarPaciente"] == "1"
+                ? $"/app/ativar?email={Uri.EscapeDataString(q["email"].ToString())}&token={Uri.EscapeDataString(q["token"].ToString())}"
+                : "/app/" + context.Request.QueryString;
+            context.Response.Headers.CacheControl = "no-cache";
+            context.Response.Redirect(destino);
+            return;
+        }
+        // Links de e-mail que apontam para a raiz do site.
+        var publica = caminho.TrimEnd('/');
+        if (publica is "/redefinir-senha" or "/confirmar-email" or "/confirmar-troca-email" or "/recuperar-senha")
+        {
+            context.Response.Redirect((publica == "/recuperar-senha" ? "/app/entrar" : "/app" + publica) + context.Request.QueryString);
+            return;
+        }
+        if (caminho.Equals("/classico", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.Headers.CacheControl = "no-cache";
+            context.Response.ContentType = "text/html; charset=utf-8";
+            await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "index.html"));
+            return;
+        }
+    }
+    await next();
+});
+
 app.UseDefaultFiles();
 app.UseStaticFiles(arquivosEstaticos);
 
@@ -260,10 +296,11 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 app.MapControllers();
 
-// SPA web do MVP. Rotas desconhecidas fora de /api caem no index.
 // Novo front (React) servido em /app: rotas do cliente caem no index.html dele.
+// Qualquer outra rota desconhecida fora de /api vai para o app novo.
 app.MapFallbackToFile("app/{*path:nonfile}", "app/index.html", arquivosEstaticos);
-app.MapFallbackToFile("index.html", arquivosEstaticos);
+app.MapFallback("/api/{*path}", () => Results.NotFound(new { message = "Rota nao encontrada." }));
+app.MapFallback(() => Results.Redirect("/app/"));
 
 if (app.Environment.IsDevelopment())
 {
