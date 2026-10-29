@@ -13,7 +13,7 @@ namespace HealthPlatform.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/pacientes")]
-public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttpContextAccessor httpContextAccessor) : ControllerBase
+public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttpContextAccessor httpContextAccessor, AcessoPacientesService acesso) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<PacienteListResponse>> GetAll(
@@ -238,6 +238,12 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
 
         db.Pacientes.Add(paciente);
         AdicionarAuditoria("CREATE", paciente, null, Snapshot(paciente));
+        // Quem cadastra entra na equipe do paciente e passa a ve-lo.
+        if (acesso.ProfissionalAtualId.HasValue)
+        {
+            await acesso.GarantirNaEquipeAsync(currentUser.OrganizationId, paciente.Id, acesso.ProfissionalAtualId.Value, currentUser.UserId, ct);
+            db.PacientesVisiveis?.Add(paciente.Id);
+        }
         await db.SaveChangesAsync(ct);
 
         return CreatedAtAction(nameof(GetById), new { id = paciente.Id }, ToResponse(paciente));
@@ -338,13 +344,15 @@ public class PacientesController(AppDbContext db, CurrentUser currentUser, IHttp
 
         if (cpfNormalizado is not null)
         {
-            var cpfExiste = await db.Pacientes.AnyAsync(x =>
+            var cpfExiste = await db.Pacientes.IgnoreQueryFilters().AnyAsync(x =>
                 x.OrganizacaoId == currentUser.OrganizationId &&
                 x.Cpf == cpfNormalizado &&
                 (!ignorarPacienteId.HasValue || x.Id != ignorarPacienteId.Value), ct);
 
             if (cpfExiste)
-                return Conflict(new { message = "Ja existe um paciente com este CPF nesta organizacao." });
+                return Conflict(new { message = db.PacientesVisiveis is null
+                    ? "Ja existe um paciente com este CPF nesta organizacao."
+                    : "Ja existe um paciente com este CPF na clinica. Peca ao administrador para incluir voce na equipe dele." });
         }
 
         if (!string.IsNullOrWhiteSpace(email))

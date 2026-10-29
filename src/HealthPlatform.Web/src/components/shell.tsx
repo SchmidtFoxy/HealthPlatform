@@ -11,6 +11,8 @@ export interface NavItem {
   label: string;
   icon: LucideIcon;
   end?: boolean;
+  /** Aparece so no menu lateral (PC) ou so na barra de baixo (celular). */
+  only?: 'desktop' | 'mobile';
 }
 
 export function Logo({ className }: { className?: string }) {
@@ -23,13 +25,13 @@ export function Logo({ className }: { className?: string }) {
 }
 
 /** Navegacao inferior no celular e trilho lateral a partir de 1024px. */
-export function AppShell({ items, footer }: { items: NavItem[]; footer?: ReactNode }) {
+export function AppShell({ items, footer, atalho }: { items: NavItem[]; footer?: ReactNode; atalho?: ReactNode }) {
   return (
     <div className="min-h-full lg:flex">
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
         <Logo className="px-2" />
         <nav className="mt-8 flex flex-col gap-1">
-          {items.map((it) => (
+          {items.filter((it) => it.only !== 'mobile').map((it) => (
             <NavLink
               key={it.to}
               to={it.to}
@@ -43,7 +45,10 @@ export function AppShell({ items, footer }: { items: NavItem[]; footer?: ReactNo
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto">{footer ?? <ContaLateral />}</div>
+        <div className="mt-auto">
+          {atalho}
+          {footer ?? <ContaLateral />}
+        </div>
       </aside>
 
       <main className="min-w-0 flex-1 pb-[calc(84px+env(safe-area-inset-bottom,0px))] lg:pb-10">
@@ -52,7 +57,7 @@ export function AppShell({ items, footer }: { items: NavItem[]; footer?: ReactNo
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line/80 bg-surface/85 pb-safe backdrop-blur-xl lg:hidden">
         <div className="mx-auto flex max-w-lg px-gutter">
-          {items.map((it) => (
+          {items.filter((it) => it.only !== 'desktop').map((it) => (
             <NavLink key={it.to} to={it.to} end={it.end} className="relative flex flex-1 flex-col items-center gap-1 pb-2 pt-2.5">
               {({ isActive }) => (
                 <>

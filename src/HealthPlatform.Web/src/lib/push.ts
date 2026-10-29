@@ -67,7 +67,7 @@ export function destinoDoLink(link: string, paciente: boolean) {
   const conversa = /^chat-profissional:([0-9a-f-]{36})$/i.exec(link);
   if (!paciente && conversa) return `/pro/mensagens/${conversa[1]}`;
   const vinculo = /^admin-paciente:([0-9a-f-]{36})$/i.exec(link);
-  if (!paciente && vinculo) return `/pro/gestao?aba=carteira&paciente=${vinculo[1]}`;
+  if (!paciente && vinculo) return `/admin/usuarios?aba=pacientes&paciente=${vinculo[1]}`;
   const ficha = /^paciente:([0-9a-f-]{36})$/i.exec(link);
   if (!paciente && ficha) return `/pro/pacientes/${ficha[1]}`;
   const pro: Record<string, string> = { followups: 'pro/central?aba=contatos', pendencias: 'pro/central?aba=pendencias', solicitacoes: 'pro/central?aba=pedidos', agenda: 'pro/agenda', inicio: 'pro' };

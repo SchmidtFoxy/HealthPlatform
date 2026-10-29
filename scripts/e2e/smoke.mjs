@@ -47,6 +47,7 @@ async function rotasDoProfissional() {
 }
 
 const PUBLICAS = ['/', '/recursos', '/vantagens', '/sobre', '/entrar'];
+const DO_ADMIN = ['/admin', '/admin?aba=clinica', '/admin/usuarios', '/admin/usuarios?aba=pacientes', '/admin/usuarios?aba=pacientes&equipe=sem', '/admin/atividade', '/admin/clinica', '/admin/perfil', '/admin/conta'];
 const DO_PACIENTE = ['/hoje', '/treino', '/dieta', '/progresso', '/perfil', '/conta', '/arquivos', '/cuidados', '/diario', '/jornada', '/explorar', '/chat'];
 
 const falhas = [];
@@ -202,6 +203,7 @@ try {
   await percorrer('publico', PUBLICAS, null);
   await percorrer('paciente', DO_PACIENTE, PACIENTE);
   await percorrer('profissional', await rotasDoProfissional(), ADMIN);
+  await percorrer('admin', DO_ADMIN, ADMIN);
   await acoes('paciente', PACIENTE_ACOES, PASSOS_PACIENTE);
   await acoes('profissional', ADMIN, PASSOS_PROFISSIONAL);
 } finally {

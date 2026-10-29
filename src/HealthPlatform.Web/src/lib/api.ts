@@ -3,6 +3,9 @@
 
 export type TipoUsuario = 'Admin' | 'Medico' | 'Nutricionista' | 'Personal' | 'Secretaria' | 'Paciente';
 
+/** Onde cada perfil cai ao entrar: paciente no app dele, admin no painel e o resto na rotina clinica. */
+export const rotaInicial = (tipo: TipoUsuario) => (tipo === 'Paciente' ? '/hoje' : tipo === 'Admin' ? '/admin' : '/pro');
+
 export interface Sessao {
   token: string;
   nome: string;

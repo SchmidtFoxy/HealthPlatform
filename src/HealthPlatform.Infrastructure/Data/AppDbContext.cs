@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using HealthPlatform.Domain.Common;
 using HealthPlatform.Domain.Entities;
 using HealthPlatform.Infrastructure.Identity;
@@ -11,12 +12,20 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    /// <summary>
+    /// Pacientes que o usuario da requisicao pode ver. Nulo = sem limite (admin, secretaria,
+    /// o proprio paciente e tarefas internas). Preenchido para medico, nutricionista e personal:
+    /// o filtro global abaixo esconde os outros pacientes e todos os dados ligados a eles.
+    /// </summary>
+    public List<Guid>? PacientesVisiveis { get; set; }
+
     public DbSet<Organizacao> Organizacoes => Set<Organizacao>();
     public DbSet<Profissional> Profissionais => Set<Profissional>();
     public DbSet<Paciente> Pacientes => Set<Paciente>();
     public DbSet<Consulta> Consultas => Set<Consulta>();
     public DbSet<Avaliacao> Avaliacoes => Set<Avaliacao>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<ProfissionalPaciente> ProfissionaisPacientes => Set<ProfissionalPaciente>();
     public DbSet<Anamnese> Anamneses => Set<Anamnese>();
     public DbSet<PerguntaAnamnese> PerguntasAnamnese => Set<PerguntaAnamnese>();
     public DbSet<RespostaAnamnesePersonalizada> RespostasAnamnesePersonalizadas => Set<RespostaAnamnesePersonalizada>();
@@ -934,6 +943,44 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
             entity.Property(x => x.IpAddress).HasMaxLength(64);
             entity.HasIndex(x => x.CreatedAtUtc);
         });
+
+        builder.Entity<ProfissionalPaciente>(entity =>
+        {
+            entity.ToTable("ProfissionaisPacientes");
+            entity.HasIndex(x => new { x.PacienteId, x.ProfissionalId }).IsUnique();
+            entity.HasIndex(x => new { x.OrganizacaoId, x.ProfissionalId });
+            entity.HasOne(x => x.Paciente).WithMany().HasForeignKey(x => x.PacienteId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Profissional).WithMany().HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        AplicarFiltroDePacientes(builder);
+    }
+
+    /// <summary>
+    /// Filtro global: com <see cref="PacientesVisiveis"/> preenchido, o paciente e toda entidade
+    /// com PacienteId so aparecem se o paciente estiver na lista. Vale para listas, buscas e
+    /// abertura por id, sem precisar de checagem em cada controller.
+    /// </summary>
+    private void AplicarFiltroDePacientes(ModelBuilder builder)
+    {
+        builder.Entity<Paciente>().HasQueryFilter(x => PacientesVisiveis == null || PacientesVisiveis.Contains(x.Id));
+
+        var contexto = Expression.Constant(this);
+        var visiveis = Expression.Property(contexto, nameof(PacientesVisiveis));
+        var contains = typeof(List<Guid>).GetMethod(nameof(List<Guid>.Contains))!;
+        foreach (var tipo in builder.Model.GetEntityTypes())
+        {
+            var clr = tipo.ClrType;
+            if (clr == typeof(Paciente) || clr == typeof(ProfissionalPaciente) || tipo.BaseType is not null) continue;
+            var prop = clr.GetProperty("PacienteId");
+            if (prop is null || prop.PropertyType != typeof(Guid)) continue;
+
+            var e = Expression.Parameter(clr, "e");
+            var corpo = Expression.OrElse(
+                Expression.Equal(visiveis, Expression.Constant(null, typeof(List<Guid>))),
+                Expression.Call(visiveis, contains, Expression.Property(e, prop)));
+            builder.Entity(clr).HasQueryFilter(Expression.Lambda(corpo, e));
+        }
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

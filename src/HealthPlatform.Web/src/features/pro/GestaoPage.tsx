@@ -8,7 +8,6 @@ import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Segmented, Sheet,
 import { api, ApiError, iniciarSimulacao, lerSessao } from '@/lib/api';
 import { n0, tempoRelativo } from '@/lib/format';
 import { REGRAS_SENHA } from '../auth/LoginPage';
-import { VinculoPacientePainel } from '../admin/VinculoPaciente';
 import { Chips } from './CuidadosPro';
 
 const erroToast = (e: unknown) => toast(e instanceof Error ? e.message : 'Não foi possível salvar.', 'bad');
@@ -92,7 +91,7 @@ async function baixar(path: string, nome: string, abrir = false) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
-function Numero({ v, l, tone, icon }: { v: number | null | undefined; l: string; tone?: string; icon?: ReactNode }) {
+export function Numero({ v, l, tone, icon }: { v: number | null | undefined; l: string; tone?: string; icon?: ReactNode }) {
   return (
     <Card className="p-4">
       {icon}
@@ -134,7 +133,7 @@ function Colunas({ itens }: { itens: Serie[] }) {
   );
 }
 
-function Indicadores() {
+export function Indicadores() {
   const [dias, setDias] = useState('30');
   const q = useQuery({ queryKey: ['pro', 'gestao', dias], queryFn: () => api<ResumoGestao>(`/api/gestao/resumo?dias=${dias}`), placeholderData: (p) => p });
   const [baixando, setBaixando] = useState<'csv' | 'html' | null>(null);
@@ -261,19 +260,10 @@ const PRIORIDADE: Record<string, { l: string; tone: 'bad' | 'warn' | 'info' | 'n
 };
 
 function Carteira() {
-  const [params, setParams] = useSearchParams();
   const [prioridade, setPrioridade] = useState('Todas');
   const [busca, setBusca] = useState('');
   const [aberto, setAberto] = useState<string | null>(null);
-  // ?paciente=<id> abre direto o vinculo (vem do aviso "paciente sem responsavel").
-  const vinculo = params.get('paciente');
   const admin = lerSessao()?.tipoUsuario === 'Admin';
-  const abrirVinculo = (id: string | null) => {
-    const p = new URLSearchParams(params);
-    if (id) p.set('paciente', id);
-    else p.delete('paciente');
-    setParams(p, { replace: true });
-  };
   const q = useQuery({ queryKey: ['pro', 'carteira'], queryFn: () => api<ResumoCarteira>('/api/carteira?ordenar=score') });
   const ins = useQuery({ queryKey: ['pro', 'insights-dashboard'], queryFn: () => api<InsightsDashboard>('/api/insights/dashboard') });
   const sinais = new Map((ins.data?.pacientes ?? []).map((x) => [x.pacienteId, x.insights]));
@@ -366,9 +356,11 @@ function Carteira() {
                             </Button>
                           </Link>
                           {admin && (
-                            <Button size="sm" variant="soft" icon={<MessageCircle className="h-4 w-4" />} onClick={() => abrirVinculo(x.pacienteId)}>
-                              Mensagens e responsável
-                            </Button>
+                            <Link to={`/admin/usuarios?aba=pacientes&paciente=${x.pacienteId}`}>
+                              <Button size="sm" variant="soft" icon={<MessageCircle className="h-4 w-4" />}>
+                                Equipe e mensagens
+                              </Button>
+                            </Link>
                           )}
                         </div>
                       </div>
@@ -380,11 +372,6 @@ function Carteira() {
           )}
           <p className="text-[12px] text-faint">A prioridade soma sinais de exames, evolução, pendências e falta de contato. É apoio à organização, não diagnóstico.</p>
         </div>
-      )}
-      {admin && (
-        <Sheet open={!!vinculo} onClose={() => abrirVinculo(null)} title="Mensagens e responsável" tall>
-          {vinculo && <VinculoPacientePainel pacienteId={vinculo} />}
-        </Sheet>
       )}
     </>
   );
@@ -417,7 +404,7 @@ interface Membro {
 const TIPOS: Record<string, string> = { Admin: 'Administrador', Medico: 'Médico', Nutricionista: 'Nutricionista', Personal: 'Personal', Secretaria: 'Secretaria' };
 const exigeRegistro = (t: string) => t === 'Medico' || t === 'Nutricionista' || t === 'Personal';
 
-function Equipe() {
+export function Equipe({ acessos, extra }: { acessos?: Record<string, string | null>; extra?: Record<string, ReactNode> } = {}) {
   const q = useQuery({ queryKey: ['pro', 'equipe'], queryFn: () => api<Membro[]>('/api/equipe'), retry: (n, e) => !(e instanceof ApiError && e.status === 403) && n < 2 });
   const [aberto, setAberto] = useState<Membro | 'novo' | null>(null);
   const [senha, setSenha] = useState<Membro | null>(null);
@@ -451,6 +438,8 @@ function Equipe() {
                   {m.ehUsuarioAtual && <span className="font-normal text-muted"> (você)</span>}
                 </span>
                 <span className="block text-[13px] text-muted">{[TIPOS[m.tipoUsuario] ?? m.tipoUsuario, m.especialidade, m.email].filter(Boolean).join(' · ')}</span>
+                {acessos && m.ativo && <span className="block text-[12px] text-faint">{acessos[m.usuarioId] ? `Último acesso ${tempoRelativo(acessos[m.usuarioId])}` : 'Sem acesso registrado'}</span>}
+                {extra?.[m.usuarioId] && <span className="mt-0.5 block">{extra[m.usuarioId]}</span>}
               </span>
               {!m.ativo && <Pill>Inativo</Pill>}
             </button>
@@ -636,7 +625,7 @@ interface ResumoConfig {
   organizacao: { id: string; nome: string; cnpj: string | null; ativa: boolean };
 }
 
-function Clinica() {
+export function Clinica() {
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ['pro', 'config'], queryFn: () => api<ResumoConfig>('/api/configuracoes/resumo') });
   const [nome, setNome] = useState('');

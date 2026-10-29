@@ -49,7 +49,7 @@ export function useConta() {
       // Na simulacao, "Sair" volta para a conta do admin.
       if (lerSessao()?.impersonating) {
         await encerrarSimulacao();
-        return nav('/pro/gestao?aba=equipe', { replace: true });
+        return nav('/admin/usuarios?aba=equipe', { replace: true });
       }
       await sair();
       nav('/entrar', { replace: true });

@@ -21,7 +21,7 @@ public static class OrigemResponsavel
         UltimaConsulta => "Pela consulta mais recente",
         UltimoPlano => "Pelo plano de treino ou dieta mais recente",
         Conversa => "Pelo último profissional que respondeu no chat",
-        UnicoProfissional => "Único profissional da clínica",
+        UnicoProfissional => "Único profissional da equipe do paciente",
         _ => "Sem profissional responsável"
     };
 }
@@ -34,7 +34,7 @@ public sealed record ResponsavelPaciente(Guid PacienteId, Profissional? Profissi
 /// <summary>
 /// Quem acompanha o paciente e recebe as mensagens dele. Ordem: o profissional definido no
 /// paciente; a consulta mais recente que nao foi cancelada nem faltou; quem fez o plano de
-/// treino ou dieta mais recente; o ultimo profissional que respondeu no chat; o unico profissional ativo da clinica. Fora disso o paciente fica sem responsavel,
+/// treino ou dieta mais recente; o ultimo profissional que respondeu no chat; o unico profissional da equipe. So contam profissionais da equipe do paciente. Fora disso o paciente fica sem responsavel,
 /// em vez de cair em alguem por ordem alfabetica.
 /// </summary>
 public sealed class ProfissionalResponsavelService(AppDbContext db)
@@ -53,7 +53,16 @@ public sealed class ProfissionalResponsavelService(AppDbContext db)
             .Where(x => x.OrganizacaoId == organizacaoId && x.Ativo)
             .ToDictionaryAsync(x => x.Id, ct);
 
-        var definidos = await db.Pacientes.AsNoTracking()
+        // So quem esta na equipe do paciente enxerga ele; so essas pessoas podem receber as mensagens.
+        var equipe = (await db.ProfissionaisPacientes.AsNoTracking()
+                .Where(x => x.OrganizacaoId == organizacaoId && ids.Contains(x.PacienteId))
+                .Select(x => new { x.PacienteId, x.ProfissionalId })
+                .ToListAsync(ct))
+            .Select(x => (x.PacienteId, x.ProfissionalId))
+            .ToHashSet();
+        bool NaEquipe(Guid pacienteId, Guid profissionalId) => equipe.Contains((pacienteId, profissionalId));
+
+        var definidos = await db.Pacientes.AsNoTracking().IgnoreQueryFilters()
             .Where(x => x.OrganizacaoId == organizacaoId && ids.Contains(x.Id) && x.ProfissionalResponsavelId.HasValue)
             .Select(x => new { x.Id, ProfissionalId = x.ProfissionalResponsavelId!.Value })
             .ToDictionaryAsync(x => x.Id, x => x.ProfissionalId, ct);
@@ -64,7 +73,7 @@ public sealed class ProfissionalResponsavelService(AppDbContext db)
             .Select(x => new { x.PacienteId, x.ProfissionalId, x.DataHoraUtc })
             .ToListAsync(ct);
         var porConsulta = consultas
-            .Where(x => profissionais.ContainsKey(x.ProfissionalId))
+            .Where(x => profissionais.ContainsKey(x.ProfissionalId) && NaEquipe(x.PacienteId, x.ProfissionalId))
             .GroupBy(x => x.PacienteId)
             .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.DataHoraUtc).First().ProfissionalId);
 
@@ -77,7 +86,7 @@ public sealed class ProfissionalResponsavelService(AppDbContext db)
             .Select(x => new { x.PacienteId, x.ProfissionalId, x.CreatedAtUtc })
             .ToListAsync(ct);
         var porPlano = planosTreino.Concat(planosDieta)
-            .Where(x => profissionais.ContainsKey(x.ProfissionalId))
+            .Where(x => profissionais.ContainsKey(x.ProfissionalId) && NaEquipe(x.PacienteId, x.ProfissionalId))
             .GroupBy(x => x.PacienteId)
             .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.CreatedAtUtc).First().ProfissionalId);
 
@@ -88,11 +97,14 @@ public sealed class ProfissionalResponsavelService(AppDbContext db)
             .Select(g => new { g.Key.PacienteId, g.Key.ProfissionalId, Ultima = g.Max(x => x.DataHoraUtc) })
             .ToListAsync(ct);
         var porConversa = conversas
-            .Where(x => profissionais.ContainsKey(x.ProfissionalId))
+            .Where(x => profissionais.ContainsKey(x.ProfissionalId) && NaEquipe(x.PacienteId, x.ProfissionalId))
             .GroupBy(x => x.PacienteId)
             .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.Ultima).First().ProfissionalId);
 
-        var unico = profissionais.Count == 1 ? profissionais.Values.First() : null;
+        var porEquipe = equipe
+            .Where(x => profissionais.ContainsKey(x.ProfissionalId))
+            .GroupBy(x => x.PacienteId)
+            .ToDictionary(g => g.Key, g => g.Select(x => x.ProfissionalId).ToList());
 
         foreach (var id in ids)
         {
@@ -104,8 +116,8 @@ public sealed class ProfissionalResponsavelService(AppDbContext db)
                 resultado[id] = new(id, profissionais[planoId], OrigemResponsavel.UltimoPlano);
             else if (porConversa.TryGetValue(id, out var conversaId))
                 resultado[id] = new(id, profissionais[conversaId], OrigemResponsavel.Conversa);
-            else if (unico is not null)
-                resultado[id] = new(id, unico, OrigemResponsavel.UnicoProfissional);
+            else if (porEquipe.TryGetValue(id, out var daEquipe) && daEquipe.Count == 1)
+                resultado[id] = new(id, profissionais[daEquipe[0]], OrigemResponsavel.UnicoProfissional);
             else
                 resultado[id] = new(id, null, OrigemResponsavel.SemResponsavel);
         }

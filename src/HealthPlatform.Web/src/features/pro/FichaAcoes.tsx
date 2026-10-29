@@ -80,7 +80,7 @@ export function MaisAcoes({ paciente, className }: { paciente: PacienteFicha; cl
 
 // ---------------------------------------------------------------- Dados
 
-function EditarDadosSheet({ paciente, onClose }: { paciente: PacienteFicha | null; onClose: () => void }) {
+export function EditarDadosSheet({ paciente, onClose }: { paciente: PacienteFicha | null; onClose: () => void }) {
   const qc = useQueryClient();
   const [f, setF] = useState({ nome: '', cpf: '', dataNascimento: '', sexo: '', telefone: '', email: '', profissao: '' });
   useEffect(() => {
@@ -168,7 +168,7 @@ interface StatusAcesso {
   email: string | null;
 }
 
-function AcessoSheet({ paciente, onClose }: { paciente: PacienteFicha | null; onClose: () => void }) {
+export function AcessoSheet({ paciente, onClose }: { paciente: Pick<PacienteFicha, 'id' | 'nome' | 'email' | 'telefone'> | null; onClose: () => void }) {
   const qc = useQueryClient();
   const q = useQuery({
     queryKey: ['pro', 'acesso', paciente?.id],

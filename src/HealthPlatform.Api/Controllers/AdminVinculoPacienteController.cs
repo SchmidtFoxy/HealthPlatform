@@ -24,6 +24,7 @@ public sealed class AdminVinculoPacienteController(
     AppDbContext db,
     CurrentUser currentUser,
     ProfissionalResponsavelService responsaveis,
+    AcessoPacientesService acesso,
     IHttpContextAccessor httpContextAccessor) : ControllerBase
 {
     [HttpGet("vinculo")]
@@ -212,6 +213,9 @@ public sealed class AdminVinculoPacienteController(
         var agora = DateTime.UtcNow;
         paciente.ProfissionalResponsavelId = novo?.Id;
         paciente.UpdatedAtUtc = agora;
+        // Quem recebe as mensagens precisa enxergar o paciente.
+        if (novo is not null)
+            await acesso.GarantirNaEquipeAsync(org, pacienteId, novo.Id, currentUser.UserId, ct);
 
         var repassados = 0;
         if (novo is not null && request.RepassarAvisos)

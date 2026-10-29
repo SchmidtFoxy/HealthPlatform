@@ -5,7 +5,7 @@ import { FormEvent, InputHTMLAttributes, ReactNode, useEffect, useRef, useState 
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import simbolo from '@/assets/aesyn-symbol.webp';
 import { Button } from '@/components/ui';
-import { api, entrar, pedirNovaSenha } from '@/lib/api';
+import { api, entrar, pedirNovaSenha, rotaInicial } from '@/lib/api';
 
 type Etapa = 'entrar' | 'esqueci' | 'enviado';
 
@@ -45,7 +45,7 @@ export function LoginPage() {
       } catch {
         /* sem armazenamento: so nao lembra o e-mail */
       }
-      const inicio = s.tipoUsuario === 'Paciente' ? '/hoje' : '/pro';
+      const inicio = rotaInicial(s.tipoUsuario);
       const volta = typeof de === 'string' && de.startsWith('/') && !de.startsWith('//') && de !== '/entrar' ? de : null;
       nav(volta ?? inicio, { replace: true });
     } catch (err) {
