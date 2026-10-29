@@ -2145,6 +2145,9 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.Property<string>("Profissao")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("ProfissionalResponsavelId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Sexo")
                         .HasColumnType("text");
 
@@ -2181,6 +2184,8 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .HasFilter("\"Cpf\" IS NOT NULL");
 
                     b.HasIndex("OrganizacaoId", "StatusAcompanhamento");
+
+                    b.HasIndex("ProfissionalResponsavelId");
 
                     b.ToTable("Pacientes", (string)null);
                 });

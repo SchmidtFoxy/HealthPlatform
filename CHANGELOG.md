@@ -1,4 +1,4 @@
-## v0.71.0 — Calculadora de metas de volta na dieta
+## v0.71.0 — Calculadora de metas e medidas caseiras na dieta
 
 - Editor de dieta › Metas do dia › "Calcular pela fórmula" traz de volta o planejamento energético da versão clássica:
   - **Gasto energético**: TMB por Mifflin-St Jeor (ou Katch-McArdle quando a última avaliação tem massa magra) e GET com o fator de atividade (sedentário × 1,2 até extremamente ativo × 1,9). Peso e altura vêm da última avaliação; idade e sexo, da ficha.
@@ -10,6 +10,14 @@
   - O peso da medida (ex.: 1 pão = 50 g) pode ser guardado no alimento com um toque, ou em Biblioteca › Alimentos › "Medida caseira". Alimentos com medida guardada já entram na dieta como 1 unidade.
   - O paciente vê "2 pães · 100 g".
   - Banco: três colunas opcionais em `Alimentos` (`scripts/sql/v0.71.0_alimento_medida_caseira.sql`, rodar antes do merge).
+
+## v0.70.0 — Profissional responsável pelo paciente
+
+- O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.
+- Sem responsável definido, o sistema deduz: consulta mais recente que não foi cancelada nem faltou, plano de treino ou dieta mais recente, último profissional que respondeu no chat ou o único profissional da clínica. Se nada disso existir, o paciente vê o aviso e os administradores são avisados, em vez de a mensagem ir para a pessoa errada.
+- A conversa é do paciente: ao trocar o responsável, o novo profissional vê o histórico inteiro.
+- Gestão › Carteira › "Mensagens e responsável" (só admin): quem recebe as mensagens e por quê, se a conta e o push do profissional estão ativos, mensagens e avisos por pessoa, alertas do que está errado e a troca do responsável, com opção de repassar os avisos não lidos.
+- Banco: coluna nova `Pacientes.ProfissionalResponsavelId` (migration V0700ProfissionalResponsavel).
 
 ## v0.69.1 — Abertura animada do app
 
