@@ -1,3 +1,11 @@
+## v0.72.2 — Abertura emendada na splash do sistema
+
+- A abertura animada agora começa exatamente onde a tela de abertura do celular termina: mesmo fundo, mesmo símbolo, mesmo tamanho e posição. Em vez de "logo parada → tela em branco → animação", o símbolo da splash ganha vida, sobe, cresce e o nome AESYN entra.
+- Novo ícone maskable (o que o Android usa na splash e no ícone adaptável): o símbolo com brilho sobre o fundo escuro, sem o quadrado com borda que aparecia antes. A cor de fundo da splash (background_color) passa a ser a mesma da animação.
+- A abertura fica sempre escura, porque a splash do sistema não acompanha o tema claro.
+- O símbolo da abertura vem embutido no index.html, então aparece no primeiro quadro mesmo sem cache.
+- O Android atualiza o ícone e a splash do app instalado sozinho em até um ou dois dias; reinstalar o app aplica na hora.
+
 ## v0.72.1 — Convite do paciente deixa de dar "Invalid token."
 
 - Causa: as chaves que assinam convites, links de "esqueci a senha" e de confirmação de e-mail ficavam dentro do container. Cada deploy (e a mudança de servidor) criava chaves novas e todo link gerado antes passava a dar "Invalid token.". Além disso o convite valia só 30 minutos, pouco para um link enviado por WhatsApp.
