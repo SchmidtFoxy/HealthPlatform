@@ -1,3 +1,10 @@
+## v0.72.3 — Versão vem só do VERSION.txt
+
+- O número da versão agora fica num lugar só: o VERSION.txt. O build da API lê esse arquivo, e o /api/health, o Swagger e o PREPARAR.ps1 mostram o que está nele.
+- Antes a versão também estava escrita à mão no HealthController.cs, no Swagger e no PREPARAR.ps1. Quando só o VERSION.txt era atualizado, o healthcheck do deploy esperava a versão nova, a API respondia a antiga e o deploy falhava (foi o que aconteceu na 0.71.0).
+- O healthcheck do deploy não mudou: continua comparando o "version" do /api/health com o VERSION.txt.
+- Sem migration e sem mudança de banco.
+
 ## v0.72.2 — Abertura emendada na splash do sistema
 
 - A abertura animada agora começa exatamente onde a tela de abertura do celular termina: mesmo fundo, mesmo símbolo, mesmo tamanho e posição. Em vez de "logo parada → tela em branco → animação", o símbolo da splash ganha vida, sobe, cresce e o nome AESYN entra.

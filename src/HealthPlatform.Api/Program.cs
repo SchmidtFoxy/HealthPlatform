@@ -21,7 +21,7 @@ builder.Services.AddControllers(o => o.Filters.Add<FiltroAcessoPaciente>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.72.1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v" + HealthPlatform.Api.Controllers.HealthController.AppVersion });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
