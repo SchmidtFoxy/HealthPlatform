@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeftRight, BookCopy, BookmarkPlus, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, BookCopy, BookmarkPlus, Calculator, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Ring, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { hojeIso, n0 } from '@/lib/format';
 import type { Alimento, PlanoAlimentarPro } from '@/lib/types';
+import { CalculoMetasSheet } from './CalculoMetas';
 import { InserirModeloSheet, SalvarParteComoModeloSheet } from './ModelosNoPlano';
 import { useAlimentos, usePaciente, usePlanosAlimentares } from './queries';
 import { useSuplementos } from './suplementos';
@@ -408,6 +409,7 @@ function MetasSheet({
   atual,
   refeicoes,
   onDistribuir,
+  onCalcular,
 }: {
   open: boolean;
   onClose: () => void;
@@ -416,6 +418,7 @@ function MetasSheet({
   atual: Macros;
   refeicoes: Refeicao[];
   onDistribuir: (pcts: number[]) => void;
+  onCalcular: () => void;
 }) {
   const [dividir, setDividir] = useState(false);
   const [pcts, setPcts] = useState<number[]>([]);
@@ -451,6 +454,13 @@ function MetasSheet({
         </Button>
       }
     >
+      <button onClick={onCalcular} className="mb-2 flex w-full items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 px-3 py-3 text-left text-accent">
+        <Calculator className="h-5 w-5 shrink-0" />
+        <span className="min-w-0">
+          <span className="block font-semibold">Calcular pela fórmula</span>
+          <span className="block text-[13px] text-muted">TMB, gasto com atividade, meta de kg a ganhar ou perder e macros em g/kg.</span>
+        </span>
+      </button>
       {campo('calorias', 'Calorias', 50, 'text-fg')}
       {kcalMacros > 0 && Math.abs(kcalMacros - (metas.calorias ?? 0)) > 30 && (
         <button className="mb-2 w-full rounded-xl bg-accent/10 px-3 py-2 text-left text-[13px] text-accent" onClick={() => onChange({ ...metas, calorias: Math.round(kcalMacros) })}>
@@ -542,6 +552,7 @@ export function DietEditorPage() {
   const [aberto, setAberto] = useState<{ r: string; i: string } | null>(null);
   const [addEm, setAddEm] = useState<string | null>(null);
   const [metasOpen, setMetasOpen] = useState(false);
+  const [calcOpen, setCalcOpen] = useState(false);
   const [menuRef, setMenuRef] = useState<string | null>(null);
   const [inserir, setInserir] = useState(false);
   const [salvarModelo, setSalvarModelo] = useState<{ id: string; nome: string } | null>(null);
@@ -648,7 +659,7 @@ export function DietEditorPage() {
               <button onClick={() => setMetasOpen(true)} className="mb-4 flex w-full items-center gap-3 rounded-xl2 border border-accent/30 bg-accent/10 p-4 text-left text-sm">
                 <Target className="h-5 w-5 shrink-0 text-accent" />
                 <span>
-                  <b>Defina as metas do dia</b> para acompanhar calorias e macros enquanto monta.
+                  <b>Defina as metas do dia</b> para acompanhar calorias e macros enquanto monta. Dá para calcular pela TMB e pela meta de peso.
                 </span>
               </button>
             )}
@@ -761,6 +772,10 @@ export function DietEditorPage() {
           onChange={(m) => up((x) => ({ ...x, metas: m }))}
           atual={total}
           refeicoes={d.refeicoes}
+          onCalcular={() => {
+            setMetasOpen(false);
+            setCalcOpen(true);
+          }}
           onDistribuir={(pcts) =>
             up((x) => ({
               ...x,
@@ -778,6 +793,28 @@ export function DietEditorPage() {
           }
         />
       )}
+
+      <CalculoMetasSheet
+        open={calcOpen}
+        onClose={() => {
+          setCalcOpen(false);
+          setMetasOpen(true);
+        }}
+        pacienteId={id}
+        onAplicar={(m) => {
+          up((x) => ({
+            ...x,
+            metas: {
+              ...x.metas,
+              calorias: m.calorias ?? x.metas.calorias,
+              proteinasG: m.proteinasG ?? x.metas.proteinasG,
+              carboidratosG: m.carboidratosG ?? x.metas.carboidratosG,
+              gordurasG: m.gordurasG ?? x.metas.gordurasG,
+            },
+          }));
+          toast('Metas calculadas aplicadas. Revise antes de salvar.');
+        }}
+      />
 
       <InserirModeloSheet
         tipo="refeicao"
