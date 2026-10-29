@@ -1,3 +1,13 @@
+## v0.69.2 — Notificação de mensagem leva direto para a conversa
+
+- Cada mensagem nova do chat chega como notificação com o nome de quem escreveu e o texto, e toca de novo a cada mensagem (antes a segunda mensagem trocava a primeira em silêncio). Várias mensagens da mesma conversa ficam numa notificação só, com "3 mensagens novas".
+- Tocar na notificação com o app fechado abre o app (com a abertura animada) direto na conversa. Com o app em segundo plano, ele vem para a frente já na conversa, sem recarregar.
+- Se a sessão tinha expirado, depois de entrar o app volta para a conversa da notificação, e não para o início.
+- Quem está com a conversa aberta na tela não recebe o aviso; a mensagem aparece na hora, sem esperar a próxima atualização. Abrir a conversa tira a notificação dela da bandeja.
+- A conversa convida a ligar as notificações ("Seja avisado quando ... responder") para quem ainda não ligou.
+- O aparelho que já deu permissão volta a ser registrado sozinho ao entrar no app. Ao sair da conta, o aparelho deixa de receber as notificações dela.
+- Inscrições expiradas são removidas do servidor na primeira falha de envio.
+
 ## v0.69.1 — Abertura animada do app
 
 - Ao abrir o app instalado na tela inicial, uma abertura animada substitui a logo parada: linhas de luz desenham o "A", o símbolo da marca se materializa com um reflexo e o nome AESYN entra letra a letra. Segue o tema claro ou escuro.

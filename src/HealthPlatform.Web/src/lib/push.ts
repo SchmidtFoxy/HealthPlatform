@@ -72,3 +72,21 @@ export function destinoDoLink(link: string, paciente: boolean) {
   if (!paciente && Object.prototype.hasOwnProperty.call(pro, link)) return `/${pro[link]}`;
   return '/';
 }
+
+/**
+ * Com a permissao ja dada, garante que o servidor conhece a inscricao deste aparelho (sem perguntar nada).
+ * Cobre a inscricao renovada pelo navegador e o aparelho que entrou com outra conta.
+ */
+export async function sincronizarPush() {
+  if (!pushSuportado() || Notification.permission !== 'granted') return;
+  const st = await statusPush();
+  if (!st.habilitadoNoServidor || !st.publicKey) return;
+  await ativarPush();
+}
+
+/** Tira da bandeja as notificacoes de uma conversa que acabou de ser aberta. */
+export async function limparNotificacoesDaConversa(link: string) {
+  if (!('serviceWorker' in navigator)) return;
+  const reg = await navigator.serviceWorker.getRegistration('/');
+  (await reg?.getNotifications({ tag: `aesyn-${link}` }))?.forEach((n) => n.close());
+}

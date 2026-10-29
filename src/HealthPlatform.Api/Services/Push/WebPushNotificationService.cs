@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using HealthPlatform.Infrastructure.Data;
 using HealthPlatform.Infrastructure.Identity;
@@ -46,18 +47,22 @@ public sealed class WebPushNotificationService(
 
         var vapid = new VapidDetails(_options.Subject, _options.PublicKey, _options.PrivateKey);
         var client = new WebPushClient();
+        // Mensagens: uma notificacao por conversa, que toca de novo a cada mensagem nova.
+        var mensagemComLink = categoria == "mensagem" && !string.IsNullOrWhiteSpace(link);
         var payload = JsonSerializer.Serialize(new
         {
             title = titulo,
             body = mensagem,
             icon = "/icons/icon-192.png",
             badge = "/icons/icon-192.png",
-            tag = $"aesyn-{categoria}",
+            tag = mensagemComLink ? $"aesyn-{link}" : $"aesyn-{categoria}",
+            renotify = mensagemComLink,
             data = new { link = link ?? string.Empty, categoria }
         }, JsonOptions);
 
         var enviados = 0;
         var falhas = 0;
+        var expiradas = new List<IdentityUserToken<Guid>>();
         foreach (var token in tokens)
         {
             if (string.IsNullOrWhiteSpace(token.Value)) continue;
@@ -73,10 +78,29 @@ public sealed class WebPushNotificationService(
                 await client.SendNotificationAsync(subscription, payload, vapid);
                 enviados++;
             }
+            catch (WebPushException ex) when (ex.StatusCode is HttpStatusCode.Gone or HttpStatusCode.NotFound)
+            {
+                // Inscricao expirada ou desfeita no aparelho: sai da lista para nao tentar de novo.
+                falhas++;
+                expiradas.Add(token);
+            }
             catch (Exception ex)
             {
                 falhas++;
                 logger.LogWarning(ex, "Falha ao enviar Web Push para usuario {UsuarioId}. A requisicao principal nao sera interrompida.", usuarioId);
+            }
+        }
+
+        if (expiradas.Count > 0)
+        {
+            try
+            {
+                db.Set<IdentityUserToken<Guid>>().RemoveRange(expiradas);
+                await db.SaveChangesAsync(ct);
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Nao foi possivel remover inscricoes push expiradas do usuario {UsuarioId}.", usuarioId);
             }
         }
 
