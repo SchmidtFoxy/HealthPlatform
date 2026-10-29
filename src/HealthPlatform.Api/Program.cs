@@ -20,7 +20,7 @@ builder.Services.AddControllers(o => o.Filters.Add<FiltroAcessoPaciente>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.70.0" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthPlatform API", Version = "v0.72.0" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -292,7 +292,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// v0.70.0 — medico, nutricionista e personal so enxergam os pacientes da propria equipe.
+// v0.72.0 — medico, nutricionista e personal so enxergam os pacientes da propria equipe.
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/api"))

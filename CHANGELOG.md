@@ -1,4 +1,4 @@
-## v0.70.0 — Painel do administrador e profissional responsável
+## v0.72.0 — Painel do administrador e equipe do paciente
 
 - O administrador entra no próprio painel (/admin), separado da rotina clínica: Início, Usuários, Atividade e Clínica.
 - Início: equipe por função, pacientes ativos e novos, acesso dos pacientes ao app, consultas, pendências e uma lista do que precisa de atenção (convites não ativados, pacientes sem profissional, equipe sem entrar há 30 dias). A aba "Indicadores clínicos" traz os indicadores e o relatório da Gestão.
@@ -7,17 +7,21 @@
 - Atividade: o que foi feito na plataforma, por quem e quando, a partir da auditoria.
 - O app passa a registrar entradas (login e uso) na auditoria, para mostrar o último acesso.
 - O admin continua com acesso à rotina clínica pelo atalho "Rotina clínica"; na rotina clínica, o atalho "Painel do administrador" leva de volta.
-- O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.
-- Sem responsável definido, o sistema deduz: consulta mais recente que não foi cancelada nem faltou, plano de treino ou dieta mais recente, último profissional que respondeu no chat ou o único profissional da clínica. Se nada disso existir, o paciente vê o aviso e os administradores são avisados, em vez de a mensagem ir para a pessoa errada.
-- A conversa é do paciente: ao trocar o responsável, o novo profissional vê o histórico inteiro.
-- Admin › Usuários › paciente › "Trocar responsável e ver conversa" (também pelo botão "Equipe e mensagens" da Carteira): quem recebe as mensagens e por quê, se a conta e o push do profissional estão ativos, mensagens e avisos por pessoa, alertas do que está errado e a troca do responsável, com opção de repassar os avisos não lidos.
-- Banco: coluna nova `Pacientes.ProfissionalResponsavelId` (migration V0700ProfissionalResponsavel).
+- A troca do responsável pelas mensagens (v0.70.0) passa para Admin › Usuários › paciente; o botão "Equipe e mensagens" da Carteira leva para lá.
 - Equipe do paciente: médico, nutricionista e personal só veem (e só conseguem abrir) os pacientes da própria equipe. Vale para listas, buscas, agenda, central, chat e para abrir qualquer dado por id; quem não é da equipe recebe "não encontrado". Admin e secretaria continuam vendo todos.
 - Paciente cadastrado pelo admin não aparece para nenhum profissional até entrar numa equipe. Paciente cadastrado por um profissional já entra na equipe dele.
 - Na virada, cada profissional entra na equipe dos pacientes com quem já teve consulta, plano, evolução, anamnese, conversa ou de quem é o responsável (migration V0700EquipePaciente), para ninguém perder quem já atende.
 - Só quem está na equipe pode receber as mensagens do paciente; sem ninguém na equipe, o paciente fica sem responsável e o admin é avisado.
 - Admin › Usuários: equipe e pacientes num lugar só. Em cada paciente: marcar a equipe, trocar quem recebe as mensagens, acesso ao app, editar dados e desativar ou reativar o cadastro. Filtro por profissional e "sem equipe", e seleção de vários pacientes para atribuir ou transferir de um profissional para outro.
 - Equipe: cada profissional mostra quantos pacientes tem, com atalho para a lista dele.
+
+## v0.70.0 — Profissional responsável pelo paciente
+
+- O paciente passa a ter um profissional responsável, que recebe as mensagens do chat. Antes o sistema escolhia pela consulta mais recente (mesmo cancelada) e, sem consulta, pelo primeiro profissional em ordem alfabética, então um profissional novo na clínica podia "roubar" as mensagens.
+- Sem responsável definido, o sistema deduz: consulta mais recente que não foi cancelada nem faltou, plano de treino ou dieta mais recente, último profissional que respondeu no chat ou o único profissional da clínica. Se nada disso existir, o paciente vê o aviso e os administradores são avisados, em vez de a mensagem ir para a pessoa errada.
+- A conversa é do paciente: ao trocar o responsável, o novo profissional vê o histórico inteiro.
+- Gestão › Carteira › "Mensagens e responsável" (só admin): quem recebe as mensagens e por quê, se a conta e o push do profissional estão ativos, mensagens e avisos por pessoa, alertas do que está errado e a troca do responsável, com opção de repassar os avisos não lidos.
+- Banco: coluna nova `Pacientes.ProfissionalResponsavelId` (migration V0700ProfissionalResponsavel).
 
 ## v0.69.1 — Abertura animada do app
 
