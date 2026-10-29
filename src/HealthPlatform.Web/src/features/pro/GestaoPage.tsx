@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { AlertTriangle, CalendarCheck, ChevronDown, Download, Eye, FileText, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
+import { AlertTriangle, CalendarCheck, ChevronDown, Download, Eye, FileText, MessageCircle, Plus, Search, ShieldCheck, UserPlus, Users } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page, PageHeader } from '@/components/shell';
@@ -8,6 +8,7 @@ import { Button, Card, Empty, ErrorBox, Field, inputCls, Pill, Segmented, Sheet,
 import { api, ApiError, iniciarSimulacao, lerSessao } from '@/lib/api';
 import { n0, tempoRelativo } from '@/lib/format';
 import { REGRAS_SENHA } from '../auth/LoginPage';
+import { VinculoPacientePainel } from '../admin/VinculoPaciente';
 import { Chips } from './CuidadosPro';
 
 const erroToast = (e: unknown) => toast(e instanceof Error ? e.message : 'Não foi possível salvar.', 'bad');
@@ -260,9 +261,19 @@ const PRIORIDADE: Record<string, { l: string; tone: 'bad' | 'warn' | 'info' | 'n
 };
 
 function Carteira() {
+  const [params, setParams] = useSearchParams();
   const [prioridade, setPrioridade] = useState('Todas');
   const [busca, setBusca] = useState('');
   const [aberto, setAberto] = useState<string | null>(null);
+  // ?paciente=<id> abre direto o vinculo (vem do aviso "paciente sem responsavel").
+  const vinculo = params.get('paciente');
+  const admin = lerSessao()?.tipoUsuario === 'Admin';
+  const abrirVinculo = (id: string | null) => {
+    const p = new URLSearchParams(params);
+    if (id) p.set('paciente', id);
+    else p.delete('paciente');
+    setParams(p, { replace: true });
+  };
   const q = useQuery({ queryKey: ['pro', 'carteira'], queryFn: () => api<ResumoCarteira>('/api/carteira?ordenar=score') });
   const ins = useQuery({ queryKey: ['pro', 'insights-dashboard'], queryFn: () => api<InsightsDashboard>('/api/insights/dashboard') });
   const sinais = new Map((ins.data?.pacientes ?? []).map((x) => [x.pacienteId, x.insights]));
@@ -348,11 +359,18 @@ function Carteira() {
                             {i.acaoSugerida && <p className="mt-1 text-[13px]">{i.acaoSugerida}</p>}
                           </div>
                         ))}
-                        <Link to={`/pro/pacientes/${x.pacienteId}`}>
-                          <Button size="sm" variant="soft">
-                            Abrir ficha
-                          </Button>
-                        </Link>
+                        <div className="flex flex-wrap gap-2">
+                          <Link to={`/pro/pacientes/${x.pacienteId}`}>
+                            <Button size="sm" variant="soft">
+                              Abrir ficha
+                            </Button>
+                          </Link>
+                          {admin && (
+                            <Button size="sm" variant="soft" icon={<MessageCircle className="h-4 w-4" />} onClick={() => abrirVinculo(x.pacienteId)}>
+                              Mensagens e responsável
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -362,6 +380,11 @@ function Carteira() {
           )}
           <p className="text-[12px] text-faint">A prioridade soma sinais de exames, evolução, pendências e falta de contato. É apoio à organização, não diagnóstico.</p>
         </div>
+      )}
+      {admin && (
+        <Sheet open={!!vinculo} onClose={() => abrirVinculo(null)} title="Mensagens e responsável" tall>
+          {vinculo && <VinculoPacientePainel pacienteId={vinculo} />}
+        </Sheet>
       )}
     </>
   );
