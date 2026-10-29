@@ -695,8 +695,8 @@ export function DietEditorPage() {
       setSujo(false);
       qc.invalidateQueries({ queryKey: ['pro'] });
       toast(liberar ? 'Dieta liberada para o paciente' : 'Dieta salva');
+      setD(deServidor(salvo));
       if (ehNovo) nav(`/pro/pacientes/${id}/dieta/${salvo.id}`, { replace: true });
-      else setD(deServidor(salvo));
     },
     onError: (e) => toast(e.message, 'bad'),
   });
@@ -982,11 +982,18 @@ export function DietEditorPage() {
                     variant="outline"
                     icon={<BookmarkPlus className="h-4 w-4" />}
                     disabled={!d.refeicoes[idx].itens.length}
-                    onClick={() => {
-                      const r = d.refeicoes[idx];
-                      if (!r.id || sujo) return toast('Salve a dieta antes de guardar a refeição como modelo.', 'bad');
+                    onClick={async () => {
+                      let r: { id?: string; nome: string } = d.refeicoes[idx];
+                      if (!r.id || sujo) {
+                        // Salva a dieta automaticamente para a refeição ganhar id no servidor.
+                        try {
+                          r = deServidor(await salvar.mutateAsync(false)).refeicoes[idx] ?? r;
+                        } catch {
+                          return;
+                        }
+                      }
                       setMenuRef(null);
-                      setSalvarModelo({ id: r.id, nome: r.nome });
+                      if (r.id) setSalvarModelo({ id: r.id, nome: r.nome });
                     }}
                   >
                     Salvar como modelo

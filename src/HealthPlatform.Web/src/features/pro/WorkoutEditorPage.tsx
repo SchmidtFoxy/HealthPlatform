@@ -477,8 +477,9 @@ export function WorkoutEditorPage() {
       setConflito(null);
       qc.invalidateQueries({ queryKey: ['pro'] });
       toast(v.novaVersao ? 'Nova versão publicada; o histórico ficou na anterior' : v.liberar ? 'Treino liberado para o paciente' : 'Treino salvo');
+      // A rota muda mas a página não remonta: sem o setD, as sessões ficavam sem id e "Salvar como modelo" seguia bloqueado.
+      setD(deServidor(salvo));
       if (ehNovo || v.novaVersao) nav(`/pro/pacientes/${id}/treino/${salvo.id}`, { replace: true });
-      else setD(deServidor(salvo));
     },
     onError: (e) => {
       if (e instanceof ApiError && e.status === 409) setConflito(e.message);
@@ -636,10 +637,19 @@ export function WorkoutEditorPage() {
                   size="sm"
                   variant="ghost"
                   icon={<BookmarkPlus className="h-4 w-4" />}
-                  disabled={!sessao.itens.length}
-                  onClick={() => {
-                    if (!sessao.id || sujo) return toast('Salve o treino antes de guardar a sessão como modelo.', 'bad');
-                    setSalvarModelo({ id: sessao.id, nome: sessao.nome });
+                  disabled={!sessao.itens.length || salvar.isPending}
+                  onClick={async () => {
+                    let alvo: { id?: string; nome: string } = sessao;
+                    if (!alvo.id || sujo) {
+                      // Salva o treino automaticamente para a sessão ganhar id no servidor.
+                      const pos = d.sessoes.indexOf(sessao);
+                      try {
+                        alvo = deServidor(await salvar.mutateAsync({ liberar: false })).sessoes[pos] ?? alvo;
+                      } catch {
+                        return;
+                      }
+                    }
+                    if (alvo.id) setSalvarModelo({ id: alvo.id, nome: alvo.nome });
                   }}
                 >
                   Salvar como modelo

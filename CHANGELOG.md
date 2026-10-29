@@ -1,3 +1,10 @@
+## v0.72.3 — "Salvar como modelo" funciona direto no editor de treino e de dieta
+
+- Causa: ao salvar um treino (ou dieta) novo, a página mudava de endereço mas mantinha o rascunho antigo, sem os ids que o servidor acabou de gerar. O botão "Salvar como modelo" continuava pedindo "Salve o treino antes" mesmo depois de salvo, até recarregar a página.
+- Depois de salvar, o editor passa a usar o plano devolvido pelo servidor, com os ids.
+- "Salvar como modelo" agora salva o treino/dieta sozinho quando há alterações pendentes e já abre a janela do modelo. O status do plano não muda (um rascunho continua rascunho).
+- Sem SQL nem migration.
+
 ## v0.72.2 — Abertura emendada na splash do sistema
 
 - A abertura animada agora começa exatamente onde a tela de abertura do celular termina: mesmo fundo, mesmo símbolo, mesmo tamanho e posição. Em vez de "logo parada → tela em branco → animação", o símbolo da splash ganha vida, sobe, cresce e o nome AESYN entra.
