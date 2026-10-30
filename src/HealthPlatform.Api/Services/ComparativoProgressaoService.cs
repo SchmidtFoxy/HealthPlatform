@@ -29,15 +29,15 @@ public static class ComparativoProgressaoService
                 "Sugestao de progressao nao e evento aplicado; sem registro real nao existe comparacao causal ou temporal valida.");
 
         var marcoUtc = DateTime.SpecifyKind(evento.DataAplicacaoUtc, DateTimeKind.Utc).ToUniversalTime();
-        var hojeFimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var hojeFimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
         var antesInicioUtc = marcoUtc.AddDays(-janelaDias);
         var depoisFimPlanejadoUtc = marcoUtc.AddDays(janelaDias);
         var depoisFimUtc = depoisFimPlanejadoUtc < hojeFimUtc ? depoisFimPlanejadoUtc : hojeFimUtc;
         var diasDepois = Math.Max(0, Math.Min(janelaDias, (int)Math.Ceiling((depoisFimUtc - marcoUtc).TotalDays)));
 
-        var dataMarco = DateOnly.FromDateTime(marcoUtc);
-        var dataAntesInicio = DateOnly.FromDateTime(antesInicioUtc);
-        var dataDepoisFim = DateOnly.FromDateTime(depoisFimUtc.AddTicks(-1));
+        var dataMarco = HorarioLocal.Dia(marcoUtc);
+        var dataAntesInicio = HorarioLocal.Dia(antesInicioUtc);
+        var dataDepoisFim = HorarioLocal.Dia(depoisFimUtc.AddTicks(-1));
 
         var prontidoes = await db.ProntidoesDiarias.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Data >= dataAntesInicio && x.Data <= dataDepoisFim)

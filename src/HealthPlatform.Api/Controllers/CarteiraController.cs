@@ -120,7 +120,7 @@ public sealed class CarteiraController(
             })
             .ToListAsync(ct);
 
-        var dataInicioMeta = DateOnly.FromDateTime(inicio14);
+        var dataInicioMeta = HorarioLocal.Dia(inicio14);
         var metas = await db.RegistrosMetas.AsNoTracking()
             .Where(x => x.Data >= dataInicioMeta &&
                         ids.Contains(x.MetaPaciente.PacienteId))

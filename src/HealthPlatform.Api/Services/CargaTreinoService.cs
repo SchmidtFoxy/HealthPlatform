@@ -12,9 +12,9 @@ public static class CargaTreinoService
         const int diasObservados = 28;
         var inicio28 = dia.AddDays(-27);
         var inicio7 = dia.AddDays(-6);
-        var inicioUtc = DateTime.SpecifyKind(inicio28.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var inicio7Utc = DateTime.SpecifyKind(inicio7.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var fimUtc = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicio28);
+        var inicio7Utc = HorarioLocal.InicioUtc(inicio7);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var treinos = await db.ExecucoesTreino.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Status == "Concluido" &&
@@ -55,7 +55,7 @@ public static class CargaTreinoService
         var rpes = recentes.Where(x => x.EsforcoPercebido.HasValue).Select(x => x.EsforcoPercebido!.Value).ToList();
         decimal? rpeMedio = rpes.Count > 0 ? Math.Round((decimal)rpes.Average(), 1) : null;
         var duracao7 = recentes.Where(x => x.DuracaoMinutos.HasValue).Sum(x => x.DuracaoMinutos ?? 0);
-        int? diasDesdeUltimo = treinos.Count == 0 ? null : Math.Max(0, dia.DayNumber - DateOnly.FromDateTime(treinos[^1].DataHoraInicioUtc).DayNumber);
+        int? diasDesdeUltimo = treinos.Count == 0 ? null : Math.Max(0, dia.DayNumber - HorarioLocal.Dia(treinos[^1].DataHoraInicioUtc).DayNumber);
         var intensos = recentes.Count(x => x.EsforcoPercebido >= 8);
 
         var prontidoes = await db.ProntidoesDiarias.AsNoTracking()

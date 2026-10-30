@@ -12,7 +12,7 @@ public static class AthletePerformancePassportService
         Guid pacienteId,
         CancellationToken ct)
     {
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var performance = await PerformanceEsportivaService.MontarAsync(db, pacienteId, hoje, ct);
         var recordes = await MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await MontarTemposAsync(db, pacienteId, hoje, ct);
@@ -138,9 +138,9 @@ public static class AthletePerformancePassportService
         CancellationToken ct)
     {
         const int diasObservados = 180;
-        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var recenteDesdeUtc = dia.AddDays(-6).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia.AddDays(-(diasObservados - 1)));
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
+        var recenteDesdeUtc = HorarioLocal.InicioUtc(dia.AddDays(-6));
 
         var itens = await db.ExecucoesItensTreino.AsNoTracking()
             .Where(x =>
@@ -469,7 +469,7 @@ public static class AthletePerformancePassportService
         MultiSignalTimelineResponse timeline)
     {
         var dias = timeline.Eventos
-            .GroupBy(x => DateOnly.FromDateTime(x.DataUtc))
+            .GroupBy(x => HorarioLocal.Dia(x.DataUtc))
             .Select(grupo =>
             {
                 var eventos = grupo.ToArray();
@@ -517,7 +517,7 @@ public static class AthletePerformancePassportService
         MultiSignalTimelineResponse timeline,
         DateOnly hoje)
     {
-        var fimUtc = hoje.ToDateTime(TimeOnly.MaxValue, DateTimeKind.Utc);
+        var fimUtc = HorarioLocal.FimUtc(hoje).AddTicks(-1);
 
         var definicoes = new[]
         {
@@ -631,7 +631,7 @@ public static class AthletePerformancePassportService
         ProgressIntelligenceFoundationResponse foundation,
         DateOnly hoje)
     {
-        var hojeUtc = hoje.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var hojeUtc = HorarioLocal.InicioUtc(hoje);
 
         var contextos = foundation.Sinais
             .Select(sinal =>
@@ -755,8 +755,8 @@ public static class AthletePerformancePassportService
         CancellationToken ct)
     {
         const int diasObservados = 180;
-        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia.AddDays(-(diasObservados - 1)));
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var itens = await db.ExecucoesItensTreino.AsNoTracking()
             .Where(x =>
@@ -885,8 +885,8 @@ public static class AthletePerformancePassportService
         CancellationToken ct)
     {
         const int diasObservados = 365;
-        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia.AddDays(-(diasObservados - 1)));
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var eventos = await db.EventosProgressaoSupervisionada.AsNoTracking()
             .Where(x =>
@@ -965,8 +965,8 @@ public static class AthletePerformancePassportService
         CancellationToken ct)
     {
         const int diasObservados = 365;
-        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia.AddDays(-(diasObservados - 1)));
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var eventos = await db.EventosProgressaoSupervisionada.AsNoTracking()
             .Where(x =>
@@ -1031,8 +1031,8 @@ public static class AthletePerformancePassportService
         CancellationToken ct)
     {
         const int diasObservados = 180;
-        var inicioUtc = dia.AddDays(-(diasObservados - 1)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia.AddDays(-(diasObservados - 1)));
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var sessoes = await db.ExecucoesTreino.AsNoTracking()
             .Where(x =>

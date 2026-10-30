@@ -223,7 +223,7 @@ public sealed class ExecucoesTreinoPacienteController(
             }
         }
 
-        var dataTreino = DateOnly.FromDateTime(inicio);
+        var dataTreino = HorarioLocal.Dia(inicio);
         var recomendacao = await db.ProntidoesDiarias.AsNoTracking()
             .Where(x => x.PacienteId == paciente.Id && x.Data == dataTreino)
             .Select(x => x.RecomendacaoTreino)

@@ -61,7 +61,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarRecordesAsync(
             db,
             pacienteId,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -83,7 +83,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarRecordesAsync(
             db,
             pacienteId.Value,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -103,7 +103,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarTemposAsync(
             db,
             pacienteId,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -125,7 +125,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarTemposAsync(
             db,
             pacienteId.Value,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -145,7 +145,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(
             db,
             pacienteId,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -167,7 +167,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(
             db,
             pacienteId.Value,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -187,7 +187,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarHabilidadesMarcosAsync(
             db,
             pacienteId,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -209,7 +209,7 @@ public sealed class AthletePerformancePassportController(
         return Ok(await AthletePerformancePassportService.MontarHabilidadesMarcosAsync(
             db,
             pacienteId.Value,
-            DateOnly.FromDateTime(DateTime.UtcNow),
+            HorarioLocal.Hoje(),
             ct));
     }
 
@@ -226,7 +226,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -251,7 +251,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -274,7 +274,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -301,7 +301,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -326,7 +326,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -354,7 +354,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -380,7 +380,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -409,7 +409,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -436,7 +436,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -466,7 +466,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -494,7 +494,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -524,7 +524,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -552,7 +552,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -585,7 +585,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);
@@ -616,7 +616,7 @@ public sealed class AthletePerformancePassportController(
         if (!existe)
             return NotFound(new { message = "Paciente nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId, hoje, ct);
@@ -651,7 +651,7 @@ public sealed class AthletePerformancePassportController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var recordes = await AthletePerformancePassportService.MontarRecordesAsync(db, pacienteId.Value, hoje, ct);
         var tempos = await AthletePerformancePassportService.MontarTemposAsync(db, pacienteId.Value, hoje, ct);
         var resultados = await AthletePerformancePassportService.MontarResultadosCompeticaoTesteAsync(db, pacienteId.Value, hoje, ct);

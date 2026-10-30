@@ -29,8 +29,8 @@ public static class ComparativoCiclosService
             var fimObservado = ciclo.DataFim < dia ? ciclo.DataFim : dia;
             if (fimObservado < ciclo.DataInicio) continue;
 
-            var inicioUtc = ciclo.DataInicio.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-            var fimUtc = fimObservado.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+            var inicioUtc = HorarioLocal.InicioUtc(ciclo.DataInicio);
+            var fimUtc = HorarioLocal.InicioUtc(fimObservado.AddDays(1));
             var diasObservados = Math.Max(1, fimObservado.DayNumber - ciclo.DataInicio.DayNumber + 1);
             var semanasObservadas = Math.Max(1m, diasObservados / 7m);
 

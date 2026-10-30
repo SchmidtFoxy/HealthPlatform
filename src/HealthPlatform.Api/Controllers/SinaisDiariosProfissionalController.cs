@@ -31,10 +31,10 @@ public sealed class SinaisDiariosProfissionalController(
         if (!profissionalExiste && !admin)
             return Forbid();
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var inicio = hoje.AddDays(-(dias - 1));
-        var inicioUtc = DateTime.SpecifyKind(inicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var amanhaUtc = DateTime.SpecifyKind(hoje.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicio);
+        var amanhaUtc = HorarioLocal.InicioUtc(hoje.AddDays(1));
 
         var pacientes = await db.Pacientes.AsNoTracking()
             .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.Ativo)
@@ -171,7 +171,7 @@ public sealed class SinaisDiariosProfissionalController(
                 prontidao?.EnergiaNivel,
                 prontidao?.DorNivel,
                 prontidao?.RecuperacaoNivel,
-                fechamento is null ? null : DateOnly.FromDateTime(fechamento.DataHoraUtc),
+                fechamento is null ? null : HorarioLocal.Dia(fechamento.DataHoraUtc),
                 fechamento?.Escala,
                 treinosPaciente.Length,
                 treinosPaciente.FirstOrDefault()?.DataHoraInicioUtc));

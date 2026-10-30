@@ -16,8 +16,8 @@ public static class CargaIndividualizadaService
         const int diasObservados = 56;
         var inicioAtual = dia.AddDays(-6);
         var inicioHistorico = inicioAtual.AddDays(-49);
-        var inicioUtc = DateTime.SpecifyKind(inicioHistorico.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var fimUtc = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicioHistorico);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var treinos = await db.ExecucoesTreino.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Status == "Concluido" &&
@@ -34,8 +34,8 @@ public static class CargaIndividualizadaService
         {
             var inicio = inicioAtual.AddDays(-(i * 7));
             var fim = inicio.AddDays(6);
-            var inicioSemanaUtc = DateTime.SpecifyKind(inicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-            var fimSemanaUtc = DateTime.SpecifyKind(fim.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+            var inicioSemanaUtc = HorarioLocal.InicioUtc(inicio);
+            var fimSemanaUtc = HorarioLocal.InicioUtc(fim.AddDays(1));
             var itens = treinos.Where(x => x.DataHoraInicioUtc >= inicioSemanaUtc && x.DataHoraInicioUtc < fimSemanaUtc).ToList();
             var cargas = itens.Select(x => CargaSessao(x.DuracaoMinutos, x.EsforcoPercebido)).Where(x => x > 0m).ToList();
             var rpes = itens.Where(x => x.EsforcoPercebido.HasValue).Select(x => x.EsforcoPercebido!.Value).ToList();

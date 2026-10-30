@@ -101,6 +101,7 @@ export const AguaCard = forwardRef<HTMLDivElement, { delay?: number }>(function 
     onSuccess: (r) => {
       qc.setQueryData<ResumoAgua>([...CHAVE, hoje], (a) => (a ? { ...a, lembreteAtivo: r.ativo } : a));
       qc.invalidateQueries({ queryKey: ['push'] });
+      qc.invalidateQueries({ queryKey: ['p', 'lembretes'] });
       toast(r.ativo ? 'Lembrete ligado. Às 10h, 13h, 16h e 19h, só se você estiver atrás do ritmo.' : 'Lembrete de água desligado.');
     },
     onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível alterar o lembrete.', 'bad'),

@@ -21,7 +21,7 @@ public static partial class EvolucaoPeriodoService
         AppDbContext db, Guid pacienteId, int dias, bool paraPaciente, CancellationToken ct)
     {
         dias = Math.Clamp(dias, 14, 365);
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var inicioAtual = hoje.AddDays(-(dias - 1));
         var fimAnterior = inicioAtual.AddDays(-1);
         var inicioAnterior = fimAnterior.AddDays(-(dias - 1));
@@ -36,11 +36,11 @@ public static partial class EvolucaoPeriodoService
             .ToListAsync(ct);
 
         var sessoes = execucoes
-            .Select(x => new Sessao(DateOnly.FromDateTime(x.DataHoraInicioUtc), x.DuracaoMinutos ?? 0, x.EsforcoPercebido))
+            .Select(x => new Sessao(HorarioLocal.Dia(x.DataHoraInicioUtc), x.DuracaoMinutos ?? 0, x.EsforcoPercebido))
             .ToList();
         var series = execucoes.SelectMany(x =>
         {
-            var dia = DateOnly.FromDateTime(x.DataHoraInicioUtc);
+            var dia = HorarioLocal.Dia(x.DataHoraInicioUtc);
             var feitos = x.Itens.Where(i => i.Concluido).Select(i => new Serie(dia,
                 Grupo(i.ItemTreino.Exercicio.GrupoMuscular),
                 Math.Max(0, i.SeriesRealizadas ?? 0),
@@ -74,7 +74,7 @@ public static partial class EvolucaoPeriodoService
         foreach (var r in registrosAdesao)
         {
             if (AdesaoNutricionalService.LerStatus(r.Descricao) is not { } lido) continue;
-            var dia = DateOnly.FromDateTime(r.DataHoraUtc);
+            var dia = HorarioLocal.Dia(r.DataHoraUtc);
             if (!vistas.Add((dia, lido.RefeicaoId))) continue;
             refeicoes.Add(new Refeicao(dia, lido.Status switch { "Realizada" => 100m, "Adaptada" => 80m, _ => 0m }));
         }
@@ -182,7 +182,7 @@ public static partial class EvolucaoPeriodoService
 
     private static string Grupo(string? grupo) => string.IsNullOrWhiteSpace(grupo) ? "Outros" : grupo.Trim();
 
-    private static DateTime Utc(DateOnly d) => DateTime.SpecifyKind(d.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+    private static DateTime Utc(DateOnly d) => HorarioLocal.InicioUtc(d);
 
     private static decimal? Media(IEnumerable<decimal> valores)
     {

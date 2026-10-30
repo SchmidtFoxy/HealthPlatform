@@ -18,7 +18,7 @@ public static class RetornoGradualService
         // A referencia usa ate 42 dias para detectar uma pausa observavel entre sessoes concluidas do proprio atleta.
         const int janelaDias = 42;
         const int pausaMinimaDias = 7;
-        var fimUtc = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
         var inicioUtc = fimUtc.AddDays(-janelaDias);
 
         var sessoes = await db.ExecucoesTreino.AsNoTracking()
@@ -28,7 +28,7 @@ public static class RetornoGradualService
             .Select(x => x.DataHoraInicioUtc)
             .ToListAsync(ct);
 
-        var diasTreino = sessoes.Select(DateOnly.FromDateTime).Distinct().OrderByDescending(x => x).ToList();
+        var diasTreino = sessoes.Select(HorarioLocal.Dia).Distinct().OrderByDescending(x => x).ToList();
         var ultimaSessao = sessoes.FirstOrDefault();
         DateTime? ultimaSessaoUtc = sessoes.Count > 0 ? ultimaSessao : null;
         DateTime? sessaoRetornoUtc = null;
@@ -45,7 +45,7 @@ public static class RetornoGradualService
             {
                 pausaDetectada = true;
                 diasPausa = intervalo;
-                var retornoDate = sessoes.Where(x => DateOnly.FromDateTime(x) == maisRecente).OrderBy(x => x).First();
+                var retornoDate = sessoes.Where(x => HorarioLocal.Dia(x) == maisRecente).OrderBy(x => x).First();
                 sessaoRetornoUtc = retornoDate;
                 retornoEmCurso = maisRecente >= dia.AddDays(-7);
                 break;

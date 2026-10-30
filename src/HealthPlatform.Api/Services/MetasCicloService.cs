@@ -25,8 +25,8 @@ public static class MetasCicloService
         {
             var inicioSemana = InicioDaSemana(dia);
             if (inicioSemana < ciclo.DataInicio) inicioSemana = ciclo.DataInicio;
-            var inicioUtc = inicioSemana.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-            var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+            var inicioUtc = HorarioLocal.InicioUtc(inicioSemana);
+            var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
             var treinosSemana = await db.ExecucoesTreino.AsNoTracking()
                 .CountAsync(x => x.PacienteId == pacienteId && x.Status == "Concluido" &&
                                  x.DataHoraInicioUtc >= inicioUtc && x.DataHoraInicioUtc < fimUtc, ct);
@@ -48,8 +48,8 @@ public static class MetasCicloService
 
         if (ciclo.MetaPesoKg.HasValue)
         {
-            var inicioCicloUtc = ciclo.DataInicio.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-            var fimDiaUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+            var inicioCicloUtc = HorarioLocal.InicioUtc(ciclo.DataInicio);
+            var fimDiaUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
             var pesos = await db.Avaliacoes.AsNoTracking()
                 .Where(x => x.PacienteId == pacienteId && x.PesoKg.HasValue && x.DataUtc >= inicioCicloUtc && x.DataUtc < fimDiaUtc)
                 .OrderBy(x => x.DataUtc)

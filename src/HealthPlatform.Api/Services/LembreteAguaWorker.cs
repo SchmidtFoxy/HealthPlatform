@@ -8,7 +8,7 @@ namespace HealthPlatform.Api.Services;
 /// Lembrete de agua por push (v0.74.0). So para quem ligou o lembrete no card de agua.
 /// Nos horarios fixos (10h, 13h, 16h e 19h no fuso do aparelho), manda um push se o paciente
 /// estiver abaixo do ritmo do dia. Quem esta em dia nao recebe nada. No maximo um por horario.
-/// Respeita a preferencia "Lembretes" do perfil (categoria "lembrete").
+/// Liga e desliga no sino do card de agua ou em Perfil › Lembretes (categoria "agua", v0.80.0).
 /// </summary>
 public sealed class LembreteAguaWorker(IServiceScopeFactory scopes, ILogger<LembreteAguaWorker> logger) : BackgroundService
 {
@@ -79,7 +79,7 @@ public sealed class LembreteAguaWorker(IServiceScopeFactory scopes, ILogger<Lemb
             var mensagem = resumo.HojeMl <= 0
                 ? $"Ainda não tem água registrada hoje. Que tal começar com um copo? Meta: {Litros(resumo.MetaMl)}."
                 : $"Você está em {Litros(resumo.HojeMl)} de {Litros(resumo.MetaMl)}. {(copos == 1 ? "Um copo" : $"{copos} copos")} agora te deixa no ritmo.";
-            await push.EnviarAsync(token.UserId, "lembrete", "Hora da água 💧", mensagem, "inicio", ct);
+            await push.EnviarAsync(token.UserId, "agua", "Hora da água 💧", mensagem, "inicio", ct);
         }
     }
 

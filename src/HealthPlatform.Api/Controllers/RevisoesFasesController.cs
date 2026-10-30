@@ -363,7 +363,7 @@ public sealed class RevisoesFasesController(
 
         var itens = await query.OrderBy(x => x.DataUtc).ToListAsync(ct);
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var dias = Math.Max(0, hoje.DayNumber - dataInicio.DayNumber + 1);
         var peso = itens.LastOrDefault(x => x.PesoKg.HasValue)?.PesoKg;
         var adesao = nutricao

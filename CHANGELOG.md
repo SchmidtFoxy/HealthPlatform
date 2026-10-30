@@ -1,3 +1,16 @@
+## v0.80.0 — Dia vira à meia-noite de Brasília e central de lembretes no Perfil
+
+- **Virada do dia corrigida**: a API contava o dia em UTC, então às 21h de Brasília tudo passava para o dia seguinte. Quem marcava uma refeição, registrava o treino ou fechava o diário entre 21h e meia-noite via isso cair no dia errado, e a tela Hoje das 21h em diante mostrava o dia seguinte zerado. Agora todo "hoje", início e fim de dia e agrupamento por dia (dieta, treino, diário, check-in, metas, sequências, evolução e telas do profissional) usa o horário de Brasília (America/Sao_Paulo). A água já usava o fuso do aparelho e continua igual.
+- O app aberto (ou voltando do fundo) depois da meia-noite troca de dia sozinho, sem precisar recarregar.
+- **Perfil › Lembretes**: o paciente liga e desliga cada aviso por push:
+  - **Refeições**: na hora de cada refeição do plano ativo, só se ela ainda não foi marcada no dia.
+  - **Água**: o mesmo lembrete do sino do card de água (10h, 13h, 16h e 19h, só se estiver atrás do ritmo). Ligar em um lugar liga no outro.
+  - **Treino**: no horário escolhido (padrão 18h), só nos dias com treino e se ele ainda não foi registrado. Planos em rodízio avisam o próximo treino.
+  - **Mensagens do chat**: a mesma preferência "Mensagens" da conta, com o total de mensagens não lidas e atalho para o chat.
+- Cada lembrete sai no máximo uma vez por dia, até 20 min depois do horário. Ligar qualquer um ativa as notificações do aparelho, se ainda não estiverem ativas.
+- O lembrete de água deixou de depender da chave "Lembretes" da conta (que continua valendo para remédios, metas e pedidos): agora vale só a escolha do sino ou de Perfil › Lembretes.
+- Novos endpoints `GET/PUT /api/portal/me/lembretes`. As escolhas ficam na tabela UsuariosTokens do Identity, que já existe. **Sem SQL nem migration.**
+
 ## v0.79.0 — Correção: card de água sumia ao registrar (paciente com meta do profissional)
 
 - Causa real da tela preta da 0.78.0: com meta hídrica do profissional, o `POST /api/portal/me/agua` devolvia o registro da meta em vez do resumo da água. O card tentava ler os últimos dias de uma resposta que não tinha esse campo e quebrava (na 0.76.0 derrubava a tela Hoje; na 0.78.0 o card sumia até recarregar). A água era salva normalmente.

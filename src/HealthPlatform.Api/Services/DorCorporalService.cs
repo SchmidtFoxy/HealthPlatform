@@ -12,7 +12,7 @@ public static class DorCorporalService
     public static async Task<PortalDorCorporalResumoResponse> MontarAsync(
         AppDbContext db, Guid pacienteId, DateOnly dia, CancellationToken ct)
     {
-        var fim = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fim = HorarioLocal.InicioUtc(dia.AddDays(1));
         var inicio = fim.AddDays(-7);
         var rows = await db.RegistrosDiarioPaciente.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Tipo == "DorCorporal" &&
@@ -29,7 +29,7 @@ public static class DorCorporalService
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (payload is null || string.IsNullOrWhiteSpace(payload.Regiao)) continue;
                 registros.Add(new PortalDorCorporalRegistroResponse(
-                    x.Id, DateOnly.FromDateTime(x.DataHoraUtc), payload.Regiao, payload.Lado,
+                    x.Id, HorarioLocal.Dia(x.DataHoraUtc), payload.Regiao, payload.Lado,
                     x.Escala ?? 0, payload.ImpactoTreino, payload.Observacao));
             }
             catch (JsonException) { }

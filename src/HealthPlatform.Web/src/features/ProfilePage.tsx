@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { AppleHealthCard } from '@/features/patient/AppleHealth';
 import { BoasVindasSheet } from '@/features/patient/BoasVindas';
 import { CheckInSheet } from '@/features/patient/CheckInSheet';
+import { LembretesCard } from '@/features/patient/Lembretes';
 import { useMinhaConta, usePrivacidade } from '@/features/AccountPage';
 import { Avatar, PAPEL, TrocarConta, useConta } from '@/components/account';
 import { NotificacoesCard } from '@/components/notificacoes';
@@ -70,6 +71,13 @@ export function ProfilePage() {
 
       <p className="eyebrow mb-2 mt-7">Notificações</p>
       <NotificacoesCard />
+
+      {s?.tipoUsuario === 'Paciente' && (
+        <>
+          <p className="eyebrow mb-2 mt-7">Lembretes</p>
+          <LembretesCard />
+        </>
+      )}
 
       {s?.tipoUsuario === 'Paciente' && (
         <>

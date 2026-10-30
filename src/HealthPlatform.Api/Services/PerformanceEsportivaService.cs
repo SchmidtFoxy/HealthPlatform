@@ -12,8 +12,8 @@ public static partial class PerformanceEsportivaService
     {
         const int diasObservados = 180;
         var inicio = dia.AddDays(-(diasObservados - 1));
-        var inicioUtc = inicio.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicio);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
 
         var itens = await db.ExecucoesItensTreino.AsNoTracking()
             .Where(x => x.ExecucaoTreino.PacienteId == pacienteId &&
@@ -43,8 +43,8 @@ public static partial class PerformanceEsportivaService
             .Select(x => new { x.Data, x.Score })
             .ToDictionaryAsync(x => x.Data, x => x.Score, ct);
 
-        var inicio28 = dia.AddDays(-27).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var inicioAnterior28 = dia.AddDays(-55).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicio28 = HorarioLocal.InicioUtc(dia.AddDays(-27));
+        var inicioAnterior28 = HorarioLocal.InicioUtc(dia.AddDays(-55));
 
         decimal volume28 = 0m;
         decimal volumeAnterior28 = 0m;
@@ -82,7 +82,7 @@ public static partial class PerformanceEsportivaService
             var ultima = comCarga.Last();
             var registrosAntesMelhor = comCarga.Where(x => x.DataHoraInicioUtc < melhor.DataHoraInicioUtc).ToList();
             var melhorAnterior = registrosAntesMelhor.Count == 0 ? (decimal?)null : registrosAntesMelhor.Max(x => x.CargaRealizada);
-            var dataMelhor = DateOnly.FromDateTime(melhor.DataHoraInicioUtc);
+            var dataMelhor = HorarioLocal.Dia(melhor.DataHoraInicioUtc);
             var novoPr = melhorAnterior.HasValue && melhor.CargaRealizada > melhorAnterior && dataMelhor >= dia.AddDays(-6);
 
             decimal? evolucao = null;

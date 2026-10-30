@@ -9,7 +9,7 @@ public static class ExecucaoGuiadaService
     public static async Task<PortalExecucaoDiaResponse> MontarAsync(
         AppDbContext db, Guid pacienteId, DateOnly dia, PortalEstrategiaDiaResponse estrategia, CancellationToken ct)
     {
-        var inicio = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicio = HorarioLocal.InicioUtc(dia);
         var fim = inicio.AddDays(1);
         var itens = new List<PortalExecucaoDiaItemResponse>();
 

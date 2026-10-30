@@ -43,7 +43,7 @@ public static class HidratacaoContextualService
             ? Math.Round(Math.Min(150m, consumidoMl.Value / metaMl * 100m), 1)
             : null;
 
-        var inicioUtc = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia);
         var fimUtc = inicioUtc.AddDays(1);
         var treino = await db.ExecucoesTreino.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Status == "Concluido" &&

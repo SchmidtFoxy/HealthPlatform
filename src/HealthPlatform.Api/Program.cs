@@ -76,6 +76,7 @@ builder.Services.Configure<PushOptions>(builder.Configuration.GetSection(PushOpt
 builder.Services.AddScoped<IPushNotificationService, WebPushNotificationService>();
 // v0.74.0 - Lembrete de agua por push, so para quem ligou no card de agua.
 builder.Services.AddHostedService<LembreteAguaWorker>();
+builder.Services.AddHostedService<LembretesPacienteWorker>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()

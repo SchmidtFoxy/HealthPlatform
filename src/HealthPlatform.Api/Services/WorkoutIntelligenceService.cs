@@ -128,7 +128,7 @@ public static class WorkoutIntelligenceService
         if (plano is null)
             return new("SemPlano", "Sem plano ativo", "Sem fase ativa", "Sem bloco ativo", null, null, null, null, null, null, false, Array.Empty<WorkoutPeriodizationPhaseResponse>(), "Periodização depende do planejamento registrado pelo profissional; o AESYN não cria ciclos automaticamente.");
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var fases = plano.FasesTreino.OrderBy(x => x.Ordem).ThenBy(x => x.DataInicio).ToList();
         var faseAtual = fases.FirstOrDefault(x => x.Status.Equals("EmCurso", StringComparison.OrdinalIgnoreCase) || x.Status.Equals("Ativa", StringComparison.OrdinalIgnoreCase))
             ?? fases.FirstOrDefault(x => x.DataInicio <= hoje && (!x.DataFim.HasValue || x.DataFim.Value >= hoje));

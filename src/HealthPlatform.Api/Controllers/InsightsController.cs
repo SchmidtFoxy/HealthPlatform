@@ -132,7 +132,7 @@ public sealed class InsightsController(
         CancellationToken ct)
     {
         var agora = DateTime.UtcNow;
-        var hoje = DateOnly.FromDateTime(agora);
+        var hoje = HorarioLocal.Dia(agora);
         var insights = new List<InsightClinicoResponse>();
 
         await AvaliarExames(pacienteId, insights, ct);
@@ -328,8 +328,8 @@ public sealed class InsightsController(
         var planoAtivo = await db.PlanosTreino.AsNoTracking().AnyAsync(x =>
             x.PacienteId == pacienteId &&
             x.Status == "Ativo" &&
-            x.DataInicio <= DateOnly.FromDateTime(agora) &&
-            (!x.DataFim.HasValue || x.DataFim.Value >= DateOnly.FromDateTime(agora)), ct);
+            x.DataInicio <= HorarioLocal.Dia(agora) &&
+            (!x.DataFim.HasValue || x.DataFim.Value >= HorarioLocal.Dia(agora)), ct);
 
         if (!planoAtivo) return;
 

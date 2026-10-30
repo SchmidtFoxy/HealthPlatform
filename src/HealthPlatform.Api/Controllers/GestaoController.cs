@@ -139,8 +139,8 @@ public sealed class GestaoController(
                 x.DataHoraUtc >= inicio &&
                 x.DataHoraUtc <= fim, ct);
 
-        var inicioDate = DateOnly.FromDateTime(inicio);
-        var fimDate = DateOnly.FromDateTime(fim);
+        var inicioDate = HorarioLocal.Dia(inicio);
+        var fimDate = HorarioLocal.Dia(fim);
         var metas = await db.RegistrosMetas.AsNoTracking()
             .CountAsync(x =>
                 ids.Contains(x.MetaPaciente.PacienteId) &&
