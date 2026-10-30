@@ -1,3 +1,11 @@
+## v0.73.0 — Piloto Apple Watch / Apple Saúde pelo app Atalhos
+
+- O PWA não lê o app Saúde do iPhone. Este piloto usa um atalho do app Atalhos (iOS) que lê o resumo do dia anterior e envia para o Aesyn, sem app na App Store.
+- Perfil do paciente › "Apple Watch e Saúde": conectar gera um código pessoal (mostrado uma vez), com passo a passo de instalação e automação diária. "Desconectar" invalida o código na hora.
+- Novo endpoint `POST /api/integracoes/apple-health/atalho` (cabeçalho `X-Aesyn-Token`): recebe passos, energia ativa, distância, minutos de exercício, FC de repouso, HRV e sono, e grava como sinais "Apple Health" no monitoramento passivo que já existia (aparecem em Progresso › Sinais conectados e na ficha do profissional). Reenviar o mesmo dia substitui os valores.
+- O código fica guardado só como hash na tabela UsuariosTokens do Identity, que já existe. Sem SQL nem migration.
+- Link do atalho em `AppleHealth:AtalhoUrl` (vazio até o atalho ser montado). Como montar: docs/ATALHO-APPLE-SAUDE.md.
+
 ## v0.72.6 — Dieta: montar refeição pela meta, favoritos e alimentos sugeridos
 
 - **Montar pela meta**: cada refeição do editor de dieta ganhou o botão "Montar pela meta". O profissional marca os alimentos e o app calcula a quantidade de cada um, já na medida caseira (meia em meia unidade, ou de 5 em 5 g), para chegar nas calorias e macros da refeição. Dá para travar a quantidade de um alimento (ex.: canela, café). Sem meta na refeição, sugere uma parte igual das metas do dia. É um cálculo de otimização feito no aparelho (mínimos quadrados com quantidades positivas), não um modelo de IA: é instantâneo e sem custo.
