@@ -1,3 +1,9 @@
+## v0.79.0 — Correção: card de água sumia ao registrar (paciente com meta do profissional)
+
+- Causa real da tela preta da 0.78.0: com meta hídrica do profissional, o `POST /api/portal/me/agua` devolvia o registro da meta em vez do resumo da água. O card tentava ler os últimos dias de uma resposta que não tinha esse campo e quebrava (na 0.76.0 derrubava a tela Hoje; na 0.78.0 o card sumia até recarregar). A água era salva normalmente.
+- O endpoint agora sempre devolve o resumo. O card também só usa a resposta se ela vier completa; senão busca de novo.
+- Sem SQL nem migration.
+
 ## v0.78.0 — Correção: tela preta ao adicionar água no celular
 
 - Em alguns Android (ex.: Xiaomi, Chrome/PWA), tocar num botão de água deixava a tela toda preta até recarregar. A água era salva, mas a animação do copo quebrava o desenho da tela.

@@ -72,7 +72,9 @@ export const AguaCard = forwardRef<HTMLDivElement, { delay?: number }>(function 
       return { antes };
     },
     onSuccess: (novo, ml, ctx) => {
-      qc.setQueryData([...CHAVE, hoje], novo);
+      // So troca o cache por um resumo completo; qualquer outra resposta faz buscar de novo.
+      if (Array.isArray(novo?.ultimosDias)) qc.setQueryData([...CHAVE, hoje], novo);
+      else qc.invalidateQueries({ queryKey: [...CHAVE, hoje] });
       qc.invalidateQueries({ queryKey: ['p', 'metas'] });
       qc.invalidateQueries({ queryKey: ['p', 'diario-registros'] });
       qc.invalidateQueries({ queryKey: ['p', 'home'] });

@@ -48,7 +48,8 @@ public sealed partial class MeuPortalPacienteController
             var totalMl = Math.Max(0, AguaPacienteService.ParaMl(atual ?? 0, meta.Unidade) + request.Ml);
             var valor = Math.Round(AguaPacienteService.DeMl(totalMl, meta.Unidade), 3);
             var r = await RegistrarMeta(meta.Id, new RegistrarMetaRequest(dia, valor, null, null), ct);
-            if (r.Result is not null) return r.Result;
+            // RegistrarMeta devolve Ok(registro) quando da certo; so repassa o erro (400/404).
+            if (r.Result is { } erro and not OkObjectResult) return erro;
         }
         else if (request.Ml > 0)
         {
