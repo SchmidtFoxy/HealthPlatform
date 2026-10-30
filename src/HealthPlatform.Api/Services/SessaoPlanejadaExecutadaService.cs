@@ -16,7 +16,7 @@ public static class SessaoPlanejadaExecutadaService
     {
         // Compara o que estava planejado com o que foi realmente executado sem transformar desvio em falha.
         // Adaptacao coerente com recuperacao/dor/carga e parte valida da execucao; intensidade extra nao recebe premio automatico.
-        var inicioUtc = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dia);
         var fimUtc = inicioUtc.AddDays(1);
 
         var execucao = await db.ExecucoesTreino.AsNoTracking()

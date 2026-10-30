@@ -16,8 +16,8 @@ public class PortalPacienteController(AppDbContext db, CurrentUser currentUser) 
     [HttpGet("home")]
     public async Task<ActionResult<PortalPacienteHomeResponse>> GetHome(Guid pacienteId, [FromQuery] DateOnly? data, CancellationToken ct)
     {
-        var dia = data ?? DateOnly.FromDateTime(DateTime.UtcNow);
-        var inicioUtc = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var dia = data ?? HorarioLocal.Hoje();
+        var inicioUtc = HorarioLocal.InicioUtc(dia);
         var fimUtc = inicioUtc.AddDays(1);
 
         var paciente = await db.Pacientes.AsNoTracking()

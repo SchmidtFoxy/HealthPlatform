@@ -104,8 +104,8 @@ public static class GamificacaoService
             existentes.Add(novo);
         }
 
-        var inicioUtc = semanaInicio.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(semanaInicio);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
         var treinos = await db.ExecucoesTreino.CountAsync(x => x.PacienteId == pacienteId && x.Status == "Concluido" && x.DataHoraInicioUtc >= inicioUtc && x.DataHoraInicioUtc < fimUtc, ct);
         var checkins = await db.ProntidoesDiarias.CountAsync(x => x.PacienteId == pacienteId && x.Data >= semanaInicio && x.Data <= dia, ct);
         var diasAtivos = await db.EventosXp.Where(x => x.PacienteId == pacienteId && x.Data >= semanaInicio && x.Data <= dia)

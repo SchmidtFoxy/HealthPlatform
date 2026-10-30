@@ -19,8 +19,8 @@ public static class TendenciaRecuperacaoService
         var atual = prontidoes.Where(x => x.Data >= inicio7).ToList();
         var anterior = prontidoes.Where(x => x.Data < inicio7).ToList();
 
-        var inicioUtc = DateTime.SpecifyKind(inicio7.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var fimUtc = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicio7);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
         var treinos = await db.ExecucoesTreino.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Status == "Concluido" &&
                         x.DataHoraInicioUtc >= inicioUtc && x.DataHoraInicioUtc < fimUtc)

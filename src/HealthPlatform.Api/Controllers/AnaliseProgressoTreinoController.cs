@@ -195,7 +195,7 @@ public sealed class AnaliseProgressoTreinoController(
             .OrderByDescending(x => x.DataUtc)
             .First();
 
-        var diasSemRecorde = Math.Max(0, (DateTime.UtcNow.Date - ultimoRecorde.DataUtc.Date).Days);
+        var diasSemRecorde = Math.Max(0, HorarioLocal.Hoje().DayNumber - HorarioLocal.Dia(ultimoRecorde.DataUtc).DayNumber);
 
         if (pontos.Count < 3)
         {

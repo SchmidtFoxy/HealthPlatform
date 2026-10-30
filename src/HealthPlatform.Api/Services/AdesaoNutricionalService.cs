@@ -24,7 +24,7 @@ public static class AdesaoNutricionalService
             return new(0, 0, 0, 0, 0, null, "SemPlano",
                 "Não há plano alimentar ativo para este dia.", Array.Empty<PortalAdesaoNutricionalRefeicaoResponse>());
 
-        var inicio = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicio = HorarioLocal.InicioUtc(dia);
         var fim = inicio.AddDays(1);
         var registros = await db.RegistrosDiarioPaciente.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Tipo == "AdesaoRefeicao" &&

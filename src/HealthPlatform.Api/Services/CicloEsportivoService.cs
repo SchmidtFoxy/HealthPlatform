@@ -18,8 +18,8 @@ public static class CicloEsportivoService
         var totalSemanas = Math.Max(1, (int)Math.Ceiling(totalDias / 7m));
         var semanaAtual = Math.Min(totalSemanas, Math.Max(1, (int)Math.Ceiling(diasDecorridos / 7m)));
         var progresso = Math.Round(diasDecorridos / (decimal)totalDias * 100m, 1);
-        var inicioUtc = ciclo.DataInicio.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var fimUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(ciclo.DataInicio);
+        var fimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
         var treinos = await db.ExecucoesTreino.CountAsync(x => x.PacienteId == pacienteId && x.Status == "Concluido" && x.DataHoraInicioUtc >= inicioUtc && x.DataHoraInicioUtc < fimUtc, ct);
         var checkinsQuery = db.ProntidoesDiarias.AsNoTracking().Where(x => x.PacienteId == pacienteId && x.Data >= ciclo.DataInicio && x.Data <= dia);
         var checkins = await checkinsQuery.CountAsync(ct);

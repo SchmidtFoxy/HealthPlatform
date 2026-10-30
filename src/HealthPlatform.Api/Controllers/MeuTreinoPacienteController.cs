@@ -27,7 +27,7 @@ public sealed class MeuTreinoPacienteController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
 
         var plano = await db.PlanosTreino.AsNoTracking()
             .Include(x => x.Profissional)
@@ -105,7 +105,7 @@ public sealed class MeuTreinoPacienteController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var planos = await db.PlanosTreino.AsNoTracking()
             .Include(x => x.Profissional)
             .Include(x => x.Sessoes)

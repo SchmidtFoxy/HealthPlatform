@@ -53,7 +53,7 @@ async function fotoReduzida(file: File) {
   return c.toDataURL('image/jpeg', 0.82);
 }
 
-function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
+export function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
     <button
       role="switch"
@@ -116,6 +116,7 @@ export function AccountPage() {
       });
     },
     onMutate: (p) => qc.setQueryData<MinhaConta>(['conta'], (x) => (x ? { ...x, ...p } : x)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['p', 'lembretes'] }),
     onError: (e) => {
       toast(e instanceof Error ? e.message : 'Não foi possível salvar.', 'bad');
       atualizar();

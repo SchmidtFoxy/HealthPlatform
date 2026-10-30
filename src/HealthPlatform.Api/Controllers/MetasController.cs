@@ -17,7 +17,7 @@ public class MetasController(AppDbContext db, CurrentUser currentUser, IHttpCont
     public async Task<ActionResult<IReadOnlyCollection<MetaPacienteResponse>>> GetAll(Guid pacienteId, [FromQuery] bool incluirEncerradas = false, CancellationToken ct = default)
     {
         if (!await PacienteExiste(pacienteId, ct)) return NotFound(new { message = "Paciente nao encontrado." });
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var query = QueryCompleta().Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId);
         if (!incluirEncerradas) query = query.Where(x => x.Status == "Ativa");
         var itens = await query.OrderBy(x => x.Nome).ToListAsync(ct);
@@ -27,7 +27,7 @@ public class MetasController(AppDbContext db, CurrentUser currentUser, IHttpCont
     [HttpGet("api/metas/{id:guid}")]
     public async Task<ActionResult<MetaPacienteResponse>> GetById(Guid id, CancellationToken ct)
     {
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var item = await QueryCompleta().FirstOrDefaultAsync(x => x.Id == id && x.Paciente.OrganizacaoId == currentUser.OrganizationId, ct);
         return item is null ? NotFound(new { message = "Meta nao encontrada." }) : Ok(ToResponse(item, hoje));
     }
@@ -41,7 +41,7 @@ public class MetasController(AppDbContext db, CurrentUser currentUser, IHttpCont
         var item = new MetaPaciente { PacienteId = pacienteId, ProfissionalId = profissional.Id, Nome = request.Nome.Trim(), Tipo = NormalizarTipo(request.Tipo), ValorObjetivo = request.ValorObjetivo, Unidade = Limpar(request.Unidade), Frequencia = NormalizarFrequencia(request.Frequencia), DataInicio = request.DataInicio, DataFim = request.DataFim, Status = "Ativa", Observacoes = Limpar(request.Observacoes) };
         db.MetasPaciente.Add(item); Auditar("CREATE", item, null, Snapshot(item)); await db.SaveChangesAsync(ct);
         var criado = await QueryCompleta().FirstAsync(x => x.Id == item.Id, ct);
-        return CreatedAtAction(nameof(GetById), new { id = item.Id }, ToResponse(criado, DateOnly.FromDateTime(DateTime.UtcNow)));
+        return CreatedAtAction(nameof(GetById), new { id = item.Id }, ToResponse(criado, HorarioLocal.Hoje()));
     }
 
     [HttpPut("api/metas/{id:guid}")]
@@ -52,7 +52,7 @@ public class MetasController(AppDbContext db, CurrentUser currentUser, IHttpCont
         var erro = await Validar(item.PacienteId, request, ct); if (erro is not null) return BadRequest(new { message = erro });
         var antes = Snapshot(item); item.Nome = request.Nome.Trim(); item.Tipo = NormalizarTipo(request.Tipo); item.ValorObjetivo = request.ValorObjetivo; item.Unidade = Limpar(request.Unidade); item.Frequencia = NormalizarFrequencia(request.Frequencia); item.DataInicio = request.DataInicio; item.DataFim = request.DataFim; item.Observacoes = Limpar(request.Observacoes);
         Auditar("UPDATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct);
-        var atualizado = await QueryCompleta().FirstAsync(x => x.Id == item.Id, ct); return Ok(ToResponse(atualizado, DateOnly.FromDateTime(DateTime.UtcNow)));
+        var atualizado = await QueryCompleta().FirstAsync(x => x.Id == item.Id, ct); return Ok(ToResponse(atualizado, HorarioLocal.Hoje()));
     }
 
     [HttpPost("api/metas/{id:guid}/registros")]
@@ -83,7 +83,7 @@ public class MetasController(AppDbContext db, CurrentUser currentUser, IHttpCont
         var item = await db.MetasPaciente.Include(x => x.Paciente).FirstOrDefaultAsync(x => x.Id == id && x.Paciente.OrganizacaoId == currentUser.OrganizationId, ct); if (item is null) return NotFound(new { message = "Meta nao encontrada." });
         var novo = NormalizarStatus(status); if (novo is not ("Ativa" or "Pausada" or "Concluida" or "Cancelada")) return BadRequest(new { message = "Status permitido: Ativa, Pausada, Concluida ou Cancelada." });
         var antes = new { item.Status }; item.Status = novo; Auditar("STATUS", item, antes, new { item.Status }); await db.SaveChangesAsync(ct);
-        var atualizado = await QueryCompleta().FirstAsync(x => x.Id == id, ct); return Ok(ToResponse(atualizado, DateOnly.FromDateTime(DateTime.UtcNow)));
+        var atualizado = await QueryCompleta().FirstAsync(x => x.Id == id, ct); return Ok(ToResponse(atualizado, HorarioLocal.Hoje()));
     }
 
     private IQueryable<MetaPaciente> QueryCompleta() => db.MetasPaciente.AsNoTracking().Include(x => x.Paciente).Include(x => x.Profissional).Include(x => x.Registros);

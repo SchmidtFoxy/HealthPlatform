@@ -42,7 +42,7 @@ public sealed partial class MeuPortalPacienteController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         if (request.Data > hoje.AddDays(1))
             return BadRequest(new { message = "Nao e permitido registrar prontidao em data futura." });
 
@@ -127,14 +127,14 @@ public sealed partial class MeuPortalPacienteController(
     {
         var pacienteId = await MeuPacienteId(ct);
         if (!pacienteId.HasValue) return NotFound(new { message = "Paciente vinculado nao encontrado." });
-        if (request.Data > DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1))
+        if (request.Data > HorarioLocal.Hoje().AddDays(1))
             return BadRequest(new { message = "Nao e permitido registrar dor em data futura." });
         if (string.IsNullOrWhiteSpace(request.Regiao) || request.Regiao.Trim().Length > 80)
             return BadRequest(new { message = "Informe uma regiao corporal valida." });
         if (request.Intensidade < 0 || request.Intensidade > 10 || request.ImpactoTreino < 0 || request.ImpactoTreino > 10)
             return BadRequest(new { message = "Intensidade e impacto no treino devem estar entre 0 e 10." });
 
-        var inicio = DateTime.SpecifyKind(request.Data.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicio = HorarioLocal.InicioUtc(request.Data);
         var fim = inicio.AddDays(1);
         var candidatos = await db.RegistrosDiarioPaciente
             .Where(x => x.PacienteId == pacienteId.Value && x.Tipo == "DorCorporal" && x.DataHoraUtc >= inicio && x.DataHoraUtc < fim)
@@ -167,7 +167,7 @@ public sealed partial class MeuPortalPacienteController(
         var pacienteId = await MeuPacienteId(ct);
         if (!pacienteId.HasValue) return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var original = await db.RefeicoesPlanoAlimentar.AsNoTracking()
             .Include(x => x.PlanoAlimentar)
             .Include(x => x.Itens).ThenInclude(x => x.Alimento)
@@ -236,14 +236,14 @@ public sealed partial class MeuPortalPacienteController(
         if (string.IsNullOrWhiteSpace(status))
             return BadRequest(new { message = "Status deve ser Realizada, Adaptada ou NaoRealizada." });
 
-        var dia = DateOnly.FromDateTime(DateTime.UtcNow);
+        var dia = HorarioLocal.Hoje();
         var refeicaoValida = await db.RefeicoesPlanoAlimentar.AsNoTracking().AnyAsync(x =>
             x.Id == refeicaoId && x.PlanoAlimentar.PacienteId == pacienteId.Value &&
             x.PlanoAlimentar.Status == "Ativo" && x.PlanoAlimentar.DataInicio <= dia &&
             (!x.PlanoAlimentar.DataFim.HasValue || x.PlanoAlimentar.DataFim.Value >= dia), ct);
         if (!refeicaoValida) return NotFound(new { message = "Refeicao ativa nao encontrada no plano do paciente." });
 
-        var inicio = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicio = HorarioLocal.InicioUtc(dia);
         var fim = inicio.AddDays(1);
         var candidatos = await db.RegistrosDiarioPaciente
             .Where(x => x.PacienteId == pacienteId.Value && x.Tipo == "AdesaoRefeicao" &&
@@ -293,10 +293,10 @@ public sealed partial class MeuPortalPacienteController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var fim = DateOnly.FromDateTime(DateTime.UtcNow);
+        var fim = HorarioLocal.Hoje();
         var inicio = fim.AddDays(-(dias - 1));
-        var inicioUtc = DateTime.SpecifyKind(inicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var fimExclusivoUtc = DateTime.SpecifyKind(fim.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicio);
+        var fimExclusivoUtc = HorarioLocal.InicioUtc(fim.AddDays(1));
 
         var prontidoes = await db.ProntidoesDiarias.AsNoTracking()
             .Where(x =>
@@ -348,7 +348,7 @@ public sealed partial class MeuPortalPacienteController(
             .ToDictionary(x => x.Key, x => x.First());
 
         var treinosPorDia = treinos
-            .GroupBy(x => DateOnly.FromDateTime(x.DataHoraInicioUtc))
+            .GroupBy(x => HorarioLocal.Dia(x.DataHoraInicioUtc))
             .ToDictionary(
                 x => x.Key,
                 x => new
@@ -360,7 +360,7 @@ public sealed partial class MeuPortalPacienteController(
                 });
 
         var fechamentoPorDia = fechamentos
-            .GroupBy(x => DateOnly.FromDateTime(x.DataHoraUtc))
+            .GroupBy(x => HorarioLocal.Dia(x.DataHoraUtc))
             .ToDictionary(x => x.Key, x => x.First());
 
         var itens = new List<PortalHistoricoDiarioItemResponse>(dias);
@@ -409,8 +409,8 @@ public sealed partial class MeuPortalPacienteController(
         if (request.PercepcaoDoDia < 0 || request.PercepcaoDoDia > 10)
             return BadRequest(new { message = "Percepcao do dia deve estar entre 0 e 10." });
 
-        var dia = DateOnly.FromDateTime(DateTime.UtcNow);
-        var inicio = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var dia = HorarioLocal.Hoje();
+        var inicio = HorarioLocal.InicioUtc(dia);
         var fim = inicio.AddDays(1);
         var item = await db.RegistrosDiarioPaciente.FirstOrDefaultAsync(x =>
             x.PacienteId == pacienteId.Value && x.Tipo == "FechamentoDia" &&
@@ -558,7 +558,7 @@ public sealed partial class MeuPortalPacienteController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var dia = DateOnly.FromDateTime(DateTime.UtcNow);
+        var dia = HorarioLocal.Hoje();
 
         var plano = await db.PlanosAlimentares.AsNoTracking()
             .Include(x => x.Profissional)
@@ -699,7 +699,7 @@ public sealed partial class MeuPortalPacienteController(
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
         dias = Math.Clamp(dias, 7, 180);
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var inicio = hoje.AddDays(-(dias - 1));
 
         var metas = await db.MetasPaciente.AsNoTracking()
@@ -761,15 +761,15 @@ public sealed partial class MeuPortalPacienteController(
         if (!pacienteId.HasValue)
             return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var dataFim = ate ?? hoje;
         var dataInicio = de ?? dataFim.AddDays(-29);
 
         if (dataInicio > dataFim)
             return BadRequest(new { message = "Periodo do diario invalido." });
 
-        var inicioUtc = DateTime.SpecifyKind(dataInicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var fimUtc = DateTime.SpecifyKind(dataFim.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(dataInicio);
+        var fimUtc = HorarioLocal.InicioUtc(dataFim.AddDays(1));
 
         var query = db.RegistrosDiarioPaciente.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId.Value &&
@@ -1095,8 +1095,8 @@ public sealed partial class MeuPortalPacienteController(
         DateOnly? data,
         CancellationToken ct)
     {
-        var dia = data ?? DateOnly.FromDateTime(DateTime.UtcNow);
-        var inicioUtc = DateTime.SpecifyKind(dia.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var dia = data ?? HorarioLocal.Hoje();
+        var inicioUtc = HorarioLocal.InicioUtc(dia);
         var fimUtc = inicioUtc.AddDays(1);
 
         var paciente = await db.Pacientes.AsNoTracking()

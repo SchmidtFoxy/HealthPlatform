@@ -586,7 +586,7 @@ public sealed class TreinosController(
 
         var antes = new { item.Status, item.DataFim };
         item.Status = "Inativo";
-        item.DataFim ??= DateOnly.FromDateTime(DateTime.UtcNow);
+        item.DataFim ??= HorarioLocal.Hoje();
         Auditar("ARCHIVE", nameof(PlanoTreino), item.Id, antes, new { item.Status, item.DataFim });
         await db.SaveChangesAsync(ct);
         return NoContent();
@@ -606,7 +606,7 @@ public sealed class TreinosController(
 
         var antes = new { item.Status, item.DataFim };
         item.Status = "Ativo";
-        if (item.DataFim.HasValue && item.DataFim.Value < DateOnly.FromDateTime(DateTime.UtcNow))
+        if (item.DataFim.HasValue && item.DataFim.Value < HorarioLocal.Hoje())
             item.DataFim = null;
         Auditar("REACTIVATE", nameof(PlanoTreino), item.Id, antes, new { item.Status, item.DataFim });
         await db.SaveChangesAsync(ct);
@@ -627,7 +627,7 @@ public sealed class TreinosController(
 
         var antes = new { item.Status, item.DataFim };
         item.Status = "Inativo";
-        item.DataFim ??= DateOnly.FromDateTime(DateTime.UtcNow);
+        item.DataFim ??= HorarioLocal.Hoje();
         Auditar("UNLINK_ARCHIVE", nameof(PlanoTreino), item.Id, antes, new
         {
             item.Status,

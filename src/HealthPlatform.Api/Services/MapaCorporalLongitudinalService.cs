@@ -16,9 +16,9 @@ public static class MapaCorporalLongitudinalService
         // Mapa longitudinal ancorado apenas em registros DorCorporal realmente persistidos.
         // A janela de 56 dias permite comparar 28 dias recentes vs. 28 dias anteriores sem criar diagnostico retrospectivo.
         const int periodoDias = 56;
-        var fim = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fim = HorarioLocal.InicioUtc(dia.AddDays(1));
         var inicio = fim.AddDays(-periodoDias);
-        var corte28 = DateOnly.FromDateTime(fim.AddDays(-28));
+        var corte28 = HorarioLocal.Dia(fim.AddDays(-28));
 
         var rows = await db.RegistrosDiarioPaciente.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Tipo == "DorCorporal" &&
@@ -35,7 +35,7 @@ public static class MapaCorporalLongitudinalService
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (payload is null || string.IsNullOrWhiteSpace(payload.Regiao)) continue;
                 linhas.Add(new DorLinha(
-                    DateOnly.FromDateTime(row.DataHoraUtc), payload.Regiao.Trim(), NormalizarLado(payload.Lado),
+                    HorarioLocal.Dia(row.DataHoraUtc), payload.Regiao.Trim(), NormalizarLado(payload.Lado),
                     Math.Clamp(row.Escala ?? 0, 0, 10), Math.Clamp(payload.ImpactoTreino, 0, 10)));
             }
             catch (JsonException) { }

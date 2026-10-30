@@ -41,9 +41,9 @@ public static class BlocoTreinamentoService
         var semanaAtual = dia < fase.DataInicio ? 0 : Math.Min(totalSemanas, Math.Max(1, (int)Math.Ceiling(Math.Max(1, diasDecorridos) / 7m)));
         var progresso = dia < fase.DataInicio ? 0m : Math.Round(diasDecorridos / (decimal)totalDias * 100m, 1);
 
-        var inicioUtc = DateTime.SpecifyKind(fase.DataInicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(fase.DataInicio);
         var fimObservado = dia < fim ? dia : fim;
-        var fimUtc = DateTime.SpecifyKind(fimObservado.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var fimUtc = HorarioLocal.InicioUtc(fimObservado.AddDays(1));
         var execQuery = db.ExecucoesTreino.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Status == "Concluido" && x.DataHoraInicioUtc >= inicioUtc && x.DataHoraInicioUtc < fimUtc);
         if (fase.PlanoTreinoId.HasValue)

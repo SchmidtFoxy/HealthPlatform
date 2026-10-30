@@ -18,8 +18,8 @@ public class DiarioPacienteController(AppDbContext db, CurrentUser currentUser, 
     {
         if (!await PacienteExiste(pacienteId, ct)) return NotFound(new { message = "Paciente nao encontrado." });
         var q = db.RegistrosDiarioPaciente.AsNoTracking().Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId);
-        if (inicio.HasValue) { var d = inicio.Value.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc); q = q.Where(x => x.DataHoraUtc >= d); }
-        if (fim.HasValue) { var d = fim.Value.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc); q = q.Where(x => x.DataHoraUtc < d); }
+        if (inicio.HasValue) { var d = HorarioLocal.InicioUtc(inicio.Value); q = q.Where(x => x.DataHoraUtc >= d); }
+        if (fim.HasValue) { var d = HorarioLocal.InicioUtc(fim.Value.AddDays(1)); q = q.Where(x => x.DataHoraUtc < d); }
         if (!string.IsNullOrWhiteSpace(tipo)) q = q.Where(x => x.Tipo == NormalizarTipo(tipo));
         return Ok(await q.OrderByDescending(x => x.DataHoraUtc).Take(500).Select(x => ToResponse(x)).ToListAsync(ct));
     }
@@ -53,7 +53,7 @@ public class DiarioPacienteController(AppDbContext db, CurrentUser currentUser, 
     public async Task<ActionResult<ResumoDiaPacienteResponse>> ResumoDia(Guid pacienteId, [FromQuery] DateOnly? data, CancellationToken ct)
     {
         if (!await PacienteExiste(pacienteId, ct)) return NotFound(new { message = "Paciente nao encontrado." });
-        var dia = data ?? DateOnly.FromDateTime(DateTime.UtcNow); var inicio = dia.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc); var fim = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        var dia = data ?? HorarioLocal.Hoje(); var inicio = HorarioLocal.InicioUtc(dia); var fim = HorarioLocal.InicioUtc(dia.AddDays(1));
         var metas = await db.MetasPaciente.AsNoTracking().Include(x => x.Registros.Where(r => r.Data == dia)).Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId && x.Status == "Ativa" && x.DataInicio <= dia && (!x.DataFim.HasValue || x.DataFim >= dia)).OrderBy(x => x.Nome).ToListAsync(ct);
         var regs = await db.RegistrosDiarioPaciente.AsNoTracking().Where(x => x.PacienteId == pacienteId && x.Paciente.OrganizacaoId == currentUser.OrganizationId && x.DataHoraUtc >= inicio && x.DataHoraUtc < fim).OrderByDescending(x => x.DataHoraUtc).ToListAsync(ct);
         var resumoMetas = metas.Select(m => { var r = m.Registros.FirstOrDefault(); decimal? progresso = r?.Concluida == true ? 100 : (m.ValorObjetivo.HasValue && r?.Valor.HasValue == true ? Math.Round(Math.Clamp(r.Valor.Value / m.ValorObjetivo.Value * 100m, 0m, 100m), 1) : null); return new ResumoMetaHojeResponse(m.Id, m.Nome, m.Tipo, m.ValorObjetivo, m.Unidade, r?.Valor, r?.Concluida, progresso); }).ToList();

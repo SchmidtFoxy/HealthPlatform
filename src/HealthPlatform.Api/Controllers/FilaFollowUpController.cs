@@ -42,7 +42,7 @@ public sealed class FilaFollowUpController(
         CancellationToken ct = default)
     {
         var agora = DateTime.UtcNow;
-        var hoje = DateOnly.FromDateTime(agora);
+        var hoje = HorarioLocal.Dia(agora);
         var limite30 = agora.AddDays(-30);
         var limite7 = agora.AddDays(7);
 
@@ -88,7 +88,7 @@ public sealed class FilaFollowUpController(
                     return null;
 
                 var data = proximo.Value;
-                var dataDia = DateOnly.FromDateTime(data);
+                var dataDia = HorarioLocal.Dia(data);
                 var atraso = dataDia < hoje ? hoje.DayNumber - dataDia.DayNumber : 0;
                 var faixaItem = dataDia < hoje ? "Vencido"
                     : dataDia == hoje ? "Hoje"

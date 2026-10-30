@@ -11,7 +11,7 @@ public static class RespostaSessaoService
     {
         // Resposta observada depois da sessao nao prova que a sessao causou a resposta.
         // O check-in do mesmo dia pode ter ocorrido antes do treino; por isso a referencia principal e o dia seguinte.
-        var limiteFimUtc = DateTime.SpecifyKind(dia.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var limiteFimUtc = HorarioLocal.InicioUtc(dia.AddDays(1));
         var limiteInicioUtc = limiteFimUtc.AddDays(-3);
         var sessao = await db.ExecucoesTreino.AsNoTracking()
             .Include(x => x.SessaoTreino)
@@ -30,7 +30,7 @@ public static class RespostaSessaoService
                 "Resposta a sessao e acompanhamento temporal; nao diagnostica lesao, nao atribui causalidade e nao prescreve nova carga.");
         }
 
-        var dataSessao = DateOnly.FromDateTime(sessao.DataHoraInicioUtc);
+        var dataSessao = HorarioLocal.Dia(sessao.DataHoraInicioUtc);
         var dataRespostaEsperada = dataSessao.AddDays(1);
         var checkin = await db.ProntidoesDiarias.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Data == dataRespostaEsperada && x.Data <= dia)

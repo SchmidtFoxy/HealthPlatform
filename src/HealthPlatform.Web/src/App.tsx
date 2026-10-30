@@ -1,6 +1,6 @@
 import { Activity, Building2, CalendarCheck, CalendarDays, Dumbbell, Home, LayoutDashboard, MessageCircle, Salad, User, Users, UsersRound } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { lazy, ReactNode, Suspense, useEffect } from 'react';
+import { lazy, ReactNode, Suspense, useEffect, useRef, useState } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell } from './components/shell';
 import { AtalhoAdmin, AtalhoClinico } from './features/admin/Atalhos';
@@ -17,6 +17,7 @@ import { DiaryPage } from './features/patient/DiaryPage';
 import { WorkoutPlanPage } from './features/patient/WorkoutPlanPage';
 import { EVENTO_ABRIR_LINK, EVENTO_PUSH_RECEBIDO } from './lib/atualizacao';
 import { sincronizarPush } from './lib/push';
+import { hojeIso } from './lib/format';
 import { useSessao } from './lib/session';
 import { useTema } from './lib/theme';
 
@@ -117,6 +118,32 @@ function useNotificacoesNoApp() {
   }, [s?.token, s?.impersonating]);
 }
 
+/**
+ * Virada do dia: com o app aberto (ou voltando do fundo) depois da meia-noite, redesenha as telas
+ * e busca tudo de novo, para agua, dieta, treino e diario passarem para o dia novo sem recarregar.
+ */
+function useViradaDoDia() {
+  const qc = useQueryClient();
+  const [dia, setDia] = useState(hojeIso);
+  const anterior = useRef(dia);
+  useEffect(() => {
+    const conferir = () => setDia(hojeIso());
+    const t = window.setInterval(conferir, 30_000);
+    document.addEventListener('visibilitychange', conferir);
+    window.addEventListener('focus', conferir);
+    return () => {
+      window.clearInterval(t);
+      document.removeEventListener('visibilitychange', conferir);
+      window.removeEventListener('focus', conferir);
+    };
+  }, []);
+  useEffect(() => {
+    if (anterior.current === dia) return;
+    anterior.current = dia;
+    qc.invalidateQueries();
+  }, [dia, qc]);
+}
+
 // Perfil so aparece na barra do celular; no PC a conta fica no rodape do menu lateral.
 const navAdmin = [
   { to: '/admin', label: 'Início', icon: LayoutDashboard, end: true },
@@ -129,6 +156,7 @@ const navAdmin = [
 export function App() {
   useTema();
   useNotificacoesNoApp();
+  useViradaDoDia();
   return (
     <>
       <Toaster />

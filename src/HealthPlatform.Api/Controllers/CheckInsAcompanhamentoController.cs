@@ -332,7 +332,7 @@ public sealed class CheckInsAcompanhamentoController(
 
     private static StatusTransicaoFaseResponse MontarStatusTransicao(Guid faseId, string nome, string tipo, string status, DateOnly dataInicio, DateOnly? dataFim, decimal? metaPesoKg, int? metaAdesaoPercentual, int? duracaoMinimaDias, string? criterioTransicao, IReadOnlyCollection<CheckInAcompanhamento> checkIns, bool usarAdesaoAlimentar)
     {
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hoje = HorarioLocal.Hoje();
         var diasDecorridos = Math.Max(0, hoje.DayNumber - dataInicio.DayNumber + 1);
         var ordenados = checkIns.OrderBy(x => x.DataUtc).ToList();
         var pesoAtual = ordenados.LastOrDefault(x => x.PesoKg.HasValue)?.PesoKg;
@@ -556,7 +556,7 @@ public sealed class CheckInsAcompanhamentoController(
 
     private async Task<Guid?> FaseNutricionalAtual(Guid pacienteId, CancellationToken ct)
     {
-        var agora = DateOnly.FromDateTime(DateTime.UtcNow);
+        var agora = HorarioLocal.Hoje();
         return await db.FasesNutricionais.AsNoTracking()
             .Where(x =>
                 x.PacienteId == pacienteId &&
@@ -571,7 +571,7 @@ public sealed class CheckInsAcompanhamentoController(
 
     private async Task<Guid?> FaseTreinoAtual(Guid pacienteId, CancellationToken ct)
     {
-        var agora = DateOnly.FromDateTime(DateTime.UtcNow);
+        var agora = HorarioLocal.Hoje();
         return await db.FasesTreino.AsNoTracking()
             .Where(x =>
                 x.PacienteId == pacienteId &&

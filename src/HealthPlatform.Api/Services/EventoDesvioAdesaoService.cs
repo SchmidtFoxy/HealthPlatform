@@ -23,7 +23,7 @@ public static class EventoDesvioAdesaoService
         CancellationToken ct)
     {
         prioridade = Math.Clamp(prioridade, 1, 3);
-        var inicio = dataHoraUtc.Date;
+        var inicio = HorarioLocal.InicioUtc(HorarioLocal.Dia(dataHoraUtc));
         var fim = inicio.AddDays(1);
 
         var existentes = await db.RegistrosDiarioPaciente

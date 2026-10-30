@@ -35,7 +35,7 @@ public static class HistoricoProgressaoService
                 "A linha do tempo nasce apenas de eventos realmente aplicados e registrados por profissional.",
                 "Ausencia de historico nao significa ausencia de cuidado; sugestoes nao sao convertidas em eventos automaticamente.");
 
-        var agoraUtc = dia.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddTicks(-1);
+        var agoraUtc = HorarioLocal.InicioUtc(dia.AddDays(1)).AddTicks(-1);
         var itens = eventos.Select((x, index) =>
         {
             var fim = x.EncerradoEmUtc ?? agoraUtc;

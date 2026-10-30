@@ -57,8 +57,8 @@ public static class TendenciaSemanalService
     private static async Task<JanelaResumo> LerJanelaAsync(
         AppDbContext db, Guid pacienteId, DateOnly inicio, DateOnly fim, CancellationToken ct)
     {
-        var inicioUtc = DateTime.SpecifyKind(inicio.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
-        var fimUtc = DateTime.SpecifyKind(fim.AddDays(1).ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc);
+        var inicioUtc = HorarioLocal.InicioUtc(inicio);
+        var fimUtc = HorarioLocal.InicioUtc(fim.AddDays(1));
 
         var treinos = await db.ExecucoesTreino.AsNoTracking()
             .Where(x => x.PacienteId == pacienteId && x.Status == "Concluido" &&
