@@ -1,3 +1,4 @@
+using System.Reflection;
 using HealthPlatform.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,11 @@ namespace HealthPlatform.Api.Controllers;
 [Route("api/health")]
 public class HealthController(AppDbContext db) : ControllerBase
 {
+    // Vem do VERSION.txt no build (ver HealthPlatform.Api.csproj). O deploy compara este valor.
+    public static readonly string AppVersion =
+        typeof(HealthController).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "desconhecida";
+
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken ct)
     {
@@ -19,7 +25,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             var payload = new
             {
                 status = databaseOk ? "ok" : "degraded",
-                version = "0.72.4",
+                version = AppVersion,
                 database = databaseOk ? "connected" : "unavailable",
                 utc = DateTime.UtcNow
             };
@@ -33,7 +39,7 @@ public class HealthController(AppDbContext db) : ControllerBase
             return StatusCode(StatusCodes.Status503ServiceUnavailable, new
             {
                 status = "degraded",
-                version = "0.72.4",
+                version = AppVersion,
                 database = "unavailable",
                 utc = DateTime.UtcNow
             });
