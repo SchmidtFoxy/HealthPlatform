@@ -1,3 +1,10 @@
+## v0.78.0 — Correção: tela preta ao adicionar água no celular
+
+- Em alguns Android (ex.: Xiaomi, Chrome/PWA), tocar num botão de água deixava a tela toda preta até recarregar. A água era salva, mas a animação do copo quebrava o desenho da tela.
+- O copo agora anima pelo próprio SVG (nível da água quadro a quadro e onda/bolhas com animate do SVG), sem transform de CSS dentro do recorte do copo.
+- Se o card de água tiver qualquer erro, some só o card, sem derrubar a tela Hoje.
+- Sem SQL nem migration.
+
 ## v0.77.0 — Chat mais parecido com um app de conversa
 
 - **Responder uma mensagem específica**: arrastar a mensagem para a direita (celular), segurar e escolher "Responder", ou o botão que aparece ao passar o mouse (computador). A resposta mostra o trecho citado em cima; tocar no trecho leva até a mensagem original e a destaca.

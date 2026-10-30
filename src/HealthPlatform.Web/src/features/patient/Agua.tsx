@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, BellRing, Check, Droplet, Flame, GlassWater, Milk, Plus, Undo2 } from 'lucide-react';
-import { forwardRef, useEffect, useId, useRef, useState } from 'react';
+import { Component, type ReactNode, forwardRef, useEffect, useId, useRef, useState } from 'react';
 import { toast } from '@/components/ui';
 import { api } from '@/lib/api';
 import { diaSemanaCurto, hojeIso, n0 } from '@/lib/format';
@@ -275,13 +275,20 @@ export const AguaCard = forwardRef<HTMLDivElement, { delay?: number }>(function 
   );
 });
 
-/** Copo em SVG: a agua sobe ate o percentual com uma onda correndo por cima. */
+/**
+ * Copo em SVG: a agua sobe ate o percentual com uma onda correndo por cima.
+ * Tudo anima por atributo do SVG (transform e animate do proprio SVG), sem transform de CSS:
+ * em alguns celulares Android, transform de CSS dentro de SVG com clipPath deixava a tela toda preta.
+ */
 function Copo({ pct, cheio }: { pct: number; cheio: boolean }) {
-  const id = useId().replace(/:/g, '');
+  const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const topo = 14;
   const fundo = 122;
-  const nivel = fundo - (pct / 100) * (fundo - topo);
+  const alvo = fundo - (pct / 100) * (fundo - topo);
+  const nivel = useNivel(alvo, fundo);
+  const parado = semMovimento();
   const contorno = 'M12 8 H88 L79.5 112 Q79 122 69 122 H31 Q21 122 20.5 112 Z';
+  const fundura = fundo - alvo;
   return (
     <svg viewBox="0 0 100 130" className="h-[118px] w-[92px]" role="img" aria-label={`Copo ${Math.round(pct)}% cheio`}>
       <defs>
@@ -294,37 +301,64 @@ function Copo({ pct, cheio }: { pct: number; cheio: boolean }) {
         </linearGradient>
       </defs>
       <path d={contorno} fill="rgb(var(--info) / 0.07)" />
-      <g clipPath={`url(#copo-${id})`}>
-        <motion.g initial={{ y: fundo }} animate={{ y: nivel }} transition={{ type: 'spring', stiffness: 70, damping: 14 }}>
-          <g className="agua-onda-lenta">
-            <path d="M-100 -2 Q-75 -9 -50 -2 T0 -2 T50 -2 T100 -2 T150 -2 T200 -2 V140 H-100 Z" fill="rgb(var(--info) / 0.35)" />
+      {nivel < fundo - 0.5 && (
+        <g clipPath={`url(#copo-${id})`}>
+          <g transform={`translate(0 ${nivel.toFixed(2)})`}>
+            <g>
+              <path d="M-100 -2 Q-75 -9 -50 -2 T0 -2 T50 -2 T100 -2 T150 -2 T200 -2 V140 H-100 Z" fill="rgb(var(--info) / 0.35)" />
+              {!parado && <animateTransform attributeName="transform" type="translate" from="-100 0" to="0 0" dur="5.5s" repeatCount="indefinite" />}
+            </g>
+            <g>
+              <path d="M-100 0 Q-75 -6 -50 0 T0 0 T50 0 T100 0 T150 0 T200 0 V140 H-100 Z" fill={`url(#agua-${id})`} />
+              {!parado && <animateTransform attributeName="transform" type="translate" from="0 0" to="-100 0" dur="3.2s" repeatCount="indefinite" />}
+            </g>
+            {!parado &&
+              fundura > 16 &&
+              [
+                [32, 0.2, 2.2],
+                [52, 1.1, 1.6],
+                [68, 1.9, 2.6],
+              ].map(([x, atraso, raio]) => (
+                <circle key={x} cx={x} cy={fundura - 4} r={raio} fill="white" opacity="0">
+                  <animate attributeName="cy" from={fundura - 4} to={8} dur="2.8s" begin={`${atraso}s`} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0;0.8;0" keyTimes="0;0.15;1" dur="2.8s" begin={`${atraso}s`} repeatCount="indefinite" />
+                </circle>
+              ))}
           </g>
-          <g className="agua-onda">
-            <path d="M-100 0 Q-75 -6 -50 0 T0 0 T50 0 T100 0 T150 0 T200 0 V140 H-100 Z" fill={`url(#agua-${id})`} />
-          </g>
-          {pct > 8 &&
-            [
-              [32, 0.2, 2.2],
-              [52, 1.1, 1.6],
-              [68, 1.9, 2.6],
-            ].map(([x, atraso, raio]) => (
-              <circle
-                key={x}
-                className="agua-bolha"
-                cx={x}
-                cy={fundo - nivel - 4}
-                r={raio}
-                fill="white"
-                opacity="0"
-                style={{ animationDelay: `${atraso}s`, ['--sobe' as string]: `-${Math.max(0, fundo - nivel - 12)}px` }}
-              />
-            ))}
-        </motion.g>
-      </g>
+        </g>
+      )}
       <path d={contorno} fill="none" stroke={cheio ? 'rgb(var(--info))' : 'rgb(var(--line))'} strokeWidth="3" strokeLinejoin="round" />
       <path d="M20 16 L26 100" stroke="white" strokeOpacity="0.25" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
+}
+
+const semMovimento = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+/** Leva o nivel da agua ate o alvo em ~0,7 s (ease-out), quadro a quadro. */
+function useNivel(alvo: number, inicio: number) {
+  const [nivel, setNivel] = useState(inicio);
+  const atual = useRef(inicio);
+  useEffect(() => {
+    if (semMovimento()) {
+      atual.current = alvo;
+      setNivel(alvo);
+      return;
+    }
+    const de = atual.current;
+    const t0 = performance.now();
+    let quadro = 0;
+    const passo = (t: number) => {
+      const k = Math.min(1, (t - t0) / 700);
+      const v = de + (alvo - de) * (1 - Math.pow(1 - k, 3));
+      atual.current = v;
+      setNivel(v);
+      if (k < 1) quadro = requestAnimationFrame(passo);
+    };
+    quadro = requestAnimationFrame(passo);
+    return () => cancelAnimationFrame(quadro);
+  }, [alvo]);
+  return nivel;
 }
 
 /** Gotinhas que espirram do copo quando a meta e batida. */
@@ -357,5 +391,27 @@ function Festa({ chave }: { chave: number }) {
         );
       })}
     </div>
+  );
+}
+
+/** Se o card de agua quebrar, some so ele (e volta no proximo dado), em vez de derrubar a tela Hoje inteira. */
+class ProtecaoAgua extends Component<{ children: ReactNode }, { erro: boolean }> {
+  state = { erro: false };
+  static getDerivedStateFromError() {
+    return { erro: true };
+  }
+  componentDidCatch(e: unknown) {
+    console.error('Card de água', e);
+  }
+  render() {
+    return this.state.erro ? null : this.props.children;
+  }
+}
+
+export function AguaSegura({ delay }: { delay?: number }) {
+  return (
+    <ProtecaoAgua>
+      <AguaCard delay={delay} />
+    </ProtecaoAgua>
   );
 }
