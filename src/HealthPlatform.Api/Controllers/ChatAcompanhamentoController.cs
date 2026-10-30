@@ -1,4 +1,3 @@
-using System.Text;
 using HealthPlatform.Api.Services;
 using HealthPlatform.Api.Services.Push;
 using HealthPlatform.Domain.Entities;
@@ -19,15 +18,9 @@ public sealed class ChatAcompanhamentoController(
     IPushNotificationService push,
     ProfissionalResponsavelService responsaveis) : ControllerBase
 {
-    private const string ContextMarkerPrefix = "[[AESYNCTX|";
     private static readonly HashSet<string> ContextosPermitidos = new(StringComparer.OrdinalIgnoreCase)
     {
         "Geral", "Nutricao", "Treino", "Exames", "Medicamentos", "Recuperacao"
-    };
-
-    private static readonly HashSet<string> ReferenciasPermitidas = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "Arquivo", "Treino", "Exercicio", "Refeicao", "Exame"
     };
 
     [Authorize(Policy = "PatientOnly")]
@@ -39,8 +32,8 @@ public sealed class ChatAcompanhamentoController(
         if (paciente is null) return NotFound(new { message = "Paciente vinculado nao encontrado." });
 
         var profissional = await ResolverProfissionalDoPaciente(paciente.Id, ct);
-        await MarcarConversaComoLida(paciente.Id, ct);
-        var mensagens = await ListarMensagens(paciente.Id, "Paciente", ct);
+        var novas = await MarcarConversaComoLida(paciente.Id, ct);
+        var mensagens = await ListarMensagens(paciente.Id, "Paciente", novas, ct);
         if (profissional is null)
         {
             await AvisarAdministradoresSemResponsavel(paciente, ct);
@@ -87,8 +80,8 @@ public sealed class ChatAcompanhamentoController(
         if (paciente is null) return NotFound();
         if (!await PodeAcompanharPaciente(profissional.Id, paciente.Id, ct)) return Forbid();
 
-        await MarcarConversaComoLida(paciente.Id, ct);
-        var mensagens = await ListarMensagens(paciente.Id, "Profissional", ct);
+        var novas = await MarcarConversaComoLida(paciente.Id, ct);
+        var mensagens = await ListarMensagens(paciente.Id, "Profissional", novas, ct);
         return Ok(new
         {
             paciente = new { paciente.Id, paciente.Nome },
@@ -175,13 +168,13 @@ public sealed class ChatAcompanhamentoController(
                 var slaExcedido = aguardandoResposta && minutosAguardando >= 24 * 60;
                 var proximoDoSla = aguardandoResposta && !slaExcedido && minutosAguardando >= 18 * 60;
                 pacientes.TryGetValue(g.Key, out var paciente);
-                var (mensagem, referencia) = SepararObservacoes(ultima.Observacoes ?? string.Empty);
+                var (mensagem, referencia, _) = ChatMarcadores.Separar(ultima.Observacoes);
                 return new
                 {
                     pacienteId = g.Key,
                     pacienteNome = paciente?.Nome ?? "Paciente",
                     pacienteEmail = paciente?.Email,
-                    ultimaMensagem = Resumir(mensagem, 160),
+                    ultimaMensagem = ChatMarcadores.Resumo(mensagem, referencia, 160),
                     ultimaMensagemEmUtc = ultima.DataHoraUtc,
                     ultimoAutorTipo = ultima.Resultado,
                     contexto = ExtrairContexto(ultima.Canal),
@@ -258,7 +251,17 @@ public sealed class ChatAcompanhamentoController(
 
         var contexto = NormalizarContexto(request.Contexto);
         var referencia = NormalizarReferencia(request);
-        var observacoes = MontarObservacoes(mensagem, referencia);
+
+        // Resposta a uma mensagem anterior: so vale se for da mesma conversa.
+        InteracaoAcompanhamento? citada = null;
+        if (request.RespostaAId.HasValue)
+        {
+            citada = await db.InteracoesAcompanhamento.AsNoTracking().FirstOrDefaultAsync(x =>
+                x.Id == request.RespostaAId.Value && x.OrganizacaoId == currentUser.OrganizationId &&
+                x.PacienteId == paciente.Id && x.Canal.StartsWith("Chat:"), ct);
+            if (citada is null) return BadRequest(new { message = "A mensagem respondida nao foi encontrada nesta conversa." });
+        }
+        var observacoes = ChatMarcadores.Montar(mensagem, referencia, citada?.Id);
         var agora = DateTime.UtcNow;
         var item = new InteracaoAcompanhamento
         {
@@ -283,7 +286,7 @@ public sealed class ChatAcompanhamentoController(
                 Tipo = "Chat",
                 Prioridade = "Normal",
                 Titulo = autor == "Paciente" ? $"Nova mensagem de {paciente.Nome}" : $"Nova mensagem de {profissional.Nome}",
-                Mensagem = $"{RotuloContexto(contexto)} • {Resumir(mensagem, 120)}",
+                Mensagem = $"{RotuloContexto(contexto)} • {ChatMarcadores.Resumo(mensagem, referencia, 120)}",
                 OrigemTipo = "ChatAcompanhamento",
                 OrigemId = item.Id,
                 OrigemChave = $"CHAT:{item.Id}",
@@ -300,7 +303,7 @@ public sealed class ChatAcompanhamentoController(
         {
             // Como num app de conversa: o titulo e quem escreveu e o corpo e a propria mensagem.
             var pushTitulo = autor == "Paciente" ? paciente.Nome : profissional.Nome;
-            var pushCorpo = referencia?.Tipo == "Arquivo" && mensagem == "Foto" ? "📷 Foto" : Resumir(mensagem, 160);
+            var pushCorpo = ChatMarcadores.Resumo(mensagem, referencia, 160);
             if (contexto != "Geral") pushCorpo = $"{RotuloContexto(contexto)} • {pushCorpo}";
             var pushLink = autor == "Paciente" ? $"chat-profissional:{paciente.Id}" : "chat";
             await push.EnviarAsync(destinatarioUsuarioId.Value, "mensagem", pushTitulo, pushCorpo, pushLink, ct);
@@ -314,12 +317,14 @@ public sealed class ChatAcompanhamentoController(
             contextoRotulo = RotuloContexto(contexto),
             mensagem,
             referencia,
+            respostaA = citada is null ? null : Citacao(citada, autor),
             status = destinatarioUsuarioId.HasValue ? "Entregue" : "Enviada"
         });
     }
 
     // A conversa e do paciente: se o responsavel muda, o novo profissional ve o historico inteiro.
-    private async Task<object[]> ListarMensagens(Guid pacienteId, string perspectiva, CancellationToken ct)
+    // novas: mensagens que estavam sem ler ate esta abertura, para o app marcar onde a leitura parou.
+    private async Task<object[]> ListarMensagens(Guid pacienteId, string perspectiva, HashSet<Guid> novas, CancellationToken ct)
     {
         var itens = await db.InteracoesAcompanhamento.AsNoTracking()
             .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId && x.Canal.StartsWith("Chat:"))
@@ -327,6 +332,20 @@ public sealed class ChatAcompanhamentoController(
             .Take(300)
             .ToListAsync(ct);
         itens.Reverse();
+
+        var porId = itens.ToDictionary(x => x.Id);
+        var citadasFora = itens.Select(x => ChatMarcadores.Separar(x.Observacoes).RespostaAId)
+            .Where(x => x.HasValue && !porId.ContainsKey(x.Value))
+            .Select(x => x!.Value)
+            .Distinct()
+            .ToArray();
+        if (citadasFora.Length > 0)
+        {
+            var antigas = await db.InteracoesAcompanhamento.AsNoTracking()
+                .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId && citadasFora.Contains(x.Id))
+                .ToListAsync(ct);
+            foreach (var antiga in antigas) porId[antiga.Id] = antiga;
+        }
 
         var ids = itens.Select(x => x.Id).ToArray();
         var notificacoes = ids.Length == 0
@@ -341,7 +360,8 @@ public sealed class ChatAcompanhamentoController(
         return itens.Select(x =>
         {
             var meu = string.Equals(x.Resultado, perspectiva, StringComparison.OrdinalIgnoreCase);
-            var (mensagem, referencia) = SepararObservacoes(x.Observacoes ?? string.Empty);
+            var (mensagem, referencia, respostaAId) = ChatMarcadores.Separar(x.Observacoes);
+            var citada = respostaAId.HasValue && porId.TryGetValue(respostaAId.Value, out var c) ? c : null;
             notificacoes.TryGetValue(x.Id, out var lidaEmUtc);
             var status = meu ? (lidaEmUtc.HasValue ? "Lida" : notificacoes.ContainsKey(x.Id) ? "Entregue" : "Enviada") : "Recebida";
             return (object)new
@@ -354,19 +374,21 @@ public sealed class ChatAcompanhamentoController(
                 contextoRotulo = RotuloContexto(ExtrairContexto(x.Canal)),
                 mensagem,
                 referencia,
+                respostaA = citada is null ? null : Citacao(citada, perspectiva),
                 status,
-                lidaEmUtc
+                lidaEmUtc,
+                novaAoAbrir = novas.Contains(x.Id)
             };
         }).ToArray();
     }
 
-    private async Task MarcarConversaComoLida(Guid pacienteId, CancellationToken ct)
+    private async Task<HashSet<Guid>> MarcarConversaComoLida(Guid pacienteId, CancellationToken ct)
     {
         var ids = await db.InteracoesAcompanhamento.AsNoTracking()
             .Where(x => x.OrganizacaoId == currentUser.OrganizationId && x.PacienteId == pacienteId && x.Canal.StartsWith("Chat:"))
             .Select(x => x.Id)
             .ToListAsync(ct);
-        if (ids.Count == 0) return;
+        if (ids.Count == 0) return [];
 
         var agora = DateTime.UtcNow;
         var notificacoes = await db.NotificacoesInternas
@@ -375,45 +397,36 @@ public sealed class ChatAcompanhamentoController(
                 x.OrigemId.HasValue && ids.Contains(x.OrigemId.Value))
             .ToListAsync(ct);
 
-        if (notificacoes.Count == 0) return;
+        if (notificacoes.Count == 0) return [];
         foreach (var notificacao in notificacoes)
         {
             notificacao.LidaEmUtc = agora;
             notificacao.UpdatedAtUtc = agora;
         }
         await db.SaveChangesAsync(ct);
+        return notificacoes.Select(x => x.OrigemId!.Value).ToHashSet();
     }
 
     private static ChatReferencia? NormalizarReferencia(ChatMensagemRequest request)
     {
         var tipo = (request.ReferenciaTipo ?? string.Empty).Trim();
-        if (!ReferenciasPermitidas.Contains(tipo)) return null;
+        if (!ChatMarcadores.ReferenciasPermitidas.Contains(tipo)) return null;
         var titulo = (request.ReferenciaTitulo ?? string.Empty).Trim();
         if (titulo.Length > 160) titulo = titulo[..160];
         return new ChatReferencia(tipo, request.ReferenciaId, titulo);
     }
 
-    private static string MontarObservacoes(string mensagem, ChatReferencia? referencia)
+    // Trecho da mensagem respondida, mostrado em cima da resposta.
+    private static object Citacao(InteracaoAcompanhamento citada, string perspectiva)
     {
-        if (referencia is null) return mensagem;
-        var titulo = Convert.ToBase64String(Encoding.UTF8.GetBytes(referencia.Titulo ?? string.Empty));
-        return $"{mensagem}\n{ContextMarkerPrefix}{referencia.Tipo}|{referencia.Id?.ToString() ?? string.Empty}|{titulo}]]";
-    }
-
-    private static (string Mensagem, ChatReferencia? Referencia) SepararObservacoes(string observacoes)
-    {
-        var indice = observacoes.LastIndexOf(ContextMarkerPrefix, StringComparison.Ordinal);
-        if (indice < 0) return (observacoes, null);
-        var fim = observacoes.IndexOf("]]", indice, StringComparison.Ordinal);
-        if (fim < 0) return (observacoes, null);
-        var payload = observacoes[(indice + ContextMarkerPrefix.Length)..fim];
-        var partes = payload.Split('|', 3);
-        if (partes.Length != 3 || !ReferenciasPermitidas.Contains(partes[0])) return (observacoes, null);
-        Guid? id = Guid.TryParse(partes[1], out var parsed) ? parsed : null;
-        string titulo;
-        try { titulo = Encoding.UTF8.GetString(Convert.FromBase64String(partes[2])); }
-        catch { titulo = string.Empty; }
-        return (observacoes[..indice].TrimEnd(), new ChatReferencia(partes[0], id, titulo));
+        var (mensagem, referencia, _) = ChatMarcadores.Separar(citada.Observacoes);
+        return new
+        {
+            citada.Id,
+            autorTipo = citada.Resultado,
+            meu = string.Equals(citada.Resultado, perspectiva, StringComparison.OrdinalIgnoreCase),
+            trecho = ChatMarcadores.Resumo(mensagem, referencia, 140)
+        };
     }
 
     private async Task<bool> PodeAcompanharPaciente(Guid profissionalId, Guid pacienteId, CancellationToken ct)
@@ -495,8 +508,6 @@ public sealed class ChatAcompanhamentoController(
         "Recuperacao" => "Recuperação",
         _ => "Acompanhamento geral"
     };
-
-    private static string Resumir(string valor, int limite) => valor.Length <= limite ? valor : valor[..limite] + "…";
 }
 
 public sealed record ChatMensagemRequest(
@@ -504,6 +515,5 @@ public sealed record ChatMensagemRequest(
     string? Contexto,
     string? ReferenciaTipo = null,
     Guid? ReferenciaId = null,
-    string? ReferenciaTitulo = null);
-
-public sealed record ChatReferencia(string Tipo, Guid? Id, string? Titulo);
+    string? ReferenciaTitulo = null,
+    Guid? RespostaAId = null);

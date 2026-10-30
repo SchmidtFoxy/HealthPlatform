@@ -317,11 +317,12 @@ public class TimelineController(AppDbContext db, CurrentUser currentUser) : Cont
         timeline.AddRange(mensagens.Select(x =>
         {
             var contexto = x.Canal.StartsWith("Chat:", StringComparison.OrdinalIgnoreCase) ? x.Canal[5..] : "Geral";
-            var resumo = string.IsNullOrWhiteSpace(x.Observacoes) ? "Mensagem registrada" :
-                (x.Observacoes!.Length <= 140 ? x.Observacoes : x.Observacoes[..140] + "…");
+            // Sem os marcadores internos de anexo e resposta.
+            var (mensagem, referencia, _) = ChatMarcadores.Separar(x.Observacoes);
+            var resumo = string.IsNullOrWhiteSpace(mensagem) ? "Mensagem registrada" : ChatMarcadores.Resumo(mensagem, referencia, 140);
             return new TimelineItemResponse(
                 "chat", x.Id, x.DataHoraUtc, $"Mensagem • {contexto}", resumo,
-                new { autor = x.Resultado, contexto, mensagem = x.Observacoes, profissional = x.Profissional },
+                new { autor = x.Resultado, contexto, mensagem, profissional = x.Profissional },
                 "Comunicacao", 0, $"chat:{x.Id}", "Chat");
         }));
 

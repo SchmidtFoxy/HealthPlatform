@@ -1,3 +1,15 @@
+## v0.74.0 — Chat mais parecido com um app de conversa
+
+- **Responder uma mensagem específica**: arrastar a mensagem para a direita (celular), segurar e escolher "Responder", ou o botão que aparece ao passar o mouse (computador). A resposta mostra o trecho citado em cima; tocar no trecho leva até a mensagem original e a destaca.
+- **Envio na hora**: a mensagem aparece assim que a pessoa toca em enviar, com um relógio enquanto sai. Se a internet falhar, ela fica marcada "Não enviada · tentar de novo" (ou "Descartar") em vez de sumir com o texto. Dá para mandar várias seguidas sem esperar.
+- **Status como no WhatsApp**: ✓ enviada, ✓✓ entregue e ✓✓ lida. Segurar a mensagem mostra quando foi enviada e quando foi lida, e permite copiar o texto.
+- **Rolagem inteligente**: ao abrir, a conversa para na linha "Mensagens novas" em vez de pular para o fim. Se a pessoa estiver lendo mensagens antigas, a conversa não pula quando chega outra: aparece o botão "1 nova mensagem" para descer.
+- **Rascunho salvo**: o que foi escrito e não enviado continua lá ao sair e voltar para a conversa (por paciente, no aparelho).
+- **Respostas rápidas do profissional**: botão de raio ao lado do clipe, com respostas prontas ({nome} vira o primeiro nome do paciente). Dá para salvar o texto que está escrevendo como nova resposta e apagar as que não usa. Ficam salvas no aparelho.
+- Links nas mensagens ficam clicáveis. A conversa atualiza a cada 8 s com o app aberto (antes 15 s).
+- A caixa de entrada, as notificações e o push mostram "📷 Foto" ou "📎 nome do arquivo" no lugar do texto interno dos anexos. A linha do tempo do paciente deixou de mostrar o marcador técnico dos anexos no meio da mensagem.
+- A resposta citada é guardada junto com a mensagem, no mesmo campo de hoje. **Sem SQL nem migration.**
+
 ## v0.73.0 — Piloto Apple Watch / Apple Saúde pelo app Atalhos
 
 - O PWA não lê o app Saúde do iPhone. Este piloto usa um atalho do app Atalhos (iOS) que lê o resumo do dia anterior e envia para o Aesyn, sem app na App Store.
