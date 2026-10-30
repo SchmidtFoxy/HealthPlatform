@@ -27,3 +27,7 @@ public record AlimentoResponse(
     string? UnidadeNome,
     decimal? GramasPorUnidade,
     decimal? GramasPorMl);
+
+public record AlimentoFavoritoResponse(string Refeicao, Guid AlimentoId);
+
+public record SalvarFavoritosRefeicaoRequest(string Refeicao, IReadOnlyCollection<Guid> AlimentoIds);

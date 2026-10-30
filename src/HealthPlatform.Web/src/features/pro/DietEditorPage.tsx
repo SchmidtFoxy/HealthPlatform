@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeftRight, BookCopy, BookmarkPlus, Calculator, Check, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Search, Target, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, BookCopy, BookmarkPlus, Calculator, Check, ChevronDown, ChevronLeft, Clock, MoreHorizontal, Plus, Sparkles, Target, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, ErrorBox, Field, IconButton, inputCls, Pill, Ring, Segmented, Sheet, Skeleton, Stepper, toast } from '@/components/ui';
@@ -11,7 +11,9 @@ import { corpoAlimento, type Modo, modoDe, pluralizar } from '@/lib/medidas';
 import type { Alimento, PlanoAlimentarPro } from '@/lib/types';
 import { CalculoMetasSheet } from './CalculoMetas';
 import { InserirModeloSheet, SalvarParteComoModeloSheet } from './ModelosNoPlano';
+import { MontarPelaMetaSheet } from './MontarRefeicao';
 import { useAlimentos, usePaciente, usePlanosAlimentares } from './queries';
+import { gramasEquivalentes, SeletorAlimento } from './SeletorAlimento';
 import { useSuplementos } from './suplementos';
 import { macrosSuplementos, SuplementosSecao } from './SuplementosDieta';
 
@@ -173,75 +175,6 @@ function macrosDe(al: Alimento | undefined, gramas: number): Macros {
   return { kcal: al.caloriasPor100g * k, p: al.proteinasPor100g * k, c: al.carboidratosPor100g * k, g: al.gordurasPor100g * k, f: al.fibrasPor100g * k };
 }
 
-/** Gramas do substituto que entregam as mesmas calorias do alimento original, arredondado a 5 g. */
-function gramasEquivalentes(orig: Alimento | undefined, gramas: number, sub: Alimento) {
-  if (!orig || !sub.caloriasPor100g) return gramas;
-  const kcal = (orig.caloriasPor100g * gramas) / 100;
-  return Math.max(5, Math.round(((kcal / sub.caloriasPor100g) * 100) / 5) * 5);
-}
-
-// ------------------------------------------------------------------ Seletor de alimento
-
-function SeletorAlimento({ open, onClose, onPick, titulo, referencia }: { open: boolean; onClose: () => void; onPick: (a: Alimento) => void; titulo: string; referencia?: { alimento?: Alimento; gramas: number } }) {
-  const alimentos = useAlimentos();
-  const [busca, setBusca] = useState('');
-  const [cat, setCat] = useState<string | null>(null);
-  useEffect(() => {
-    if (open) {
-      setBusca('');
-      setCat(referencia?.alimento?.categoria ?? null);
-    }
-  }, [open, referencia?.alimento?.categoria]);
-  const ativos = (alimentos.data ?? []).filter((a) => a.ativo);
-  const cats = useMemo(() => [...new Set(ativos.map((a) => a.categoria).filter(Boolean) as string[])].sort(), [ativos]);
-  const termo = busca
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase();
-  const lista = ativos
-    .filter((a) => !cat || a.categoria === cat)
-    .filter((a) => !termo || a.nome.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(termo))
-    .slice(0, 80);
-  return (
-    <Sheet open={open} onClose={onClose} title={titulo} tall>
-      <label className="relative mb-3 block">
-        <Search className="pointer-events-none absolute left-3.5 top-3 h-5 w-5 text-faint" />
-        <input id="busca-alimento" type="search" placeholder="Buscar alimento" value={busca} onChange={(e) => setBusca(e.target.value)} className={inputCls + ' pl-11'} />
-      </label>
-      {cats.length > 0 && (
-        <div className="no-scrollbar -mx-5 mb-3 flex gap-2 overflow-x-auto px-5">
-          {[null, ...cats].map((c) => (
-            <button key={c ?? 'todas'} onClick={() => setCat(c)} className={clsx('h-8 shrink-0 rounded-full border px-3 text-[13px] font-semibold', cat === c ? 'border-accent bg-accent text-accent-ink' : 'border-line text-muted')}>
-              {c ?? 'Todas'}
-            </button>
-          ))}
-        </div>
-      )}
-      {alimentos.isLoading && <Skeleton className="h-60" />}
-      <div className="flex flex-col">
-        {lista.map((a) => (
-          <button key={a.id} onClick={() => onPick(a)} className="flex items-center gap-3 rounded-xl px-2 py-3 text-left transition hover:bg-raised active:bg-raised">
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold">{a.nome}</p>
-              <p className="num text-[12px] text-muted">
-                <span className="text-prot">P {n0(a.proteinasPor100g)}</span> · <span className="text-carb">C {n0(a.carboidratosPor100g)}</span> · <span className="text-fat">G {n0(a.gordurasPor100g)}</span> por 100 g
-              </p>
-            </div>
-            {referencia?.alimento ? (
-              <span className="num shrink-0 text-right text-sm font-semibold">
-                {gramasEquivalentes(referencia.alimento, referencia.gramas, a)} g<span className="block text-[11px] font-normal text-muted">equivalente</span>
-              </span>
-            ) : (
-              <span className="num shrink-0 text-sm text-muted">{n0(a.caloriasPor100g)} kcal</span>
-            )}
-          </button>
-        ))}
-        {!alimentos.isLoading && lista.length === 0 && <p className="py-10 text-center text-sm text-muted">Nenhum alimento encontrado. Cadastre novos alimentos na Biblioteca.</p>}
-      </div>
-    </Sheet>
-  );
-}
-
 // ------------------------------------------------------------------ Item
 
 function LinhaItem({ item, al, onOpen }: { item: Item; al?: Alimento; onOpen: () => void }) {
@@ -249,7 +182,7 @@ function LinhaItem({ item, al, onOpen }: { item: Item; al?: Alimento; onOpen: ()
   return (
     <button onClick={onOpen} className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-raised/50 active:bg-raised/70">
       <div className="min-w-0 flex-1">
-        <p className="truncate font-semibold">{al?.nome ?? 'Alimento indisponível'}</p>
+        <p className={clsx('truncate font-semibold', !al && 'text-warn')}>{al?.nome ?? 'Alimento desativado: toque para remover ou trocar'}</p>
         <p className="num text-[12px] text-muted">
           {item.unidade !== 'g' && item.quantidade ? `${n1(item.quantidade)} ${item.unidade === 'ml' ? 'ml' : pluralizar(item.unidade, item.quantidade)} · ` : ''}
           {n0(item.gramas)} g · P {n0(m.p)} · C {n0(m.c)} · G {n0(m.g)}
@@ -267,7 +200,7 @@ function LinhaItem({ item, al, onOpen }: { item: Item; al?: Alimento; onOpen: ()
 }
 
 /** Campo decimal que aceita virgula e so repassa valores positivos. */
-function NumeroG({ valor, onChange, sufixo }: { valor: number; onChange: (v: number) => void; sufixo: string }) {
+function NumeroG({ valor, onChange, sufixo, className }: { valor: number; onChange: (v: number) => void; sufixo?: string; className?: string }) {
   const [txt, setTxt] = useState(String(valor).replace('.', ','));
   useEffect(() => {
     if (Math.abs(Number(txt.replace(',', '.')) - valor) > 0.001) setTxt(String(Math.round(valor * 100) / 100).replace('.', ','));
@@ -277,7 +210,7 @@ function NumeroG({ valor, onChange, sufixo }: { valor: number; onChange: (v: num
   return (
     <div className="relative">
       <input
-        className={inputCls + ' pr-14'}
+        className={className ?? inputCls + ' pr-14'}
         inputMode="decimal"
         value={txt}
         onChange={(e) => {
@@ -286,8 +219,30 @@ function NumeroG({ valor, onChange, sufixo }: { valor: number; onChange: (v: num
           if (n > 0) onChange(n);
         }}
       />
-      <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[13px] text-muted">{sufixo}</span>
+      {sufixo && <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[13px] text-muted">{sufixo}</span>}
     </div>
+  );
+}
+
+/** Nome da medida caseira. Pode ficar vazio enquanto digita; so repassa texto preenchido. */
+function NomeMedida({ valor, onChange }: { valor: string; onChange: (v: string) => void }) {
+  const [txt, setTxt] = useState(valor);
+  useEffect(() => {
+    if (txt.trim() !== valor) setTxt(valor);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valor]);
+  return (
+    <input
+      className={inputCls}
+      placeholder="unidade, fatia, colher"
+      maxLength={40}
+      value={txt}
+      onChange={(e) => {
+        setTxt(e.target.value);
+        if (e.target.value.trim()) onChange(e.target.value.trim());
+      }}
+      onBlur={() => !txt.trim() && setTxt(valor)}
+    />
   );
 }
 
@@ -398,7 +353,7 @@ function ItemSheet({
           {modo === 'un' && (
             <div className="grid w-full grid-cols-2 gap-3">
               <Field label="Medida">
-                <input className={inputCls} placeholder="unidade, fatia, colher" maxLength={40} value={item.unidade} onChange={(e) => onChange({ ...item, unidade: e.target.value || 'unidade' })} />
+                <NomeMedida valor={item.unidade} onChange={(u) => onChange({ ...item, unidade: u })} />
               </Field>
               <Field label={`1 ${item.unidade || 'unidade'} pesa`}>
                 <NumeroG valor={pesoUn ?? 0} sufixo="g" onChange={(p) => setQtd(item.quantidade, p)} />
@@ -450,15 +405,11 @@ function ItemSheet({
                     {n0(sm.kcal)} kcal · P {n0(sm.p)} · C {n0(sm.c)} · G {n0(sm.g)}
                   </p>
                 </div>
-                <input
-                  aria-label="Gramas"
-                  inputMode="decimal"
+                {/* Campo vazio ou zero nao vai para o rascunho: o servidor recusa substituicao sem quantidade. */}
+                <NumeroG
+                  valor={s.gramas}
                   className="num h-10 w-16 rounded-lg border border-line bg-surface text-center font-semibold"
-                  value={s.gramas}
-                  onChange={(e) => {
-                    const g = Number(e.target.value.replace(',', '.')) || 0;
-                    onChange({ ...item, subs: item.subs.map((x) => (x.k === s.k ? { ...x, gramas: g, quantidade: x.unidade === 'g' ? g : x.quantidade } : x)) });
-                  }}
+                  onChange={(g) => onChange({ ...item, subs: item.subs.map((x) => (x.k === s.k ? { ...x, gramas: g, quantidade: x.unidade === 'g' ? g : x.quantidade } : x)) })}
                 />
                 <span className="text-xs text-muted">g</span>
                 <IconButton label="Remover substituição" onClick={() => onChange({ ...item, subs: item.subs.filter((x) => x.k !== s.k) })}>
@@ -652,6 +603,7 @@ export function DietEditorPage() {
   const [menuRef, setMenuRef] = useState<string | null>(null);
   const [inserir, setInserir] = useState(false);
   const [salvarModelo, setSalvarModelo] = useState<{ id: string; nome: string } | null>(null);
+  const [montarEm, setMontarEm] = useState<string | null>(null);
 
   useEffect(() => {
     if (plano.data && !d) setD(deServidor(plano.data));
@@ -679,6 +631,12 @@ export function DietEditorPage() {
   const salvar = useMutation({
     mutationFn: async (liberar: boolean) => {
       if (!d) throw new Error('Nada para salvar');
+      // Alimento desativado na Biblioteca nao vem na lista: o servidor recusaria o plano inteiro com uma mensagem generica.
+      const desativados = d.refeicoes.flatMap((r) => r.itens.flatMap((i) => [i, ...i.subs]).filter((i) => !mapa.has(i.alimentoId)).map(() => r.nome));
+      if (desativados.length)
+        throw new Error(`Há ${desativados.length} alimento(s) desativado(s) em ${[...new Set(desativados)].join(', ')}. Remova ou troque antes de salvar.`);
+      const semItens = d.refeicoes.every((r) => r.itens.length === 0);
+      if (semItens) throw new Error('Inclua ao menos um alimento antes de salvar.');
       const status = liberar ? 'Ativo' : ehNovo ? 'Inativo' : d.status;
       const body = paraServidor(d, status);
       const salvo = ehNovo
@@ -789,9 +747,14 @@ export function DietEditorPage() {
                             ))}
                           </div>
                         )}
-                        <button onClick={() => setAddEm(r.k)} className="flex w-full items-center gap-2 border-t border-line/50 px-4 py-3 text-sm font-semibold text-accent">
-                          <Plus className="h-4 w-4" /> Adicionar alimento
-                        </button>
+                        <div className="flex border-t border-line/50">
+                          <button onClick={() => setAddEm(r.k)} className="flex flex-1 items-center gap-2 px-4 py-3 text-sm font-semibold text-accent">
+                            <Plus className="h-4 w-4" /> Adicionar alimento
+                          </button>
+                          <button onClick={() => setMontarEm(r.k)} className="flex items-center gap-2 border-l border-line/50 px-4 py-3 text-sm font-semibold text-accent">
+                            <Sparkles className="h-4 w-4" /> Montar pela meta
+                          </button>
+                        </div>
                       </Card>
                     </motion.div>
                   );
@@ -823,11 +786,11 @@ export function DietEditorPage() {
       {/* Barra de acao */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/60 bg-bg/90 pb-safe backdrop-blur-xl">
         <div className="mx-auto flex max-w-3xl gap-2 px-gutter py-3">
-          <Button variant="outline" className="flex-1" disabled={!d || vazio || (!sujo && !ehNovo)} loading={salvar.isPending && salvar.variables === false} onClick={() => salvar.mutate(false)}>
+          <Button variant="outline" className="flex-1" disabled={!d || vazio || (!sujo && !ehNovo) || salvar.isPending} loading={salvar.isPending && salvar.variables === false} onClick={() => salvar.mutate(false)}>
             {sujo || ehNovo ? 'Salvar' : 'Salvo'}
           </Button>
           {(d?.status !== 'Ativo' || sujo) && (
-            <Button className="flex-[1.4]" disabled={!d || vazio} loading={salvar.isPending && salvar.variables === true} onClick={() => salvar.mutate(true)}>
+            <Button className="flex-[1.4]" disabled={!d || vazio || salvar.isPending} loading={salvar.isPending && salvar.variables === true} onClick={() => salvar.mutate(true)}>
               {d?.status === 'Ativo' ? 'Salvar e notificar' : 'Liberar ao paciente'}
             </Button>
           )}
@@ -943,6 +906,30 @@ export function DietEditorPage() {
         }}
       />
       <SalvarParteComoModeloSheet tipo="refeicao" alvo={salvarModelo} onClose={() => setSalvarModelo(null)} />
+      {d && (
+        <MontarPelaMetaSheet
+          refeicao={d.refeicoes.find((r) => r.k === montarEm) ?? null}
+          metaDia={d.metas}
+          totalRefeicoes={d.refeicoes.length}
+          mapa={mapa}
+          onClose={() => setMontarEm(null)}
+          onAplicar={(metas, novos) => {
+            const k = montarEm;
+            if (!k) return;
+            upRef(k, (x) => ({
+              ...x,
+              metas: { ...x.metas, ...metas },
+              // Quem ja estava na refeicao mantem as substituicoes e a orientacao.
+              itens: novos.map((n) => {
+                const antes = x.itens.find((i) => i.alimentoId === n.alimentoId);
+                return antes ? { ...antes, ...n } : { k: uid(), ...n, observacao: null, subs: [] };
+              }),
+            }));
+            setMontarEm(null);
+            toast('Quantidades aplicadas. Revise e salve a dieta.');
+          }}
+        />
+      )}
 
       <Sheet open={!!menuRef} onClose={() => setMenuRef(null)} title={d?.refeicoes.find((r) => r.k === menuRef)?.nome}>
         {menuRef && d && (
@@ -981,7 +968,8 @@ export function DietEditorPage() {
                   <Button
                     variant="outline"
                     icon={<BookmarkPlus className="h-4 w-4" />}
-                    disabled={!d.refeicoes[idx].itens.length}
+                    disabled={!d.refeicoes[idx].itens.length || salvar.isPending}
+                    loading={salvar.isPending}
                     onClick={async () => {
                       let r: { id?: string; nome: string } = d.refeicoes[idx];
                       if (!r.id || sujo) {

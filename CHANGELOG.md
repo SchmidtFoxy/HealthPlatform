@@ -1,3 +1,15 @@
+## v0.72.6 — Dieta: montar refeição pela meta, favoritos e alimentos sugeridos
+
+- **Montar pela meta**: cada refeição do editor de dieta ganhou o botão "Montar pela meta". O profissional marca os alimentos e o app calcula a quantidade de cada um, já na medida caseira (meia em meia unidade, ou de 5 em 5 g), para chegar nas calorias e macros da refeição. Dá para travar a quantidade de um alimento (ex.: canela, café). Sem meta na refeição, sugere uma parte igual das metas do dia. É um cálculo de otimização feito no aparelho (mínimos quadrados com quantidades positivas), não um modelo de IA: é instantâneo e sem custo.
+- **Favoritos por refeição**: a estrela guarda o alimento como favorito daquela refeição (pelo nome, ex.: "Café da manhã") para o profissional logado. Na próxima vez, os favoritos já aparecem na lista para marcar. Tabela nova `AlimentosFavoritos`.
+- **Alimentos sugeridos**: tapioca (goma hidratada), café preto, maçã Fuji, canela em pó e whey (genérico, Growth, New Millen, Max Titanium e Integralmédica), com medida caseira. O SQL desta versão inclui em todas as clínicas; o botão "Adicionar alimentos sugeridos" na Biblioteca > Alimentos faz o mesmo para clínicas novas. Alimento com o mesmo nome não é duplicado.
+- Correções no editor de dieta:
+  - Apagar a quantidade de uma substituição deixava 0 g no rascunho, e o servidor recusava a dieta inteira com uma mensagem técnica. Agora o campo só aceita valor positivo.
+  - Apagar o nome da medida caseira ("fatia", "colher") trocava na hora por "unidade" e atrapalhava a digitação. Agora o campo pode ficar vazio enquanto digita.
+  - Alimento desativado na Biblioteca aparecia como "Alimento indisponível" e travava o salvar com erro genérico. Agora aparece em destaque e o aviso diz em qual refeição está.
+  - Os botões de salvar ficam bloqueados enquanto a dieta está sendo salva, para um toque duplo não criar duas dietas.
+- **Precisa de SQL**: `scripts/sql/v0.72.6_alimentos_favoritos.sql` (tabela nova e os alimentos). Rodar antes do merge.
+
 ## v0.72.5 — "Salvar como modelo" funciona direto no editor de treino e de dieta
 
 - Causa: ao salvar um treino (ou dieta) novo, a página mudava de endereço mas mantinha o rascunho antigo, sem os ids que o servidor acabou de gerar. O botão "Salvar como modelo" continuava pedindo "Salve o treino antes" mesmo depois de salvo, até recarregar a página.

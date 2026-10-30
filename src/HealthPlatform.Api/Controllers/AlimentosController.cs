@@ -77,6 +77,69 @@ public class AlimentosController(AppDbContext db, CurrentUser currentUser, IHttp
         if (item is null) return NotFound(new { message = "Alimento nao encontrado." }); var antes = Snapshot(item); item.Ativo = true; item.UpdatedAtUtc = DateTime.UtcNow; Auditar("ACTIVATE", item, antes, Snapshot(item)); await db.SaveChangesAsync(ct); return Ok(ToResponse(item));
     }
 
+    /// <summary>Acrescenta os alimentos da base Aesyn que ainda nao existem na organizacao (compara pelo nome).</summary>
+    [HttpPost("catalogo-base")]
+    public async Task<IActionResult> PopularCatalogoBase(CancellationToken ct)
+    {
+        var existentes = (await db.Alimentos.Where(x => x.OrganizacaoId == currentUser.OrganizationId).Select(x => x.NomeNormalizado).ToListAsync(ct)).ToHashSet();
+        var criados = new List<string>();
+        foreach (var b in CatalogoBase)
+        {
+            var normalizado = Normalizar(b.Nome);
+            if (!existentes.Add(normalizado)) continue;
+            var item = new Alimento { OrganizacaoId = currentUser.OrganizationId, Nome = b.Nome, NomeNormalizado = normalizado, Categoria = b.Categoria, CaloriasPor100g = b.Kcal, ProteinasPor100g = b.Prot, CarboidratosPor100g = b.Carb, GordurasPor100g = b.Gord, FibrasPor100g = b.Fibra, UnidadeNome = b.Medida, GramasPorUnidade = b.GramasMedida, GramasPorMl = b.GramasPorMl };
+            db.Alimentos.Add(item); Auditar("CREATE", item, null, Snapshot(item)); criados.Add(b.Nome);
+        }
+        await db.SaveChangesAsync(ct);
+        return Ok(new { criados = criados.Count, ignorados = CatalogoBase.Length - criados.Count, nomes = criados });
+    }
+
+    [HttpGet("favoritos")]
+    public async Task<ActionResult<IReadOnlyCollection<AlimentoFavoritoResponse>>> GetFavoritos(CancellationToken ct)
+    {
+        var profissional = await GetProfissionalAtual(ct); if (profissional is null) return Ok(Array.Empty<AlimentoFavoritoResponse>());
+        var itens = await db.AlimentosFavoritos.AsNoTracking().Where(x => x.ProfissionalId == profissional.Id).OrderBy(x => x.CreatedAtUtc).Select(x => new AlimentoFavoritoResponse(x.Refeicao, x.AlimentoId)).ToListAsync(ct);
+        return Ok(itens);
+    }
+
+    /// <summary>Troca a lista de favoritos de uma refeicao (identificada pelo nome) do profissional logado.</summary>
+    [HttpPut("favoritos")]
+    public async Task<ActionResult<IReadOnlyCollection<AlimentoFavoritoResponse>>> SalvarFavoritos(SalvarFavoritosRefeicaoRequest request, CancellationToken ct)
+    {
+        var refeicao = Normalizar(request.Refeicao ?? string.Empty);
+        if (refeicao.Length is 0 or > 80) return BadRequest(new { message = "Informe o nome da refeicao (ate 80 caracteres)." });
+        var profissional = await GetProfissionalAtual(ct); if (profissional is null) return Conflict(new { message = "Cadastre seu perfil profissional antes de guardar favoritos." });
+        var ids = (request.AlimentoIds ?? Array.Empty<Guid>()).Distinct().ToArray();
+        if (ids.Length > 60) return BadRequest(new { message = "Use ate 60 favoritos por refeicao." });
+        var validos = await db.Alimentos.CountAsync(x => ids.Contains(x.Id) && x.OrganizacaoId == currentUser.OrganizationId, ct);
+        if (validos != ids.Length) return BadRequest(new { message = "Um ou mais alimentos nao existem nesta organizacao." });
+        var atuais = await db.AlimentosFavoritos.Where(x => x.ProfissionalId == profissional.Id && x.Refeicao == refeicao).ToListAsync(ct);
+        db.AlimentosFavoritos.RemoveRange(atuais.Where(x => !ids.Contains(x.AlimentoId)));
+        var manter = atuais.Select(x => x.AlimentoId).ToHashSet();
+        foreach (var id in ids.Where(x => !manter.Contains(x))) db.AlimentosFavoritos.Add(new AlimentoFavorito { ProfissionalId = profissional.Id, Refeicao = refeicao, AlimentoId = id });
+        await db.SaveChangesAsync(ct);
+        return await GetFavoritos(ct);
+    }
+
+    private async Task<Profissional?> GetProfissionalAtual(CancellationToken ct) =>
+        await db.Profissionais.FirstOrDefaultAsync(x => x.UsuarioId == currentUser.UserId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
+
+    private sealed record AlimentoBase(string Nome, string Categoria, decimal Kcal, decimal Prot, decimal Carb, decimal Gord, decimal Fibra, string? Medida, decimal? GramasMedida, decimal? GramasPorMl = null);
+
+    // Valores por 100 g. Alimentos in natura pela TACO (Unicamp) e USDA; whey pelos rotulos das marcas (variam um pouco por sabor).
+    private static readonly AlimentoBase[] CatalogoBase =
+    [
+        new("Tapioca (goma hidratada)", "Cereais e derivados", 240m, 0m, 60m, 0m, 0m, "colher de sopa", 15m),
+        new("Café preto (sem açúcar)", "Bebidas", 9m, 0.7m, 1.5m, 0.1m, 0m, "xícara de café", 50m, 1m),
+        new("Maçã Fuji (com casca)", "Frutas", 56m, 0.3m, 15.2m, 0m, 1.3m, "unidade média", 130m),
+        new("Canela em pó", "Temperos", 247m, 4m, 80.6m, 1.2m, 53.1m, "colher de chá", 2.6m),
+        new("Whey protein concentrado (genérico)", "Suplementos", 400m, 72m, 15m, 6m, 0m, "dose", 30m),
+        new("Whey Growth Concentrado 80%", "Suplementos", 403m, 76.7m, 9.3m, 6.7m, 0m, "dose", 30m),
+        new("Whey New Millen 100% Whey", "Suplementos", 407m, 70m, 20m, 5m, 0m, "dose", 30m),
+        new("Whey Max Titanium Top Whey 3W", "Suplementos", 425m, 80m, 11m, 6.8m, 0m, "dose", 40m),
+        new("Whey Integralmédica 100% Pure", "Suplementos", 407m, 70m, 17m, 6.3m, 0m, "dose", 30m),
+    ];
+
     private static string? Validar(UpsertAlimentoRequest r)
     {
         if (string.IsNullOrWhiteSpace(r.Nome)) return "Nome do alimento e obrigatorio.";
