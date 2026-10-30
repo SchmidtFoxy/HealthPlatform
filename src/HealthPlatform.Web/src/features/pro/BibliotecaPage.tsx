@@ -688,6 +688,16 @@ function Alimentos() {
   const termo = semAcento(busca.trim());
   const lista = todos.filter((x) => !termo || semAcento(`${x.nome} ${x.categoria ?? ''}`).includes(termo));
   const categorias = Array.from(new Set(todos.map((x) => x.categoria).filter(Boolean))).sort() as string[];
+  const qc = useQueryClient();
+  const base = useMutation({
+    mutationFn: () => api<{ criados: number; nomes: string[] }>('/api/alimentos/catalogo-base', { method: 'POST' }),
+    onSuccess: (r) => {
+      toast(r.criados ? `${r.criados} alimentos adicionados: ${r.nomes.join(', ')}.` : 'Sua tabela já tem todos os alimentos sugeridos.');
+      qc.invalidateQueries({ queryKey: ['pro', 'alimentos-lista'] });
+      qc.invalidateQueries({ queryKey: ['pro', 'alimentos'] });
+    },
+    onError: erroToast,
+  });
 
   return (
     <>
@@ -699,9 +709,12 @@ function Alimentos() {
           </p>
           <Inativos value={inativos} onChange={setInativos} />
         </div>
-        <div>
+        <div className="flex flex-wrap gap-2">
           <Button size="sm" icon={<Plus className="h-4 w-4" />} onClick={() => setAberto('novo')}>
             Novo alimento
+          </Button>
+          <Button size="sm" variant="soft" icon={<Library className="h-4 w-4" />} loading={base.isPending} onClick={() => base.mutate()}>
+            Adicionar alimentos sugeridos
           </Button>
         </div>
       </div>

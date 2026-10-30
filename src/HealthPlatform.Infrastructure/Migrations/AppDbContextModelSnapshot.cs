@@ -87,6 +87,39 @@ namespace HealthPlatform.Infrastructure.Migrations
                     b.ToTable("Alimentos", (string)null);
                 });
 
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.AlimentoFavorito", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AlimentoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ProfissionalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Refeicao")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlimentoId");
+
+                    b.HasIndex("ProfissionalId", "Refeicao", "AlimentoId")
+                        .IsUnique();
+
+                    b.ToTable("AlimentosFavoritos", (string)null);
+                });
+
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Anamnese", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3619,6 +3652,25 @@ namespace HealthPlatform.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Organizacao");
+                });
+
+            modelBuilder.Entity("HealthPlatform.Domain.Entities.AlimentoFavorito", b =>
+                {
+                    b.HasOne("HealthPlatform.Domain.Entities.Alimento", "Alimento")
+                        .WithMany()
+                        .HasForeignKey("AlimentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthPlatform.Domain.Entities.Profissional", "Profissional")
+                        .WithMany()
+                        .HasForeignKey("ProfissionalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Alimento");
+
+                    b.Navigation("Profissional");
                 });
 
             modelBuilder.Entity("HealthPlatform.Domain.Entities.Anamnese", b =>

@@ -41,6 +41,7 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
     public DbSet<ProgramacaoNutricionalDia> ProgramacoesNutricionaisDia => Set<ProgramacaoNutricionalDia>();
     public DbSet<FaseNutricional> FasesNutricionais => Set<FaseNutricional>();
     public DbSet<ModeloRefeicao> ModelosRefeicoes => Set<ModeloRefeicao>();
+    public DbSet<AlimentoFavorito> AlimentosFavoritos => Set<AlimentoFavorito>();
     public DbSet<ModeloPlanoAlimentar> ModelosPlanosAlimentares => Set<ModeloPlanoAlimentar>();
     public DbSet<RefeicaoPlanoAlimentar> RefeicoesPlanoAlimentar => Set<RefeicaoPlanoAlimentar>();
     public DbSet<ItemRefeicaoPlano> ItensRefeicaoPlano => Set<ItemRefeicaoPlano>();
@@ -319,6 +320,18 @@ public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
                 .HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(x => x.Profissional).WithMany(x => x.ModelosRefeicoes)
                 .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<AlimentoFavorito>(entity =>
+        {
+            entity.ToTable("AlimentosFavoritos");
+            entity.Property(x => x.Refeicao).HasMaxLength(80).IsRequired();
+            entity.HasIndex(x => new { x.ProfissionalId, x.Refeicao, x.AlimentoId }).IsUnique();
+            entity.HasIndex(x => x.AlimentoId);
+            entity.HasOne(x => x.Profissional).WithMany()
+                .HasForeignKey(x => x.ProfissionalId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Alimento).WithMany()
+                .HasForeignKey(x => x.AlimentoId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<FaseNutricional>(entity =>
