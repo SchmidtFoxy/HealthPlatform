@@ -1,3 +1,13 @@
+## v0.74.0 — Água mais divertida na tela Hoje
+
+- O card de água virou um copo que enche com onda e bolhas, com o total grande, a porcentagem e uma frase de ritmo ("No ritmo", "Um pouco atrás do ritmo", "Meta batida"). Bater a meta solta gotinhas e um aviso com a sequência.
+- Botões rápidos de copo (250 ml), garrafa (500 ml) e garrafão (1 L), mais "Outro" com 100 a 750 ml. "Tirar" desfaz o último registro, inclusive sem meta (antes só dava para tirar com meta do profissional).
+- Últimos 7 dias em mini copos e sequência de dias seguidos batendo a meta (o dia de hoje em aberto não quebra a sequência).
+- Meta do dia: a do profissional, quando existe. Sem ela, o app mostra uma referência de 35 ml/kg pelo último peso das avaliações (de 1,5 a 4,5 L), ou 2 L sem peso. É só referência na tela: nenhuma meta é criada e o profissional continua definindo a prescrição.
+- Lembrete de água por push (sino no card): às 10h, 13h, 16h e 19h no fuso do aparelho, só se o paciente estiver atrás do ritmo do dia (meta distribuída das 7h às 21h). No máximo um por horário. Respeita a preferência "Lembretes" do perfil. Ligar o sino ativa as notificações do aparelho se ainda não estiverem ativas.
+- Novos endpoints `GET/POST /api/portal/me/agua` e `PUT /api/portal/me/agua/lembrete`. Com meta, o consumo continua no registro da meta (o mesmo que o profissional vê); sem meta, nos registros de Hidratação do diário.
+- O lembrete fica guardado na tabela UsuariosTokens do Identity, que já existe. Sem SQL nem migration.
+
 ## v0.73.0 — Piloto Apple Watch / Apple Saúde pelo app Atalhos
 
 - O PWA não lê o app Saúde do iPhone. Este piloto usa um atalho do app Atalhos (iOS) que lê o resumo do dia anterior e envia para o Aesyn, sem app na App Store.
