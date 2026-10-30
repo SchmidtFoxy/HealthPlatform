@@ -1,3 +1,10 @@
+## v0.72.4 — Notificação para todos pelo painel admin
+
+- Painel admin > Clínica > Comunicação > "Enviar notificação": o admin escreve título e mensagem, escolhe para quem (só admins, equipe ou todos) e vê quantas pessoas e aparelhos vão receber antes de enviar. Pede confirmação.
+- Só recebem os aparelhos com notificação ligada. Aparelhos com inscrição vencida são removidos da lista no envio.
+- Cada envio fica na auditoria (PUSH_BROADCAST) com o texto e o público.
+- Sem migration e sem mudança de banco.
+
 ## v0.72.3 — Versão vem só do VERSION.txt
 
 - O número da versão agora fica num lugar só: o VERSION.txt. O build da API lê esse arquivo, e o /api/health, o Swagger e o PREPARAR.ps1 mostram o que está nele.

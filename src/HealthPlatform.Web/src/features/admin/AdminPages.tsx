@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Activity, AlertTriangle, CalendarCheck, ChevronRight, ClipboardList, KeyRound, LogIn, MailWarning, Pencil, Search, Stethoscope, UserCheck, UserPlus, Users, UserX } from 'lucide-react';
+import { Activity, AlertTriangle, Bell, CalendarCheck, ChevronRight, ClipboardList, KeyRound, LogIn, MailWarning, Pencil, Search, Stethoscope, UserCheck, UserPlus, Users, UserX } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { PAPEL } from '@/components/account';
@@ -838,6 +838,7 @@ export function AdminAtividadePage() {
 // ---------------------------------------------------------------- Clinica
 
 export function AdminClinicaPage() {
+  const [aviso, setAviso] = useState(false);
   return (
     <Page>
       <PageHeader title="Clínica" subtitle="Dados da organização e configurações compartilhadas." />
@@ -848,7 +849,82 @@ export function AdminClinicaPage() {
         <LinkLinha to="/pro/biblioteca" titulo="Biblioteca" sub="Exercícios, alimentos, suplementos, modelos e programas" />
         <LinkLinha to="/pro/gestao?aba=carteira" titulo="Carteira de pacientes" sub="Pacientes por prioridade de acompanhamento" />
       </Card>
+      <p className="eyebrow mb-2 mt-7">Comunicação</p>
+      <Card>
+        <button type="button" className="flex w-full items-center gap-3 p-4 text-left font-semibold" onClick={() => setAviso(true)}>
+          <Bell className="h-5 w-5 text-accent" />
+          <span className="min-w-0 flex-1">
+            Enviar notificação
+            <span className="block text-sm font-normal text-muted">Push para os aparelhos com notificação ligada</span>
+          </span>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
+        </button>
+      </Card>
+      <AvisoPushSheet aberto={aviso} onClose={() => setAviso(false)} />
     </Page>
+  );
+}
+
+type PublicoAviso = 'todos' | 'equipe' | 'admins';
+
+/** Push do admin para varias pessoas: mostra quantos aparelhos recebem antes de enviar. */
+function AvisoPushSheet({ aberto, onClose }: { aberto: boolean; onClose: () => void }) {
+  const [publico, setPublico] = useState<PublicoAviso>('admins');
+  const [titulo, setTitulo] = useState('AESYN');
+  const [mensagem, setMensagem] = useState('Notificação de teste. Se você recebeu, está tudo certo!');
+  const previa = useQuery({
+    queryKey: ['admin', 'push-previa', publico],
+    queryFn: () => api<{ pessoas: number; aparelhos: number }>(`/api/admin/push/previa?publico=${publico}`),
+    enabled: aberto,
+  });
+  const enviar = useMutation({
+    mutationFn: () => api<{ pessoas: number; enviadas: number; falhas: number; habilitado: boolean }>('/api/admin/push/enviar', { method: 'POST', json: { publico, titulo, mensagem } }),
+    onSuccess: (r) => {
+      if (!r.habilitado) toast('Nada enviado: o push está desligado no servidor ou ninguém tem notificação ligada.', 'bad');
+      else toast(`Enviada para ${r.enviadas} aparelho(s)${r.falhas ? `, ${r.falhas} falharam (aparelhos antigos são removidos)` : ''}.`);
+      onClose();
+    },
+    onError: (e) => toast(e instanceof Error ? e.message : 'Não foi possível enviar.', 'bad'),
+  });
+  const p = previa.data;
+  const confirmar = () => {
+    if (p && window.confirm(`Enviar "${titulo}" para ${p.aparelhos} aparelho(s) de ${p.pessoas} pessoa(s)?`)) enviar.mutate();
+  };
+  return (
+    <Sheet
+      open={aberto}
+      onClose={onClose}
+      title="Enviar notificação"
+      footer={
+        <Button size="lg" className="w-full" disabled={!p?.aparelhos || !titulo.trim() || !mensagem.trim()} loading={enviar.isPending} onClick={confirmar}>
+          {p ? `Enviar para ${p.aparelhos} aparelho(s)` : 'Enviar'}
+        </Button>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <Field label="Para quem">
+          <Segmented<PublicoAviso>
+            compact
+            value={publico}
+            onChange={setPublico}
+            options={[
+              { value: 'admins', label: 'Só admins' },
+              { value: 'equipe', label: 'Equipe' },
+              { value: 'todos', label: 'Todos' },
+            ]}
+          />
+        </Field>
+        <p className="text-[13px] text-muted">
+          {p ? `${p.pessoas} pessoa(s) com ${p.aparelhos} aparelho(s) com notificação ligada.` : 'Contando aparelhos...'} Quem não ligou a notificação não recebe.
+        </p>
+        <Field label="Título">
+          <input className={inputCls} maxLength={80} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+        </Field>
+        <Field label="Mensagem">
+          <textarea className={inputCls} rows={3} maxLength={240} value={mensagem} onChange={(e) => setMensagem(e.target.value)} />
+        </Field>
+      </div>
+    </Sheet>
   );
 }
 
