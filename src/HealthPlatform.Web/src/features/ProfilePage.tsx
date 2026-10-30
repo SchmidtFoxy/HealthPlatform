@@ -1,6 +1,7 @@
 import { ChevronRight, LogOut, Monitor, Moon, ShieldAlert, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AppleHealthCard } from '@/features/patient/AppleHealth';
 import { BoasVindasSheet } from '@/features/patient/BoasVindas';
 import { CheckInSheet } from '@/features/patient/CheckInSheet';
 import { useMinhaConta, usePrivacidade } from '@/features/AccountPage';
@@ -69,6 +70,13 @@ export function ProfilePage() {
 
       <p className="eyebrow mb-2 mt-7">Notificações</p>
       <NotificacoesCard />
+
+      {s?.tipoUsuario === 'Paciente' && (
+        <>
+          <p className="eyebrow mb-2 mt-7">Apple Watch e Saúde</p>
+          <AppleHealthCard />
+        </>
+      )}
 
       <p className="eyebrow mb-2 mt-7">Outras funções</p>
       <Card className="divide-y divide-line">
