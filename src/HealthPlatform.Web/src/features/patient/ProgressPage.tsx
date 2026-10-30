@@ -1,19 +1,31 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { Activity, Clock, Flame, Moon, Trophy, TrendingDown, TrendingUp } from 'lucide-react';
-import { useMemo } from 'react';
+import { Flame, Moon, TrendingDown, TrendingUp } from 'lucide-react';
+import { ReactNode, useMemo, useState } from 'react';
 import { Page, PageHeader } from '@/components/shell';
 import { Card, ErrorBox, Skeleton, Sparkline } from '@/components/ui';
 import { dataCurta, diaSemanaCurto, n0, n1 } from '@/lib/format';
 import { CheckInsSecao } from '@/features/checkins';
 import { RecordesCard } from '@/features/recordes';
-import { CorpoSecao, ExamesSecao, SinaisSecao } from './BodyAndExams';
+import { CorpoEvolucao, EvolucaoCarregando, FotosEvolucao, GruposMusculares, type Periodo, ResumoPeriodo, SeletorPeriodo, SemanaASemana, useEvolucaoPeriodo } from '@/features/evolucao/Evolucao';
+import { ExamesSecao, SinaisSecao } from './BodyAndExams';
 import { useHistoricoDiario, useHistoricoTreinos } from './queries';
 
 const DIA = 86400000;
+
+function Titulo({ children, extra }: { children: ReactNode; extra?: ReactNode }) {
+  return (
+    <div className="mb-3 mt-8 flex items-end justify-between gap-3">
+      <h2 className="font-display text-[17px] font-semibold tracking-tight">{children}</h2>
+      {extra && <span className="text-sm text-muted">{extra}</span>}
+    </div>
+  );
+}
 const chave = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 export function ProgressPage() {
+  const [periodo, setPeriodo] = useState<Periodo>('90');
+  const evolucao = useEvolucaoPeriodo(null, periodo);
   const diario = useHistoricoDiario(30);
   const hist = useHistoricoTreinos(84);
 
@@ -62,36 +74,38 @@ export function ProgressPage() {
       .sort((a, b) => b.pct - a.pct);
   }, [hist.data]);
 
-  const execs = hist.data?.execucoes ?? [];
-  const ult30 = execs.filter((e) => Date.now() - new Date(e.dataHoraInicioUtc).getTime() < 30 * DIA);
-  const minutos = ult30.reduce((a, e) => a + (e.duracaoMinutos ?? 0), 0);
-  const subindo = exercicios.filter((e) => e.delta > 0).length;
-
-  const kpis = [
-    { icon: Flame, v: String(ult30.length), l: 'treinos em 30 dias', c: 'text-warn' },
-    { icon: Clock, v: minutos >= 60 ? `${n0(minutos / 60)}h` : `${minutos}min`, l: 'de treino em 30 dias', c: 'text-info' },
-    { icon: Activity, v: media != null ? n0(media) : '—', l: 'prontidão média', c: 'text-accent' },
-    { icon: Trophy, v: String(subindo), l: subindo === 1 ? 'exercício com carga subindo' : 'exercícios com carga subindo', c: 'text-ok' },
-  ];
-
   return (
     <Page wide>
       <PageHeader eyebrow="Progresso" title="Sua evolução" subtitle="O que os seus registros mostram nas últimas semanas." />
       {(diario.isError || hist.isError) && <ErrorBox error={diario.error ?? hist.error} />}
 
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
-        {kpis.map((k, i) => (
-          <motion.div key={k.l} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-            <Card className="h-full p-4">
-              <k.icon className={clsx('h-4 w-4', k.c)} />
-              <p className="num mt-2.5 text-[28px] font-semibold leading-none">{k.v}</p>
-              <p className="mt-1.5 text-[12px] leading-tight text-muted">{k.l}</p>
-            </Card>
-          </motion.div>
-        ))}
+      <div className="mb-4">
+        <SeletorPeriodo value={periodo} onChange={setPeriodo} />
       </div>
+      {evolucao.isError && <ErrorBox error={evolucao.error} onRetry={() => evolucao.refetch()} />}
+      {evolucao.isLoading ? (
+        <EvolucaoCarregando />
+      ) : (
+        evolucao.data && (
+          <div className={clsx('flex flex-col gap-4 transition-opacity', evolucao.isPlaceholderData && 'opacity-60')}>
+            <ResumoPeriodo dados={evolucao.data} periodo={periodo} />
+            <SemanaASemana dados={evolucao.data} />
+          </div>
+        )
+      )}
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      {evolucao.data && (
+        <>
+          <Titulo extra={evolucao.data.avaliacoes.length ? `${evolucao.data.avaliacoes.length} ${evolucao.data.avaliacoes.length > 1 ? 'avaliações' : 'avaliação'}` : undefined}>Corpo</Titulo>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <CorpoEvolucao avaliacoes={evolucao.data.avaliacoes} vazio="Suas medidas aparecem aqui depois da primeira avaliação com o seu profissional." />
+            <FotosEvolucao fotos={evolucao.data.fotos} podeEnviar />
+          </div>
+        </>
+      )}
+
+      <Titulo>Recuperação e constância</Titulo>
+      <div className="grid gap-4 lg:grid-cols-2">
         {/* Prontidao e sono */}
         <Card className="p-5">
           <div className="flex items-start justify-between gap-3">
@@ -186,10 +200,7 @@ export function ProgressPage() {
         </Card>
       </div>
 
-      <div className="mb-3 mt-8 flex items-end justify-between">
-        <h2 className="font-display text-[17px] font-semibold tracking-tight">Evolução de carga</h2>
-        {!!exercicios.length && <span className="text-sm text-muted">{exercicios.length} exercícios</span>}
-      </div>
+      <Titulo extra={exercicios.length ? `${exercicios.length} exercícios` : undefined}>Evolução de carga</Titulo>
       {hist.isLoading ? (
         <Skeleton className="h-40" />
       ) : !exercicios.length ? (
@@ -226,10 +237,14 @@ export function ProgressPage() {
           ))}
         </div>
       )}
+      {!!evolucao.data?.gruposMusculares.length && (
+        <div className="mt-4">
+          <GruposMusculares grupos={evolucao.data.gruposMusculares} />
+        </div>
+      )}
       <div className="mt-8">
         <RecordesCard />
       </div>
-      <CorpoSecao />
       <div className="mt-8">
         <CheckInsSecao paciente={null} titulo="Check-ins de evolução" />
       </div>
