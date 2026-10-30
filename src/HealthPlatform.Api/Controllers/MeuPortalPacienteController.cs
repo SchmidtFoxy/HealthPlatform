@@ -16,7 +16,7 @@ namespace HealthPlatform.Api.Controllers;
 [ApiController]
 [Authorize(Policy = "PatientOnly")]
 [Route("api/portal/me")]
-public sealed class MeuPortalPacienteController(
+public sealed partial class MeuPortalPacienteController(
     AppDbContext db,
     CurrentUser currentUser,
     IHttpContextAccessor httpContextAccessor) : ControllerBase

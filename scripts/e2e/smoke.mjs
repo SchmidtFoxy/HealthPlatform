@@ -138,6 +138,11 @@ const PASSOS_PACIENTE = [
     const antes = await agua.innerText();
     await agua.getByRole('button', { name: /\+ 250 ml/ }).click();
     await page.waitForFunction((t) => document.getElementById('agua')?.innerText !== t, antes, { timeout: 10000 });
+    const [r] = await Promise.all([
+      page.waitForResponse((x) => x.request().method() === 'POST' && new URL(x.url()).pathname === '/api/portal/me/agua', { timeout: 15000 }),
+      agua.getByRole('button', { name: /^Tirar 250 ml$/ }).click(),
+    ]);
+    if (!r.ok()) throw new Error(`desfazer água respondeu ${r.status()}`);
   }],
   ['treino: série e finalizar', async (page) => {
     await ir(page, '/treino');
