@@ -123,6 +123,7 @@ async function enviarMensagem(page) {
     page.getByRole('button', { name: 'Enviar' }).click(),
   ]);
   if (!r.ok()) throw new Error(`envio da mensagem respondeu ${r.status()}`);
+  return r;
 }
 
 const PASSOS_PACIENTE = [
@@ -199,8 +200,13 @@ const PASSOS_PROFISSIONAL = [
     await page.getByText('Rafael Tavares').first().click();
     await page.waitForURL(/\/pro\/mensagens\/[0-9a-f-]{36}/, { timeout: 15000 });
     await page.getByText(`Mensagem ${marca}`).last().waitFor({ timeout: 10000 });
-    await page.getByPlaceholder('Responder').fill(`Resposta ${marca}`);
-    await enviarMensagem(page);
+    // Responde citando a mensagem do paciente (clique direito abre as acoes da mensagem).
+    await page.getByText(`Mensagem ${marca}`).last().click({ button: 'right' });
+    await page.getByRole('dialog').getByRole('button', { name: 'Responder' }).click();
+    await page.getByPlaceholder('Escreva a resposta').fill(`Resposta ${marca}`);
+    const r = await enviarMensagem(page);
+    const enviada = await r.json();
+    if (!enviada.respostaA?.trecho?.includes(marca)) throw new Error('a resposta nao veio ligada a mensagem citada');
   }],
 ];
 

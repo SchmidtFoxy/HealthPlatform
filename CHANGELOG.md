@@ -1,3 +1,15 @@
+## v0.77.0 — Chat mais parecido com um app de conversa
+
+- **Responder uma mensagem específica**: arrastar a mensagem para a direita (celular), segurar e escolher "Responder", ou o botão que aparece ao passar o mouse (computador). A resposta mostra o trecho citado em cima; tocar no trecho leva até a mensagem original e a destaca.
+- **Envio na hora**: a mensagem aparece assim que a pessoa toca em enviar, com um relógio enquanto sai. Se a internet falhar, ela fica marcada "Não enviada · tentar de novo" (ou "Descartar") em vez de sumir com o texto. Dá para mandar várias seguidas sem esperar.
+- **Status como no WhatsApp**: ✓ enviada, ✓✓ entregue e ✓✓ lida. Segurar a mensagem mostra quando foi enviada e quando foi lida, e permite copiar o texto.
+- **Rolagem inteligente**: ao abrir, a conversa para na linha "Mensagens novas" em vez de pular para o fim. Se a pessoa estiver lendo mensagens antigas, a conversa não pula quando chega outra: aparece o botão "1 nova mensagem" para descer.
+- **Rascunho salvo**: o que foi escrito e não enviado continua lá ao sair e voltar para a conversa (por paciente, no aparelho).
+- **Respostas rápidas do profissional**: botão de raio ao lado do clipe, com respostas prontas ({nome} vira o primeiro nome do paciente). Dá para salvar o texto que está escrevendo como nova resposta e apagar as que não usa. Ficam salvas no aparelho.
+- Links nas mensagens ficam clicáveis. A conversa atualiza a cada 8 s com o app aberto (antes 15 s).
+- A caixa de entrada, as notificações e o push mostram "📷 Foto" ou "📎 nome do arquivo" no lugar do texto interno dos anexos. A linha do tempo do paciente deixou de mostrar o marcador técnico dos anexos no meio da mensagem.
+- A resposta citada é guardada junto com a mensagem, no mesmo campo de hoje. **Sem SQL nem migration.**
+
 ## v0.76.0 — Água mais divertida na tela Hoje
 
 - O card de água virou um copo que enche com onda e bolhas, com o total grande, a porcentagem e uma frase de ritmo ("No ritmo", "Um pouco atrás do ritmo", "Meta batida"). Bater a meta solta gotinhas e um aviso com a sequência.
@@ -7,6 +19,7 @@
 - Lembrete de água por push (sino no card): às 10h, 13h, 16h e 19h no fuso do aparelho, só se o paciente estiver atrás do ritmo do dia (meta distribuída das 7h às 21h). No máximo um por horário. Respeita a preferência "Lembretes" do perfil. Ligar o sino ativa as notificações do aparelho se ainda não estiverem ativas.
 - Novos endpoints `GET/POST /api/portal/me/agua` e `PUT /api/portal/me/agua/lembrete`. Com meta, o consumo continua no registro da meta (o mesmo que o profissional vê); sem meta, nos registros de Hidratação do diário.
 - O lembrete fica guardado na tabela UsuariosTokens do Identity, que já existe. Sem SQL nem migration.
+
 ## v0.74.0 — Evolução do paciente: períodos, comparação, corpo e fotos
 
 - **Progresso do paciente** ganhou um seletor de período (30 dias, 90 dias, 6 meses, 1 ano). Cada número vem comparado com o período anterior do mesmo tamanho: treinos, tempo treinando, volume levantado (carga × repetições), adesão à dieta, prontidão, sono, peso e gordura corporal, com seta e cor indicando se melhorou.
