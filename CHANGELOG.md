@@ -1,4 +1,4 @@
-## v0.74.0 — Água mais divertida na tela Hoje
+## v0.76.0 — Água mais divertida na tela Hoje
 
 - O card de água virou um copo que enche com onda e bolhas, com o total grande, a porcentagem e uma frase de ritmo ("No ritmo", "Um pouco atrás do ritmo", "Meta batida"). Bater a meta solta gotinhas e um aviso com a sequência.
 - Botões rápidos de copo (250 ml), garrafa (500 ml) e garrafão (1 L), mais "Outro" com 100 a 750 ml. "Tirar" desfaz o último registro, inclusive sem meta (antes só dava para tirar com meta do profissional).
@@ -7,6 +7,16 @@
 - Lembrete de água por push (sino no card): às 10h, 13h, 16h e 19h no fuso do aparelho, só se o paciente estiver atrás do ritmo do dia (meta distribuída das 7h às 21h). No máximo um por horário. Respeita a preferência "Lembretes" do perfil. Ligar o sino ativa as notificações do aparelho se ainda não estiverem ativas.
 - Novos endpoints `GET/POST /api/portal/me/agua` e `PUT /api/portal/me/agua/lembrete`. Com meta, o consumo continua no registro da meta (o mesmo que o profissional vê); sem meta, nos registros de Hidratação do diário.
 - O lembrete fica guardado na tabela UsuariosTokens do Identity, que já existe. Sem SQL nem migration.
+## v0.74.0 — Evolução do paciente: períodos, comparação, corpo e fotos
+
+- **Progresso do paciente** ganhou um seletor de período (30 dias, 90 dias, 6 meses, 1 ano). Cada número vem comparado com o período anterior do mesmo tamanho: treinos, tempo treinando, volume levantado (carga × repetições), adesão à dieta, prontidão, sono, peso e gordura corporal, com seta e cor indicando se melhorou.
+- **Semana a semana**: gráfico de barras por semana para treinos, volume, adesão à dieta, prontidão e sono, com valor de cada semana ao tocar/passar o mouse e linha da média.
+- **Corpo**: gráfico de linha com datas reais para peso, gordura, massa magra, massa gorda, cintura, abdômen, quadril e IMC, com variação desde a primeira avaliação e tabela com todas as avaliações.
+- **Fotos**: antes e depois por posição (frente, costas, lados) e galeria. O próprio paciente agora pode enviar e apagar suas fotos de evolução pelo app; elas aparecem também na ficha, em Prontuário › Fotos (mesmo formato das fotos enviadas pela equipe).
+- **Séries por grupo muscular**, período atual vs. anterior.
+- **Ficha do paciente**: nova aba "Evolução" com o mesmo painel, atalhos para lançar avaliação e gerenciar fotos no prontuário, e os check-ins de evolução. As abas da ficha rolam para o lado no celular.
+- Endpoints novos: `GET /api/portal/me/evolucao-periodo`, `GET /api/pacientes/{id}/evolucao-periodo`, `POST/DELETE /api/portal/me/fotos-evolucao` e `GET /api/portal/me/fotos-evolucao/{arquivo}`.
+- Sem SQL nem migration: usa tabelas que já existem.
 
 ## v0.73.0 — Piloto Apple Watch / Apple Saúde pelo app Atalhos
 

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HealthPlatform.Api.Contracts.Diario;
+using HealthPlatform.Api.Contracts.Evolucao;
 using HealthPlatform.Api.Contracts.Metas;
 using HealthPlatform.Api.Contracts.Portal;
 using HealthPlatform.Api.Services;
@@ -848,6 +849,100 @@ public sealed partial class MeuPortalPacienteController(
         }).ToList();
 
         return Ok(new { total = ordenados.Count, itens = ordenados });
+    }
+
+    /// <summary>Evolucao no periodo (padrao 90 dias) comparada com o periodo anterior de mesmo tamanho.</summary>
+    [HttpGet("evolucao-periodo")]
+    public async Task<ActionResult<EvolucaoPeriodoResponse>> MinhaEvolucaoPeriodo([FromQuery] int dias = 90, CancellationToken ct = default)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+        return Ok(await EvolucaoPeriodoService.MontarAsync(db, pacienteId.Value, dias, paraPaciente: true, ct));
+    }
+
+    /// <summary>O proprio paciente envia uma foto de evolucao; ela aparece tambem na ficha, em Prontuario > Fotos.</summary>
+    [HttpPost("fotos-evolucao")]
+    [RequestSizeLimit(FotosEvolucaoController.LimiteBytes + 64 * 1024)]
+    public async Task<ActionResult<EvolucaoFotoResponse>> EnviarFotoEvolucao(
+        IFormFile file,
+        [FromForm] string? pose,
+        [FromForm] string? descricao,
+        [FromServices] IWebHostEnvironment environment,
+        CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+        if (file is null || file.Length == 0) return BadRequest(new { message = "Selecione uma imagem." });
+        if (file.Length > FotosEvolucaoController.LimiteBytes) return BadRequest(new { message = "A imagem deve ter no maximo 8 MB." });
+        if (!FotosEvolucaoController.Extensoes.TryGetValue(file.ContentType, out var extensao))
+            return BadRequest(new { message = "Formato invalido. Use JPEG, PNG ou WebP." });
+        if (!await FotosEvolucaoController.AssinaturaValida(file, file.ContentType, ct))
+            return BadRequest(new { message = "O conteudo do arquivo nao corresponde a uma imagem valida." });
+
+        var poseLimpa = pose?.Trim() ?? string.Empty;
+        var poseValida = poseLimpa is "Frente" or "Costas" or "LadoDireito" or "LadoEsquerdo" ? poseLimpa : "Frente";
+        var nota = Limpar(descricao);
+        if (nota is { Length: > 1000 }) nota = nota[..1000];
+
+        var pasta = FotosEvolucaoController.Diretorio(environment, currentUser.OrganizationId, pacienteId.Value);
+        Directory.CreateDirectory(pasta);
+        var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid():N}{extensao}";
+        await using (var stream = System.IO.File.Create(Path.Combine(pasta, fileName))) await file.CopyToAsync(stream, ct);
+
+        // Mesmo formato da foto enviada pelo profissional: tipo "FotoEvolucao:<pose>" e URL da ficha.
+        var item = new RegistroDiarioPaciente
+        {
+            PacienteId = pacienteId.Value,
+            DataHoraUtc = DateTime.UtcNow,
+            Tipo = $"FotoEvolucao:{poseValida}",
+            Descricao = nota,
+            ImagemUrl = $"/api/pacientes/{pacienteId.Value}/fotos-evolucao/{fileName}"
+        };
+        db.RegistrosDiarioPaciente.Add(item);
+        Auditar("CREATE", nameof(RegistroDiarioPaciente), item.Id, null, new { item.Tipo, item.DataHoraUtc, Origem = "Paciente" });
+        await db.SaveChangesAsync(ct);
+
+        return Ok(new EvolucaoFotoResponse(item.Id, item.DataHoraUtc, poseValida, false, item.Descricao,
+            EvolucaoPeriodoService.UrlDoPaciente(item.ImagemUrl)));
+    }
+
+    [HttpGet("fotos-evolucao/{fileName}")]
+    public async Task<IActionResult> MinhaFotoEvolucao(string fileName, [FromServices] IWebHostEnvironment environment, CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue) return NotFound();
+        if (string.IsNullOrWhiteSpace(fileName) || Path.GetFileName(fileName) != fileName) return BadRequest();
+        var contentType = FotosEvolucaoController.ContentType(fileName);
+        if (contentType is null) return BadRequest();
+        var path = Path.Combine(FotosEvolucaoController.Diretorio(environment, currentUser.OrganizationId, pacienteId.Value), fileName);
+        if (!System.IO.File.Exists(path)) return NotFound();
+        Response.Headers.CacheControl = "private, max-age=86400";
+        return PhysicalFile(path, contentType, enableRangeProcessing: true);
+    }
+
+    /// <summary>O paciente pode apagar as proprias fotos de evolucao (registro e arquivo). Copias anotadas pelo profissional ficam.</summary>
+    [HttpDelete("fotos-evolucao/{registroId:guid}")]
+    public async Task<IActionResult> ApagarFotoEvolucao(Guid registroId, [FromServices] IWebHostEnvironment environment, CancellationToken ct)
+    {
+        var pacienteId = await MeuPacienteId(ct);
+        if (!pacienteId.HasValue)
+            return NotFound(new { message = "Paciente vinculado nao encontrado." });
+        var item = await db.RegistrosDiarioPaciente.FirstOrDefaultAsync(x =>
+            x.Id == registroId && x.PacienteId == pacienteId.Value && x.Tipo.StartsWith("FotoEvolucao:"), ct);
+        if (item is null) return NotFound(new { message = "Foto nao encontrada." });
+        Auditar("DELETE", nameof(RegistroDiarioPaciente), item.Id, new { item.Tipo, item.DataHoraUtc, item.ImagemUrl }, null);
+        db.RegistrosDiarioPaciente.Remove(item);
+        await db.SaveChangesAsync(ct);
+
+        var fileName = Path.GetFileName(item.ImagemUrl ?? string.Empty);
+        if (FotosEvolucaoController.ContentType(fileName) is not null)
+        {
+            var path = Path.Combine(FotosEvolucaoController.Diretorio(environment, currentUser.OrganizationId, pacienteId.Value), fileName);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        }
+        return NoContent();
     }
 
     [HttpGet("exames")]

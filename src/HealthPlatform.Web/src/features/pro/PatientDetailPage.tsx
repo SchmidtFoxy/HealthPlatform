@@ -21,9 +21,10 @@ import { AplicarProgramaSheet } from './Programas';
 import { AbaCuidados } from './CuidadosPro';
 import { MaisAcoes, STATUS_ACOMPANHAMENTO } from './FichaAcoes';
 import { AbaProntuario } from './ProntuarioPro';
+import { AbaEvolucao } from './EvolucaoPro';
 import { useHistoricoPaciente, usePaciente, usePlanosAlimentares, usePlanosTreino, useResumoClinico } from './queries';
 
-type Aba = 'geral' | 'dieta' | 'treino' | 'cuidados' | 'prontuario';
+type Aba = 'geral' | 'evolucao' | 'dieta' | 'treino' | 'cuidados' | 'prontuario';
 
 interface EvolucaoCarga {
   exercicioId: string;
@@ -451,9 +452,10 @@ export function PatientDetailPage() {
         </motion.section>
       )}
 
-      <div className="sticky top-0 z-20 -mx-gutter mt-4 bg-bg/90 px-gutter py-2 pt-safe backdrop-blur-xl">
+      <div className="no-scrollbar sticky top-0 z-20 -mx-gutter mt-4 overflow-x-auto bg-bg/90 px-gutter py-2 pt-safe backdrop-blur-xl">
         <Segmented<Aba>
           compact
+          className="min-w-[480px] sm:min-w-0"
           value={aba}
           onChange={(v) => {
             setParams(v === 'geral' ? {} : { aba: v }, { replace: true });
@@ -461,6 +463,7 @@ export function PatientDetailPage() {
           }}
           options={[
             { value: 'geral', label: 'Geral' },
+            { value: 'evolucao', label: 'Evolução' },
             { value: 'dieta', label: 'Dieta' },
             { value: 'treino', label: 'Treino' },
             { value: 'cuidados', label: 'Cuidados' },
@@ -470,10 +473,11 @@ export function PatientDetailPage() {
       </div>
 
       {aba === 'geral' && <VisaoGeral id={id} />}
+      {aba === 'evolucao' && <AbaEvolucao id={id} irPara={(secao) => setParams({ aba: 'prontuario', secao }, { replace: true })} />}
       {aba === 'dieta' && <AbaDieta id={id} />}
       {aba === 'treino' && <AbaTreino id={id} />}
       {aba === 'cuidados' && <AbaCuidados id={id} />}
-      {aba === 'prontuario' && <AbaProntuario id={id} />}
+      {aba === 'prontuario' && <AbaProntuario key={params.get('secao') ?? ''} id={id} inicial={params.get('secao')} />}
       <RegistrarContatoSheet paciente={contato && p ? { id: p.id, nome: p.nome } : null} onClose={() => setContato(false)} />
     </Page>
   );

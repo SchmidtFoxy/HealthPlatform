@@ -75,6 +75,10 @@ public static class AdesaoNutricionalService
     public static string Serializar(Guid refeicaoId, string status, string? observacao)
         => JsonSerializer.Serialize(new { refeicaoId, status = NormalizarStatus(status), observacao = Limpar(observacao) });
 
+    /// <summary>Refeicao e status de um registro "AdesaoRefeicao" (null quando o texto nao e um registro valido).</summary>
+    public static (Guid RefeicaoId, string Status)? LerStatus(string? descricao)
+        => Ler(descricao) is { } r ? (r.RefeicaoId, r.Status) : null;
+
     public static bool Corresponde(string? descricao, Guid refeicaoId)
         => Ler(descricao)?.RefeicaoId == refeicaoId;
 
