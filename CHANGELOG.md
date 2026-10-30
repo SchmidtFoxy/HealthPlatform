@@ -1,3 +1,14 @@
+## v0.74.0 — Evolução do paciente: períodos, comparação, corpo e fotos
+
+- **Progresso do paciente** ganhou um seletor de período (30 dias, 90 dias, 6 meses, 1 ano). Cada número vem comparado com o período anterior do mesmo tamanho: treinos, tempo treinando, volume levantado (carga × repetições), adesão à dieta, prontidão, sono, peso e gordura corporal, com seta e cor indicando se melhorou.
+- **Semana a semana**: gráfico de barras por semana para treinos, volume, adesão à dieta, prontidão e sono, com valor de cada semana ao tocar/passar o mouse e linha da média.
+- **Corpo**: gráfico de linha com datas reais para peso, gordura, massa magra, massa gorda, cintura, abdômen, quadril e IMC, com variação desde a primeira avaliação e tabela com todas as avaliações.
+- **Fotos**: antes e depois por posição (frente, costas, lados) e galeria. O próprio paciente agora pode enviar e apagar suas fotos de evolução pelo app; elas aparecem também na ficha, em Prontuário › Fotos (mesmo formato das fotos enviadas pela equipe).
+- **Séries por grupo muscular**, período atual vs. anterior.
+- **Ficha do paciente**: nova aba "Evolução" com o mesmo painel, atalhos para lançar avaliação e gerenciar fotos no prontuário, e os check-ins de evolução. As abas da ficha rolam para o lado no celular.
+- Endpoints novos: `GET /api/portal/me/evolucao-periodo`, `GET /api/pacientes/{id}/evolucao-periodo`, `POST/DELETE /api/portal/me/fotos-evolucao` e `GET /api/portal/me/fotos-evolucao/{arquivo}`.
+- Sem SQL nem migration: usa tabelas que já existem.
+
 ## v0.73.0 — Piloto Apple Watch / Apple Saúde pelo app Atalhos
 
 - O PWA não lê o app Saúde do iPhone. Este piloto usa um atalho do app Atalhos (iOS) que lê o resumo do dia anterior e envia para o Aesyn, sem app na App Store.

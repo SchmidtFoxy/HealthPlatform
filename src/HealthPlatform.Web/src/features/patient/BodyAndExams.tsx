@@ -1,22 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ChevronDown, FlaskConical, TrendingDown, TrendingUp } from 'lucide-react';
+import { ChevronDown, FlaskConical } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Card, Pill, Skeleton, Sparkline } from '@/components/ui';
+import { Card, Pill, Skeleton } from '@/components/ui';
 import { api } from '@/lib/api';
 import { dataCurta, n1 } from '@/lib/format';
-
-interface Avaliacao {
-  id: string;
-  dataUtc: string;
-  pesoKg: number | null;
-  imc: number | null;
-  percentualGordura: number | null;
-  massaMagraKg: number | null;
-  cinturaCm: number | null;
-  abdomenCm: number | null;
-  quadrilCm: number | null;
-}
 
 interface Resultado {
   id: string;
@@ -39,68 +27,7 @@ interface Exame {
   resultados: Resultado[];
 }
 
-const useEvolucao = () => useQuery({ queryKey: ['p', 'evolucao'], queryFn: () => api<{ itens: Avaliacao[] }>('/api/portal/me/evolucao?limite=24') });
 const useExames = () => useQuery({ queryKey: ['p', 'exames'], queryFn: () => api<{ exames: Exame[] }>('/api/portal/me/exames?limite=20') });
-
-// Para cada medida, se subir e bom ou ruim (null: neutro).
-const MEDIDAS: { k: keyof Avaliacao; l: string; u: string; subirBom: boolean | null }[] = [
-  { k: 'pesoKg', l: 'Peso', u: 'kg', subirBom: null },
-  { k: 'percentualGordura', l: 'Gordura', u: '%', subirBom: false },
-  { k: 'massaMagraKg', l: 'Massa magra', u: 'kg', subirBom: true },
-  { k: 'cinturaCm', l: 'Cintura', u: 'cm', subirBom: false },
-  { k: 'abdomenCm', l: 'Abdômen', u: 'cm', subirBom: false },
-  { k: 'quadrilCm', l: 'Quadril', u: 'cm', subirBom: null },
-  { k: 'imc', l: 'IMC', u: '', subirBom: null },
-];
-
-/** Avaliacoes fisicas registradas pelo profissional. */
-export function CorpoSecao() {
-  const q = useEvolucao();
-  const itens = q.data?.itens ?? [];
-  const medidas = MEDIDAS.map((m) => {
-    const serie = itens.map((a) => a[m.k] as number | null).filter((v): v is number => v != null);
-    return { ...m, serie, delta: serie.length > 1 ? serie[serie.length - 1] - serie[0] : 0 };
-  }).filter((m) => m.serie.length);
-
-  if (q.isLoading) return <Skeleton className="mt-8 h-40" />;
-  if (!itens.length) return null;
-  const ultima = itens[itens.length - 1];
-
-  return (
-    <section className="mt-8">
-      <div className="mb-3 flex items-end justify-between">
-        <h2 className="font-display text-[17px] font-semibold tracking-tight">Corpo</h2>
-        <span className="text-sm text-muted">
-          {itens.length} {itens.length > 1 ? 'avaliações' : 'avaliação'} · última {dataCurta(ultima.dataUtc)}
-        </span>
-      </div>
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
-        {medidas.map((m) => {
-          const bom = m.subirBom == null || m.delta === 0 ? null : m.delta > 0 === m.subirBom;
-          return (
-            <Card key={m.k} className="flex flex-col p-4">
-              <p className="text-[13px] text-muted">{m.l}</p>
-              <p className="num mt-1 text-[24px] font-semibold leading-none">
-                {n1(m.serie[m.serie.length - 1])}
-                {m.u && <span className="ml-0.5 text-[13px] font-normal text-muted">{m.u}</span>}
-              </p>
-              {m.serie.length > 1 && (
-                <>
-                  <p className={clsx('num mt-1.5 flex items-center gap-1 text-[12px] font-semibold', bom == null ? 'text-muted' : bom ? 'text-ok' : 'text-warn')}>
-                    {m.delta > 0 ? <TrendingUp className="h-3.5 w-3.5" /> : m.delta < 0 ? <TrendingDown className="h-3.5 w-3.5" /> : null}
-                    {m.delta > 0 ? '+' : ''}
-                    {n1(m.delta)} {m.u} desde {dataCurta(itens[0].dataUtc)}
-                  </p>
-                  <Sparkline points={m.serie} height={34} className="mt-auto pt-2" color={bom === false ? 'rgb(var(--warn))' : undefined} />
-                </>
-              )}
-            </Card>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
 
 const valor = (r: Resultado) => (r.valorNumerico != null ? `${n1(r.valorNumerico)}${r.unidade ? ` ${r.unidade}` : ''}` : r.valorTexto ?? '—');
 const referencia = (r: Resultado) =>

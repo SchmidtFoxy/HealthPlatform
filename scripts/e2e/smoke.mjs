@@ -37,7 +37,7 @@ async function rotasDoProfissional() {
   const lista = await api(t, '/api/pacientes?busca=Marina&pagina=1&tamanhoPagina=5');
   const id = lista.itens?.[0]?.id;
   if (!id) throw new Error('Seed sem a paciente Marina.');
-  const rotas = ['/pro', '/pro/pacientes', '/pro/mensagens', '/pro/agenda', '/pro/central', '/pro/biblioteca', '/pro/anamnese-exames', '/pro/gestao', '/pro/avisos', '/pro/perfil', '/pro/conta', `/pro/pacientes/${id}`, `/pro/pacientes/${id}/arquivos`];
+  const rotas = ['/pro', '/pro/pacientes', '/pro/mensagens', '/pro/agenda', '/pro/central', '/pro/biblioteca', '/pro/anamnese-exames', '/pro/gestao', '/pro/avisos', '/pro/perfil', '/pro/conta', `/pro/pacientes/${id}`, `/pro/pacientes/${id}?aba=evolucao`, `/pro/pacientes/${id}/arquivos`];
   const dietas = await api(t, `/api/pacientes/${id}/planos-alimentares`).catch(() => []);
   if (dietas[0]?.id) rotas.push(`/pro/pacientes/${id}/dieta/${dietas[0].id}`);
   const treinos = await api(t, `/api/pacientes/${id}/treinos`).catch(() => []);

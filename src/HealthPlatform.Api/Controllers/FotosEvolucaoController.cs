@@ -10,8 +10,8 @@ namespace HealthPlatform.Api.Controllers;
 [Authorize]
 public class FotosEvolucaoController(AppDbContext db, CurrentUser currentUser, IWebHostEnvironment environment) : ControllerBase
 {
-    private const long LimiteBytes = 8 * 1024 * 1024;
-    private static readonly IReadOnlyDictionary<string, string> Extensoes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    internal const long LimiteBytes = 8 * 1024 * 1024;
+    internal static readonly IReadOnlyDictionary<string, string> Extensoes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         ["image/jpeg"] = ".jpg",
         ["image/png"] = ".png",
@@ -44,8 +44,7 @@ public class FotosEvolucaoController(AppDbContext db, CurrentUser currentUser, I
     {
         if (!await PacienteAutorizado(pacienteId, ct)) return NotFound();
         if (string.IsNullOrWhiteSpace(fileName) || Path.GetFileName(fileName) != fileName) return BadRequest();
-        var extensao = Path.GetExtension(fileName).ToLowerInvariant();
-        var contentType = extensao switch { ".jpg" or ".jpeg" => "image/jpeg", ".png" => "image/png", ".webp" => "image/webp", _ => null };
+        var contentType = ContentType(fileName);
         if (contentType is null) return BadRequest();
         var path = Path.Combine(DiretorioPaciente(pacienteId), fileName);
         if (!System.IO.File.Exists(path)) return NotFound();
@@ -55,14 +54,25 @@ public class FotosEvolucaoController(AppDbContext db, CurrentUser currentUser, I
     private Task<bool> PacienteAutorizado(Guid pacienteId, CancellationToken ct) =>
         db.Pacientes.AsNoTracking().AnyAsync(x => x.Id == pacienteId && x.OrganizacaoId == currentUser.OrganizationId && x.Ativo, ct);
 
-    private string DiretorioPaciente(Guid pacienteId) => Path.Combine(
+    private string DiretorioPaciente(Guid pacienteId) => Diretorio(environment, currentUser.OrganizationId, pacienteId);
+
+    /// <summary>Pasta das fotos do paciente; tambem usada pelas rotas do portal do paciente.</summary>
+    internal static string Diretorio(IWebHostEnvironment environment, Guid organizacaoId, Guid pacienteId) => Path.Combine(
         environment.ContentRootPath,
         "App_Data",
         "evolucao",
-        currentUser.OrganizationId.ToString("N"),
+        organizacaoId.ToString("N"),
         pacienteId.ToString("N"));
 
-    private static async Task<bool> AssinaturaValida(IFormFile file, string contentType, CancellationToken ct)
+    internal static string? ContentType(string fileName) => Path.GetExtension(fileName).ToLowerInvariant() switch
+    {
+        ".jpg" or ".jpeg" => "image/jpeg",
+        ".png" => "image/png",
+        ".webp" => "image/webp",
+        _ => null
+    };
+
+    internal static async Task<bool> AssinaturaValida(IFormFile file, string contentType, CancellationToken ct)
     {
         var buffer = new byte[12];
         await using var stream = file.OpenReadStream();
