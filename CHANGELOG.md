@@ -1,4 +1,4 @@
-## v0.75.0 — Chat mais parecido com um app de conversa
+## v0.77.0 — Chat mais parecido com um app de conversa
 
 - **Responder uma mensagem específica**: arrastar a mensagem para a direita (celular), segurar e escolher "Responder", ou o botão que aparece ao passar o mouse (computador). A resposta mostra o trecho citado em cima; tocar no trecho leva até a mensagem original e a destaca.
 - **Envio na hora**: a mensagem aparece assim que a pessoa toca em enviar, com um relógio enquanto sai. Se a internet falhar, ela fica marcada "Não enviada · tentar de novo" (ou "Descartar") em vez de sumir com o texto. Dá para mandar várias seguidas sem esperar.
@@ -9,6 +9,16 @@
 - Links nas mensagens ficam clicáveis. A conversa atualiza a cada 8 s com o app aberto (antes 15 s).
 - A caixa de entrada, as notificações e o push mostram "📷 Foto" ou "📎 nome do arquivo" no lugar do texto interno dos anexos. A linha do tempo do paciente deixou de mostrar o marcador técnico dos anexos no meio da mensagem.
 - A resposta citada é guardada junto com a mensagem, no mesmo campo de hoje. **Sem SQL nem migration.**
+
+## v0.76.0 — Água mais divertida na tela Hoje
+
+- O card de água virou um copo que enche com onda e bolhas, com o total grande, a porcentagem e uma frase de ritmo ("No ritmo", "Um pouco atrás do ritmo", "Meta batida"). Bater a meta solta gotinhas e um aviso com a sequência.
+- Botões rápidos de copo (250 ml), garrafa (500 ml) e garrafão (1 L), mais "Outro" com 100 a 750 ml. "Tirar" desfaz o último registro, inclusive sem meta (antes só dava para tirar com meta do profissional).
+- Últimos 7 dias em mini copos e sequência de dias seguidos batendo a meta (o dia de hoje em aberto não quebra a sequência).
+- Meta do dia: a do profissional, quando existe. Sem ela, o app mostra uma referência de 35 ml/kg pelo último peso das avaliações (de 1,5 a 4,5 L), ou 2 L sem peso. É só referência na tela: nenhuma meta é criada e o profissional continua definindo a prescrição.
+- Lembrete de água por push (sino no card): às 10h, 13h, 16h e 19h no fuso do aparelho, só se o paciente estiver atrás do ritmo do dia (meta distribuída das 7h às 21h). No máximo um por horário. Respeita a preferência "Lembretes" do perfil. Ligar o sino ativa as notificações do aparelho se ainda não estiverem ativas.
+- Novos endpoints `GET/POST /api/portal/me/agua` e `PUT /api/portal/me/agua/lembrete`. Com meta, o consumo continua no registro da meta (o mesmo que o profissional vê); sem meta, nos registros de Hidratação do diário.
+- O lembrete fica guardado na tabela UsuariosTokens do Identity, que já existe. Sem SQL nem migration.
 
 ## v0.74.0 — Evolução do paciente: períodos, comparação, corpo e fotos
 

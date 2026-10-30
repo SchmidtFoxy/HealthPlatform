@@ -153,3 +153,20 @@ input[type='number'] {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Copo de agua da tela Hoje: a onda corre de lado e as bolhas sobem. */
+@keyframes agua-onda {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100px); }
+}
+@keyframes agua-bolha {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 0.8; }
+  100% { transform: translateY(var(--sobe, -40px)); opacity: 0; }
+}
+.agua-onda { animation: agua-onda 3.2s linear infinite; }
+.agua-onda-lenta { animation: agua-onda 5.5s linear infinite reverse; }
+.agua-bolha { animation: agua-bolha 2.8s ease-in infinite; transform-box: fill-box; }
+@media (prefers-reduced-motion: reduce) {
+  .agua-onda, .agua-onda-lenta, .agua-bolha { animation: none !important; }
+}
