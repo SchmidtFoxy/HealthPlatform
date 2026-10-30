@@ -3,7 +3,8 @@ import clsx from 'clsx';
 import { Activity, Camera, CalendarDays, ClipboardList, Dumbbell, Eraser, FileText, FlaskConical, HeartPulse, ImagePlus, MessageCircle, NotebookPen, PenLine, Salad, Scale, Stethoscope, Target } from 'lucide-react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Button, Card, Field, inputCls, Sheet, Skeleton, toast } from '@/components/ui';
-import { api, lerSessao } from '@/lib/api';
+import { api } from '@/lib/api';
+import { Foto, useImagem } from '@/lib/imagemProtegida';
 import { Chips } from './CuidadosPro';
 
 // ---------------------------------------------------------------- Fotos de evolucao
@@ -29,48 +30,6 @@ const poseDe = (tipo: string): Pose => (POSES.find((p) => tipo.endsWith(`:${p.va
 const rotuloPose = (tipo: string) => POSES.find((p) => p.value === poseDe(tipo))?.label ?? 'Foto';
 const anotada = (tipo: string) => tipo.startsWith('FotoEvolucaoAnotada');
 const dia = (iso: string) => new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-
-// As fotos ficam atras de endpoint autenticado; baixa como blob e reaproveita entre telas.
-const cacheImagens = new Map<string, Promise<string>>();
-function urlProtegida(path: string) {
-  let p = cacheImagens.get(path);
-  if (!p) {
-    const s = lerSessao();
-    p = fetch(path, { headers: s ? { Authorization: `Bearer ${s.token}` } : {} }).then(async (r) => {
-      if (!r.ok) throw new Error('Imagem indisponível.');
-      return URL.createObjectURL(await r.blob());
-    });
-    p.catch(() => cacheImagens.delete(path));
-    cacheImagens.set(path, p);
-  }
-  return p;
-}
-
-function useImagem(path: string | null | undefined) {
-  const [src, setSrc] = useState<string | null>(null);
-  const [erro, setErro] = useState(false);
-  useEffect(() => {
-    let vivo = true;
-    setSrc(null);
-    setErro(false);
-    if (path)
-      urlProtegida(path).then(
-        (u) => vivo && setSrc(u),
-        () => vivo && setErro(true),
-      );
-    return () => {
-      vivo = false;
-    };
-  }, [path]);
-  return { src, erro };
-}
-
-function Foto({ path, alt, className }: { path: string; alt: string; className?: string }) {
-  const { src, erro } = useImagem(path);
-  if (erro) return <div className={clsx('grid place-items-center bg-raised text-[13px] text-faint', className)}>Imagem indisponível</div>;
-  if (!src) return <Skeleton className={className} />;
-  return <img src={src} alt={alt} className={clsx('object-cover', className)} />;
-}
 
 const useFotos = (id: string) =>
   useQuery({

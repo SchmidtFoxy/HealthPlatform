@@ -118,7 +118,8 @@ interface Relatorio {
   conclusaoMedica: string | null;
 }
 
-type Secao = 'linha' | 'checkins' | 'consultas' | 'evolucoes' | 'anamnese' | 'avaliacoes' | 'fotos' | 'exames' | 'relatorios';
+const SECOES = ['linha', 'checkins', 'consultas', 'evolucoes', 'anamnese', 'avaliacoes', 'fotos', 'exames', 'relatorios'] as const;
+type Secao = (typeof SECOES)[number];
 
 // ---------------------------------------------------------------- Utilidades
 
@@ -206,8 +207,8 @@ function Rodape({ salvar, pendente, valido = true, rotulo = 'Salvar' }: { salvar
 // ---------------------------------------------------------------- Aba
 
 /** Aba "Prontuario" da ficha: consultas, evolucoes (SOAP), anamnese, avaliacoes, fotos, exames, relatorios e linha do tempo. */
-export function AbaProntuario({ id }: { id: string }) {
-  const [secao, setSecao] = useState<Secao>('consultas');
+export function AbaProntuario({ id, inicial }: { id: string; inicial?: string | null }) {
+  const [secao, setSecao] = useState<Secao>((SECOES as readonly string[]).includes(inicial ?? '') ? (inicial as Secao) : 'consultas');
   return (
     <div className="mt-6">
       <div className="-mx-gutter mb-4 overflow-x-auto px-gutter pb-1">

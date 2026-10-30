@@ -1,4 +1,4 @@
-## v0.74.0 — Chat mais parecido com um app de conversa
+## v0.75.0 — Chat mais parecido com um app de conversa
 
 - **Responder uma mensagem específica**: arrastar a mensagem para a direita (celular), segurar e escolher "Responder", ou o botão que aparece ao passar o mouse (computador). A resposta mostra o trecho citado em cima; tocar no trecho leva até a mensagem original e a destaca.
 - **Envio na hora**: a mensagem aparece assim que a pessoa toca em enviar, com um relógio enquanto sai. Se a internet falhar, ela fica marcada "Não enviada · tentar de novo" (ou "Descartar") em vez de sumir com o texto. Dá para mandar várias seguidas sem esperar.
@@ -9,6 +9,17 @@
 - Links nas mensagens ficam clicáveis. A conversa atualiza a cada 8 s com o app aberto (antes 15 s).
 - A caixa de entrada, as notificações e o push mostram "📷 Foto" ou "📎 nome do arquivo" no lugar do texto interno dos anexos. A linha do tempo do paciente deixou de mostrar o marcador técnico dos anexos no meio da mensagem.
 - A resposta citada é guardada junto com a mensagem, no mesmo campo de hoje. **Sem SQL nem migration.**
+
+## v0.74.0 — Evolução do paciente: períodos, comparação, corpo e fotos
+
+- **Progresso do paciente** ganhou um seletor de período (30 dias, 90 dias, 6 meses, 1 ano). Cada número vem comparado com o período anterior do mesmo tamanho: treinos, tempo treinando, volume levantado (carga × repetições), adesão à dieta, prontidão, sono, peso e gordura corporal, com seta e cor indicando se melhorou.
+- **Semana a semana**: gráfico de barras por semana para treinos, volume, adesão à dieta, prontidão e sono, com valor de cada semana ao tocar/passar o mouse e linha da média.
+- **Corpo**: gráfico de linha com datas reais para peso, gordura, massa magra, massa gorda, cintura, abdômen, quadril e IMC, com variação desde a primeira avaliação e tabela com todas as avaliações.
+- **Fotos**: antes e depois por posição (frente, costas, lados) e galeria. O próprio paciente agora pode enviar e apagar suas fotos de evolução pelo app; elas aparecem também na ficha, em Prontuário › Fotos (mesmo formato das fotos enviadas pela equipe).
+- **Séries por grupo muscular**, período atual vs. anterior.
+- **Ficha do paciente**: nova aba "Evolução" com o mesmo painel, atalhos para lançar avaliação e gerenciar fotos no prontuário, e os check-ins de evolução. As abas da ficha rolam para o lado no celular.
+- Endpoints novos: `GET /api/portal/me/evolucao-periodo`, `GET /api/pacientes/{id}/evolucao-periodo`, `POST/DELETE /api/portal/me/fotos-evolucao` e `GET /api/portal/me/fotos-evolucao/{arquivo}`.
+- Sem SQL nem migration: usa tabelas que já existem.
 
 ## v0.73.0 — Piloto Apple Watch / Apple Saúde pelo app Atalhos
 
