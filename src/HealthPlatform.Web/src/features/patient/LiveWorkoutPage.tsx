@@ -155,13 +155,13 @@ function Ajuste({ label, value, onChange, step, max, sufixo }: { label: string; 
   );
 }
 
-function SerieLinha({ i, s, foco, unidade, onClick }: { i: number; s: SerieRegistro; foco: boolean; unidade: string; onClick: () => void }) {
+function SerieLinha({ i, s, foco, unidade, onClick, onRemover }: { i: number; s: SerieRegistro; foco: boolean; unidade: string; onClick: () => void; onRemover?: () => void }) {
   return (
-    <li>
+    <li className="flex items-center gap-2">
       <button
         onClick={onClick}
         className={clsx(
-          'flex w-full items-center gap-3 rounded-2xl border px-3 py-2.5 text-left transition',
+          'flex min-w-0 flex-1 items-center gap-3 rounded-2xl border px-3 py-2.5 text-left transition',
           foco ? 'border-accent bg-accent/[0.08]' : s.feita ? 'border-ok/25 bg-ok/[0.07]' : 'border-line bg-surface hover:border-accent/40',
         )}
       >
@@ -173,6 +173,17 @@ function SerieLinha({ i, s, foco, unidade, onClick }: { i: number; s: SerieRegis
         </span>
         <span className={clsx('text-[12px] font-semibold', s.feita ? 'text-ok' : foco ? 'text-accent' : 'text-faint')}>{s.feita ? 'Feita' : foco ? 'Agora' : 'A fazer'}</span>
       </button>
+      {onRemover && (
+        <button
+          type="button"
+          aria-label={`Remover série ${i + 1}`}
+          title={`Remover série ${i + 1}`}
+          onClick={onRemover}
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-line text-faint transition hover:border-bad/40 hover:text-bad active:scale-95"
+        >
+          <Minus className="h-4 w-4" />
+        </button>
+      )}
     </li>
   );
 }
@@ -328,6 +339,18 @@ export function LiveWorkoutPage() {
       const base = l[l.length - 1] ?? { reps: null, carga: null };
       return { ...x, series: { ...x.series, [it.id]: [...l, { reps: base.reps, carga: base.carga, feita: false }] } };
     });
+
+  // Diminui o numero de series do exercicio de hoje (sempre fica pelo menos uma).
+  const removerSerie = (idx: number) => {
+    setT((x) => {
+      if (!x) return x;
+      const l = x.series[it.id];
+      if (l.length <= 1) return x;
+      return { ...x, series: { ...x.series, [it.id]: l.filter((_, i) => i !== idx) } };
+    });
+    setFocoSel(null);
+    toast(`Série ${idx + 1} removida.`);
+  };
 
   const adicionarExtra = (x: { id: string; nome: string; grupoMuscular: string | null; equipamento: string | null }) => {
     const extra: Extra = { id: `extra-${Math.random().toString(36).slice(2, 10)}`, exercicioId: x.id, nome: x.nome, grupoMuscular: x.grupoMuscular, equipamento: x.equipamento };
@@ -572,7 +595,7 @@ export function LiveWorkoutPage() {
 
             <ul className="mt-4 flex flex-col gap-2">
               {series.map((s, i) => (
-                <SerieLinha key={i} i={i} s={s} foco={i === foco} unidade={unidade} onClick={() => setFocoSel(i)} />
+                <SerieLinha key={i} i={i} s={s} foco={i === foco} unidade={unidade} onClick={() => setFocoSel(i)} onRemover={series.length > 1 ? () => removerSerie(i) : undefined} />
               ))}
             </ul>
             <div className="mt-2 grid grid-cols-2 gap-2">
