@@ -1,3 +1,9 @@
+## v0.81.0 — Remover séries no treino ao vivo
+
+- Durante o treino ao vivo, cada série da lista ganha um botão **−** ao lado para tirá-la do treino de hoje. Assim dá para diminuir o número de séries, não só adicionar com "Série extra".
+- Funciona com séries feitas ou a fazer, em exercícios do plano e extras. Sempre fica pelo menos uma série. A remoção vale só para a execução de hoje: a prescrição do profissional não muda e o registro salva apenas as séries feitas.
+- Sem SQL nem migration.
+
 ## v0.80.0 — Dia vira à meia-noite de Brasília e central de lembretes no Perfil
 
 - **Virada do dia corrigida**: a API contava o dia em UTC, então às 21h de Brasília tudo passava para o dia seguinte. Quem marcava uma refeição, registrava o treino ou fechava o diário entre 21h e meia-noite via isso cair no dia errado, e a tela Hoje das 21h em diante mostrava o dia seguinte zerado. Agora todo "hoje", início e fim de dia e agrupamento por dia (dieta, treino, diário, check-in, metas, sequências, evolução e telas do profissional) usa o horário de Brasília (America/Sao_Paulo). A água já usava o fuso do aparelho e continua igual.
